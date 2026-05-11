@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendulum Ideal Lab - M.5 Physics</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        :root {
+            --accent: #ffff00;
+            --border: 4px solid #000000;
+            --shadow: 8px 8px 0px #000000;
+        }
+
+        * { box-sizing: border-box; font-family: 'K2D', sans-serif; }
+        body { background-color: #f0f0f0; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+
+        .lab-container {
+            background: #fff; border: var(--border); box-shadow: var(--shadow);
+            width: 100%; max-width: 1000px; padding: 20px; display: flex; flex-wrap: wrap; gap: 20px;
+        }
+
+        #sim-box {
+            flex: 1; min-width: 400px; height: 600px; border: var(--border);
+            position: relative; background: #fff; cursor: grab; overflow: hidden;
+        }
+        #sim-box:active { cursor: grabbing; }
+
+        .controls { width: 320px; display: flex; flex-direction: column; gap: 15px; }
+        .card { border: var(--border); padding: 15px; background: #fff; box-shadow: 4px 4px 0px #000; }
+        h2 { margin: 0 0 10px 0; font-size: 18px; text-transform: uppercase; background: var(--accent); padding: 5px; border-bottom: var(--border); }
+        
+        .input-group { margin-bottom: 10px; }
+        label { display: block; font-weight: 800; font-size: 13px; margin-bottom: 3px; }
+        input[type="number"], select { width: 100%; padding: 10px; border: 2px solid #000; font-weight: 800; font-size: 16px; outline: none; cursor: pointer;}
+
+        .btn {
+            width: 100%; padding: 12px; background: var(--accent); border: var(--border);
+            font-weight: 800; cursor: pointer; text-transform: uppercase; margin-top: 5px;
+            box-shadow: 2px 2px 0px #000; transition: 0.1s;
+        }
+        .btn:active { transform: translate(2px, 2px); box-shadow: none; }
+        .btn-stop { background: #ff4d4d; color: #fff; }
+
+        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .data-box { background: #000; color: var(--accent); padding: 10px; text-align: center; border: var(--border); font-weight: 800; }
+        .data-box span { display: block; font-size: 10px; color: #fff; text-transform: uppercase;}
+
+        #calc-panel {
+            width: 100%; margin-top: 20px; display: none;
+            background: #fff; border: var(--border); padding: 20px; box-shadow: var(--shadow);
+        }
+        .step { border-left: 6px solid #000; padding-left: 20px; margin-bottom: 30px; }
+        .formula-box { background: #f8fafc; padding: 20px; border: 2px dashed #000; margin: 15px 0; overflow-x: auto; font-size: 1.1em;}
+    </style>
+</head>
+<body>
+
+<div class="lab-container">
+    <div id="sim-box">
+        <canvas id="canvas"></canvas>
+        <div id="status-msg" style="position: absolute; bottom: 15px; left: 15px; background: var(--accent); padding: 10px; border: 3px solid #000; font-size: 14px; font-weight: 800; box-shadow: 3px 3px 0px #000;">
+            👋 ลากลูกตุ้มเพื่อทำมุม (θ) แล้วปล่อย!
+        </div>
+    </div>
+
+    <div class="controls">
+        <div class="card">
+            <h2>⚙️ System Setup</h2>
+            <div class="input-group">
+                <label>Length (ความยาวเชือก L) [m]:</label>
+                <input type="number" id="l-in" value="2.0" step="0.1" min="0.5" max="5.0" onchange="triggerUpdate()">
+            </div>
+            <div class="input-group">
+                <label>Mass (มวลลูกตุ้ม m) [kg]:</label>
+                <input type="number" id="m-in" value="5" step="1" onchange="triggerUpdate()">
+            </div>
+            <div class="input-group">
+                <label>Gravity (แรงโน้มถ่วง g) [m/s²]:</label>
+                <select id="g-in" onchange="triggerUpdate()">
+                    <option value="9.81">โลก (Earth) - 9.81</option>
+                    <option value="1.62">ดวงจันทร์ (Moon) - 1.62</option>
+                    <option value="24.79">ดาวพฤหัส (Jupiter) - 24.79</option>
+                </select>
+            </div>
+            <button class="btn btn-stop" onclick="stopSim()">🛑 STOP / RESET</button>
+            <button class="btn" style="background: #000; color: #fff;" onclick="toggleCalc()">📊 พิสูจน์การคำนวณ</button>
+        </div>
+
+        <div class="card">
+            <h2>📈 Dashboard (Real-time)</h2>
+            <div class="data-grid">
+                <div class="data-box"><div id="omega-out">0.00</div><span>rad/s (ω)</span></div>
+                <div class="data-box"><div id="period-out">0.00</div><span>s (Period T)</span></div>
+                <div class="data-box"><div id="freq-out">0.00</div><span>Hz (Freq f)</span></div>
+                <div class="data-box"><div id="angle-out">0.00</div><span>° (Max Angle)</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="calc-panel" class="lab-container"></div>
+
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const simBox = document.getElementById('sim-box');
+
+    // ตัวแปรฟิสิกส์ลูกตุ้ม
+    let L = 2.0; // ความยาวเชือก (เมตร)
+    let g = 9.81; // ความเร่งโน้มถ่วง
+    let m = 5; // มวล (มีไว้หลอกเด็กเฉยๆ ไม่มีผลต่อสูตร)
+    
+    let theta = 0; // มุมปัจจุบัน (เรเดียน)
+    let omega_v = 0; // ความเร็วเชิงมุมของการแกว่ง
+    let maxTheta = 0; // มุมสูงสุดที่ดึง
+    
+    let isDragging = false;
+    let isStopped = true; 
+    let simTime = 0; 
+    const dt = 1/60; 
+    
+    const pivot = { x: 0, y: 50 }; // จุดหมุน
+
+    function resize() {
+        canvas.width = simBox.offsetWidth;
+        canvas.height = simBox.offsetHeight;
+        pivot.x = canvas.width / 2;
+        if (isStopped) theta = 0;
+    }
+    window.onresize = resize;
+    resize();
+
+    function triggerUpdate() {
+        L = parseFloat(document.getElementById('l-in').value) || 2.0;
+        m = parseFloat(document.getElementById('m-in').value) || 1;
+        g = parseFloat(document.getElementById('g-in').value) || 9.81;
+        stopSim();
+    }
+
+    function stopSim() {
+        isStopped = true;
+        isDragging = false;
+        omega_v = 0;
+        theta = 0;
+        maxTheta = 0;
+        simTime = 0; 
+        document.getElementById('status-msg').innerText = "👋 ลากลูกตุ้มเพื่อทำมุม (θ) แล้วปล่อย!";
+        document.getElementById('status-msg').style.background = "var(--accent)";
+        updateMathPanel();
+    }
+
+    function toggleCalc() {
+        const p = document.getElementById('calc-panel');
+        if (p.style.display === 'block') { p.style.display = 'none'; } 
+        else { p.style.display = 'block'; updateMathPanel(); }
+    }
+
+    // Interaction (Drag)
+    simBox.addEventListener('mousedown', e => startDrag(e.offsetY, e.offsetX));
+    simBox.addEventListener('mousemove', e => doDrag(e.offsetY, e.offsetX));
+    simBox.addEventListener('mouseup', stopDrag);
+    simBox.addEventListener('mouseleave', stopDrag);
+    simBox.addEventListener('touchstart', e => { 
+        const t = e.touches[0]; const rect = simBox.getBoundingClientRect();
+        startDrag(t.clientY - rect.top, t.clientX - rect.left); 
+    });
+    simBox.addEventListener('touchmove', e => { 
+        e.preventDefault(); const t = e.touches[0]; const rect = simBox.getBoundingClientRect();
+        doDrag(t.clientY - rect.top, t.clientX - rect.left); 
+    });
+    simBox.addEventListener('touchend', stopDrag);
+
+    function startDrag(mouseY, mouseX) {
+        let L_px = L * 100; 
+        let bobX = pivot.x + L_px * Math.sin(theta);
+        let bobY = pivot.y + L_px * Math.cos(theta);
+        
+        // เช็คว่าคลิกโดนลูกตุ้มไหม
+        if (Math.hypot(mouseX - bobX, mouseY - bobY) < 50) { 
+            isDragging = true; 
+            isStopped = true;
+            omega_v = 0; 
+            simTime = 0;
+            document.getElementById('status-msg').innerText = "✊ กำลังปรับองศาการแกว่ง...";
+            document.getElementById('status-msg').style.background = "var(--accent)";
+        }
+    }
+    
+    function doDrag(mouseY, mouseX) { 
+        if (isDragging) { 
+            // คำนวณมุมจากเมาส์เทียบกับแนวดิ่ง (atan2 ปกติรับ y, x แต่เราต้องการมุมจากแกน Y จึงสลับกัน)
+            theta = Math.atan2(mouseX - pivot.x, mouseY - pivot.y);
+            maxTheta = Math.abs(theta);
+        } 
+    }
+    
+    function stopDrag() { 
+        if(isDragging) { 
+            isDragging = false; 
+            isStopped = false; 
+            document.getElementById('status-msg').innerText = "⚡ สถานะ: กำลังแกว่งแบบอุดมคติ"; 
+            document.getElementById('status-msg').style.background = "#10b981"; 
+            updateMathPanel(); 
+        } 
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        let L_px = L * 100; // 1 เมตร = 100 pixels
+
+        // Physics Engine: Pendulum (alpha = -g/L * sin(theta))
+        if (!isDragging && !isStopped) {
+            let alpha = -(g / L) * Math.sin(theta);
+            omega_v += alpha * dt;
+            theta += omega_v * dt;
+            simTime += dt;
+        }
+
+        // วาดนาฬิกา
+        ctx.fillStyle = "#000"; ctx.font = "bold 24px K2D"; ctx.textAlign = "right";
+        ctx.fillText("⏱️ Time: " + simTime.toFixed(2) + " s", canvas.width - 20, 40);
+        ctx.textAlign = "left";
+
+        // วาดเส้นแนวสมดุล (แนวดิ่ง)
+        ctx.beginPath(); ctx.setLineDash([10, 10]); ctx.strokeStyle = "#ff4d4d"; ctx.lineWidth = 2;
+        ctx.moveTo(pivot.x, pivot.y); ctx.lineTo(pivot.x, pivot.y + 500);
+        ctx.stroke(); ctx.setLineDash([]); 
+
+        // วาดส่วนวัดมุม (Protractor Arc) ถ้ายกขึ้น
+        if (Math.abs(theta) > 0.01) {
+            ctx.beginPath(); ctx.strokeStyle = "rgba(0,0,0,0.2)"; ctx.lineWidth = 30;
+            let startAngle = Math.PI/2; // ลงข้างล่าง
+            let endAngle = Math.PI/2 - theta;
+            ctx.arc(pivot.x, pivot.y, 100, Math.min(startAngle, endAngle), Math.max(startAngle, endAngle));
+            ctx.stroke();
+            
+            // Text องศา
+            ctx.fillStyle = "#000"; ctx.font = "bold 16px K2D";
+            let deg = Math.abs(theta * 180 / Math.PI).toFixed(1);
+            ctx.fillText(deg + "°", pivot.x + (theta>0? 30 : -70), pivot.y + 120);
+        }
+
+        // วาดคานยึด
+        ctx.fillStyle = "#000";
+        ctx.fillRect(pivot.x - 75, pivot.y - 15, 150, 15);
+
+        // คำนวณพิกัดลูกตุ้ม
+        let bobX = pivot.x + L_px * Math.sin(theta);
+        let bobY = pivot.y + L_px * Math.cos(theta);
+
+        // วาดเชือก
+        ctx.beginPath(); ctx.lineWidth = 4; ctx.strokeStyle = "#000";
+        ctx.moveTo(pivot.x, pivot.y); ctx.lineTo(bobX, bobY); ctx.stroke();
+
+        // วาดลูกตุ้ม (ขนาดแปรผันตามมวลนิดหน่อยให้ดูมีมิติ)
+        let radius = 20 + Math.min(m, 50) * 0.3;
+        ctx.beginPath();
+        ctx.arc(bobX, bobY, radius, 0, 2 * Math.PI);
+        ctx.fillStyle = isDragging ? "#ffff00" : "#fff";
+        ctx.fill(); ctx.lineWidth = 6; ctx.stroke();
+
+        // Data Update
+        let omega = Math.sqrt(g/L);
+        let T = 2 * Math.PI * Math.sqrt(L/g);
+        document.getElementById('omega-out').innerText = omega.toFixed(2);
+        document.getElementById('period-out').innerText = T.toFixed(2);
+        document.getElementById('freq-out').innerText = (1/T).toFixed(2);
+        document.getElementById('angle-out').innerText = (maxTheta * 180 / Math.PI).toFixed(1);
+
+        requestAnimationFrame(animate);
+    }
+
+    function updateMathPanel() {
+        const panel = document.getElementById('calc-panel');
+        if (panel.style.display === 'none') return; 
+
+        const omegaVal = Math.sqrt(g/L);
+        const periodVal = 2 * Math.PI * Math.sqrt(L/g);
+        const deg = (maxTheta * 180 / Math.PI).toFixed(1);
+
+        panel.innerHTML = `
+            <div style="width:100%;">
+                <h1 style="background:var(--accent); border:var(--border); padding:10px; font-size:24px; margin-top:0;">📊 รายงานการคำนวณ (Pendulum)</h1>
+                
+                <div class="step" style="background:#fff9c4; padding:15px; border:3px dashed #eab308; margin-bottom:20px;">
+                    <h3 style="margin-top:0;">💡 จุดหลอกข้อสอบ (Trick!)</h3>
+                    <p>สังเกตไหมว่าในสูตรคำนวณ <b>ไม่มีตัวแปรมวล (m)</b> เลย! ไม่ว่าคุณจะตั้งมวลลูกตุ้มเป็น 5 kg หรือ 100 kg คาบการแกว่ง (T) ก็จะเท่าเดิมเสมอ! (ทดลองเปลี่ยนมวลดูสิครับ)</p>
+                </div>
+
+                <div class="step">
+                    <h3>1. ความถี่เชิงมุม (Angular Frequency)</h3>
+                    <p>สูตรลูกตุ้ม: $$\\omega = \\sqrt{\\frac{g}{L}}$$ แทนค่า $g = ${g}$, $L = ${L}$</p>
+                    <div class="formula-box">
+                        $$\\omega = \\sqrt{\\frac{${g}}{${L}}} = \\sqrt{${(g/L).toFixed(2)}} = \\mathbf{${omegaVal.toFixed(3)} \\text{ rad/s}}$$
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h3>2. คาบการสั่น (Period)</h3>
+                    <p>สูตร: $$T = 2\\pi \\sqrt{\\frac{L}{g}}$$</p>
+                    <div class="formula-box">
+                        $$T = 2(3.1416) \\sqrt{\\frac{${L}}{${g}}} = \\mathbf{${periodVal.toFixed(3)} \\text{ วินาที}}$$
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h3>3. ข้อควรระวัง (Small Angle Approximation)</h3>
+                    <p>สูตรที่ใช้ด้านบนจะแม่นยำที่สุดเมื่อแกว่งด้วยมุมแคบๆ ($\\theta < 15^\\circ$) ตอนนี้คุณดึงลูกตุ้มทำมุม <b>${deg}^\\circ</b></p>
+                </div>
+            </div>
+        `;
+
+        if (window.MathJax) {
+            MathJax.typesetPromise();
+        }
+    }
+
+    animate();
+</script>
+</body>
+</html>
