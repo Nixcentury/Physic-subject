@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHM Ideal Lab - M.5 Physics</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        :root {
+            --accent: #ffff00;
+            --border: 4px solid #000000;
+            --shadow: 8px 8px 0px #000000;
+        }
+
+        * { box-sizing: border-box; font-family: 'K2D', sans-serif; }
+        body { background-color: #f0f0f0; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+
+        .lab-container {
+            background: #fff; border: var(--border); box-shadow: var(--shadow);
+            width: 100%; max-width: 1000px; padding: 20px; display: flex; flex-wrap: wrap; gap: 20px;
+        }
+
+        #sim-box {
+            flex: 1; min-width: 400px; height: 600px; border: var(--border);
+            position: relative; background: #fff; cursor: grab; overflow: hidden;
+        }
+        #sim-box:active { cursor: grabbing; }
+
+        .controls { width: 320px; display: flex; flex-direction: column; gap: 15px; }
+        .card { border: var(--border); padding: 15px; background: #fff; box-shadow: 4px 4px 0px #000; }
+        h2 { margin: 0 0 10px 0; font-size: 18px; text-transform: uppercase; background: var(--accent); padding: 5px; border-bottom: var(--border); }
+        
+        .input-group { margin-bottom: 10px; }
+        label { display: block; font-weight: 800; font-size: 13px; margin-bottom: 3px; }
+        input[type="number"] { width: 100%; padding: 10px; border: 2px solid #000; font-weight: 800; font-size: 16px; outline: none;}
+
+        .btn {
+            width: 100%; padding: 12px; background: var(--accent); border: var(--border);
+            font-weight: 800; cursor: pointer; text-transform: uppercase; margin-top: 5px;
+            box-shadow: 2px 2px 0px #000; transition: 0.1s;
+        }
+        .btn:active { transform: translate(2px, 2px); box-shadow: none; }
+        .btn-stop { background: #ff4d4d; color: #fff; }
+
+        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .data-box { background: #000; color: var(--accent); padding: 10px; text-align: center; border: var(--border); font-weight: 800; }
+        .data-box span { display: block; font-size: 10px; color: #fff; text-transform: uppercase;}
+
+        #calc-panel {
+            width: 100%; margin-top: 20px; display: none;
+            background: #fff; border: var(--border); padding: 20px; box-shadow: var(--shadow);
+        }
+        .step { border-left: 6px solid #000; padding-left: 20px; margin-bottom: 30px; }
+        .formula-box { background: #f8fafc; padding: 20px; border: 2px dashed #000; margin: 15px 0; overflow-x: auto; font-size: 1.1em;}
+    </style>
+</head>
+<body>
+
+<div class="lab-container">
+    <div id="sim-box">
+        <canvas id="canvas"></canvas>
+        <div id="status-msg" style="position: absolute; bottom: 15px; left: 15px; background: var(--accent); padding: 10px; border: 3px solid #000; font-size: 14px; font-weight: 800; box-shadow: 3px 3px 0px #000;">
+            👋 ดึงก้อนมวลแล้วปล่อย เพื่อเริ่มการทดลอง
+        </div>
+    </div>
+
+    <div class="controls">
+        <div class="card">
+            <h2>⚙️ System Setup</h2>
+            <div class="input-group">
+                <label>Mass (มวล m) [kg]:</label>
+                <input type="number" id="m-in" value="10" step="1" onchange="triggerUpdate()">
+            </div>
+            <div class="input-group">
+                <label>Spring Constant (ค่า K) [N/m]:</label>
+                <input type="number" id="k-in" value="50" step="1" onchange="triggerUpdate()">
+            </div>
+            <button class="btn btn-stop" onclick="stopSim()">🛑 STOP / RESET</button>
+            <button class="btn" onclick="toggleOrientation()">🔄 สลับแนวตั้ง / แนวนอน</button>
+            <button class="btn" style="background: #000; color: #fff;" onclick="toggleCalc()">📊 พิสูจน์การคำนวณ</button>
+        </div>
+
+        <div class="card">
+            <h2>📈 Dashboard (Real-time)</h2>
+            <div class="data-grid">
+                <div class="data-box"><div id="omega-out">0.00</div><span>rad/s (ω)</span></div>
+                <div class="data-box"><div id="period-out">0.00</div><span>s (Period T)</span></div>
+                <div class="data-box"><div id="freq-out">0.00</div><span>Hz (Freq f)</span></div>
+                <div class="data-box"><div id="amp-out">0.00</div><span>m (Amp A)</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="calc-panel" class="lab-container"></div>
+
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const simBox = document.getElementById('sim-box');
+
+    let m = 10, k = 50; 
+    let x = 300, v = 0, a = 0;
+    let isVertical = true;
+    let equilibrium = 250; 
+    let isDragging = false;
+    let isStopped = true; 
+    let currentAmplitude = 0; 
+    let simTime = 0; // 🚩 ตัวแปรสำหรับนาฬิกาจับเวลา
+    const dt = 1/60; // 🚩 ปรับเวลาให้เป็นโลกจริง (60 FPS = 0.0166 วินาที)
+
+    function resize() {
+        canvas.width = simBox.offsetWidth;
+        canvas.height = simBox.offsetHeight;
+        equilibrium = isVertical ? canvas.height / 3 : canvas.width / 2;
+        if (isStopped) x = equilibrium;
+    }
+    window.onresize = resize;
+    resize();
+
+    function triggerUpdate() {
+        m = parseFloat(document.getElementById('m-in').value) || 1;
+        k = parseFloat(document.getElementById('k-in').value) || 1;
+        stopSim();
+    }
+
+    function toggleOrientation() { isVertical = !isVertical; resize(); stopSim(); }
+    
+    function stopSim() {
+        isStopped = true;
+        isDragging = false;
+        v = 0;
+        x = equilibrium;
+        currentAmplitude = 0;
+        simTime = 0; // รีเซ็ตนาฬิกาจับเวลา
+        document.getElementById('status-msg').innerText = "👋 ดึงก้อนมวลแล้วปล่อย เพื่อเริ่มการทดลอง";
+        document.getElementById('status-msg').style.background = "var(--accent)";
+        updateMathPanel();
+    }
+
+    function toggleCalc() {
+        const p = document.getElementById('calc-panel');
+        if (p.style.display === 'block') {
+            p.style.display = 'none';
+        } else {
+            p.style.display = 'block';
+            updateMathPanel();
+        }
+    }
+
+    // Interaction
+    simBox.addEventListener('mousedown', e => startDrag(e.offsetY, e.offsetX));
+    simBox.addEventListener('mousemove', e => doDrag(e.offsetY, e.offsetX));
+    simBox.addEventListener('mouseup', stopDrag);
+    simBox.addEventListener('mouseleave', stopDrag);
+    
+    simBox.addEventListener('touchstart', e => { 
+        const t = e.touches[0]; 
+        const rect = simBox.getBoundingClientRect();
+        startDrag(t.clientY - rect.top, t.clientX - rect.left); 
+    });
+    simBox.addEventListener('touchmove', e => { 
+        e.preventDefault(); 
+        const t = e.touches[0]; 
+        const rect = simBox.getBoundingClientRect();
+        doDrag(t.clientY - rect.top, t.clientX - rect.left); 
+    });
+    simBox.addEventListener('touchend', stopDrag);
+
+    function startDrag(mouseY, mouseX) {
+        let pos = isVertical ? mouseY : mouseX;
+        if (Math.abs(pos - x) < 60) { 
+            isDragging = true; 
+            isStopped = true;
+            v = 0; 
+            simTime = 0; // รีเซ็ตเวลาตอนจับ
+            document.getElementById('status-msg').innerText = "✊ กำลังปรับแอมพลิจูด...";
+            document.getElementById('status-msg').style.background = "var(--accent)";
+        }
+    }
+    function doDrag(mouseY, mouseX) { 
+        if (isDragging) { 
+            x = isVertical ? mouseY : mouseX; 
+            currentAmplitude = Math.abs(x - equilibrium); 
+        } 
+    }
+    function stopDrag() { 
+        if(isDragging) { 
+            isDragging = false; 
+            isStopped = false; 
+            document.getElementById('status-msg').innerText = "⚡ สถานะ: กำลังสั่นแบบอุดมคติ"; 
+            document.getElementById('status-msg').style.background = "#10b981"; 
+            updateMathPanel(); 
+        } 
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Physics Engine (Ideal SHM + Real-time Step)
+        if (!isDragging && !isStopped) {
+            let force = -k * (x - equilibrium);
+            a = force / m;
+            v += a * dt; 
+            x += v * dt;
+            simTime += dt; // 🚩 เดินเวลาของนาฬิกา
+        }
+
+        // 🚩 วาดนาฬิกาจับเวลาบน Canvas
+        ctx.fillStyle = "#000";
+        ctx.font = "bold 24px K2D";
+        ctx.textAlign = "right";
+        ctx.fillText("⏱️ Time: " + simTime.toFixed(2) + " s", canvas.width - 20, 40);
+        ctx.textAlign = "left";
+
+        // วาดเส้นแนวสมดุล (Equilibrium Line)
+        ctx.beginPath();
+        ctx.setLineDash([10, 10]);
+        ctx.strokeStyle = "#ff4d4d";
+        ctx.lineWidth = 2;
+        if (isVertical) {
+            ctx.moveTo(0, equilibrium); ctx.lineTo(canvas.width, equilibrium);
+        } else {
+            ctx.moveTo(equilibrium, 0); ctx.lineTo(equilibrium, canvas.height);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]); 
+
+        // Label แนวสมดุล
+        ctx.fillStyle = "#ff4d4d";
+        ctx.font = "bold 14px K2D";
+        ctx.fillText("แนวสมดุล (0m)", isVertical ? 15 : equilibrium + 10, isVertical ? equilibrium - 10 : 25);
+
+        // 🚩 วาดไม้บรรทัดบอกระยะ (Ruler)
+        ctx.beginPath();
+        ctx.strokeStyle = "#9ca3af"; // สีเทา
+        ctx.fillStyle = "#6b7280";
+        ctx.lineWidth = 2;
+        ctx.font = "bold 12px K2D";
+        
+        for (let i = -4; i <= 4; i++) {
+            if (i === 0) continue; // ข้ามตรงเส้นสมดุล
+            let mark = equilibrium + (i * 100); // 100px = 1m
+            let text = (i > 0 ? "+" : "") + i + "m";
+            
+            if (isVertical) {
+                let rx = canvas.width/2 + 80;
+                ctx.moveTo(rx, mark); ctx.lineTo(rx + 20, mark);
+                ctx.fillText(text, rx + 25, mark + 4);
+            } else {
+                let ry = canvas.height/2 + 80;
+                ctx.moveTo(mark, ry); ctx.lineTo(mark, ry + 20);
+                ctx.fillText(text, mark - 10, ry + 35);
+            }
+        }
+        ctx.stroke();
+        // เส้นหลักของไม้บรรทัด
+        ctx.beginPath();
+        if (isVertical) {
+            ctx.moveTo(canvas.width/2 + 80, equilibrium - 400); ctx.lineTo(canvas.width/2 + 80, equilibrium + 400);
+        } else {
+            ctx.moveTo(equilibrium - 400, canvas.height/2 + 80); ctx.lineTo(equilibrium + 400, canvas.height/2 + 80);
+        }
+        ctx.stroke();
+
+        // วาดส่วนยึดสปริง
+        ctx.fillStyle = "#000";
+        if (isVertical) {
+            ctx.fillRect(canvas.width/2 - 75, 0, 150, 15);
+        } else {
+            ctx.fillRect(0, canvas.height/2 - 75, 15, 150);
+        }
+
+        // วาดสปริง
+        ctx.beginPath(); 
+        ctx.lineWidth = 4; ctx.strokeStyle = "#000";
+        let startX = isVertical ? canvas.width/2 : 15;
+        let startY = isVertical ? 15 : canvas.height/2;
+        ctx.moveTo(startX, startY);
+        let loops = 30; 
+        for(let i=0; i<=loops; i++) {
+            let p = i / loops;
+            let currX = isVertical ? startX + (i%2 ? 25 : -25) : 15 + (x - 40 - 15) * p;
+            let currY = isVertical ? 15 + (x - 40 - 15) * p : startY + (i%2 ? 25 : -25);
+            if (i === 0 || i === loops) { currX = isVertical ? startX : currX; currY = isVertical ? currY : startY; }
+            ctx.lineTo(currX, currY);
+        }
+        ctx.stroke();
+
+        // วาดมวล
+        ctx.fillStyle = isDragging ? "#ffff00" : "#fff"; 
+        ctx.strokeStyle = "#000"; ctx.lineWidth = 6;
+        if (isVertical) {
+            ctx.fillRect(canvas.width/2 - 40, x - 40, 80, 80);
+            ctx.strokeRect(canvas.width/2 - 40, x - 40, 80, 80);
+        } else {
+            ctx.fillRect(x - 40, canvas.height/2 - 40, 80, 80);
+            ctx.strokeRect(x - 40, canvas.height/2 - 40, 80, 80);
+        }
+
+        // Data Update
+        let omega = Math.sqrt(k/m);
+        let T = 2 * Math.PI / omega;
+        document.getElementById('omega-out').innerText = omega.toFixed(2);
+        document.getElementById('period-out').innerText = T.toFixed(2);
+        document.getElementById('freq-out').innerText = (1/T).toFixed(2);
+        document.getElementById('amp-out').innerText = (currentAmplitude / 100).toFixed(2);
+
+        requestAnimationFrame(animate);
+    }
+
+    function updateMathPanel() {
+        const panel = document.getElementById('calc-panel');
+        if (panel.style.display === 'none') return; 
+
+        const omegaVal = Math.sqrt(k/m);
+        const periodVal = 2 * Math.PI / omegaVal;
+        const A_m = currentAmplitude / 100; 
+
+        panel.innerHTML = `
+            <div style="width:100%;">
+                <h1 style="background:var(--accent); border:var(--border); padding:10px; font-size:24px; margin-top:0;">📊 รายงานการคำนวณ (Live Calculation)</h1>
+                
+                <div class="step">
+                    <h3>1. ความถี่เชิงมุม (Angular Frequency)</h3>
+                    <p>สูตร: $$\\omega = \\sqrt{\\frac{k}{m}}$$</p>
+                    <div class="formula-box">
+                        $$\\omega = \\sqrt{\\frac{${k}}{${m}}} = \\sqrt{${(k/m).toFixed(2)}} = \\mathbf{${omegaVal.toFixed(3)} \\text{ rad/s}}$$
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h3>2. คาบการสั่น (Period) และความถี่ (Frequency)</h3>
+                    <p>สูตร: $$T = \\frac{2\\pi}{\\omega}$$และ$$f = \\frac{1}{T}$$</p>
+                    <div class="formula-box">
+                        $$T = \\frac{2(3.1416)}{${omegaVal.toFixed(3)}} = \\mathbf{${periodVal.toFixed(3)} \\text{ วินาที}}$$
+                        $$f = \\frac{1}{${periodVal.toFixed(3)}} = \\mathbf{${(1/periodVal).toFixed(3)} \\text{ Hz}}$$
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h3>3. อัตราเร็วและความเร่งสูงสุด</h3>
+                    <p>ที่แอมพลิจูด $$A = ${A_m.toFixed(2)} \\text{ เมตร}$$ :</p>
+                    <div class="formula-box">
+                        $$v_{max} = \\omega A = ${omegaVal.toFixed(2)} \\times ${A_m.toFixed(2)} = \\mathbf{${(omegaVal * A_m).toFixed(3)} \\text{ m/s}}$$
+                        $$a_{max} = \\omega^2 A = ${(omegaVal**2).toFixed(2)} \\times ${A_m.toFixed(2)} = \\mathbf{${(omegaVal**2 * A_m).toFixed(3)} \\text{ m/s}^2}$$
+                    </div>
+                </div>
+            </div>
+        `;
+
+        if (window.MathJax) {
+            MathJax.typesetPromise();
+        }
+    }
+
+    animate();
+</script>
+</body>
+</html>
