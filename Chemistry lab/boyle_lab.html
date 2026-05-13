@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemistry Lab - Boyle's Law</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- 🚩 จุดที่แก้ไข: เติมสคริปต์ตั้งค่า MathJax กลับเข้ามาตรงนี้ครับ -->
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+    
+    <style>
+        :root {
+            --primary: #000000;      
+            --accent: #d8b4fe;       
+            --bg-card: #ffffff;      
+            --bg-body: #faf5ff;      
+            --border: 4px solid #000000;
+            --shadow: 8px 8px 0px #000000;
+        }
+
+        * { box-sizing: border-box; font-family: 'K2D', sans-serif; user-select: none; }
+        body { background-color: var(--bg-body); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+
+        .lab-container {
+            background: var(--bg-card); border: var(--border); box-shadow: var(--shadow);
+            width: 100%; max-width: 1100px; padding: 20px; display: flex; flex-wrap: wrap; gap: 20px;
+        }
+
+        #sim-box {
+            flex: 2; min-width: 350px; height: 600px; border: var(--border);
+            position: relative; background: #ffffff; overflow: hidden;
+            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        #canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+        #canvas:active { cursor: grabbing; }
+
+        .controls { flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 15px; }
+        .card { border: var(--border); padding: 15px; background: #fff; box-shadow: 4px 4px 0px #000; }
+        h2 { margin: 0 0 10px 0; font-size: 18px; text-transform: uppercase; background: var(--accent); padding: 5px; border-bottom: var(--border); border-radius: 0; }
+        
+        .input-group { margin-bottom: 10px; }
+        label { display: block; font-weight: 800; font-size: 13px; margin-bottom: 3px; }
+        input[type="number"] { width: 100%; padding: 10px; border: 2px solid #000; font-weight: 800; font-size: 16px; outline: none; background:#faf5ff;}
+        input[type=range] { width: 100%; cursor: pointer; margin: 15px 0; accent-color: var(--accent); }
+
+        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .data-box { background: #000; color: var(--accent); padding: 10px; text-align: center; border: var(--border); font-weight: 800; }
+        .data-box span { display: block; font-size: 11px; color: #fff; text-transform: uppercase; margin-top:2px;}
+
+        #status-msg { position: absolute; top: 15px; left: 15px; background: var(--accent); padding: 8px 12px; border: 3px solid #000; font-size: 14px; font-weight: 800; box-shadow: 3px 3px 0px #000; z-index: 20; }
+        
+        #calc-panel { width: 100%; margin-top: 20px; display: none; background: #fff; border: var(--border); padding: 20px; box-shadow: var(--shadow); }
+        .formula-box { background: #faf5ff; padding: 20px; border: 2px dashed #000; margin: 15px 0; overflow-x: auto; font-size: 1.1em;}
+
+        .btn {
+            width: 100%; padding: 15px; background: #000; color: #fff; border: var(--border);
+            font-weight: 800; font-size: 16px; cursor: pointer; text-transform: uppercase; margin-top: 5px;
+            box-shadow: 3px 3px 0px var(--accent); transition: 0.1s;
+        }
+        .btn:active { transform: translate(3px, 3px); box-shadow: none; }
+    </style>
+</head>
+<body>
+
+<div class="lab-container">
+    <div id="sim-box">
+        <div id="status-msg">⚖️ ลากลูกตุ้มด้านล่าง (0.25 atm) มาวางบนลูกสูบ</div>
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <div class="controls">
+        <div class="card">
+            <h2>⚙️ MANUAL PRESSURE</h2>
+            <label style="font-weight: 800;">ปรับความดันเพิ่ม (Manual):</label>
+            <input type="range" id="p-slider" min="0" max="4" step="0.25" value="0" oninput="updatePhysics()">
+            <div style="text-align: center; font-weight: 800; font-size: 18px;">+ <span id="p-slider-val">0.00</span> atm</div>
+        </div>
+
+        <div class="card" style="background: #f8fafc;">
+            <h2>🌡️ ENV SETUP (สภาพแวดล้อม)</h2>
+            <div class="input-group">
+                <label>Moles (n) [mol]:</label>
+                <input type="number" id="n-in" value="1.0" step="0.1" onchange="updatePhysics()">
+            </div>
+            <div class="input-group">
+                <label>Temp (T) [Kelvin]:</label>
+                <input type="number" id="t-in" value="298" step="1" onchange="updatePhysics()">
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📈 REAL-TIME DATA</h2>
+            <div class="data-grid">
+                <div class="data-box"><div id="p-out" style="color:#ef4444; font-size:20px;">1.00</div><span>Total P (atm)</span></div>
+                <div class="data-box"><div id="v-out" style="color:#10b981; font-size:20px;">24.47</div><span>Volume (L)</span></div>
+                <div class="data-box"><div id="n-out" style="color:#fff;">1.00</div><span>Moles (n)</span></div>
+                <div class="data-box"><div id="t-out" style="color:#fff;">298</div><span>Temp (K)</span></div>
+            </div>
+            <button class="btn" onclick="toggleCalc()">📊 พิสูจน์สมการ P₁V₁ = P₂V₂</button>
+        </div>
+    </div>
+</div>
+
+<div id="calc-panel"></div>
+
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const simBox = document.getElementById('sim-box');
+
+    // ตัวแปรเคมี
+    const R = 0.08206; 
+    let n = 1.0; 
+    let T = 298; 
+    const baseP = 1.0; 
+    
+    let P = 1.0; 
+    let V = (n * R * T) / P;
+    
+    let targetPistonH = 280; 
+    let currentPistonH = 280;
+
+    // ระบบลูกตุ้ม
+    let weights = [];
+    const weightSize = 40;
+    
+    function initWeights() {
+        weights = [];
+        let shelfY = canvas.height - 80;
+        for(let i=0; i<8; i++) {
+            weights.push({
+                id: i,
+                baseX: 20 + i * (weightSize + 10),
+                baseY: shelfY,
+                x: 20 + i * (weightSize + 10),
+                y: shelfY,
+                isDragging: false,
+                onPiston: false
+            });
+        }
+    }
+
+    let draggedWeight = null;
+    let dragOffsetX = 0;
+    let dragOffsetY = 0;
+
+    function updatePhysics() {
+        // อัปเดตสภาพแวดล้อม
+        n = parseFloat(document.getElementById('n-in').value) || 1.0;
+        T = parseFloat(document.getElementById('t-in').value) || 298;
+
+        let manualP = parseFloat(document.getElementById('p-slider').value);
+        document.getElementById('p-slider-val').innerText = manualP.toFixed(2);
+
+        let stackedCount = weights.filter(w => w.onPiston).length;
+        let weightP = stackedCount * 0.25; 
+        
+        P = baseP + manualP + weightP;
+        V = (n * R * T) / P;
+        
+        // คำนวณสเกลกระบอกสูบ (จำกัดความสูงไม่ให้ล้นจอ)
+        targetPistonH = Math.min((V / 24.47) * 280, 420); 
+        
+        document.getElementById('p-out').innerText = P.toFixed(2);
+        document.getElementById('v-out').innerText = V.toFixed(2);
+        document.getElementById('n-out').innerText = n.toFixed(2);
+        document.getElementById('t-out').innerText = T.toFixed(0);
+
+        if (document.getElementById('calc-panel').style.display === 'block') updateMathPanel();
+    }
+
+    function getMousePos(evt) {
+        const rect = canvas.getBoundingClientRect();
+        let clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
+        let clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
+        return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+
+    canvas.addEventListener('mousedown', startDrag);
+    canvas.addEventListener('mousemove', doDrag);
+    window.addEventListener('mouseup', stopDrag);
+
+    canvas.addEventListener('touchstart', startDrag, {passive: false});
+    canvas.addEventListener('touchmove', function(e) { if(draggedWeight) e.preventDefault(); doDrag(e); }, {passive: false});
+    window.addEventListener('touchend', stopDrag);
+
+    function startDrag(e) {
+        let pos = getMousePos(e);
+        for (let i = weights.length - 1; i >= 0; i--) {
+            let w = weights[i];
+            if (pos.x >= w.x && pos.x <= w.x + weightSize && pos.y >= w.y && pos.y <= w.y + weightSize) {
+                draggedWeight = w;
+                dragOffsetX = pos.x - w.x;
+                dragOffsetY = pos.y - w.y;
+                w.isDragging = true;
+                weights.splice(i, 1);
+                weights.push(w);
+                break;
+            }
+        }
+    }
+
+    function doDrag(e) {
+        if (!draggedWeight) return;
+        let pos = getMousePos(e);
+        draggedWeight.x = pos.x - dragOffsetX;
+        draggedWeight.y = pos.y - dragOffsetY;
+    }
+
+    function stopDrag() {
+        if(draggedWeight) {
+            let centerX = canvas.width / 2;
+            let pistonTopY = (canvas.height/2 + 100) - currentPistonH;
+            
+            let isNearPiston = (draggedWeight.x + weightSize/2 > centerX - 65) && 
+                               (draggedWeight.x + weightSize/2 < centerX + 65) &&
+                               (draggedWeight.y + weightSize > pistonTopY - 120);
+
+            if (isNearPiston) { draggedWeight.onPiston = true; } 
+            else { draggedWeight.onPiston = false; }
+
+            draggedWeight.isDragging = false;
+            draggedWeight = null;
+            updatePhysics();
+        }
+    }
+
+    function toggleCalc() {
+        const p = document.getElementById('calc-panel');
+        p.style.display = (p.style.display === 'block') ? 'none' : 'block';
+        updateMathPanel();
+    }
+
+    function animate() {
+        let w = simBox.clientWidth;
+        let h = simBox.clientHeight;
+        if (canvas.width !== w || canvas.height !== h) { 
+            canvas.width = w; canvas.height = h; 
+            initWeights(); 
+        }
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        currentPistonH += (targetPistonH - currentPistonH) * 0.1;
+
+        const centerX = canvas.width / 2;
+        const bottomY = canvas.height / 2 + 150;
+        const cylWidth = 130;
+
+        // 1. วาดชั้นวางลูกตุ้ม
+        ctx.fillStyle = "#1f2937";
+        ctx.fillRect(10, canvas.height - 35, canvas.width - 20, 10);
+        ctx.fillStyle = "#333"; ctx.font = "bold 12px K2D"; ctx.fillText("WEIGHT SHELF (0.25 atm per block)", 20, canvas.height - 15);
+
+        // 2. วาดแก๊ส
+        ctx.fillStyle = "rgba(216, 180, 254, 0.6)";
+        ctx.fillRect(centerX - cylWidth/2, bottomY - currentPistonH, cylWidth, currentPistonH);
+        
+        ctx.fillStyle = "rgba(168, 85, 247, 0.8)";
+        for(let i=0; i<30; i++) {
+            let rx = centerX - cylWidth/2 + 10 + (Math.sin(i*123) * 0.5 + 0.5) * (cylWidth - 20);
+            let ry = bottomY - currentPistonH + 10 + (Math.cos(i*321) * 0.5 + 0.5) * (currentPistonH - 20);
+            ctx.beginPath(); ctx.arc(rx, ry, 3, 0, Math.PI*2); ctx.fill();
+        }
+
+        // 3. วาดกระบอกสูบ
+        ctx.beginPath();
+        ctx.lineWidth = 6; ctx.strokeStyle = "#000";
+        ctx.moveTo(centerX - cylWidth/2, bottomY - 450);
+        ctx.lineTo(centerX - cylWidth/2, bottomY);
+        ctx.lineTo(centerX + cylWidth/2, bottomY);
+        ctx.lineTo(centerX + cylWidth/2, bottomY - 450);
+        ctx.stroke();
+
+        // 4. วาดลูกสูบ
+        let pistonY = bottomY - currentPistonH;
+        ctx.fillStyle = "#374151";
+        ctx.fillRect(centerX - cylWidth/2 + 2, pistonY - 15, cylWidth - 4, 15);
+        ctx.strokeRect(centerX - cylWidth/2 + 2, pistonY - 15, cylWidth - 4, 15);
+        
+        ctx.fillStyle = "#9ca3af";
+        ctx.fillRect(centerX - 8, pistonY - 300, 16, 285);
+        ctx.strokeRect(centerX - 8, pistonY - 300, 16, 285);
+
+        // 5. วาดลูกตุ้ม
+        let stackIndex = 0;
+        weights.forEach(w => {
+            if (w.onPiston && !w.isDragging) {
+                let targetX = centerX - weightSize/2;
+                let targetY = pistonY - 15 - weightSize - (stackIndex * weightSize);
+                w.x += (targetX - w.x) * 0.2;
+                w.y += (targetY - w.y) * 0.2;
+                stackIndex++;
+            } else if (!w.isDragging && !w.onPiston) {
+                w.x += (w.baseX - w.x) * 0.15;
+                w.y += (w.baseY - w.y) * 0.15;
+            }
+            ctx.fillStyle = "#111827";
+            ctx.fillRect(w.x, w.y, weightSize, weightSize);
+            ctx.strokeRect(w.x, w.y, weightSize, weightSize);
+            ctx.fillStyle = "#d8b4fe"; ctx.font = "bold 10px K2D"; ctx.textAlign = "center";
+            ctx.fillText("0.25", w.x + weightSize/2, w.y + 18);
+            ctx.fillText("atm", w.x + weightSize/2, w.y + 30);
+        });
+
+        requestAnimationFrame(animate);
+    }
+
+    function updateMathPanel() {
+        const p = document.getElementById('calc-panel');
+        const k = (n * R * T).toFixed(2);
+        
+        p.innerHTML = `
+            <h2 style="padding:10px; background:var(--accent); border:var(--border);">📊 ANALYSIS: P₁V₁ = P₂V₂</h2>
+            <div class="formula-box">
+                <b>1. หาค่าคงที่ ($k$) จาก $nRT$:</b><br>
+                $k = (${n.toFixed(2)} \\text{ mol}) \\times (0.08206 \\frac{\\text{L}\\cdot\\text{atm}}{\\text{mol}\\cdot\\text{K}}) \\times (${T} \\text{ K})$<br>
+                $k = \\mathbf{${k} \\text{ L}\\cdot\\text{atm}}$<br><br>
+
+                <b>2. ความดันรวม ($P$):</b><br>
+                $P_{total} = P_{base} + P_{manual} + P_{weights}$ = $\\mathbf{${P.toFixed(2)} \\text{ atm}}$<br><br>
+
+                <b>3. ปริมาตรที่ได้ ($V$):</b><br>
+                $V = \\frac{k}{P} = \\frac{${k} \\text{ L}\\cdot\\text{atm}}{${P.toFixed(2)} \\text{ atm}}$ = $\\mathbf{${V.toFixed(2)} \\text{ L}}$<br>
+                <hr>
+                <b>ตรวจสอบ:</b> $P \\times V = ${P.toFixed(2)} \\times ${V.toFixed(2)} = \\mathbf{${(P * V).toFixed(2)}}$ (คงที่!)
+            </div>
+        `;
+        if (window.MathJax) MathJax.typesetPromise();
+    }
+
+    updatePhysics();
+    animate();
+</script>
+</body>
+</html>
