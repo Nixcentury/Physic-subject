@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemistry Lab - Gay-Lussac's Law</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+    
+    <style>
+        :root {
+            --primary: #000000;      
+            --accent: #d8b4fe;       
+            --bg-card: #ffffff;      
+            --bg-body: #faf5ff;      
+            --border: 4px solid #000000;
+            --shadow: 8px 8px 0px #000000;
+        }
+
+        * { box-sizing: border-box; font-family: 'K2D', sans-serif; user-select: none; }
+        body { background-color: var(--bg-body); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+
+        .lab-container {
+            background: var(--bg-card); border: var(--border); box-shadow: var(--shadow);
+            width: 100%; max-width: 1100px; padding: 20px; display: flex; flex-wrap: wrap; gap: 20px;
+        }
+
+        #sim-box {
+            flex: 2; min-width: 350px; height: 600px; border: var(--border);
+            position: relative; background: #ffffff; overflow: hidden;
+            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        #canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+        #canvas:active { cursor: grabbing; }
+
+        .controls { flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 15px; }
+        .card { border: var(--border); padding: 15px; background: #fff; box-shadow: 4px 4px 0px #000; }
+        h2 { margin: 0 0 10px 0; font-size: 18px; text-transform: uppercase; background: var(--accent); padding: 5px; border-bottom: var(--border); }
+        
+        .input-group { margin-bottom: 10px; }
+        label { display: block; font-weight: 800; font-size: 13px; margin-bottom: 3px; }
+        input[type="number"] { width: 100%; padding: 10px; border: 2px solid #000; font-weight: 800; font-size: 16px; outline: none; background:#faf5ff;}
+
+        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .data-box { background: #000; color: var(--accent); padding: 10px; text-align: center; border: var(--border); font-weight: 800; }
+        .data-box span { display: block; font-size: 11px; color: #fff; text-transform: uppercase; margin-top:2px;}
+
+        #status-msg { position: absolute; top: 15px; left: 15px; background: var(--accent); padding: 8px 12px; border: 3px solid #000; font-size: 14px; font-weight: 800; box-shadow: 3px 3px 0px #000; z-index: 20; transition: 0.2s; }
+        #calc-panel { width: 100%; margin-top: 20px; display: none; background: #fff; border: var(--border); padding: 20px; box-shadow: var(--shadow); }
+        .formula-box { background: #faf5ff; padding: 20px; border: 2px dashed #000; margin: 15px 0; overflow-x: auto; font-size: 1.1em;}
+
+        .btn {
+            width: 100%; padding: 15px; background: #000; color: #fff; border: var(--border);
+            font-weight: 800; font-size: 16px; cursor: pointer; text-transform: uppercase; margin-top: 5px;
+            box-shadow: 3px 3px 0px var(--accent); transition: 0.1s;
+        }
+        .btn:active { transform: translate(3px, 3px); box-shadow: none; }
+        .btn-reset { background: #ff4d4d; color: #fff; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="lab-container">
+    <div id="sim-box">
+        <div id="status-msg">🌡️ ลากไอเทมมาวางเพื่อปรับอุณหภูมิ ยกออกเพื่อล็อกความดัน!</div>
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <div class="controls">
+        <div class="card" style="background: #f8fafc;">
+            <h2>💡 GAY-LUSSAC'S LAW</h2>
+            <p style="font-size: 14px; font-weight: 600;">เมื่อปริมาตรคงที่ ความดันของแก๊สจะแปรผันตรงกับอุณหภูมิเคลวิน ($P \propto T$)</p>
+            <ul style="font-size: 13px; color: #555; padding-left: 20px; margin-bottom: 0;">
+                <li>ถังแก๊สถูกปิดตาย ปริมาตร ($V$) ขยายไม่ได้</li>
+                <li>ลาก <b>ไฟ (🔥)</b> มาอัง เพื่อเพิ่มความดัน</li>
+                <li>ลาก <b>น้ำแข็ง (🧊)</b> มาอัง เพื่อลดความดัน</li>
+            </ul>
+        </div>
+
+        <div class="card" style="background: #ffffff;">
+            <h2>🌡️ CONTROL SETUP (ตัวแปรควบคุม)</h2>
+            <div class="input-group">
+                <label>Volume (V) [ลิตร]:</label>
+                <input type="number" id="v-in" value="24.47" step="1" onchange="updatePhysics()">
+            </div>
+            <div class="input-group">
+                <label>Moles (n) [mol]:</label>
+                <input type="number" id="n-in" value="1.0" step="0.1" onchange="updatePhysics()">
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📈 REAL-TIME DATA</h2>
+            <div class="data-grid">
+                <div class="data-box"><div id="p-out" style="color:#ef4444; font-size:20px;">1.00</div><span>Press (atm)</span></div>
+                <div class="data-box"><div id="t-out" style="color:#38bdf8; font-size:20px;">300</div><span>Temp (K)</span></div>
+            </div>
+            <button class="btn" onclick="toggleCalc()">📊 พิสูจน์สมการ P₁/T₁ = P₂/T₂</button>
+            <button class="btn btn-reset" onclick="resetTemp()">🔄 รีเซ็ตค่าเริ่มต้น (300K)</button>
+        </div>
+    </div>
+</div>
+
+<div id="calc-panel"></div>
+
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const simBox = document.getElementById('sim-box');
+
+    // ตัวแปรเคมี
+    const R = 0.08206; 
+    let n = 1.0; 
+    let V = 24.47; 
+    let T = 300; 
+    let P = 1.0;
+
+    const MAX_T = 900;
+    const MIN_T = 50;
+    
+    // ความสูงคงที่ของถังแก๊ส (เพราะปริมาตรคงที่)
+    const containerH = 250;
+    let targetGaugeAngle = -Math.PI; // มุมเข็มเกจ์วัด
+    let currentGaugeAngle = -Math.PI;
+
+    // ระบบอนุภาคแก๊ส
+    let particles = [];
+    for(let i=0; i<35; i++) {
+        particles.push({
+            x: 0, y: 0,
+            vx: (Math.random() - 0.5) * 2,
+            vy: (Math.random() - 0.5) * 2
+        });
+    }
+
+    // ไอเทมต้ม/แช่แข็ง
+    let items = [
+        { id: 'ice', icon: '🧊', color: '#38bdf8', bg: '#bae6fd', size: 60, x: 0, y: 0, baseX: 0, baseY: 0, isDragging: false, inZone: false },
+        { id: 'fire', icon: '🔥', color: '#ef4444', bg: '#fecaca', size: 60, x: 0, y: 0, baseX: 0, baseY: 0, isDragging: false, inZone: false }
+    ];
+
+    function initItems() {
+        let shelfY = canvas.height - 80;
+        let paddingX = 40;
+        items[0].baseX = paddingX; items[0].baseY = shelfY;
+        items[0].x = paddingX; items[0].y = shelfY;
+
+        items[1].baseX = canvas.width - paddingX - items[1].size; items[1].baseY = shelfY;
+        items[1].x = canvas.width - paddingX - items[1].size; items[1].y = shelfY;
+    }
+
+    function updatePhysics() {
+        n = parseFloat(document.getElementById('n-in').value) || 1.0;
+        V = parseFloat(document.getElementById('v-in').value) || 24.47;
+
+        // P = nRT / V
+        P = (n * R * T) / V;
+        
+        document.getElementById('t-out').innerText = T.toFixed(0);
+        document.getElementById('p-out').innerText = P.toFixed(2);
+
+        // คำนวณมุมเข็มเกจ์ความดัน (สเกลจาก 0 ถึง 4 atm วิ่งเป็นครึ่งวงกลม)
+        let pRatio = Math.min(P / 4, 1);
+        targetGaugeAngle = -Math.PI + (pRatio * Math.PI);
+
+        if (document.getElementById('calc-panel').style.display === 'block') {
+            // อัปเดตเฉพาะตัวเลขในกล่องคำนวณ เพื่อไม่ให้กระตุกเวลาอุณหภูมิเปลี่ยน
+            const elP = document.getElementById('math-p');
+            const elT = document.getElementById('math-t');
+            const elK = document.getElementById('math-k');
+            
+            if (elP) elP.innerText = `${P.toFixed(2)} atm`;
+            if (elT) elT.innerText = `${T.toFixed(0)} K`;
+            if (elK) elK.innerText = `${(P/T).toFixed(5)}`;
+        }
+    }
+
+    // --- Drag & Drop Core ---
+    function getMousePos(evt) {
+        const rect = canvas.getBoundingClientRect();
+        let clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
+        let clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
+        return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+
+    canvas.addEventListener('mousedown', startDrag);
+    canvas.addEventListener('mousemove', doDrag);
+    window.addEventListener('mouseup', stopDrag);
+    canvas.addEventListener('touchstart', startDrag, {passive: false});
+    canvas.addEventListener('touchmove', function(e) { if(draggedItem) e.preventDefault(); doDrag(e); }, {passive: false});
+    window.addEventListener('touchend', stopDrag);
+
+    let draggedItem = null;
+    let dragOffsetX = 0, dragOffsetY = 0;
+
+    function startDrag(e) {
+        let pos = getMousePos(e);
+        for (let i = items.length - 1; i >= 0; i--) {
+            let item = items[i];
+            if (pos.x >= item.x && pos.x <= item.x + item.size && pos.y >= item.y && pos.y <= item.y + item.size) {
+                draggedItem = item;
+                dragOffsetX = pos.x - item.x;
+                dragOffsetY = pos.y - item.y;
+                item.isDragging = true;
+                break;
+            }
+        }
+    }
+
+    function doDrag(e) { if (draggedItem) { let pos = getMousePos(e); draggedItem.x = pos.x - dragOffsetX; draggedItem.y = pos.y - dragOffsetY; } }
+
+    function stopDrag() {
+        if (draggedItem) {
+            let centerX = canvas.width / 2, bottomY = canvas.height / 2 + 80;
+            let inDropZone = (draggedItem.x + draggedItem.size/2 > centerX - 60) && 
+                             (draggedItem.x + draggedItem.size/2 < centerX + 60) &&
+                             (draggedItem.y + draggedItem.size/2 > bottomY - 20) &&
+                             (draggedItem.y + draggedItem.size/2 < bottomY + 100);
+
+            if (inDropZone) {
+                draggedItem.inZone = true;
+                items.forEach(i => { if (i !== draggedItem && i.inZone) i.inZone = false; });
+            } else { draggedItem.inZone = false; }
+            draggedItem.isDragging = false; draggedItem = null;
+            checkEnvironment();
+        }
+    }
+
+    function checkEnvironment() {
+        let activeItem = items.find(i => i.inZone);
+        if (activeItem) {
+            document.getElementById('status-msg').innerText = activeItem.id === 'fire' ? "🔥 ความร้อนกระตุ้นพลังงานจลน์..." : "❄️ ลดอุณหภูมิ ลดแรงชนผนัง...";
+            document.getElementById('status-msg').style.background = activeItem.bg;
+        } else {
+            document.getElementById('status-msg').innerText = "🔒 ล็อกปริมาตร และตรึงความดันคงที่";
+            document.getElementById('status-msg').style.background = "var(--accent)";
+        }
+    }
+
+    function resetTemp() { T = 300; items.forEach(i => i.inZone = false); checkEnvironment(); updatePhysics(); }
+    
+    function toggleCalc() { 
+        const p = document.getElementById('calc-panel'); 
+        if (p.style.display === 'block') {
+            p.style.display = 'none';
+        } else {
+            p.style.display = 'block'; 
+            updateMathPanel(); 
+        }
+    }
+
+    // --- Render Engine ---
+    function animate() {
+        let w = simBox.clientWidth, h = simBox.clientHeight;
+        if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; initItems(); }
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (canvas.width === 0) { requestAnimationFrame(animate); return; }
+
+        // 🌡️ 🚩 แก้ไขจุดที่หน่วงอุณหภูมิ (จาก 2.0 ปรับลดเหลือ 0.5 เพื่อให้ค่อยๆ ร้อน/เย็น)
+        let activeItem = items.find(i => i.inZone);
+        if (activeItem) {
+            if (activeItem.id === 'fire' && T < MAX_T) T += 0.5;
+            else if (activeItem.id === 'ice' && T > MIN_T) T -= 0.5;
+            updatePhysics();
+        }
+
+        currentGaugeAngle += (targetGaugeAngle - currentGaugeAngle) * 0.15;
+
+        const centerX = canvas.width / 2;
+        const bottomY = canvas.height / 2 + 100;
+        const cylWidth = 140;
+        const topY = bottomY - containerH;
+
+        // 1. วาด Drop Zone ใต้ถัง
+        ctx.setLineDash([5, 5]); ctx.lineWidth = 3; ctx.strokeStyle = "#9ca3af";
+        ctx.strokeRect(centerX - 60, bottomY + 10, 120, 70);
+        ctx.fillStyle = "#9ca3af"; ctx.font = "bold 12px K2D"; ctx.textAlign = "center";
+        ctx.fillText("วางไอเทมที่นี่", centerX, bottomY + 50); ctx.setLineDash([]);
+
+        // 2. เอฟเฟกต์เรืองแสงในถังตามระดับความดัน (ยิ่งดันสูง ยิ่งม่วงเข้มแดง)
+        let pFactor = Math.min(P / 3, 1);
+        ctx.fillStyle = `rgba(168, 85, 247, ${0.1 + pFactor * 0.4})`;
+        ctx.fillRect(centerX - cylWidth/2, topY, cylWidth, containerH);
+
+        // 3. วาดและคำนวณอนุภาคแก๊ส
+        let speedMultiplier = Math.sqrt(T / 300) * 2;
+        ctx.fillStyle = P > 2 ? "#ef4444" : "rgba(168, 85, 247, 0.9)";
+        particles.forEach((p) => {
+            if (p.x === 0) {
+                p.x = centerX - cylWidth/2 + 10 + Math.random() * (cylWidth - 20);
+                p.y = bottomY - Math.random() * containerH;
+            }
+            p.x += p.vx * speedMultiplier; p.y += p.vy * speedMultiplier;
+
+            if (p.x < centerX - cylWidth/2 + 5 || p.x > centerX + cylWidth/2 - 5) p.vx *= -1;
+            if (p.y > bottomY - 5 || p.y < topY + 5) p.vy *= -1;
+            ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI*2); ctx.fill();
+        });
+
+        // 4. วาดตัวถังแก๊สหนาแน่น (Fixed Tank)
+        ctx.beginPath(); ctx.lineWidth = 6; ctx.strokeStyle = "#000";
+        ctx.strokeRect(centerX - cylWidth/2, topY, cylWidth, containerH);
+        
+        // วาดสลักล็อก (สัญลักษณ์ย้ำว่าปริมาตรคงที่)
+        ctx.fillStyle = "#000";
+        ctx.fillRect(centerX - cylWidth/2 - 10, topY + 20, 10, 15);
+        ctx.fillRect(centerX + cylWidth/2, topY + 20, 10, 15);
+
+        // 5. วาดหน้าปัดเกจ์ความดัน (Pressure Gauge) ด้านบนถัง
+        let gaugeX = centerX, gaugeY = topY - 45, r = 35;
+        ctx.beginPath(); ctx.arc(gaugeX, gaugeY, r, 0, Math.PI*2);
+        ctx.fillStyle = "#fff"; ctx.fill(); ctx.lineWidth = 4; ctx.strokeStyle = "#000"; ctx.stroke();
+        
+        // แถบสีอันตรายในเกจ์
+        ctx.beginPath(); ctx.lineWidth = 4; ctx.strokeStyle = "#ef4444";
+        ctx.arc(gaugeX, gaugeY, r - 6, -Math.PI / 4, 0); ctx.stroke();
+
+        // เข็มวัดความดัน
+        ctx.beginPath(); ctx.lineWidth = 3; ctx.strokeStyle = "#000";
+        ctx.moveTo(gaugeX, gaugeY);
+        ctx.lineTo(gaugeX + Math.cos(currentGaugeAngle) * (r - 10), gaugeY + Math.sin(currentGaugeAngle) * (r - 10));
+        ctx.stroke();
+        ctx.beginPath(); ctx.arc(gaugeX, gaugeY, 4, 0, Math.PI*2); ctx.fillStyle = "#000"; ctx.fill();
+
+        // 6. วาดไอเทมลากวาง
+        items.forEach(item => {
+            if (item.inZone && !item.isDragging) {
+                item.x += ((centerX - item.size/2) - item.x) * 0.2;
+                item.y += ((bottomY + 15) - item.y) * 0.2;
+            } else if (!item.isDragging && !item.inZone) {
+                item.x += (item.baseX - item.x) * 0.15; item.y += (item.baseY - item.y) * 0.15;
+            }
+            ctx.fillStyle = item.bg; ctx.fillRect(item.x, item.y, item.size, item.size);
+            ctx.lineWidth = 4; ctx.strokeStyle = item.color; ctx.strokeRect(item.x, item.y, item.size, item.size);
+            ctx.font = "30px sans-serif"; ctx.textAlign = "center";
+            ctx.fillText(item.icon, item.x + item.size/2, item.y + 40);
+        });
+
+        requestAnimationFrame(animate);
+    }
+
+    function updateMathPanel() {
+        const p = document.getElementById('calc-panel');
+        const k = (P / T).toFixed(5);
+        
+        // สังเกตว่าผมใส่ span id="math-p" เป็นต้น เพื่อให้ตอนอัปเดตตัวเลข มันไม่ต้องโหลด MathJax ใหม่ทั้งหมด
+        p.innerHTML = `
+            <h2 style="padding:10px; background:var(--accent); border:var(--border);">📊 ANALYSIS: GAY-LUSSAC'S LAW</h2>
+            <div class="formula-box">
+                <b>กฎของเกย์-ลูสแซก:</b> อัตราส่วนความดันต่ออุณหภูมิเคลวินจะเป็นค่าคงที่เสมอ เมื่อปริมาตรคงที่ $\\left(\\frac{P}{T} = k\\right)$<br><br>
+                <b>สมการสภาวะปัจจุบัน (Live):</b><br>
+                $P = \\frac{nRT}{V} = \\frac{(${n.toFixed(1)})\\cdot(0.08206)\\cdot(T)}{${V.toFixed(2)}} = $ <b id="math-p" style="color:#ef4444;">${P.toFixed(2)} atm</b><br>
+                $T = $ <b id="math-t" style="color:#38bdf8;">${T.toFixed(0)} K</b><br>
+                <hr style="border:1px dashed #000;">
+                <b>ตรวจสอบค่าคงที่ $k$:</b><br>
+                อัตราส่วน $\\frac{P}{T}$ = <b id="math-k">${k}</b> (ค่า $k$ จะล็อกแน่นคงที่ ไม่ว่าถังจะร้อนหรือเย็น!)
+            </div>
+        `;
+        if (window.MathJax) MathJax.typesetPromise();
+    }
+
+    updatePhysics();
+    animate();
+</script>
+</body>
+</html>
