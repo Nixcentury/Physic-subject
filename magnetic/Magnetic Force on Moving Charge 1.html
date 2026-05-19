@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics Lab - Lorentz Force (High School Edition)</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+    
+    <style>
+        :root {
+            --primary: #000000;      
+            --accent: #d8b4fe;       
+            --bg-card: #ffffff;      
+            --bg-body: #faf5ff;      
+            --border: 4px solid #000000;
+            --shadow: 8px 8px 0px #000000;
+            --pos-color: #ef4444; 
+            --neg-color: #3b82f6; 
+            --neu-color: #9ca3af;
+        }
+
+        * { box-sizing: border-box; font-family: 'K2D', sans-serif; user-select: none; }
+        body { background-color: var(--bg-body); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+
+        .lab-container {
+            background: var(--bg-card); border: var(--border); box-shadow: var(--shadow);
+            width: 100%; max-width: 1200px; padding: 20px; display: flex; flex-wrap: wrap; gap: 20px;
+        }
+
+        #sim-box {
+            flex: 2; min-width: 400px; height: 600px; border: var(--border);
+            position: relative; background: #ffffff !important; overflow: hidden;
+            background-image: radial-gradient(#cbd5e1 1.5px, transparent 1.5px);
+            background-size: 30px 30px;
+        }
+        
+        #canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; }
+
+        #sim-status {
+            position: absolute; top: 15px; left: 15px; color: #000; z-index: 10;
+            font-size: 14px; font-weight: 800; background: var(--accent); padding: 8px 12px; 
+            border: 3px solid #000; box-shadow: 3px 3px 0px #000; pointer-events: none;
+        }
+
+        /* 📌 ตำนานเวกเตอร์ตอนกดหยุด */
+        #vector-legend {
+            position: absolute; bottom: 15px; right: 15px; background: rgba(255,255,255,0.9);
+            border: 3px solid #000; padding: 10px; font-size: 13px; font-weight: 800;
+            display: none; box-shadow: 3px 3px 0px #000; z-index: 10;
+        }
+
+        .controls { flex: 1; min-width: 350px; display: flex; flex-direction: column; gap: 15px; }
+        .card { border: var(--border); padding: 15px; background: #fff; box-shadow: 4px 4px 0px #000; }
+        h2 { margin: 0 0 10px 0; font-size: 18px; text-transform: uppercase; background: var(--accent); padding: 5px; border-bottom: var(--border); }
+        
+        .input-group { margin-bottom: 15px; }
+        label { display: block; font-weight: 800; font-size: 14px; margin-bottom: 5px; }
+        input[type=range] { width: 100%; cursor: pointer; accent-color: var(--primary); }
+
+        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        .btn {
+            padding: 10px; background: #fff; color: #000; border: 3px solid #000;
+            font-weight: 800; font-size: 14px; cursor: pointer; text-transform: uppercase;
+            box-shadow: 3px 3px 0px #000; transition: 0.1s; text-align: center;
+        }
+        .btn:active { transform: translate(3px, 3px); box-shadow: none; }
+        .btn.active-b { background: #facc15; color: #000; } 
+        .btn.active-v { background: #10b981; color: #fff; } 
+
+        .action-group { display: flex; gap: 10px; margin-top: 10px; }
+        .fire-btn {
+            flex: 2; padding: 15px; background: #10b981; color: #fff; border: var(--border);
+            font-weight: 800; font-size: 18px; cursor: pointer; box-shadow: 4px 4px 0px #000;
+        }
+        .pause-btn {
+            flex: 1; padding: 15px; background: #f59e0b; color: #000; border: var(--border);
+            font-weight: 800; font-size: 18px; cursor: pointer; box-shadow: 4px 4px 0px #000;
+        }
+        .fire-btn:active, .pause-btn:active { transform: translate(4px, 4px); box-shadow: none; }
+        
+        #calc-panel { width: 100%; margin-top: 20px; background: #fff; border: var(--border); padding: 20px; box-shadow: var(--shadow); }
+        .formula-box { background: #faf5ff; padding: 20px; border: 2px dashed #000; margin: 15px 0; overflow-x: auto; font-size: 1.1em;}
+        
+        .val-badge { background:#000; color:#fff; padding:2px 8px; border-radius:4px; font-size:16px; }
+    </style>
+</head>
+<body>
+
+<div class="lab-container">
+    <div id="sim-box">
+        <div id="sim-status">⚠️ ตั้งค่าและกดปุ่ม FIRE! เพื่อยิงประจุเข้าสู่สนามแม่เหล็ก</div>
+        <div id="vector-legend">
+            <b>🔍 VECTOR INSPECTION</b><br>
+            <span style="color:#10b981;">● ทิศความเร็ว (v)</span><br>
+            <span style="color:#ef4444;">● ทิศแรงแม่เหล็ก (F)</span>
+        </div>
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <div class="controls">
+        <div class="card">
+            <h2>⚛️ PARTICLE (ขนาดและชนิดประจุ)</h2>
+            <div class="input-group">
+                <label>ค่าประจุไฟฟ้า ($q$): <span id="q-val" class="val-badge" style="background:var(--pos-color);">+1</span></label>
+                <input type="range" id="q-slider" min="-3" max="3" step="1" value="1" oninput="updateUI()">
+                <p style="font-size: 12px; margin: 5px 0 0 0; color: #555;">(ค่า + คือประจุบวก, ค่า - คือประจุลบ, 0 คือเป็นกลาง)</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🧲 MAGNETIC FIELD (ทิศสนาม B)</h2>
+            <div class="btn-group">
+                <button id="btn-B-IN" class="btn active-b" onclick="setBDir('IN')">พุ่งเข้า ⊗</button>
+                <button id="btn-B-OUT" class="btn" onclick="setBDir('OUT')">พุ่งออก ⊙</button>
+                <button id="btn-B-LEFT" class="btn" onclick="setBDir('LEFT')">ไปทางซ้าย ←</button>
+                <button id="btn-B-RIGHT" class="btn" onclick="setBDir('RIGHT')">ไปทางขวา →</button>
+                <button id="btn-B-UP" class="btn" onclick="setBDir('UP')">ชี้ขึ้น ↑</button>
+                <button id="btn-B-DOWN" class="btn" onclick="setBDir('DOWN')">ชี้ลง ↓</button>
+            </div>
+        </div>
+
+        <div class="card" style="background: #f8fafc;">
+            <h2>🚀 VELOCITY (ทิศและความเร็ว v)</h2>
+            <div class="btn-group">
+                <button id="btn-V-LEFT" class="btn" onclick="setVDir('LEFT')">วิ่งซ้าย ←</button>
+                <button id="btn-V-RIGHT" class="btn active-v" onclick="setVDir('RIGHT')">วิ่งขวา →</button>
+                <button id="btn-V-UP" class="btn" onclick="setVDir('UP')">วิ่งขึ้น ↑</button>
+                <button id="btn-V-DOWN" class="btn" onclick="setVDir('DOWN')">วิ่งลง ↓</button>
+            </div>
+            
+            <div class="input-group" style="margin-top: 15px;">
+                <label>อัตราเร็ว ($v$):</label>
+                <input type="range" id="v-slider" min="20" max="100" step="10" value="60" oninput="updateUI()">
+            </div>
+            
+            <div class="action-group">
+                <button class="fire-btn" onclick="fireParticle()">⚡ ยิง (FIRE!)</button>
+                <button class="pause-btn" onclick="togglePause()">⏸️ หยุดดูเวกเตอร์</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="calc-panel"></div>
+
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const simBox = document.getElementById('sim-box');
+    const legend = document.getElementById('vector-legend');
+
+    let q = 1; 
+    let B_dir = 'IN'; 
+    let V_dir = 'RIGHT';
+    let v_mag = 60;
+    let B_mag = 1.5; 
+    let m = 1; 
+    
+    let isPaused = false;
+    let particle = { x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0, active: false };
+    let trail = [];
+
+    function setBDir(dir) {
+        B_dir = dir;
+        ['IN', 'OUT', 'LEFT', 'RIGHT', 'UP', 'DOWN'].forEach(d => document.getElementById('btn-B-'+d).classList.remove('active-b'));
+        document.getElementById('btn-B-'+dir).classList.add('active-b');
+        updateUI();
+    }
+
+    function setVDir(dir) {
+        V_dir = dir;
+        ['LEFT', 'RIGHT', 'UP', 'DOWN'].forEach(d => document.getElementById('btn-V-'+d).classList.remove('active-v'));
+        document.getElementById('btn-V-'+dir).classList.add('active-v');
+        updateUI();
+    }
+
+    function togglePause() {
+        if (!particle.active) return;
+        isPaused = !isPaused;
+        const btn = document.querySelector('.pause-btn');
+        const status = document.getElementById('sim-status');
+        
+        if (isPaused) {
+            btn.innerText = "▶️ เล่นต่อ";
+            btn.style.background = "#3b82f6";
+            status.innerText = "⏸️ PAUSED: ใช้กฎมือขวาทาบทิศ v และ F";
+            status.style.background = "#f59e0b";
+            legend.style.display = "block";
+        } else {
+            btn.innerText = "⏸️ หยุดดูเวกเตอร์";
+            btn.style.background = "#f59e0b";
+            status.innerText = "🚀 กำลังเคลื่อนที่...";
+            status.style.background = getChargeColor(q);
+            legend.style.display = "none";
+        }
+    }
+
+    function getChargeColor(charge) {
+        if (charge > 0) return "rgba(239, 68, 68, 0.9)"; 
+        if (charge < 0) return "rgba(59, 130, 246, 0.9)"; 
+        return "rgba(156, 163, 175, 0.9)"; 
+    }
+
+    function updateUI() {
+        q = parseInt(document.getElementById('q-slider').value);
+        v_mag = parseInt(document.getElementById('v-slider').value);
+        
+        let qBadge = document.getElementById('q-val');
+        qBadge.innerText = (q > 0 ? "+" : (q === 0 ? "0" : "")) + q;
+        qBadge.style.background = q > 0 ? "var(--pos-color)" : (q < 0 ? "var(--neg-color)" : "var(--neu-color)");
+
+        updateMathPanel();
+    }
+
+    function fireParticle() {
+        particle.x = 0; particle.y = 0; particle.z = 0;
+        trail = [];
+        if(isPaused) togglePause(); 
+
+        particle.vx = 0; particle.vy = 0; particle.vz = 0;
+        if (V_dir === 'LEFT') particle.vx = -v_mag;
+        if (V_dir === 'RIGHT') particle.vx = v_mag;
+        if (V_dir === 'UP') particle.vy = v_mag; 
+        if (V_dir === 'DOWN') particle.vy = -v_mag;
+
+        particle.active = true;
+        document.getElementById('sim-status').innerText = "🚀 กำลังทะลวงเข้าสู่สนามแม่เหล็ก...";
+        document.getElementById('sim-status').style.background = getChargeColor(q);
+        document.getElementById('sim-status').style.color = "#fff";
+    }
+
+    function drawVectorArrow(ctx, startX, startY, endX, endY, color, label) {
+        ctx.beginPath(); ctx.moveTo(startX, startY); ctx.lineTo(endX, endY);
+        ctx.lineWidth = 4; ctx.strokeStyle = color; ctx.stroke();
+        
+        let angle = Math.atan2(endY - startY, endX - startX);
+        let headSize = 14;
+        ctx.beginPath(); ctx.moveTo(endX, endY);
+        ctx.lineTo(endX - headSize*Math.cos(angle-Math.PI/6), endY - headSize*Math.sin(angle-Math.PI/6));
+        ctx.lineTo(endX - headSize*Math.cos(angle+Math.PI/6), endY - headSize*Math.sin(angle+Math.PI/6));
+        ctx.fillStyle = color; ctx.fill();
+
+        ctx.fillStyle = color; ctx.font = "bold 20px Arial";
+        ctx.fillText(label, endX + 18*Math.cos(angle), endY + 18*Math.sin(angle) + 5);
+    }
+
+    function animate() {
+        let w = simBox.clientWidth; let h = simBox.clientHeight;
+        if (w > 0 && h > 0 && (canvas.width !== w || canvas.height !== h)) { canvas.width = w; canvas.height = h; }
+        if (canvas.width === 0) { requestAnimationFrame(animate); return; }
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const centerX = canvas.width / 2; const centerY = canvas.height / 2;
+
+        // 1. วาดจุดศูนย์กลาง (จุดเริ่มเข้าสนาม)
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 8, 0, Math.PI*2);
+        ctx.fillStyle = "#cbd5e1"; ctx.fill();
+        ctx.strokeStyle = "#94a3b8"; ctx.lineWidth = 2; ctx.stroke();
+        ctx.fillStyle = "#64748b"; ctx.font = "bold 12px K2D"; ctx.textAlign = "center";
+        ctx.fillText("ENTRY POINT", centerX, centerY - 15);
+
+        // 2. วาดสนามแม่เหล็ก (B)
+        ctx.fillStyle = "#64748b";
+        ctx.font = "bold 24px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        for(let i=50; i<canvas.width; i+=90) {
+            for(let j=50; j<canvas.height; j+=90) {
+                if(B_dir === 'IN') ctx.fillText("✕", i, j);
+                if(B_dir === 'OUT') ctx.fillText("•", i, j);
+                if(B_dir === 'RIGHT') ctx.fillText("→", i, j);
+                if(B_dir === 'LEFT') ctx.fillText("←", i, j);
+                if(B_dir === 'UP') ctx.fillText("↑", i, j);
+                if(B_dir === 'DOWN') ctx.fillText("↓", i, j);
+            }
+        }
+
+        // 3. คำนวณฟิสิกส์
+        if (particle.active && !isPaused) {
+            let Bx = 0, By = 0, Bz = 0;
+            if(B_dir === 'IN') Bz = -B_mag;
+            if(B_dir === 'OUT') Bz = B_mag;
+            if(B_dir === 'RIGHT') Bx = B_mag;
+            if(B_dir === 'LEFT') Bx = -B_mag;
+            if(B_dir === 'UP') By = B_mag;
+            if(B_dir === 'DOWN') By = -B_mag;
+
+            let dt = 0.05; 
+            // F = q(v x B)
+            let Fx = q * (particle.vy * Bz - particle.vz * By);
+            let Fy = q * (particle.vz * Bx - particle.vx * Bz);
+            let Fz = q * (particle.vx * By - particle.vy * Bx);
+
+            particle.vx += Fx * dt; particle.vy += Fy * dt; particle.vz += Fz * dt;
+
+            // ล็อกขนาดความเร็ว
+            let current_v = Math.sqrt(particle.vx**2 + particle.vy**2 + particle.vz**2);
+            if (current_v > 0) {
+                particle.vx = (particle.vx / current_v) * v_mag;
+                particle.vy = (particle.vy / current_v) * v_mag;
+                particle.vz = (particle.vz / current_v) * v_mag;
+            }
+
+            particle.x += particle.vx * dt; particle.y += particle.vy * dt; particle.z += particle.vz * dt;
+
+            trail.push({ x: particle.x, y: particle.y, z: particle.z, vx: particle.vx, vy: particle.vy, vz: particle.vz, fx: Fx, fy: Fy, fz: Fz });
+            if(trail.length > 500) trail.shift(); 
+        }
+
+        // 4. วาดการเคลื่อนที่และเวกเตอร์
+        if (trail.length > 0) {
+            ctx.beginPath();
+            for(let i=0; i<trail.length; i++) {
+                let p = trail[i];
+                let sx = centerX + p.x; let sy = centerY - p.y; 
+                if(i===0) ctx.moveTo(sx, sy); else ctx.lineTo(sx, sy);
+            }
+            ctx.strokeStyle = q > 0 ? "rgba(239, 68, 68, 0.7)" : (q < 0 ? "rgba(59, 130, 246, 0.7)" : "rgba(156, 163, 175, 0.7)");
+            ctx.lineWidth = 5; ctx.stroke();
+
+            let lastP = trail[trail.length-1];
+            let sx = centerX + lastP.x; let sy = centerY - lastP.y;
+            let scale = Math.max(0.4, 1 + (lastP.z / 300));
+
+            // วาดเวกเตอร์ v และ F ตอนหยุด Pause
+            if (isPaused) {
+                // 🟢 เวกเตอร์ความเร็ว (v)
+                let vLen = Math.sqrt(lastP.vx**2 + lastP.vy**2);
+                if (vLen > 0.1) {
+                    let vx_screen = sx + (lastP.vx / vLen) * 70;
+                    let vy_screen = sy - (lastP.vy / vLen) * 70;
+                    drawVectorArrow(ctx, sx, sy, vx_screen, vy_screen, "#10b981", "v");
+                }
+
+                // 🔴 เวกเตอร์แรงแม่เหล็ก (F)
+                let fLen = Math.sqrt(lastP.fx**2 + lastP.fy**2);
+                if (fLen > 0.1) {
+                    let fx_screen = sx + (lastP.fx / fLen) * 90;
+                    let fy_screen = sy - (lastP.fy / fLen) * 90; 
+                    drawVectorArrow(ctx, sx, sy, fx_screen, fy_screen, "#ef4444", "F");
+                } else if (Math.abs(lastP.fz) > 0.1) {
+                    ctx.beginPath(); ctx.arc(sx, sy, 35, 0, Math.PI*2);
+                    ctx.fillStyle = "rgba(239, 68, 68, 0.2)"; ctx.fill();
+                    ctx.lineWidth=3; ctx.strokeStyle="#ef4444"; ctx.stroke();
+                    ctx.fillStyle = "#ef4444"; ctx.font="bold 20px Arial"; 
+                    ctx.fillText(lastP.fz > 0 ? "⊙ F พุ่งออก" : "⊗ F พุ่งเข้า", sx, sy - 50);
+                } else {
+                    ctx.fillStyle = "#000"; ctx.font="bold 16px K2D"; 
+                    ctx.fillText("F = 0 (วิ่งตรงทะลุไปเลย)", sx, sy - 30);
+                }
+            }
+
+            // วาดตัวประจุทับเวกเตอร์
+            ctx.beginPath(); ctx.arc(sx, sy, 14 * scale, 0, Math.PI*2);
+            ctx.fillStyle = q > 0 ? "var(--pos-color)" : (q < 0 ? "var(--neg-color)" : "var(--neu-color)");
+            ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = "#000"; ctx.stroke();
+            ctx.fillStyle = "#fff"; ctx.font = "bold 16px Arial";
+            ctx.fillText(q > 0 ? "+" : (q < 0 ? "-" : "0"), sx, sy + 5);
+        }
+
+        requestAnimationFrame(animate);
+    }
+
+    function getAngle(vx, vy, vz, bx, by, bz) {
+        let dot = (vx*bx + vy*by + vz*bz);
+        let vLen = Math.sqrt(vx*vx + vy*vy + vz*vz);
+        let bLen = Math.sqrt(bx*bx + by*by + bz*bz);
+        if (vLen===0 || bLen===0) return 0;
+        let cosTheta = dot / (vLen * bLen);
+        if (cosTheta > 1) cosTheta = 1; if (cosTheta < -1) cosTheta = -1;
+        return Math.acos(cosTheta) * (180 / Math.PI);
+    }
+
+    function updateMathPanel() {
+        const p = document.getElementById('calc-panel');
+        
+        let Bx = 0, By = 0, Bz = 0;
+        if(B_dir === 'IN') Bz = -B_mag; if(B_dir === 'OUT') Bz = B_mag;
+        if(B_dir === 'RIGHT') Bx = B_mag; if(B_dir === 'LEFT') Bx = -B_mag;
+        if(B_dir === 'UP') By = B_mag; if(B_dir === 'DOWN') By = -B_mag;
+
+        let vx = 0, vy = 0, vz = 0;
+        if(V_dir === 'LEFT') vx = -v_mag; if(V_dir === 'RIGHT') vx = v_mag;
+        if(V_dir === 'UP') vy = v_mag; if(V_dir === 'DOWN') vy = -v_mag;
+
+        let angle = getAngle(vx, vy, vz, Bx, By, Bz);
+        let F = Math.abs(q * v_mag * B_mag * Math.sin(angle * Math.PI/180)).toFixed(1);
+        
+        let r_val = "0 (วิ่งเป็นเส้นตรง)";
+        let t_val = "0 (ไม่หมุนเป็นรอบ)";
+        let pitch_html = "";
+
+        // คำนวณ R และ T เมื่อมีแรงกระทำ
+        if (Math.abs(Math.sin(angle * Math.PI/180)) > 0.01 && q !== 0) {
+            let r = Math.abs((m * v_mag * Math.sin(angle * Math.PI/180)) / (q * B_mag));
+            r_val = r.toFixed(2) + " หน่วย";
+            
+            // 🚩 หัวใจสำคัญ ม.ปลาย: คาบเวลา (T)
+            let period = Math.abs((2 * Math.PI * m) / (q * B_mag));
+            t_val = period.toFixed(2) + " วินาที";
+
+            // ถ้ายิงเฉียง (ไม่ใช่ 90 องศา) จะเกิดเกลียว Helix และมีระยะ Pitch
+            if (angle !== 90 && angle !== 0 && angle !== 180) {
+                let v_parallel = v_mag * Math.cos(angle * Math.PI/180);
+                let pitch = Math.abs(v_parallel * period);
+                pitch_html = `<br><b>4. ระยะเกลียว (Pitch):</b> $d = v_{\\parallel} T = \\mathbf{${pitch.toFixed(2)}}$ หน่วย`;
+            }
+        }
+
+        p.innerHTML = `
+            <h2 style="padding:10px; background:var(--accent); border:var(--border); margin-top:0;">📊 ANALYSIS: LORENTZ FORCE</h2>
+            <div class="formula-box">
+                <b>1. มุม $\\theta$ ระหว่างความเร็วกับสนามแม่เหล็ก:</b> $\\theta = ${angle.toFixed(0)}^\\circ$<br>
+                <b>2. แรงแม่เหล็ก (Magnetic Force):</b> $\\vec{F} = q(\\vec{v} \\times \\vec{B})$<br>
+                $F = |q|vB\\sin\\theta = (|${q}|)(${v_mag})(${B_mag})\\sin(${angle.toFixed(0)}^\\circ) = \\mathbf{${F} \\text{ นิวตัน}}$<br><br>
+                
+                <b>3. การเคลื่อนที่แบบหมุน (Circular Motion Properties):</b><br>
+                <ul>
+                    <li><b>รัศมี (Radius):</b> $r = \\frac{mv\\sin\\theta}{qB} = \\mathbf{${r_val}}$</li>
+                    <li><b>คาบเวลา (Period):</b> $T = \\frac{2\\pi m}{qB} = \\mathbf{${t_val}}$ (คงที่เสมอ ไม่ขึ้นกับความเร็ว!)</li>
+                </ul>
+                ${pitch_html}
+            </div>
+        `;
+        
+        try { if (window.MathJax && typeof MathJax.typesetPromise === 'function') MathJax.typesetPromise(); } catch (e) {}
+    }
+
+    updateUI();
+    setTimeout(() => { fireParticle(); }, 500);
+    animate();
+</script>
+</body>
+</html>
