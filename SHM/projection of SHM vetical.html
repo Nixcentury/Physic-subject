@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics Lab - UCM to SHM Connection</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+    
+    <style>
+        :root {
+            --primary: #000000;      
+            --accent: #d8b4fe;       
+            --bg-card: #ffffff;      
+            --bg-body: #faf5ff;      
+            --border: 4px solid #000000;
+            --shadow: 8px 8px 0px #000000;
+            --pos-color: #3b82f6; 
+            --vel-color: #10b981; 
+            --acc-color: #ef4444; 
+        }
+
+        * { box-sizing: border-box; font-family: 'K2D', sans-serif; user-select: none; }
+        body { background-color: var(--bg-body); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+
+        .lab-container {
+            background: var(--bg-card); border: var(--border); box-shadow: var(--shadow);
+            width: 100%; max-width: 1200px; padding: 20px; display: flex; flex-wrap: wrap; gap: 20px;
+        }
+
+        #sim-box {
+            flex: 2; min-width: 500px; height: 600px; border: var(--border);
+            position: relative; background: #ffffff !important; overflow: hidden;
+            background-image: radial-gradient(#cbd5e1 1.5px, transparent 1.5px);
+            background-size: 30px 30px;
+        }
+        
+        #canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; }
+
+        #sim-status {
+            position: absolute; top: 15px; left: 15px; color: #000; z-index: 10;
+            font-size: 14px; font-weight: 800; background: var(--accent); padding: 8px 12px; 
+            border: 3px solid #000; box-shadow: 3px 3px 0px #000; pointer-events: none;
+        }
+        
+        #vector-legend {
+            position: absolute; bottom: 15px; left: 15px; background: rgba(255,255,255,0.9);
+            border: 3px solid #000; padding: 10px; font-size: 13px; font-weight: 800;
+            box-shadow: 3px 3px 0px #000; z-index: 10; pointer-events: none;
+        }
+
+        .controls { flex: 1; min-width: 350px; display: flex; flex-direction: column; gap: 15px; max-height: 600px; overflow-y: auto; padding-right: 5px;}
+        .card { border: var(--border); padding: 15px; background: #fff; box-shadow: 4px 4px 0px #000; }
+        h2 { margin: 0 0 10px 0; font-size: 16px; text-transform: uppercase; background: var(--accent); padding: 5px; border-bottom: var(--border); }
+        
+        .input-group { margin-bottom: 12px; display: flex; flex-direction: column; gap: 5px;}
+        label { font-weight: 800; font-size: 14px; }
+        input[type=range] { width: 100%; cursor: pointer; accent-color: var(--primary); }
+        
+        .num-input {
+            width: 100px; padding: 8px; font-weight: bold; font-size: 16px; border: 3px solid #000; 
+            border-radius: 4px; text-align: center; outline: none; background: #faf5ff;
+        }
+        .num-input:focus { background: #fff; border-color: #8b5cf6; }
+
+        .btn {
+            padding: 12px; background: #fff; color: #000; border: 3px solid #000;
+            font-weight: 800; font-size: 14px; cursor: pointer; text-transform: uppercase;
+            box-shadow: 4px 4px 0px #000; transition: 0.1s; text-align: center; width: 100%;
+        }
+        .btn:active { transform: translate(4px, 4px); box-shadow: none; }
+        .btn-jump { background: #8b5cf6; color: #fff; margin-top: 5px; }
+        .btn-play { background: #10b981; color: #fff; }
+        .btn-reset { background: #ef4444; color: #fff; }
+
+        .action-group { display: flex; gap: 10px; margin-top: 15px; }
+        
+        #calc-panel { width: 100%; margin-top: 20px; background: #fff; border: var(--border); padding: 20px; box-shadow: var(--shadow); }
+        .formula-box { background: #faf5ff; padding: 15px; border: 2px dashed #000; margin: 10px 0; overflow-x: auto; font-size: 1.1em; line-height: 1.6;}
+        
+        .val-badge { background:#000; color:#fff; padding:2px 8px; border-radius:4px; font-size:14px; display:inline-block; min-width:40px; text-align:center;}
+        .val-badge.vel { background: var(--vel-color); }
+        .val-badge.acc { background: var(--acc-color); }
+    </style>
+</head>
+<body>
+
+<div class="lab-container">
+    <div id="sim-box">
+        <div id="sim-status">⏱️ t = 0.00 s</div>
+        <div id="vector-legend">
+            <b>🔍 VECTOR INSPECTION</b><br>
+            <span style="color:#10b981;">🟩 ความเร็ว (v)</span><br>
+            <span style="color:#ef4444;">🟥 ความเร่ง (a)</span>
+        </div>
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <div class="controls">
+        <div class="card" style="background: #f8fafc;">
+            <h2>⏳ TIME MACHINE (กระโดดข้ามเวลา)</h2>
+            <div class="input-group" style="flex-direction: row; align-items: center; justify-content: space-between;">
+                <label>เวลาที่ต้องการหยุด (วินาที):</label>
+                <input type="number" id="target-time" class="num-input" min="0" step="0.1" value="1.57">
+            </div>
+            <button class="btn btn-jump" onclick="jumpToTime()">🎯 ไปที่เวลานี้และหยุดภาพ</button>
+            <p style="font-size: 11px; margin: 5px 0 0 0; color: #555;">*แนะนำ: ลองคำนวณคาบ (T) แล้วกรอกเวลา T/4 หรือ T/2 เพื่อดูจุดเปลี่ยนทิศทาง</p>
+        </div>
+
+        <div class="card">
+            <h2>🎛️ PARAMETERS (ตัวแปร)</h2>
+            <div class="input-group">
+                <label>ความถี่เชิงมุม ($\omega$): <span id="val-w" class="val-badge">1.0</span> rad/s</label>
+                <input type="range" id="slider-w" min="0.5" max="3.0" step="0.1" value="1.0" oninput="updateParams()">
+            </div>
+            <div class="input-group">
+                <label>แอมพลิจูด ($A$): <span id="val-A" class="val-badge">5.0</span> m</label>
+                <input type="range" id="slider-A" min="2" max="8" step="0.5" value="5.0" oninput="updateParams()">
+            </div>
+            
+            <div class="action-group">
+                <button id="play-btn" class="btn btn-play" onclick="togglePlay()">▶️ เริ่มจับเวลา (PLAY)</button>
+                <button class="btn btn-reset" onclick="resetTime()">🔄 รีเซ็ต (t=0)</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📊 REAL-TIME DATA</h2>
+            <div style="font-size: 15px; font-weight: bold; display: flex; flex-direction: column; gap: 8px;">
+                <div>⏱️ เวลา ($t$): <span id="rt-t">0.00</span> s</div>
+                <div>📐 มุมเฟส ($\theta$): <span id="rt-theta">0.00</span>&deg;</div>
+                <div>📍 การกระจัด ($y$): <span id="rt-y">0.00</span> m</div>
+                <div><span class="val-badge vel">v</span> ความเร็ว ($v_y$): <span id="rt-v">0.00</span> m/s</div>
+                <div><span class="val-badge acc">a</span> ความเร่ง ($a_y$): <span id="rt-a">0.00</span> m/s²</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="calc-panel"></div>
+
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const simBox = document.getElementById('sim-box');
+
+    let t = 0;
+    let w = 1.0;
+    let A = 5.0; // หน่วยสมมติ
+    let isPlaying = false;
+    let lastFrameTime = 0;
+
+    // การตั้งค่าสเกลกราฟิก
+    const scale = 25; // 1 m = 25 px
+    const vectorScale = 15; // ขยายความยาวลูกศร
+
+    function updateParams() {
+        w = parseFloat(document.getElementById('slider-w').value);
+        A = parseFloat(document.getElementById('slider-A').value);
+        document.getElementById('val-w').innerText = w.toFixed(1);
+        document.getElementById('val-A').innerText = A.toFixed(1);
+        
+        if(!isPlaying) renderFrame(); 
+        updateMathPanel();
+    }
+
+    function togglePlay() {
+        isPlaying = !isPlaying;
+        const btn = document.getElementById('play-btn');
+        if (isPlaying) {
+            btn.innerHTML = "⏸️ หยุดเวลา (PAUSE)";
+            btn.style.background = "#f59e0b";
+            lastFrameTime = performance.now();
+            requestAnimationFrame(animateLoop);
+        } else {
+            btn.innerHTML = "▶️ เล่นต่อ (RESUME)";
+            btn.style.background = "#10b981";
+        }
+    }
+
+    function resetTime() {
+        t = 0;
+        isPlaying = false;
+        document.getElementById('play-btn').innerHTML = "▶️ เริ่มจับเวลา (PLAY)";
+        document.getElementById('play-btn').style.background = "#10b981";
+        renderFrame();
+    }
+
+    // 🎯 ฟังก์ชันกระโดดข้ามเวลาตามที่ผู้ใช้กรอก
+    function jumpToTime() {
+        let target = parseFloat(document.getElementById('target-time').value);
+        if(isNaN(target) || target < 0) target = 0;
+        
+        t = target;
+        isPlaying = false; // บังคับหยุดภาพ
+        document.getElementById('play-btn').innerHTML = "▶️ เล่นต่อ (RESUME)";
+        document.getElementById('play-btn').style.background = "#10b981";
+        
+        renderFrame();
+    }
+
+    function animateLoop(timestamp) {
+        if (!isPlaying) return;
+        let dt = (timestamp - lastFrameTime) / 1000;
+        lastFrameTime = timestamp;
+        t += dt; 
+        
+        renderFrame();
+        requestAnimationFrame(animateLoop);
+    }
+
+    function drawArrow(x, y, dx, dy, color, label) {
+        let len = Math.hypot(dx, dy);
+        if (len < 1) return; // ไม่วาดถ้าค่าน้อยเกินไป (เกือบศูนย์)
+
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + dx, y + dy);
+        ctx.strokeStyle = color; ctx.lineWidth = 4; ctx.stroke();
+        
+        let angle = Math.atan2(dy, dx);
+        let head = 12;
+        ctx.beginPath(); ctx.moveTo(x + dx, y + dy);
+        ctx.lineTo(x + dx - head*Math.cos(angle-Math.PI/6), y + dy - head*Math.sin(angle-Math.PI/6));
+        ctx.lineTo(x + dx - head*Math.cos(angle+Math.PI/6), y + dy - head*Math.sin(angle+Math.PI/6));
+        ctx.fillStyle = color; ctx.fill();
+
+        ctx.font = "bold 16px Arial";
+        ctx.shadowColor = "white"; ctx.shadowBlur = 4;
+        ctx.fillText(label, x + dx + 15*Math.cos(angle), y + dy + 15*Math.sin(angle) + 5);
+        ctx.shadowBlur = 0;
+    }
+
+    // ฟังก์ชันวาดสปริงแนวดิ่ง
+    function drawSpring(x, startY, endY, coils, radius) {
+        ctx.beginPath(); ctx.moveTo(x, startY);
+        let dist = endY - startY;
+        let step = dist / coils;
+        for (let i = 0; i <= coils; i++) {
+            let r = (i % 2 === 0) ? radius : -radius;
+            if(i===0 || i===coils) r = 0;
+            ctx.lineTo(x + r, startY + i * step);
+        }
+        ctx.lineWidth = 3; ctx.strokeStyle = "#475569"; ctx.stroke();
+    }
+
+    function renderFrame() {
+        let wBox = simBox.clientWidth; let hBox = simBox.clientHeight;
+        if (wBox > 0 && hBox > 0 && (canvas.width !== wBox || canvas.height !== hBox)) { 
+            canvas.width = wBox; canvas.height = hBox; 
+        }
+        if (canvas.width === 0) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // คำนวณฟิสิกส์
+        let theta_rad = w * t;
+        let theta_deg = (theta_rad * 180 / Math.PI) % 360;
+        
+        // y = A sin(wt) (กำหนดให้ sin เป็นการเริ่มจากสมดุลไปบวก)
+        let y_math = A * Math.sin(theta_rad);
+        let x_math = A * Math.cos(theta_rad); // ของวงกลม
+        
+        // อนุพันธ์ (ความเร็ว & ความเร่ง)
+        let vy_math = A * w * Math.cos(theta_rad);
+        let vx_math = -A * w * Math.sin(theta_rad);
+        
+        let ay_math = -A * w * w * Math.sin(theta_rad);
+        let ax_math = -A * w * w * Math.cos(theta_rad);
+
+        // อัปเดต UI หน้าจอ
+        document.getElementById('sim-status').innerText = `⏱️ t = ${t.toFixed(2)} s`;
+        document.getElementById('rt-t').innerText = t.toFixed(2);
+        document.getElementById('rt-theta').innerText = theta_deg.toFixed(1);
+        document.getElementById('rt-y').innerText = y_math.toFixed(2);
+        document.getElementById('rt-v').innerText = vy_math.toFixed(2);
+        document.getElementById('rt-a').innerText = ay_math.toFixed(2);
+
+        // จัดเลย์เอาต์หน้าจอ
+        let midY = canvas.height / 2;
+        let cx = canvas.width * 0.35; // ศูนย์กลางวงกลม
+        let sx = canvas.width * 0.8;  // แกน SHM
+        let R = A * scale; // รัศมีหน้าจอ
+
+        let px = cx + (x_math * scale);
+        let py = midY - (y_math * scale); // ลบเพราะ Y จอภาพชี้ลง
+        
+        // 1. วาดวงกลม UCM
+        ctx.beginPath(); ctx.arc(cx, midY, R, 0, Math.PI*2);
+        ctx.strokeStyle = "#cbd5e1"; ctx.lineWidth = 3; ctx.stroke();
+        // แกน XY วงกลม
+        ctx.beginPath(); ctx.moveTo(cx-R-20, midY); ctx.lineTo(cx+R+20, midY); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx, midY-R-20); ctx.lineTo(cx, midY+R+20); ctx.stroke();
+        // รัศมีกวาดมุม
+        ctx.beginPath(); ctx.moveTo(cx, midY); ctx.lineTo(px, py); ctx.strokeStyle="#94a3b8"; ctx.stroke();
+
+        // 2. วาด SHM (สปริง)
+        ctx.fillStyle = "#64748b"; ctx.fillRect(sx - 40, 20, 80, 10); // เพดาน
+        drawSpring(sx, 30, py - 20, 15, 15);
+        // แกนสมดุล SHM
+        ctx.beginPath(); ctx.moveTo(sx-40, midY); ctx.lineTo(sx+40, midY); ctx.stroke();
+
+        // 3. เส้นไข่ปลาเชื่อม Projection (หัวใจของเรื่องนี้!)
+        ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(sx, py);
+        ctx.strokeStyle = "rgba(139, 92, 246, 0.6)"; ctx.lineWidth = 2; ctx.setLineDash([8, 8]); ctx.stroke(); ctx.setLineDash([]);
+
+        // 4. วาดมวลทั้ง 2 ฝั่ง
+        // มวลวงกลม
+        ctx.beginPath(); ctx.arc(px, py, 18, 0, Math.PI*2);
+        ctx.fillStyle = "#facc15"; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle="#000"; ctx.stroke();
+        // มวลสปริง
+        ctx.beginPath(); ctx.arc(sx, py, 22, 0, Math.PI*2);
+        ctx.fillStyle = "#f59e0b"; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle="#000"; ctx.stroke();
+        ctx.fillStyle="#000"; ctx.font="bold 16px Arial"; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText("m", sx, py);
+
+        // 5. วาดเวกเตอร์ V (เขียว) และ A (แดง)
+        // Normalize vector length by scaling down based on max values
+        let max_v = A * 5.0; // สมมติ w_max = 5.0
+        let max_a = A * 25.0;
+        let v_len = 80 / max_v; // ให้ลูกศรยาวสุดประมาณ 80px
+        let a_len = 80 / max_a;
+
+        // VECTORS สำหรับวงกลม (UCM)
+        drawArrow(px, py, vx_math * v_len, -vy_math * v_len, "#10b981", "v");
+        drawArrow(px, py, ax_math * a_len, -ay_math * a_len, "#ef4444", "a");
+
+        // VECTORS สำหรับสปริง (SHM)
+        drawArrow(sx, py, 0, -vy_math * v_len, "#10b981", "v");
+        drawArrow(sx, py, 0, -ay_math * a_len, "#ef4444", "a");
+    }
+
+    function updateMathPanel() {
+        const p = document.getElementById('calc-panel');
+        let period = (2 * Math.PI / w).toFixed(2);
+        
+        p.innerHTML = `
+            <h2 style="padding:10px; background:var(--accent); border:var(--border); margin-top:0;">📋 KINEMATIC EQUATIONS (สมการเชื่อมโยงวงกลม $\\rightarrow$ SHM)</h2>
+            <div class="formula-box">
+                <b>คาบการเคลื่อนที่:</b> $T = \\frac{2\\pi}{\\omega} = \\mathbf{${period} \\text{ วินาที}}$ (ลองเอาค่า T นี้ไปหาร 2 หรือ 4 แล้วกรอกใน Time Machine ดูสิ!)<br><br>
+                <b>1. การกระจัด (เงาบนแกน Y):</b><br>
+                $y(t) = A \\sin(\\omega t) = (${A.toFixed(1)}) \\sin(${w.toFixed(1)}t)$<br><br>
+                <b>2. ความเร็ว (อนุพันธ์ของ y):</b><br>
+                $v(t) = A\\omega \\cos(\\omega t) = (${A.toFixed(1)})(${w.toFixed(1)}) \\cos(${w.toFixed(1)}t)$<br><br>
+                <b>3. ความเร่ง (อนุพันธ์ของ v):</b><br>
+                $a(t) = -A\\omega^2 \\sin(\\omega t) = -\\omega^2 y$
+            </div>
+        `;
+        try { if (window.MathJax && typeof MathJax.typesetPromise === 'function') MathJax.typesetPromise(); } catch (e) {}
+    }
+
+    updateParams();
+    resetTime();
+</script>
+</body>
+</html>

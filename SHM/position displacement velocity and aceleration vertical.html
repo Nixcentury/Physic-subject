@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics Lab - Vertical SHM</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+    
+    <style>
+        :root {
+            --primary: #000000;      
+            --accent: #d8b4fe;       
+            --bg-card: #ffffff;      
+            --bg-body: #faf5ff;      
+            --border: 4px solid #000000;
+            --shadow: 8px 8px 0px #000000;
+            --pos-color: #3b82f6; /* สีน้ำเงิน (y) */
+            --vel-color: #10b981; /* สีเขียว (v) */
+            --acc-color: #ef4444; /* สีแดง (a) */
+        }
+
+        * { box-sizing: border-box; font-family: 'K2D', sans-serif; user-select: none; }
+        body { background-color: var(--bg-body); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+
+        .lab-container {
+            background: var(--bg-card); border: var(--border); box-shadow: var(--shadow);
+            width: 100%; max-width: 1300px; padding: 20px; display: flex; flex-wrap: wrap; gap: 20px;
+        }
+
+        #sim-box {
+            flex: 2; min-width: 500px; height: 650px; border: var(--border);
+            position: relative; background: #ffffff !important; overflow: hidden;
+            background-image: radial-gradient(#cbd5e1 1.5px, transparent 1.5px);
+            background-size: 30px 30px;
+        }
+        
+        #canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; }
+
+        #sim-status {
+            position: absolute; top: 15px; left: 15px; color: #000; z-index: 10;
+            font-size: 14px; font-weight: 800; background: var(--accent); padding: 8px 12px; 
+            border: 3px solid #000; box-shadow: 3px 3px 0px #000; pointer-events: none;
+        }
+
+        .controls { flex: 1; min-width: 350px; display: flex; flex-direction: column; gap: 15px; max-height: 650px; overflow-y: auto; padding-right: 5px;}
+        .card { border: var(--border); padding: 15px; background: #fff; box-shadow: 4px 4px 0px #000; }
+        h2 { margin: 0 0 10px 0; font-size: 16px; text-transform: uppercase; background: var(--accent); padding: 5px; border-bottom: var(--border); }
+        
+        .input-group { margin-bottom: 12px; }
+        label { display: block; font-weight: 800; font-size: 14px; margin-bottom: 5px; }
+        input[type=range] { width: 100%; cursor: pointer; accent-color: var(--primary); }
+
+        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        .btn {
+            padding: 10px; background: #fff; color: #000; border: 3px solid #000;
+            font-weight: 800; font-size: 14px; cursor: pointer; text-transform: uppercase;
+            box-shadow: 3px 3px 0px #000; transition: 0.1s; text-align: center;
+        }
+        .btn:active { transform: translate(3px, 3px); box-shadow: none; }
+        .btn.active-func { background: #8b5cf6; color: #fff; } 
+
+        .action-group { display: flex; gap: 10px; margin-top: 15px; }
+        .play-btn { flex: 2; padding: 15px; background: #10b981; color: #fff; border: var(--border); font-weight: 800; font-size: 18px; cursor: pointer; box-shadow: 4px 4px 0px #000; }
+        .reset-btn { flex: 1; padding: 15px; background: #ef4444; color: #fff; border: var(--border); font-weight: 800; font-size: 16px; cursor: pointer; box-shadow: 4px 4px 0px #000; }
+        .play-btn:active, .reset-btn:active { transform: translate(4px, 4px); box-shadow: none; }
+        
+        #calc-panel { width: 100%; margin-top: 20px; background: #fff; border: var(--border); padding: 20px; box-shadow: var(--shadow); }
+        .formula-box { background: #faf5ff; padding: 15px; border: 2px dashed #000; margin: 10px 0; overflow-x: auto; font-size: 1.1em; line-height: 1.6;}
+        
+        .val-badge { background:#000; color:#fff; padding:2px 8px; border-radius:4px; font-size:14px; display:inline-block; min-width:40px; text-align:center;}
+        .val-badge.pos { background: var(--pos-color); }
+        .val-badge.vel { background: var(--vel-color); }
+        .val-badge.acc { background: var(--acc-color); }
+    </style>
+</head>
+<body>
+
+<div class="lab-container">
+    <div id="sim-box">
+        <div id="sim-status">⏱️ t = 0.00 s</div>
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <div class="controls">
+        <div class="card">
+            <h2>⚙️ SETUP (รูปแบบสมการ)</h2>
+            <div class="btn-group">
+                <button id="btn-func-sin" class="btn active-func" onclick="setFunc('sin')">ฟังก์ชัน Sine</button>
+                <button id="btn-func-cos" class="btn" onclick="setFunc('cos')">ฟังก์ชัน Cosine</button>
+            </div>
+            <p style="font-size: 12px; margin: 0; color: #555; text-align: center;">* กำหนดการเคลื่อนที่เป็นแนวดิ่ง (แกน Y) อัตโนมัติ</p>
+        </div>
+
+        <div class="card" style="background: #f8fafc;">
+            <h2>🎛️ PARAMETERS (ตัวแปร SHM)</h2>
+            
+            <div class="input-group">
+                <label>แอมพลิจูด ($A$): <span id="val-A" class="val-badge">5.0</span> m</label>
+                <input type="range" id="slider-A" min="1" max="10" step="0.5" value="5" oninput="updateParams()">
+            </div>
+            
+            <div class="input-group">
+                <label>ความถี่เชิงมุม ($\omega$): <span id="val-w" class="val-badge">1.0</span> rad/s</label>
+                <input type="range" id="slider-w" min="0.5" max="5.0" step="0.1" value="1.0" oninput="updateParams()">
+            </div>
+
+            <div class="input-group">
+                <label>เฟสเริ่มต้น ($\phi$): <span id="val-phi" class="val-badge">0</span>&deg;</label>
+                <input type="range" id="slider-phi" min="0" max="360" step="15" value="0" oninput="updateParams()">
+            </div>
+            
+            <div class="action-group">
+                <button id="play-btn" class="play-btn" onclick="togglePlay()">▶️ เริ่มจับเวลา (PLAY)</button>
+                <button class="reset-btn" onclick="resetTime()">🔄 รีเซ็ต (t=0)</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📊 REAL-TIME DATA</h2>
+            <div style="font-size: 15px; font-weight: bold; display: flex; flex-direction: column; gap: 8px;">
+                <div><span class="val-badge pos">y</span> การกระจัด: <span id="rt-y">0.00</span> m</div>
+                <div><span class="val-badge vel">v</span> ความเร็ว: <span id="rt-v">0.00</span> m/s</div>
+                <div><span class="val-badge acc">a</span> ความเร่ง: <span id="rt-a">0.00</span> m/s²</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="calc-panel"></div>
+
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const simBox = document.getElementById('sim-box');
+
+    // State Variables
+    let A = 5.0;
+    let w = 1.0;
+    let phi_deg = 0;
+    let func = 'sin';
+    
+    let t = 0;
+    let isPlaying = false;
+    let lastFrameTime = 0;
+
+    // History for graphs
+    let history = [];
+    const MAX_HISTORY = 400; // จำนวนจุดบนกราฟ
+
+    function setFunc(f) {
+        func = f;
+        document.getElementById('btn-func-sin').classList.remove('active-func');
+        document.getElementById('btn-func-cos').classList.remove('active-func');
+        document.getElementById('btn-func-'+f).classList.add('active-func');
+        resetTime();
+    }
+
+    function updateParams() {
+        A = parseFloat(document.getElementById('slider-A').value);
+        w = parseFloat(document.getElementById('slider-w').value);
+        phi_deg = parseInt(document.getElementById('slider-phi').value);
+        
+        document.getElementById('val-A').innerText = A.toFixed(1);
+        document.getElementById('val-w').innerText = w.toFixed(1);
+        document.getElementById('val-phi').innerText = phi_deg;
+        
+        if(!isPlaying) renderFrame(); // วาดอัปเดตตำแหน่งตอนหยุดเวลา
+        updateMathPanel();
+    }
+
+    function togglePlay() {
+        isPlaying = !isPlaying;
+        const btn = document.getElementById('play-btn');
+        if (isPlaying) {
+            btn.innerHTML = "⏸️ หยุดเวลา (PAUSE)";
+            btn.style.background = "#f59e0b";
+            lastFrameTime = performance.now();
+            requestAnimationFrame(animateLoop);
+        } else {
+            btn.innerHTML = "▶️ เล่นต่อ (RESUME)";
+            btn.style.background = "#10b981";
+        }
+    }
+
+    function resetTime() {
+        t = 0;
+        history = [];
+        isPlaying = false;
+        document.getElementById('play-btn').innerHTML = "▶️ เริ่มจับเวลา (PLAY)";
+        document.getElementById('play-btn').style.background = "#10b981";
+        updateParams();
+        renderFrame();
+    }
+
+    // Mathematical Core
+    function getKinematics(time) {
+        let phi_rad = phi_deg * Math.PI / 180;
+        let phase = (w * time) + phi_rad;
+        let pos, vel, acc;
+
+        if (func === 'sin') {
+            pos = A * Math.sin(phase);
+            vel = A * w * Math.cos(phase);
+            acc = -A * w * w * Math.sin(phase);
+        } else {
+            pos = A * Math.cos(phase);
+            vel = -A * w * Math.sin(phase);
+            acc = -A * w * w * Math.cos(phase);
+        }
+        return { pos, vel, acc };
+    }
+
+    function animateLoop(timestamp) {
+        if (!isPlaying) return;
+        
+        let dt = (timestamp - lastFrameTime) / 1000; // วินาที
+        lastFrameTime = timestamp;
+        
+        // เร่งเวลาเล็กน้อยให้ดูทันใจ
+        t += dt * 1.5; 
+        
+        renderFrame();
+        requestAnimationFrame(animateLoop);
+    }
+
+    function renderFrame() {
+        let wBox = simBox.clientWidth; let hBox = simBox.clientHeight;
+        if (wBox > 0 && hBox > 0 && (canvas.width !== wBox || canvas.height !== hBox)) { 
+            canvas.width = wBox; canvas.height = hBox; 
+        }
+        if (canvas.width === 0) return;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        let kine = getKinematics(t);
+        document.getElementById('sim-status').innerText = `⏱️ t = ${t.toFixed(2)} s`;
+        document.getElementById('rt-y').innerText = kine.pos.toFixed(2);
+        document.getElementById('rt-v').innerText = kine.vel.toFixed(2);
+        document.getElementById('rt-a').innerText = kine.acc.toFixed(2);
+
+        // บันทึกประวัติ
+        history.push({ t: t, pos: kine.pos, vel: kine.vel, acc: kine.acc });
+        if (history.length > MAX_HISTORY) history.shift();
+
+        // ----------------------------------------------------
+        // 1. วาดมวลและสปริง (ฝั่งซ้ายของจอ 35%) - แนวดิ่งเท่านั้น
+        // ----------------------------------------------------
+        let simAreaWidth = canvas.width * 0.35;
+        let midX = simAreaWidth / 2;
+        let midY = canvas.height / 2;
+        
+        // สเกลตำแหน่งให้พอดีจอ (A สูงสุด=10 -> ลากได้สุด 100px)
+        let scalePos = 12; 
+
+        ctx.fillStyle = "#f1f5f9";
+        ctx.fillRect(0, 0, simAreaWidth, canvas.height);
+        ctx.beginPath(); ctx.moveTo(simAreaWidth, 0); ctx.lineTo(simAreaWidth, canvas.height);
+        ctx.strokeStyle = "#000"; ctx.lineWidth = 4; ctx.stroke();
+
+        let massY = midY - (kine.pos * scalePos); // ลบเพราะ Y ชี้ขึ้นบนหน้าจอ
+
+        // วาดเพดานบน
+        ctx.fillStyle = "#64748b"; ctx.fillRect(midX - 40, 20, 80, 10);
+        // วาดสปริงแนวตั้ง
+        drawSpring(ctx, midX, 30, midX, massY - 25, 15, 15);
+
+        // วาดจุดสมดุล (Equilibrium) - เส้นแนวนอน
+        ctx.beginPath();
+        ctx.moveTo(midX-60, midY); ctx.lineTo(midX+60, midY);
+        ctx.strokeStyle = "rgba(0,0,0,0.3)"; ctx.setLineDash([5, 5]); ctx.lineWidth=2; ctx.stroke(); ctx.setLineDash([]);
+
+        // วาดมวล
+        ctx.beginPath(); ctx.arc(midX, massY, 25, 0, Math.PI*2);
+        ctx.fillStyle = "#f59e0b"; ctx.fill();
+        ctx.lineWidth = 4; ctx.strokeStyle = "#000"; ctx.stroke();
+        ctx.fillStyle = "#000"; ctx.font = "bold 20px K2D"; ctx.textAlign = "center"; ctx.textBaseline="middle"; ctx.fillText("m", midX, massY);
+
+        // ----------------------------------------------------
+        // 2. วาดกราฟ 3 เส้น (ฝั่งขวาของจอ 65%)
+        // ----------------------------------------------------
+        let graphStartX = simAreaWidth + 20;
+        let graphWidth = canvas.width - simAreaWidth - 40;
+        let graphHeight = (canvas.height - 60) / 3;
+
+        // วาดกราฟ Y (สีน้ำเงิน)
+        drawGraph(ctx, history, 'pos', graphStartX, 20, graphWidth, graphHeight, "การกระจัด (y)", "var(--pos-color)", A);
+        // วาดกราฟ V (สีเขียว)
+        let vMax = A * w;
+        drawGraph(ctx, history, 'vel', graphStartX, 20 + graphHeight + 10, graphWidth, graphHeight, "ความเร็ว (v)", "var(--vel-color)", vMax || 1);
+        // วาดกราฟ A (สีแดง)
+        let aMax = A * w * w;
+        drawGraph(ctx, history, 'acc', graphStartX, 20 + (graphHeight + 10)*2, graphWidth, graphHeight, "ความเร่ง (a)", "var(--acc-color)", aMax || 1);
+    }
+
+    // ฟังก์ชันวาดสปริงซิกแซก
+    function drawSpring(ctx, startX, startY, endX, endY, coils, radius) {
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        let dx = endX - startX; let dy = endY - startY;
+        let dist = Math.hypot(dx, dy);
+        let angle = Math.atan2(dy, dx);
+        
+        let step = dist / coils;
+        for (let i = 0; i <= coils; i++) {
+            let l = i * step;
+            let r = (i % 2 === 0) ? radius : -radius;
+            if(i===0 || i===coils) r = 0; // หัวท้ายอยู่ตรงกลาง
+            
+            let x = startX + l * Math.cos(angle) - r * Math.sin(angle);
+            let y = startY + l * Math.sin(angle) + r * Math.cos(angle);
+            ctx.lineTo(x, y);
+        }
+        ctx.lineWidth = 3; ctx.strokeStyle = "#475569"; ctx.stroke();
+    }
+
+    // ฟังก์ชันวาดกราฟ Scrolling
+    function drawGraph(ctx, data, key, x, y, w, h, label, color, maxVal) {
+        // วาดกล่องกราฟ
+        ctx.fillStyle = "#fff"; ctx.fillRect(x, y, w, h);
+        ctx.strokeStyle = "#000"; ctx.lineWidth = 2; ctx.strokeRect(x, y, w, h);
+        
+        let midY = y + h/2;
+        // เส้นแกนเวลา t
+        ctx.beginPath(); ctx.moveTo(x, midY); ctx.lineTo(x+w, midY);
+        ctx.strokeStyle = "#cbd5e1"; ctx.lineWidth = 2; ctx.stroke();
+
+        // เขียนป้ายชื่อกราฟ
+        ctx.fillStyle = "#000"; ctx.font = "bold 14px K2D"; ctx.textAlign = "left"; ctx.textBaseline="top";
+        ctx.fillText(label, x + 10, y + 10);
+
+        if (data.length < 2) return;
+
+        // สเกลค่าให้พอดีกล่อง (เผื่อขอบบนล่าง 10px)
+        let scaleY = (h/2 - 10) / (maxVal * 1.1);
+        let tMin = data[0].t;
+        let tMax = data[data.length-1].t;
+        let tRange = Math.max(5, tMax - tMin); // โชว์ช่วงเวลา 5 วิล่าสุด
+
+        ctx.beginPath();
+        for (let i = 0; i < data.length; i++) {
+            let px = x + w - ((tMax - data[i].t) / tRange) * w;
+            let py = midY - (data[i][key] * scaleY);
+            if (px >= x) { // วาดเฉพาะส่วนที่อยู่ในกล่อง
+                if(i===0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+            }
+        }
+        ctx.strokeStyle = color; ctx.lineWidth = 3; ctx.stroke();
+
+        // วาดจุดปลายสุด (Current State)
+        let lastPt = data[data.length-1];
+        let pX = x + w; let pY = midY - (lastPt[key] * scaleY);
+        ctx.beginPath(); ctx.arc(pX, pY, 6, 0, Math.PI*2);
+        ctx.fillStyle = color; ctx.fill(); ctx.lineWidth=2; ctx.strokeStyle="#000"; ctx.stroke();
+    }
+
+    function updateMathPanel() {
+        const p = document.getElementById('calc-panel');
+        let varName = 'y';
+        
+        let eq_x, eq_v, eq_a;
+        if (func === 'sin') {
+            eq_x = `${varName}(t) = A \\sin(\\omega t + \\phi)`;
+            eq_v = `v(t) = A\\omega \\cos(\\omega t + \\phi)`;
+            eq_a = `a(t) = -A\\omega^2 \\sin(\\omega t + \\phi)`;
+        } else {
+            eq_x = `${varName}(t) = A \\cos(\\omega t + \\phi)`;
+            eq_v = `v(t) = -A\\omega \\sin(\\omega t + \\phi)`;
+            eq_a = `a(t) = -A\\omega^2 \\cos(\\omega t + \\phi)`;
+        }
+
+        let vmax = (A * w).toFixed(2);
+        let amax = (A * w * w).toFixed(2);
+
+        p.innerHTML = `
+            <h2 style="padding:10px; background:var(--accent); border:var(--border); margin-top:0;">📋 EQUATIONS OF MOTION (สมการ SHM แนวดิ่ง)</h2>
+            <div class="formula-box">
+                <b>1. สมการการกระจัด:</b> $${eq_x}$ <br>
+                $\\_\\_ ${varName}(t) = ${A.toFixed(1)} \\cdot \\${func}(${w.toFixed(1)}t + ${phi_deg}^\\circ)$<br><br>
+                
+                <b>2. สมการความเร็ว:</b> $${eq_v}$ <br>
+                $\\_\\_ v_{max} = A\\omega = (${A.toFixed(1)})(${w.toFixed(1)}) = \\mathbf{${vmax} \\text{ m/s}}$<br><br>
+                
+                <b>3. สมการความเร่ง:</b> $${eq_a} = -\\omega^2 ${varName}$ <br>
+                $\\_\\_ a_{max} = A\\omega^2 = (${A.toFixed(1)})(${w.toFixed(1)})^2 = \\mathbf{${amax} \\text{ m/s}^2}$
+            </div>
+        `;
+        
+        try { if (window.MathJax && typeof MathJax.typesetPromise === 'function') MathJax.typesetPromise(); } catch (e) {}
+    }
+
+    updateParams();
+    resetTime();
+</script>
+</body>
+</html>
