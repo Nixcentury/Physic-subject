@@ -88,7 +88,7 @@
         #calc-panel { width: 100%; margin-top: 20px; background: #fff; border: var(--border); padding: 20px; box-shadow: var(--shadow); }
         .formula-box { background: #faf5ff; padding: 20px; border: 2px dashed #000; margin: 15px 0; overflow-x: auto; font-size: 1.1em;}
         
-        .val-badge { background:#000; color:#fff; padding:2px 8px; border-radius:4px; font-size:16px; }
+        .val-badge { background:#000; color:#fff; padding:2px 8px; border-radius:4px; font-size:14px; display:inline-block; min-width:35px; text-align:center;}
     </style>
 </head>
 <body>
@@ -115,7 +115,7 @@
         </div>
 
         <div class="card">
-            <h2>🧲 MAGNETIC FIELD (ทิศสนาม B)</h2>
+            <h2>🧲 MAGNETIC FIELD (ทิศและขนาดสนาม B)</h2>
             <div class="btn-group">
                 <button id="btn-B-IN" class="btn active-b" onclick="setBDir('IN')">พุ่งเข้า ⊗</button>
                 <button id="btn-B-OUT" class="btn" onclick="setBDir('OUT')">พุ่งออก ⊙</button>
@@ -123,6 +123,10 @@
                 <button id="btn-B-RIGHT" class="btn" onclick="setBDir('RIGHT')">ไปทางขวา →</button>
                 <button id="btn-B-UP" class="btn" onclick="setBDir('UP')">ชี้ขึ้น ↑</button>
                 <button id="btn-B-DOWN" class="btn" onclick="setBDir('DOWN')">ชี้ลง ↓</button>
+            </div>
+            <div class="input-group" style="margin-top: 15px;">
+                <label>ขนาดสนามแม่เหล็ก ($B$): <span id="B-val" class="val-badge" style="background:#facc15; color:#000;">1.5</span> T</label>
+                <input type="range" id="B-slider" min="0.5" max="5.0" step="0.5" value="1.5" oninput="updateUI()">
             </div>
         </div>
 
@@ -136,13 +140,21 @@
             </div>
             
             <div class="input-group" style="margin-top: 15px;">
-                <label>อัตราเร็ว ($v$):</label>
+                <label>อัตราเร็ว ($v$): <span id="v-val" class="val-badge" style="background:#10b981;">60</span> m/s</label>
                 <input type="range" id="v-slider" min="20" max="100" step="10" value="60" oninput="updateUI()">
             </div>
             
             <div class="action-group">
                 <button class="fire-btn" onclick="fireParticle()">⚡ ยิง (FIRE!)</button>
                 <button class="pause-btn" onclick="togglePause()">⏸️ หยุดดูเวกเตอร์</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📊 REAL-TIME DATA</h2>
+            <div style="font-size: 15px; font-weight: bold; display: flex; flex-direction: column; gap: 8px;">
+                <div><span class="val-badge" style="background:#ef4444;">F</span> แรงแม่เหล็ก: <span id="rt-f">0.0</span> N</div>
+                <div><span class="val-badge" style="background:#8b5cf6;">r</span> รัศมีความโค้ง: <span id="rt-r">0.00</span></div>
             </div>
         </div>
     </div>
@@ -211,10 +223,15 @@
     function updateUI() {
         q = parseInt(document.getElementById('q-slider').value);
         v_mag = parseInt(document.getElementById('v-slider').value);
+        B_mag = parseFloat(document.getElementById('B-slider').value); // อัปเดตค่า B
         
+        // อัปเดตตัวเลขบน Badge
         let qBadge = document.getElementById('q-val');
         qBadge.innerText = (q > 0 ? "+" : (q === 0 ? "0" : "")) + q;
         qBadge.style.background = q > 0 ? "var(--pos-color)" : (q < 0 ? "var(--neg-color)" : "var(--neu-color)");
+        
+        document.getElementById('v-val').innerText = v_mag;
+        document.getElementById('B-val').innerText = B_mag.toFixed(1);
 
         updateMathPanel();
     }
@@ -392,25 +409,29 @@
         let angle = getAngle(vx, vy, vz, Bx, By, Bz);
         let F = Math.abs(q * v_mag * B_mag * Math.sin(angle * Math.PI/180)).toFixed(1);
         
-        let r_val = "0 (วิ่งเป็นเส้นตรง)";
-        let t_val = "0 (ไม่หมุนเป็นรอบ)";
+        let r_val = "0 (วิ่งตรง)";
+        let t_val = "0 (ไม่หมุน)";
         let pitch_html = "";
+
+        // อัปเดตข้อมูล Real-Time Data Card
+        document.getElementById('rt-f').innerText = F;
 
         // คำนวณ R และ T เมื่อมีแรงกระทำ
         if (Math.abs(Math.sin(angle * Math.PI/180)) > 0.01 && q !== 0) {
             let r = Math.abs((m * v_mag * Math.sin(angle * Math.PI/180)) / (q * B_mag));
-            r_val = r.toFixed(2) + " หน่วย";
+            r_val = r.toFixed(2) + " ม.";
+            document.getElementById('rt-r').innerText = r_val;
             
-            // 🚩 หัวใจสำคัญ ม.ปลาย: คาบเวลา (T)
             let period = Math.abs((2 * Math.PI * m) / (q * B_mag));
             t_val = period.toFixed(2) + " วินาที";
 
-            // ถ้ายิงเฉียง (ไม่ใช่ 90 องศา) จะเกิดเกลียว Helix และมีระยะ Pitch
             if (angle !== 90 && angle !== 0 && angle !== 180) {
                 let v_parallel = v_mag * Math.cos(angle * Math.PI/180);
                 let pitch = Math.abs(v_parallel * period);
                 pitch_html = `<br><b>4. ระยะเกลียว (Pitch):</b> $d = v_{\\parallel} T = \\mathbf{${pitch.toFixed(2)}}$ หน่วย`;
             }
+        } else {
+            document.getElementById('rt-r').innerText = "0 (วิ่งตรง)";
         }
 
         p.innerHTML = `
