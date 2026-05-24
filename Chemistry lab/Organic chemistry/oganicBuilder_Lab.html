@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examate - Organic Master Sandbox V4 (Teacher Edition)</title>
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #000000;
+            --accent: #d8b4fe;
+            --bg-body: #faf5ff;
+            --border: 4px solid #000000;
+            --shadow: 8px 8px 0px #000000;
+            --sat-color: #10b981; 
+            --unsat-color: #ef4444; 
+        }
+
+        * { box-sizing: border-box; font-family: 'K2D', sans-serif; user-select: none; }
+        body { background-color: var(--bg-body); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+
+        .container {
+            background: #ffffff; border: var(--border); box-shadow: var(--shadow);
+            width: 100%; max-width: 1400px; padding: 20px; display: flex; flex-direction: column; gap: 20px;
+        }
+
+        .header-title {
+            margin: 0; padding: 15px; background: var(--accent); border: var(--border);
+            font-size: 26px; font-weight: 800; text-transform: uppercase; text-align: center;
+            box-shadow: 4px 4px 0px #000;
+        }
+
+        .main-layout { display: flex; flex-wrap: wrap; gap: 20px; }
+        
+        /* 🧪 จอแสดงผลลิวอิส (Canvas) */
+        .display-box {
+            flex: 1.6; min-width: 600px; height: 450px; border: var(--border);
+            position: relative; background: #ffffff; overflow: auto;
+            display: flex; align-items: center; justify-content: center;
+            background-image: radial-gradient(#cbd5e1 2px, transparent 2px);
+            background-size: 30px 30px; padding: 20px;
+        }
+
+        .molecule-container { display: flex; align-items: center; justify-content: center; gap: 0px; }
+        .carbon-group { display: flex; flex-direction: column; align-items: center; position: relative; margin: 0 5px; }
+        .atom-c { font-size: 28px; font-weight: 900; color: #2563eb; background: #eff6ff; width: 45px; height: 45px; display: flex; justify-content: center; align-items: center; border: 3px solid #2563eb; border-radius: 8px; z-index: 2; }
+        
+        /* ปุ่ม H/Branch */
+        .h-btn { 
+            font-size: 15px; font-weight: 800; color: #64748b; background: #f8fafc; 
+            border: 2px dashed #94a3b8; border-radius: 6px; padding: 3px 6px; 
+            cursor: pointer; transition: 0.2s; position: absolute; z-index: 1;
+            white-space: nowrap;
+        }
+        .h-btn:hover { background: #e2e8f0; transform: scale(1.1); z-index: 10; border-color: #000;}
+        .h-subbed { background: #fef08a; border: 2px solid #ca8a04; color: #854d0e; }
+
+        .h-top { top: -45px; }
+        .h-bottom { bottom: -45px; }
+        .h-left { left: -45px; top: 8px; }
+        .h-right { right: -45px; top: 8px; }
+        .bond-h-v { width: 3px; height: 20px; background: #000; position: absolute; }
+        .bond-v-top { top: -15px; } .bond-v-bot { bottom: -15px; }
+
+        .main-bond { font-family: monospace; font-size: 36px; font-weight: 900; color: #000; margin: 0 5px; }
+        .plug-container { display: flex; align-items: center; background: #fff1f2; border: 3px solid #f43f5e; padding: 10px 15px; border-radius: 12px; font-size: 24px; font-weight: 800; margin: 0 5px;}
+
+        /* 🎛️ แผงควบคุม */
+        .controls-sidebar { flex: 1; min-width: 420px; display: flex; flex-direction: column; gap: 15px; }
+        .card { border: var(--border); padding: 12px; background: #fff; box-shadow: 4px 4px 0px #000; }
+        .card h3 { margin: 0 0 10px 0; font-size: 15px; background: #f1f5f9; padding: 6px; border-bottom: 2px solid #000; font-weight: 800; }
+        
+        .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 8px; }
+        .btn {
+            padding: 6px 4px; background: #fff; color: #000; border: 2px solid #000;
+            font-weight: 800; font-size: 12px; cursor: pointer; text-transform: uppercase;
+            box-shadow: 2px 2px 0px #000; transition: 0.1s; text-align: center; line-height: 1.1;
+        }
+        .btn span { display: block; font-size: 9px; font-weight: 400; color: #475569; margin-top: 2px; }
+        .btn:active { transform: translate(2px, 2px); box-shadow: none; }
+        .btn.active-r { background: #3b82f6; color: #fff; } .btn.active-r span { color: #bfdbfe; }
+        .btn.active-plug { background: #10b981; color: #fff; } .btn.active-plug span { color: #a7f3d0; }
+        .btn.active-r2 { background: #ec4899; color: #fff; } .btn.active-r2 span { color: #fbcfe8; }
+
+        /* Modal ย่อยสำหรับ H */
+        #sub-modal {
+            display: none; position: absolute; background: #fff; border: 3px solid #000; 
+            box-shadow: 6px 6px 0px #000; padding: 15px; z-index: 100; border-radius: 8px; width: 220px;
+        }
+        .sub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+        .sub-btn { padding: 5px; font-weight: bold; border: 2px solid #000; background: #fff; cursor: pointer; font-size: 12px; }
+        .sub-btn:hover { background: #e2e8f0; }
+
+        /* 📊 รายงาน (ปรับใหม่ให้สวยงามและอ่านง่าย) */
+        .report-panel { width: 100%; border: var(--border); padding: 20px; background: #fff; box-shadow: var(--shadow); display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: 20px; align-items: center; }
+        .status-badge { display: inline-block; padding: 8px 16px; border: 2px solid #000; font-weight: 800; font-size: 18px; color: #fff; border-radius: 4px; box-shadow: 3px 3px 0px #000; text-align: center; width: 100%;}
+        .formula-box { font-size: 32px; font-weight: 900; color: #1e293b; background: #f8fafc; border: 2px dashed #94a3b8; padding: 10px; text-align: center; border-radius: 8px;}
+        .class-box { font-size: 20px; font-weight: 800; color: #0f172a; background: #fffbeb; border: 3px solid #f59e0b; padding: 15px; text-align: center; border-radius: 8px; box-shadow: 4px 4px 0px #f59e0b;}
+        .section-title { font-weight: 800; font-size: 14px; margin-bottom: 8px; color: #475569; text-transform: uppercase; letter-spacing: 1px;}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="header-title">🧪 คลังอาวุธเคมีอินทรีย์ (Teacher Edition)</h1>
+    
+    <div class="main-layout">
+        <div id="sim-box">
+            <div id="sim-status" style="position:absolute; top:15px; left:15px; background:#fff; border:2px solid #000; padding:5px 10px; font-weight:800; font-size:12px; z-index:5;">
+                👉 จิ้มที่ปุ่ม [H] เพื่อแตกโซ่กิ่ง หรือเติมหมู่ 7 ได้เลย!
+            </div>
+            <div class="display-box" id="display-area">
+                <div class="molecule-container" id="lewis-output"></div>
+            </div>
+            
+            <div id="sub-modal">
+                <h4 style="margin:0 0 10px 0; font-size:13px; text-align:center;">เปลี่ยน H เป็น (Substitute):</h4>
+                <div class="sub-grid">
+                    <button class="sub-btn" onclick="applySub('H')">H (คืนค่าเดิม)</button>
+                    <button class="sub-btn" style="background:#fef08a;" onclick="applySub('CH3')">-CH₃ (Methyl)</button>
+                    <button class="sub-btn" style="background:#fef08a;" onclick="applySub('C2H5')">-C₂H₅ (Ethyl)</button>
+                    <button class="sub-btn" style="background:#bbf7d0;" onclick="applySub('Cl')">-Cl (Chloro)</button>
+                    <button class="sub-btn" style="background:#bbf7d0;" onclick="applySub('Br')">-Br (Bromo)</button>
+                    <button class="sub-btn" style="background:#bbf7d0;" onclick="applySub('F')">-F (Fluoro)</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls-sidebar">
+            <div class="card">
+                <h3>1️⃣ เลือกแกนหลักซ้าย (Root L)</h3>
+                <div class="btn-grid" style="grid-template-columns: repeat(4, 1fr);">
+                    <button id="r-meth" class="btn active-r" onclick="setRoot('meth', 1, 'alkane')">C1<span>Methyl</span></button>
+                    <button id="r-eth" class="btn" onclick="setRoot('eth', 2, 'alkane')">C2<span>Ethyl</span></button>
+                    <button id="r-prop" class="btn" onclick="setRoot('prop', 3, 'alkane')">C3<span>Propyl</span></button>
+                    <button id="r-but" class="btn" onclick="setRoot('but', 4, 'alkane')">C4<span>Butyl</span></button>
+                </div>
+                <div class="btn-grid" style="grid-template-columns: repeat(3, 1fr);">
+                    <button id="r-vinyl" class="btn" onclick="setRoot('vinyl', 2, 'alkene')">ไวนิล<span>Vinyl (C=C)</span></button>
+                    <button id="r-allyl" class="btn" onclick="setRoot('allyl', 3, 'alkene')">แอลลิล<span>Allyl (C-C=C)</span></button>
+                    <button id="r-cyclo3" class="btn" onclick="setRoot('cyclo3', 3, 'cyclo')">△ วง 3<span>Cyclopropyl</span></button>
+                    <button id="r-cyclo4" class="btn" onclick="setRoot('cyclo4', 4, 'cyclo')">□ วง 4<span>Cyclobutyl</span></button>
+                    <button id="r-cyclo5" class="btn" onclick="setRoot('cyclo5', 5, 'cyclo')">⬠ วง 5<span>Cyclopentyl</span></button>
+                    <button id="r-cyclo6" class="btn" onclick="setRoot('cyclo6', 6, 'cyclo')">⬡ วง 6<span>Cyclohexyl</span></button>
+                    <button id="r-phenyl" class="btn" onclick="setRoot('phenyl', 6, 'aromatic')">⏣ เบนซีน<span>Phenyl</span></button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>2️⃣ เสียบหมู่ฟังก์ชัน (Functional Group)</h3>
+                <div class="btn-grid" style="grid-template-columns: repeat(3, 1fr);">
+                    <button id="p-h" class="btn active-plug" onclick="setPlug('H')">+H<span>แอลเคน / Alkane</span></button>
+                    <button id="p-oh" class="btn" onclick="setPlug('OH')">-OH<span>แอลกอฮอล์ / Alcohol</span></button>
+                    <button id="p-o" class="btn" onclick="setPlug('O')">-O-<span>อีเทอร์ / Ether</span></button>
+                    <button id="p-cho" class="btn" onclick="setPlug('CHO')">-CHO<span>แอลดีไฮด์ / Aldehyde</span></button>
+                    <button id="p-co" class="btn" onclick="setPlug('CO')">-CO-<span>คีโตน / Ketone</span></button>
+                    <button id="p-cooh" class="btn" onclick="setPlug('COOH')">-COOH<span>กรด / Organic Acid</span></button>
+                    <button id="p-coo" class="btn" onclick="setPlug('COO')">-COO-<span>เอสเทอร์ / Ester</span></button>
+                    <button id="p-nh2" class="btn" onclick="setPlug('NH2')">-NH2<span>เอมีน / Amine</span></button>
+                    <button id="p-conh2" class="btn" onclick="setPlug('CONH2')">-CONH2<span>เอไมด์ / Amide</span></button>
+                </div>
+            </div>
+
+            <div class="card" id="r2-panel" style="display: none; background: #fff5f5; border-color: #ec4899;">
+                <h3 style="background:#fce7f3; padding: 5px;">🌸 2.1 ต่อแกนขวา (R')</h3>
+                <div class="btn-grid" style="grid-template-columns: repeat(5, 1fr);">
+                    <button id="r2c-0" class="btn active-r2" style="background:#10b981;" onclick="setR2Size(0)">H<span>ไฮโดรเจน</span></button>
+                    <button id="r2c-1" class="btn" onclick="setR2Size(1)">C1<span>Methyl</span></button>
+                    <button id="r2c-2" class="btn" onclick="setR2Size(2)">C2<span>Ethyl</span></button>
+                    <button id="r2c-3" class="btn" onclick="setR2Size(3)">C3<span>Propyl</span></button>
+                    <button id="r2c-4" class="btn" onclick="setR2Size(4)">C4<span>Butyl</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="report-panel">
+        <div>
+            <div class="section-title">ความอิ่มตัว (Saturation)</div>
+            <div id="sat-badge" class="status-badge">...</div>
+        </div>
+        <div>
+            <div class="section-title">สูตรโมเลกุล (Formula)</div>
+            <div class="formula-box" id="formula-output">C_n H_m</div>
+        </div>
+        <div>
+            <div class="section-title">ประเภทสาร (Chemical Class)</div>
+            <div class="class-box" id="class-info">ไฮโดรคาร์บอน (Hydrocarbon)</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let rootCode = 'meth', rootSize = 1, rootFamily = 'alkane';
+    let plugType = 'H';
+    let r2Size = 0; 
+    let subs = {}; 
+    let targetSubKey = '';
+
+    function setRoot(c, s, f) { 
+        rootCode = c; rootSize = s; rootFamily = f; 
+        subs = {}; 
+        renderLab(); 
+        document.querySelectorAll('[id^="r-"]').forEach(b => b.classList.remove('active-r'));
+        document.getElementById('r-'+c).classList.add('active-r');
+    }
+
+    function setPlug(p) { 
+        plugType = p; 
+        for (let key in subs) { if(key.startsWith('R')) delete subs[key]; }
+        renderLab();
+        document.querySelectorAll('[id^="p-"]').forEach(b => b.classList.remove('active-plug'));
+        document.getElementById('p-'+p.toLowerCase()).classList.add('active-plug');
+        document.getElementById('r2-panel').style.display = (['O','COO','CO'].includes(p)) ? 'block' : 'none';
+    }
+
+    function setR2Size(s) { 
+        r2Size = s; 
+        for (let key in subs) { if(key.startsWith('R')) delete subs[key]; }
+        renderLab();
+        document.querySelectorAll('[id^="r2c-"]').forEach(b => b.classList.remove('active-r2'));
+        document.querySelectorAll('[id^="r2c-"]').forEach(b => b.style.background = '#fff');
+        
+        let activeBtn = document.getElementById('r2c-'+s);
+        activeBtn.classList.add('active-r2');
+        if(s === 0) activeBtn.style.background = '#10b981'; 
+    }
+
+    function openSubModal(chain, ci, p, e) { 
+        targetSubKey = chain + ci + '_' + p; 
+        const m = document.getElementById('sub-modal'); 
+        m.style.left = (e.clientX - 100) + 'px'; 
+        m.style.top = (e.clientY - 50) + 'px'; 
+        m.style.display = 'block'; 
+    }
+
+    function applySub(el) { 
+        if(el === 'H') delete subs[targetSubKey]; 
+        else subs[targetSubKey] = el; 
+        document.getElementById('sub-modal').style.display = 'none'; 
+        renderLab(); 
+    }
+
+    function createH(chain, ci, p) { 
+        let val = subs[chain + ci + '_' + p] || 'H'; 
+        let displayStr = val === 'CH3' ? 'CH₃' : (val === 'C2H5' ? 'C₂H₅' : val);
+        let posClass = p==='t' ? 'h-top' : (p==='b' ? 'h-bottom' : (p==='l' ? 'h-left' : 'h-right'));
+        let bondClass = p==='t' ? 'bond-v-top' : 'bond-v-bot';
+        
+        let bondHtml = (p==='t' || p==='b') ? `<div class="bond-h-v ${bondClass}"></div>` : '';
+        return `${bondHtml}<div class="h-btn ${posClass} ${val!=='H'?'h-subbed':''}" onclick="openSubModal('${chain}', ${ci}, '${p}', event)">${displayStr}</div>`;
+    }
+
+    function renderLab() {
+        const out = document.getElementById('lewis-output'); 
+        let h = '';
+
+        // --- 1. วาดสายฝั่งซ้าย (L) ---
+        if(['alkane','alkene'].includes(rootFamily)) {
+            for(let i=rootSize; i>=1; i--) { 
+                let hasTop = true, hasBot = true;
+                if(rootCode==='vinyl' && (i===2||i===1)) hasTop = false;
+                if(rootCode==='allyl' && (i===3||i===2)) hasTop = false;
+
+                h += `<div class="carbon-group">`;
+                if(hasTop) h += createH('L', i, 't');
+                h += `<div class="atom-c">C</div>`;
+                if(hasBot) h += createH('L', i, 'b');
+                
+                if(i===rootSize) h += `<div class="bond-h-v" style="width:20px; height:3px; left:-20px; top:20px;"></div>${createH('L', i, 'l')}`;
+                h += `</div>`;
+
+                if(i>1) h += `<div class="main-bond">${(rootCode==='vinyl'&&i===2)||(rootCode==='allyl'&&i===3)?'＝':'—'}</div>`;
+            }
+        } else {
+            let shape = rootCode.includes('cyclo3')?'△':rootCode.includes('cyclo4')?'□':rootCode.includes('cyclo5')?'⬠':'⬡';
+            if(rootCode === 'phenyl') shape = '⏣';
+            h += `<div class="atom-c" style="width:auto; padding:10px 20px; border-color:#0d9488; color:#0d9488;">${shape} ${rootCode}</div>`;
+        }
+
+        h += `<div class="main-bond">—</div>`;
+
+        // --- 2. วาดหมู่ฟังก์ชัน ---
+        let pStr = plugType;
+        if(pStr==='OH') pStr='O-H'; else if(pStr==='CHO') pStr='CH(=O)'; else if(pStr==='COOH') pStr='C(=O)OH';
+        else if(pStr==='COO') pStr='C(=O)O'; else if(pStr==='CO') pStr='C(=O)'; else if(pStr==='CONH2') pStr='C(=O)NH₂';
+        h += `<div class="plug-container">${pStr}</div>`;
+
+        // --- 3. วาดสายฝั่งขวา (R) ---
+        if(['O','COO','CO'].includes(plugType)) { 
+            h += `<div class="main-bond">—</div>`;
+            if(r2Size === 0) {
+                h += `<div class="atom-h" style="font-size:32px; font-weight:900; color:#10b981;">H</div>`;
+            } else {
+                for(let j=1; j<=r2Size; j++) { 
+                    h += `<div class="carbon-group">`;
+                    h += createH('R', j, 't');
+                    h += `<div class="atom-c">C</div>`;
+                    h += createH('R', j, 'b');
+                    
+                    if(j===r2Size) h += `<div class="bond-h-v" style="width:20px; height:3px; right:-20px; top:20px;"></div>${createH('R', j, 'r')}`;
+                    h += `</div>`;
+                    if(j<r2Size) h += `<div class="main-bond">—</div>`;
+                }
+            }
+        }
+        
+        out.innerHTML = h; 
+        updateData();
+    }
+
+    function updateData() {
+        let c = rootSize, h = rootSize*2+1, o = 0, n = 0, cl = 0, br = 0, f = 0;
+        let isSat = rootFamily === 'alkane';
+
+        if(rootCode==='vinyl'){h-=2; isSat=false;} if(rootCode==='allyl'){h-=2; isSat=false;}
+        if(rootFamily==='cyclo'){c=rootSize; h=rootSize*2-1;} if(rootCode==='phenyl'){c=6; h=5; isSat=false;}
+        
+        let effectivePlug = plugType;
+        if(r2Size === 0 && ['O','COO','CO'].includes(plugType)) {
+            if(plugType === 'O') effectivePlug = 'OH';
+            if(plugType === 'COO') effectivePlug = 'COOH';
+            if(plugType === 'CO') effectivePlug = 'CHO';
+        }
+
+        if(effectivePlug==='H') h+=1; else if(effectivePlug==='OH'){o=1; h+=1;} else if(effectivePlug==='CHO'){c+=1; o=1; h+=1; isSat=false;}
+        else if(effectivePlug==='COOH'){c+=1; o=2; h+=1; isSat=false;} else if(effectivePlug==='NH2'){n=1; h+=2;} 
+        else if(effectivePlug==='CONH2'){c+=1; o=1; n=1; h+=2; isSat=false;}
+        else if(effectivePlug==='COO'){c+=1+r2Size; o=2; h+=r2Size*2+1; isSat=false;}
+        else if(effectivePlug==='CO'){c+=1+r2Size; o=1; h+=r2Size*2+2; isSat=false;}
+        else if(effectivePlug==='O'){o=1; c+=r2Size; h+=r2Size*2+1;}
+
+        let subCount = 0;
+        for(let key in subs){ 
+            h-=1; subCount++;
+            let s=subs[key]; 
+            if(s==='CH3'){c+=1; h+=3;} else if(s==='C2H5'){c+=2; h+=5;} 
+            else if(s==='Cl')cl++; else if(s==='Br')br++; else if(s==='F')f++; 
+        }
+
+        // อัปเดตสูตรโมเลกุล
+        document.getElementById('formula-output').innerHTML = `C<sub>${c}</sub>H<sub>${h}</sub>${o?`O<sub>${o}</sub>`:''}${n?`N<sub>${n}</sub>`:''}${cl?`Cl<sub>${cl}</sub>`:''}${br?`Br<sub>${br}</sub>`:''}${f?`F<sub>${f}</sub>`:''}`;
+        
+        // อัปเดตป้ายอิ่มตัว
+        const sb = document.getElementById('sat-badge');
+        sb.innerText = isSat ? "อิ่มตัว 🟢" : "ไม่อิ่มตัว 🔴";
+        sb.style.background = isSat ? "var(--sat-color)" : "var(--unsat-color)";
+
+        // อัปเดตประเภทสารเคมี
+        let cls = "ไฮโดรคาร์บอน (Hydrocarbon)";
+        if(subCount > 0 && ['Cl','Br','F'].some(x => Object.values(subs).includes(x))) cls = "แฮโลแอลเคน (Haloalkane)";
+        else if(effectivePlug==='OH') cls = "แอลกอฮอล์ (Alcohol)";
+        else if(effectivePlug==='COOH') cls = "กรดคาร์บอกซิลิก (Carboxylic Acid)";
+        else if(effectivePlug==='CHO') cls = "แอลดีไฮด์ (Aldehyde)";
+        else if(effectivePlug==='NH2') cls = "เอมีน (Amine)";
+        else if(effectivePlug==='CONH2') cls = "เอไมด์ (Amide)";
+        else if(effectivePlug==='COO') cls = "เอสเทอร์ (Ester)";
+        else if(effectivePlug==='O') cls = "อีเทอร์ (Ether)";
+        else if(effectivePlug==='CO') cls = "คีโตน (Ketone)";
+        
+        if(rootFamily === 'cyclo') cls += " แบบวง (Cyclic)";
+        if(rootFamily === 'aromatic') cls += " อะโรมาติก (Aromatic)";
+
+        document.getElementById('class-info').innerText = cls;
+    }
+
+    // ปิด Modal เมื่อคลิกที่อื่น
+    window.onclick = e => { 
+        if(!e.target.matches('.h-btn') && !document.getElementById('sub-modal').contains(e.target)) 
+            document.getElementById('sub-modal').style.display='none'; 
+    }
+
+    setRoot('prop', 3, 'alkane'); 
+</script>
+</body>
+</html>

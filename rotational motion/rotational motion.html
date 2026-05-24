@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics Lab: Rotational Kinematics (Bilingual)</title>
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #000000;
+            --accent: #facc15;
+            --bg-body: #f8fafc;
+            --border: 4px solid #000000;
+            --shadow: 6px 6px 0px #000000;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+        }
+
+        * { box-sizing: border-box; font-family: 'K2D', sans-serif; user-select: none; }
+        body { background-color: var(--bg-body); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; color: var(--text); }
+
+        .container {
+            background: var(--card-bg); border: var(--border); box-shadow: 8px 8px 0px #000;
+            width: 100%; max-width: 1280px; padding: 20px; display: flex; flex-direction: column; gap: 20px;
+        }
+
+        .header-title {
+            margin: 0; padding: 15px; background: var(--accent); border: var(--border);
+            font-size: 24px; font-weight: 900; text-transform: uppercase; text-align: center;
+            box-shadow: 4px 4px 0px #000; letter-spacing: 1px;
+        }
+        .header-subtitle { display: block; font-size: 14px; font-weight: 600; color: #333; margin-top: 5px; }
+
+        .main-layout { display: flex; flex-wrap: wrap; gap: 20px; }
+
+        /* 🎛️ แผงควบคุม (Controls) */
+        .controls-panel { flex: 1; min-width: 350px; display: flex; flex-direction: column; gap: 15px; }
+        .control-group { background: #fff; border: 3px solid #000; padding: 15px; box-shadow: 3px 3px 0px #000; }
+        .control-group label { font-size: 16px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
+        .control-label-en { font-size: 12px; font-weight: 600; color: #64748b; display: block; margin-top: -2px; }
+        
+        .val-badge { background: #e2e8f0; border: 2px solid #000; padding: 2px 8px; border-radius: 4px; color: #2563eb; font-size: 18px; }
+        
+        input[type="range"] { width: 100%; margin-top: 10px; cursor: pointer; accent-color: #000; height: 8px; }
+
+        .btn-run {
+            background: #10b981; color: #fff; border: 3px solid #000; padding: 15px; font-size: 20px; font-weight: 900; cursor: pointer;
+            box-shadow: 4px 4px 0px #000; transition: 0.1s; text-align: center; text-transform: uppercase;
+        }
+        .btn-run span { display: block; font-size: 12px; font-weight: 600; }
+        .btn-run:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #000; }
+        .btn-run:disabled { background: #94a3b8; cursor: not-allowed; box-shadow: none; transform: translate(2px, 2px); }
+        
+        .btn-reset {
+            background: #f87171; color: #fff; border: 3px solid #000; padding: 10px; font-size: 16px; font-weight: 800; cursor: pointer;
+            box-shadow: 3px 3px 0px #000; transition: 0.1s; text-align: center; margin-top: -5px;
+        }
+        .btn-reset:active { transform: translate(2px, 2px); box-shadow: none; }
+
+        .note-box { font-size: 13px; color: #475569; background: #f1f5f9; padding: 10px; border-left: 4px solid #94a3b8; font-weight: 600; }
+
+        /* 🎬 จอแสดงผลกราฟิก (Canvas) */
+        .visual-panel {
+            flex: 1.5; min-width: 500px; height: 420px; background: #fff; border: 4px solid #000; position: relative;
+            display: flex; align-items: center; justify-content: center; overflow: hidden;
+            background-image: radial-gradient(#cbd5e1 2px, transparent 2px); background-size: 25px 25px;
+            box-shadow: inset 4px 4px 0px rgba(0,0,0,0.05);
+        }
+
+        .timer-display {
+            position: absolute; top: 15px; left: 15px; background: #fff; border: 3px solid #000; padding: 5px 15px;
+            font-size: 28px; font-weight: 900; box-shadow: 4px 4px 0px #000; color: #ea580c; z-index: 10; font-family: monospace;
+        }
+
+        .status-tag {
+            position: absolute; top: 15px; right: 15px; background: #fff; border: 2px solid #000; padding: 5px 10px;
+            font-size: 14px; font-weight: 800; z-index: 10; text-align: right;
+        }
+
+        /* 📊 แผงรายงานจุดเยือกแข็ง (Freeze Report) */
+        .report-panel {
+            width: 100%; border: var(--border); padding: 20px; background: #ecfdf5; box-shadow: var(--shadow);
+            display: none; flex-direction: column; gap: 15px; border-color: #059669; margin-top: 5px;
+        }
+        .report-header { font-size: 22px; font-weight: 900; color: #047857; text-align: center; border-bottom: 3px dashed #34d399; padding-bottom: 10px; margin: 0; }
+        
+        .report-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .report-card { background: #fff; border: 3px solid #000; padding: 15px; text-align: center; box-shadow: 4px 4px 0px #000; }
+        .report-title { font-size: 16px; font-weight: 900; color: #0f172a; margin-bottom: 10px; text-transform: uppercase; }
+        .report-title span { display: block; font-size: 12px; font-weight: 600; color: #64748b; }
+        
+        .data-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dashed #e2e8f0; padding: 10px 0; }
+        .data-row:last-child { border-bottom: none; }
+        .data-label { font-weight: 800; font-size: 15px; color: #0f172a; text-align: left; }
+        .data-label span { display: block; font-size: 11px; font-weight: 600; color: #64748b; }
+        .data-val { font-weight: 900; font-size: 20px; color: #2563eb; font-family: monospace; }
+        
+        .bridge-eq { font-size: 11px; color: #10b981; font-weight: 800; background: #d1fae5; padding: 2px 6px; border-radius: 4px; border: 1px solid #10b981; display: inline-block; margin-top: 4px;}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="header-title">
+        ⚙️ ห้องปฏิบัติการคิเนมาติกส์การหมุน 
+        <span class="header-subtitle">Interactive Rotational Kinematics Lab</span>
+    </h1>
+
+    <div class="main-layout">
+        <div class="controls-panel">
+            <div class="control-group" style="background: #eff6ff;">
+                <label><div>แรงดึงเชือก <span class="control-label-en">Pulling Force (F)</span></div> <span class="val-badge" id="val-f">20 N</span></label>
+                <input type="range" id="slider-f" min="10" max="100" step="5" value="20" oninput="updateVars()">
+            </div>
+            <div class="control-group" style="background: #f0fdfa;">
+                <label><div>รัศมีวงล้อ <span class="control-label-en">Wheel Radius (R)</span></div> <span class="val-badge" id="val-r">1.0 m</span></label>
+                <input type="range" id="slider-r" min="0.5" max="2.5" step="0.1" value="1.0" oninput="updateVars()">
+            </div>
+            <div class="control-group" style="background: #fff7ed;">
+                <label><div>เวลาเป้าหมาย <span class="control-label-en">Target Time (t)</span></div> <span class="val-badge" id="val-t" style="color: #ea580c;">3.0 s</span></label>
+                <input type="range" id="slider-t" min="1.0" max="10.0" step="0.5" value="3.0" oninput="updateVars()">
+            </div>
+
+            <div class="note-box">
+                💡 ข้อตกลง (Condition): สมมติให้ล้อวงนี้เป็นทรงกระบอกตัน มีมวลคงที่ (Mass) = 10 kg 
+                <br>โมเมนต์ความเฉื่อย (Moment of Inertia, I) = ½MR²
+            </div>
+
+            <button class="btn-run" id="btn-run" onclick="startSimulation()">
+                🚀 ดึงเชือก! <span>(RUN SIMULATOR)</span>
+            </button>
+            <button class="btn-reset" onclick="resetSimulation()">🔄 รีเซ็ต (Reset)</button>
+        </div>
+
+        <div class="visual-panel">
+            <div class="timer-display" id="timer-ui">0.00 s</div>
+            <div class="status-tag" id="status-ui">รอคำสั่ง<br><span style="font-size: 11px; color:#64748b;">(Awaiting Input)</span></div>
+            
+            <svg id="svg-canvas" width="600" height="400" viewBox="-100 -200 500 400" style="overflow: visible;">
+                <g id="vis-wheel-group">
+                    <circle cx="0" cy="0" r="50" fill="#e2e8f0" stroke="#000" stroke-width="4" id="vis-wheel"/>
+                    <line x1="0" y1="-50" x2="0" y2="50" stroke="#94a3b8" stroke-width="3" id="spoke1"/>
+                    <line x1="-50" y1="0" x2="50" y2="0" stroke="#94a3b8" stroke-width="3" id="spoke2"/>
+                    <circle cx="0" cy="-40" r="6" fill="#ca8a04" stroke="#000" stroke-width="2" id="vis-marker"/>
+                    <circle cx="0" cy="0" r="8" fill="#000"/> </g>
+
+                <line x1="0" y1="0" x2="35" y2="35" stroke="#3b82f6" stroke-width="3" stroke-dasharray="4,4" id="vis-r-line"/>
+                <text x="40" y="45" font-weight="900" fill="#3b82f6" font-size="16" id="vis-r-text">R</text>
+
+                <line x1="0" y1="-50" x2="0" y2="-50" stroke="#ef4444" stroke-width="6" stroke-dasharray="15, 10" id="vis-rope"/>
+                
+                <g id="vis-robot" transform="translate(0, -50)">
+                    <rect x="0" y="-15" width="30" height="30" fill="#facc15" stroke="#000" stroke-width="3"/>
+                    <text x="5" y="5" font-weight="900" font-size="14">🤖</text>
+                    
+                    <line x1="30" y1="0" x2="60" y2="0" stroke="#ef4444" stroke-width="3" stroke-dasharray="4,4"/>
+                    <polygon points="60,-5 68,0 60,5" fill="#ef4444"/>
+                    <text x="75" y="-5" font-weight="800" fill="#ef4444" font-size="16" id="vis-f-text">20N</text>
+                    <text x="75" y="15" font-weight="800" fill="#16a34a" font-size="14" id="vis-s-text">s = 0.0 m</text>
+                </g>
+            </svg>
+        </div>
+    </div>
+
+    <div class="report-panel" id="report-panel">
+        <h3 class="report-header">❄️ สถานะหยุดนิ่ง (FREEZE-FRAME): ณ วินาทีที่ <span id="rep-time">3.0</span></h3>
+        
+        <div class="report-grid">
+            <div class="report-card">
+                <div class="report-title">⚙️ ช่วงที่ออกแรง <span>(Acceleration Phase)</span></div>
+                <div class="data-row">
+                    <div class="data-label">แรงบิด <span>Torque (τ)</span></div> 
+                    <div class="data-val" id="rep-tau">0.0 <span style='font-size:12px;color:#64748b;'>N·m</span></div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">ความเร่งมุม <span>Angular Accel. (α)</span></div> 
+                    <div class="data-val" id="rep-alpha">0.0 <span style='font-size:12px;color:#64748b;'>rad/s²</span></div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">ความเร่งเส้น <span>Linear Accel. (a)</span> <br><span class="bridge-eq">a = αR</span></div> 
+                    <div class="data-val" id="rep-a">0.0 <span style='font-size:12px;color:#64748b;'>m/s²</span></div>
+                </div>
+            </div>
+
+            <div class="report-card" style="border-color: #3b82f6;">
+                <div class="report-title" style="color: #3b82f6;">🚀 ความเร็วที่ได้ <span>(Final Velocity)</span></div>
+                <div class="data-row">
+                    <div class="data-label">ความเร็วต้น <span>Initial Vel. (ω_i)</span></div> 
+                    <div class="data-val">0.0 <span style='font-size:12px;color:#64748b;'>rad/s</span></div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">ความเร็วมุม <span>Final Angular Vel. (ω_f)</span></div> 
+                    <div class="data-val" id="rep-omega">0.0 <span style='font-size:12px;color:#64748b;'>rad/s</span></div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">ความเร็วเส้น <span>Final Linear Vel. (v_f)</span> <br><span class="bridge-eq">v = ωR</span></div> 
+                    <div class="data-val" id="rep-v">0.0 <span style='font-size:12px;color:#64748b;'>m/s</span></div>
+                </div>
+            </div>
+
+            <div class="report-card" style="border-color: #10b981;">
+                <div class="report-title" style="color: #10b981;">📏 การกระจัด <span>(Displacement)</span></div>
+                <div class="data-row">
+                    <div class="data-label">มุมที่กวาดได้ <span>Angular Disp. (θ)</span></div> 
+                    <div class="data-val" id="rep-theta">0.0 <span style='font-size:12px;color:#64748b;'>rad</span></div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">เชือกถูกลากไป <span>Linear Disp. (s)</span> <br><span class="bridge-eq">s = θR</span></div> 
+                    <div class="data-val" id="rep-s">0.0 <span style='font-size:12px;color:#64748b;'>m</span></div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">จำนวนรอบ <span>Total Revolutions</span></div> 
+                    <div class="data-val" id="rep-rev">0.0 <span style='font-size:12px;color:#64748b;'>รอบ</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Constants & State
+    const M = 10; // Mass = 10 kg
+    const SCALE = 20; // ปรับสเกลภาพให้เห็นหุ่นยนต์ดึงได้ไกลขึ้น (1m = 20px)
+    let reqAnim;
+    let startTime = null;
+    let isRunning = false;
+
+    // Physics Variables
+    let F, R, targetT;
+    let tau, I, alpha, a;
+    let currentT = 0, currentTheta = 0, currentS = 0;
+
+    // Elements
+    const elF = document.getElementById('slider-f');
+    const elR = document.getElementById('slider-r');
+    const elT = document.getElementById('slider-t');
+    const timerUI = document.getElementById('timer-ui');
+    const wheelGrp = document.getElementById('vis-wheel-group');
+    const robot = document.getElementById('vis-robot');
+    const rope = document.getElementById('vis-rope');
+    const statusUI = document.getElementById('status-ui');
+
+    function updateVars() {
+        F = parseFloat(elF.value);
+        R = parseFloat(elR.value);
+        targetT = parseFloat(elT.value);
+
+        document.getElementById('val-f').innerText = F + " N";
+        document.getElementById('val-r').innerText = R.toFixed(1) + " m";
+        document.getElementById('val-t').innerText = targetT.toFixed(1) + " s";
+        document.getElementById('vis-f-text').innerText = F + "N";
+
+        // Update SVG Static Graphics
+        let pxR = R * SCALE * 2.5; // ขยายล้อให้เห็นชัดหน่อยแม้สเกลระยะกระจัดจะไกล
+        
+        document.getElementById('vis-wheel').setAttribute('r', pxR);
+        document.getElementById('spoke1').setAttribute('y1', -pxR);
+        document.getElementById('spoke1').setAttribute('y2', pxR);
+        document.getElementById('spoke2').setAttribute('x1', -pxR);
+        document.getElementById('spoke2').setAttribute('x2', pxR);
+        document.getElementById('vis-marker').setAttribute('cy', -(pxR - 10));
+        
+        // เซ็ตตำแหน่งเชือกเริ่มต้น (ติดกับวงล้อเสมอ)
+        rope.setAttribute('y1', -pxR);
+        rope.setAttribute('y2', -pxR);
+        rope.setAttribute('x1', 0); // จุดเริ่มต้นเชือกอยู่บนสุดของวงล้อเสมอ
+        
+        // ถ้ายังไม่ได้วิ่ง ให้เชือกยืดมาแค่ติดตัวหุ่นยนต์ (0)
+        if (!isRunning && currentT === 0) {
+            rope.setAttribute('x2', 0); 
+            robot.setAttribute('transform', `translate(0, ${-pxR})`);
+            document.getElementById('vis-s-text').innerText = "s = 0.0 m";
+        }
+
+        let rLineX = pxR * Math.cos(Math.PI/4);
+        let rLineY = pxR * Math.sin(Math.PI/4);
+        document.getElementById('vis-r-line').setAttribute('x2', rLineX);
+        document.getElementById('vis-r-line').setAttribute('y2', rLineY);
+        document.getElementById('vis-r-text').setAttribute('x', rLineX + 5);
+        document.getElementById('vis-r-text').setAttribute('y', rLineY + 15);
+    }
+
+    function calculatePhysics() {
+        // I = 1/2 M R^2
+        I = 0.5 * M * (R * R);
+        tau = F * R;
+        alpha = tau / I;
+        a = alpha * R;
+    }
+
+    function startSimulation() {
+        if (isRunning) return;
+        updateVars();
+        calculatePhysics();
+        
+        // Reset UI
+        document.getElementById('report-panel').style.display = 'none';
+        document.getElementById('btn-run').disabled = true;
+        elF.disabled = true; elR.disabled = true; elT.disabled = true;
+        
+        statusUI.innerHTML = "กำลังเร่ง...<br><span style='font-size: 11px; color:#f87171;'>(Accelerating)</span>";
+        statusUI.style.borderColor = "#ef4444"; statusUI.style.color = "#ef4444";
+        
+        currentT = 0;
+        startTime = null;
+        isRunning = true;
+        reqAnim = requestAnimationFrame(animate);
+    }
+
+    function animate(timestamp) {
+        if (!startTime) startTime = timestamp;
+        let elapsed = (timestamp - startTime) / 1000; 
+
+        if (elapsed >= targetT) {
+            elapsed = targetT;
+            isRunning = false;
+        }
+
+        currentT = elapsed;
+        
+        // Kinematic Equations
+        let theta = 0.5 * alpha * (currentT * currentT);
+        let s = 0.5 * a * (currentT * currentT);
+        let degrees = theta * (180 / Math.PI);
+
+        // Update UI
+        timerUI.innerText = currentT.toFixed(2) + " s";
+        wheelGrp.setAttribute('transform', `rotate(${degrees})`);
+        
+        // คำนวณระยะพิกเซลที่เชือกถูกดึงออกไป
+        let pxR = R * SCALE * 2.5; 
+        let pxS = s * SCALE; 
+        
+        // อัปเดตเชือกให้ยืดตามระยะหุ่นยนต์
+        rope.setAttribute('x2', pxS);
+        // เลื่อนลายเชือกให้ดูเหมือนกำลังวิ่ง (สร้างความรู้สึกถึงการถูกลาก)
+        rope.setAttribute('stroke-dashoffset', -pxS); 
+        
+        // หุ่นยนต์ขยับติดกับปลายเชือก
+        robot.setAttribute('transform', `translate(${pxS}, ${-pxR})`);
+        document.getElementById('vis-s-text').innerText = `s = ${s.toFixed(1)} m`;
+
+        if (isRunning) {
+            reqAnim = requestAnimationFrame(animate);
+        } else {
+            freezeFrame(theta, s);
+        }
+    }
+
+    function freezeFrame(finalTheta, finalS) {
+        statusUI.innerHTML = "❄️ ล็อกภาพ!<br><span style='font-size: 11px; color:#60a5fa;'>(Freeze Frame)</span>";
+        statusUI.style.borderColor = "#3b82f6"; statusUI.style.color = "#3b82f6";
+        
+        // Final Calculations
+        let finalOmega = alpha * targetT;
+        let finalV = a * targetT;
+        let totalRevs = finalTheta / (2 * Math.PI);
+
+        // Populate Report
+        document.getElementById('rep-time').innerText = targetT.toFixed(1);
+        document.getElementById('rep-tau').innerHTML = tau.toFixed(1) + " <span style='font-size:12px;color:#64748b;'>N·m</span>";
+        document.getElementById('rep-alpha').innerHTML = alpha.toFixed(2) + " <span style='font-size:12px;color:#64748b;'>rad/s²</span>";
+        document.getElementById('rep-a').innerHTML = a.toFixed(2) + " <span style='font-size:12px;color:#64748b;'>m/s²</span>";
+        
+        document.getElementById('rep-omega').innerHTML = finalOmega.toFixed(2) + " <span style='font-size:12px;color:#64748b;'>rad/s</span>";
+        document.getElementById('rep-v').innerHTML = finalV.toFixed(2) + " <span style='font-size:12px;color:#64748b;'>m/s</span>";
+        
+        document.getElementById('rep-theta').innerHTML = finalTheta.toFixed(2) + " <span style='font-size:12px;color:#64748b;'>rad</span>";
+        document.getElementById('rep-s').innerHTML = finalS.toFixed(2) + " <span style='font-size:12px;color:#64748b;'>m</span>";
+        document.getElementById('rep-rev').innerHTML = totalRevs.toFixed(2) + " <span style='font-size:12px;color:#64748b;'>รอบ</span>";
+
+        document.getElementById('report-panel').style.display = 'flex';
+    }
+
+    function resetSimulation() {
+        cancelAnimationFrame(reqAnim);
+        isRunning = false;
+        
+        document.getElementById('btn-run').disabled = false;
+        elF.disabled = false; elR.disabled = false; elT.disabled = false;
+        
+        timerUI.innerText = "0.00 s";
+        statusUI.innerHTML = "รอคำสั่ง<br><span style='font-size: 11px; color:#64748b;'>(Awaiting Input)</span>";
+        statusUI.style.borderColor = "#000"; statusUI.style.color = "#000";
+        document.getElementById('report-panel').style.display = 'none';
+        
+        wheelGrp.setAttribute('transform', `rotate(0)`);
+        rope.setAttribute('stroke-dashoffset', 0); // รีเซ็ตลายเชือก
+        
+        // รีเซ็ตตัวแปรระยะจัดเก็บชั่วคราว
+        currentT = 0;
+        updateVars();
+    }
+
+    // Init
+    updateVars();
+</script>
+</body>
+</html>
