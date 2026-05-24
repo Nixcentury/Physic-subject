@@ -96,6 +96,19 @@
         .data-val { font-weight: 900; font-size: 20px; color: #2563eb; font-family: monospace; }
         
         .bridge-eq { font-size: 11px; color: #10b981; font-weight: 800; background: #d1fae5; padding: 2px 6px; border-radius: 4px; border: 1px solid #10b981; display: inline-block; margin-top: 4px;}
+
+        /* 📝 ส่วนแจกแจงการคำนวณ (Calculation Breakdown) - Bilingual Fix */
+        .calc-breakdown {
+            background: #fef3c7; border: 3px dashed #d97706; padding: 15px; margin-top: 5px;
+            box-shadow: 4px 4px 0px #d97706; display: none;
+        }
+        .calc-header { font-size: 18px; font-weight: 900; color: #b45309; margin-bottom: 12px; border-bottom: 2px solid #fcd34d; padding-bottom: 5px; }
+        .calc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px; }
+        .calc-step { font-size: 14px; color: #334155; background: #fff; padding: 10px; border: 2px solid #000; font-family: monospace; line-height: 1.5; }
+        .calc-step-label { font-family: 'K2D', sans-serif; font-weight: 800; font-size: 15px; color: #0f172a; display: block; margin-bottom: 5px; }
+        .calc-step-label span { font-size: 11px; color: #64748b; display: inline-block; margin-left: 4px; }
+        .calc-step span.formula { color: #2563eb; font-weight: bold; font-size: 15px; }
+        .calc-step span.result { color: #059669; font-weight: bold; font-size: 15px; background: #d1fae5; padding: 0 4px; border-radius: 3px;}
     </style>
 </head>
 <body>
@@ -142,7 +155,8 @@
                     <line x1="0" y1="-50" x2="0" y2="50" stroke="#94a3b8" stroke-width="3" id="spoke1"/>
                     <line x1="-50" y1="0" x2="50" y2="0" stroke="#94a3b8" stroke-width="3" id="spoke2"/>
                     <circle cx="0" cy="-40" r="6" fill="#ca8a04" stroke="#000" stroke-width="2" id="vis-marker"/>
-                    <circle cx="0" cy="0" r="8" fill="#000"/> </g>
+                    <circle cx="0" cy="0" r="8" fill="#000"/> 
+                </g>
 
                 <line x1="0" y1="0" x2="35" y2="35" stroke="#3b82f6" stroke-width="3" stroke-dasharray="4,4" id="vis-r-line"/>
                 <text x="40" y="45" font-weight="900" fill="#3b82f6" font-size="16" id="vis-r-text">R</text>
@@ -214,13 +228,16 @@
                 </div>
             </div>
         </div>
+        
+        <div class="calc-breakdown" id="calc-breakdown">
+            </div>
     </div>
 </div>
 
 <script>
     // Constants & State
     const M = 10; // Mass = 10 kg
-    const SCALE = 20; // ปรับสเกลภาพให้เห็นหุ่นยนต์ดึงได้ไกลขึ้น (1m = 20px)
+    const SCALE = 20; // ปรับสเกลภาพ
     let reqAnim;
     let startTime = null;
     let isRunning = false;
@@ -250,8 +267,7 @@
         document.getElementById('val-t').innerText = targetT.toFixed(1) + " s";
         document.getElementById('vis-f-text').innerText = F + "N";
 
-        // Update SVG Static Graphics
-        let pxR = R * SCALE * 2.5; // ขยายล้อให้เห็นชัดหน่อยแม้สเกลระยะกระจัดจะไกล
+        let pxR = R * SCALE * 2.5; 
         
         document.getElementById('vis-wheel').setAttribute('r', pxR);
         document.getElementById('spoke1').setAttribute('y1', -pxR);
@@ -260,12 +276,10 @@
         document.getElementById('spoke2').setAttribute('x2', pxR);
         document.getElementById('vis-marker').setAttribute('cy', -(pxR - 10));
         
-        // เซ็ตตำแหน่งเชือกเริ่มต้น (ติดกับวงล้อเสมอ)
         rope.setAttribute('y1', -pxR);
         rope.setAttribute('y2', -pxR);
-        rope.setAttribute('x1', 0); // จุดเริ่มต้นเชือกอยู่บนสุดของวงล้อเสมอ
+        rope.setAttribute('x1', 0); 
         
-        // ถ้ายังไม่ได้วิ่ง ให้เชือกยืดมาแค่ติดตัวหุ่นยนต์ (0)
         if (!isRunning && currentT === 0) {
             rope.setAttribute('x2', 0); 
             robot.setAttribute('transform', `translate(0, ${-pxR})`);
@@ -281,7 +295,6 @@
     }
 
     function calculatePhysics() {
-        // I = 1/2 M R^2
         I = 0.5 * M * (R * R);
         tau = F * R;
         alpha = tau / I;
@@ -295,6 +308,7 @@
         
         // Reset UI
         document.getElementById('report-panel').style.display = 'none';
+        document.getElementById('calc-breakdown').style.display = 'none';
         document.getElementById('btn-run').disabled = true;
         elF.disabled = true; elR.disabled = true; elT.disabled = true;
         
@@ -318,25 +332,19 @@
 
         currentT = elapsed;
         
-        // Kinematic Equations
         let theta = 0.5 * alpha * (currentT * currentT);
         let s = 0.5 * a * (currentT * currentT);
         let degrees = theta * (180 / Math.PI);
 
-        // Update UI
         timerUI.innerText = currentT.toFixed(2) + " s";
         wheelGrp.setAttribute('transform', `rotate(${degrees})`);
         
-        // คำนวณระยะพิกเซลที่เชือกถูกดึงออกไป
         let pxR = R * SCALE * 2.5; 
         let pxS = s * SCALE; 
         
-        // อัปเดตเชือกให้ยืดตามระยะหุ่นยนต์
         rope.setAttribute('x2', pxS);
-        // เลื่อนลายเชือกให้ดูเหมือนกำลังวิ่ง (สร้างความรู้สึกถึงการถูกลาก)
         rope.setAttribute('stroke-dashoffset', -pxS); 
         
-        // หุ่นยนต์ขยับติดกับปลายเชือก
         robot.setAttribute('transform', `translate(${pxS}, ${-pxR})`);
         document.getElementById('vis-s-text').innerText = `s = ${s.toFixed(1)} m`;
 
@@ -351,7 +359,6 @@
         statusUI.innerHTML = "❄️ ล็อกภาพ!<br><span style='font-size: 11px; color:#60a5fa;'>(Freeze Frame)</span>";
         statusUI.style.borderColor = "#3b82f6"; statusUI.style.color = "#3b82f6";
         
-        // Final Calculations
         let finalOmega = alpha * targetT;
         let finalV = a * targetT;
         let totalRevs = finalTheta / (2 * Math.PI);
@@ -370,6 +377,47 @@
         document.getElementById('rep-rev').innerHTML = totalRevs.toFixed(2) + " <span style='font-size:12px;color:#64748b;'>รอบ</span>";
 
         document.getElementById('report-panel').style.display = 'flex';
+
+        // Populate Calculation Breakdown - BILINGUAL FIX
+        let calcHTML = `
+            <div class="calc-header">📝 แจกแจงวิธีทำ <span style="font-size: 14px; color: #d97706;">(Step-by-Step Calculation)</span></div>
+            <div class="calc-grid">
+                <div class="calc-step">
+                    <span class="calc-step-label">1. ความเฉื่อย <span>(Moment of Inertia, I)</span></span>
+                    <span class="formula">I = ½MR²</span><br>= 0.5 × 10 × (${R.toFixed(1)})² <br>= <span class="result">${I.toFixed(2)} kg·m²</span>
+                </div>
+                <div class="calc-step">
+                    <span class="calc-step-label">2. แรงบิด <span>(Torque, τ)</span></span>
+                    <span class="formula">τ = F × R</span><br>= ${F} × ${R.toFixed(1)} <br>= <span class="result">${tau.toFixed(1)} N·m</span>
+                </div>
+                <div class="calc-step">
+                    <span class="calc-step-label">3. ความเร่งมุม <span>(Angular Accel., α)</span></span>
+                    <span class="formula">α = τ / I</span><br>= ${tau.toFixed(1)} / ${I.toFixed(2)} <br>= <span class="result">${alpha.toFixed(2)} rad/s²</span>
+                </div>
+                <div class="calc-step">
+                    <span class="calc-step-label">4. ความเร่งเส้น <span>(Linear Accel., a)</span></span>
+                    <span class="formula">a = α × R</span><br>= ${alpha.toFixed(2)} × ${R.toFixed(1)} <br>= <span class="result">${a.toFixed(2)} m/s²</span>
+                </div>
+                <div class="calc-step">
+                    <span class="calc-step-label">5. ความเร็วมุม <span>(Angular Vel., ω)</span></span>
+                    <span class="formula">ω = α × t</span><br>= ${alpha.toFixed(2)} × ${targetT.toFixed(1)} <br>= <span class="result">${finalOmega.toFixed(2)} rad/s</span>
+                </div>
+                <div class="calc-step">
+                    <span class="calc-step-label">6. ความเร็วเส้น <span>(Linear Vel., v)</span></span>
+                    <span class="formula">v = ω × R</span><br>= ${finalOmega.toFixed(2)} × ${R.toFixed(1)} <br>= <span class="result">${finalV.toFixed(2)} m/s</span>
+                </div>
+                <div class="calc-step">
+                    <span class="calc-step-label">7. ระยะมุม <span>(Angular Disp., θ)</span></span>
+                    <span class="formula">θ = ½αt²</span><br>= 0.5 × ${alpha.toFixed(2)} × (${targetT.toFixed(1)})² <br>= <span class="result">${finalTheta.toFixed(2)} rad</span>
+                </div>
+                <div class="calc-step">
+                    <span class="calc-step-label">8. ระยะเส้น <span>(Linear Disp., s)</span></span>
+                    <span class="formula">s = θ × R</span><br>= ${finalTheta.toFixed(2)} × ${R.toFixed(1)} <br>= <span class="result">${finalS.toFixed(2)} m</span>
+                </div>
+            </div>
+        `;
+        document.getElementById('calc-breakdown').innerHTML = calcHTML;
+        document.getElementById('calc-breakdown').style.display = 'block';
     }
 
     function resetSimulation() {
@@ -382,12 +430,13 @@
         timerUI.innerText = "0.00 s";
         statusUI.innerHTML = "รอคำสั่ง<br><span style='font-size: 11px; color:#64748b;'>(Awaiting Input)</span>";
         statusUI.style.borderColor = "#000"; statusUI.style.color = "#000";
+        
         document.getElementById('report-panel').style.display = 'none';
+        document.getElementById('calc-breakdown').style.display = 'none';
         
         wheelGrp.setAttribute('transform', `rotate(0)`);
-        rope.setAttribute('stroke-dashoffset', 0); // รีเซ็ตลายเชือก
+        rope.setAttribute('stroke-dashoffset', 0); 
         
-        // รีเซ็ตตัวแปรระยะจัดเก็บชั่วคราว
         currentT = 0;
         updateVars();
     }
