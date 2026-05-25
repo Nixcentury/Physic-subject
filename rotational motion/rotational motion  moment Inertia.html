@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shape Lab: Rotational Inertia (Bilingual)</title>
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #000000;
+            --accent: #facc15;
+            --bg-body: #f8fafc;
+            --border: 4px solid #000000;
+            --shadow: 6px 6px 0px #000000;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+        }
+
+        * { box-sizing: border-box; font-family: 'K2D', sans-serif; user-select: none; }
+        body { background-color: var(--bg-body); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; color: var(--text); }
+
+        .container {
+            background: var(--card-bg); border: var(--border); box-shadow: 8px 8px 0px #000;
+            width: 100%; max-width: 1280px; padding: 20px; display: flex; flex-direction: column; gap: 20px;
+        }
+
+        .header-title {
+            margin: 0; padding: 15px; background: var(--accent); border: var(--border);
+            font-size: 24px; font-weight: 900; text-transform: uppercase; text-align: center;
+            box-shadow: 4px 4px 0px #000; letter-spacing: 1px;
+        }
+        .header-subtitle { display: block; font-size: 14px; font-weight: 600; color: #333; margin-top: 5px; }
+
+        .main-layout { display: flex; flex-wrap: wrap; gap: 20px; }
+
+        /* 🎛️ แผงควบคุม (Controls) */
+        .controls-panel { flex: 1; min-width: 350px; display: flex; flex-direction: column; gap: 15px; }
+        .control-group { background: #fff; border: 3px solid #000; padding: 15px; box-shadow: 3px 3px 0px #000; }
+        .control-group label { font-size: 16px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
+        .control-label-en { font-size: 12px; font-weight: 600; color: #64748b; display: block; margin-top: -2px; }
+        
+        .val-badge { background: #e2e8f0; border: 2px solid #000; padding: 2px 8px; border-radius: 4px; color: #2563eb; font-size: 18px; }
+        
+        select, input[type="range"] { width: 100%; margin-top: 10px; cursor: pointer; border: 2px solid #000; font-size: 16px; padding: 5px; outline: none; }
+        input[type="range"] { accent-color: #000; height: 8px; padding: 0; border: none; }
+
+        .btn-run {
+            background: #10b981; color: #fff; border: 3px solid #000; padding: 15px; font-size: 20px; font-weight: 900; cursor: pointer;
+            box-shadow: 4px 4px 0px #000; transition: 0.1s; text-align: center; text-transform: uppercase; margin-top: 5px;
+        }
+        .btn-run span { display: block; font-size: 12px; font-weight: 600; }
+        .btn-run:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #000; }
+        .btn-run:disabled { background: #94a3b8; cursor: not-allowed; box-shadow: none; transform: translate(2px, 2px); }
+        
+        .btn-reset {
+            background: #f87171; color: #fff; border: 3px solid #000; padding: 10px; font-size: 16px; font-weight: 800; cursor: pointer;
+            box-shadow: 3px 3px 0px #000; transition: 0.1s; text-align: center; margin-top: -5px;
+        }
+        .btn-reset:active { transform: translate(2px, 2px); box-shadow: none; }
+
+        /* 🎬 จอแสดงผลกราฟิก (Canvas) */
+        .visual-panel {
+            flex: 1.5; min-width: 500px; height: 480px; background: #fff; border: 4px solid #000; position: relative;
+            display: flex; align-items: center; justify-content: center; overflow: hidden;
+            background-image: radial-gradient(#cbd5e1 2px, transparent 2px); background-size: 25px 25px;
+            box-shadow: inset 4px 4px 0px rgba(0,0,0,0.05);
+        }
+
+        .timer-display {
+            position: absolute; top: 15px; left: 15px; background: #fff; border: 3px solid #000; padding: 5px 15px;
+            font-size: 28px; font-weight: 900; box-shadow: 4px 4px 0px #000; color: #ea580c; z-index: 10; font-family: monospace;
+        }
+
+        .status-tag {
+            position: absolute; top: 15px; right: 15px; background: #fff; border: 2px solid #000; padding: 5px 10px;
+            font-size: 14px; font-weight: 800; z-index: 10; text-align: right;
+        }
+
+        /* 📊 แผงรายงานจุดเยือกแข็ง (Freeze Report) */
+        .report-panel {
+            width: 100%; border: var(--border); padding: 20px; background: #ecfdf5; box-shadow: var(--shadow);
+            display: none; flex-direction: column; gap: 15px; border-color: #059669; margin-top: 5px;
+        }
+        .report-header { font-size: 22px; font-weight: 900; color: #047857; text-align: center; border-bottom: 3px dashed #34d399; padding-bottom: 10px; margin: 0; }
+        
+        /* 📝 ส่วนแจกแจงการคำนวณ (Calculation Breakdown) */
+        .calc-breakdown {
+            background: #fef3c7; border: 3px dashed #d97706; padding: 15px;
+            box-shadow: 4px 4px 0px #d97706; display: flex; flex-direction: column; gap: 10px;
+        }
+        .calc-header { font-size: 18px; font-weight: 900; color: #b45309; margin-bottom: 5px; border-bottom: 2px solid #fcd34d; padding-bottom: 5px; }
+        .calc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; }
+        .calc-step { font-size: 14px; color: #334155; background: #fff; padding: 12px; border: 2px solid #000; font-family: monospace; line-height: 1.6; }
+        .calc-step-label { font-family: 'K2D', sans-serif; font-weight: 800; font-size: 16px; color: #0f172a; display: block; margin-bottom: 5px; }
+        .calc-step-label span { font-size: 12px; color: #64748b; display: inline-block; margin-left: 4px; }
+        .calc-step span.formula { color: #2563eb; font-weight: bold; font-size: 16px; }
+        .calc-step span.result { color: #059669; font-weight: bold; font-size: 18px; background: #d1fae5; padding: 0 6px; border-radius: 3px;}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="header-title">
+        ⚙️ Shape Lab: กฎการหมุนและการกระจายตัวของมวล
+        <span class="header-subtitle">Rotational Inertia & Mass Distribution</span>
+    </h1>
+
+    <div class="main-layout">
+        <div class="controls-panel">
+            <div class="control-group" style="background: #fdf2f8;">
+                <label><div>รูปทรงวัตถุ <span class="control-label-en">Shape Selector</span></div></label>
+                <select id="in-shape" onchange="updateVars()">
+                    <option value="1.0">⭕ ห่วงวงแหวน (Hoop) 👉 k = 1.0</option>
+                    <option value="0.5" selected>💿 ทรงกระบอกตัน (Solid Cylinder) 👉 k = 0.5</option>
+                    <option value="0.4">🏀 ทรงกลมตัน (Solid Sphere) 👉 k = 0.4</option>
+                </select>
+            </div>
+            <div class="control-group" style="background: #f0fdfa;">
+                <label><div>มวลวัตถุ <span class="control-label-en">Mass (M)</span></div> <span class="val-badge" id="val-m">10 kg</span></label>
+                <input type="range" id="in-m" min="1" max="50" step="1" value="10" oninput="updateVars()">
+            </div>
+            <div class="control-group" style="background: #eff6ff;">
+                <label><div>รัศมี <span class="control-label-en">Radius (R)</span></div> <span class="val-badge" id="val-r">1.0 m</span></label>
+                <input type="range" id="in-r" min="0.5" max="2.0" step="0.1" value="1.0" oninput="updateVars()">
+            </div>
+            <div class="control-group" style="background: #fff7ed;">
+                <label><div>แรงดึง <span class="control-label-en">Pulling Force (F)</span></div> <span class="val-badge" id="val-f">20 N</span></label>
+                <input type="range" id="in-f" min="5" max="100" step="5" value="20" oninput="updateVars()">
+            </div>
+
+            <button class="btn-run" id="btn-run" onclick="startSimulation()">
+                🚀 ดึงเชือก! <span>(PULL!)</span>
+            </button>
+            <button class="btn-reset" onclick="resetSimulation()">🔄 รีเซ็ต (Reset)</button>
+        </div>
+
+        <div class="visual-panel">
+            <div class="timer-display" id="timer-ui">0.00 s</div>
+            <div class="status-tag" id="status-ui">รอคำสั่ง<br><span style="font-size: 11px; color:#64748b;">(Awaiting Input)</span></div>
+            
+            <svg id="svg-canvas" width="600" height="400" viewBox="-100 -200 500 400" style="overflow: visible;">
+                <defs>
+                    <radialGradient id="sphereGrad" cx="30%" cy="30%" r="70%">
+                        <stop offset="0%" stop-color="#bfdbfe" />
+                        <stop offset="100%" stop-color="#1d4ed8" />
+                    </radialGradient>
+                </defs>
+
+                <g id="vis-wheel-group">
+                    <circle cx="0" cy="0" r="50" fill="#94a3b8" stroke="#000" stroke-width="4" id="vis-shape"/>
+                    <g id="vis-spokes">
+                        <line x1="0" y1="-50" x2="0" y2="50" stroke="#475569" stroke-width="2" stroke-dasharray="4,4" id="spoke1"/>
+                        <line x1="-50" y1="0" x2="50" y2="0" stroke="#475569" stroke-width="2" stroke-dasharray="4,4" id="spoke2"/>
+                    </g>
+                    <circle cx="0" cy="-40" r="6" fill="#facc15" stroke="#000" stroke-width="2" id="vis-marker"/>
+                    <circle cx="0" cy="0" r="8" fill="#000"/> </g>
+
+                <line x1="0" y1="0" x2="35" y2="35" stroke="#000" stroke-width="3" stroke-dasharray="4,4" id="vis-r-line"/>
+                <rect x="30" y="25" width="25" height="20" fill="#fff" stroke="#000" rx="3"></rect>
+                <text x="35" y="40" font-weight="900" fill="#000" font-size="14" id="vis-r-text">R</text>
+
+                <line x1="0" y1="-50" x2="0" y2="-50" stroke="#ef4444" stroke-width="6" stroke-dasharray="15, 10" id="vis-rope"/>
+                
+                <g id="vis-robot" transform="translate(0, -50)">
+                    <rect x="0" y="-15" width="30" height="30" fill="#facc15" stroke="#000" stroke-width="3"/>
+                    <text x="5" y="5" font-weight="900" font-size="14">🤖</text>
+                    
+                    <line x1="30" y1="0" x2="60" y2="0" stroke="#ef4444" stroke-width="3" stroke-dasharray="4,4"/>
+                    <polygon points="60,-5 68,0 60,5" fill="#ef4444"/>
+                    <text x="75" y="-5" font-weight="900" fill="#ef4444" font-size="16" id="vis-f-text">20N</text>
+                    <text x="75" y="15" font-weight="800" fill="#16a34a" font-size="14" id="vis-s-text">s = 0.0 m</text>
+                </g>
+            </svg>
+        </div>
+    </div>
+
+    <div class="report-panel" id="report-panel">
+        <h3 class="report-header">❄️ สถานะหยุดนิ่ง (FREEZE-FRAME): ณ วินาทีที่ 3.0</h3>
+        
+        <div class="calc-breakdown" id="calc-breakdown">
+            </div>
+    </div>
+</div>
+
+<script>
+    const TARGET_TIME = 3.0; // ล็อกเวลาทดลองที่ 3 วินาที
+    const SCALE = 25; // Base scale (1m = 25px)
+    let reqAnim;
+    let startTime = null;
+    let isRunning = false;
+
+    let M, R, F, K;
+    let I, tau, alpha, a;
+    let currentT = 0;
+
+    const elM = document.getElementById('in-m');
+    const elR = document.getElementById('in-r');
+    const elF = document.getElementById('in-f');
+    const elShape = document.getElementById('in-shape');
+    
+    const objShape = document.getElementById('vis-shape');
+    const objSpokes = document.getElementById('vis-spokes');
+    const timerUI = document.getElementById('timer-ui');
+    const wheelGrp = document.getElementById('vis-wheel-group');
+    const robot = document.getElementById('vis-robot');
+    const rope = document.getElementById('vis-rope');
+    const statusUI = document.getElementById('status-ui');
+
+    function updateVars() {
+        M = parseFloat(elM.value);
+        R = parseFloat(elR.value);
+        F = parseFloat(elF.value);
+        K = parseFloat(elShape.value);
+
+        document.getElementById('val-m').innerText = M + " kg";
+        document.getElementById('val-r').innerText = R.toFixed(1) + " m";
+        document.getElementById('val-f').innerText = F + " N";
+        document.getElementById('vis-f-text').innerText = F + "N";
+
+        // ปรับแต่งหน้าตาของกราฟิกวัตถุตามรูปทรง (Shape Visual Logic)
+        let pxR = R * SCALE * 2.5; 
+        
+        if(K === 1.0) { // Hoop
+            objShape.setAttribute('fill', '#fff');
+            objShape.setAttribute('stroke', '#64748b');
+            objShape.setAttribute('stroke-width', '16');
+            objSpokes.style.display = 'block';
+        } else if (K === 0.5) { // Solid Cylinder
+            objShape.setAttribute('fill', '#94a3b8');
+            objShape.setAttribute('stroke', '#000');
+            objShape.setAttribute('stroke-width', '4');
+            objSpokes.style.display = 'block';
+        } else if (K === 0.4) { // Solid Sphere
+            objShape.setAttribute('fill', 'url(#sphereGrad)');
+            objShape.setAttribute('stroke', '#000');
+            objShape.setAttribute('stroke-width', '2');
+            objSpokes.style.display = 'none'; // ซ่อนซี่ล้อเพื่อให้ดูเป็นทรงกลมตัน
+        }
+
+        // อัปเดตขนาดและตำแหน่ง
+        objShape.setAttribute('r', pxR);
+        document.getElementById('spoke1').setAttribute('y1', -pxR);
+        document.getElementById('spoke1').setAttribute('y2', pxR);
+        document.getElementById('spoke2').setAttribute('x1', -pxR);
+        document.getElementById('spoke2').setAttribute('x2', pxR);
+        document.getElementById('vis-marker').setAttribute('cy', -(pxR - 12));
+        
+        rope.setAttribute('y1', -pxR);
+        rope.setAttribute('y2', -pxR);
+        rope.setAttribute('x1', 0); 
+        
+        if (!isRunning && currentT === 0) {
+            rope.setAttribute('x2', 0); 
+            robot.setAttribute('transform', `translate(0, ${-pxR})`);
+            document.getElementById('vis-s-text').innerText = "s = 0.0 m";
+        }
+
+        let rLineX = pxR * Math.cos(Math.PI/4);
+        let rLineY = pxR * Math.sin(Math.PI/4);
+        document.getElementById('vis-r-line').setAttribute('x2', rLineX);
+        document.getElementById('vis-r-line').setAttribute('y2', rLineY);
+    }
+
+    function calculatePhysics() {
+        I = K * M * (R * R);
+        tau = F * R;
+        alpha = tau / I;
+        a = alpha * R;
+    }
+
+    function startSimulation() {
+        if (isRunning) return;
+        updateVars();
+        calculatePhysics();
+        
+        document.getElementById('report-panel').style.display = 'none';
+        document.getElementById('btn-run').disabled = true;
+        elM.disabled = true; elR.disabled = true; elF.disabled = true; elShape.disabled = true;
+        
+        statusUI.innerHTML = "กำลังเร่ง...<br><span style='font-size: 11px; color:#f87171;'>(Accelerating)</span>";
+        statusUI.style.borderColor = "#ef4444"; statusUI.style.color = "#ef4444";
+        
+        currentT = 0;
+        startTime = null;
+        isRunning = true;
+        reqAnim = requestAnimationFrame(animate);
+    }
+
+    function animate(timestamp) {
+        if (!startTime) startTime = timestamp;
+        let elapsed = (timestamp - startTime) / 1000; 
+
+        if (elapsed >= TARGET_TIME) {
+            elapsed = TARGET_TIME;
+            isRunning = false;
+        }
+
+        currentT = elapsed;
+        
+        let theta = 0.5 * alpha * (currentT * currentT);
+        let s = 0.5 * a * (currentT * currentT);
+        let degrees = theta * (180 / Math.PI);
+
+        timerUI.innerText = currentT.toFixed(2) + " s";
+        wheelGrp.setAttribute('transform', `rotate(${degrees})`);
+        
+        let pxR = R * SCALE * 2.5; 
+        let pxS = s * SCALE; 
+        
+        rope.setAttribute('x2', pxS);
+        rope.setAttribute('stroke-dashoffset', -pxS); 
+        
+        robot.setAttribute('transform', `translate(${pxS}, ${-pxR})`);
+        document.getElementById('vis-s-text').innerText = `s = ${s.toFixed(1)} m`;
+
+        if (isRunning) {
+            reqAnim = requestAnimationFrame(animate);
+        } else {
+            freezeFrame(theta, s);
+        }
+    }
+
+    function freezeFrame(finalTheta, finalS) {
+        statusUI.innerHTML = "❄️ ล็อกภาพ!<br><span style='font-size: 11px; color:#60a5fa;'>(Freeze Frame)</span>";
+        statusUI.style.borderColor = "#3b82f6"; statusUI.style.color = "#3b82f6";
+        
+        document.getElementById('report-panel').style.display = 'flex';
+
+        // สร้างตาราง Breakdown 3 ขั้นตอน
+        let shapeName = K === 1.0 ? "ห่วง (Hoop)" : (K === 0.5 ? "ทรงกระบอก (Solid Cylinder)" : "ทรงกลม (Solid Sphere)");
+        
+        let calcHTML = `
+            <div class="calc-header">📝 แจกแจงวิธีทำ <span style="font-size: 14px; color: #d97706;">(Step-by-Step Calculation)</span></div>
+            <div class="calc-grid">
+                <div class="calc-step">
+                    <span class="calc-step-label">ขั้นที่ 1: ความเฉื่อย <span>(Inertia, I)</span></span>
+                    <span style="color:#64748b; font-size:12px;">รูปทรง: ${shapeName} &rarr; k = ${K}</span><br>
+                    <span class="formula">I = k·M·R²</span><br>= ${K} × ${M} × (${R.toFixed(1)})² <br>= <span class="result">${I.toFixed(2)} kg·m²</span>
+                </div>
+                <div class="calc-step">
+                    <span class="calc-step-label">ขั้นที่ 2: ทอร์ค <span>(Torque, τ)</span></span>
+                    <br>
+                    <span class="formula">τ = F × R</span><br>= ${F} × ${R.toFixed(1)} <br>= <span class="result">${tau.toFixed(1)} N·m</span>
+                </div>
+                <div class="calc-step">
+                    <span class="calc-step-label">ขั้นที่ 3: ความเร่งมุม <span>(Angular Accel., α)</span></span>
+                    <br>
+                    <span class="formula">α = τ / I</span><br>= ${tau.toFixed(1)} / ${I.toFixed(2)} <br>= <span class="result">${alpha.toFixed(2)} rad/s²</span>
+                </div>
+            </div>
+        `;
+        document.getElementById('calc-breakdown').innerHTML = calcHTML;
+    }
+
+    function resetSimulation() {
+        cancelAnimationFrame(reqAnim);
+        isRunning = false;
+        
+        document.getElementById('btn-run').disabled = false;
+        elM.disabled = false; elR.disabled = false; elF.disabled = false; elShape.disabled = false;
+        
+        timerUI.innerText = "0.00 s";
+        statusUI.innerHTML = "รอคำสั่ง<br><span style='font-size: 11px; color:#64748b;'>(Awaiting Input)</span>";
+        statusUI.style.borderColor = "#000"; statusUI.style.color = "#000";
+        
+        document.getElementById('report-panel').style.display = 'none';
+        
+        wheelGrp.setAttribute('transform', `rotate(0)`);
+        rope.setAttribute('stroke-dashoffset', 0); 
+        
+        currentT = 0;
+        updateVars();
+    }
+
+    // Init
+    updateVars();
+</script>
+</body>
+</html>
