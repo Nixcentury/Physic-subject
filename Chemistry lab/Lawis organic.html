@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Organic Chemistry - Lewis Structure Builder</title>
-    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>Organic Chemistry - Ultimate Builder (Anti-Overlap)</title>
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800;900&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -17,90 +17,139 @@
         }
 
         * { box-sizing: border-box; font-family: 'K2D', sans-serif; user-select: none; -webkit-user-select: none; }
-        body { background-color: var(--bg-body); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; touch-action: none; overflow: hidden; }
+        body { background-color: var(--bg-body); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; touch-action: none; overflow: hidden; height: 100vh;}
+
+        .header { width: 100%; max-width: 1400px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .title { font-size: 24px; font-weight: 900; background: var(--accent); padding: 8px 15px; border: var(--border); box-shadow: 4px 4px 0px #000; text-transform: uppercase; }
+
+        .view-tabs { display: flex; gap: 8px; background: #fff; border: 3px solid #000; box-shadow: 4px 4px 0px #000; padding: 5px; }
+        .view-btn { padding: 8px 15px; font-size: 14px; font-weight: 800; background: transparent; border: 2px solid transparent; cursor: pointer; transition: 0.2s; border-radius: 4px; }
+        .view-btn.active { background: #3b82f6; color: #fff; border: 2px solid #000; }
 
         .lab-container {
             background: var(--bg-card); border: var(--border); box-shadow: var(--shadow);
-            width: 100%; max-width: 1200px; padding: 20px; display: flex; flex-wrap: wrap; gap: 20px;
+            width: 100%; max-width: 1400px; padding: 15px; display: flex; flex-wrap: wrap; gap: 15px; flex: 1; overflow: hidden;
         }
 
         #canvas-container {
-            flex: 3; min-width: 400px; height: 600px; border: var(--border);
+            flex: 1; min-width: 500px; height: 100%; border: var(--border);
             position: relative; background: #ffffff; overflow: hidden;
-            background-image: radial-gradient(#e2e8f0 2px, transparent 2px);
+            background-image: radial-gradient(#cbd5e1 2px, transparent 2px);
             background-size: 40px 40px; cursor: grab;
         }
-        
         canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; touch-action: none; }
 
-        .controls { flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 15px; }
-        .card { border: var(--border); padding: 15px; background: #fff; box-shadow: 4px 4px 0px #000; }
-        h2 { margin: 0 0 10px 0; font-size: 16px; text-transform: uppercase; background: var(--accent); padding: 5px; border-bottom: var(--border); }
+        .sidebar { width: 350px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; padding-right: 5px;}
+        .card { border: var(--border); padding: 12px; background: #fff; box-shadow: 4px 4px 0px #000; }
+        h2 { margin: 0 0 10px 0; font-size: 16px; text-transform: uppercase; background: var(--accent); padding: 5px; border-bottom: var(--border); text-align: center;}
         
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-        .btn {
-            padding: 12px 10px; background: #fff; color: #000; border: 3px solid #000;
-            font-weight: 800; font-size: 16px; cursor: pointer; text-transform: uppercase;
-            box-shadow: 3px 3px 0px #000; transition: 0.1s; text-align: center;
-        }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 5px; }
+        .btn { padding: 10px 5px; background: #fff; color: #000; border: 3px solid #000; font-weight: 800; font-size: 14px; cursor: pointer; box-shadow: 3px 3px 0px #000; transition: 0.1s; text-align: center; }
         .btn:active { transform: translate(3px, 3px); box-shadow: none; }
-        .btn.active-tool { background: #ef4444; color: #fff; }
-        .btn-full { grid-column: span 2; background: #10b981; color: #fff; }
+        .btn.active-danger { background: #ef4444; color: #fff; }
+        
+        .template-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+        .tpl-btn { background: #f1f5f9; border: 2px solid #000; padding: 8px 2px; font-weight: 900; font-size: 14px; cursor: pointer; box-shadow: 2px 2px 0px #000; transition: 0.1s; color: #0f172a;}
+        .tpl-btn:active { transform: translate(2px,2px); box-shadow: none;}
+        .tpl-btn.aliphatic { background: #dcfce7; color: #065f46; border-color: #065f46; }
+        .tpl-btn.aromatic { background: #fef08a; color: #854d0e; border-color: #854d0e;}
+        
+        .note-box { background: #f8fafc; padding: 10px; border: 2px dashed #000; font-size: 13px; font-weight: 600; color: #333; line-height: 1.5; margin-top: 10px;}
 
-        .note-box { background: #f8fafc; padding: 10px; border: 2px dashed #000; font-size: 13px; font-weight: 600; color: #333; line-height: 1.5; }
-
-        /* Popup เมนูเลือกธาตุ */
         #element-popup {
             position: absolute; display: none; background: #fff; border: 3px solid #000;
-            box-shadow: 4px 4px 0px #000; padding: 10px; z-index: 100; border-radius: 8px;
-            transform: translate(-50%, -120%);
+            box-shadow: 6px 6px 0px #000; padding: 12px; z-index: 100; border-radius: 8px;
+            transform: translate(-50%, -110%); width: 200px;
         }
-        .el-btn {
-            width: 40px; height: 40px; margin: 0 5px; font-size: 18px; font-weight: bold;
-            border: 2px solid #000; background: #fff; cursor: pointer; border-radius: 5px; transition: 0.1s;
-        }
+        .popup-title { font-size:12px; font-weight:900; margin-bottom:8px; text-align:center; color: #475569; border-bottom: 2px dashed #cbd5e1; padding-bottom: 5px;}
+        .el-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px;}
+        .el-btn { height: 45px; font-size: 18px; font-weight: 900; border: 2px solid #000; background: #fff; cursor: pointer; border-radius: 6px; transition: 0.1s; display: flex; align-items: center; justify-content: center;}
         .el-btn:active { background: #e2e8f0; }
+        
         .el-btn[data-el="C"] { color: #000; }
+        .el-btn[data-el="H"] { color: #64748b; }
         .el-btn[data-el="O"] { color: #ef4444; }
         .el-btn[data-el="N"] { color: #3b82f6; }
-        .el-btn[data-el="H"] { color: #64748b; }
+        .el-btn[data-el="S"] { color: #eab308; } 
+        .el-btn[data-el="X"] { color: #10b981; background: #ecfdf5;} 
         
-        .close-popup { display: block; width: 100%; margin-top: 10px; background: #f1f5f9; border: 2px solid #000; padding: 5px; font-weight: bold; cursor: pointer; }
+        .close-popup { width: 100%; background: #f1f5f9; border: 2px solid #000; padding: 8px; font-weight: 900; cursor: pointer; }
     </style>
 </head>
 <body>
+
+<div class="header">
+    <div class="title">🧪 Organic Builder Pro</div>
+    <div class="view-tabs">
+        <button class="view-btn active" id="view-lewis" onclick="setView('lewis')">Lewis (เส้น)</button>
+        <button class="view-btn" id="view-dot" onclick="setView('dot')">Dot (จุด)</button>
+        <button class="view-btn" id="view-skeletal" onclick="setView('skeletal')">Skeletal (มุม)</button>
+    </div>
+</div>
 
 <div class="lab-container">
     <div id="canvas-container">
         <canvas id="chemCanvas"></canvas>
         <div id="element-popup">
-            <div style="font-size:12px; font-weight:bold; margin-bottom:5px; text-align:center;">เลือกอะตอมใส่ช่องนี้</div>
-            <div style="display:flex;">
+            <div class="popup-title">อะตอม (Atoms)</div>
+            <div class="el-grid">
                 <button class="el-btn" data-el="C">C</button>
+                <button class="el-btn" data-el="H">H</button>
                 <button class="el-btn" data-el="O">O</button>
                 <button class="el-btn" data-el="N">N</button>
-                <button class="el-btn" data-el="H">H</button>
+                <button class="el-btn" data-el="S">S</button>
+                <button class="el-btn" data-el="X" title="Halogen (หมู่ 7)">X</button>
             </div>
-            <button class="close-popup" onclick="closePopup()">ยกเลิก</button>
+            <button class="close-popup" onclick="closePopup()">ยกเลิก (Cancel)</button>
         </div>
     </div>
 
-    <div class="controls">
+    <div class="sidebar">
         <div class="card">
-            <h2>🛠️ เครื่องมือ (TOOLS)</h2>
+            <h2>🛠️ เครื่องมือหลัก</h2>
             <div class="btn-grid">
-                <button class="btn btn-full" onclick="resetCanvas()">🔄 เริ่มใหม่ (ตั้งต้นที่ C)</button>
-                <button id="btn-erase" class="btn tool-btn" style="grid-column: span 2;" onclick="toggleEraser()">🗑️ เปิดยางลบ (ลบอะตอม)</button>
+                <button class="btn" style="background:#10b981; color:#fff;" onclick="resetCanvas()">🔄 ล้างกระดาน</button>
+                <button id="btn-erase" class="btn" onclick="toggleEraser()">🗑️ ยางลบ</button>
+            </div>
+            <div class="note-box" style="margin-top:0;">
+                🟢 <b>กางแขนอัตโนมัติ:</b> H จะไม่ซ้อนกันแล้ว!<br>
+                🟢 <b>เปลี่ยนพันธะ:</b> จิ้มที่ <b>เส้นพันธะ</b> เพื่อเปลี่ยน เดี่ยว ➡️ คู่ ➡️ สาม
             </div>
         </div>
 
         <div class="card">
-            <h2>📝 วิธีสร้างโครงสร้างลิวอิส</h2>
-            <div class="note-box">
-                🟢 <b>ต่ออะตอม:</b> จิ้มที่ช่อง `[ + ]` เพื่อเลือกอะตอมมาต่อ<br>
-                🟢 <b>เปลี่ยนพันธะ:</b> จิ้มที่ <b>เส้นพันธะ</b> เพื่อยุบ/กาง (เดี่ยว $\rightarrow$ คู่ $\rightarrow$ สาม)<br>
-                🟢 <b>เลื่อนกระดาน:</b> ลากพื้นที่ว่างเพื่อเลื่อนดูกระดาน<br>
-                🟢 <b>กฎทรงแขน:</b> ระบบจะคำนวณแขน C(4), N(3), O(2), H(1) ให้ตรงตามหลักสูตรอัตโนมัติ!
+            <h2 style="background: #dcfce7; color:#065f46;">อะลิฟาติก โซ่ตรง (Aliphatic)</h2>
+            <div class="template-grid">
+                <button class="tpl-btn aliphatic" onclick="spawnChain(1)">C1</button>
+                <button class="tpl-btn aliphatic" onclick="spawnChain(2)">C2</button>
+                <button class="tpl-btn aliphatic" onclick="spawnChain(3)">C3</button>
+                <button class="tpl-btn aliphatic" onclick="spawnChain(4)">C4</button>
+                <button class="tpl-btn aliphatic" onclick="spawnChain(5)">C5</button>
+                <button class="tpl-btn aliphatic" onclick="spawnChain(6)">C6</button>
+                <button class="tpl-btn aliphatic" onclick="spawnChain(7)">C7</button>
+                <button class="tpl-btn aliphatic" onclick="spawnChain(8)">C8</button>
+                <button class="tpl-btn aliphatic" onclick="spawnChain(9)">C9</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>อลิไซคลิก (Cycloalkanes)</h2>
+            <div class="template-grid">
+                <button class="tpl-btn" onclick="spawnRing(3)">△ C3</button>
+                <button class="tpl-btn" onclick="spawnRing(4)">□ C4</button>
+                <button class="tpl-btn" onclick="spawnRing(5)">⬠ C5</button>
+                <button class="tpl-btn" onclick="spawnRing(6)">⬡ C6</button>
+                <button class="tpl-btn" onclick="spawnRing(7)">⬢ C7</button>
+                <button class="tpl-btn" onclick="spawnRing(8)">⯃ C8</button>
+                <button class="tpl-btn" onclick="spawnRing(9)" style="grid-column: span 3;">วงแหวนเก้าเหลี่ยม (C9)</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 style="background: #fef08a; color:#854d0e;">อะโรมาติก (Aromatics)</h2>
+            <div class="template-grid" style="grid-template-columns: 1fr 1fr;">
+                <button class="tpl-btn aromatic" onclick="spawnAromatic('benzene')">⬡ Benzene</button>
+                <button class="tpl-btn aromatic" onclick="spawnAromatic('naphthalene')">⬡⬡ Naphthalene</button>
             </div>
         </div>
     </div>
@@ -112,58 +161,67 @@
     const container = document.getElementById('canvas-container');
     const popup = document.getElementById('element-popup');
 
-    // โครงสร้างเคมีและกริด
     let atoms = [];
     let bonds = [];
     let slots = [];
     let nextAtomId = 1;
-    const GRID_SIZE = 70;
+    
     const ATOM_RADIUS = 22;
+    const H_RADIUS = 14;     // ย่อขนาดอะตอม H ให้เล็กลงเพื่อให้ดูโปร่ง
+    const BOND_LENGTH = 80;  // เพิ่มระยะพันธะให้ยาวขึ้น กันแออัด
 
-    // การควบคุมกล้อง (Panning)
     let camX = 0, camY = 0;
     let isDraggingCam = false;
     let lastMouseX = 0, lastMouseY = 0;
 
-    // สถานะโปรแกรม
-    let isEraserMode = false;
+    let currentMode = 'BUILD'; 
+    let currentView = 'lewis'; 
     let selectedSlot = null;
 
-    // กำหนดเวเลนซ์อิเล็กตรอน (จำนวนแขน)
-    const VALENCE = { 'C': 4, 'H': 1, 'O': 2, 'N': 3 };
+    let dragStartAtom = null;
+    let dragCurrentPos = null;
+
+    const VALENCE = { 
+        'C': 4, 'H': 1, 'O': 2, 'N': 3, 'X': 1, 'S': 2
+    };
 
     function resizeCanvas() {
         canvas.width = container.clientWidth;
         canvas.height = container.clientHeight;
-        if(atoms.length === 0) resetCanvas();
+        if(atoms.length === 0) spawnChain(1); 
         render();
     }
     window.addEventListener('resize', resizeCanvas);
 
+    function setView(view) {
+        currentView = view;
+        document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('view-' + view).classList.add('active');
+        render();
+    }
+
     function toggleEraser() {
-        isEraserMode = !isEraserMode;
-        const btn = document.getElementById('btn-erase');
-        if (isEraserMode) {
-            btn.classList.add('active-tool');
-            btn.innerText = "🛑 ปิดยางลบ";
-            closePopup();
+        currentMode = (currentMode === 'ERASE') ? 'BUILD' : 'ERASE';
+        const btnErase = document.getElementById('btn-erase');
+        closePopup();
+
+        if (currentMode === 'ERASE') {
+            btnErase.classList.add('active-danger');
+            container.style.cursor = 'crosshair';
         } else {
-            btn.classList.remove('active-tool');
-            btn.innerText = "🗑️ เปิดยางลบ (ลบอะตอม)";
+            btnErase.classList.remove('active-danger');
+            container.style.cursor = 'grab';
         }
+        render();
     }
 
     function resetCanvas() {
         atoms = []; bonds = [];
-        camX = canvas.width / 2;
-        camY = canvas.height / 2;
-        // เริ่มต้นด้วย C 1 ตัวกลางจอ
-        atoms.push({ id: nextAtomId++, type: 'C', qx: 0, qy: 0 });
-        isEraserMode = false;
-        document.getElementById('btn-erase').classList.remove('active-tool');
-        document.getElementById('btn-erase').innerText = "🗑️ เปิดยางลบ (ลบอะตอม)";
+        camX = canvas.width / 2; camY = canvas.height / 2;
+        currentMode = 'BUILD';
+        document.getElementById('btn-erase').classList.remove('active-danger');
+        container.style.cursor = 'grab';
         closePopup();
-        calculateSlots();
         render();
     }
 
@@ -175,32 +233,147 @@
         return VALENCE[atom.type] - used;
     }
 
+    function areAdjacent(a1, a2) {
+        let dist = Math.hypot(a1.x - a2.x, a1.y - a2.y);
+        return dist > 0 && dist < BOND_LENGTH * 1.5;
+    }
+
+    // ⭐ อัลกอริทึม Local Vector Repulsion (จำลองทฤษฎีแรงผลัก VSEPR)
     function calculateSlots() {
         slots = [];
-        const dirs = [{x:0, y:-1}, {x:1, y:0}, {x:0, y:1}, {x:-1, y:0}]; // บน ขวา ล่าง ซ้าย
-        
         atoms.forEach(atom => {
             let free = getFreeValence(atom);
-            if (free > 0) {
-                dirs.forEach(d => {
-                    let nx = atom.qx + d.x;
-                    let ny = atom.qy + d.y;
-                    // ตรวจสอบว่าจุดนั้นว่างไหม
-                    let isOccupied = atoms.some(a => a.qx === nx && a.qy === ny);
-                    let hasSlot = slots.some(s => s.qx === nx && s.qy === ny);
-                    
-                    if (!isOccupied && !hasSlot) {
-                        slots.push({ qx: nx, qy: ny, parentId: atom.id });
+            if (free <= 0) return;
+
+            let baseAngle = 0;
+            let bondedNeighbors = [];
+            bonds.forEach(b => {
+                if (b.a1 === atom.id) bondedNeighbors.push(atoms.find(a => a.id === b.a2));
+                if (b.a2 === atom.id) bondedNeighbors.push(atoms.find(a => a.id === b.a1));
+            });
+
+            if (bondedNeighbors.length === 0) {
+                baseAngle = 0;
+            } else if (bondedNeighbors.length === 1) {
+                // ปลายสาย: กางแขนออกไปในทิศตรงข้ามกับเพื่อนบ้านตรงๆ
+                let n = bondedNeighbors[0];
+                baseAngle = Math.atan2(atom.y - n.y, atom.x - n.x);
+            } else {
+                // ตรงกลางโซ่หรือวง: รวมเวกเตอร์เพื่อหา "เส้นแบ่งครึ่งมุมภายนอก" 
+                let vecX = 0, vecY = 0;
+                bondedNeighbors.forEach(n => {
+                    let dx = atom.x - n.x;
+                    let dy = atom.y - n.y;
+                    let len = Math.hypot(dx, dy);
+                    if(len > 0) {
+                        vecX += dx/len; // Normalize เวกเตอร์
+                        vecY += dy/len;
                     }
                 });
+                
+                if (Math.hypot(vecX, vecY) > 0.1) {
+                    baseAngle = Math.atan2(vecY, vecX);
+                } else {
+                    // กรณีอยู่ตรงกลางเป๊ะ 180 องศา จะผลัก 90 องศา
+                    let n = bondedNeighbors[0];
+                    baseAngle = Math.atan2(atom.y - n.y, atom.x - n.x) + Math.PI/2;
+                }
             }
+
+            let slotDist = 45;
+            let angles = [];
+            
+            // กางแขนตามหลัก VSEPR
+            if (free === 1) {
+                angles = [baseAngle];
+            } else if (free === 2) {
+                if(bondedNeighbors.length === 1) {
+                    angles = [baseAngle - Math.PI/3, baseAngle + Math.PI/3]; // กาง 120 องศา
+                } else {
+                    angles = [baseAngle - Math.PI/4, baseAngle + Math.PI/4]; // กางออกด้านข้างโซ่
+                }
+            } else if (free === 3) {
+                angles = [baseAngle, baseAngle - Math.PI/2.5, baseAngle + Math.PI/2.5]; // ทรงสามง่าม
+            } else if (free === 4) {
+                angles = [Math.PI/4, 3*Math.PI/4, -Math.PI/4, -3*Math.PI/4]; // ทรงกากบาท
+            }
+
+            angles.forEach(ang => {
+                slots.push({
+                    x: atom.x + slotDist * Math.cos(ang),
+                    y: atom.y + slotDist * Math.sin(ang),
+                    parentId: atom.id
+                });
+            });
         });
     }
 
-    // แปลงพิกัด กริด <-> หน้าจอ
-    function getScreenPos(qx, qy) { return { x: camX + qx * GRID_SIZE, y: camY + qy * GRID_SIZE }; }
+    function spawnChain(n) {
+        resetCanvas();
+        let startX = -(n - 1) * BOND_LENGTH * Math.cos(Math.PI / 6) / 2;
+        for (let i = 0; i < n; i++) {
+            let x = startX + i * BOND_LENGTH * Math.cos(Math.PI / 6);
+            let y = (i % 2 === 0) ? 0 : BOND_LENGTH * Math.sin(Math.PI / 6);
+            atoms.push({ id: nextAtomId++, type: 'C', x: x, y: y });
+            if (i > 0) bonds.push({ a1: nextAtomId - 2, a2: nextAtomId - 1, order: 1 });
+        }
+        calculateSlots(); render();
+    }
 
-    // ฟังก์ชันจัดการ Popup เลือกธาตุ
+    function spawnRing(n) {
+        resetCanvas();
+        let r = BOND_LENGTH / (2 * Math.sin(Math.PI / n)); 
+        let firstId = nextAtomId;
+        for (let i = 0; i < n; i++) {
+            let angle = i * (2 * Math.PI / n) - Math.PI / 2;
+            atoms.push({ id: nextAtomId++, type: 'C', x: r * Math.cos(angle), y: r * Math.sin(angle) });
+            if (i > 0) bonds.push({ a1: nextAtomId - 2, a2: nextAtomId - 1, order: 1 });
+        }
+        bonds.push({ a1: nextAtomId - 1, a2: firstId, order: 1 }); 
+        calculateSlots(); render();
+    }
+
+    function spawnAromatic(type) {
+        resetCanvas();
+        let r = BOND_LENGTH;
+        let firstId = nextAtomId;
+
+        if (type === 'benzene') {
+            for (let i = 0; i < 6; i++) {
+                let angle = i * (Math.PI / 3) - Math.PI / 2;
+                atoms.push({ id: nextAtomId++, type: 'C', x: r * Math.cos(angle), y: r * Math.sin(angle) });
+                if (i > 0) bonds.push({ a1: nextAtomId - 2, a2: nextAtomId - 1, order: (i % 2 === 0) ? 2 : 1 });
+            }
+            bonds.push({ a1: nextAtomId - 1, a2: firstId, order: 2 });
+        } 
+        else if (type === 'naphthalene') {
+            const d = BOND_LENGTH * Math.cos(Math.PI/6); 
+            
+            let c0 = nextAtomId++; atoms.push({id: c0, type:'C', x: 0, y: BOND_LENGTH/2}); 
+            let c1 = nextAtomId++; atoms.push({id: c1, type:'C', x: 0, y: -BOND_LENGTH/2}); 
+            let c2 = nextAtomId++; atoms.push({id: c2, type:'C', x: -d, y: -BOND_LENGTH});
+            let c3 = nextAtomId++; atoms.push({id: c3, type:'C', x: -2*d, y: -BOND_LENGTH/2});
+            let c4 = nextAtomId++; atoms.push({id: c4, type:'C', x: -2*d, y: BOND_LENGTH/2});
+            let c5 = nextAtomId++; atoms.push({id: c5, type:'C', x: -d, y: BOND_LENGTH});
+            
+            bonds.push({a1:c1, a2:c2, order:1}); bonds.push({a1:c2, a2:c3, order:2});
+            bonds.push({a1:c3, a2:c4, order:1}); bonds.push({a1:c4, a2:c5, order:2});
+            bonds.push({a1:c5, a2:c0, order:1}); bonds.push({a1:c0, a2:c1, order:2}); 
+
+            let c6 = nextAtomId++; atoms.push({id: c6, type:'C', x: d, y: -BOND_LENGTH});
+            let c7 = nextAtomId++; atoms.push({id: c7, type:'C', x: 2*d, y: -BOND_LENGTH/2});
+            let c8 = nextAtomId++; atoms.push({id: c8, type:'C', x: 2*d, y: BOND_LENGTH/2});
+            let c9 = nextAtomId++; atoms.push({id: c9, type:'C', x: d, y: BOND_LENGTH});
+
+            bonds.push({a1:c1, a2:c6, order:1}); bonds.push({a1:c6, a2:c7, order:2});
+            bonds.push({a1:c7, a2:c8, order:1}); bonds.push({a1:c8, a2:c9, order:2});
+            bonds.push({a1:c9, a2:c0, order:1});
+        }
+        calculateSlots(); render();
+    }
+
+    function getScreenPos(x, y) { return { x: camX + x, y: camY + y }; }
+
     document.querySelectorAll('.el-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             if (!selectedSlot) return;
@@ -208,23 +381,21 @@
             let parent = atoms.find(a => a.id === selectedSlot.parentId);
             
             if (parent && getFreeValence(parent) > 0) {
-                let newAtom = { id: nextAtomId++, type: type, qx: selectedSlot.qx, qy: selectedSlot.qy };
+                let dx = selectedSlot.x - parent.x; let dy = selectedSlot.y - parent.y;
+                let len = Math.hypot(dx, dy);
+                let newX = parent.x + (dx/len) * BOND_LENGTH;
+                let newY = parent.y + (dy/len) * BOND_LENGTH;
+
+                let newAtom = { id: nextAtomId++, type: type, x: newX, y: newY };
                 atoms.push(newAtom);
                 bonds.push({ a1: parent.id, a2: newAtom.id, order: 1 });
             }
-            closePopup();
-            calculateSlots();
-            render();
+            closePopup(); calculateSlots(); render();
         });
     });
 
-    function closePopup() {
-        popup.style.display = 'none';
-        selectedSlot = null;
-        render();
-    }
+    function closePopup() { popup.style.display = 'none'; selectedSlot = null; render(); }
 
-    // --- ระบบ Click & Touch ---
     function getEventPos(e) {
         const rect = canvas.getBoundingClientRect();
         const clientX = e.clientX || (e.touches && e.touches[0].clientX);
@@ -233,30 +404,26 @@
     }
 
     function hitTest(x, y) {
-        // เช็กคลิกอะตอม
         for (let a of atoms) {
-            let s = getScreenPos(a.qx, a.qy);
+            let s = getScreenPos(a.x, a.y);
+            // Hit box กว้างขึ้นเล็กน้อยเพื่อกดง่ายขึ้น
             if (Math.hypot(s.x - x, s.y - y) <= ATOM_RADIUS) return { type: 'ATOM', target: a };
         }
-        // เช็กคลิก Slot
-        if (!isEraserMode) {
+        if (currentMode === 'BUILD' && currentView !== 'skeletal') {
             for (let s of slots) {
-                let sp = getScreenPos(s.qx, s.qy);
+                let sp = getScreenPos(s.x, s.y);
                 if (Math.hypot(sp.x - x, sp.y - y) <= ATOM_RADIUS) return { type: 'SLOT', target: s };
             }
         }
-        // เช็กคลิกพันธะ
         for (let b of bonds) {
-            let a1 = atoms.find(a => a.id === b.a1);
-            let a2 = atoms.find(a => a.id === b.a2);
+            let a1 = atoms.find(a => a.id === b.a1); let a2 = atoms.find(a => a.id === b.a2);
             if(!a1 || !a2) continue;
-            let p1 = getScreenPos(a1.qx, a1.qy); let p2 = getScreenPos(a2.qx, a2.qy);
+            let p1 = getScreenPos(a1.x, a1.y); let p2 = getScreenPos(a2.x, a2.y);
             if (distToSegment({x, y}, p1, p2) < 15) return { type: 'BOND', target: b };
         }
         return null;
     }
 
-    // ฟังก์ชันหาระยะห่างจุดกับเส้นตรง
     function dist2(v, w) { return (v.x - w.x)**2 + (v.y - w.y)**2 }
     function distToSegment(p, v, w) {
         let l2 = dist2(v, w);
@@ -270,37 +437,36 @@
         const hit = hitTest(pos.x, pos.y);
 
         if (hit) {
-            if (hit.type === 'SLOT') {
+            if (currentMode === 'BUILD' && hit.type === 'SLOT') {
                 selectedSlot = hit.target;
                 popup.style.display = 'block';
-                popup.style.left = pos.x + 'px';
-                popup.style.top = (pos.y - 10) + 'px';
-                render(); // ไฮไลท์ Slot
+                popup.style.left = pos.x + 'px'; popup.style.top = (pos.y - 10) + 'px';
+                render();
             } 
-            else if (hit.type === 'BOND' && !isEraserMode) {
-                // เปลี่ยนพันธะ เดี่ยว -> คู่ -> สาม
+            else if (currentMode === 'BUILD' && hit.type === 'BOND') {
                 let a1 = atoms.find(a => a.id === hit.target.a1);
                 let a2 = atoms.find(a => a.id === hit.target.a2);
-                let currentOrder = hit.target.order;
-                
-                // คำนวณแขนที่เหลือจริงๆ ของทั้งสองฝั่ง
-                let f1 = getFreeValence(a1) + currentOrder; 
-                let f2 = getFreeValence(a2) + currentOrder;
+                let f1 = getFreeValence(a1) + hit.target.order; 
+                let f2 = getFreeValence(a2) + hit.target.order;
                 let maxAllowed = Math.min(3, f1, f2);
 
-                if (currentOrder < maxAllowed) hit.target.order++;
-                else hit.target.order = 1; // วนกลับไป 1
+                if (hit.target.order < maxAllowed) hit.target.order++;
+                else hit.target.order = 1;
 
                 closePopup(); calculateSlots(); render();
             }
-            else if (hit.type === 'ATOM' && isEraserMode) {
-                // ลบอะตอม
+            else if (currentMode === 'ERASE' && hit.type === 'ATOM') {
                 bonds = bonds.filter(b => b.a1 !== hit.target.id && b.a2 !== hit.target.id);
                 atoms = atoms.filter(a => a.id !== hit.target.id);
                 closePopup(); calculateSlots(); render();
             }
+            else if (currentMode === 'BUILD' && hit.type === 'ATOM') {
+                if (getFreeValence(hit.target) > 0) {
+                    dragStartAtom = hit.target;
+                    dragCurrentPos = pos;
+                }
+            }
         } else {
-            // ลากเพื่อ Pan กล้อง
             isDraggingCam = true;
             lastMouseX = e.clientX; lastMouseY = e.clientY;
             container.style.cursor = 'grabbing';
@@ -308,118 +474,190 @@
         }
     });
 
-    window.addEventListener('pointerup', () => {
-        isDraggingCam = false; container.style.cursor = 'grab';
+    window.addEventListener('pointerup', e => {
+        if (dragStartAtom) {
+            const pos = getEventPos(e);
+            const hit = hitTest(pos.x, pos.y);
+            if (hit && hit.type === 'ATOM' && hit.target.id !== dragStartAtom.id) {
+                let a1 = dragStartAtom; let a2 = hit.target;
+                let alreadyBonded = bonds.some(b => (b.a1===a1.id && b.a2===a2.id) || (b.a1===a2.id && b.a2===a1.id));
+                if (areAdjacent(a1, a2) && !alreadyBonded && getFreeValence(a2) > 0) {
+                    bonds.push({ a1: a1.id, a2: a2.id, order: 1 });
+                }
+            }
+            dragStartAtom = null; dragCurrentPos = null;
+            calculateSlots(); render();
+        }
+        isDraggingCam = false; 
+        if(currentMode === 'BUILD') container.style.cursor = 'grab';
     });
 
     window.addEventListener('pointermove', e => {
         if (isDraggingCam) {
-            camX += e.clientX - lastMouseX;
-            camY += e.clientY - lastMouseY;
+            camX += e.clientX - lastMouseX; camY += e.clientY - lastMouseY;
             lastMouseX = e.clientX; lastMouseY = e.clientY;
+            render();
+        } else if (dragStartAtom) {
+            dragCurrentPos = getEventPos(e);
             render();
         }
     });
 
-    // --- Rendering ---
+    function isAtomVisible(a) {
+        if (currentView !== 'skeletal') return true;
+        if (a.type === 'C') return false; 
+        if (a.type === 'H') {
+            let bond = bonds.find(b => b.a1 === a.id || b.a2 === a.id);
+            if (bond) {
+                let partnerId = bond.a1 === a.id ? bond.a2 : bond.a1;
+                let partner = atoms.find(p => p.id === partnerId);
+                if (partner && partner.type === 'C') return false; 
+            }
+        }
+        return true;
+    }
+
     function render() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // วาดพันธะ (Bonds)
         ctx.lineCap = "round";
+
+        if (dragStartAtom && dragCurrentPos) {
+            let p1 = getScreenPos(dragStartAtom.x, dragStartAtom.y);
+            ctx.strokeStyle = "#3b82f6"; ctx.lineWidth = 4; ctx.setLineDash([5,5]);
+            drawLine(p1.x, p1.y, dragCurrentPos.x, dragCurrentPos.y);
+            ctx.setLineDash([]);
+        }
+
         bonds.forEach(b => {
-            let a1 = atoms.find(a => a.id === b.a1);
-            let a2 = atoms.find(a => a.id === b.a2);
+            let a1 = atoms.find(a => a.id === b.a1); let a2 = atoms.find(a => a.id === b.a2);
             if (!a1 || !a2) return;
 
-            let p1 = getScreenPos(a1.qx, a1.qy);
-            let p2 = getScreenPos(a2.qx, a2.qy);
-            
+            if (currentView === 'skeletal') {
+                let isCH = (a1.type === 'C' && a2.type === 'H') || (a1.type === 'H' && a2.type === 'C');
+                if (isCH) return;
+            }
+
+            let p1 = getScreenPos(a1.x, a1.y); let p2 = getScreenPos(a2.x, a2.y);
             let dx = p2.x - p1.x; let dy = p2.y - p1.y;
             let len = Math.hypot(dx, dy);
             let nx = -dy / len; let ny = dx / len;
-            let gap = 8; // ระยะห่างเส้นคู่/สาม
+            let gap = 8;
 
-            ctx.strokeStyle = "#334155";
-            ctx.lineWidth = 5;
+            ctx.strokeStyle = "#334155"; ctx.fillStyle = "#334155";
+            ctx.lineWidth = currentView === 'skeletal' ? 6 : 5;
 
-            if (b.order === 1) {
-                drawLine(p1.x, p1.y, p2.x, p2.y);
-            } else if (b.order === 2) {
-                drawLine(p1.x + nx*gap/2, p1.y + ny*gap/2, p2.x + nx*gap/2, p2.y + ny*gap/2);
-                drawLine(p1.x - nx*gap/2, p1.y - ny*gap/2, p2.x - nx*gap/2, p2.y - ny*gap/2);
-            } else if (b.order === 3) {
-                drawLine(p1.x, p1.y, p2.x, p2.y);
-                drawLine(p1.x + nx*gap, p1.y + ny*gap, p2.x + nx*gap, p2.y + ny*gap);
-                drawLine(p1.x - nx*gap, p1.y - ny*gap, p2.x - nx*gap, p2.y - ny*gap);
+            if (currentView === 'dot') {
+                for(let order=0; order<b.order; order++) {
+                    let offset = (b.order===1)? 0 : (b.order===2)? (order===0?-gap/2:gap/2) : (order===0?0 : order===1?-gap:gap);
+                    let startX = p1.x + nx*offset; let startY = p1.y + ny*offset;
+                    ctx.beginPath(); ctx.arc(startX + (dx*0.35), startY + (dy*0.35), 4, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(startX + (dx*0.65), startY + (dy*0.65), 4, 0, Math.PI*2); ctx.fill();
+                }
+            } else {
+                if (b.order === 1) drawLine(p1.x, p1.y, p2.x, p2.y);
+                else if (b.order === 2) {
+                    drawLine(p1.x + nx*gap/2, p1.y + ny*gap/2, p2.x + nx*gap/2, p2.y + ny*gap/2);
+                    drawLine(p1.x - nx*gap/2, p1.y - ny*gap/2, p2.x - nx*gap/2, p2.y - ny*gap/2);
+                } else if (b.order === 3) {
+                    drawLine(p1.x, p1.y, p2.x, p2.y);
+                    drawLine(p1.x + nx*gap, p1.y + ny*gap, p2.x + nx*gap, p2.y + ny*gap);
+                    drawLine(p1.x - nx*gap, p1.y - ny*gap, p2.x - nx*gap, p2.y - ny*gap);
+                }
             }
         });
 
-        // วาด Slots ช่องประกอบร่าง
-        if (!isEraserMode) {
-            slots.forEach(s => {
-                let p = getScreenPos(s.qx, s.qy);
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, ATOM_RADIUS - 2, 0, Math.PI * 2);
-                
-                if (selectedSlot && selectedSlot.qx === s.qx && selectedSlot.qy === s.qy) {
-                    ctx.fillStyle = "#d8b4fe"; // ไฮไลท์สีม่วงตอนกด
-                    ctx.fill();
-                    ctx.strokeStyle = "#a855f7";
-                } else {
-                    ctx.fillStyle = "rgba(255,255,255,0.7)";
-                    ctx.fill();
-                    ctx.strokeStyle = "#94a3b8";
+        if (currentView === 'skeletal') {
+            atoms.forEach(a => {
+                if (a.type === 'C') {
+                    let p = getScreenPos(a.x, a.y);
+                    ctx.fillStyle = "#334155"; ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI*2); ctx.fill();
                 }
-                
-                ctx.setLineDash([4, 4]);
-                ctx.lineWidth = 2;
-                ctx.stroke();
-                ctx.setLineDash([]);
-                
-                ctx.fillStyle = "#64748b"; ctx.font = "bold 20px Arial";
-                ctx.textAlign = "center"; ctx.textBaseline = "middle";
-                ctx.fillText("+", p.x, p.y + 2);
             });
         }
 
-        // วาดอะตอมทั้งหมด
-        atoms.forEach(a => {
-            let p = getScreenPos(a.qx, a.qy);
-            
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, ATOM_RADIUS, 0, Math.PI * 2);
-            ctx.fillStyle = "#ffffff";
-            
-            // ขอบอะตอมสีตามธาตุ
-            if(a.type === 'C') ctx.strokeStyle = "#000000";
-            else if(a.type === 'O') ctx.strokeStyle = "#ef4444";
-            else if(a.type === 'N') ctx.strokeStyle = "#3b82f6";
-            else ctx.strokeStyle = "#64748b"; // H
-            
-            ctx.lineWidth = 4;
-            ctx.fill(); ctx.stroke();
+        if (currentMode === 'BUILD' && currentView !== 'skeletal') {
+            slots.forEach(s => {
+                let p = getScreenPos(s.x, s.y);
+                ctx.beginPath(); ctx.arc(p.x, p.y, H_RADIUS + 2, 0, Math.PI * 2);
+                if (selectedSlot && selectedSlot.x === s.x && selectedSlot.y === s.y) {
+                    ctx.fillStyle = "#d8b4fe"; ctx.fill(); ctx.strokeStyle = "#a855f7";
+                } else {
+                    ctx.fillStyle = "rgba(255,255,255,0.7)"; ctx.fill(); ctx.strokeStyle = "#94a3b8";
+                }
+                ctx.setLineDash([4, 4]); ctx.lineWidth = 2; ctx.stroke(); ctx.setLineDash([]);
+                ctx.fillStyle = "#64748b"; ctx.font = "bold 16px Arial";
+                ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("+", p.x, p.y + 2);
+            });
+        }
 
-            ctx.fillStyle = ctx.strokeStyle;
-            ctx.font = "bold 22px 'K2D', sans-serif";
+        atoms.forEach(a => {
+            if (!isAtomVisible(a)) return;
+
+            let p = getScreenPos(a.x, a.y);
+            let visRadius = (a.type === 'H') ? H_RADIUS : ATOM_RADIUS; // ย่อขนาด H
+            
+            if (currentView === 'dot') {
+                ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(p.x, p.y, visRadius, 0, Math.PI*2); ctx.fill();
+            } else {
+                ctx.beginPath(); ctx.arc(p.x, p.y, visRadius, 0, Math.PI * 2);
+                ctx.fillStyle = "#ffffff";
+                if(a.type === 'C') ctx.strokeStyle = "#000000";
+                else if(a.type === 'O') ctx.strokeStyle = "#ef4444";
+                else if(a.type === 'N') ctx.strokeStyle = "#3b82f6";
+                else if(a.type === 'S') ctx.strokeStyle = "#eab308";
+                else if(a.type === 'X') ctx.strokeStyle = "#10b981";
+                else ctx.strokeStyle = "#64748b"; 
+                
+                ctx.lineWidth = (a.type === 'H') ? 2 : 4; 
+                ctx.fill(); ctx.stroke();
+            }
+
+            if(a.type === 'C') ctx.fillStyle = "#000000";
+            else if(a.type === 'O') ctx.fillStyle = "#ef4444";
+            else if(a.type === 'N') ctx.fillStyle = "#3b82f6";
+            else if(a.type === 'S') ctx.fillStyle = "#eab308";
+            else if(a.type === 'X') ctx.fillStyle = "#10b981";
+            else ctx.fillStyle = "#64748b"; 
+
+            let fontSize = (a.type === 'H') ? 16 : 20;
+            ctx.font = `bold ${fontSize}px 'K2D', sans-serif`;
             ctx.textAlign = "center"; ctx.textBaseline = "middle";
             ctx.fillText(a.type, p.x, p.y + 2);
-            
-            // หากอยู่ในโหมดยางลบ วาดกากบาททับ
-            if (isEraserMode) {
+
+            if (currentView === 'dot') {
+                if (a.type === 'O' || a.type === 'S') drawLonePairs(p, 2); 
+                if (a.type === 'N') drawLonePairs(p, 1);
+                if (a.type === 'X') drawLonePairs(p, 3);
+            }
+
+            if (currentMode === 'ERASE') {
                 ctx.fillStyle = "rgba(239, 68, 68, 0.4)";
-                ctx.beginPath(); ctx.arc(p.x, p.y, ATOM_RADIUS, 0, Math.PI*2); ctx.fill();
-                ctx.fillStyle = "#ef4444"; ctx.font = "bold 24px Arial";
+                ctx.beginPath(); ctx.arc(p.x, p.y, visRadius, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = "#ef4444"; ctx.font = "bold 20px Arial";
                 ctx.fillText("✕", p.x, p.y + 2);
             }
         });
     }
 
-    function drawLine(x1, y1, x2, y2) {
-        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    function drawLine(x1, y1, x2, y2) { ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); }
+
+    function drawLonePairs(pos, pairsRequired) {
+        ctx.fillStyle = "#eab308"; 
+        let dist = 24;
+        if (pairsRequired >= 1) {
+            ctx.beginPath(); ctx.arc(pos.x - 6, pos.y - dist, 3, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(pos.x + 6, pos.y - dist, 3, 0, Math.PI*2); ctx.fill();
+        }
+        if (pairsRequired >= 2) {
+            ctx.beginPath(); ctx.arc(pos.x + dist, pos.y - 6, 3, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(pos.x + dist, pos.y + 6, 3, 0, Math.PI*2); ctx.fill();
+        }
+        if (pairsRequired >= 3) {
+            ctx.beginPath(); ctx.arc(pos.x - dist, pos.y - 6, 3, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(pos.x - dist, pos.y + 6, 3, 0, Math.PI*2); ctx.fill();
+        }
     }
 
-    // เริ่มต้น
     setTimeout(resizeCanvas, 100);
 </script>
 </body>
