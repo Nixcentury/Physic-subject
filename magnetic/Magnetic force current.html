@@ -2,9 +2,9 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Electromagnetism Lab (Bilingual)</title>
-    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Electromagnetism Lab: Straight Wire</title>
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #000000;
@@ -16,12 +16,12 @@
             --text: #0f172a;
         }
 
-        * { box-sizing: border-box; font-family: 'K2D', sans-serif; user-select: none; }
+        * { box-sizing: border-box; font-family: 'K2D', sans-serif; user-select: none; -webkit-user-select: none; }
         body { background-color: var(--bg-body); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; color: var(--text); }
 
         .container {
             background: var(--card-bg); border: var(--border); box-shadow: 8px 8px 0px #000;
-            width: 100%; max-width: 1280px; padding: 20px; display: flex; flex-direction: column; gap: 20px;
+            width: 100%; max-width: 1200px; padding: 20px; display: flex; flex-direction: column; gap: 20px;
         }
 
         .header-title {
@@ -36,186 +36,119 @@
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;
             background: #ecfdf5; border: var(--border); padding: 15px; box-shadow: 4px 4px 0px #000;
         }
-        .dash-box { background: #fff; border: 3px solid #000; padding: 10px; text-align: center; }
-        .dash-label { font-size: 15px; font-weight: 800; color: #0f172a; }
-        .dash-label span { display: block; font-size: 11px; color: #64748b; font-weight: 600; }
-        .dash-value { font-size: 24px; font-weight: 900; color: #2563eb; font-family: monospace; margin-top: 5px; }
-        .formula-tag { font-size: 14px; background: #e0f2fe; padding: 6px; display: inline-block; margin-top: 5px; font-weight: bold; border: 2px solid #3b82f6; border-radius: 4px;}
+        .dash-box { background: #fff; border: 3px solid #000; padding: 15px; text-align: center; }
+        .dash-label { font-size: 16px; font-weight: 800; color: #0f172a; }
+        .dash-label span { display: block; font-size: 12px; color: #64748b; font-weight: 600; }
+        .dash-value { font-size: 32px; font-weight: 900; color: #2563eb; font-family: monospace; margin-top: 5px; }
+        .formula-tag { font-size: 16px; background: #e0f2fe; padding: 8px; display: inline-block; margin-top: 5px; font-weight: bold; border: 2px solid #3b82f6; border-radius: 4px;}
 
         .main-layout { display: flex; flex-wrap: wrap; gap: 20px; }
 
         /* 🎛️ แผงควบคุม (Controls) */
         .controls-panel { flex: 1; min-width: 350px; display: flex; flex-direction: column; gap: 15px; }
-        .control-group { background: #fff; border: 3px solid #000; padding: 15px; box-shadow: 3px 3px 0px #000; }
-        .control-group label { font-size: 16px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
-        .control-label-en { font-size: 12px; font-weight: 600; color: #64748b; display: block; margin-top: -2px; }
+        .control-group { background: #fff; border: 3px solid #000; padding: 20px; box-shadow: 3px 3px 0px #000; }
+        .control-group label { font-size: 18px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
+        .control-label-en { font-size: 13px; font-weight: 600; color: #64748b; display: block; margin-top: -2px; }
         
-        .val-badge { background: #e2e8f0; border: 2px solid #000; padding: 2px 8px; border-radius: 4px; color: #2563eb; font-size: 16px; }
+        .val-badge { background: #e2e8f0; border: 2px solid #000; padding: 4px 12px; border-radius: 4px; color: #2563eb; font-size: 20px; font-family: monospace;}
         
-        select, input[type="range"] { width: 100%; margin-top: 10px; cursor: pointer; border: 2px solid #000; font-size: 16px; padding: 5px; outline: none; }
-        input[type="range"] { accent-color: #000; height: 8px; padding: 0; border: none; }
+        input[type="range"] { width: 100%; margin-top: 15px; cursor: pointer; border: 2px solid #000; padding: 5px; outline: none; accent-color: #000; height: 10px; border-radius: 5px; }
 
-        .btn-run {
-            background: #10b981; color: #fff; border: 3px solid #000; padding: 15px; font-size: 18px; font-weight: 900; cursor: pointer;
-            box-shadow: 4px 4px 0px #000; transition: 0.1s; text-align: center; text-transform: uppercase; margin-top: 5px;
+        .btn-reset {
+            background: #f87171; color: #fff; border: 3px solid #000; padding: 15px; font-size: 18px; font-weight: 900; cursor: pointer;
+            box-shadow: 4px 4px 0px #000; transition: 0.1s; text-align: center; text-transform: uppercase; margin-top: auto;
         }
-        .btn-run:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #000; }
+        .btn-reset:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #000; }
+
+        .note-box { background: #fef3c7; padding: 15px; border: 3px dashed #d97706; font-size: 15px; font-weight: 600; color: #b45309; line-height: 1.5;}
 
         /* 🎬 จอแสดงผลกราฟิก (Canvas) */
         .visual-panel {
-            flex: 1.5; min-width: 500px; height: 480px; background: #fff; border: 4px solid #000; position: relative;
+            flex: 1.5; min-width: 500px; height: 450px; background: #fff; border: 4px solid #000; position: relative;
             display: flex; align-items: center; justify-content: center; overflow: hidden;
             background-image: radial-gradient(#cbd5e1 2px, transparent 2px); background-size: 25px 25px;
             box-shadow: inset 4px 4px 0px rgba(0,0,0,0.05);
         }
-        
-        .target-box {
-            position: absolute; top: 15px; left: 15px; background: #fef3c7; border: 3px dashed #d97706; padding: 10px;
-            font-size: 14px; font-weight: 800; color: #b45309; z-index: 10; box-shadow: 4px 4px 0px #d97706;
-        }
-        .target-success { background: #d1fae5; border-color: #059669; color: #047857; box-shadow: 4px 4px 0px #059669; }
 
         /* 📝 ส่วนแจกแจงการคำนวณ (Calculation Breakdown) */
         .calc-breakdown {
-            background: #fef3c7; border: 3px dashed #d97706; padding: 15px;
-            box-shadow: 4px 4px 0px #d97706; display: flex; flex-direction: column; gap: 10px; margin-top: 10px;
+            background: #f8fafc; border: 3px solid #64748b; padding: 20px;
+            box-shadow: 4px 4px 0px #64748b; display: flex; flex-direction: column; gap: 10px; margin-top: 10px;
         }
-        .calc-header { font-size: 18px; font-weight: 900; color: #b45309; margin-bottom: 5px; border-bottom: 2px solid #fcd34d; padding-bottom: 5px; }
-        .calc-step { font-size: 14px; color: #334155; background: #fff; padding: 15px; border: 2px solid #000; font-family: monospace; line-height: 1.6; }
-        .calc-step span.formula { color: #2563eb; font-weight: bold; font-size: 18px; }
-        .calc-step span.result { color: #059669; font-weight: bold; font-size: 20px; background: #d1fae5; padding: 2px 8px; border-radius: 4px; border: 1px solid #10b981;}
+        .calc-header { font-size: 20px; font-weight: 900; color: #334155; margin-bottom: 5px; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px; }
+        .calc-step { font-size: 16px; color: #0f172a; background: #fff; padding: 20px; border: 2px dashed #94a3b8; font-family: monospace; line-height: 1.8; }
+        .calc-step span.formula { color: #2563eb; font-weight: bold; font-size: 20px; }
+        .calc-step span.highlight { color: #ea580c; font-weight: bold; background: #ffedd5; padding: 2px 6px; border-radius: 4px; border: 1px solid #ea580c;}
+        .calc-step span.result { color: #059669; font-weight: bold; font-size: 24px; background: #d1fae5; padding: 4px 10px; border-radius: 6px; border: 2px solid #10b981;}
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1 class="header-title">
-        🧲 ห้องปฏิบัติการกฎของแอมแปร์
-        <span class="header-subtitle">Ampère's Law & Electromagnetism Lab</span>
+        🧲 ห้องปฏิบัติการกฎของแอมแปร์ (ลวดตรงยาว)
+        <span class="header-subtitle">Magnetic Field of a Straight Current-Carrying Wire</span>
     </h1>
 
     <div class="dashboard">
-        <div class="dash-box">
-            <div class="dash-label">กระแสไฟฟ้า <span>Current (I)</span></div>
-            <div class="dash-value" id="dash-i">0.0 <span style="font-size:14px;color:#64748b;">A</span></div>
+        <div class="dash-box" style="border-color: #ef4444;">
+            <div class="dash-label" style="color: #ef4444;">กระแสไฟฟ้า <span>Current (I)</span></div>
+            <div class="dash-value" id="dash-i" style="color: #ef4444;">1.0 <span style="font-size:16px;">A</span></div>
         </div>
         <div class="dash-box" style="border-color: #3b82f6;">
             <div class="dash-label" style="color: #3b82f6;">สนามแม่เหล็ก <span>Magnetic Field (B)</span></div>
-            <div class="dash-value" id="dash-b">0.00</div>
-            <div style="font-size:12px; font-weight:bold; color:#64748b; margin-top:2px;">× 10⁻⁵ Tesla</div>
+            <div class="dash-value" id="dash-b">2.00</div>
+            <div style="font-size:14px; font-weight:bold; color:#64748b; margin-top:5px;">× 10⁻⁷ Tesla</div>
         </div>
         <div class="dash-box">
-            <div class="dash-label">สูตรที่ใช้ <span>Active Formula</span></div>
-            <div class="formula-tag" id="dash-formula">B = (μ₀·I) / (2π·r)</div>
+            <div class="dash-label">สมการตั้งต้น <span>Formula</span></div>
+            <div class="formula-tag">B = (μ₀·I) / (2π·d)</div>
         </div>
     </div>
 
     <div class="main-layout">
         <div class="controls-panel">
-            <div class="control-group" style="background: #fdf2f8;">
-                <label><div>ชนิดของตัวนำ <span class="control-label-en">Wire Type</span></div></label>
-                <select id="in-mode" onchange="changeMode()">
-                    <option value="straight">📏 ลวดตัวนำตรงยาว (Straight Wire)</option>
-                    <option value="solenoid">🌀 โซลีนอยด์หน้าตัด (Solenoid Cross-section)</option>
-                    <option value="toroid">🍩 ทอรอยด์หน้าตัด (Toroid Cross-section)</option>
-                </select>
-            </div>
             
-            <div class="control-group" style="background: #f0fdfa;">
-                <label><div>กระแสไฟฟ้า <span class="control-label-en">Current (I)</span></div> <span class="val-badge" id="lbl-i">5 A</span></label>
-                <input type="range" id="in-i" min="1" max="20" step="1" value="5" oninput="updateVars()">
+            <div class="note-box">
+                💡 <b>จุดสังเกต:</b> ลองปรับ <b>I = 1 A</b> และ <b>d = 1 m</b> ดูสิ! <br>คุณจะเห็นค่าคงที่ของการแปรผัน (μ₀/2π) โผล่ขึ้นมาบนหน้าปัดทันที!
             </div>
 
-            <div class="control-group" id="ctrl-r" style="background: #eff6ff;">
-                <label><div>ระยะห่าง / รัศมีแกน <span class="control-label-en">Distance/Radius (r)</span></div> <span class="val-badge" id="lbl-r">0.05 m</span></label>
-                <input type="range" id="in-r" min="0.01" max="0.10" step="0.01" value="0.05" oninput="updateVars()">
+            <div class="control-group" style="background: #fef2f2;">
+                <label><div>กระแสไฟฟ้า <span class="control-label-en">Current (I)</span></div> <span class="val-badge" id="lbl-i" style="color: #ef4444; border-color: #ef4444; background: #fff;">1.0 A</span></label>
+                <input type="range" id="in-i" min="0.5" max="15.0" step="0.5" value="1.0" oninput="updateVars()">
             </div>
 
-            <div class="control-group" id="ctrl-n" style="background: #fff7ed; display: none;">
-                <label><div>จำนวนรอบ <span class="control-label-en">Number of Turns (N)</span></div> <span class="val-badge" id="lbl-n">100</span></label>
-                <input type="range" id="in-n" min="50" max="500" step="10" value="100" oninput="updateVars()">
+            <div class="control-group" style="background: #eff6ff;">
+                <label><div>ระยะห่างจากลวด <span class="control-label-en">Distance (d)</span></div> <span class="val-badge" id="lbl-d">1.0 m</span></label>
+                <input type="range" id="in-d" min="0.5" max="10.0" step="0.5" value="1.0" oninput="updateVars()">
             </div>
             
-            <div class="control-group" id="ctrl-l" style="background: #f5f3ff; display: none;">
-                <label><div>ความยาวขดลวด <span class="control-label-en">Length (L)</span></div> <span class="val-badge" id="lbl-l">0.2 m</span></label>
-                <input type="range" id="in-l" min="0.1" max="1.0" step="0.1" value="0.2" oninput="updateVars()">
-            </div>
-            
-            <button class="btn-run" onclick="generateMission()">
-                🎯 สุ่มเป้าหมายใหม่ (New Target)
+            <button class="btn-reset" onclick="resetToIdeal()">
+                🔄 กลับไปที่ I=1, d=1 (Ideal State)
             </button>
         </div>
 
         <div class="visual-panel">
-            <div class="target-box" id="mission-box">
-                🎯 ภารกิจ (Mission): <br>ปรับตัวแปรให้ได้ B ≈ <span id="mission-target" style="font-size:18px;">--</span> × 10⁻⁵ T
-            </div>
-            
             <svg id="svg-canvas" width="400" height="400" viewBox="0 0 400 400" style="overflow: visible;">
-                
                 <g id="vis-straight">
-                    <line x1="200" y1="50" x2="200" y2="350" stroke="#64748b" stroke-width="12" stroke-linecap="round"/>
-                    <line x1="200" y1="280" x2="200" y2="120" stroke="#ef4444" stroke-width="4" marker-end="url(#arrowhead-red)"/>
-                    <text x="215" y="100" font-weight="900" fill="#ef4444" font-size="20">I</text>
+                    <line x1="200" y1="40" x2="200" y2="360" stroke="#94a3b8" stroke-width="16" stroke-linecap="round"/>
+                    <line x1="200" y1="280" x2="200" y2="120" stroke="#ef4444" stroke-width="6" marker-end="url(#arrowhead-red)"/>
+                    <text x="220" y="100" font-weight="900" fill="#ef4444" font-size="24">I</text>
                     
-                    <ellipse cx="200" cy="200" rx="80" ry="25" fill="none" stroke="#3b82f6" stroke-width="2" id="vis-b-ring1" stroke-dasharray="8,4"/>
+                    <ellipse cx="200" cy="200" rx="80" ry="25" fill="none" stroke="#3b82f6" stroke-width="3" id="vis-b-ring" stroke-dasharray="10,6"/>
                     
                     <g id="vis-compass" transform="translate(280, 200)">
                         <circle cx="0" cy="0" r="18" fill="#fff" stroke="#000" stroke-width="3"/>
                         <polygon points="0,-12 6,0 -6,0" fill="#ef4444"/>
                         <polygon points="0,12 6,0 -6,0" fill="#94a3b8"/>
-                        <text x="0" y="32" text-anchor="middle" font-size="14" font-weight="900" id="txt-compass-r" fill="#0f172a">r</text>
+                        <text x="0" y="35" text-anchor="middle" font-size="18" font-weight="900" id="txt-compass-d" fill="#0f172a">1.0 m</text>
                     </g>
-                    <line x1="200" y1="200" x2="280" y2="200" stroke="#000" stroke-width="2" stroke-dasharray="4,4" id="vis-r-line"/>
-                </g>
-
-                <g id="vis-solenoid" style="display: none;">
-                    <rect x="100" y="120" width="200" height="160" fill="#fef3c7" fill-opacity="0.5" stroke="#d97706" stroke-width="2" stroke-dasharray="5,5"/>
-                    
-                    <g fill="#f59e0b" stroke="#000" stroke-width="2">
-                        <circle cx="120" cy="120" r="8"/><circle cx="120" cy="120" r="2" fill="#000"/>
-                        <circle cx="160" cy="120" r="8"/><circle cx="160" cy="120" r="2" fill="#000"/>
-                        <circle cx="200" cy="120" r="8"/><circle cx="200" cy="120" r="2" fill="#000"/>
-                        <circle cx="240" cy="120" r="8"/><circle cx="240" cy="120" r="2" fill="#000"/>
-                        <circle cx="280" cy="120" r="8"/><circle cx="280" cy="120" r="2" fill="#000"/>
-                        <circle cx="120" cy="280" r="8"/><line x1="115" y1="275" x2="125" y2="285" stroke="#000"/><line x1="125" y1="275" x2="115" y2="285" stroke="#000"/>
-                        <circle cx="160" cy="280" r="8"/><line x1="155" y1="275" x2="165" y2="285" stroke="#000"/><line x1="165" y1="275" x2="155" y2="285" stroke="#000"/>
-                        <circle cx="200" cy="280" r="8"/><line x1="195" y1="275" x2="205" y2="285" stroke="#000"/><line x1="205" y1="275" x2="195" y2="285" stroke="#000"/>
-                        <circle cx="240" cy="280" r="8"/><line x1="235" y1="275" x2="245" y2="285" stroke="#000"/><line x1="245" y1="275" x2="235" y2="285" stroke="#000"/>
-                        <circle cx="280" cy="280" r="8"/><line x1="275" y1="275" x2="285" y2="285" stroke="#000"/><line x1="285" y1="275" x2="275" y2="285" stroke="#000"/>
-                    </g>
-                    
-                    <g id="vis-sol-lines" stroke="#10b981" stroke-linecap="round">
-                        <line x1="50" y1="170" x2="350" y2="170" marker-end="url(#arrowhead-green)"/>
-                        <line x1="50" y1="200" x2="350" y2="200" marker-end="url(#arrowhead-green)"/>
-                        <line x1="50" y1="230" x2="350" y2="230" marker-end="url(#arrowhead-green)"/>
-                    </g>
-                    
-                    <line x1="100" y1="310" x2="300" y2="310" stroke="#000" stroke-width="2"/>
-                    <line x1="100" y1="305" x2="100" y2="315" stroke="#000" stroke-width="2"/>
-                    <line x1="300" y1="305" x2="300" y2="315" stroke="#000" stroke-width="2"/>
-                    <text x="200" y="330" text-anchor="middle" font-weight="900" font-size="16">L</text>
-                </g>
-
-                <g id="vis-toroid" style="display: none;">
-                    <circle cx="200" cy="200" r="100" fill="none" stroke="#fcd34d" stroke-width="60" id="vis-tor-donut"/>
-                    <circle cx="200" cy="200" r="130" fill="none" stroke="#d97706" stroke-width="3" id="vis-tor-out"/>
-                    <circle cx="200" cy="200" r="70" fill="none" stroke="#d97706" stroke-width="3" id="vis-tor-in"/>
-                    
-                    <circle cx="200" cy="200" r="100" fill="none" stroke="#10b981" stroke-width="4" stroke-dasharray="15, 10" id="vis-tor-b"/>
-                    <polygon points="300,195 310,200 300,205" fill="#10b981" id="vis-tor-arrow"/>
-
-                    <line x1="200" y1="200" x2="300" y2="200" stroke="#000" stroke-width="2" id="vis-tor-r"/>
-                    <circle cx="200" cy="200" r="4" fill="#000"/>
-                    <text x="250" y="190" font-weight="900" font-size="16" id="txt-tor-r">r</text>
+                    <line x1="200" y1="200" x2="280" y2="200" stroke="#000" stroke-width="3" stroke-dasharray="6,4" id="vis-d-line"/>
                 </g>
 
                 <defs>
-                    <marker id="arrowhead-red" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                        <polygon points="0 0, 10 3.5, 0 7" fill="#ef4444" />
-                    </marker>
-                    <marker id="arrowhead-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                        <polygon points="0 0, 10 3.5, 0 7" fill="#10b981" />
+                    <marker id="arrowhead-red" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                        <polygon points="0 0, 8 3, 0 6" fill="#ef4444" />
                     </marker>
                 </defs>
             </svg>
@@ -223,7 +156,7 @@
     </div>
 
     <div class="calc-breakdown" id="calc-breakdown">
-        <div class="calc-header">📝 แจกแจงการคำนวณแบบละเอียดยิบ (Step-by-step Calculation)</div>
+        <div class="calc-header">📝 ทำไมสูตรถึงกลายเป็น 2 × 10⁻⁷ ? (Mathematical Proof)</div>
         <div class="calc-step" id="txt-calc">
             </div>
     </div>
@@ -234,178 +167,66 @@
     const MU_0 = 4 * Math.PI * 1e-7; // μ₀
     
     // UI Elements
-    const modeSelect = document.getElementById('in-mode');
-    const ctrlR = document.getElementById('ctrl-r');
-    const ctrlN = document.getElementById('ctrl-n');
-    const ctrlL = document.getElementById('ctrl-l');
-    
     const inI = document.getElementById('in-i');
-    const inR = document.getElementById('in-r');
-    const inN = document.getElementById('in-n');
-    const inL = document.getElementById('in-l');
+    const inD = document.getElementById('in-d');
     
-    // Vis Groups
-    const visStraight = document.getElementById('vis-straight');
-    const visSolenoid = document.getElementById('vis-solenoid');
-    const visToroid = document.getElementById('vis-toroid');
-    
-    let currentMode = 'straight';
-    let targetB = 0; // Mission target
-
-    function changeMode() {
-        currentMode = modeSelect.value;
-        
-        // Reset Displays
-        ctrlR.style.display = 'none';
-        ctrlN.style.display = 'none';
-        ctrlL.style.display = 'none';
-        
-        visStraight.style.display = 'none';
-        visSolenoid.style.display = 'none';
-        visToroid.style.display = 'none';
-
-        if (currentMode === 'straight') {
-            ctrlR.style.display = 'flex';
-            visStraight.style.display = 'block';
-            document.getElementById('dash-formula').innerHTML = "B = <span style='font-size:18px;'>μ₀·I / 2πr</span>";
-        } else if (currentMode === 'solenoid') {
-            ctrlN.style.display = 'flex';
-            ctrlL.style.display = 'flex';
-            visSolenoid.style.display = 'block';
-            document.getElementById('dash-formula').innerHTML = "B = <span style='font-size:18px;'>μ₀·I·N / L</span>";
-        } else if (currentMode === 'toroid') {
-            ctrlR.style.display = 'flex';
-            ctrlN.style.display = 'flex';
-            visToroid.style.display = 'block';
-            document.getElementById('dash-formula').innerHTML = "B = <span style='font-size:18px;'>μ₀·I·N / 2πr</span>";
-        }
-        
-        generateMission(); 
-    }
-
-    function generateMission() {
-        let randomB = 0;
-        if (currentMode === 'straight') {
-            randomB = (Math.floor(Math.random() * 8) + 2); // 2 ถึง 9
-        } else if (currentMode === 'solenoid') {
-            randomB = (Math.floor(Math.random() * 20) + 10) * 10; // 100 ถึง 300
-        } else if (currentMode === 'toroid') {
-            randomB = (Math.floor(Math.random() * 15) + 5) * 10; // 50 ถึง 200
-        }
-        
-        targetB = randomB;
-        document.getElementById('mission-target').innerText = targetB;
-        document.getElementById('mission-box').className = "target-box";
+    function resetToIdeal() {
+        inI.value = 1.0;
+        inD.value = 1.0;
         updateVars();
     }
 
     function updateVars() {
         let I = parseFloat(inI.value);
-        let r = parseFloat(inR.value);
-        let N = parseFloat(inN.value);
-        let L = parseFloat(inL.value);
+        let d = parseFloat(inD.value);
 
-        document.getElementById('lbl-i').innerText = I + " A";
-        document.getElementById('lbl-r').innerText = r.toFixed(2) + " m";
-        document.getElementById('lbl-n').innerText = N;
-        document.getElementById('lbl-l').innerText = L.toFixed(1) + " m";
+        // Update Labels
+        document.getElementById('lbl-i').innerText = I.toFixed(1) + " A";
+        document.getElementById('lbl-d').innerText = d.toFixed(1) + " m";
         document.getElementById('dash-i').innerText = I.toFixed(1);
 
-        let B = 0;
-        let calcHTML = "";
+        // Calculate B
+        let B = (MU_0 * I) / (2 * Math.PI * d);
+        
+        // เราต้องการแสดงผลในสเกล 10^-7 เพื่อให้เห็นเลข 2 ชัดๆ
+        let displayB = B * 1e7; 
+        document.getElementById('dash-b').innerText = displayB.toFixed(2);
+        
+        // --- Visual Update ---
+        // mapping ให้ d=1 คือ 60px และ d=10 คือ 150px
+        let pxR = 50 + (d * 10); 
+        document.getElementById('vis-compass').setAttribute('transform', `translate(${200 + pxR}, 200)`);
+        document.getElementById('vis-d-line').setAttribute('x2', 200 + pxR);
+        document.getElementById('txt-compass-d').innerText = d.toFixed(1) + " m";
+        
+        // ปรับความกว้างของวงรีให้เข้ากับระยะ d
+        document.getElementById('vis-b-ring').setAttribute('rx', pxR);
+        document.getElementById('vis-b-ring').setAttribute('ry', pxR * 0.3); // มุมมอง Perspective
+        
+        // ปรับความหนาเส้นสนามตามความแรง B
+        let strokeW = 1 + (displayB / 10);
+        document.getElementById('vis-b-ring').setAttribute('stroke-width', strokeW > 10 ? 10 : strokeW);
 
-        if (currentMode === 'straight') {
-            B = (MU_0 * I) / (2 * Math.PI * r);
-            let displayB = B * 1e5;
-            document.getElementById('dash-b').innerText = displayB.toFixed(2);
+        // --- Calculation Breakdown ---
+        let calcHTML = `
+            <span style="color:#64748b; font-weight:800;">1. จากสูตรสนามแม่เหล็กของลวดตรงยาว:</span><br>
+            <span class="formula">B = <span class="highlight">(μ₀)</span>·I / <span class="highlight">(2π)</span>·d</span><br><br>
             
-            // Visual Update: ขยับเข็มทิศ
-            let pxR = (r / 0.10) * 130; // mapping
-            document.getElementById('vis-compass').setAttribute('transform', `translate(${200 + pxR}, 200)`);
-            document.getElementById('vis-r-line').setAttribute('x2', 200 + pxR);
-            document.getElementById('txt-compass-r').innerText = r.toFixed(2) + "m";
-            
-            // ปรับความเข้มเส้นสนามตาม I
-            document.getElementById('vis-b-ring1').setAttribute('stroke-width', 1 + (I/3));
+            <span style="color:#64748b; font-weight:800;">2. แทนค่าสัมประสิทธิ์ความซึมซาบแม่เหล็ก (μ₀ = 4π × 10⁻⁷):</span><br>
+            B = [ <span class="highlight">4π</span> × 10⁻⁷ × ${I.toFixed(1)} ] / [ <span class="highlight">2π</span> × ${d.toFixed(1)} ]<br><br>
 
-            calcHTML = `
-                <span style="color:#64748b; font-weight:800;">1. แทนค่าสูตรลวดตรงยาว (Straight Wire Formula):</span><br>
-                <span class="formula">B = (μ₀ × I) / (2π × r)</span><br><br>
-                <span style="color:#64748b; font-weight:800;">2. กระจายค่าคงที่ (μ₀ = 4π × 10⁻⁷):</span><br>
-                B = [ (4π × 10⁻⁷) × ${I} ] / [ 2π × ${r.toFixed(2)} ]<br>
-                B = [ 2 × 10⁻⁷ × ${I} ] / ${r.toFixed(2)}<br><br>
-                <span style="color:#64748b; font-weight:800;">3. ผลลัพธ์สุดท้าย (Result):</span><br>
-                B = <span class="result">${displayB.toFixed(2)} × 10⁻⁵ Tesla</span>
-            `;
-            checkMission(displayB);
+            <span style="color:#64748b; font-weight:800;">3. สังเกตว่า 4π หารด้วย 2π จะตัดกันเหลือ 2 เสมอ!</span><br>
+            B = [ <span class="highlight">2</span> × 10⁻⁷ × ${I.toFixed(1)} ] / ${d.toFixed(1)}<br><br>
 
-        } else if (currentMode === 'solenoid') {
-            B = (MU_0 * I * N) / L;
-            let displayB = B * 1e5;
-            document.getElementById('dash-b').innerText = displayB.toFixed(2);
-            
-            // Visual Update: ความเข้มเส้นสนามตรงกลาง
-            let intensity = 1 + (displayB / 100);
-            document.getElementById('vis-sol-lines').setAttribute('stroke-width', intensity * 1.5);
-
-            calcHTML = `
-                <span style="color:#64748b; font-weight:800;">1. แทนค่าสูตรโซลีนอยด์ (Solenoid Formula):</span><br>
-                <span class="formula">B = (μ₀ × I × N) / L</span><br><br>
-                <span style="color:#64748b; font-weight:800;">2. กระจายค่าคงที่ (μ₀ = 4π × 10⁻⁷):</span><br>
-                B = [ (4π × 10⁻⁷) × ${I} × ${N} ] / ${L.toFixed(1)}<br><br>
-                <span style="color:#64748b; font-weight:800;">3. ผลลัพธ์สุดท้าย (Result):</span><br>
-                B = <span class="result">${displayB.toFixed(2)} × 10⁻⁵ Tesla</span>
-            `;
-            checkMission(displayB);
-
-        } else if (currentMode === 'toroid') {
-            B = (MU_0 * I * N) / (2 * Math.PI * r);
-            let displayB = B * 1e5;
-            document.getElementById('dash-b').innerText = displayB.toFixed(2);
-            
-            // Visual Update: ย่อขยายโดนัทตามรัศมีแกน (r)
-            let pxR = (r / 0.10) * 110; // mapping max r = 0.10 to 110px
-            document.getElementById('vis-tor-donut').setAttribute('r', pxR);
-            document.getElementById('vis-tor-out').setAttribute('r', pxR + 30);
-            document.getElementById('vis-tor-in').setAttribute('r', Math.max(10, pxR - 30));
-            
-            document.getElementById('vis-tor-b').setAttribute('r', pxR);
-            document.getElementById('vis-tor-arrow').setAttribute('points', `${200+pxR-5},195 ${200+pxR+5},200 ${200+pxR-5},205`);
-
-            document.getElementById('vis-tor-r').setAttribute('x2', 200 + pxR);
-            document.getElementById('txt-tor-r').setAttribute('x', 200 + (pxR/2));
-            
-            // ความเข้มเส้นสนาม
-            document.getElementById('vis-tor-b').setAttribute('stroke-width', 2 + (displayB/40));
-
-            calcHTML = `
-                <span style="color:#64748b; font-weight:800;">1. แทนค่าสูตรทอรอยด์ (Toroid Formula):</span><br>
-                <span class="formula">B = (μ₀ × I × N) / (2π × r)</span><br><br>
-                <span style="color:#64748b; font-weight:800;">2. กระจายค่าคงที่ (μ₀ = 4π × 10⁻⁷):</span><br>
-                B = [ (4π × 10⁻⁷) × ${I} × ${N} ] / [ 2π × ${r.toFixed(2)} ]<br>
-                B = [ 2 × 10⁻⁷ × ${I} × ${N} ] / ${r.toFixed(2)}<br><br>
-                <span style="color:#64748b; font-weight:800;">3. ผลลัพธ์สุดท้าย (Result):</span><br>
-                B = <span class="result">${displayB.toFixed(2)} × 10⁻⁵ Tesla</span>
-            `;
-            checkMission(displayB);
-        }
-
+            <span style="color:#64748b; font-weight:800;">4. ผลลัพธ์ (นำ 2 ไปคูณ I แล้วหาร d):</span><br>
+            B = <span class="result">${displayB.toFixed(2)} × 10⁻⁷ Tesla</span>
+        `;
+        
         document.getElementById('txt-calc').innerHTML = calcHTML;
     }
 
-    function checkMission(currentB) {
-        let box = document.getElementById('mission-box');
-        if (Math.abs(currentB - targetB) <= (targetB * 0.05)) {
-            box.className = "target-box target-success";
-            box.innerHTML = `✅ สำเร็จ! (Mission Cleared!)<br>ได้ค่า B ≈ <span style="font-size:18px;">${targetB}</span> × 10⁻⁵ T แล้ว!`;
-        } else {
-            box.className = "target-box";
-            box.innerHTML = `🎯 ภารกิจ (Mission): <br>ปรับตัวแปรให้ได้ B ≈ <span id="mission-target" style="font-size:18px;">${targetB}</span> × 10⁻⁵ T`;
-        }
-    }
-
     // Init
-    changeMode();
+    updateVars();
 </script>
 </body>
 </html>
