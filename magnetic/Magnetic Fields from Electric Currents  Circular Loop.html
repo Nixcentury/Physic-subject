@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Electromagnetism Lab: Circular Coil</title>
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #000000;
+            --accent: #facc15;
+            --bg-body: #f8fafc;
+            --border: 4px solid #000000;
+            --shadow: 6px 6px 0px #000000;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+        }
+
+        * { box-sizing: border-box; font-family: 'K2D', sans-serif; user-select: none; -webkit-user-select: none; }
+        body { background-color: var(--bg-body); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; color: var(--text); }
+
+        .container {
+            background: var(--card-bg); border: var(--border); box-shadow: 8px 8px 0px #000;
+            width: 100%; max-width: 1200px; padding: 20px; display: flex; flex-direction: column; gap: 20px;
+        }
+
+        .header-title {
+            margin: 0; padding: 15px; background: var(--accent); border: var(--border);
+            font-size: 24px; font-weight: 900; text-transform: uppercase; text-align: center;
+            box-shadow: 4px 4px 0px #000; letter-spacing: 1px;
+        }
+        .header-subtitle { display: block; font-size: 14px; font-weight: 600; color: #333; margin-top: 5px; }
+
+        /* 🎛️ แผงหน้าปัด (Dashboard) */
+        .dashboard {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;
+            background: #ecfdf5; border: var(--border); padding: 15px; box-shadow: 4px 4px 0px #000;
+        }
+        .dash-box { background: #fff; border: 3px solid #000; padding: 15px; text-align: center; }
+        .dash-label { font-size: 15px; font-weight: 800; color: #0f172a; }
+        .dash-label span { display: block; font-size: 11px; color: #64748b; font-weight: 600; }
+        .dash-value { font-size: 30px; font-weight: 900; color: #2563eb; font-family: monospace; margin-top: 5px; }
+        .formula-tag { font-size: 15px; background: #e0f2fe; padding: 8px; display: inline-block; margin-top: 5px; font-weight: bold; border: 2px solid #3b82f6; border-radius: 4px;}
+
+        .main-layout { display: flex; flex-wrap: wrap; gap: 20px; }
+
+        /* 🎛️ แผงควบคุม (Controls) */
+        .controls-panel { flex: 1; min-width: 350px; display: flex; flex-direction: column; gap: 15px; }
+        .control-group { background: #fff; border: 3px solid #000; padding: 15px 20px; box-shadow: 3px 3px 0px #000; }
+        .control-group label { font-size: 16px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
+        .control-label-en { font-size: 12px; font-weight: 600; color: #64748b; display: block; margin-top: -2px; }
+        
+        .val-badge { background: #e2e8f0; border: 2px solid #000; padding: 4px 10px; border-radius: 4px; color: #2563eb; font-size: 18px; font-family: monospace;}
+        
+        input[type="range"] { width: 100%; margin-top: 15px; cursor: pointer; border: 2px solid #000; padding: 5px; outline: none; accent-color: #000; height: 10px; border-radius: 5px; }
+
+        .btn-reset {
+            background: #f87171; color: #fff; border: 3px solid #000; padding: 15px; font-size: 18px; font-weight: 900; cursor: pointer;
+            box-shadow: 4px 4px 0px #000; transition: 0.1s; text-align: center; text-transform: uppercase; margin-top: auto;
+        }
+        .btn-reset:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #000; }
+
+        .note-box { background: #fef3c7; padding: 15px; border: 3px dashed #d97706; font-size: 15px; font-weight: 600; color: #b45309; line-height: 1.5;}
+
+        /* 🎬 จอแสดงผลกราฟิก (Canvas) */
+        .visual-panel {
+            flex: 1.5; min-width: 500px; height: 480px; background: #fff; border: 4px solid #000; position: relative;
+            display: flex; align-items: center; justify-content: center; overflow: hidden;
+            background-image: radial-gradient(#cbd5e1 2px, transparent 2px); background-size: 25px 25px;
+            box-shadow: inset 4px 4px 0px rgba(0,0,0,0.05);
+        }
+
+        /* 📝 ส่วนแจกแจงการคำนวณ (Calculation Breakdown) */
+        .calc-breakdown {
+            background: #f8fafc; border: 3px solid #64748b; padding: 20px;
+            box-shadow: 4px 4px 0px #64748b; display: flex; flex-direction: column; gap: 10px; margin-top: 10px;
+        }
+        .calc-header { font-size: 20px; font-weight: 900; color: #334155; margin-bottom: 5px; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px; }
+        .calc-step { font-size: 16px; color: #0f172a; background: #fff; padding: 20px; border: 2px dashed #94a3b8; font-family: monospace; line-height: 1.8; }
+        .calc-step span.formula { color: #2563eb; font-weight: bold; font-size: 20px; }
+        .calc-step span.highlight { color: #ea580c; font-weight: bold; background: #ffedd5; padding: 2px 6px; border-radius: 4px; border: 1px solid #ea580c;}
+        .calc-step span.result { color: #059669; font-weight: bold; font-size: 22px; background: #d1fae5; padding: 4px 10px; border-radius: 6px; border: 2px solid #10b981;}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="header-title">
+        🧲 ห้องปฏิบัติการกฎของแอมแปร์ (ลวดวงกลม)
+        <span class="header-subtitle">Magnetic Field at the Center of a Circular Coil</span>
+    </h1>
+
+    <div class="dashboard">
+        <div class="dash-box" style="border-color: #ef4444;">
+            <div class="dash-label" style="color: #ef4444;">กระแสไฟฟ้า <span>Current (I)</span></div>
+            <div class="dash-value" id="dash-i" style="color: #ef4444;">1.0 <span style="font-size:16px;">A</span></div>
+        </div>
+        <div class="dash-box" style="border-color: #d97706;">
+            <div class="dash-label" style="color: #d97706;">จำนวนรอบ <span>Turns (N)</span></div>
+            <div class="dash-value" id="dash-n" style="color: #d97706;">1</div>
+        </div>
+        <div class="dash-box" style="border-color: #3b82f6;">
+            <div class="dash-label" style="color: #3b82f6;">สนามแม่เหล็ก <span>Magnetic Field (B)</span></div>
+            <div class="dash-value" id="dash-b">2.00π</div>
+            <div style="font-size:14px; font-weight:bold; color:#64748b; margin-top:5px;">× 10⁻⁷ Tesla</div>
+        </div>
+        <div class="dash-box">
+            <div class="dash-label">สมการตั้งต้น <span>Formula</span></div>
+            <div class="formula-tag">B = (μ₀·I·N) / 2R</div>
+        </div>
+    </div>
+
+    <div class="main-layout">
+        <div class="controls-panel">
+            
+            <div class="note-box">
+                💡 <b>จุดสังเกต:</b> ในลวดวงกลม ตัวส่วนคือ <b>2R (ไม่มี π)</b> <br>
+                ดังนั้นเมื่อแทนค่า μ₀ = 4π × 10⁻⁷ ลงไป ค่า π จะไม่หายไปไหน! <br>ลองปรับ <b>I=1, N=1, R=1</b> เพื่อดูค่าสัมประสิทธิ์ตั้งต้นสิ!
+            </div>
+
+            <div class="control-group" style="background: #fef2f2;">
+                <label><div>กระแสไฟฟ้า <span class="control-label-en">Current (I)</span></div> <span class="val-badge" id="lbl-i" style="color: #ef4444; border-color: #ef4444; background: #fff;">1.0 A</span></label>
+                <input type="range" id="in-i" min="0.5" max="15.0" step="0.5" value="1.0" oninput="updateVars()">
+            </div>
+
+            <div class="control-group" style="background: #fffbeb;">
+                <label><div>จำนวนรอบขดลวด <span class="control-label-en">Turns (N)</span></div> <span class="val-badge" id="lbl-n" style="color: #d97706; border-color: #d97706; background: #fff;">1 รอบ</span></label>
+                <input type="range" id="in-n" min="1" max="20" step="1" value="1" oninput="updateVars()">
+            </div>
+
+            <div class="control-group" style="background: #eff6ff;">
+                <label><div>รัศมีวงลวด <span class="control-label-en">Radius (R)</span></div> <span class="val-badge" id="lbl-r">1.0 m</span></label>
+                <input type="range" id="in-r" min="0.5" max="10.0" step="0.5" value="1.0" oninput="updateVars()">
+            </div>
+            
+            <button class="btn-reset" onclick="resetToIdeal()">
+                🔄 กลับไปที่ I=1, N=1, R=1 (Ideal State)
+            </button>
+        </div>
+
+        <div class="visual-panel">
+            <svg id="svg-canvas" width="500" height="480" viewBox="0 0 500 480" style="overflow: visible;">
+                <g id="vis-coil-group">
+                    <ellipse cx="250" cy="280" rx="120" ry="50" fill="none" stroke="#94a3b8" stroke-width="6" id="vis-coil"/>
+                    
+                    <path d="M 240 330 Q 250 330 260 328" fill="none" stroke="#ef4444" stroke-width="6" marker-end="url(#arrowhead-red)" id="vis-i-arrow"/>
+                    <text x="250" y="355" font-weight="900" fill="#ef4444" font-size="20" id="txt-i">I</text>
+                    
+                    <circle cx="250" cy="280" r="4" fill="#000"/>
+                    <line x1="250" y1="280" x2="370" y2="280" stroke="#000" stroke-width="3" stroke-dasharray="6,4" id="vis-r-line"/>
+                    <text x="310" y="270" font-weight="900" fill="#0f172a" font-size="18" id="txt-r">1.0 m</text>
+                    
+                    <line x1="250" y1="280" x2="250" y2="100" stroke="#3b82f6" stroke-width="6" id="vis-b-line" stroke-linecap="round"/>
+                    <polygon points="250,90 260,105 240,105" fill="#3b82f6" id="vis-b-head"/>
+                    <text x="270" y="100" font-weight="900" fill="#3b82f6" font-size="24" id="txt-b">B</text>
+                </g>
+
+                <defs>
+                    <marker id="arrowhead-red" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                        <polygon points="0 0, 8 3, 0 6" fill="#ef4444" />
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+    </div>
+
+    <div class="calc-breakdown" id="calc-breakdown">
+        <div class="calc-header">📝 ทำไมคราวนี้ค่า π ถึงไม่หายไป? (Mathematical Proof)</div>
+        <div class="calc-step" id="txt-calc">
+            </div>
+    </div>
+</div>
+
+<script>
+    // UI Elements
+    const inI = document.getElementById('in-i');
+    const inN = document.getElementById('in-n');
+    const inR = document.getElementById('in-r');
+    
+    function resetToIdeal() {
+        inI.value = 1.0;
+        inN.value = 1;
+        inR.value = 1.0;
+        updateVars();
+    }
+
+    function updateVars() {
+        let I = parseFloat(inI.value);
+        let N = parseInt(inN.value);
+        let R = parseFloat(inR.value);
+
+        // Update Labels
+        document.getElementById('lbl-i').innerText = I.toFixed(1) + " A";
+        document.getElementById('lbl-n').innerText = N + " รอบ";
+        document.getElementById('lbl-r').innerText = R.toFixed(1) + " m";
+        
+        document.getElementById('dash-i').innerText = I.toFixed(1);
+        document.getElementById('dash-n').innerText = N;
+
+        // Calculate B Prefix (The number in front of π * 10^-7)
+        // B = (4π*10^-7 * I * N) / 2R = (2 * I * N / R) * π * 10^-7
+        let bPrefix = (2 * I * N) / R;
+        
+        document.getElementById('dash-b').innerText = bPrefix.toFixed(2) + "π";
+        
+        // --- Visual Update ---
+        // mapping ให้ R=1 คือ 60px และ R=10 คือ 200px
+        let pxR = 50 + (R * 15); 
+        
+        // อัปเดตขนาดลวด
+        let coil = document.getElementById('vis-coil');
+        coil.setAttribute('rx', pxR);
+        coil.setAttribute('ry', pxR * 0.35); // Perspective view
+        
+        // ความหนาของลวดเพิ่มตามจำนวนรอบ (N)
+        coil.setAttribute('stroke-width', 4 + (N * 0.6));
+        
+        // อัปเดตเส้นบอกระยะ R
+        document.getElementById('vis-r-line').setAttribute('x2', 250 + pxR);
+        document.getElementById('txt-r').setAttribute('x', 250 + pxR/2);
+        document.getElementById('txt-r').innerText = R.toFixed(1) + " m";
+        
+        // อัปเดตลูกศรกระแสไฟฟ้า (ขยับตามขอบลวด)
+        document.getElementById('vis-i-arrow').setAttribute('d', `M ${250 - 10} ${280 + pxR*0.35} Q 250 ${280 + pxR*0.35} ${250 + 10} ${280 + pxR*0.35 - 1}`);
+        document.getElementById('txt-i').setAttribute('y', 280 + pxR*0.35 + 25);
+
+        // อัปเดตความยาวและความหนาของสนามแม่เหล็ก B
+        let bLen = 30 + (bPrefix * 3); // Scale visually
+        if (bLen > 220) bLen = 220; // Limit max height so it doesn't leave the box
+        let bStroke = 2 + (bPrefix / 5);
+        if (bStroke > 15) bStroke = 15;
+
+        document.getElementById('vis-b-line').setAttribute('y2', 280 - bLen);
+        document.getElementById('vis-b-line').setAttribute('stroke-width', bStroke);
+        document.getElementById('vis-b-head').setAttribute('points', `250,${280 - bLen - 10} ${250+10+(bStroke/2)},${280 - bLen + 5} ${250-10-(bStroke/2)},${280 - bLen + 5}`);
+        document.getElementById('txt-b').setAttribute('y', 280 - bLen - 15);
+
+        // --- Calculation Breakdown ---
+        let calcHTML = `
+            <span style="color:#64748b; font-weight:800;">1. จากสูตรสนามแม่เหล็กตรงกลางลวดวงกลม:</span><br>
+            <span class="formula">B = <span class="highlight">(μ₀)</span>·I·N / <span class="highlight">2R</span></span><br><br>
+            
+            <span style="color:#64748b; font-weight:800;">2. แทนค่าสัมประสิทธิ์ความซึมซาบแม่เหล็ก (μ₀ = 4π × 10⁻⁷):</span><br>
+            B = [ <span class="highlight">4π</span> × 10⁻⁷ × ${I.toFixed(1)} × ${N} ] / [ <span class="highlight">2</span> × ${R.toFixed(1)} ]<br><br>
+
+            <span style="color:#64748b; font-weight:800;">3. สังเกตว่า 4π หารด้วย 2 จะตัดกันเหลือ 2π (ค่า π จะอยู่รอด!):</span><br>
+            B = [ <span class="highlight">2π</span> × 10⁻⁷ × ${I.toFixed(1)} × ${N} ] / ${R.toFixed(1)}<br><br>
+
+            <span style="color:#64748b; font-weight:800;">4. ผลลัพธ์:</span><br>
+            B = <span class="result">${bPrefix.toFixed(2)}π × 10⁻⁷ Tesla</span>
+        `;
+        
+        document.getElementById('txt-calc').innerHTML = calcHTML;
+    }
+
+    // Init
+    updateVars();
+</script>
+</body>
+</html>
