@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Density & Sig-Fig Forge</title>
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #000000;
+            --accent: #facc15;
+            --bg-body: #f8fafc;
+            --border: 4px solid #000000;
+            --shadow: 6px 6px 0px #000000;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+        }
+
+        * { box-sizing: border-box; font-family: 'K2D', sans-serif; user-select: none; }
+        body { background-color: var(--bg-body); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; color: var(--text); overflow-x: hidden; }
+
+        .container {
+            background: var(--card-bg); border: var(--border); box-shadow: 8px 8px 0px #000;
+            width: 100%; max-width: 1200px; padding: 20px; display: flex; flex-direction: column; gap: 20px;
+        }
+
+        .header-title {
+            margin: 0; padding: 15px; background: var(--accent); border: var(--border);
+            font-size: 26px; font-weight: 900; text-transform: uppercase; text-align: center;
+            box-shadow: 4px 4px 0px #000; letter-spacing: 1px;
+        }
+        .header-subtitle { display: block; font-size: 14px; font-weight: 600; color: #333; margin-top: 5px; }
+
+        .dashboard {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;
+            background: #e0f2fe; border: var(--border); padding: 15px; box-shadow: 4px 4px 0px #000;
+        }
+        .dash-box { background: #fff; border: 3px solid #000; padding: 15px; text-align: center; position: relative;}
+        .dash-label { font-size: 18px; font-weight: 900; color: #0f172a; }
+        .dash-value { font-size: 40px; font-weight: 900; font-family: monospace; margin-top: 5px; }
+        .sf-badge { position: absolute; top: -15px; right: -15px; background: #000; color: #fff; font-size: 14px; padding: 5px 10px; border-radius: 20px; font-weight: bold; border: 2px solid #fff; box-shadow: 2px 2px 0px rgba(0,0,0,0.5);}
+
+        .main-layout { display: flex; flex-wrap: wrap; gap: 20px; }
+
+        .controls-panel { flex: 1; min-width: 350px; display: flex; flex-direction: column; gap: 15px; }
+        .control-group { background: #fff; border: 3px solid #000; padding: 20px; box-shadow: 3px 3px 0px #000; display: flex; flex-direction: column; gap: 10px;}
+        .control-group label { font-size: 18px; font-weight: 900; display: block; }
+        
+        input[type="text"] { 
+            width: 100%; border: 4px solid #000; padding: 15px; font-size: 28px; font-weight: 900; outline: none; background: #f8fafc; text-align: center; color: #2563eb; font-family: monospace;
+        }
+        input[type="text"]:focus { background: #fff; border-color: #ef4444; }
+
+        .btn-check {
+            background: #10b981; color: #fff; border: 4px solid #000; padding: 15px; font-size: 22px; font-weight: 900; cursor: pointer;
+            box-shadow: 6px 6px 0px #000; transition: 0.1s; text-align: center; text-transform: uppercase; margin-top: 10px;
+        }
+        .btn-check:active { transform: translate(4px, 4px); box-shadow: 2px 2px 0px #000; }
+
+        .btn-random {
+            background: #8b5cf6; color: #fff; border: 3px solid #000; padding: 15px; font-size: 18px; font-weight: 900; cursor: pointer;
+            box-shadow: 4px 4px 0px #000; transition: 0.1s; width: 100%;
+        }
+        .btn-random:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0px #000; }
+
+        .visual-panel {
+            flex: 1.5; min-width: 500px; height: 350px; background: #fff; border: 4px solid #000; position: relative;
+            display: flex; align-items: center; justify-content: space-around; overflow: hidden;
+            background-image: radial-gradient(#cbd5e1 2px, transparent 2px); background-size: 25px 25px;
+            box-shadow: inset 4px 4px 0px rgba(0,0,0,0.05); padding: 20px;
+        }
+
+        canvas { display: block; width: 100%; height: 100%; position: absolute; top:0; left:0; z-index: 1;}
+
+        .feedback-box {
+            background: #f8fafc; border: 4px dashed #64748b; padding: 20px;
+            box-shadow: 4px 4px 0px #64748b; display: flex; flex-direction: column; gap: 10px; margin-top: 10px;
+        }
+        .fb-header { font-size: 22px; font-weight: 900; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px; }
+        .fb-content { font-size: 18px; color: #334155; line-height: 1.6; font-weight: 600;}
+        .fb-content .highlight { background: #fef08a; color: #b45309; padding: 2px 6px; border: 2px solid #d97706; border-radius: 4px;}
+        
+        .status-error { color: #ef4444; border-color: #fca5a5; }
+        .status-success { color: #10b981; border-color: #6ee7b7; }
+        .status-warn { color: #f97316; border-color: #fdba74; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="header-title">
+        ⚖️ เตาหลอมความหนาแน่น (Density Forge)
+        <span class="header-subtitle">Calculating Density with Significant Figures</span>
+    </h1>
+
+    <div class="dashboard">
+        <div class="dash-box" style="border-color: #ef4444;">
+            <div class="dash-label" style="color: #ef4444;">มวล (Mass)</div>
+            <div class="dash-value" id="val-mass" style="color: #ef4444;">0.00 g</div>
+            <div class="sf-badge" id="sf-mass">SF: 3</div>
+        </div>
+        <div class="dash-box" style="border-color: #3b82f6;">
+            <div class="dash-label" style="color: #3b82f6;">ปริมาตร (Volume)</div>
+            <div class="dash-value" id="val-vol" style="color: #3b82f6;">0.0 cm³</div>
+            <div class="sf-badge" id="sf-vol">SF: 2</div>
+        </div>
+    </div>
+
+    <div class="main-layout">
+        <div class="controls-panel">
+            <button class="btn-random" onclick="generateMission()">🎲 สุ่มโจทย์ใหม่ (New Mission)</button>
+            
+            <div class="control-group" style="background: #fdf2f8;">
+                <label>📌 กฎการคูณ/หาร: <span style="color:#ef4444;">คำตอบต้องมีเลขนัยสำคัญเท่ากับตัวที่ "น้อยที่สุด" เสมอ!</span></label>
+            </div>
+
+            <div class="control-group" style="background: #fffbeb; border-color: #d97706;">
+                <label style="color: #d97706;">🧪 คำนวณความหนาแน่น (ρ = m/v)</label>
+                <input type="text" id="in-density" placeholder="เช่น 2.5" autocomplete="off">
+                <div style="text-align:center; font-weight:800; color:#64748b;">หน่วย: g/cm³</div>
+                <button class="btn-check" onclick="checkAnswer()">✔️ ตรวจคำตอบ (Check)</button>
+            </div>
+        </div>
+
+        <div class="visual-panel">
+            <canvas id="simCanvas"></canvas>
+        </div>
+    </div>
+
+    <div class="feedback-box" id="feedback-box">
+        <div class="fb-header" id="fb-title">💡 รอรับคำตอบ...</div>
+        <div class="fb-content" id="fb-desc">
+            กดเครื่องคิดเลขนำค่า <b>มวล (m)</b> หารด้วย <b>ปริมาตร (V)</b> <br>แต่อย่าลืม!! คุณต้อง <b>ปัดเศษเลขนัยสำคัญ (Sig-Figs)</b> ให้ถูกต้องก่อนตอบด้วยนะ!
+        </div>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Mission Data
+    let massStr = "";
+    let volStr = "";
+    let massSF = 0;
+    let volSF = 0;
+    let minSF = 0;
+    let rawDensity = 0;
+    let targetDensityStr = "";
+    
+    // Visual Data
+    let objColor = "#94a3b8";
+
+    function resizeCanvas() {
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight;
+        drawSimulation();
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    // สร้างฟังก์ชันนับเลขนัยสำคัญ (Sig Fig Counter Logic)
+    function countSigFigs(numStr) {
+        let str = numStr.trim().toLowerCase();
+        if (str.includes('e')) str = str.split('e')[0]; // ตัด Scientific notation ออกมานับเฉพาะสัมประสิทธิ์
+        str = str.replace('-', ''); // เอาเครื่องหมายลบออก
+        let hasDecimal = str.includes('.');
+        str = str.replace('.', ''); // เอาจุดทศนิยมออก
+        str = str.replace(/^0+/, ''); // เอาศูนย์ด้านหน้าออก
+        if (str === '') return 0; // ถ้าเป็น 0.000 จะเหลือ ''
+        if (!hasDecimal) {
+            str = str.replace(/0+$/, ''); // ถ้าไม่มีทศนิยม ศูนย์ตามหลังไม่นับ
+        }
+        return str.length;
+    }
+
+    function generateMission() {
+        const colors = ['#fca5a5', '#fde047', '#86efac', '#93c5fd', '#d8b4fe'];
+        objColor = colors[Math.floor(Math.random() * colors.length)];
+
+        // สุ่มเลขนัยสำคัญ 2, 3 หรือ 4 ตัว
+        massSF = Math.floor(Math.random() * 3) + 2; 
+        volSF = Math.floor(Math.random() * 3) + 2;
+        minSF = Math.min(massSF, volSF);
+
+        // สุ่มตัวเลขตั้งต้น (หลีกเลี่ยงเลขที่หารแล้วลงตัวเป๊ะๆ เพื่อบังคับให้ปัดเศษ)
+        let massVal = (Math.random() * 90) + 10; // 10 to 100
+        let volVal = (Math.random() * 40) + 5;   // 5 to 45
+
+        // ใช้ toPrecision เพื่อบังคับสร้าง String ที่มีเลขนัยสำคัญตามที่กำหนดเป๊ะๆ
+        massStr = massVal.toPrecision(massSF);
+        volStr = volVal.toPrecision(volSF);
+
+        // คำนวณคำตอบเป้าหมาย
+        rawDensity = parseFloat(massStr) / parseFloat(volStr);
+        targetDensityStr = rawDensity.toPrecision(minSF);
+
+        // Update UI
+        document.getElementById('val-mass').innerText = massStr + " g";
+        document.getElementById('val-vol').innerText = volStr + " cm³";
+        document.getElementById('sf-mass').innerText = "SF: " + massSF;
+        document.getElementById('sf-vol').innerText = "SF: " + volSF;
+        
+        document.getElementById('in-density').value = "";
+        
+        document.getElementById('fb-title').innerHTML = "💡 รอรับคำตอบ...";
+        document.getElementById('fb-title').className = "fb-header";
+        document.getElementById('fb-desc').innerHTML = "กดเครื่องคิดเลขนำค่า <b>มวล (m)</b> หารด้วย <b>ปริมาตร (V)</b> <br>แต่อย่าลืม!! คุณต้อง <b>ปัดเศษเลขนัยสำคัญ (Sig-Figs)</b> ให้ถูกต้องก่อนตอบด้วยนะ!";
+
+        drawSimulation();
+    }
+
+    function checkAnswer() {
+        let inputStr = document.getElementById('in-density').value.trim();
+        let titleEl = document.getElementById('fb-title');
+        let descEl = document.getElementById('fb-desc');
+
+        if (inputStr === "") {
+            titleEl.innerHTML = "⚠️ ยังไม่ได้กรอกข้อมูล!"; titleEl.className = "fb-header status-warn";
+            descEl.innerHTML = "กรุณาคำนวณและพิมพ์คำตอบลงไปครับ"; return;
+        }
+
+        let userNum = parseFloat(inputStr);
+        let userSF = countSigFigs(inputStr);
+        let targetNum = parseFloat(targetDensityStr);
+
+        if (isNaN(userNum)) {
+            titleEl.innerHTML = "⚠️ รูปแบบไม่ถูกต้อง!"; titleEl.className = "fb-header status-warn";
+            descEl.innerHTML = "กรุณาใส่เฉพาะตัวเลขครับ"; return;
+        }
+
+        // ความคลาดเคลื่อนคณิตศาสตร์
+        let rawDiff = Math.abs(userNum - rawDensity);
+        let targetDiff = Math.abs(userNum - targetNum);
+        let acceptableRoundingMargin = Math.abs(targetNum - rawDensity) * 1.5 + 1e-5;
+
+        // 1. ตรวจสอบว่ากดเครื่องคิดเลขมาผิดรึเปล่า?
+        if (targetDiff > 1e-4 && rawDiff > acceptableRoundingMargin) {
+            titleEl.innerHTML = "❌ คำนวณตัวเลขผิดพลาด!"; titleEl.className = "fb-header status-error";
+            descEl.innerHTML = `คุณกดเครื่องคิดเลขได้ค่าที่คลาดเคลื่อนไปไกลครับ ลองกดใหม่นะ: <br><span class="highlight">${massStr} ÷ ${volStr}</span>`;
+            return;
+        }
+
+        // 2. ตรวจสอบเลขนัยสำคัญ
+        if (userSF !== minSF) {
+            titleEl.innerHTML = "❌ ผิดกฎเลขนัยสำคัญ (Sig-Figs Error)!"; titleEl.className = "fb-header status-error";
+            descEl.innerHTML = `คำตอบของคุณมีเลขนัยสำคัญ <b>${userSF} ตัว</b> ซึ่งผิดกฎ!<br>
+            กติกาคือ: มวลมี ${massSF} ตัว, ปริมาตรมี ${volSF} ตัว <br>
+            ดังนั้นคำตอบต้องยึดตามตัวที่ <b>"น้อยที่สุด"</b> คือต้องตอบให้มี <span class="highlight">${minSF} ตำแหน่ง</span> ครับ!`;
+            return;
+        }
+
+        // 3. ตรวจสอบการปัดเศษ (กรณีเลขนัยสำคัญถูก แต่ปัดเศษผิด)
+        if (inputStr !== targetDensityStr && targetDiff > 1e-5) {
+            titleEl.innerHTML = "❌ การปัดเศษ (Rounding) ไม่ถูกต้อง!"; titleEl.className = "fb-header status-error";
+            descEl.innerHTML = `ค่าดิบจากเครื่องคิดเลขคือ <b>${rawDensity.toFixed(5)}...</b><br>
+            เมื่อต้องการให้เหลือ ${minSF} ตำแหน่ง คุณต้องพิจารณาตัวเลขตัวถัดไปว่าควรปัดขึ้นหรือปัดทิ้งครับ!`;
+            return;
+        }
+
+        // 4. ถูกต้อง 100%
+        titleEl.innerHTML = "✅ ถูกต้องสมบูรณ์แบบ! (Perfect Calculation)"; titleEl.className = "fb-header status-success";
+        descEl.innerHTML = `เก่งมากครับ! ค่าดิบคือ ${rawDensity.toFixed(5)}...<br>
+        คุณปัดเศษให้เหลือ <b>${minSF} เลขนัยสำคัญ</b> กลายเป็น <span class="highlight">${targetDensityStr} g/cm³</span> ได้ถูกต้องตามกฎเป๊ะ!`;
+    }
+
+    function drawSimulation() {
+        if (!ctx) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        let cx1 = canvas.width * 0.3; // ฝั่งตาชั่ง
+        let cx2 = canvas.width * 0.7; // ฝั่งบีกเกอร์
+        let cy = canvas.height * 0.6;
+
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = "#000";
+
+        // --- ซ้าย: เครื่องชั่งดิจิทัล ---
+        ctx.fillStyle = "#cbd5e1"; ctx.fillRect(cx1 - 60, cy, 120, 40); ctx.strokeRect(cx1 - 60, cy, 120, 40);
+        ctx.fillStyle = "#86efac"; ctx.fillRect(cx1 - 40, cy + 10, 80, 20); ctx.strokeRect(cx1 - 40, cy + 10, 80, 20);
+        ctx.fillStyle = "#f1f5f9"; ctx.beginPath(); ctx.ellipse(cx1, cy - 10, 60, 15, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+        
+        // วาดก้อนวัตถุ
+        ctx.fillStyle = objColor;
+        ctx.beginPath(); ctx.moveTo(cx1 - 25, cy - 20); ctx.lineTo(cx1 + 25, cy - 20); ctx.lineTo(cx1 + 35, cy - 50); ctx.lineTo(cx1 - 15, cy - 50); ctx.closePath(); ctx.fill(); ctx.stroke();
+        ctx.fillRect(cx1 - 25, cy - 20, 40, 30); ctx.strokeRect(cx1 - 25, cy - 20, 40, 30);
+        ctx.fillStyle = "#064e3b"; ctx.font = "bold 12px monospace"; ctx.textAlign="center"; ctx.fillText(massStr, cx1, cy + 24);
+
+        // --- ขวา: บีกเกอร์วัดปริมาตร ---
+        ctx.fillStyle = "rgba(191, 219, 254, 0.6)"; // น้ำ
+        ctx.beginPath(); ctx.moveTo(cx2 - 40, cy + 40); ctx.lineTo(cx2 + 40, cy + 40); ctx.lineTo(cx2 + 40, cy - 60); ctx.lineTo(cx2 - 40, cy - 60); ctx.fill();
+        ctx.strokeRect(cx2 - 40, cy - 100, 80, 140); // ขอบแก้ว
+        
+        // ขีดสเกลบีกเกอร์
+        for(let i=0; i<5; i++) {
+            let y = cy + 20 - (i*30);
+            ctx.beginPath(); ctx.moveTo(cx2 - 40, y); ctx.lineTo(cx2 - 25, y); ctx.stroke();
+        }
+
+        // วัตถุจมน้ำ
+        ctx.fillStyle = objColor;
+        ctx.fillRect(cx2 - 15, cy, 30, 30); ctx.strokeRect(cx2 - 15, cy, 30, 30);
+        
+        // ป้ายปริมาตร
+        ctx.fillStyle = "#3b82f6"; ctx.fillRect(cx2 + 50, cy - 70, 70, 30); ctx.strokeRect(cx2 + 50, cy - 70, 70, 30);
+        ctx.fillStyle = "#fff"; ctx.font = "bold 14px Arial"; ctx.fillText(volStr, cx2 + 85, cy - 50);
+        ctx.beginPath(); ctx.moveTo(cx2 + 50, cy - 55); ctx.lineTo(cx2 + 40, cy - 60); ctx.stroke();
+
+        // --- กลาง: เครื่องหมายหาร ---
+        ctx.fillStyle = "#000";
+        ctx.font = "900 40px K2D";
+        ctx.fillText("÷", canvas.width * 0.5, cy - 20);
+    }
+
+    // Init
+    setTimeout(() => {
+        resizeCanvas();
+        generateMission();
+    }, 100);
+
+</script>
+</body>
+</html>
