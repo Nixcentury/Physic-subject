@@ -84,6 +84,10 @@
         input:checked + .slider { background-color: #10b981; }
         input:checked + .slider:before { transform: translateX(26px); }
 
+        /* ทำให้ปุ่มแถวล่างจัดเรียงไม่เบียดกันบนจอ iPad */
+        .controls-row { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
+        .controls-row > button { flex: 1; min-width: 250px; }
+
     </style>
 </head>
 <body>
@@ -116,9 +120,9 @@
 
         <div class="controls-panel">
             <label><div>📏 เลื่อนปากวัด (Slide Jaw)</div> <span class="val-badge" id="lbl-slider">0.00 cm</span></label>
-            <input type="range" id="in-value" min="0.00" max="5.00" step="0.01" value="1.25" oninput="updateCaliper()">
+            <input type="range" id="in-value" min="0.00" max="5.00" step="0.01" value="4.97" oninput="updateCaliper()">
             
-            <div style="display: flex; gap: 15px; align-items: center;">
+            <div class="controls-row">
                 <button class="btn-random" onclick="randomizeValue()">🎲 สุ่มโจทย์ (Randomize)</button>
                 <div class="toggle-container">
                     <span>แสดงเส้นไกด์ (Helper Lines):</span>
@@ -136,16 +140,16 @@
                 <div class="calc-step">
                     <b>Step 1: อ่านสเกลหลัก (Main Scale)</b><br><br>
                     ดูว่า <b>"ขีด 0 ของสเกลเวอร์เนีย"</b> อยู่เลยขีดไหนของสเกลหลักมาแล้ว<br><br>
-                    อ่านค่าสเกลหลักได้ = <span class="highlight-main" id="txt-main">1.2 cm</span>
+                    อ่านค่าสเกลหลักได้ = <span class="highlight-main" id="txt-main">4.9 cm</span>
                 </div>
                 <div class="calc-step">
                     <b>Step 2: อ่านสเกลเวอร์เนีย (Vernier Scale)</b><br><br>
                     หาว่า <b>"ขีดไหนของสเกลเวอร์เนีย"</b> ตรงกับขีดของสเกลหลักมากที่สุด (คูณด้วยความละเอียด 0.01)<br><br>
-                    ขีดที่ตรงกันคือขีดที่ <span id="txt-v-mark" style="font-weight:bold; color:#ea580c;">5</span> → <span class="highlight-vernier" id="txt-v-val">0.05 cm</span>
+                    ขีดที่ตรงกันคือขีดที่ <span id="txt-v-mark" style="font-weight:bold; color:#ea580c;">7</span> → <span class="highlight-vernier" id="txt-v-val">0.07 cm</span>
                 </div>
             </div>
             <div class="result-box">
-                ผลรวม = <span style="color:#2563eb;" id="res-main">1.2</span> + <span style="color:#ea580c;" id="res-vernier">0.05</span> = <span id="res-total">1.25 cm</span>
+                ผลรวม = <span style="color:#2563eb;" id="res-main">4.9</span> + <span style="color:#ea580c;" id="res-vernier">0.07</span> = <span id="res-total">4.97 cm</span>
             </div>
         </div>
     </div>
@@ -160,12 +164,11 @@
     // ตัวแปรควบคุมความคมชัด (High-DPI Canvas)
     let dpr = window.devicePixelRatio || 1;
     
-    // ตั้งค่าความกว้างสเกลให้ใหญ่สะใจ: 1 cm = 400 pixels
+    // ตั้งค่าความกว้างสเกล: 1 cm = 400 pixels
     const PX_PER_CM = 400; 
     const PX_PER_MM = PX_PER_CM / 10;
     
     // สเกลเวอร์เนีย: 10 ช่อง ยาวเท่ากับ 9 mm (0.9 cm)
-    // ดังนั้น 1 ช่องเวอร์เนีย = 0.9 mm = 0.09 cm = 36 pixels
     const V_STEP_PX = (9 * PX_PER_MM) / 10;
 
     function resizeCanvas() {
@@ -178,7 +181,6 @@
     window.addEventListener('resize', resizeCanvas);
 
     function randomizeValue() {
-        // สุ่มค่า 0.00 ถึง 5.00
         let randomVal = (Math.floor(Math.random() * 501)) / 100;
         slider.value = randomVal;
         updateCaliper();
@@ -189,8 +191,8 @@
         document.getElementById('lbl-slider').innerText = value.toFixed(2) + " cm";
 
         // คำนวณคณิตศาสตร์ของการอ่าน
-        let mainReading = Math.floor(value * 10) / 10; // สเกลหลัก (เช่น 1.25 -> 1.2)
-        let vernierMark = Math.round((value - mainReading) * 100); // ขีดเวอร์เนียที่ตรง (เช่น 0.05 -> 5)
+        let mainReading = Math.floor(value * 10) / 10; 
+        let vernierMark = Math.round((value - mainReading) * 100); 
         let vernierReading = vernierMark * 0.01;
 
         // อัปเดต UI หน้าปัด
@@ -210,7 +212,6 @@
     }
 
     function drawCaliper(value, mainReading, vernierMark) {
-        // ขนาดของจอที่ไม่ได้คูณ dpr
         const w = canvas.width / dpr;
         const h = canvas.height / dpr;
         
@@ -219,30 +220,49 @@
         const cy = h / 2; // เส้นแบ่งกลางระหว่างสเกลหลักและเวอร์เนีย
         const offsetX = 50; // ระยะขอบซ้าย
         
+        // --- ระบบกล้องแพนอัตโนมัติ (Smart Dynamic Camera) ---
+        let physicalZeroX = offsetX + (value * PX_PER_CM); // ตำแหน่งจริงของขีด 0
+        let vernierWidth = 10 * V_STEP_PX; // ความกว้างของสเกลเวอร์เนีย
+        
+        // ตั้งเป้าให้ขีด 0 อยู่ที่เดิม แต่ถ้าความกว้างรวมของเวอร์เนียมันทะลุจอขวา ให้ดันกล้องตาม
+        let targetScreenX = physicalZeroX;
+        if (physicalZeroX + vernierWidth + 60 > w) {
+            targetScreenX = w - vernierWidth - 60; // เว้นขอบขวาไว้ 60px
+        }
+        // ถ้าจอมันเล็กมากๆ จนดันขีด 0 ชิดซ้ายเกินไป ก็เบรกไว้ที่ 20px
+        if (targetScreenX < 20) targetScreenX = 20;
+        
+        // คำนวณระยะที่กล้องต้องขยับ
+        let cameraShift = physicalZeroX - targetScreenX;
+        
         // --- 1. วาดสเกลหลัก (Main Scale) ---
         ctx.fillStyle = "#f8fafc";
         ctx.fillRect(0, 0, w, cy);
         ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(w, cy); 
         ctx.lineWidth = 4; ctx.strokeStyle = "#334155"; ctx.stroke();
 
+        // วาดปากวัดด้านซ้าย (Fixed Jaw) ที่เลื่อนหลุดจอได้
+        let fixedJawX = offsetX - 30 - cameraShift;
+        if (fixedJawX > -50) { 
+            ctx.fillStyle = "#e2e8f0";
+            ctx.fillRect(fixedJawX, cy - 60, 30, 80); 
+            ctx.strokeRect(fixedJawX, cy - 60, 30, 80);
+        }
+
         ctx.fillStyle = "#0f172a";
         ctx.textAlign = "center";
         ctx.textBaseline = "bottom";
         
-        // วาดสเกลหลักตั้งแต่ 0 ถึง 6 cm
-        for (let i = 0; i <= 60; i++) {
+        // วาดสเกลหลักเผื่อไปถึง 8 cm ป้องกันขอบจอด้านขวาโล่ง
+        for (let i = 0; i <= 80; i++) {
             let x = offsetX + (i * PX_PER_MM);
-            
-            // ขยับ Canvas ตามการเลื่อน (ให้จุด 0 ของสเกลหลักอยู่กับที่)
-            // แต่ถ้าค่าเยอะๆ อาจจะล้นจอ เราจะตั้งให้กล้องเลื่อนตามสเกลเวอร์เนีย
-            let cameraShift = value > 2 ? (value - 2) * PX_PER_CM : 0;
             let drawX = x - cameraShift;
 
-            if (drawX < 0 || drawX > w) continue;
+            // วาดเฉพาะเส้นที่อยู่ในขอบเขตหน้าจอ
+            if (drawX < -20 || drawX > w + 20) continue;
 
             let isCm = (i % 10 === 0);
             let isHalf = (i % 5 === 0 && !isCm);
-            
             let tickH = isCm ? 40 : (isHalf ? 25 : 15);
             
             ctx.beginPath();
@@ -259,11 +279,10 @@
         }
 
         // --- 2. วาดปากสไลด์ & สเกลเวอร์เนีย (Vernier Scale) ---
-        let cameraShift = value > 2 ? (value - 2) * PX_PER_CM : 0;
-        let slideStartX = offsetX + (value * PX_PER_CM) - cameraShift; // จุด 0 ของเวอร์เนีย
+        let slideStartX = targetScreenX; // จุด 0 ของเวอร์เนียจะอยู่ที่นี่พอดี
 
         ctx.fillStyle = "#e2e8f0";
-        ctx.fillRect(slideStartX - 20, cy, w, h - cy);
+        ctx.fillRect(slideStartX - 20, cy, w * 2, h - cy); // วาดยาวๆ ไปทางขวา
         ctx.beginPath(); ctx.moveTo(slideStartX - 20, cy); ctx.lineTo(w, cy); 
         ctx.lineWidth = 4; ctx.strokeStyle = "#334155"; ctx.stroke();
 
@@ -288,17 +307,16 @@
 
         // --- 3. ระบบแสดงเส้นไกด์ (Helper Lines) ---
         if (chkHelper.checked) {
-            // ไฮไลต์ขีด 0 ของสเกลเวอร์เนีย (เพื่อหาค่าหลัก)
+            // ไฮไลต์ขีด 0 ของสเกลเวอร์เนีย
             ctx.beginPath();
             ctx.moveTo(slideStartX, cy - 60);
             ctx.lineTo(slideStartX, cy + 60);
             ctx.lineWidth = 3;
-            ctx.strokeStyle = "rgba(37, 99, 235, 0.5)"; // Blue dashed
+            ctx.strokeStyle = "rgba(37, 99, 235, 0.5)"; 
             ctx.setLineDash([5, 5]);
             ctx.stroke();
             ctx.setLineDash([]);
             
-            // วงกลมชี้จุดอ่านสเกลหลัก
             ctx.beginPath();
             ctx.arc(slideStartX, cy, 8, 0, 2*Math.PI);
             ctx.fillStyle = "#3b82f6";
@@ -311,10 +329,9 @@
             ctx.moveTo(matchX, cy - 40);
             ctx.lineTo(matchX, cy + 40);
             ctx.lineWidth = 4;
-            ctx.strokeStyle = "#ef4444"; // Red solid
+            ctx.strokeStyle = "#ef4444"; 
             ctx.stroke();
 
-            // ป้ายบอกว่าตรงกัน
             ctx.fillStyle = "#ef4444";
             ctx.fillRect(matchX - 40, cy + 65, 80, 25);
             ctx.fillStyle = "#fff";
