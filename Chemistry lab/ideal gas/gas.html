@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Chemistry Interactive Gas Lab V.2</title>
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #000000;
+            --accent: #8b5cf6; /* Chemistry Purple */
+            --bg-body: #f3e8ff;
+            --border: 4px solid #000000;
+            --shadow: 6px 6px 0px #000000;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+        }
+
+        * { box-sizing: border-box; font-family: 'K2D', sans-serif; user-select: none; }
+        body { background-color: var(--bg-body); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; color: var(--text); overflow-x: hidden; }
+
+        .container {
+            background: var(--card-bg); border: var(--border); box-shadow: 8px 8px 0px #000;
+            width: 100%; max-width: 1300px; padding: 20px; display: flex; flex-direction: column; gap: 20px;
+        }
+
+        .header-title {
+            margin: 0; padding: 15px; background: var(--accent); color: #fff; border: var(--border);
+            font-size: 26px; font-weight: 900; text-transform: uppercase; text-align: center;
+            box-shadow: 4px 4px 0px #000; letter-spacing: 1px;
+        }
+
+        /* 🎛️ Dashboard */
+        .dashboard {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;
+            background: #faf5ff; border: var(--border); padding: 15px; box-shadow: 4px 4px 0px #000;
+        }
+        .dash-box { background: #fff; border: 3px solid #000; padding: 15px; text-align: center; position: relative; transition: 0.3s;}
+        .dash-box.locked { background: #cbd5e1; border-color: #64748b; opacity: 0.8;}
+        .dash-label { font-size: 16px; font-weight: 900; color: #0f172a; }
+        .dash-value { font-size: 32px; font-weight: 900; font-family: monospace; margin-top: 5px; }
+        .lock-icon { position: absolute; top: -10px; right: -10px; font-size: 20px; display: none; background: #fff; border-radius: 50%; box-shadow: 2px 2px 0px #000; border: 2px solid #000; width: 30px; height: 30px; line-height: 26px; z-index: 10;}
+        .locked .lock-icon { display: block; }
+
+        .main-layout { display: flex; flex-wrap: wrap; gap: 20px; }
+
+        /* 🎛️ Controls (Action Buttons) */
+        .controls-panel { flex: 1; min-width: 400px; display: flex; flex-direction: column; gap: 15px; }
+        
+        .mode-selector { background: #fff; border: 3px solid #000; padding: 15px; box-shadow: 3px 3px 0px #000;}
+        .mode-selector label { font-size: 18px; font-weight: 900; display: block; margin-bottom: 10px; color: var(--accent);}
+        select { width: 100%; border: 3px solid #000; padding: 10px; font-size: 16px; font-weight: 800; background: #f8fafc; cursor: pointer; outline: none; }
+
+        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        .action-card { background: #fff; border: 3px solid #000; padding: 15px; box-shadow: 3px 3px 0px #000; display: flex; flex-direction: column; gap: 10px; transition: 0.2s;}
+        .action-card.disabled { opacity: 0.4; pointer-events: none; filter: grayscale(100%); }
+        .action-card label { font-size: 16px; font-weight: 900; text-align: center;}
+        
+        .btn-action {
+            border: 3px solid #000; padding: 10px; font-size: 18px; font-weight: 900; cursor: pointer;
+            box-shadow: 3px 3px 0px #000; transition: 0.1s; text-align: center; border-radius: 8px;
+        }
+        .btn-action:active { transform: translate(3px, 3px); box-shadow: none; }
+        
+        .btn-add { background: #f87171; color: #7f1d1d; } /* Red for Pressure */
+        .btn-sub { background: #fca5a5; color: #7f1d1d; } 
+        .btn-fire { background: #fb923c; color: #fff; } /* Orange */
+        .btn-ice { background: #60a5fa; color: #fff; } /* Blue */
+        .btn-pump { background: #c084fc; color: #fff; width: 100%;} /* Purple */
+
+        .btn-reset { background: #000; color: #fff; border: 3px solid #var(--accent); padding: 15px; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 4px 4px 0px var(--accent); transition: 0.1s; text-transform: uppercase; margin-top: auto;}
+        .btn-reset:active { transform: translate(4px, 4px); box-shadow: none; }
+
+        /* 🎬 Visual Canvas */
+        .visual-panel {
+            flex: 1.5; min-width: 500px; height: 500px; background: #fff; border: 4px solid #000; position: relative;
+            display: flex; align-items: center; justify-content: center; overflow: hidden;
+            background-image: radial-gradient(#e2e8f0 2px, transparent 2px); background-size: 25px 25px;
+            box-shadow: inset 4px 4px 0px rgba(0,0,0,0.05);
+        }
+        canvas { display: block; width: 100%; height: 100%; }
+
+        /* 🧮 Math Breakdown */
+        .calc-breakdown {
+            background: #faf5ff; border: 3px solid #8b5cf6; padding: 20px;
+            box-shadow: 4px 4px 0px #8b5cf6; margin-top: 10px; text-align: center;
+        }
+        .calc-header { font-size: 20px; font-weight: 900; color: #4c1d95; margin-bottom: 15px; }
+        .math-display { display: flex; align-items: center; justify-content: center; gap: 20px; font-size: 28px; font-weight: 900; font-family: monospace; color: #0f172a;}
+        .fraction { display: flex; flex-direction: column; align-items: center; margin: 0 10px; }
+        .fraction span:first-child { border-bottom: 4px solid #000; padding-bottom: 5px; margin-bottom: 5px; }
+        .constant-r { background: #d8b4fe; padding: 10px 20px; border: 3px solid #7c3aed; border-radius: 8px; color: #4c1d95; font-size: 32px;}
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="header-title">🧪 ห้องปฏิบัติการแก๊สอุดมคติ (Chemistry Gas Lab V.2)</h1>
+
+    <div class="dashboard">
+        <div class="dash-box" id="box-p" style="border-color: #ef4444; color: #ef4444;">
+            <div class="lock-icon">🔒</div>
+            <div class="dash-label">ความดัน (P)</div>
+            <div class="dash-value"><span id="val-p">1.00</span> <span style="font-size:16px;">atm</span></div>
+        </div>
+        <div class="dash-box" id="box-v" style="border-color: #3b82f6; color: #3b82f6;">
+            <div class="lock-icon">🔒</div>
+            <div class="dash-label">ปริมาตร (V)</div>
+            <div class="dash-value"><span id="val-v">22.4</span> <span style="font-size:16px;">L</span></div>
+        </div>
+        <div class="dash-box" id="box-n" style="border-color: #a855f7; color: #a855f7;">
+            <div class="lock-icon">🔒</div>
+            <div class="dash-label">จำนวนแก๊ส (n)</div>
+            <div class="dash-value"><span id="val-n">1.00</span> <span style="font-size:16px;">mol</span></div>
+        </div>
+        <div class="dash-box" id="box-t" style="border-color: #f97316; color: #f97316;">
+            <div class="lock-icon">🔒</div>
+            <div class="dash-label">อุณหภูมิ (T)</div>
+            <div class="dash-value"><span id="val-t">273</span> <span style="font-size:16px;">K</span></div>
+        </div>
+    </div>
+
+    <div class="main-layout">
+        <div class="controls-panel">
+            <div class="mode-selector">
+                <label>📌 เลือกกฎการทดลอง (Experiment Mode):</label>
+                <select id="sel-mode" onchange="changeMode()">
+                    <option value="ideal">🔓 โหมดอิสระ (ทดลองได้ทุกปุ่ม)</option>
+                    <option value="boyle">🧪 กฎของบอยล์ (ล็อก n, T - ใช้มวลเพิ่ม P เพื่อบีบ V)</option>
+                    <option value="charles">🎈 กฎของชาร์ล (ล็อก n, P - ใช้ความร้อนขยาย V)</option>
+                    <option value="gaylussac">💥 กฎของเกย์-ลูสแซก (ล็อก n, V - ใช้ความร้อนเพิ่ม P)</option>
+                    <option value="avogadro">💨 กฎของอาโวกาโดร (ล็อก P, T - ปั๊มแก๊สเพิ่ม V)</option>
+                </select>
+            </div>
+
+            <div class="action-grid">
+                <div class="action-card" id="ctrl-p" style="border-color: #ef4444;">
+                    <label style="color:#ef4444;">🧱 วางก้อนมวล (เพิ่มความดัน P)</label>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn-action btn-add" style="flex:1;" onclick="modifyValue('p', 0.2)">+ วางมวล</button>
+                        <button class="btn-action btn-sub" style="flex:1;" onclick="modifyValue('p', -0.2)">- ยกออก</button>
+                    </div>
+                </div>
+
+                <div class="action-card" id="ctrl-t" style="border-color: #f97316;">
+                    <label style="color:#f97316;">🔥 ให้ความร้อน / 🧊 แช่เย็น</label>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn-action btn-fire" style="flex:1;" onmousedown="startHold('t', 10)" onmouseup="stopHold()" onmouseleave="stopHold()">🔥 จี้ไฟ</button>
+                        <button class="btn-action btn-ice" style="flex:1;" onmousedown="startHold('t', -10)" onmouseup="stopHold()" onmouseleave="stopHold()">🧊 แช่น้ำแข็ง</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-card" id="ctrl-n" style="border-color: #a855f7;">
+                <label style="color:#a855f7;">💨 กระบอกสูบแก๊ส (เพิ่มโมล n)</label>
+                <button class="btn-action btn-pump" onclick="modifyValue('n', 0.2)">💨 อัดแก๊สเพิ่ม +0.2 mol</button>
+            </div>
+
+            <button class="btn-reset" onclick="resetSTP()">🔄 ล้างห้องทดลอง (Reset to STP)</button>
+        </div>
+
+        <div class="visual-panel">
+            <canvas id="simCanvas"></canvas>
+        </div>
+    </div>
+
+    <div class="calc-breakdown">
+        <div class="calc-header">✨ พิสูจน์ค่าคงที่แก๊สอุดมคติ (Ideal Gas Constant: R)</div>
+        <div class="math-display">
+            <div class="fraction"><span style="color:#ef4444;">P</span><span style="color:#a855f7;">n</span></div>
+            <div style="font-size:20px; color:#64748b;">×</div>
+            <div class="fraction"><span style="color:#3b82f6;">V</span><span style="color:#f97316;">T</span></div>
+            <div>=</div>
+            <div class="fraction"><span id="math-pv">1.00 × 22.4</span><span id="math-nt">1.00 × 273</span></div>
+            <div>=</div>
+            <div class="constant-r">0.0821</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Physics Engine Constants
+    const R = 0.08206;
+    let P = 1.00, V = 22.4, n = 1.00, T = 273;
+    let mode = 'ideal';
+
+    // Visual State Flags
+    let isHeating = false;
+    let isCooling = false;
+    let holdInterval;
+
+    // Canvas & Animation
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    let dpr = window.devicePixelRatio || 1;
+    let particles = [];
+    let animationFrame;
+
+    function resizeCanvas() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.scale(dpr, dpr);
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    class Particle {
+        constructor() {
+            this.radius = 4 + Math.random() * 2;
+            this.x = canvas.width / dpr / 2 + (Math.random() - 0.5) * 50;
+            this.y = canvas.height / dpr / 2 + (Math.random() - 0.5) * 50;
+            let angle = Math.random() * 2 * Math.PI;
+            this.baseSpeed = 2 + Math.random() * 2;
+            this.vxBase = Math.cos(angle) * this.baseSpeed;
+            this.vyBase = Math.sin(angle) * this.baseSpeed;
+            const colors = ['#c084fc', '#e879f9', '#818cf8', '#a78bfa'];
+            this.color = colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        update(boxRect, speedMultiplier) {
+            let vx = this.vxBase * speedMultiplier;
+            let vy = this.vyBase * speedMultiplier;
+
+            this.x += vx;
+            this.y += vy;
+
+            // Bouncing
+            if (this.x - this.radius < boxRect.x) { this.x = boxRect.x + this.radius; this.vxBase *= -1; }
+            if (this.x + this.radius > boxRect.x + boxRect.w) { this.x = boxRect.x + boxRect.w - this.radius; this.vxBase *= -1; }
+            if (this.y - this.radius < boxRect.y) { this.y = boxRect.y + this.radius; this.vyBase *= -1; }
+            if (this.y + this.radius > boxRect.y + boxRect.h) { this.y = boxRect.y + boxRect.h - this.radius; this.vyBase *= -1; }
+        }
+
+        draw(ctx) {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fillStyle = this.color;
+            ctx.fill();
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+    }
+
+    function initParticles() {
+        particles = [];
+        adjustParticleCount();
+    }
+
+    function adjustParticleCount() {
+        let targetCount = Math.floor(n * 40);
+        if(particles.length < targetCount) {
+            let toAdd = targetCount - particles.length;
+            for(let i=0; i<toAdd; i++) particles.push(new Particle());
+        } else if(particles.length > targetCount) {
+            particles.splice(0, particles.length - targetCount);
+        }
+    }
+
+    // --- Interactive Action Logic ---
+    function startHold(type, amount) {
+        if (type === 't') {
+            if (amount > 0) isHeating = true;
+            else isCooling = true;
+        }
+        modifyValue(type, amount); 
+        holdInterval = setInterval(() => {
+            modifyValue(type, amount);
+        }, 100); 
+    }
+
+    function stopHold() {
+        clearInterval(holdInterval);
+        isHeating = false;
+        isCooling = false;
+    }
+
+    function modifyValue(type, amount) {
+        if (type === 'p') {
+            let newP = P + amount;
+            if (newP < 0.5) newP = 0.5;
+            if (newP > 5.0) newP = 5.0;
+            updatePhysics('p', newP);
+        } else if (type === 't') {
+            let newT = T + amount;
+            if (newT < 50) newT = 50;
+            if (newT > 800) newT = 800;
+            updatePhysics('t', newT);
+        } else if (type === 'n') {
+            let newN = n + amount;
+            if (newN < 0.2) newN = 0.2;
+            if (newN > 5.0) newN = 5.0;
+            updatePhysics('n', newN);
+        }
+    }
+
+    // --- Natural Physics Logic Engine ---
+    function updatePhysics(sourceType, newValue) {
+        if (mode === 'ideal') {
+            if(sourceType === 'p') { P = newValue; V = (n * R * T) / P; }
+            if(sourceType === 't') { T = newValue; V = (n * R * T) / P; } // ปริมาตรขยายเมื่อร้อน
+            if(sourceType === 'n') { n = newValue; V = (n * R * T) / P; } // ปริมาตรขยายเมื่อเติมแก๊ส
+        } 
+        else if (mode === 'boyle') {
+            if(sourceType === 'p') {
+                P = newValue;
+                V = (n * R * T) / P; // เพิ่มมวล (P) -> ปริมาตร (V) ลด
+            }
+        }
+        else if (mode === 'charles') {
+            if(sourceType === 't') {
+                T = newValue;
+                V = (n * R * T) / P; // เพิ่มความร้อน (T) -> ปริมาตร (V) ขยาย
+            }
+        }
+        else if (mode === 'gaylussac') {
+            if(sourceType === 't') {
+                T = newValue;
+                P = (n * R * T) / V; // ล็อกปริมาตร (V) -> เพิ่มความร้อน (T) ทำให้ความดัน (P) พุ่ง
+            }
+        }
+        else if (mode === 'avogadro') {
+            if(sourceType === 'n') {
+                n = newValue;
+                V = (n * R * T) / P; // เติมแก๊ส (n) -> ปริมาตร (V) ขยาย
+            }
+        }
+
+        // ป้องกันค่า V ทะลุกระบอกสูบ
+        if (V > 60) { V = 60; P = (n * R * T) / V; }
+        if (V < 5) { V = 5; P = (n * R * T) / V; }
+
+        updateUI();
+        adjustParticleCount();
+    }
+
+    function updateUI() {
+        document.getElementById('val-p').innerText = P.toFixed(2);
+        document.getElementById('val-v').innerText = V.toFixed(1);
+        document.getElementById('val-n').innerText = n.toFixed(2);
+        document.getElementById('val-t').innerText = T.toFixed(0);
+
+        document.getElementById('math-pv').innerText = `${P.toFixed(2)} × ${V.toFixed(1)}`;
+        document.getElementById('math-nt').innerText = `${n.toFixed(2)} × ${T.toFixed(0)}`;
+    }
+
+    function changeMode() {
+        mode = document.getElementById('sel-mode').value;
+        
+        document.querySelectorAll('.dash-box').forEach(el => el.classList.remove('locked'));
+        document.querySelectorAll('.action-card').forEach(el => el.classList.remove('disabled'));
+
+        if (mode === 'boyle') {
+            document.getElementById('box-n').classList.add('locked');
+            document.getElementById('box-t').classList.add('locked');
+            document.getElementById('ctrl-n').classList.add('disabled');
+            document.getElementById('ctrl-t').classList.add('disabled');
+        } else if (mode === 'charles') {
+            document.getElementById('box-n').classList.add('locked');
+            document.getElementById('box-p').classList.add('locked');
+            document.getElementById('ctrl-n').classList.add('disabled');
+            document.getElementById('ctrl-p').classList.add('disabled'); // P is locked
+        } else if (mode === 'gaylussac') {
+            document.getElementById('box-n').classList.add('locked');
+            document.getElementById('box-v').classList.add('locked');
+            document.getElementById('ctrl-n').classList.add('disabled');
+            document.getElementById('ctrl-p').classList.add('disabled'); // V locked by mechanical lock, external mass disabled
+        } else if (mode === 'avogadro') {
+            document.getElementById('box-p').classList.add('locked');
+            document.getElementById('box-t').classList.add('locked');
+            document.getElementById('ctrl-p').classList.add('disabled'); // P is locked
+            document.getElementById('ctrl-t').classList.add('disabled');
+        }
+    }
+
+    function resetSTP() {
+        P = 1.00; V = 22.4; n = 1.00; T = 273;
+        isHeating = false; isCooling = false;
+        document.getElementById('sel-mode').value = 'ideal';
+        changeMode();
+        updateUI();
+        initParticles();
+    }
+
+    // --- Drawing Loop (The Visuals) ---
+    function draw() {
+        const w = canvas.width / dpr;
+        const h = canvas.height / dpr;
+        ctx.clearRect(0, 0, w, h);
+
+        const cx = w / 2;
+        const cy = h / 2;
+        const boxWidth = 220;
+        
+        let boxHeight = 60 + (V / 60) * 260; 
+        let boxY = h - 80 - boxHeight; 
+
+        const boxRect = { x: cx - boxWidth/2, y: boxY, w: boxWidth, h: boxHeight };
+
+        // 1. วาดก้อนน้ำแข็ง หรือ ไฟ
+        if (isHeating || T > 320) {
+            let fireH = isHeating ? 40 + Math.random()*20 : (T - 320)/5;
+            ctx.fillStyle = "#f97316"; 
+            ctx.beginPath(); ctx.moveTo(cx - 50, h - 70); ctx.lineTo(cx, h - 70 - fireH); ctx.lineTo(cx + 50, h - 70); ctx.fill();
+            ctx.fillStyle = "#facc15"; 
+            ctx.beginPath(); ctx.moveTo(cx - 20, h - 70); ctx.lineTo(cx, h - 70 - fireH*0.6); ctx.lineTo(cx + 20, h - 70); ctx.fill();
+        } 
+        if (isCooling || T < 250) {
+            ctx.fillStyle = "#bae6fd";
+            ctx.fillRect(cx - 60, h - 90, 40, 40); ctx.strokeRect(cx - 60, h - 90, 40, 40);
+            ctx.fillRect(cx + 20, h - 90, 40, 40); ctx.strokeRect(cx + 20, h - 90, 40, 40);
+            ctx.fillRect(cx - 20, h - 110, 40, 40); ctx.strokeRect(cx - 20, h - 110, 40, 40);
+        }
+
+        // 2. วาดกระบอกสูบ (Cylinder)
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(boxRect.x, boxRect.y, boxRect.w, boxRect.h);
+        
+        // สีแก๊สเข้มขึ้นตามความดันภายใน (Internal Pressure)
+        let pColor = `rgba(168, 85, 247, ${Math.min((P-1)*0.15, 0.5)})`;
+        if(P > 1.1) {
+            ctx.fillStyle = pColor;
+            ctx.fillRect(boxRect.x, boxRect.y, boxRect.w, boxRect.h);
+        }
+
+        ctx.lineWidth = 6;
+        ctx.strokeStyle = "#000";
+        ctx.beginPath(); ctx.moveTo(boxRect.x, boxRect.y - 60); ctx.lineTo(boxRect.x, boxRect.y + boxRect.h);
+        ctx.lineTo(boxRect.x + boxRect.w, boxRect.y + boxRect.h); ctx.lineTo(boxRect.x + boxRect.w, boxRect.y - 60); ctx.stroke();
+
+        // 3. วาดฝาลูกสูบ (Piston lid)
+        ctx.fillStyle = "#64748b";
+        ctx.fillRect(boxRect.x - 10, boxRect.y - 20, boxRect.w + 20, 20);
+        ctx.strokeRect(boxRect.x - 10, boxRect.y - 20, boxRect.w + 20, 20);
+        
+        ctx.beginPath(); ctx.moveTo(cx, boxRect.y - 20); ctx.lineTo(cx, boxRect.y - 120); ctx.lineWidth = 12; ctx.stroke();
+
+        // 4. วาดสลักเกลียวล็อค V (เฉพาะโหมด Gay-Lussac) หรือ ก้อนมวล (โหมดอื่นๆ)
+        if (mode === 'gaylussac') {
+            // สลักล็อคสีแดงด้านข้าง
+            ctx.fillStyle = "#ef4444";
+            ctx.fillRect(boxRect.x - 20, boxRect.y - 20, 10, 20); ctx.strokeRect(boxRect.x - 20, boxRect.y - 20, 10, 20);
+            ctx.fillRect(boxRect.x + boxRect.w + 10, boxRect.y - 20, 10, 20); ctx.strokeRect(boxRect.x + boxRect.w + 10, boxRect.y - 20, 10, 20);
+            ctx.fillStyle = "#ef4444"; ctx.font = "bold 16px Arial"; ctx.fillText("LOCKED", cx, boxRect.y - 30);
+        } else {
+            // วาดก้อนมวลตามความดันที่เพิ่มเข้ามา
+            let numWeights = Math.max(0, Math.floor((P - 0.9) * 5)); // P=1.2 ได้ 1 ก้อน, P=1.4 ได้ 2 ก้อน
+            ctx.fillStyle = "#334155";
+            for(let i=0; i<numWeights; i++) {
+                let wy = boxRect.y - 20 - (i+1)*25;
+                ctx.fillRect(cx - 60, wy, 120, 25);
+                ctx.strokeRect(cx - 60, wy, 120, 25);
+                ctx.fillStyle = "#fff"; ctx.font = "bold 14px Arial"; ctx.textAlign="center"; ctx.fillText("MASS", cx, wy + 18);
+                ctx.fillStyle = "#334155"; // reset for next
+            }
+        }
+
+        // 5. วาดหัวฉีดแก๊ส (Gas Nozzle)
+        ctx.fillStyle = "#a855f7";
+        ctx.fillRect(boxRect.x - 40, h - 120, 40, 20); ctx.strokeRect(boxRect.x - 40, h - 120, 40, 20);
+        ctx.beginPath(); ctx.arc(boxRect.x - 50, h - 110, 15, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = "#fff"; ctx.font = "900 16px Arial"; ctx.textAlign="center"; ctx.fillText("N", boxRect.x - 50, h - 105);
+
+        // 6. อัปเดตและวาดอนุภาค
+        let speedMultiplier = Math.sqrt(T / 273); 
+        for(let p of particles) {
+            if(p.y < boxRect.y + p.radius) p.y = boxRect.y + p.radius;
+            p.update(boxRect, speedMultiplier);
+            p.draw(ctx);
+        }
+
+        animationFrame = requestAnimationFrame(draw);
+    }
+
+    // Initialize System
+    setTimeout(() => {
+        resizeCanvas();
+        resetSTP();
+        draw();
+    }, 100);
+
+</script>
+</body>
+</html>
