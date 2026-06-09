@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Chemistry Interactive Gas Lab V.2</title>
+    <title>Chemistry Interactive Gas Lab V.2.1</title>
     <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -58,18 +58,20 @@
         .action-card label { font-size: 16px; font-weight: 900; text-align: center;}
         
         .btn-action {
-            border: 3px solid #000; padding: 10px; font-size: 18px; font-weight: 900; cursor: pointer;
+            border: 3px solid #000; padding: 10px; font-size: 16px; font-weight: 900; cursor: pointer;
             box-shadow: 3px 3px 0px #000; transition: 0.1s; text-align: center; border-radius: 8px;
         }
         .btn-action:active { transform: translate(3px, 3px); box-shadow: none; }
         
-        .btn-add { background: #f87171; color: #7f1d1d; } /* Red for Pressure */
+        .btn-add { background: #f87171; color: #7f1d1d; } /* P: Red */
         .btn-sub { background: #fca5a5; color: #7f1d1d; } 
-        .btn-fire { background: #fb923c; color: #fff; } /* Orange */
-        .btn-ice { background: #60a5fa; color: #fff; } /* Blue */
-        .btn-pump { background: #c084fc; color: #fff; width: 100%;} /* Purple */
+        .btn-v-up { background: #60a5fa; color: #fff; } /* V: Blue */
+        .btn-v-down { background: #3b82f6; color: #fff; } 
+        .btn-fire { background: #fb923c; color: #fff; } /* T: Orange */
+        .btn-ice { background: #93c5fd; color: #1e3a8a; } 
+        .btn-pump { background: #c084fc; color: #fff; width: 100%; height: 100%;} /* n: Purple */
 
-        .btn-reset { background: #000; color: #fff; border: 3px solid #var(--accent); padding: 15px; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 4px 4px 0px var(--accent); transition: 0.1s; text-transform: uppercase; margin-top: auto;}
+        .btn-reset { background: #000; color: #fff; border: 3px solid var(--accent); padding: 15px; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 4px 4px 0px var(--accent); transition: 0.1s; text-transform: uppercase; margin-top: auto;}
         .btn-reset:active { transform: translate(4px, 4px); box-shadow: none; }
 
         /* 🎬 Visual Canvas */
@@ -97,7 +99,7 @@
 <body>
 
 <div class="container">
-    <h1 class="header-title">🧪 ห้องปฏิบัติการแก๊สอุดมคติ (Chemistry Gas Lab V.2)</h1>
+    <h1 class="header-title">🧪 ห้องปฏิบัติการแก๊สอุดมคติ (Chemistry Gas Lab V.2.1)</h1>
 
     <div class="dashboard">
         <div class="dash-box" id="box-p" style="border-color: #ef4444; color: #ef4444;">
@@ -128,34 +130,42 @@
                 <label>📌 เลือกกฎการทดลอง (Experiment Mode):</label>
                 <select id="sel-mode" onchange="changeMode()">
                     <option value="ideal">🔓 โหมดอิสระ (ทดลองได้ทุกปุ่ม)</option>
-                    <option value="boyle">🧪 กฎของบอยล์ (ล็อก n, T - ใช้มวลเพิ่ม P เพื่อบีบ V)</option>
-                    <option value="charles">🎈 กฎของชาร์ล (ล็อก n, P - ใช้ความร้อนขยาย V)</option>
-                    <option value="gaylussac">💥 กฎของเกย์-ลูสแซก (ล็อก n, V - ใช้ความร้อนเพิ่ม P)</option>
-                    <option value="avogadro">💨 กฎของอาโวกาโดร (ล็อก P, T - ปั๊มแก๊สเพิ่ม V)</option>
+                    <option value="boyle">🧪 กฎของบอยล์ (ล็อก n, T)</option>
+                    <option value="charles">🎈 กฎของชาร์ล (ล็อก n, P)</option>
+                    <option value="gaylussac">💥 กฎของเกย์-ลูสแซก (ล็อก n, V)</option>
+                    <option value="avogadro">💨 กฎของอาโวกาโดร (ล็อก P, T)</option>
                 </select>
             </div>
 
             <div class="action-grid">
                 <div class="action-card" id="ctrl-p" style="border-color: #ef4444;">
-                    <label style="color:#ef4444;">🧱 วางก้อนมวล (เพิ่มความดัน P)</label>
+                    <label style="color:#ef4444;">🧱 ก้อนมวล (ปรับ P)</label>
                     <div style="display:flex; gap:10px;">
                         <button class="btn-action btn-add" style="flex:1;" onclick="modifyValue('p', 0.2)">+ วางมวล</button>
                         <button class="btn-action btn-sub" style="flex:1;" onclick="modifyValue('p', -0.2)">- ยกออก</button>
                     </div>
                 </div>
 
-                <div class="action-card" id="ctrl-t" style="border-color: #f97316;">
-                    <label style="color:#f97316;">🔥 ให้ความร้อน / 🧊 แช่เย็น</label>
+                <div class="action-card" id="ctrl-v" style="border-color: #3b82f6;">
+                    <label style="color:#3b82f6;">💪 ลูกสูบ (ปรับ V)</label>
                     <div style="display:flex; gap:10px;">
-                        <button class="btn-action btn-fire" style="flex:1;" onmousedown="startHold('t', 10)" onmouseup="stopHold()" onmouseleave="stopHold()">🔥 จี้ไฟ</button>
-                        <button class="btn-action btn-ice" style="flex:1;" onmousedown="startHold('t', -10)" onmouseup="stopHold()" onmouseleave="stopHold()">🧊 แช่น้ำแข็ง</button>
+                        <button class="btn-action btn-v-up" style="flex:1;" onclick="modifyValue('v', 2.0)">ดึงขึ้น</button>
+                        <button class="btn-action btn-v-down" style="flex:1;" onclick="modifyValue('v', -2.0)">กดลง</button>
                     </div>
                 </div>
-            </div>
 
-            <div class="action-card" id="ctrl-n" style="border-color: #a855f7;">
-                <label style="color:#a855f7;">💨 กระบอกสูบแก๊ส (เพิ่มโมล n)</label>
-                <button class="btn-action btn-pump" onclick="modifyValue('n', 0.2)">💨 อัดแก๊สเพิ่ม +0.2 mol</button>
+                <div class="action-card" id="ctrl-t" style="border-color: #f97316;">
+                    <label style="color:#f97316;">🔥 ความร้อน (ปรับ T)</label>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn-action btn-fire" style="flex:1;" onmousedown="startHold('t', 10)" onmouseup="stopHold()" onmouseleave="stopHold()">🔥 จี้ไฟ</button>
+                        <button class="btn-action btn-ice" style="flex:1;" onmousedown="startHold('t', -10)" onmouseup="stopHold()" onmouseleave="stopHold()">🧊 แช่เย็น</button>
+                    </div>
+                </div>
+
+                <div class="action-card" id="ctrl-n" style="border-color: #a855f7;">
+                    <label style="color:#a855f7;">💨 ปั๊มแก๊ส (ปรับ n)</label>
+                    <button class="btn-action btn-pump" onclick="modifyValue('n', 0.2)">อัดแก๊สเพิ่ม +0.2 mol</button>
+                </div>
             </div>
 
             <button class="btn-reset" onclick="resetSTP()">🔄 ล้างห้องทดลอง (Reset to STP)</button>
@@ -181,17 +191,14 @@
 </div>
 
 <script>
-    // Physics Engine Constants
     const R = 0.08206;
     let P = 1.00, V = 22.4, n = 1.00, T = 273;
     let mode = 'ideal';
 
-    // Visual State Flags
     let isHeating = false;
     let isCooling = false;
     let holdInterval;
 
-    // Canvas & Animation
     const canvas = document.getElementById('simCanvas');
     const ctx = canvas.getContext('2d');
     let dpr = window.devicePixelRatio || 1;
@@ -226,7 +233,6 @@
             this.x += vx;
             this.y += vy;
 
-            // Bouncing
             if (this.x - this.radius < boxRect.x) { this.x = boxRect.x + this.radius; this.vxBase *= -1; }
             if (this.x + this.radius > boxRect.x + boxRect.w) { this.x = boxRect.x + boxRect.w - this.radius; this.vxBase *= -1; }
             if (this.y - this.radius < boxRect.y) { this.y = boxRect.y + this.radius; this.vyBase *= -1; }
@@ -283,6 +289,11 @@
             if (newP < 0.5) newP = 0.5;
             if (newP > 5.0) newP = 5.0;
             updatePhysics('p', newP);
+        } else if (type === 'v') {
+            let newV = V + amount;
+            if (newV < 5) newV = 5;
+            if (newV > 60) newV = 60;
+            updatePhysics('v', newV);
         } else if (type === 't') {
             let newT = T + amount;
             if (newT < 50) newT = 50;
@@ -300,32 +311,22 @@
     function updatePhysics(sourceType, newValue) {
         if (mode === 'ideal') {
             if(sourceType === 'p') { P = newValue; V = (n * R * T) / P; }
-            if(sourceType === 't') { T = newValue; V = (n * R * T) / P; } // ปริมาตรขยายเมื่อร้อน
-            if(sourceType === 'n') { n = newValue; V = (n * R * T) / P; } // ปริมาตรขยายเมื่อเติมแก๊ส
+            if(sourceType === 'v') { V = newValue; P = (n * R * T) / V; } // ดึงลูกสูบ ความดันเปลี่ยน
+            if(sourceType === 't') { T = newValue; V = (n * R * T) / P; } 
+            if(sourceType === 'n') { n = newValue; V = (n * R * T) / P; } 
         } 
         else if (mode === 'boyle') {
-            if(sourceType === 'p') {
-                P = newValue;
-                V = (n * R * T) / P; // เพิ่มมวล (P) -> ปริมาตร (V) ลด
-            }
+            if(sourceType === 'p') { P = newValue; V = (n * R * T) / P; }
+            if(sourceType === 'v') { V = newValue; P = (n * R * T) / V; } // บอยล์ปรับได้ทั้ง P และ V
         }
         else if (mode === 'charles') {
-            if(sourceType === 't') {
-                T = newValue;
-                V = (n * R * T) / P; // เพิ่มความร้อน (T) -> ปริมาตร (V) ขยาย
-            }
+            if(sourceType === 't') { T = newValue; V = (n * R * T) / P; }
         }
         else if (mode === 'gaylussac') {
-            if(sourceType === 't') {
-                T = newValue;
-                P = (n * R * T) / V; // ล็อกปริมาตร (V) -> เพิ่มความร้อน (T) ทำให้ความดัน (P) พุ่ง
-            }
+            if(sourceType === 't') { T = newValue; P = (n * R * T) / V; }
         }
         else if (mode === 'avogadro') {
-            if(sourceType === 'n') {
-                n = newValue;
-                V = (n * R * T) / P; // เติมแก๊ส (n) -> ปริมาตร (V) ขยาย
-            }
+            if(sourceType === 'n') { n = newValue; V = (n * R * T) / P; }
         }
 
         // ป้องกันค่า V ทะลุกระบอกสูบ
@@ -361,17 +362,20 @@
             document.getElementById('box-n').classList.add('locked');
             document.getElementById('box-p').classList.add('locked');
             document.getElementById('ctrl-n').classList.add('disabled');
-            document.getElementById('ctrl-p').classList.add('disabled'); // P is locked
+            document.getElementById('ctrl-p').classList.add('disabled');
+            document.getElementById('ctrl-v').classList.add('disabled'); // ตัวแปรตาม
         } else if (mode === 'gaylussac') {
             document.getElementById('box-n').classList.add('locked');
             document.getElementById('box-v').classList.add('locked');
             document.getElementById('ctrl-n').classList.add('disabled');
-            document.getElementById('ctrl-p').classList.add('disabled'); // V locked by mechanical lock, external mass disabled
+            document.getElementById('ctrl-p').classList.add('disabled');
+            document.getElementById('ctrl-v').classList.add('disabled'); // ล็อค V
         } else if (mode === 'avogadro') {
             document.getElementById('box-p').classList.add('locked');
             document.getElementById('box-t').classList.add('locked');
-            document.getElementById('ctrl-p').classList.add('disabled'); // P is locked
+            document.getElementById('ctrl-p').classList.add('disabled');
             document.getElementById('ctrl-t').classList.add('disabled');
+            document.getElementById('ctrl-v').classList.add('disabled'); // ตัวแปรตาม
         }
     }
 
@@ -418,7 +422,6 @@
         ctx.fillStyle = "#fff";
         ctx.fillRect(boxRect.x, boxRect.y, boxRect.w, boxRect.h);
         
-        // สีแก๊สเข้มขึ้นตามความดันภายใน (Internal Pressure)
         let pColor = `rgba(168, 85, 247, ${Math.min((P-1)*0.15, 0.5)})`;
         if(P > 1.1) {
             ctx.fillStyle = pColor;
@@ -439,21 +442,20 @@
 
         // 4. วาดสลักเกลียวล็อค V (เฉพาะโหมด Gay-Lussac) หรือ ก้อนมวล (โหมดอื่นๆ)
         if (mode === 'gaylussac') {
-            // สลักล็อคสีแดงด้านข้าง
             ctx.fillStyle = "#ef4444";
             ctx.fillRect(boxRect.x - 20, boxRect.y - 20, 10, 20); ctx.strokeRect(boxRect.x - 20, boxRect.y - 20, 10, 20);
             ctx.fillRect(boxRect.x + boxRect.w + 10, boxRect.y - 20, 10, 20); ctx.strokeRect(boxRect.x + boxRect.w + 10, boxRect.y - 20, 10, 20);
-            ctx.fillStyle = "#ef4444"; ctx.font = "bold 16px Arial"; ctx.fillText("LOCKED", cx, boxRect.y - 30);
+            ctx.fillStyle = "#ef4444"; ctx.font = "bold 16px Arial"; ctx.fillText("LOCKED", cx - 35, boxRect.y - 30);
         } else {
-            // วาดก้อนมวลตามความดันที่เพิ่มเข้ามา
-            let numWeights = Math.max(0, Math.floor((P - 0.9) * 5)); // P=1.2 ได้ 1 ก้อน, P=1.4 ได้ 2 ก้อน
+            // วาดก้อนมวลตามความดัน
+            let numWeights = Math.max(0, Math.floor((P - 0.9) * 5)); 
             ctx.fillStyle = "#334155";
             for(let i=0; i<numWeights; i++) {
                 let wy = boxRect.y - 20 - (i+1)*25;
                 ctx.fillRect(cx - 60, wy, 120, 25);
                 ctx.strokeRect(cx - 60, wy, 120, 25);
                 ctx.fillStyle = "#fff"; ctx.font = "bold 14px Arial"; ctx.textAlign="center"; ctx.fillText("MASS", cx, wy + 18);
-                ctx.fillStyle = "#334155"; // reset for next
+                ctx.fillStyle = "#334155"; 
             }
         }
 
