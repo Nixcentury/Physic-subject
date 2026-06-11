@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vernier Caliper Master Class</title>
+    <title>Vernier Caliper Quiz Master</title>
     <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -31,22 +31,31 @@
         }
         .header-subtitle { display: block; font-size: 14px; font-weight: 600; color: #333; margin-top: 5px; }
 
+        /* 🎛️ Quiz Dashboard */
         .dashboard {
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;
             background: #e0f2fe; border: var(--border); padding: 15px; box-shadow: 4px 4px 0px #000;
         }
-        .dash-box { background: #fff; border: 3px solid #000; padding: 15px; text-align: center; }
-        .dash-label { font-size: 16px; font-weight: 800; color: #0f172a; }
-        .dash-value { font-size: 36px; font-weight: 900; color: #2563eb; font-family: monospace; margin-top: 5px; }
+        .dash-box { background: #fff; border: 3px solid #000; padding: 15px; text-align: center; display: flex; flex-direction: column; gap: 10px; }
+        .dash-label { font-size: 16px; font-weight: 900; color: #0f172a; }
         
+        .ans-input {
+            width: 100%; font-size: 32px; font-weight: 900; font-family: monospace; text-align: center;
+            border: 3px dashed #94a3b8; padding: 5px; outline: none; transition: 0.2s; color: #0f172a;
+        }
+        .ans-input:focus { border-style: solid; border-color: #3b82f6; background: #eff6ff; }
+        .ans-input.correct { border-style: solid; border-color: #10b981; background: #d1fae5; color: #065f46; }
+        .ans-input.wrong { border-style: solid; border-color: #ef4444; background: #fee2e2; color: #991b1b; }
+
         .main-layout { display: flex; flex-direction: column; gap: 20px; }
 
-        .controls-panel { background: #fff; border: 3px solid #000; padding: 20px; box-shadow: 3px 3px 0px #000; display: flex; flex-direction: column; gap: 10px;}
-        .controls-panel label { font-size: 18px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
-        .val-badge { background: #e2e8f0; border: 2px solid #000; padding: 4px 15px; border-radius: 4px; color: #2563eb; font-size: 24px; font-family: monospace;}
+        /* 🎛️ Controls */
+        .controls-panel { background: #fff; border: 3px solid #000; padding: 20px; box-shadow: 3px 3px 0px #000; display: flex; flex-direction: column; gap: 15px;}
+        .controls-panel label { font-size: 18px; font-weight: 900; display: flex; justify-content: space-between; align-items: center; }
+        .val-badge { background: #e2e8f0; border: 2px solid #000; padding: 4px 15px; border-radius: 4px; color: #000; font-size: 16px;}
         
         input[type="range"] { 
-            width: 100%; margin-top: 10px; cursor: pointer; border: 2px solid #000; padding: 5px; outline: none; accent-color: #000; height: 12px; border-radius: 6px; 
+            width: 100%; margin-top: 5px; cursor: pointer; border: 2px solid #000; padding: 5px; outline: none; accent-color: #000; height: 12px; border-radius: 6px; 
         }
 
         .visual-panel {
@@ -54,12 +63,12 @@
             display: flex; align-items: center; justify-content: center; overflow: hidden;
             box-shadow: inset 4px 4px 0px rgba(0,0,0,0.05);
         }
-        
         canvas { width: 100%; height: 100%; display: block; }
 
+        /* 💡 Calculation Breakdown (Hidden by default) */
         .calc-breakdown {
             background: #f8fafc; border: 3px solid #64748b; padding: 20px;
-            box-shadow: 4px 4px 0px #64748b; display: flex; flex-direction: column; gap: 15px;
+            box-shadow: 4px 4px 0px #64748b; display: none; flex-direction: column; gap: 15px;
         }
         .calc-header { font-size: 20px; font-weight: 900; color: #334155; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px; }
         .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
@@ -69,24 +78,26 @@
         .highlight-vernier { color: #ea580c; font-weight: bold; background: #ffedd5; padding: 2px 6px; border: 1px solid #f97316; border-radius: 4px;}
         .result-box { background: #d1fae5; border: 3px solid #10b981; padding: 15px; text-align: center; font-size: 28px; font-weight: 900; color: #065f46; box-shadow: 4px 4px 0px #10b981;}
 
-        .btn-random {
-            background: #8b5cf6; color: #fff; border: 3px solid #000; padding: 15px; font-size: 18px; font-weight: 900; cursor: pointer;
-            box-shadow: 4px 4px 0px #000; transition: 0.1s; text-transform: uppercase; width: 100%; margin-top: 10px;
-        }
-        .btn-random:active { transform: translate(4px, 4px); box-shadow: none; }
+        /* 🕹️ Buttons */
+        .controls-row { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; margin-top: 10px;}
+        .controls-row > button { flex: 1; min-width: 200px; border: 3px solid #000; padding: 15px; font-size: 18px; font-weight: 900; cursor: pointer; transition: 0.1s; text-transform: uppercase;}
+        .controls-row > button:active { transform: translate(4px, 4px); box-shadow: none !important; }
+        
+        .btn-check { background: #10b981; color: #fff; box-shadow: 4px 4px 0px #047857; }
+        .btn-random { background: #8b5cf6; color: #fff; box-shadow: 4px 4px 0px #5b21b6; }
+        .btn-show { background: #facc15; color: #000; box-shadow: 4px 4px 0px #b45309; }
 
         /* Toggle Button */
-        .toggle-container { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 16px; margin-top: 10px;}
+        .toggle-container { display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 800; font-size: 16px; margin-top: 15px; width: 100%; background: #f1f5f9; padding: 10px; border: 2px dashed #cbd5e1;}
         .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .4s; border: 3px solid #000; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border: 2px solid #000; border-radius: 50%; }
-        input:checked + .slider { background-color: #10b981; }
-        input:checked + .slider:before { transform: translateX(26px); }
+        .slider-toggle { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .4s; border: 3px solid #000; border-radius: 34px; }
+        .slider-toggle:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border: 2px solid #000; border-radius: 50%; }
+        input:checked + .slider-toggle { background-color: #3b82f6; }
+        input:checked + .slider-toggle:before { transform: translateX(26px); }
 
-        /* ทำให้ปุ่มแถวล่างจัดเรียงไม่เบียดกันบนจอ iPad */
-        .controls-row { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
-        .controls-row > button { flex: 1; min-width: 250px; }
+        /* Feedback Message */
+        #feedback-msg { font-size: 20px; font-weight: 900; text-align: center; margin-top: 10px; display: none; padding: 10px; border: 3px solid #000;}
 
     </style>
 </head>
@@ -94,62 +105,67 @@
 
 <div class="container">
     <h1 class="header-title">
-        🗜️ อ่านเวอร์เนียแบบ Full HD
-        <span class="header-subtitle">Vernier Caliper Master Class (Resolution 0.01 cm)</span>
+        🗜️ แบบทดสอบอ่านเวอร์เนีย
+        <span class="header-subtitle">Vernier Caliper Quiz Master (Resolution 0.01 cm)</span>
     </h1>
-
-    <div class="dashboard">
-        <div class="dash-box" style="border-color: #3b82f6;">
-            <div class="dash-label" style="color: #3b82f6;">สเกลหลัก <span>Main Scale (cm)</span></div>
-            <div class="dash-value" id="dash-main">0.0</div>
-        </div>
-        <div class="dash-box" style="border-color: #f97316;">
-            <div class="dash-label" style="color: #f97316;">สเกลเวอร์เนีย <span>Vernier Scale (cm)</span></div>
-            <div class="dash-value" id="dash-vernier" style="color: #ea580c;">0.00</div>
-        </div>
-        <div class="dash-box" style="border-color: #10b981; background: #ecfdf5;">
-            <div class="dash-label" style="color: #10b981;">ผลการวัดรวม <span>Total Reading (cm)</span></div>
-            <div class="dash-value" id="dash-total" style="color: #10b981;">0.00</div>
-        </div>
-    </div>
 
     <div class="main-layout">
         <div class="visual-panel">
             <canvas id="caliperCanvas"></canvas>
         </div>
 
-        <div class="controls-panel">
-            <label><div>📏 เลื่อนปากวัด (Slide Jaw)</div> <span class="val-badge" id="lbl-slider">0.00 cm</span></label>
-            <input type="range" id="in-value" min="0.00" max="5.00" step="0.01" value="4.97" oninput="updateCaliper()">
-            
-            <div class="controls-row">
-                <button class="btn-random" onclick="randomizeValue()">🎲 สุ่มโจทย์ (Randomize)</button>
-                <div class="toggle-container">
-                    <span>แสดงเส้นไกด์ (Helper Lines):</span>
-                    <label class="switch">
-                        <input type="checkbox" id="chk-helper" checked onchange="updateCaliper()">
-                        <span class="slider"></span>
-                    </label>
-                </div>
+        <div class="dashboard">
+            <div class="dash-box" style="border-color: #3b82f6;">
+                <div class="dash-label" style="color: #3b82f6;">สเกลหลัก (cm)</div>
+                <input type="number" id="ans-main" class="ans-input" placeholder="0.0" step="0.1">
+            </div>
+            <div class="dash-box" style="border-color: #f97316;">
+                <div class="dash-label" style="color: #f97316;">สเกลเวอร์เนีย (cm)</div>
+                <input type="number" id="ans-vernier" class="ans-input" placeholder="0.00" step="0.01">
+            </div>
+            <div class="dash-box" style="border-color: #10b981; background: #ecfdf5;">
+                <div class="dash-label" style="color: #10b981;">ผลการวัดรวม (cm)</div>
+                <input type="number" id="ans-total" class="ans-input" placeholder="0.00" step="0.01">
             </div>
         </div>
 
-        <div class="calc-breakdown">
-            <div class="calc-header">📝 วิธีการอ่านค่า (How to Read)</div>
+        <div class="controls-panel">
+            <label><div>📏 ปรับโจทย์ (Set Problem)</div> <span class="val-badge">ซ่อนตัวเลขเฉลยแล้ว</span></label>
+            <input type="range" id="in-value" min="0.00" max="5.00" step="0.01" value="2.34" oninput="onSliderMove()">
+            
+            <div class="toggle-container">
+                <span>แสดงเส้นไกด์ใบ้คำตอบ (Hint Lines):</span>
+                <label class="switch">
+                    <input type="checkbox" id="chk-helper" onchange="drawCurrent()">
+                    <span class="slider-toggle"></span>
+                </label>
+            </div>
+
+            <div id="feedback-msg"></div>
+
+            <div class="controls-row">
+                <button class="btn-check" onclick="checkAnswer()">✔️ ตรวจคำตอบ</button>
+                <button class="btn-random" onclick="randomizeValue()">🎲 สุ่มโจทย์ใหม่</button>
+                <button class="btn-show" onclick="showSolution()">💡 ดูเฉลยวิธีทำ</button>
+            </div>
+        </div>
+
+        <div class="calc-breakdown" id="solution-box">
+            <div class="calc-header">📝 เฉลยวิธีการอ่านค่า (Solution)</div>
             <div class="calc-grid">
                 <div class="calc-step">
                     <b>Step 1: อ่านสเกลหลัก (Main Scale)</b><br><br>
                     ดูว่า <b>"ขีด 0 ของสเกลเวอร์เนีย"</b> อยู่เลยขีดไหนของสเกลหลักมาแล้ว<br><br>
-                    อ่านค่าสเกลหลักได้ = <span class="highlight-main" id="txt-main">4.9 cm</span>
+                    อ่านค่าสเกลหลักได้ = <span class="highlight-main" id="txt-main">0.0 cm</span>
                 </div>
                 <div class="calc-step">
                     <b>Step 2: อ่านสเกลเวอร์เนีย (Vernier Scale)</b><br><br>
-                    หาว่า <b>"ขีดไหนของสเกลเวอร์เนีย"</b> ตรงกับขีดของสเกลหลักมากที่สุด (คูณด้วยความละเอียด 0.01)<br><br>
-                    ขีดที่ตรงกันคือขีดที่ <span id="txt-v-mark" style="font-weight:bold; color:#ea580c;">7</span> → <span class="highlight-vernier" id="txt-v-val">0.07 cm</span>
+                    หาว่า <b>"ขีดไหนของสเกลเวอร์เนีย"</b> ตรงกับขีดของสเกลหลักมากที่สุด (คูณด้วย 0.01)<br><br>
+                    ขีดที่ตรงกันคือขีดที่ <span id="txt-v-mark" style="font-weight:bold; color:#ea580c;">0</span> → <span class="highlight-vernier" id="txt-v-val">0.00 cm</span>
                 </div>
             </div>
             <div class="result-box">
-                ผลรวม = <span style="color:#2563eb;" id="res-main">4.9</span> + <span style="color:#ea580c;" id="res-vernier">0.07</span> = <span id="res-total">4.97 cm</span>
+                ผลรวม = <span style="color:#2563eb;" id="res-main">0.0</span> + <span style="color:#ea580c;" id="res-vernier">0.00</span> = <span id="res-total">0.00 cm</span>
             </div>
         </div>
     </div>
@@ -160,88 +176,139 @@
     const ctx = canvas.getContext('2d');
     const slider = document.getElementById('in-value');
     const chkHelper = document.getElementById('chk-helper');
+    const solutionBox = document.getElementById('solution-box');
+    const feedbackMsg = document.getElementById('feedback-msg');
 
-    // ตัวแปรควบคุมความคมชัด (High-DPI Canvas)
+    const inputMain = document.getElementById('ans-main');
+    const inputVernier = document.getElementById('ans-vernier');
+    const inputTotal = document.getElementById('ans-total');
+
     let dpr = window.devicePixelRatio || 1;
-    
-    // ตั้งค่าความกว้างสเกล: 1 cm = 400 pixels
     const PX_PER_CM = 400; 
     const PX_PER_MM = PX_PER_CM / 10;
-    
-    // สเกลเวอร์เนีย: 10 ช่อง ยาวเท่ากับ 9 mm (0.9 cm)
     const V_STEP_PX = (9 * PX_PER_MM) / 10;
+
+    // ตัวแปรเก็บค่าความจริง (Answers)
+    let currentActualValue = 0;
+    let currentMainReading = 0;
+    let currentVernierMark = 0;
+    let currentVernierReading = 0;
 
     function resizeCanvas() {
         const rect = canvas.parentElement.getBoundingClientRect();
         canvas.width = rect.width * dpr;
         canvas.height = rect.height * dpr;
         ctx.scale(dpr, dpr);
-        updateCaliper();
+        calculateValues();
+        drawCurrent();
     }
     window.addEventListener('resize', resizeCanvas);
+
+    function calculateValues() {
+        currentActualValue = parseFloat(slider.value);
+        currentMainReading = Math.floor(currentActualValue * 10) / 10; 
+        currentVernierMark = Math.round((currentActualValue - currentMainReading) * 100); 
+        currentVernierReading = currentVernierMark * 0.01;
+    }
+
+    function resetQuizState() {
+        inputMain.value = ''; inputVernier.value = ''; inputTotal.value = '';
+        inputMain.className = 'ans-input'; inputVernier.className = 'ans-input'; inputTotal.className = 'ans-input';
+        solutionBox.style.display = 'none';
+        feedbackMsg.style.display = 'none';
+        chkHelper.checked = false; // ปิดเส้นไกด์เมื่อเริ่มโจทย์ใหม่
+    }
+
+    function onSliderMove() {
+        calculateValues();
+        resetQuizState();
+        drawCurrent();
+    }
 
     function randomizeValue() {
         let randomVal = (Math.floor(Math.random() * 501)) / 100;
         slider.value = randomVal;
-        updateCaliper();
+        onSliderMove();
     }
 
-    function updateCaliper() {
-        let value = parseFloat(slider.value);
-        document.getElementById('lbl-slider').innerText = value.toFixed(2) + " cm";
+    function checkAnswer() {
+        let uMain = parseFloat(inputMain.value);
+        let uVernier = parseFloat(inputVernier.value);
+        let uTotal = parseFloat(inputTotal.value);
 
-        // คำนวณคณิตศาสตร์ของการอ่าน
-        let mainReading = Math.floor(value * 10) / 10; 
-        let vernierMark = Math.round((value - mainReading) * 100); 
-        let vernierReading = vernierMark * 0.01;
+        let isMainCorrect = Math.abs(uMain - currentMainReading) < 0.001;
+        let isVernierCorrect = Math.abs(uVernier - currentVernierReading) < 0.001;
+        let isTotalCorrect = Math.abs(uTotal - currentActualValue) < 0.001;
 
-        // อัปเดต UI หน้าปัด
-        document.getElementById('dash-main').innerText = mainReading.toFixed(1);
-        document.getElementById('dash-vernier').innerText = vernierReading.toFixed(2);
-        document.getElementById('dash-total').innerText = value.toFixed(2);
+        // เปลี่ยนสีกล่องตามความถูกต้อง
+        inputMain.className = 'ans-input ' + (isNaN(uMain) ? '' : (isMainCorrect ? 'correct' : 'wrong'));
+        inputVernier.className = 'ans-input ' + (isNaN(uVernier) ? '' : (isVernierCorrect ? 'correct' : 'wrong'));
+        inputTotal.className = 'ans-input ' + (isNaN(uTotal) ? '' : (isTotalCorrect ? 'correct' : 'wrong'));
 
-        document.getElementById('txt-main').innerText = mainReading.toFixed(1) + " cm";
-        document.getElementById('txt-v-mark').innerText = vernierMark;
-        document.getElementById('txt-v-val').innerText = vernierReading.toFixed(2) + " cm";
+        feedbackMsg.style.display = 'block';
+        if (isMainCorrect && isVernierCorrect && isTotalCorrect) {
+            feedbackMsg.innerHTML = "🎉 ยอดเยี่ยม! ถูกต้องทุกตำแหน่ง!";
+            feedbackMsg.style.backgroundColor = "#d1fae5";
+            feedbackMsg.style.borderColor = "#10b981";
+            feedbackMsg.style.color = "#065f46";
+        } else {
+            feedbackMsg.innerHTML = "❌ ยังมีจุดที่ผิดอยู่ ลองดูเส้นสเกลดีๆ อีกครั้งนะ!";
+            feedbackMsg.style.backgroundColor = "#fee2e2";
+            feedbackMsg.style.borderColor = "#ef4444";
+            feedbackMsg.style.color = "#991b1b";
+        }
+    }
+
+    function showSolution() {
+        // ใส่คำตอบที่ถูกต้องลงในช่อง
+        inputMain.value = currentMainReading.toFixed(1);
+        inputVernier.value = currentVernierReading.toFixed(2);
+        inputTotal.value = currentActualValue.toFixed(2);
         
-        document.getElementById('res-main').innerText = mainReading.toFixed(1);
-        document.getElementById('res-vernier').innerText = vernierReading.toFixed(2);
-        document.getElementById('res-total').innerText = value.toFixed(2) + " cm";
+        inputMain.className = 'ans-input correct';
+        inputVernier.className = 'ans-input correct';
+        inputTotal.className = 'ans-input correct';
 
-        drawCaliper(value, mainReading, vernierMark);
+        // เปิดเส้นไกด์และเฉลยวิธีทำ
+        chkHelper.checked = true;
+        drawCurrent();
+
+        document.getElementById('txt-main').innerText = currentMainReading.toFixed(1) + " cm";
+        document.getElementById('txt-v-mark').innerText = currentVernierMark;
+        document.getElementById('txt-v-val').innerText = currentVernierReading.toFixed(2) + " cm";
+        
+        document.getElementById('res-main').innerText = currentMainReading.toFixed(1);
+        document.getElementById('res-vernier').innerText = currentVernierReading.toFixed(2);
+        document.getElementById('res-total').innerText = currentActualValue.toFixed(2) + " cm";
+
+        solutionBox.style.display = 'flex';
+        feedbackMsg.style.display = 'none';
     }
 
-    function drawCaliper(value, mainReading, vernierMark) {
+    function drawCurrent() {
         const w = canvas.width / dpr;
         const h = canvas.height / dpr;
-        
         ctx.clearRect(0, 0, w, h);
 
-        const cy = h / 2; // เส้นแบ่งกลางระหว่างสเกลหลักและเวอร์เนีย
-        const offsetX = 50; // ระยะขอบซ้าย
+        const cy = h / 2; 
+        const offsetX = 50; 
         
-        // --- ระบบกล้องแพนอัตโนมัติ (Smart Dynamic Camera) ---
-        let physicalZeroX = offsetX + (value * PX_PER_CM); // ตำแหน่งจริงของขีด 0
-        let vernierWidth = 10 * V_STEP_PX; // ความกว้างของสเกลเวอร์เนีย
+        let physicalZeroX = offsetX + (currentActualValue * PX_PER_CM); 
+        let vernierWidth = 10 * V_STEP_PX; 
         
-        // ตั้งเป้าให้ขีด 0 อยู่ที่เดิม แต่ถ้าความกว้างรวมของเวอร์เนียมันทะลุจอขวา ให้ดันกล้องตาม
         let targetScreenX = physicalZeroX;
         if (physicalZeroX + vernierWidth + 60 > w) {
-            targetScreenX = w - vernierWidth - 60; // เว้นขอบขวาไว้ 60px
+            targetScreenX = w - vernierWidth - 60; 
         }
-        // ถ้าจอมันเล็กมากๆ จนดันขีด 0 ชิดซ้ายเกินไป ก็เบรกไว้ที่ 20px
         if (targetScreenX < 20) targetScreenX = 20;
-        
-        // คำนวณระยะที่กล้องต้องขยับ
         let cameraShift = physicalZeroX - targetScreenX;
         
-        // --- 1. วาดสเกลหลัก (Main Scale) ---
+        // 1. วาดสเกลหลัก (Main Scale)
         ctx.fillStyle = "#f8fafc";
         ctx.fillRect(0, 0, w, cy);
         ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(w, cy); 
         ctx.lineWidth = 4; ctx.strokeStyle = "#334155"; ctx.stroke();
 
-        // วาดปากวัดด้านซ้าย (Fixed Jaw) ที่เลื่อนหลุดจอได้
         let fixedJawX = offsetX - 30 - cameraShift;
         if (fixedJawX > -50) { 
             ctx.fillStyle = "#e2e8f0";
@@ -253,12 +320,10 @@
         ctx.textAlign = "center";
         ctx.textBaseline = "bottom";
         
-        // วาดสเกลหลักเผื่อไปถึง 8 cm ป้องกันขอบจอด้านขวาโล่ง
         for (let i = 0; i <= 80; i++) {
             let x = offsetX + (i * PX_PER_MM);
             let drawX = x - cameraShift;
 
-            // วาดเฉพาะเส้นที่อยู่ในขอบเขตหน้าจอ
             if (drawX < -20 || drawX > w + 20) continue;
 
             let isCm = (i % 10 === 0);
@@ -278,11 +343,11 @@
             }
         }
 
-        // --- 2. วาดปากสไลด์ & สเกลเวอร์เนีย (Vernier Scale) ---
-        let slideStartX = targetScreenX; // จุด 0 ของเวอร์เนียจะอยู่ที่นี่พอดี
+        // 2. ปากสไลด์ & สเกลเวอร์เนีย
+        let slideStartX = targetScreenX; 
 
         ctx.fillStyle = "#e2e8f0";
-        ctx.fillRect(slideStartX - 20, cy, w * 2, h - cy); // วาดยาวๆ ไปทางขวา
+        ctx.fillRect(slideStartX - 20, cy, w * 2, h - cy); 
         ctx.beginPath(); ctx.moveTo(slideStartX - 20, cy); ctx.lineTo(w, cy); 
         ctx.lineWidth = 4; ctx.strokeStyle = "#334155"; ctx.stroke();
 
@@ -305,9 +370,8 @@
             }
         }
 
-        // --- 3. ระบบแสดงเส้นไกด์ (Helper Lines) ---
+        // 3. ระบบแสดงเส้นไกด์ (Helper Lines)
         if (chkHelper.checked) {
-            // ไฮไลต์ขีด 0 ของสเกลเวอร์เนีย
             ctx.beginPath();
             ctx.moveTo(slideStartX, cy - 60);
             ctx.lineTo(slideStartX, cy + 60);
@@ -322,8 +386,7 @@
             ctx.fillStyle = "#3b82f6";
             ctx.fill();
 
-            // ไฮไลต์เส้นที่ตรงกันเป๊ะ! (Vernier Match)
-            let matchX = slideStartX + (vernierMark * V_STEP_PX);
+            let matchX = slideStartX + (currentVernierMark * V_STEP_PX);
             
             ctx.beginPath();
             ctx.moveTo(matchX, cy - 40);
@@ -340,7 +403,6 @@
         }
     }
 
-    // Init First Draw
     setTimeout(() => {
         resizeCanvas();
     }, 100);
