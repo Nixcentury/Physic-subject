@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Significant Figures Master V.2</title>
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #000000;
+            --accent: #facc15;
+            --bg-body: #f8fafc;
+            --border: 4px solid #000000;
+            --shadow: 6px 6px 0px #000000;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+        }
+
+        * { box-sizing: border-box; font-family: 'K2D', sans-serif; user-select: none; }
+        body { background-color: var(--bg-body); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; color: var(--text); overflow-x: hidden; }
+
+        .container {
+            background: var(--card-bg); border: var(--border); box-shadow: 8px 8px 0px #000;
+            width: 100%; max-width: 1200px; padding: 20px; display: flex; flex-direction: column; gap: 20px;
+        }
+
+        .header-title {
+            margin: 0; padding: 15px; background: var(--accent); border: var(--border);
+            font-size: 26px; font-weight: 900; text-transform: uppercase; text-align: center;
+            box-shadow: 4px 4px 0px #000; letter-spacing: 1px;
+        }
+        .header-subtitle { display: block; font-size: 14px; font-weight: 600; color: #333; margin-top: 5px; }
+
+        /* 🔄 แท็บสลับด่าน */
+        .mode-tabs { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-bottom: 5px; }
+        .tab-btn {
+            flex: 1; min-width: 250px; padding: 15px; border: var(--border); font-size: 18px; font-weight: 900; cursor: pointer;
+            box-shadow: 4px 4px 0px #000; background: #e2e8f0; color: #64748b; transition: 0.2s; text-align: center;
+        }
+        .tab-btn.active { background: #3b82f6; color: #fff; transform: translate(2px, 2px); box-shadow: 2px 2px 0px #000; }
+
+        .main-layout { display: flex; flex-wrap: wrap; gap: 20px; }
+
+        /* 🎬 จอแสดงผลกราฟิก */
+        .visual-panel {
+            flex: 1.5; min-width: 500px; height: 450px; background: #fff; border: 4px solid #000; position: relative;
+            display: flex; align-items: center; justify-content: center; overflow: hidden;
+            background-image: radial-gradient(#cbd5e1 2px, transparent 2px); background-size: 25px 25px;
+            box-shadow: inset 4px 4px 0px rgba(0,0,0,0.05); cursor: crosshair;
+        }
+        canvas { width: 100%; height: 100%; display: block; }
+        .hint-text { position: absolute; top: 10px; left: 10px; background: #000; color: #facc15; padding: 4px 10px; font-weight: 800; border-radius: 4px; font-size: 14px;}
+
+        /* 🎛️ แผงตอบคำถาม */
+        .controls-panel { flex: 1; min-width: 350px; display: flex; flex-direction: column; gap: 15px; }
+        
+        .quiz-box { background: #eff6ff; border: 3px solid #3b82f6; padding: 20px; box-shadow: 4px 4px 0px #3b82f6; text-align: center; display: flex; flex-direction: column; gap: 10px;}
+        .quiz-label { font-size: 18px; font-weight: 900; color: #1e3a8a; }
+        .ans-input {
+            width: 100%; font-size: 36px; font-weight: 900; font-family: monospace; text-align: center;
+            border: 4px dashed #94a3b8; padding: 10px; outline: none; transition: 0.2s; color: #0f172a;
+        }
+        .ans-input:focus { border-style: solid; border-color: #3b82f6; background: #fff; }
+        .ans-input.correct { border-style: solid; border-color: #10b981; background: #d1fae5; color: #065f46; }
+        .ans-input.wrong { border-style: solid; border-color: #ef4444; background: #fee2e2; color: #991b1b; }
+        .ans-input.sigfig-error { border-style: solid; border-color: #f59e0b; background: #fef3c7; color: #92400e; }
+
+        .unit-label { font-size: 20px; font-weight: 900; color: #3b82f6; }
+
+        .controls-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn-action {
+            border: 3px solid #000; padding: 12px; font-size: 16px; font-weight: 900; cursor: pointer;
+            box-shadow: 3px 3px 0px #000; transition: 0.1s; text-align: center;
+        }
+        .btn-action:active { transform: translate(3px, 3px); box-shadow: none; }
+        .btn-check { background: #10b981; color: #fff; }
+        .btn-random { background: #8b5cf6; color: #fff; }
+        .btn-helper { background: #facc15; color: #000; grid-column: span 2;}
+
+        #feedback-msg { font-size: 16px; font-weight: 800; text-align: center; margin-top: 5px; padding: 12px; border: 3px solid #000; display: none; line-height: 1.5;}
+
+        .sigfig-rule { background: #f1f5f9; border-left: 5px solid #000; padding: 15px; font-size: 14px; font-weight: 600; line-height: 1.6;}
+        .highlight { color: #ea580c; font-weight: 900; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="header-title">
+        🔍 ปรมาจารย์เลขนัยสำคัญ 
+        <span class="header-subtitle">Significant Figures & Scale Reading Master</span>
+    </h1>
+
+    <div class="mode-tabs">
+        <div class="tab-btn active" id="tab-1" onclick="switchMode(1)">📏 1. ไม้บรรทัด (สเกล 1 cm)</div>
+        <div class="tab-btn" id="tab-2" onclick="switchMode(2)">📐 2. ไม้บรรทัด (สเกล 0.1 cm)</div>
+        <div class="tab-btn" id="tab-3" onclick="switchMode(3)">🧪 3. กระบอกตวง (สเกล 1 mL)</div>
+    </div>
+
+    <div class="main-layout">
+        <div class="visual-panel">
+            <div class="hint-text">เล็งผ่านแว่นขยาย (Magnifier) แล้วกะระยะด้วยสายตา!</div>
+            <canvas id="scaleCanvas"></canvas>
+        </div>
+
+        <div class="controls-panel">
+            <div class="quiz-box">
+                <div class="quiz-label" id="lbl-question">อ่านค่าได้เท่าไหร่?</div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="text" id="ans-input" class="ans-input" placeholder="0.0" autocomplete="off">
+                    <span class="unit-label" id="lbl-unit">cm</span>
+                </div>
+                <div id="feedback-msg"></div>
+            </div>
+
+            <div class="controls-row">
+                <button class="btn-action btn-check" onclick="checkAnswer()">✔️ ตรวจคำตอบ</button>
+                <button class="btn-action btn-random" onclick="generateProblem()">🎲 สุ่มโจทย์ใหม่</button>
+                <button class="btn-action btn-helper" onclick="toggleHelper()" id="btn-helper">💡 เปิดเส้นตาทิพย์ (เฉลย 10 ช่องย่อย)</button>
+            </div>
+
+            <div class="sigfig-rule" id="rule-box">
+                <b>กฎการอ่านสเกล:</b><br>
+                ค่าที่อ่านได้ = ค่าที่แน่นอน + <span class="highlight">ค่าที่เดา 1 ตำแหน่ง</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentMode = 1;
+    let actualValue = 0;
+    let isHelperOn = false;
+
+    const config = {
+        1: { 
+            name: "ไม้บรรทัด (สเกลหยาบ)", unit: "cm", 
+            resolution: 1, decimals: 1, tolerance: 0.1, 
+            ruleText: "สเกลหลักขีดละ <b>1 cm</b> <br>ต้องเดาเพิ่ม 1 ตำแหน่ง → ตอบทศนิยม <b>1 ตำแหน่ง</b> เสมอ (เช่น 4.2 หรือ 5.0)"
+        },
+        2: { 
+            name: "ไม้บรรทัด (สเกลละเอียด)", unit: "cm", 
+            resolution: 0.1, decimals: 2, tolerance: 0.01, 
+            ruleText: "สเกลหลักขีดละ <b>0.1 cm</b> <br>ต้องเดาเพิ่ม 1 ตำแหน่ง → ตอบทศนิยม <b>2 ตำแหน่ง</b> เสมอ (เช่น 4.25 หรือ 4.50)"
+        },
+        3: { 
+            name: "กระบอกตวง", unit: "mL", 
+            resolution: 1, decimals: 1, tolerance: 0.1, 
+            ruleText: "สเกลหลักขีดละ <b>1 mL</b> <br>ให้อ่านระดับน้ำที่ <b>จุดต่ำสุดของส่วนโค้ง (Meniscus)</b><br>และตอบทศนิยม <b>1 ตำแหน่ง</b> เสมอ"
+        }
+    };
+
+    const canvas = document.getElementById('scaleCanvas');
+    const ctx = canvas.getContext('2d');
+    let dpr = window.devicePixelRatio || 1;
+    
+    // ตั้งค่า Pixel Per Unit แยกตามโหมดเพื่อให้พอดีจอ
+    const PX_RULER = 80;  // 1 cm = 80px
+    const PX_CYL = 35;    // 1 mL = 35px (เพื่อให้กระบอกสูง 10mL ยัดลงจอ 450px ได้พอดี)
+
+    function resizeCanvas() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.scale(dpr, dpr);
+        drawScene();
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    function switchMode(mode) {
+        currentMode = mode;
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('tab-' + mode).classList.add('active');
+
+        document.getElementById('lbl-unit').innerText = config[mode].unit;
+        document.getElementById('rule-box').innerHTML = `<b>กฎการอ่านสเกล:</b><br>${config[mode].ruleText}`;
+        
+        let placeholder = mode === 2 ? "0.00" : "0.0";
+        document.getElementById('ans-input').placeholder = placeholder;
+
+        generateProblem();
+    }
+
+    function generateProblem() {
+        let raw = 1.0 + Math.random() * 7.5;
+        if (currentMode === 1 || currentMode === 3) {
+            actualValue = Math.round(raw * 10) / 10;
+        } else {
+            actualValue = Math.round(raw * 100) / 100;
+        }
+        resetFeedback();
+        drawScene();
+    }
+
+    function resetFeedback() {
+        isHelperOn = false;
+        document.getElementById('btn-helper').innerHTML = "💡 เปิดเส้นตาทิพย์ (เฉลย 10 ช่องย่อย)";
+        let inp = document.getElementById('ans-input');
+        inp.value = ''; inp.className = 'ans-input';
+        document.getElementById('feedback-msg').style.display = 'none';
+    }
+
+    function toggleHelper() {
+        isHelperOn = !isHelperOn;
+        let btn = document.getElementById('btn-helper');
+        if(isHelperOn) {
+            btn.innerHTML = "❌ ปิดเส้นตาทิพย์";
+            btn.style.background = "#ef4444"; btn.style.color = "#fff";
+        } else {
+            btn.innerHTML = "💡 เปิดเส้นตาทิพย์ (เฉลย 10 ช่องย่อย)";
+            btn.style.background = "#facc15"; btn.style.color = "#000";
+        }
+        drawScene();
+    }
+
+    function checkAnswer() {
+        let inp = document.getElementById('ans-input');
+        let fb = document.getElementById('feedback-msg');
+        let userStr = inp.value.trim();
+        let cfg = config[currentMode];
+
+        if(userStr === "") return;
+
+        let parts = userStr.split('.');
+        let decCount = parts.length > 1 ? parts[1].length : 0;
+        
+        if (decCount !== cfg.decimals) {
+            inp.className = 'ans-input sigfig-error';
+            fb.style.display = 'block';
+            fb.style.backgroundColor = "#fef3c7"; fb.style.borderColor = "#f59e0b"; fb.style.color = "#92400e";
+            fb.innerHTML = `⚠️ <b>ผิดหลักเลขนัยสำคัญ!</b><br>คำตอบต้องมีทศนิยม <b>${cfg.decimals} ตำแหน่ง</b> เท่านั้น! (เติม 0 ให้ครบถ้าตกขีดพอดี)`;
+            return;
+        }
+
+        let userVal = parseFloat(userStr);
+        let diff = Math.abs(userVal - actualValue);
+        
+        if (diff <= cfg.tolerance + 0.0001) {
+            inp.className = 'ans-input correct';
+            fb.style.display = 'block';
+            fb.style.backgroundColor = "#d1fae5"; fb.style.borderColor = "#10b981"; fb.style.color = "#065f46";
+            if (diff === 0) fb.innerHTML = `🎉 <b>ยอดเยี่ยม!</b> สายตาเหยี่ยวมาก ถูกต้อง 100% ตรงเป๊ะ!`;
+            else fb.innerHTML = `✅ <b>ถูกต้อง!</b> กะระยะได้ดีมาก (ค่าจริงคือ ${actualValue.toFixed(cfg.decimals)})`;
+        } else {
+            inp.className = 'ans-input wrong';
+            fb.style.display = 'block';
+            fb.style.backgroundColor = "#fee2e2"; fb.style.borderColor = "#ef4444"; fb.style.color = "#991b1b";
+            fb.innerHTML = `❌ <b>ยังคลาดเคลื่อนอยู่</b><br>ค่าที่คุณเดาห่างจากความเป็นจริงมากเกินไป ลองเปิด "เส้นตาทิพย์" ดูก่อนนะ!`;
+        }
+    }
+
+    // --- Drawing Engine ---
+    function drawScene() {
+        const w = canvas.width / dpr;
+        const h = canvas.height / dpr;
+        ctx.clearRect(0, 0, w, h);
+
+        if (currentMode === 1 || currentMode === 2) {
+            drawRuler(w, h, currentMode);
+            drawMagnifier(w, h, currentMode);
+        } else if (currentMode === 3) {
+            drawCylinder(w, h);
+            drawMagnifier(w, h, currentMode);
+        }
+    }
+
+    function drawRuler(w, h, mode) {
+        let cy = h / 2 + 50; 
+        let offsetX = 50;
+
+        let objWidth = actualValue * PX_RULER;
+        ctx.fillStyle = "#94a3b8"; 
+        ctx.fillRect(offsetX, cy - 60, objWidth, 60);
+        ctx.strokeStyle = "#334155"; ctx.lineWidth = 3;
+        ctx.strokeRect(offsetX, cy - 60, objWidth, 60);
+
+        ctx.fillStyle = "#fef08a"; 
+        ctx.fillRect(offsetX - 20, cy, w, 100);
+        ctx.beginPath(); ctx.moveTo(offsetX - 20, cy); ctx.lineTo(w, cy); ctx.lineWidth = 4; ctx.strokeStyle = "#000"; ctx.stroke();
+
+        ctx.fillStyle = "#000"; ctx.textAlign = "center"; ctx.textBaseline = "top";
+
+        let maxVal = 12;
+        for (let i = 0; i <= maxVal * 10; i++) {
+            let x = offsetX + (i * PX_RULER / 10);
+            let isCm = (i % 10 === 0);
+            let isHalf = (i % 5 === 0 && !isCm);
+
+            if (mode === 1 && !isCm) continue; 
+
+            // ปรับขีดสเกลให้สั้นลงนิดนึง เพื่อให้ตัวเลขเขยิบขึ้นมาได้
+            let tickH = isCm ? 25 : (isHalf ? 15 : 10);
+            
+            ctx.beginPath(); ctx.moveTo(x, cy); ctx.lineTo(x, cy + tickH);
+            ctx.lineWidth = isCm ? 3 : 1.5; ctx.stroke();
+
+            // เลื่อนตัวเลขขึ้นมาให้ชิดขีดสเกลมากขึ้น (cy + 30)
+            if (isCm) {
+                ctx.font = "900 22px Arial";
+                ctx.fillText(i / 10, x, cy + 30);
+            }
+        }
+    }
+
+    function drawCylinder(w, h) {
+        let cx = w / 2;
+        let cyBase = h - 20; 
+        let cyTop = 30; 
+        let width = 140; 
+
+        let waterH = actualValue * PX_CYL;
+        let waterY = cyBase - waterH; 
+
+        ctx.fillStyle = "rgba(59, 130, 246, 0.4)"; 
+        ctx.beginPath();
+        ctx.moveTo(cx - width/2, cyBase);
+        ctx.lineTo(cx - width/2, waterY);
+        ctx.quadraticCurveTo(cx, waterY + 30, cx + width/2, waterY);
+        ctx.lineTo(cx + width/2, cyBase);
+        ctx.fill();
+
+        ctx.strokeStyle = "#64748b"; ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.moveTo(cx - width/2, cyTop); ctx.lineTo(cx - width/2, cyBase);
+        ctx.lineTo(cx + width/2, cyBase); ctx.lineTo(cx + width/2, cyTop);
+        ctx.stroke();
+
+        // 🎨 เปลี่ยน: ย้ายสเกลมาไว้ "ฝั่งซ้าย" และให้ตัวเลขชิดเส้น
+        ctx.fillStyle = "#000"; ctx.textAlign = "right"; ctx.textBaseline = "middle";
+        for (let i = 0; i <= 10; i++) {
+            let y = cyBase - (i * PX_CYL);
+            ctx.beginPath(); ctx.moveTo(cx - width/2, y); ctx.lineTo(cx - width/2 + 20, y);
+            ctx.lineWidth = 3; ctx.strokeStyle = "#000"; ctx.stroke();
+            ctx.font = "900 24px Arial";
+            ctx.fillText(i, cx - width/2 - 10, y);
+        }
+    }
+
+    function drawMagnifier(w, h, mode) {
+        let magX, magY;
+        let objPointX, objPointY;
+        
+        // 🎨 เปลี่ยน: ขยายเลนส์แว่นขยายให้ใหญ่ขึ้น (Radius = 140) และลดซูม (2.1x) ให้เห็นบริบท
+        let magRadius = 140; 
+        let zoomFactor = 2.1; 
+
+        if (mode === 1 || mode === 2) {
+            objPointX = 50 + (actualValue * PX_RULER);
+            // 🎨 เปลี่ยน: กดกล้องลงมา 15px เพื่อให้เห็นตัวเลข (cy + 65)
+            objPointY = h / 2 + 65; 
+            magX = w / 2; magY = 150; 
+        } else {
+            // 🎨 เปลี่ยน: เลื่อนกล้องไปทางซ้ายให้เห็นสเกล (-30px)
+            objPointX = w / 2 - 30; 
+            objPointY = (h - 20) - (actualValue * PX_CYL) + 15; 
+            // 🎨 เปลี่ยน: ย้ายแว่นขยายไปฝั่งขวา จะได้ไม่บังกระบอก
+            magX = w / 2 + 130; magY = h / 2; 
+        }
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(magX, magY, magRadius, 0, Math.PI * 2);
+        ctx.lineWidth = 8; ctx.strokeStyle = "#ea580c"; 
+        ctx.stroke();
+        
+        ctx.clip();
+        ctx.fillStyle = "#fff"; ctx.fillRect(magX - magRadius, magY - magRadius, magRadius*2, magRadius*2);
+
+        ctx.translate(magX, magY);
+        ctx.scale(zoomFactor, zoomFactor);
+        ctx.translate(-objPointX, -objPointY);
+
+        if (mode === 1 || mode === 2) drawRuler(w, h, mode);
+        if (mode === 3) drawCylinder(w, h);
+
+        // --- ระบบเส้นตาทิพย์ (Helper Lines) ---
+        if (isHelperOn) {
+            ctx.strokeStyle = "rgba(239, 68, 68, 0.5)"; 
+            ctx.lineWidth = 1.5 / zoomFactor; 
+
+            let step = mode === 2 ? (PX_RULER/10) : (mode === 1 ? PX_RULER : PX_CYL); 
+            
+            if (mode === 1 || mode === 2) {
+                let baseLeft = Math.floor(actualValue * (mode===2?10:1)) * step + 50;
+                for(let i=1; i<10; i++) {
+                    let hLineX = baseLeft + (i * step / 10);
+                    ctx.beginPath(); ctx.moveTo(hLineX, objPointY); ctx.lineTo(hLineX, objPointY - 40); ctx.stroke();
+                }
+                ctx.strokeStyle = "red"; ctx.lineWidth = 3 / zoomFactor;
+                ctx.beginPath(); ctx.moveTo(objPointX, objPointY-50); ctx.lineTo(objPointX, objPointY+20); ctx.stroke();
+            } else {
+                let baseBottom = (h - 20) - Math.floor(actualValue) * step;
+                for(let i=1; i<10; i++) {
+                    let hLineY = baseBottom - (i * step / 10);
+                    ctx.beginPath(); ctx.moveTo(w/2 - 100, hLineY); ctx.lineTo(w/2 + 50, hLineY); ctx.stroke();
+                }
+                ctx.strokeStyle = "red"; ctx.lineWidth = 3 / zoomFactor;
+                ctx.beginPath(); ctx.moveTo(w/2 - 120, objPointY); ctx.lineTo(w/2 + 50, objPointY); ctx.stroke();
+            }
+        }
+
+        ctx.restore(); 
+        ctx.strokeStyle = "rgba(0,0,0,0.2)"; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(magX - 15, magY); ctx.lineTo(magX + 15, magY); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(magX, magY - 15); ctx.lineTo(magX, magY + 15); ctx.stroke();
+    }
+
+    setTimeout(() => {
+        resizeCanvas();
+        switchMode(1);
+    }, 100);
+
+</script>
+</body>
+</html>
