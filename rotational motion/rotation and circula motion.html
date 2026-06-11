@@ -49,7 +49,6 @@
         .control-label-en { font-size: 12px; font-weight: 600; color: #64748b; display: block; margin-top: -2px; }
         
         .val-badge { background: #e2e8f0; border: 2px solid #000; padding: 2px 8px; border-radius: 4px; color: #2563eb; font-size: 18px; }
-        
         input[type="range"] { width: 100%; margin-top: 10px; cursor: pointer; accent-color: #000; height: 8px; }
 
         .btn-run {
@@ -58,19 +57,25 @@
         }
         .btn-run span { display: block; font-size: 12px; font-weight: 600; }
         .btn-run:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #000; }
-        .btn-run:disabled { background: #94a3b8; cursor: not-allowed; box-shadow: none; transform: translate(2px, 2px); }
         
+        .btn-toggle {
+            background: #3b82f6; color: #fff; border: 4px solid #000; padding: 15px; font-size: 22px; font-weight: 900; cursor: pointer;
+            box-shadow: 6px 6px 0px #000; transition: 0.1s; text-align: center;
+        }
+        .btn-toggle.off { background: #ef4444; }
+        .btn-toggle:active { transform: translate(4px, 4px); box-shadow: 2px 2px 0px #000; }
+
         .btn-reset {
             background: #f87171; color: #fff; border: 3px solid #000; padding: 10px; font-size: 16px; font-weight: 800; cursor: pointer;
             box-shadow: 3px 3px 0px #000; transition: 0.1s; text-align: center; margin-top: -5px;
         }
         .btn-reset:active { transform: translate(2px, 2px); box-shadow: none; }
 
-        .note-box { font-size: 13px; color: #475569; background: #f1f5f9; padding: 10px; border-left: 4px solid #94a3b8; font-weight: 600; line-height: 1.5; }
+        .note-box { font-size: 15px; color: #0f172a; background: #f1f5f9; padding: 15px; border-left: 5px solid #3b82f6; font-weight: 600; line-height: 1.6; }
 
         /* 🎬 จอแสดงผลกราฟิก (Canvas) */
         .visual-panel {
-            flex: 1.5; min-width: 500px; height: 420px; background: #fff; border: 4px solid #000; position: relative;
+            flex: 1.5; min-width: 500px; height: 450px; background: #fff; border: 4px solid #000; position: relative;
             display: flex; align-items: center; justify-content: center; overflow: hidden;
             background-image: radial-gradient(#cbd5e1 2px, transparent 2px); background-size: 25px 25px;
             box-shadow: inset 4px 4px 0px rgba(0,0,0,0.05);
@@ -86,7 +91,7 @@
             font-size: 14px; font-weight: 800; z-index: 10; text-align: right;
         }
 
-        /* 📊 แผงรายงานจุดเยือกแข็ง (Freeze Report) */
+        /* 📊 แผงรายงาน */
         .report-panel {
             width: 100%; border: var(--border); padding: 20px; background: #ecfdf5; box-shadow: var(--shadow);
             display: none; flex-direction: column; gap: 15px; border-color: #059669; margin-top: 5px;
@@ -104,20 +109,7 @@
         .data-label span { display: block; font-size: 11px; font-weight: 600; color: #64748b; }
         .data-val { font-weight: 900; font-size: 20px; color: #2563eb; font-family: monospace; }
         
-        .bridge-eq { font-size: 11px; color: #10b981; font-weight: 800; background: #d1fae5; padding: 2px 6px; border-radius: 4px; border: 1px solid #10b981; display: inline-block; margin-top: 4px;}
-
-        /* 📝 ส่วนแจกแจงการคำนวณ (Calculation Breakdown) */
-        .calc-breakdown {
-            background: #fef3c7; border: 3px dashed #d97706; padding: 15px; margin-top: 5px;
-            box-shadow: 4px 4px 0px #d97706; display: none;
-        }
-        .calc-header { font-size: 18px; font-weight: 900; color: #b45309; margin-bottom: 12px; border-bottom: 2px solid #fcd34d; padding-bottom: 5px; }
-        .calc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px; }
-        .calc-step { font-size: 14px; color: #334155; background: #fff; padding: 10px; border: 2px solid #000; font-family: monospace; line-height: 1.5; }
-        .calc-step-label { font-family: 'K2D', sans-serif; font-weight: 800; font-size: 15px; color: #0f172a; display: block; margin-bottom: 5px; }
-        .calc-step-label span { font-size: 11px; color: #64748b; display: inline-block; margin-left: 4px; }
-        .calc-step span.formula { color: #2563eb; font-weight: bold; font-size: 15px; }
-        .calc-step span.result { color: #059669; font-weight: bold; font-size: 15px; background: #d1fae5; padding: 0 4px; border-radius: 3px;}
+        .bridge-eq { font-size: 12px; color: #10b981; font-weight: 800; background: #d1fae5; padding: 4px 8px; border-radius: 4px; border: 2px solid #10b981; display: inline-block; margin-top: 4px;}
 
         .hide { display: none !important; }
     </style>
@@ -140,33 +132,38 @@
             </div>
 
         <div class="visual-panel">
-            <div class="timer-display" id="timer-ui">0.00 s</div>
-            <div class="status-tag" id="status-ui">รอคำสั่ง<br><span style="font-size: 11px; color:#64748b;">(Awaiting Input)</span></div>
+            <div class="timer-display" id="timer-ui" style="display:none;">0.00 s</div>
+            <div class="status-tag" id="status-ui">รอคำสั่ง</div>
             
             <svg id="svg-canvas" width="600" height="400" viewBox="-300 -200 600 400" style="overflow: visible;">
+                <defs>
+                    <marker id="arrow-v" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                        <polygon points="0 0, 8 4, 0 8" fill="#10b981" />
+                    </marker>
+                    <marker id="arrow-fc" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                        <polygon points="0 0, 8 4, 0 8" fill="#ef4444" />
+                    </marker>
+                </defs>
+
                 <g id="vis-mode1" class="hide">
-                    <circle cx="0" cy="0" r="40" fill="#3b82f6" stroke="#000" stroke-width="4"/>
-                    <path d="M -25 -10 Q 0 -20 20 -5 T 35 15" fill="none" stroke="#22c55e" stroke-width="8" stroke-linecap="round"/>
-                    <path d="M -30 10 Q -20 25 -5 30" fill="none" stroke="#22c55e" stroke-width="8" stroke-linecap="round"/>
-                    <text x="-15" y="5" font-weight="900" fill="#fff" font-size="12">EARTH</text>
+                    <circle cx="0" cy="0" r="30" fill="#3b82f6" stroke="#000" stroke-width="4"/>
+                    <path d="M -15 -5 Q 0 -15 15 -2 T 25 10" fill="none" stroke="#22c55e" stroke-width="6" stroke-linecap="round"/>
+                    <text x="-20" y="50" font-weight="900" fill="#3b82f6" font-size="14">EARTH</text>
                     
-                    <circle cx="0" cy="0" r="100" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="8,8" id="m1-orbit-path"/>
+                    <circle cx="0" cy="0" r="0" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="6,6" id="m1-orbit-line" class="hide"/>
                     
                     <g id="m1-satellite-grp">
-                        <line x1="0" y1="0" x2="100" y2="0" stroke="#94a3b8" stroke-width="2" id="m1-radius-line"/>
-                        <circle cx="100" cy="0" r="8" fill="#facc15" stroke="#000" stroke-width="3" id="m1-satellite"/>
-                        
-                        <line x1="90" y1="0" x2="50" y2="0" stroke="#ef4444" stroke-width="4" stroke-linecap="round" id="m1-fc-line"/>
-                        <polygon points="50,0 58,-5 58,5" fill="#ef4444" id="m1-fc-head"/>
-                        <text x="60" y="-10" font-weight="900" fill="#ef4444" font-size="14" id="m1-fc-text">Fc</text>
+                        <line id="m1-v-line" x1="0" y1="0" x2="0" y2="50" stroke="#10b981" stroke-width="4" marker-end="url(#arrow-v)"/>
+                        <text id="m1-v-text" x="15" y="45" font-weight="900" fill="#10b981" font-size="16">V</text>
 
-                        <line x1="100" y1="0" x2="100" y2="45" stroke="#10b981" stroke-width="4" stroke-linecap="round" id="m1-v-line"/>
-                        <polygon points="100,45 95,37 105,37" fill="#10b981" id="m1-v-head"/>
-                        <text x="110" y="25" font-weight="900" fill="#10b981" font-size="16" id="m1-v-text">V</text>
+                        <line id="m1-fc-line" x1="0" y1="0" x2="-50" y2="0" stroke="#ef4444" stroke-width="4" marker-end="url(#arrow-fc)"/>
+                        <text id="m1-fc-text" x="-65" y="-15" font-weight="900" fill="#ef4444" font-size="16">Fc</text>
+
+                        <circle cx="0" cy="0" r="10" fill="#facc15" stroke="#000" stroke-width="3"/>
                     </g>
                 </g>
 
-                <g id="vis-mode2">
+                <g id="vis-mode2" class="hide">
                     <g id="vis-wheel-group">
                         <circle cx="0" cy="0" r="80" fill="#e2e8f0" stroke="#000" stroke-width="4" id="vis-wheel"/>
                         <line x1="0" y1="-80" x2="0" y2="80" stroke="#94a3b8" stroke-width="3" id="spoke1"/>
@@ -174,12 +171,9 @@
                         <circle cx="0" cy="-70" r="8" fill="#facc15" stroke="#000" stroke-width="3" id="vis-marker"/>
                         <circle cx="0" cy="0" r="10" fill="#000"/> 
                     </g>
-
                     <line x1="0" y1="0" x2="56" y2="56" stroke="#3b82f6" stroke-width="4" stroke-dasharray="4,4" id="vis-r-line"/>
                     <text x="65" y="70" font-weight="900" fill="#3b82f6" font-size="20" id="vis-r-text">R</text>
-
                     <line x1="0" y1="-80" x2="0" y2="-80" stroke="#ef4444" stroke-width="6" stroke-dasharray="15, 10" id="vis-rope"/>
-                    
                     <g id="vis-robot" transform="translate(0, -80)">
                         <rect x="0" y="-15" width="30" height="30" fill="#facc15" stroke="#000" stroke-width="3"/>
                         <text x="5" y="5" font-weight="900" font-size="14">🤖</text>
@@ -194,36 +188,25 @@
     </div>
 
     <div class="report-panel" id="report-panel"></div>
-    <div class="calc-breakdown" id="calc-breakdown"></div>
-
 </div>
 
 <script>
-    // --- State Management ---
     let currentMode = 1; 
     let reqAnim;
-    let startTime = null;
     let isRunning = false;
-    let currentT = 0;
+    let lastTime = 0;
 
-    // Constants
-    const G = 6.674e-11;
-    const M_earth = 5.972e24;
-
-    // Shared UI Elements
     const timerUI = document.getElementById('timer-ui');
     const statusUI = document.getElementById('status-ui');
     const controlsContainer = document.getElementById('controls-container');
     const reportPanel = document.getElementById('report-panel');
-    const calcPanel = document.getElementById('calc-breakdown');
-
-    // SVG Elements
     const svgMode1 = document.getElementById('vis-mode1');
     const svgMode2 = document.getElementById('vis-mode2');
 
     // --- Mode Control ---
     function switchMode(mode) {
-        if (isRunning) resetSimulation();
+        if(reqAnim) cancelAnimationFrame(reqAnim);
+        isRunning = false;
         currentMode = mode;
         
         document.getElementById('tab-1').classList.remove('active');
@@ -233,338 +216,332 @@
         svgMode1.classList.add('hide');
         svgMode2.classList.add('hide');
         reportPanel.style.display = 'none';
-        calcPanel.style.display = 'none';
 
         if (mode === 1) {
             svgMode1.classList.remove('hide');
-            timerUI.classList.add('hide'); // ซ่อนนาฬิกา
+            timerUI.style.display = 'none';
             renderControlsMode1();
+            initM1();
         } else {
             svgMode2.classList.remove('hide');
-            timerUI.classList.remove('hide'); // โชว์นาฬิกา
+            timerUI.style.display = 'block';
             renderControlsMode2();
+            updateVarsM2();
         }
-        updateVars();
     }
 
-    // --- Mode 1: Circular Motion ---
-    let R_orbit_km;
+    // ==========================================
+    // 🌍 MODE 1: Circular Motion (Interactive Gravity)
+    // ==========================================
+    let isGravityOn = true;
+    let sat_x = 0, sat_y = -120; // เริ่มที่ด้านบนสุด
+    let sat_v = 3; // ความเร็วคงที่ (pixels/frame)
+    let sat_vx = 3, sat_vy = 0;
+    let sat_angle = -Math.PI / 2;
+    let current_R = 120;
+
     function renderControlsMode1() {
         controlsContainer.innerHTML = `
-            <div class="control-group" style="background: #eff6ff;">
-                <label><div>รัศมีวงโคจร <span class="control-label-en">Orbit Radius (R)</span></div> <span class="val-badge" id="val-m1-r">10,000 km</span></label>
-                <input type="range" id="slider-m1-r" min="7000" max="42000" step="500" value="10000" oninput="updateVars()">
-            </div>
             <div class="note-box">
-                💡 ข้อตกลง (Condition): ศูนย์กลางอยู่ <b>ภายนอก</b> วัตถุ<br>แรงดึงดูดของโลกทำหน้าที่เป็น <b>แรงสู่ศูนย์กลาง (Fc)</b> ในทิศพุ่งเข้า ดึงให้ดาวเทียมเคลื่อนที่ด้วยความเร็ว <b>(V) ในแนวเส้นสัมผัส</b>
+                💡 <b>พิสูจน์การเคลื่อนที่แบบวงกลม:</b><br>
+                วัตถุจะเคลื่อนที่เป็นเส้นตรงเสมอตาม <b>"ความเฉื่อย"</b> จนกว่าจะมี <b>"แรงดึงดูด (Fc)"</b> มากระทำในแนวตั้งฉาก ดึงให้มันโค้งกลายเป็นวงกลม
             </div>
-            <button class="btn-run" id="btn-run" onclick="toggleOrbitM1()">🚀 ปล่อยดาวเทียม <span>(START ORBIT)</span></button>
-            <button class="btn-reset" onclick="resetSimulation()">🔄 ตั้งค่าใหม่ (Reset)</button>
+            
+            <button class="btn-run" id="btn-start-m1" onclick="startM1()">▶️ เริ่มการจำลอง (PLAY)</button>
+            <button class="btn-toggle" id="btn-gravity" onclick="toggleGravity()">🧲 ปิดแรงดึงดูด (GRAVITY OFF)</button>
+            <button class="btn-reset" onclick="initM1()">🔄 ดึงกลับมาเริ่มต้น (Reset)</button>
         `;
     }
 
-    function calcMode1() {
-        R_orbit_km = parseFloat(document.getElementById('slider-m1-r').value);
-        let R_m = R_orbit_km * 1000;
-        let v_ms = Math.sqrt((G * M_earth) / R_m);
-        let period_s = (2 * Math.PI * R_m) / v_ms;
-        let ac = (v_ms * v_ms) / R_m;
-        return { R_m, v_ms, period_s, ac };
+    function initM1() {
+        if(reqAnim) cancelAnimationFrame(reqAnim);
+        isRunning = false;
+        isGravityOn = true;
+        
+        // Reset Position (Top, moving right)
+        current_R = 120;
+        sat_angle = -Math.PI / 2;
+        sat_x = current_R * Math.cos(sat_angle);
+        sat_y = current_R * Math.sin(sat_angle);
+        sat_vx = -sat_v * Math.sin(sat_angle);
+        sat_vy = sat_v * Math.cos(sat_angle);
+
+        document.getElementById('btn-start-m1').innerHTML = "▶️ เริ่มการจำลอง (PLAY)";
+        document.getElementById('btn-start-m1').style.display = 'block';
+        
+        let gravBtn = document.getElementById('btn-gravity');
+        gravBtn.className = "btn-toggle";
+        gravBtn.innerHTML = "🧲 ปิดแรงดึงดูด (GRAVITY OFF)";
+        gravBtn.disabled = true;
+
+        statusUI.innerHTML = "รอคำสั่ง<br><span style='font-size:11px;color:#64748b;'>(Ready)</span>";
+        statusUI.style.borderColor = "#000"; statusUI.style.color = "#000";
+
+        drawM1();
+        reportPanel.style.display = 'none';
     }
 
-    function toggleOrbitM1() {
-        if (isRunning) {
-            isRunning = false;
-            cancelAnimationFrame(reqAnim);
-            document.getElementById('btn-run').innerHTML = "🚀 ไปต่อ <span>(RESUME ORBIT)</span>";
-            document.getElementById('btn-run').style.background = "#3b82f6";
-            statusUI.innerHTML = "หยุดชั่วคราว<br><span style='font-size: 11px; color:#64748b;'>(Paused)</span>";
-            statusUI.style.borderColor = "#000"; statusUI.style.color = "#000";
-        } else {
-            isRunning = true;
-            startTime = performance.now() - (currentT * 1000); 
-            reqAnim = requestAnimationFrame(animate);
-            document.getElementById('btn-run').innerHTML = "⏸️ หยุดชั่วคราว <span>(PAUSE)</span>";
-            document.getElementById('btn-run').style.background = "#f59e0b";
-            statusUI.innerHTML = "กำลังโคจร...<br><span style='font-size: 11px; color:#10b981;'>(Orbiting)</span>";
+    function startM1() {
+        if(isRunning) return;
+        isRunning = true;
+        
+        document.getElementById('btn-start-m1').style.display = 'none';
+        document.getElementById('btn-gravity').disabled = false;
+        
+        statusUI.innerHTML = "โคจรเป็นวงกลม<br><span style='font-size:11px;color:#10b981;'>(Orbiting)</span>";
+        statusUI.style.borderColor = "#10b981"; statusUI.style.color = "#10b981";
+        
+        reqAnim = requestAnimationFrame(loopM1);
+    }
+
+    function toggleGravity() {
+        isGravityOn = !isGravityOn;
+        let btn = document.getElementById('btn-gravity');
+        
+        if(isGravityOn) {
+            btn.className = "btn-toggle";
+            btn.innerHTML = "🧲 ปิดแรงดึงดูด (GRAVITY OFF)";
+            
+            // ล็อกเข้าสู่วงโคจรใหม่ ณ ตำแหน่งปัจจุบัน
+            current_R = Math.sqrt(sat_x*sat_x + sat_y*sat_y);
+            sat_angle = Math.atan2(sat_y, sat_x);
+            // ปรับความเร็วให้ตั้งฉากเพื่อโคจรเป็นวงกลม
+            sat_vx = -sat_v * Math.sin(sat_angle);
+            sat_vy = sat_v * Math.cos(sat_angle);
+
+            statusUI.innerHTML = "ดึงดูดกลับมาแล้ว!<br><span style='font-size:11px;color:#10b981;'>(Gravity ON)</span>";
             statusUI.style.borderColor = "#10b981"; statusUI.style.color = "#10b981";
+        } else {
+            btn.className = "btn-toggle off";
+            btn.innerHTML = "❌ เปิดแรงดึงดูด (GRAVITY ON)";
+            
+            statusUI.innerHTML = "หลุดวงโคจร!<br><span style='font-size:11px;color:#ef4444;'>(Inertia Only)</span>";
+            statusUI.style.borderColor = "#ef4444"; statusUI.style.color = "#ef4444";
         }
     }
 
-    // --- Mode 2: Rotational Motion ---
-    let F_pull, R_wheel, targetT_wheel;
-    const M_wheel = 10; 
-    const SCALE_M2 = 80;
+    function loopM1() {
+        if(!isRunning) return;
 
+        if (isGravityOn) {
+            // โคจรเป็นวงกลม (เปลี่ยนมุม)
+            sat_angle += sat_v / current_R;
+            sat_x = current_R * Math.cos(sat_angle);
+            sat_y = current_R * Math.sin(sat_angle);
+            sat_vx = -sat_v * Math.sin(sat_angle);
+            sat_vy = sat_v * Math.cos(sat_angle);
+        } else {
+            // หลุดวงโคจร (พุ่งเป็นเส้นตรงตามความเร็วเดิม)
+            sat_x += sat_vx;
+            sat_y += sat_vy;
+            // อัปเดตรัศมีจำลอง (เพื่อให้วาดเส้นรอยปะได้ถูกถ้ายอมเปิดกลับมา)
+            current_R = Math.sqrt(sat_x*sat_x + sat_y*sat_y);
+            sat_angle = Math.atan2(sat_y, sat_x);
+        }
+
+        drawM1();
+        reqAnim = requestAnimationFrame(loopM1);
+    }
+
+    function drawM1() {
+        // อัปเดตตำแหน่งดาวเทียม
+        document.getElementById('m1-satellite-grp').setAttribute('transform', `translate(${sat_x}, ${sat_y})`);
+
+        let r_mag = Math.sqrt(sat_x*sat_x + sat_y*sat_y);
+
+        // วาดเวกเตอร์ V (ทิศทางความเร็ว)
+        let v_len = 50;
+        let v_mag = Math.sqrt(sat_vx*sat_vx + sat_vy*sat_vy);
+        document.getElementById('m1-v-line').setAttribute('x2', (sat_vx/v_mag) * v_len);
+        document.getElementById('m1-v-line').setAttribute('y2', (sat_vy/v_mag) * v_len);
+        document.getElementById('m1-v-text').setAttribute('x', (sat_vx/v_mag) * v_len + 15);
+        document.getElementById('m1-v-text').setAttribute('y', (sat_vy/v_mag) * v_len + 5);
+
+        // จัดการแรงดึงดูด (Fc)
+        let fcLine = document.getElementById('m1-fc-line');
+        let fcText = document.getElementById('m1-fc-text');
+        let orbitLine = document.getElementById('m1-orbit-line');
+
+        if(isGravityOn) {
+            fcLine.classList.remove('hide');
+            fcText.classList.remove('hide');
+            orbitLine.classList.remove('hide');
+            orbitLine.setAttribute('r', current_R); // แสดงรอยปะวงโคจร
+
+            // เวกเตอร์ Fc ชี้กลับไปที่ (0,0)
+            let fc_len = 45;
+            document.getElementById('m1-fc-line').setAttribute('x2', (-sat_x/r_mag) * fc_len);
+            document.getElementById('m1-fc-line').setAttribute('y2', (-sat_y/r_mag) * fc_len);
+            document.getElementById('m1-fc-text').setAttribute('x', (-sat_x/r_mag) * fc_len - 15);
+            document.getElementById('m1-fc-text').setAttribute('y', (-sat_y/r_mag) * fc_len - 15);
+        } else {
+            fcLine.classList.add('hide');
+            fcText.classList.add('hide');
+            orbitLine.classList.add('hide');
+        }
+
+        if(isRunning) showLiveReportM1();
+    }
+
+    function showLiveReportM1() {
+        let r_show = Math.sqrt(sat_x*sat_x + sat_y*sat_y);
+        
+        reportPanel.innerHTML = `
+            <h3 class="report-header">🛰️ วิเคราะห์การเคลื่อนที่ (Live Physics)</h3>
+            <div class="report-grid">
+                <div class="report-card">
+                    <div class="report-title">🚀 ความเร็วของดาว <span>(Velocity, v)</span></div>
+                    <div class="bridge-eq" style="background:#d1fae5; color:#059669; border-color:#10b981;">คงที่เสมอ (พุ่งเป็นเส้นตรง)</div>
+                </div>
+                <div class="report-card" style="border-color: ${isGravityOn ? '#ef4444' : '#94a3b8'};">
+                    <div class="report-title" style="color: ${isGravityOn ? '#ef4444' : '#94a3b8'};">🧲 แรงเข้าสู่ศูนย์กลาง <span>(Centripetal Force, Fc)</span></div>
+                    <div class="data-val" style="color: ${isGravityOn ? '#ef4444' : '#94a3b8'}; font-size:24px;">${isGravityOn ? "ทำงานอยู่ (ON)" : "ไม่มีแรงกระทำ (OFF)"}</div>
+                    <div class="bridge-eq" style="border-color: ${isGravityOn ? '#ef4444' : '#94a3b8'}; color: ${isGravityOn ? '#ef4444' : '#94a3b8'}; background: ${isGravityOn ? '#fee2e2' : '#f1f5f9'};">${isGravityOn ? "ดึงให้ดาวเทียมโค้งเป็นวงกลม" : "ดาวเทียมพุ่งหลุดวงโคจร!"}</div>
+                </div>
+            </div>
+        `;
+        reportPanel.style.display = 'flex';
+        reportPanel.style.borderColor = isGravityOn ? "#3b82f6" : "#ef4444";
+    }
+
+    // ==========================================
+    // ⚙️ MODE 2: Rotational Motion (โครงเดิม)
+    // ==========================================
+    let currentT_m2 = 0;
+    
     function renderControlsMode2() {
         controlsContainer.innerHTML = `
             <div class="control-group" style="background: #eff6ff;">
                 <label><div>แรงดึงเชือก <span class="control-label-en">Pulling Force (F)</span></div> <span class="val-badge" id="val-f">20 N</span></label>
-                <input type="range" id="slider-f" min="10" max="100" step="5" value="20" oninput="updateVars()">
+                <input type="range" id="slider-f" min="10" max="100" step="5" value="20" oninput="updateVarsM2()">
             </div>
             <div class="control-group" style="background: #f0fdfa;">
                 <label><div>รัศมีวงล้อ <span class="control-label-en">Wheel Radius (R)</span></div> <span class="val-badge" id="val-r">1.0 m</span></label>
-                <input type="range" id="slider-r" min="0.5" max="2.0" step="0.1" value="1.0" oninput="updateVars()">
+                <input type="range" id="slider-r" min="0.5" max="2.0" step="0.1" value="1.0" oninput="updateVarsM2()">
             </div>
             <div class="control-group" style="background: #fff7ed;">
                 <label><div>เวลาเป้าหมาย <span class="control-label-en">Target Time (t)</span></div> <span class="val-badge" id="val-t" style="color: #ea580c;">3.0 s</span></label>
-                <input type="range" id="slider-t" min="1.0" max="10.0" step="0.5" value="3.0" oninput="updateVars()">
+                <input type="range" id="slider-t" min="1.0" max="10.0" step="0.5" value="3.0" oninput="updateVarsM2()">
             </div>
             <div class="note-box">
                 💡 ข้อตกลง: แกนหมุนอยู่ <b>ทะลุผ่านเนื้อ</b> วัตถุ<br>สมมติให้ล้อวงนี้เป็นทรงกระบอกตัน มีมวลคงที่ (M) = 10 kg | ความเฉื่อย (I) = ½MR²
             </div>
-            <button class="btn-run" id="btn-run" onclick="startSimulationM2()">🚀 ดึงเชือก! <span>(RUN SIMULATOR)</span></button>
-            <button class="btn-reset" onclick="resetSimulation()">🔄 ตั้งค่าใหม่ (Reset)</button>
+            <button class="btn-run" id="btn-run-m2" onclick="startM2()">🚀 ดึงเชือก! <span>(RUN SIMULATOR)</span></button>
+            <button class="btn-reset" onclick="resetM2()">🔄 ตั้งค่าใหม่ (Reset)</button>
         `;
     }
 
-    function calcMode2() {
-        F_pull = parseFloat(document.getElementById('slider-f').value);
-        R_wheel = parseFloat(document.getElementById('slider-r').value);
-        targetT_wheel = parseFloat(document.getElementById('slider-t').value);
+    function updateVarsM2() {
+        let F = parseFloat(document.getElementById('slider-f').value);
+        let R = parseFloat(document.getElementById('slider-r').value);
+        let T = parseFloat(document.getElementById('slider-t').value);
 
-        let I = 0.5 * M_wheel * (R_wheel * R_wheel);
-        let tau = F_pull * R_wheel;
-        let alpha = tau / I;
-        let a = alpha * R_wheel;
+        document.getElementById('val-f').innerText = F + " N";
+        document.getElementById('val-r').innerText = R.toFixed(1) + " m";
+        document.getElementById('val-t').innerText = T.toFixed(1) + " s";
+        document.getElementById('vis-f-text').innerText = F + "N";
 
-        return { F_pull, R_wheel, targetT_wheel, I, tau, alpha, a };
+        let pxR = R * 80; 
+        document.getElementById('vis-wheel').setAttribute('r', pxR);
+        document.getElementById('spoke1').setAttribute('y1', -pxR); document.getElementById('spoke1').setAttribute('y2', pxR);
+        document.getElementById('spoke2').setAttribute('x1', -pxR); document.getElementById('spoke2').setAttribute('x2', pxR);
+        document.getElementById('vis-marker').setAttribute('cy', -(pxR - 10));
+        
+        let rope = document.getElementById('vis-rope');
+        rope.setAttribute('y1', -pxR); rope.setAttribute('y2', -pxR);
+        rope.setAttribute('x1', 0); 
+        
+        if (!isRunning && currentT_m2 === 0) {
+            rope.setAttribute('x2', 0); 
+            document.getElementById('vis-robot').setAttribute('transform', `translate(0, ${-pxR})`);
+            document.getElementById('vis-s-text').innerText = "s = 0.0 m";
+        }
     }
 
-    function startSimulationM2() {
-        if (isRunning) return;
-        updateVars();
+    function startM2() {
+        if(isRunning) return;
+        isRunning = true;
         
         reportPanel.style.display = 'none';
-        calcPanel.style.display = 'none';
-        document.getElementById('btn-run').disabled = true;
-        
+        document.getElementById('btn-run-m2').disabled = true;
         let inputs = controlsContainer.querySelectorAll('input[type="range"]');
         inputs.forEach(el => el.disabled = true);
         
         statusUI.innerHTML = "กำลังเร่ง...<br><span style='font-size: 11px; color:#f87171;'>(Running)</span>";
         statusUI.style.borderColor = "#ef4444"; statusUI.style.color = "#ef4444";
         
-        currentT = 0;
-        startTime = null;
-        isRunning = true;
-        reqAnim = requestAnimationFrame(animate);
+        currentT_m2 = 0;
+        lastTime = performance.now();
+        reqAnim = requestAnimationFrame(loopM2);
     }
 
-    // --- Core Engine ---
-    function updateVars() {
-        if (currentMode === 1) {
-            let res = calcMode1();
-            document.getElementById('val-m1-r').innerText = Number(document.getElementById('slider-m1-r').value).toLocaleString() + " km";
-            
-            // ปรับขนาดวงโคจรบนหน้าจอ
-            let scale_px = (R_orbit_km / 42000) * 160; 
-            if(scale_px < 65) scale_px = 65;
-            
-            document.getElementById('m1-orbit-path').setAttribute('r', scale_px);
-            document.getElementById('m1-satellite').setAttribute('cx', scale_px);
-            document.getElementById('m1-radius-line').setAttribute('x2', scale_px);
-            
-            // ปรับเวกเตอร์ V (ชี้ลงล่าง เป็นเส้นสัมผัส ตามเข็มนาฬิกา)
-            document.getElementById('m1-v-line').setAttribute('x1', scale_px);
-            document.getElementById('m1-v-line').setAttribute('x2', scale_px);
-            document.getElementById('m1-v-head').setAttribute('points', `${scale_px},45 ${scale_px-5},37 ${scale_px+5},37`);
-            document.getElementById('m1-v-text').setAttribute('x', scale_px + 10);
-            
-            // ปรับเวกเตอร์ Fc (ชี้เข้าซ้ายมือ เข้าหาศูนย์กลาง)
-            let fcLength = 40;
-            if(scale_px < 80) fcLength = 25; // ย่อลูกศรถ้าวงเล็ก
-            document.getElementById('m1-fc-line').setAttribute('x1', scale_px - 10);
-            document.getElementById('m1-fc-line').setAttribute('x2', scale_px - 10 - fcLength);
-            document.getElementById('m1-fc-head').setAttribute('points', `${scale_px - 10 - fcLength},0 ${scale_px - 2 - fcLength},-5 ${scale_px - 2 - fcLength},5`);
-            document.getElementById('m1-fc-text').setAttribute('x', scale_px - fcLength);
+    function loopM2(timestamp) {
+        if(!isRunning) return;
 
-            if (!isRunning) {
-                document.getElementById('m1-satellite-grp').setAttribute('transform', `rotate(0)`);
-                currentT = 0;
-            }
-            
-            // แสดงข้อมูลทันทีแบบ Real-time ไม่ต้องรอหยุด
-            showLiveReportM1(res);
+        let dt = (timestamp - lastTime) / 1000;
+        lastTime = timestamp;
+        if(dt > 0.1) dt = 0.1;
 
-        } else {
-            let res = calcMode2();
-            document.getElementById('val-f').innerText = res.F_pull + " N";
-            document.getElementById('val-r').innerText = res.R_wheel.toFixed(1) + " m";
-            document.getElementById('val-t').innerText = res.targetT_wheel.toFixed(1) + " s";
-            document.getElementById('vis-f-text').innerText = res.F_pull + "N";
+        let F = parseFloat(document.getElementById('slider-f').value);
+        let R = parseFloat(document.getElementById('slider-r').value);
+        let targetT = parseFloat(document.getElementById('slider-t').value);
+        
+        currentT_m2 += dt;
+        if(currentT_m2 >= targetT) { currentT_m2 = targetT; isRunning = false; }
+        
+        timerUI.innerText = currentT_m2.toFixed(2) + " s";
 
-            let pxR = res.R_wheel * SCALE_M2; 
-            
-            document.getElementById('vis-wheel').setAttribute('r', pxR);
-            document.getElementById('spoke1').setAttribute('y1', -pxR);
-            document.getElementById('spoke1').setAttribute('y2', pxR);
-            document.getElementById('spoke2').setAttribute('x1', -pxR);
-            document.getElementById('spoke2').setAttribute('x2', pxR);
-            document.getElementById('vis-marker').setAttribute('cy', -(pxR - 10));
-            
-            let rope = document.getElementById('vis-rope');
-            rope.setAttribute('y1', -pxR); rope.setAttribute('y2', -pxR);
-            rope.setAttribute('x1', 0); 
-            
-            if (!isRunning && currentT === 0) {
-                rope.setAttribute('x2', 0); 
-                document.getElementById('vis-robot').setAttribute('transform', `translate(0, ${-pxR})`);
-                document.getElementById('vis-s-text').innerText = "s = 0.0 m";
-            }
+        let I = 0.5 * 10 * (R * R);
+        let alpha = (F * R) / I;
+        let a = alpha * R;
 
-            let rLineX = pxR * Math.cos(Math.PI/4);
-            let rLineY = pxR * Math.sin(Math.PI/4);
-            document.getElementById('vis-r-line').setAttribute('x2', rLineX);
-            document.getElementById('vis-r-line').setAttribute('y2', rLineY);
-            document.getElementById('vis-r-text').setAttribute('x', rLineX + 10);
-            document.getElementById('vis-r-text').setAttribute('y', rLineY + 15);
-        }
+        let theta = 0.5 * alpha * (currentT_m2 * currentT_m2);
+        let s = 0.5 * a * (currentT_m2 * currentT_m2);
+
+        document.getElementById('vis-wheel-group').setAttribute('transform', `rotate(${theta * (180/Math.PI)})`);
+        let pxR = R * 80; let pxS = s * 80; 
+        
+        let rope = document.getElementById('vis-rope');
+        rope.setAttribute('x2', pxS);
+        rope.setAttribute('stroke-dashoffset', -pxS); 
+        document.getElementById('vis-robot').setAttribute('transform', `translate(${pxS}, ${-pxR})`);
+        document.getElementById('vis-s-text').innerText = `s = ${s.toFixed(1)} m`;
+
+        if(!isRunning) freezeFrameM2(F, R, targetT, I, alpha, a, theta, s);
+        else reqAnim = requestAnimationFrame(loopM2);
     }
 
-    function animate(timestamp) {
-        if (!startTime) startTime = timestamp;
-        let elapsed = (timestamp - startTime) / 1000; 
-
-        if (currentMode === 1) {
-            currentT = elapsed;
-            let res = calcMode1();
-            
-            // หมุนตามเข็มนาฬิกา (ค่ามุมเป็นบวก)
-            let anim_speed = (res.v_ms / 5000); 
-            let angle_deg = currentT * anim_speed * 100; 
-
-            document.getElementById('m1-satellite-grp').setAttribute('transform', `rotate(${angle_deg})`);
-            
-            if (isRunning) reqAnim = requestAnimationFrame(animate);
-
-        } else {
-            let res = calcMode2();
-            if (elapsed >= res.targetT_wheel) { elapsed = res.targetT_wheel; isRunning = false; }
-            currentT = elapsed;
-            timerUI.innerText = currentT.toFixed(2) + " s";
-
-            let theta = 0.5 * res.alpha * (currentT * currentT);
-            let s = 0.5 * res.a * (currentT * currentT);
-            let degrees = theta * (180 / Math.PI);
-
-            document.getElementById('vis-wheel-group').setAttribute('transform', `rotate(${degrees})`);
-            
-            let pxR = res.R_wheel * SCALE_M2; 
-            let pxS = s * SCALE_M2; 
-            
-            let rope = document.getElementById('vis-rope');
-            rope.setAttribute('x2', pxS);
-            rope.setAttribute('stroke-dashoffset', -pxS); 
-            
-            document.getElementById('vis-robot').setAttribute('transform', `translate(${pxS}, ${-pxR})`);
-            document.getElementById('vis-s-text').innerText = `s = ${s.toFixed(1)} m`;
-
-            if(!isRunning) freezeFrameM2(res, theta, s);
-            if (isRunning) reqAnim = requestAnimationFrame(animate);
-        }
-    }
-
-    // --- Reports ---
-    function showLiveReportM1(res) {
-        let period_h = res.period_s / 3600;
-
-        reportPanel.innerHTML = `
-            <h3 class="report-header">🛰️ คำนวณแบบเรียลไทม์: ณ รัศมี <span id="rep-time" style="color:#0f172a;">${(res.R_m/1000).toLocaleString()}</span> km</h3>
-            <div class="report-grid">
-                <div class="report-card">
-                    <div class="report-title">🚀 ความเร็วโคจร <span>(Orbital Velocity, v)</span></div>
-                    <div class="data-val" style="font-size:28px;">${(res.v_ms/1000).toFixed(2)} <span style='font-size:14px;color:#64748b;'>km/s</span></div>
-                    <div class="bridge-eq" style="margin-top:10px;">ตั้งฉากกับ Fc เสมอ (เวกเตอร์สีเขียว)</div>
-                </div>
-                <div class="report-card" style="border-color: #3b82f6;">
-                    <div class="report-title" style="color: #3b82f6;">⏱️ คาบเวลา 1 รอบ <span>(Period, T)</span></div>
-                    <div class="data-val" style="font-size:28px;">${period_h.toFixed(2)} <span style='font-size:14px;color:#64748b;'>ชั่วโมง</span></div>
-                </div>
-                <div class="report-card" style="border-color: #10b981;">
-                    <div class="report-title" style="color: #10b981;">🧲 ความเร่งสู่ศูนย์กลาง <span>(Centripetal Accel, a_c)</span></div>
-                    <div class="data-val" style="font-size:28px;">${res.ac.toFixed(3)} <span style='font-size:14px;color:#64748b;'>m/s²</span></div>
-                    <div class="bridge-eq" style="margin-top:10px;">ชี้เข้าหาใจกลางโลก (เวกเตอร์สีแดง)</div>
-                </div>
-            </div>
-        `;
-        reportPanel.style.display = 'flex';
-        reportPanel.style.borderColor = "#3b82f6";
-
-        calcPanel.innerHTML = `
-            <div class="calc-header">📝 แจกแจงวิธีทำ <span style="font-size: 14px; color: #d97706;">(Circular Motion Breakdown)</span></div>
-            <div class="calc-grid">
-                <div class="calc-step">
-                    <span class="calc-step-label">1. รัศมีวงโคจรเมตร <span>(Radius in m)</span></span>
-                    <span class="formula">R</span><br>= ${R_orbit_km} × 1000 <br>= <span class="result">${res.R_m.toLocaleString()} m</span>
-                </div>
-                <div class="calc-step">
-                    <span class="calc-step-label">2. ความเร็วโคจร <span>(Velocity, v)</span></span>
-                    <span class="formula">v = √(GM / R)</span><br>= √((6.67e-11 × 5.97e24) / ${res.R_m.toExponential(2)}) <br>= <span class="result">${res.v_ms.toFixed(0)} m/s</span>
-                </div>
-                <div class="calc-step">
-                    <span class="calc-step-label">3. คาบการโคจร <span>(Period, T)</span></span>
-                    <span class="formula">T = 2πR / v</span><br>= (2π × ${res.R_m.toExponential(2)}) / ${res.v_ms.toFixed(0)} <br>= <span class="result">${(res.period_s).toFixed(0)} วินาที</span>
-                </div>
-                <div class="calc-step">
-                    <span class="calc-step-label">4. ความเร่งสู่ศูนย์กลาง <span>(Centripetal a_c)</span></span>
-                    <span class="formula">a_c = v² / R</span><br>= (${res.v_ms.toFixed(0)})² / ${res.R_m.toExponential(2)} <br>= <span class="result">${res.ac.toFixed(3)} m/s²</span>
-                </div>
-            </div>
-        `;
-        calcPanel.style.display = 'block';
-    }
-
-    function freezeFrameM2(res, finalTheta, finalS) {
+    function freezeFrameM2(F, R, t, I, alpha, a, theta, s) {
         statusUI.innerHTML = "❄️ ล็อกภาพ!<br><span style='font-size: 11px; color:#60a5fa;'>(Freeze Frame)</span>";
         statusUI.style.borderColor = "#3b82f6"; statusUI.style.color = "#3b82f6";
         
-        let finalOmega = res.alpha * res.targetT_wheel;
-        let finalV = res.a * res.targetT_wheel;
-        let totalRevs = finalTheta / (2 * Math.PI);
-
         reportPanel.innerHTML = `
-            <h3 class="report-header">❄️ สถานะหยุดนิ่ง (FREEZE-FRAME): ณ วินาทีที่ <span id="rep-time">${res.targetT_wheel.toFixed(1)}</span></h3>
+            <h3 class="report-header">❄️ สถานะหยุดนิ่ง (FREEZE-FRAME): ณ วินาทีที่ <span id="rep-time">${t.toFixed(1)}</span></h3>
             <div class="report-grid">
                 <div class="report-card">
                     <div class="report-title">⚙️ ช่วงที่ออกแรง <span>(Acceleration Phase)</span></div>
-                    <div class="data-row"><div class="data-label">แรงบิด <span>Torque (τ)</span></div> <div class="data-val">${res.tau.toFixed(1)} <span style='font-size:12px;color:#64748b;'>N·m</span></div></div>
-                    <div class="data-row"><div class="data-label">ความเร่งมุม <span>Angular Accel. (α)</span></div> <div class="data-val">${res.alpha.toFixed(2)} <span style='font-size:12px;color:#64748b;'>rad/s²</span></div></div>
-                    <div class="data-row"><div class="data-label">ความเร่งเส้น <span>Linear Accel. (a)</span> <br><span class="bridge-eq">a = αR</span></div> <div class="data-val">${res.a.toFixed(2)} <span style='font-size:12px;color:#64748b;'>m/s²</span></div></div>
+                    <div class="data-row"><div class="data-label">แรงบิด <span>Torque (τ)</span></div> <div class="data-val">${(F*R).toFixed(1)} <span style='font-size:12px;color:#64748b;'>N·m</span></div></div>
+                    <div class="data-row"><div class="data-label">ความเร่งมุม <span>Angular Accel. (α)</span></div> <div class="data-val">${alpha.toFixed(2)} <span style='font-size:12px;color:#64748b;'>rad/s²</span></div></div>
                 </div>
                 <div class="report-card" style="border-color: #3b82f6;">
                     <div class="report-title" style="color: #3b82f6;">🚀 ความเร็วที่ได้ <span>(Final Velocity)</span></div>
-                    <div class="data-row"><div class="data-label">ความเร็วมุม <span>Final Angular Vel. (ω)</span></div> <div class="data-val">${finalOmega.toFixed(2)} <span style='font-size:12px;color:#64748b;'>rad/s</span></div></div>
-                    <div class="data-row"><div class="data-label">ความเร็วเส้น <span>Final Linear Vel. (v)</span> <br><span class="bridge-eq">v = ωR</span></div> <div class="data-val">${finalV.toFixed(2)} <span style='font-size:12px;color:#64748b;'>m/s</span></div></div>
+                    <div class="data-row"><div class="data-label">ความเร็วมุม <span>Final Angular Vel. (ω)</span></div> <div class="data-val">${(alpha*t).toFixed(2)} <span style='font-size:12px;color:#64748b;'>rad/s</span></div></div>
+                    <div class="data-row"><div class="data-label">ความเร็วเส้น <span>Final Linear Vel. (v)</span> <br><span class="bridge-eq">v = ωR</span></div> <div class="data-val">${(a*t).toFixed(2)} <span style='font-size:12px;color:#64748b;'>m/s</span></div></div>
                 </div>
                 <div class="report-card" style="border-color: #10b981;">
                     <div class="report-title" style="color: #10b981;">📏 การกระจัด <span>(Displacement)</span></div>
-                    <div class="data-row"><div class="data-label">มุมที่กวาดได้ <span>Angular Disp. (θ)</span></div> <div class="data-val">${finalTheta.toFixed(2)} <span style='font-size:12px;color:#64748b;'>rad</span></div></div>
-                    <div class="data-row"><div class="data-label">เชือกถูกลากไป <span>Linear Disp. (s)</span> <br><span class="bridge-eq">s = θR</span></div> <div class="data-val">${finalS.toFixed(2)} <span style='font-size:12px;color:#64748b;'>m</span></div></div>
-                    <div class="data-row"><div class="data-label">จำนวนรอบ <span>Total Revolutions</span></div> <div class="data-val">${totalRevs.toFixed(2)} <span style='font-size:12px;color:#64748b;'>รอบ</span></div></div>
+                    <div class="data-row"><div class="data-label">เชือกถูกลากไป <span>Linear Disp. (s)</span></div> <div class="data-val">${s.toFixed(2)} <span style='font-size:12px;color:#64748b;'>m</span></div></div>
+                    <div class="data-row"><div class="data-label">จำนวนรอบ <span>Total Revolutions</span></div> <div class="data-val">${(theta/(2*Math.PI)).toFixed(2)} <span style='font-size:12px;color:#64748b;'>รอบ</span></div></div>
                 </div>
             </div>
         `;
         reportPanel.style.display = 'flex';
         reportPanel.style.borderColor = "#059669";
-
-        calcPanel.innerHTML = `
-            <div class="calc-header">📝 แจกแจงวิธีทำ <span style="font-size: 14px; color: #d97706;">(Step-by-Step Calculation)</span></div>
-            <div class="calc-grid">
-                <div class="calc-step"><span class="calc-step-label">1. ความเฉื่อย <span>(Inertia, I)</span></span><span class="formula">I = ½MR²</span><br>= 0.5 × 10 × (${res.R_wheel.toFixed(1)})² <br>= <span class="result">${res.I.toFixed(2)} kg·m²</span></div>
-                <div class="calc-step"><span class="calc-step-label">2. แรงบิด <span>(Torque, τ)</span></span><span class="formula">τ = F × R</span><br>= ${res.F_pull} × ${res.R_wheel.toFixed(1)} <br>= <span class="result">${res.tau.toFixed(1)} N·m</span></div>
-                <div class="calc-step"><span class="calc-step-label">3. ความเร่งมุม <span>(Angular Accel., α)</span></span><span class="formula">α = τ / I</span><br>= ${res.tau.toFixed(1)} / ${res.I.toFixed(2)} <br>= <span class="result">${res.alpha.toFixed(2)} rad/s²</span></div>
-                <div class="calc-step"><span class="calc-step-label">4. ความเร่งเส้น <span>(Linear Accel., a)</span></span><span class="formula">a = α × R</span><br>= ${res.alpha.toFixed(2)} × ${res.R_wheel.toFixed(1)} <br>= <span class="result">${res.a.toFixed(2)} m/s²</span></div>
-                <div class="calc-step"><span class="calc-step-label">5. ความเร็วมุม <span>(Angular Vel., ω)</span></span><span class="formula">ω = α × t</span><br>= ${res.alpha.toFixed(2)} × ${res.targetT_wheel.toFixed(1)} <br>= <span class="result">${finalOmega.toFixed(2)} rad/s</span></div>
-                <div class="calc-step"><span class="calc-step-label">6. ระยะมุม <span>(Angular Disp., θ)</span></span><span class="formula">θ = ½αt²</span><br>= 0.5 × ${res.alpha.toFixed(2)} × (${res.targetT_wheel.toFixed(1)})² <br>= <span class="result">${finalTheta.toFixed(2)} rad</span></div>
-            </div>
-        `;
-        calcPanel.style.display = 'block';
     }
 
-    function resetSimulation() {
-        cancelAnimationFrame(reqAnim);
-        isRunning = false;
+    function resetM2() {
+        if(reqAnim) cancelAnimationFrame(reqAnim);
+        isRunning = false; currentT_m2 = 0;
         
         let inputs = controlsContainer.querySelectorAll('input[type="range"]');
         inputs.forEach(el => el.disabled = false);
@@ -572,26 +549,17 @@
         statusUI.innerHTML = "รอคำสั่ง<br><span style='font-size: 11px; color:#64748b;'>(Awaiting Input)</span>";
         statusUI.style.borderColor = "#000"; statusUI.style.color = "#000";
         
-        if (currentMode === 1) {
-            document.getElementById('btn-run').innerHTML = "🚀 ปล่อยดาวเทียม <span>(START ORBIT)</span>";
-            document.getElementById('btn-run').style.background = "#10b981";
-            document.getElementById('m1-satellite-grp').setAttribute('transform', `rotate(0)`);
-        } else {
-            timerUI.innerText = "0.00 s";
-            document.getElementById('btn-run').disabled = false;
-            document.getElementById('vis-wheel-group').setAttribute('transform', `rotate(0)`);
-            document.getElementById('vis-rope').setAttribute('stroke-dashoffset', 0); 
-            reportPanel.style.display = 'none';
-            calcPanel.style.display = 'none';
-        }
+        timerUI.innerText = "0.00 s";
+        document.getElementById('btn-run-m2').disabled = false;
+        document.getElementById('vis-wheel-group').setAttribute('transform', `rotate(0)`);
+        document.getElementById('vis-rope').setAttribute('stroke-dashoffset', 0); 
+        reportPanel.style.display = 'none';
         
-        currentT = 0;
-        updateVars();
+        updateVarsM2();
     }
 
-    // Init with Mode 1
+    // Start with Mode 1
     switchMode(1);
-
 </script>
 </body>
 </html>

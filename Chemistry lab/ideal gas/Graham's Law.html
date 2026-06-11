@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Graham's Law: Molecular Sprint</title>
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #000000;
+            --accent: #8b5cf6;
+            --bg-body: #f3e8ff;
+            --border: 4px solid #000000;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+        }
+
+        * { box-sizing: border-box; font-family: 'K2D', sans-serif; user-select: none; }
+        body { background-color: var(--bg-body); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; color: var(--text); overflow-x: hidden; }
+
+        .container {
+            background: var(--card-bg); border: var(--border); box-shadow: 10px 10px 0px #000;
+            width: 100%; max-width: 1200px; padding: 20px; display: flex; flex-direction: column; gap: 20px;
+        }
+
+        .header-title {
+            margin: 0; padding: 15px; background: var(--accent); color: #fff; border: var(--border);
+            font-size: 26px; font-weight: 900; text-transform: uppercase; text-align: center;
+            box-shadow: 5px 5px 0px #000; letter-spacing: 1px;
+        }
+
+        /* 🏁 Race Track */
+        .race-track {
+            background: #fff; border: var(--border); height: 250px; position: relative;
+            background-image: 
+                linear-gradient(90deg, transparent 92%, #ef4444 92%, #ef4444 93%, transparent 93%),
+                linear-gradient(#f1f5f9 2px, transparent 2px);
+            background-size: 100% 100%, 100% 125px; overflow: hidden;
+            box-shadow: inset 5px 5px 0px rgba(0,0,0,0.05);
+        }
+        
+        /* แก้ไขเส้นชัยให้อยู่ที่ 85% ของจอ เพื่อให้คำนวณง่ายและตรงกับ Canvas */
+        .finish-line-checker {
+            position: absolute; left: 85%; top: 0; bottom: 0; width: 25px;
+            background: repeating-linear-gradient(45deg, #000, #000 10px, #fff 10px, #fff 20px);
+            border-left: 4px solid #ef4444; border-right: 4px solid #000; z-index: 5;
+        }
+        
+        .lane-label {
+            position: absolute; left: 10px; background: #000; color: #fff;
+            padding: 2px 10px; font-weight: 800; font-size: 16px; z-index: 6; border-radius: 4px; border: 2px solid #fff;
+        }
+
+        /* 📊 Analytics Dashboard */
+        .analysis-panel { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .stat-box { background: #fff; border: 3px solid #000; padding: 10px; text-align: center; box-shadow: 3px 3px 0px #000; }
+        .stat-label { font-size: 16px; font-weight: 800; color: #64748b; }
+        .stat-value { font-size: 28px; font-weight: 900; font-family: monospace; }
+        .time-1 { color: #2563eb; }
+        .time-2 { color: #ea580c; }
+
+        /* Formula Styling (HTML/CSS) */
+        .formula-box {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            font-size: 24px; font-weight: 900; margin-top: 5px; color: #4c1d95; font-family: 'K2D', sans-serif;
+        }
+        .formula-fraction { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .formula-fraction span:first-child { border-bottom: 3px solid #6d28d9; padding: 0 8px; line-height: 1.1; }
+        .formula-fraction span:last-child { line-height: 1.3; }
+
+        /* 🎛️ Controls */
+        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .lane-ctrl { background: #faf5ff; border: 3px solid #000; padding: 15px; box-shadow: 4px 4px 0px #000; display: flex; flex-direction: column;}
+        .lane-ctrl h3 { margin: 0 0 10px 0; font-weight: 900; display: flex; justify-content: space-between; align-items: center;}
+        .mass-badge { background: #000; color: #fff; padding: 3px 10px; border-radius: 12px; font-size: 14px;}
+        
+        select, input[type="number"] {
+            width: 100%; border: 3px solid #000; padding: 10px; font-size: 18px; font-weight: 800; outline: none; background: #fff; cursor: pointer;
+        }
+        .gas-desc {
+            margin-top: 15px; font-size: 15px; color: #334155; min-height: 80px; border-top: 2px dashed #cbd5e1; padding-top: 10px; font-weight: 600; line-height: 1.5;
+        }
+        .custom-box { margin-top: 10px; display: none; background: #e2e8f0; padding: 10px; border: 2px solid #000; }
+
+        .btn-start {
+            background: #10b981; color: #fff; border: 4px solid #000; padding: 15px;
+            font-size: 24px; font-weight: 900; cursor: pointer; box-shadow: 6px 6px 0px #000;
+            text-transform: uppercase; width: 100%; transition: 0.1s; margin-top: 10px;
+        }
+        .btn-start:active { transform: translate(4px, 4px); box-shadow: 2px 2px 0px #000; }
+        .btn-start:disabled { background: #94a3b8; cursor: not-allowed; box-shadow: none; transform: translate(4px, 4px);}
+
+        .conclusion {
+            background: #fef08a; border: 4px solid #d97706; padding: 20px; font-weight: 800; font-size: 18px; text-align: center;
+            box-shadow: 6px 6px 0px #b45309; display: none; margin-top: 10px; color: #92400e; line-height: 1.6; width: 100%;
+        }
+        .highlight { background: #fff; padding: 2px 8px; border: 2px solid #d97706; border-radius: 4px; color: #000;}
+
+        canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none;}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="header-title">🏁 Graham's Sprint: สนามแข่งการแพร่ของแก๊ส</h1>
+
+    <div class="race-track" id="track">
+        <div class="lane-label" style="top: 20px; background: #2563eb;">LANE 1</div>
+        <div class="lane-label" style="top: 145px; background: #ea580c;">LANE 2</div>
+        <div class="finish-line-checker"></div>
+        <canvas id="raceCanvas"></canvas>
+    </div>
+
+    <div class="analysis-panel">
+        <div class="stat-box" style="border-color: #2563eb;">
+            <div class="stat-label">เวลาถึงเส้นชัย (LANE 1)</div>
+            <div class="stat-value time-1" id="time-1">0.00 s</div>
+        </div>
+        <div class="stat-box" style="border-color: #8b5cf6; background: #faf5ff;">
+            <div class="stat-label" style="color: #6d28d9;">สูตรอัตราการแพร่ (Graham's Law)</div>
+            <div class="formula-box">
+                <span>r &propto;</span>
+                <div class="formula-fraction">
+                    <span>1</span>
+                    <span>&radic;M</span>
+                </div>
+            </div>
+        </div>
+        <div class="stat-box" style="border-color: #ea580c;">
+            <div class="stat-label">เวลาถึงเส้นชัย (LANE 2)</div>
+            <div class="stat-value time-2" id="time-2">0.00 s</div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <div class="lane-ctrl">
+            <h3 style="color: #2563eb;">🟦 นักแข่งเลน 1 <span class="mass-badge" id="badge-1">M = 2</span></h3>
+            <select id="gas1" onchange="updateGas(1)">
+                <option value="H2">H₂ (Hydrogen)</option>
+                <option value="He">He (Helium)</option>
+                <option value="CH4">CH₄ (Methane)</option>
+                <option value="NH3">NH₃ (Ammonia)</option>
+                <option value="N2">N₂ (Nitrogen)</option>
+                <option value="O2">O₂ (Oxygen)</option>
+                <option value="CO2">CO₂ (Carbon Dioxide)</option>
+                <option value="SO2">SO₂ (Sulfur Dioxide)</option>
+                <option value="Custom">-- แก๊สปริศนา X --</option>
+            </select>
+            <div class="custom-box" id="custom-box-1">
+                ระบุมวลโมเลกุล (M): <input type="number" id="m1-val" value="30" step="1" min="1" max="200" oninput="updateCustom(1)">
+            </div>
+            <div class="gas-desc" id="desc-1"></div>
+        </div>
+
+        <div class="lane-ctrl">
+            <h3 style="color: #ea580c;">🟧 นักแข่งเลน 2 <span class="mass-badge" id="badge-2">M = 44</span></h3>
+            <select id="gas2" onchange="updateGas(2)">
+                <option value="H2">H₂ (Hydrogen)</option>
+                <option value="He">He (Helium)</option>
+                <option value="CH4">CH₄ (Methane)</option>
+                <option value="NH3">NH₃ (Ammonia)</option>
+                <option value="N2">N₂ (Nitrogen)</option>
+                <option value="O2">O₂ (Oxygen)</option>
+                <option value="CO2" selected>CO₂ (Carbon Dioxide)</option>
+                <option value="SO2">SO₂ (Sulfur Dioxide)</option>
+                <option value="Custom">-- แก๊สปริศนา X --</option>
+            </select>
+            <div class="custom-box" id="custom-box-2">
+                ระบุมวลโมเลกุล (M): <input type="number" id="m2-val" value="50" step="1" min="1" max="200" oninput="updateCustom(2)">
+            </div>
+            <div class="gas-desc" id="desc-2"></div>
+        </div>
+    </div>
+
+    <button class="btn-start" id="startBtn" onclick="startRace()">🏁 ปล่อยตัวนักแข่ง (START RACE)</button>
+
+    <div class="conclusion" id="conc-box"></div>
+</div>
+
+<script>
+    // 🗄️ ฐานข้อมูลแก๊ส ม.ปลาย
+    const gasDB = {
+        'H2':  { m: 2,  name: 'Hydrogen', color: '#60a5fa', desc: 'มวลเบาที่สุดในตารางธาตุ เป็นแชมป์แห่งการแพร่! แต่ติดไฟง่ายมาก' },
+        'He':  { m: 4,  name: 'Helium',   color: '#fcd34d', desc: 'ก๊าซเฉื่อย เบาและปลอดภัย นิยมใช้บรรจุลูกโป่งสวรรค์ หรือถังดำน้ำ' },
+        'CH4': { m: 16, name: 'Methane',  color: '#4ade80', desc: 'ก๊าซชีวภาพ/ก๊าซธรรมชาติ (NGV) เบากว่าอากาศและเผาไหม้ได้พลังงานสูง' },
+        'NH3': { m: 17, name: 'Ammonia',  color: '#c084fc', desc: 'ก๊าซกลิ่นฉุนสุดๆ ละลายน้ำได้ดีเยี่ยม (เป็นเบส) เจอในข้อสอบเรื่องการแพร่บ่อยที่สุด!' },
+        'N2':  { m: 28, name: 'Nitrogen', color: '#94a3b8', desc: 'ก๊าซที่มีมากที่สุดในบรรยากาศ (78%) เฉื่อยชาเพราะมีพันธะสามที่แข็งแรงมาก' },
+        'O2':  { m: 32, name: 'Oxygen',   color: '#f87171', desc: 'ก๊าซช่วยติดไฟ จำเป็นต่อชีวิต เป็นมาตรฐานที่เด็กเคมีต้องจำให้แม่น (M=32)' },
+        'CO2': { m: 44, name: 'Carbon Dioxide', color: '#334155', desc: 'ก๊าซเรือนกระจกและก๊าซดับเพลิง มวลค่อนข้างหนัก แพร่ช้ากว่าบรรยากาศทั่วไป' },
+        'SO2': { m: 64, name: 'Sulfur Dioxide', color: '#b45309', desc: 'ก๊าซพิษตัวร้าย กลิ่นเหม็นฉุนเหมือนไม้ขีดไฟ สาเหตุหลักของฝนกรด มวลมากแพร่ช้าสุดๆ' },
+    };
+
+    let m1 = 2, m2 = 44; 
+    let c1 = gasDB['H2'].color, c2 = gasDB['CO2'].color;
+    let n1 = gasDB['H2'].name, n2 = gasDB['CO2'].name;
+
+    // --- อัปเดตข้อมูลบน UI ---
+    function updateGas(lane) {
+        let selectVal = document.getElementById(`gas${lane}`).value;
+        let customBox = document.getElementById(`custom-box-${lane}`);
+        let descBox = document.getElementById(`desc-${lane}`);
+        let badge = document.getElementById(`badge-${lane}`);
+
+        if (selectVal === 'Custom') {
+            customBox.style.display = 'block';
+            descBox.innerHTML = '<b>แก๊สปริศนา X:</b> นักวิเคราะห์สามารถกำหนดมวลโมเลกุล (M) ขึ้นมาเอง เพื่อจำลองการแพร่แบบ Custom ได้เลย!';
+            updateCustom(lane);
+        } else {
+            customBox.style.display = 'none';
+            let g = gasDB[selectVal];
+            descBox.innerHTML = `<b>คุณสมบัติ:</b> ${g.desc}`;
+            badge.innerText = `M = ${g.m}`;
+            if (lane === 1) { m1 = g.m; c1 = g.color; n1 = g.name; } 
+            else { m2 = g.m; c2 = g.color; n2 = g.name; }
+            resetRaceUI();
+        }
+    }
+
+    function updateCustom(lane) {
+        let val = parseFloat(document.getElementById(`m${lane}-val`).value) || 1;
+        if (val < 1) val = 1; 
+        document.getElementById(`badge-${lane}`).innerText = `M = ${val}`;
+        if (lane === 1) { m1 = val; c1 = '#000'; n1 = 'Gas X'; } 
+        else { m2 = val; c2 = '#000'; n2 = 'Gas Y'; }
+        resetRaceUI();
+    }
+
+    // Initialize UI
+    updateGas(1); updateGas(2);
+
+    // --- Race Engine (Physics System) ---
+    const canvas = document.getElementById('raceCanvas');
+    const ctx = canvas.getContext('2d');
+    let dpr = window.devicePixelRatio || 1;
+    let animationId;
+    let isRacing = false;
+    
+    let x1 = 30, x2 = 30;
+    let t1 = 0, t2 = 0; 
+    let finishX = 0;
+    
+    let lastTime = 0;
+    let p1Finished = false;
+    let p2Finished = false;
+    
+    // ตั้งค่าพารามิเตอร์ความเร็ว (k)
+    const SPEED_CONSTANT = 500; 
+
+    function resizeCanvas() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.scale(dpr, dpr);
+        finishX = (canvas.width / dpr) * 0.85; // ตรงกับเส้นชัยใน CSS (left: 85%)
+        if(!isRacing) drawInitialState();
+    }
+    window.addEventListener('resize', resizeCanvas);
+    setTimeout(resizeCanvas, 100);
+
+    function resetRaceUI() {
+        if(animationId) cancelAnimationFrame(animationId);
+        isRacing = false;
+        x1 = 30; x2 = 30; t1 = 0; t2 = 0;
+        p1Finished = false; p2Finished = false;
+        document.getElementById('time-1').innerText = "0.00 s";
+        document.getElementById('time-2').innerText = "0.00 s";
+        document.getElementById('conc-box').style.display = 'none';
+        document.getElementById('startBtn').disabled = false;
+        document.getElementById('startBtn').innerText = "🏁 ปล่อยตัวนักแข่ง (START RACE)";
+        drawInitialState();
+    }
+
+    function drawParticle(x, y, color, label) {
+        ctx.beginPath();
+        ctx.arc(x, y, 15, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        ctx.fillStyle = (color === '#000' || color === '#334155') ? '#fff' : '#000';
+        ctx.font = "bold 12px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(label, x, y);
+    }
+
+    function drawInitialState() {
+        if(!ctx) return;
+        ctx.clearRect(0, 0, canvas.width/dpr, canvas.height/dpr);
+        drawParticle(30, 60, c1, `M=${m1}`);
+        drawParticle(30, 185, c2, `M=${m2}`);
+    }
+
+    function startRace() {
+        document.getElementById('startBtn').disabled = true;
+        document.getElementById('startBtn').innerText = "🔥 กำลังแข่งขัน...";
+        document.getElementById('conc-box').style.display = 'none';
+        
+        x1 = 30; x2 = 30; 
+        t1 = 0; t2 = 0;
+        p1Finished = false; p2Finished = false;
+        finishX = (canvas.width / dpr) * 0.85; // คอนเฟิร์มระยะเส้นชัยอีกครั้ง
+        
+        isRacing = true;
+        lastTime = performance.now();
+        requestAnimationFrame(raceLoop);
+    }
+
+    function raceLoop(currentTime) {
+        if (!isRacing) return;
+
+        // คำนวณเวลา Delta Time (dt)
+        let dt = (currentTime - lastTime) / 1000;
+        if (dt > 0.1) dt = 0.1; // ป้องกันบั๊กกรณีสลับหน้าจอ (Cap at 0.1s)
+        lastTime = currentTime;
+
+        // คำนวณความเร็วตาม Graham's Law (v = k / sqrt(M))
+        let v1 = SPEED_CONSTANT / Math.sqrt(m1);
+        let v2 = SPEED_CONSTANT / Math.sqrt(m2);
+
+        // เลื่อนตำแหน่งและจับเวลาทีละเลน
+        if (!p1Finished) {
+            x1 += v1 * dt;
+            t1 += dt;
+            document.getElementById('time-1').innerText = t1.toFixed(2) + " s";
+            if (x1 >= finishX) { x1 = finishX; p1Finished = true; }
+        }
+
+        if (!p2Finished) {
+            x2 += v2 * dt;
+            t2 += dt;
+            document.getElementById('time-2').innerText = t2.toFixed(2) + " s";
+            if (x2 >= finishX) { x2 = finishX; p2Finished = true; }
+        }
+
+        // ล้างและวาดเฟรมใหม่
+        ctx.clearRect(0, 0, canvas.width/dpr, canvas.height/dpr);
+        
+        // วาดเอฟเฟกต์หางเบลอ (Motion Blur)
+        if(!p1Finished) { ctx.fillStyle = c1; ctx.globalAlpha = 0.2; ctx.beginPath(); ctx.arc(x1-20, 60, 10, 0, Math.PI*2); ctx.fill(); }
+        if(!p2Finished) { ctx.fillStyle = c2; ctx.globalAlpha = 0.2; ctx.beginPath(); ctx.arc(x2-20, 185, 10, 0, Math.PI*2); ctx.fill(); }
+        ctx.globalAlpha = 1.0;
+
+        drawParticle(x1, 60, c1, `M=${m1}`);
+        drawParticle(x2, 185, c2, `M=${m2}`);
+
+        // ตรวจสอบผลแพ้ชนะ
+        if (p1Finished && p2Finished) {
+            isRacing = false;
+            showConclusion();
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('startBtn').innerText = "🔄 แข่งใหม่อีกครั้ง (RACE AGAIN)";
+        } else {
+            animationId = requestAnimationFrame(raceLoop);
+        }
+    }
+
+    function showConclusion() {
+        let concBox = document.getElementById('conc-box');
+        let ratioM = Math.sqrt(m2 / m1).toFixed(2);
+        let ratioT = (t2 / t1).toFixed(2);
+        
+        let winnerName, winnerM, loserName, loserM;
+        
+        if (m1 < m2) {
+            winnerName = n1; winnerM = m1; loserName = n2; loserM = m2;
+        } else if (m2 < m1) {
+            winnerName = n2; winnerM = m2; loserName = n1; loserM = m1;
+            ratioM = Math.sqrt(m1 / m2).toFixed(2);
+            ratioT = (t1 / t2).toFixed(2);
+        } else {
+            concBox.innerHTML = `💡 <b>สรุปผล:</b> แก๊สทั้งสองชนิดมีมวลโมเลกุล (M) <b>เท่ากัน</b> จึงมีอัตราการแพร่และเข้าเส้นชัยพร้อมกันเป๊ะ!`;
+            concBox.style.display = 'block';
+            return;
+        }
+
+        concBox.innerHTML = `
+            💡 <b>สรุปผลทางเคมี-ฟิสิกส์:</b><br><br>
+            ผู้ชนะคือ <span class="highlight">${winnerName} (M=${winnerM})</span> เพราะมีมวลโมเลกุล <b>"น้อยกว่า"</b> จึงแพร่ได้เร็วกว่า <span class="highlight">${loserName} (M=${loserM})</span><br><br>
+            จากการทดลอง <b>เวลาที่ใช้</b> ต่างกัน ${ratioT} เท่า <br>ซึ่งตรงกับ <b>รากที่สองของมวล (√M)</b> ที่ต่างกัน ${ratioM} เท่า ตามกฎของเกรแฮมพอดีเป๊ะ!
+        `;
+        concBox.style.display = 'block';
+    }
+
+</script>
+</body>
+</html>
