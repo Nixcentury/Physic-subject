@@ -1762,7 +1762,7 @@
             }
         }
 // ==========================================
-// 📄 ฟังก์ชัน: โหลด PDF (เวอร์ชัน Bypass Memory - โหลดตรงเข้ากระดาน)
+// 📄 ฟังก์ชัน: โหลด PDF (เวอร์ชันส่งรูปเก็บเข้า Google Drive ทีละหน้า ป้องกันคลาวด์เต็ม)
 // ==========================================
 async function handleNbPdfUpload(e) {
     const file = e.target.files[0];
@@ -1772,12 +1772,15 @@ async function handleNbPdfUpload(e) {
     const notiBox = document.getElementById('ctx-notification');
     const notiText = document.getElementById('ctx-noti-text');
     
+    // ⚠️ สำคัญ: เอาลิงก์ Web App URL (จาก Google Apps Script อันเดิม) มาแปะตรงนี้ด้วยครับ ⚠️
+    const gasWebUrl = 'เอา_Web_app_URL_จาก_GAS_มาแปะตรงนี้ครับ'; 
+
     if (notiBox) {
         document.getElementById('ctx-tools-container').style.display = 'none';
         notiBox.style.display = 'flex';
         notiBox.style.backgroundColor = '#fef08a';
         notiBox.style.color = '#854d0e';
-        notiText.innerText = "⏳ กำลังวาด PDF ลงกระดาน... (รอสักครู่นะครับ)";
+        notiText.innerText = "⏳ กำลังแยกหน้า PDF... (รอสักครู่นะครับ)";
         if (ctxBar) { ctxBar.style.display = 'flex'; ctxBar.classList.add('active'); }
     }
 
@@ -1789,57 +1792,67 @@ async function handleNbPdfUpload(e) {
             const pdf = await pdfjsLib.getDocument({ data: typedarray }).promise;
             const totalPages = pdf.numPages;
             
-            const MAX_PER_SHEET = 8; // ลิมิต 8 หน้าเพื่อความลื่นไหล
+            const MAX_PER_SHEET = 10; // ลิมิต 10 หน้า เพื่อไม่ให้โหลดนานเกินไป
             let pagesToLoad = totalPages > MAX_PER_SHEET ? MAX_PER_SHEET : totalPages;
             
             let cWidth = fCanvas.getWidth ? fCanvas.getWidth() : fCanvas.width;
             let viewTop = fCanvas.viewportTransform ? -fCanvas.viewportTransform[5] : 0;
             let currentTopY = viewTop + 50; 
-            const paddingBetweenPages = 30; // ช่องไฟเว้นบรรทัดระหว่างหน้า
+            const paddingBetweenPages = 30; 
             let loadedCount = 0;
 
-            // 🔄 เริ่มวนลูปวาดทีละหน้า
+            // 🔄 เริ่มวนลูปวาดและส่งขึ้น Drive ทีละหน้า
             for (let pageNum = 1; pageNum <= pagesToLoad; pageNum++) {
-                if (notiText) notiText.innerText = `⏳ กำลังประกอบร่างหน้าที่ ${pageNum} / ${pagesToLoad}...`;
+                if (notiText) notiText.innerText = `⏳ กำลังส่งหน้าที่ ${pageNum} / ${pagesToLoad} ขึ้น Google Drive...`;
                 
                 const page = await pdf.getPage(pageNum);
                 const viewport = page.getViewport({ scale: 1.5 });
 
-                // 1. สร้างกระดานชั่วคราว
                 const tempCanvas = document.createElement('canvas');
                 const context = tempCanvas.getContext('2d');
                 tempCanvas.height = viewport.height;
                 tempCanvas.width = viewport.width;
 
-                // 2. วาด PDF ลงกระดานชั่วคราว
                 await page.render({ canvasContext: context, viewport: viewport }).promise;
 
-                // 🚀 3. ท่าไม้ตาย! ยัด Canvas เข้า Fabric ตรงๆ ไม่ต้องแปลงเป็น Base64
-                const img = new fabric.Image(tempCanvas);
+                // 1. แปลงหน้า PDF เป็น JPEG บีบอัด
+                const compressedBase64 = tempCanvas.toDataURL('image/jpeg', 0.7);
 
-                let canvasScale = Math.min((cWidth * 0.9) / img.width, 1);
+                // 2. ยิงรูปหน้านี้ขึ้น Google Drive ทันที
+                try {
+                    const res = await fetch(gasWebUrl, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            base64: compressedBase64,
+                            fileName: `Examate_PDF_${Date.now()}_Page_${pageNum}.jpg`
+                        })
+                    });
+                    const data = await res.json();
 
-                img.set({
-                    scaleX: canvasScale, 
-                    scaleY: canvasScale,
-                    borderColor: '#3b82f6', 
-                    cornerColor: '#3b82f6',
-                    cornerSize: 12, 
-                    transparentCorners: false,
-                    originX: 'center', 
-                    originY: 'top',
-                    left: cWidth / 2, 
-                    top: currentTopY // 📍 วางต่อท้ายลงมาเรื่อยๆ
-                });
-
-                fCanvas.add(img);
-                
-                // ➕ คำนวณความสูง เพื่อดันจุด Y ลงไปรอวางแผ่นถัดไป
-                currentTopY += (img.height * canvasScale) + paddingBetweenPages;
-                loadedCount++;
+                    if (data.status === 'success') {
+                        // 3. ดึงลิงก์สั้นจาก Drive มาวาดลงกระดาน
+                        await new Promise((resolve) => {
+                            fabric.Image.fromURL(data.url, function(img) {
+                                let canvasScale = Math.min((cWidth * 0.9) / img.width, 1);
+                                img.set({
+                                    scaleX: canvasScale, scaleY: canvasScale,
+                                    borderColor: '#3b82f6', cornerColor: '#3b82f6', cornerSize: 12, 
+                                    transparentCorners: false, originX: 'center', originY: 'top',
+                                    left: cWidth / 2, top: currentTopY 
+                                });
+                                fCanvas.add(img);
+                                currentTopY += (img.height * canvasScale) + paddingBetweenPages;
+                                loadedCount++;
+                                resolve();
+                            }, { crossOrigin: 'anonymous' }); // ⚠️ ท่าบังคับกันเซฟพัง
+                        });
+                    }
+                } catch (uploadErr) {
+                    console.error(`อัปโหลดหน้าที่ ${pageNum} ไม่สำเร็จ:`, uploadErr);
+                }
             }
 
-            // 🎉 โหลดเสร็จสิ้น
+            // 🎉 โหลดเสร็จสิ้นทุกหน้า
             if (notiBox) notiBox.style.display = 'none';
             if (ctxBar) ctxBar.classList.remove('active');
             
@@ -1848,9 +1861,8 @@ async function handleNbPdfUpload(e) {
             if (typeof updateMinimap === 'function') updateMinimap();
             if (typeof saveState === 'function') saveState();
 
-            // แจ้งเตือนเมื่อจบงาน
             setTimeout(() => { 
-                alert(`✅ โหลดลงกระดานสำเร็จครบ ${loadedCount} หน้าแล้วครับ!\n\n(💡 กัปตันใช้ 2 นิ้วไถจอขึ้น หรือกดปุ่ม ✋ เลื่อนจอลงไปดูหน้าข้างล่างได้เลยครับ)`); 
+                alert(`✅ โหลด PDF เข้า Google Drive สำเร็จครบ ${loadedCount} หน้าแล้วครับ!\n(ข้อมูลเบาหวิว กดเซฟกระดานผ่านฉลุยแน่นอน)`); 
             }, 300);
 
         } catch (err) {
@@ -1860,7 +1872,7 @@ async function handleNbPdfUpload(e) {
         }
     };
     reader.readAsArrayBuffer(file);
-    e.target.value = ""; // เคลียร์ปุ่มเผื่ออัปโหลดซ้ำ
+    e.target.value = ""; // เคลียร์ปุ่ม
 }
 // ==========================================
 // 🌐 1. ฟังก์ชัน: สร้าง "ปุ่มลัด" ฝังลงบนกระดาน
