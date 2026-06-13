@@ -2021,14 +2021,15 @@ import { initializeApp } from "firebase/app";
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "firebase/auth";
 import { getFirestore, doc, setDoc, collection, addDoc } from "firebase/firestore";
 
-// 📡 1. ข้อมูลเชื่อมต่อหลังบ้าน (แก้เป็นของกัปตันเอง)
+// 📡 1. กุญแจบ้านของกัปตัน (ของแท้)
 const firebaseConfig = {
-  apiKey: "AIzaSy...",
-  authDomain: "examateapp-xxxxx.firebaseapp.com",
-  projectId: "examateapp-xxxxx",
-  storageBucket: "examateapp-xxxxx.appspot.com",
-  messagingSenderId: "...",
-  appId: "..."
+  apiKey: "AIzaSyDfkxDDnbzLUv85yDwqSpZwPCORx_eCGuo",
+  authDomain: "examateapp-1007d.firebaseapp.com",
+  projectId: "examateapp-1007d",
+  storageBucket: "examateapp-1007d.firebasestorage.app",
+  messagingSenderId: "791216427108",
+  appId: "1:791216427108:web:ccf63a9cc416650877cf71",
+  measurementId: "G-0HPEFRXYW5"
 };
 
 // สตาร์ทเครื่องยนต์ Firebase
@@ -2039,7 +2040,7 @@ const provider = new GoogleAuthProvider();
 
 let currentUser = null;
 
-// 🔑 2. ฟังก์ชันล็อกอิน (โยงเข้ากับ window เพื่อให้ HTML เรียกใช้ได้)
+// 🔑 2. ฟังก์ชันล็อกอิน
 window.loginWithGoogle = async function() {
     try {
         await signInWithPopup(auth, provider);
@@ -2056,20 +2057,20 @@ onAuthStateChanged(auth, async (user) => {
         // ถ้าระบุตัวตนสำเร็จ -> เก็บข้อมูล
         currentUser = { uid: user.uid, name: user.displayName, email: user.email };
         
-        // แอบบันทึกชื่อลงฐานข้อมูล
+        // แอบบันทึกชื่อลงฐานข้อมูลตาราง Users
         await setDoc(doc(db, "Users", user.uid), {
             name: user.displayName,
             email: user.email,
-            role: "student",
+            role: "student", // ค่าเริ่มต้น
             lastLogin: new Date()
         }, { merge: true });
 
-        // ปิดหน้าต่างล็อกอิน
+        // ปิดหน้าต่างบังจอล็อกอิน
         if (loginOverlay) loginOverlay.style.display = 'none';
         console.log("✅ เข้าสู่ระบบสำเร็จโดย: ", user.displayName);
         
     } else {
-        // ถ้ายกเลิก หรือยังไม่ล็อกอิน -> โชว์หน้าต่างล็อกอิน
+        // ถ้ายกเลิก หรือยังไม่ล็อกอิน -> โชว์หน้าต่างบังจอให้กดล็อกอิน
         currentUser = null;
         if (loginOverlay) loginOverlay.style.display = 'flex';
     }
@@ -2085,13 +2086,14 @@ window.saveBoardToCloud = async function() {
     let boardName = prompt("📌 ตั้งชื่อกระดานนี้ (เช่น ใบงานฟิสิกส์):", "กระดานของฉัน");
     if (!boardName) return;
 
+    // เปลี่ยนปุ่มเป็นรูปนาฬิกาทรายระหว่างโหลด
     let btn = document.getElementById('btn-cloud-save');
     let oldText = btn.innerHTML;
     btn.innerHTML = "⏳";
     btn.style.pointerEvents = "none";
 
     try {
-        // ดูดข้อมูลกระดานมาเป็น JSON
+        // ดูดข้อมูลกระดานมาเป็น JSON (ต้องมี fCanvas ทำงานอยู่)
         let boardData = JSON.stringify(fCanvas.toJSON());
 
         // ส่งขึ้นฐานข้อมูลตาราง Boards
@@ -2111,10 +2113,11 @@ window.saveBoardToCloud = async function() {
         alert("เซฟไม่สำเร็จ: " + error.message);
     }
 
-    // คืนค่าปุ่ม
+    // คืนค่าปุ่มให้กลับมาเป็นรูปเมฆเหมือนเดิม
     btn.innerHTML = oldText;
     btn.style.pointerEvents = "auto";
 };
+</script>
 </script>
 </script>
 </body>
