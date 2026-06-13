@@ -2165,8 +2165,7 @@ async function initWorkspace() {
         console.log("💡 เปิดกระดานใหม่เอี่ยม เรียบร้อยครับ");
     }
 }
-
-// ฟังก์ชันโหลดข้อมูลข้อความ JSON จากคลาวด์มาวาดลง Fabric.js Canvas
+// 🔄 ฟังก์ชันโหลดข้อมูลข้อความ JSON จากคลาวด์ (อัปเกรด: คลี่ข้อมูลทุกหน้า)
 async function loadBoardData(id) {
     try {
         const docRef = doc(db, "Boards", id);
@@ -2175,10 +2174,31 @@ async function loadBoardData(id) {
         if (docSnap.exists()) {
             const data = docSnap.data();
             if (fCanvas && data.canvasData) {
-                fCanvas.loadFromJSON(data.canvasData, () => {
-                    fCanvas.renderAll();
-                    console.log(`📂 โหลดข้อมูลกระดาน "${data.title}" สำเร็จ`);
-                });
+                try {
+                    const parsed = JSON.parse(data.canvasData);
+                    
+                    // 🌟 เช็คว่าเป็นบอร์ดระบบใหม่ (หลายหน้า)
+                    if (parsed.pages) {
+                        nbPagesFabric = parsed.pages;
+                        nbCurrentPage = parsed.currentPage || 0;
+                        // สร้าง Array เปล่าๆ รองรับ thumbnail ของแต่ละหน้า
+                        nbPages = new Array(nbPagesFabric.length).fill(""); 
+                        
+                        fCanvas.loadFromJSON(nbPagesFabric[nbCurrentPage], () => {
+                            fCanvas.renderAll();
+                            if(typeof updateNbPageText === 'function') updateNbPageText();
+                            console.log(`📂 โหลดกระดาน "${data.title}" ครบทุกหน้าสำเร็จ`);
+                        });
+                    } else {
+                        // (เผื่อไว้) รองรับบอร์ดระบบเก่าที่เคยเซฟไว้แค่หน้าเดียว
+                        fCanvas.loadFromJSON(data.canvasData, () => {
+                            fCanvas.renderAll();
+                            console.log(`📂 โหลดกระดาน (แบบเก่า) "${data.title}" สำเร็จ`);
+                        });
+                    }
+                } catch(e) {
+                    console.error("Error parsing board data", e);
+                }
             }
         } else {
             alert("❌ ไม่พบข้อมูลกระดานรหัสนี้ในระบบ");
@@ -2186,9 +2206,7 @@ async function loadBoardData(id) {
     } catch (error) {
         console.error("❌ โหลดกระดานผิดพลาด:", error);
     }
-}
-
-// ฟังก์ชันโคลนบอร์ดต้นฉบับแยกออกมาเป็นใบงานส่วนตัวของนักเรียนแต่ละคน
+}// ฟังก์ชันโคลนบอร์ดต้นฉบับแยกออกมาเป็นใบงานส่วนตัวของนักเรียนแต่ละคน
 async function handleTemplateClone(templateId) {
     try {
         const docRef = doc(db, "Boards", templateId);
@@ -2231,7 +2249,7 @@ async function handleTemplateClone(templateId) {
     }
 }
 
-// ☁️ 3. ฟังก์ชันบันทึกกระดาน (ฉลาดขึ้น: ตรวจจับสิทธิ์อัตโนมัติ)
+// ☁️ 3. ฟังก์ชันบันทึกกระดาน (อัปเกรด: กวาดเซฟครบทุกหน้า!)
 window.saveBoardToCloud = async function() {
     let btn = document.getElementById('btn-cloud-save');
     let oldText = btn.innerHTML;
@@ -2239,38 +2257,43 @@ window.saveBoardToCloud = async function() {
     btn.style.pointerEvents = "none";
 
     try {
-        let boardData = JSON.stringify(fCanvas.toJSON());
+        // 1. อัปเดตลายเส้นหน้าปัจจุบันเข้า Memory ก่อน (กันลืมเซฟขีดล่าสุด)
+        if (typeof saveCurrentPageToMem === 'function') saveCurrentPageToMem();
+
+        // 2. 🌟 รวมร่างทุกหน้า! (แพ็ก Array ทุกหน้าลงก้อน JSON เดียว)
+        const fullBoardData = {
+            pages: nbPagesFabric, 
+            currentPage: nbCurrentPage
+        };
+        let boardString = JSON.stringify(fullBoardData);
 
         if (currentBoardId) {
-            // เคสที่ 1: เด็กกำลังทำงานในบอร์ดตัวเอง หรือครูกำลังแก้ไขบอร์ดเดิม -> ทำการอัปเดตทับข้อมูลเดิมทันที
+            // อัปเดตทับบอร์ดเดิม
             await setDoc(doc(db, "Boards", currentBoardId), {
-                canvasData: boardData,
+                canvasData: boardString,
                 updatedAt: new Date()
             }, { merge: true });
             
-            alert("☁️ บันทึกความคืบหน้าลงระบบคลาวด์สำเร็จแล้ว!");
+            alert("☁️ บันทึกครบทุกหน้าลงระบบคลาวด์สำเร็จแล้ว!");
         } else {
-            // เคสที่ 2: ครูเปิดกระดานใหม่เอี่ยมขึ้นมาวาดเนื้อหา/แปะ PDF เพื่อเตรียมทำเป็นแม่แบบใบงานแจกเด็ก
-            let boardName = prompt("📌 ตั้งชื่อกระดานแม่แบบนี้ (เช่น ใบงานฟิสิกส์ เรื่องแรง ม.3):", "กระดานต้นแบบ");
+            // สร้างบอร์ดใหม่
+            let boardName = prompt("📌 ตั้งชื่อกระดานแม่แบบนี้ (เช่น ฟิสิกส์ ม.3):", "กระดานต้นแบบ");
             if (!boardName) boardName = "กระดานไร้ชื่อ";
 
             const docRef = await addDoc(collection(db, "Boards"), {
                 title: boardName,
-                canvasData: boardData,
-                isTemplate: true, // กำหนดสถานะไว้ว่าเป็นตัวแม่แบบ
+                canvasData: boardString,
+                isTemplate: true,
                 updatedAt: new Date()
             });
 
             currentBoardId = docRef.id;
-
-            // ปรับ URL เบราว์เซอร์ให้จำ ID นี้ไว้
             const newUrl = `${window.location.origin}${window.location.pathname}?boardId=${docRef.id}`;
             window.history.pushState({ path: newUrl }, '', newUrl);
 
-            alert(`☁️ บันทึกกระดานแม่แบบ "${boardName}" สำเร็จ!`);
+            alert(`☁️ บันทึกกระดานแม่แบบ "${boardName}" (ครบทุกหน้า) สำเร็จ!`);
         }
 
-        // เมื่อบันทึกเสร็จ จะแสดงกล่องข้อความพร้อมลิงก์แชร์ให้ใช้งานได้ทันที
         window.showShareModal();
 
     } catch (error) {
@@ -2281,7 +2304,6 @@ window.saveBoardToCloud = async function() {
     btn.innerHTML = oldText;
     btn.style.pointerEvents = "auto";
 };
-
 // 🔗 4. ฟังก์ชันแจกจ่ายลิงก์สำหรับนำไปใช้ใน Google Classroom
 window.showShareModal = function() {
     if (!currentBoardId) {
