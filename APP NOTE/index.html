@@ -245,18 +245,6 @@
 </head>
 <body>
     <button id="btn-cloud-save" class="glass-tool-btn" onclick="saveBoardToCloud()" title="เซฟกระดานขึ้น Cloud" style="background:#dbeafe !important; font-size: 20px;">☁️</button>
-
-<div id="examate-login-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: 'K2D', sans-serif; color: white;">
-    <div style="text-align: center; margin-bottom: 40px;">
-        <h1 style="font-size: 42px; font-weight: bold; margin-bottom: 10px; color: #3b82f6; letter-spacing: 1px;">ExamateApp 🌐</h1>
-        <p style="font-size: 16px; color: #94a3b8;">ระบบกระดานเรียนรู้อัจฉริยะยุคใหม่ (Cloud Platform)</p>
-    </div>
-    
-    <button onclick="loginWithGoogle()" style="background: white; color: #1e293b; border: none; padding: 14px 28px; font-size: 18px; font-weight: bold; border-radius: 12px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 12px; transition: all 0.2s;">
-        <svg width="24" height="24" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5.04c1.62 0 3.08.56 4.22 1.65l3.15-3.15C17.45 1.68 14.94 1 12 1 7.24 1 3.2 3.74 1.25 7.76l3.83 2.97C6.01 7.22 8.79 5.04 12 5.04z"/><path fill="#4285F4" d="M23.49 12.27c0-.81-.07-1.59-.2-2.36H12v4.51h6.46c-.29 1.48-1.14 2.73-2.4 3.58l3.73 2.89c2.18-2.01 3.7-4.99 3.7-8.62z"/><path fill="#FBBC05" d="M5.08 14.73c-.24-.72-.38-1.49-.38-2.3 0-.81.14-1.58.38-2.3L1.25 7.16C.45 8.76 0 10.53 0 12.4s.45 3.64 1.25 5.24l3.83-2.91z"/><path fill="#34A853" d="M12 23c3.24 0 5.97-1.07 7.96-2.91l-3.73-2.89c-1.04.7-2.37 1.11-4.23 1.11-3.21 0-5.99-2.18-6.92-5.73l-3.83 2.97C3.2 20.26 7.24 23 12 23z"/></svg>
-        Sign in with Google
-    </button>
-</div>
     
     <div style="display: flex; background: #cbd5e1; width: 100vw; height: 100vh; flex-direction: column; overflow: hidden; position: relative;">
         
@@ -2137,6 +2125,7 @@ const db = getFirestore(app);
 
 // ตัวแปรแกนหลักในการคุมกระดานปัจจุบัน
 let currentBoardId = null;
+let isCurrentBoardTemplate = true;
 
 // ฟังก์ชันดึงค่า Parameter จากลิงก์บนแถบ URL (เช่น ?boardId=xxx)
 function getUrlParam(param) {
@@ -2165,48 +2154,45 @@ async function initWorkspace() {
         console.log("💡 เปิดกระดานใหม่เอี่ยม เรียบร้อยครับ");
     }
 }
-// 🔄 ฟังก์ชันโหลดข้อมูลข้อความ JSON จากคลาวด์ (อัปเกรด: คลี่ข้อมูลทุกหน้า)
+// 🔄 ฟังก์ชันโหลดกระดาน (แยกครู/นักเรียน)
 async function loadBoardData(id) {
     try {
+        // 🌟 จุดสำคัญที่สุดที่หายไป! สั่งให้ระบบ "จำรหัสบอร์ดเดิม" ทันทีที่เปิดลิงก์
+        currentBoardId = id; 
+
         const docRef = doc(db, "Boards", id);
         const docSnap = await getDoc(docRef);
         
         if (docSnap.exists()) {
             const data = docSnap.data();
+            
+            // 🌟 เช็คว่าเป็นบอร์ดครูหรือนักเรียน
+            isCurrentBoardTemplate = data.isTemplate !== false; 
+
             if (fCanvas && data.canvasData) {
                 try {
                     const parsed = JSON.parse(data.canvasData);
-                    
-                    // 🌟 เช็คว่าเป็นบอร์ดระบบใหม่ (หลายหน้า)
                     if (parsed.pages) {
                         nbPagesFabric = parsed.pages;
                         nbCurrentPage = parsed.currentPage || 0;
-                        // สร้าง Array เปล่าๆ รองรับ thumbnail ของแต่ละหน้า
                         nbPages = new Array(nbPagesFabric.length).fill(""); 
                         
                         fCanvas.loadFromJSON(nbPagesFabric[nbCurrentPage], () => {
                             fCanvas.renderAll();
                             if(typeof updateNbPageText === 'function') updateNbPageText();
-                            console.log(`📂 โหลดกระดาน "${data.title}" ครบทุกหน้าสำเร็จ`);
+                            console.log(`📂 โหลดกระดานครบทุกหน้าสำเร็จ`);
                         });
                     } else {
-                        // (เผื่อไว้) รองรับบอร์ดระบบเก่าที่เคยเซฟไว้แค่หน้าเดียว
                         fCanvas.loadFromJSON(data.canvasData, () => {
                             fCanvas.renderAll();
-                            console.log(`📂 โหลดกระดาน (แบบเก่า) "${data.title}" สำเร็จ`);
                         });
                     }
-                } catch(e) {
-                    console.error("Error parsing board data", e);
-                }
+                } catch(e) { console.error("Error parsing board data", e); }
             }
-        } else {
-            alert("❌ ไม่พบข้อมูลกระดานรหัสนี้ในระบบ");
-        }
-    } catch (error) {
-        console.error("❌ โหลดกระดานผิดพลาด:", error);
-    }
-}// ฟังก์ชันโคลนบอร์ดต้นฉบับแยกออกมาเป็นใบงานส่วนตัวของนักเรียนแต่ละคน
+        } else { alert("❌ ไม่พบข้อมูลกระดานรหัสนี้ในระบบ"); }
+    } catch (error) { console.error("❌ โหลดกระดานผิดพลาด:", error); }
+}
+// 📥 ฟังก์ชันทำสำเนาใบงานให้นักเรียน
 async function handleTemplateClone(templateId) {
     try {
         const docRef = doc(db, "Boards", templateId);
@@ -2214,42 +2200,47 @@ async function handleTemplateClone(templateId) {
         
         if (docSnap.exists()) {
             const templateData = docSnap.data();
-            
-            // ให้เด็กระบุตัวตนง่ายๆ เพื่อเพิ่มความชัดเจนตอนส่งงาน
             let studentName = prompt("📝 พิมพ์ชื่อ-นามสกุล หรือ เลขที่ ของหนูก่อนเริ่มทำใบงานนะลูก:", "นักเรียน");
             if (!studentName || studentName.trim() === "") studentName = "นักเรียนไร้นาม";
 
-            // สั่งสร้างแฟ้มเอกสารชิ้นใหม่ในฐานข้อมูลทันที โดยดึงเอาข้อมูลลายเส้นจากตัวแม่แบบมาใส่
             const newDocRef = await addDoc(collection(db, "Boards"), {
                 title: `${templateData.title} - (${studentName})`,
                 canvasData: templateData.canvasData,
-                isTemplate: false,
+                isTemplate: false, // 🌟 ปิดโหมดแม่แบบ (นี่คืองานเด็ก)
                 parentTemplateId: templateId,
                 updatedAt: new Date()
             });
 
             currentBoardId = newDocRef.id;
+            isCurrentBoardTemplate = false; // 🌟 จำไว้ว่าตอนนี้เป็นบอร์ดเด็ก
 
-            // บังคับเปลี่ยนลิงก์บนแถบ URL ของเบราว์เซอร์ให้กลายเป็นไอดีบอร์ดใหม่ของเด็กคนนั้นทันที (โดยที่หน้าเว็บไม่รีเฟรชให้กระตุก)
             const newUrl = `${window.location.origin}${window.location.pathname}?boardId=${newDocRef.id}`;
             window.history.pushState({ path: newUrl }, '', newUrl);
 
-            // วาดภาพลายเส้นจากตัวแม่แบบลงบนกระดานให้นักเรียนลงมือทำต่อ
             if (fCanvas && templateData.canvasData) {
-                fCanvas.loadFromJSON(templateData.canvasData, () => {
-                    fCanvas.renderAll();
-                    alert(`📥 คัดลอกใบงานต้นแบบสำเร็จ! ชิ้นงานนี้เป็นของหนูแล้ว ลงมือทำได้เลยลูก`);
-                });
+                try {
+                    const parsed = JSON.parse(templateData.canvasData);
+                    if (parsed.pages) {
+                        nbPagesFabric = parsed.pages;
+                        nbCurrentPage = parsed.currentPage || 0;
+                        nbPages = new Array(nbPagesFabric.length).fill(""); 
+                        fCanvas.loadFromJSON(nbPagesFabric[nbCurrentPage], () => {
+                            fCanvas.renderAll();
+                            if(typeof updateNbPageText === 'function') updateNbPageText();
+                            alert(`📥 คัดลอกใบงานสำเร็จ! ชิ้นงานนี้เป็นของหนูแล้ว ลงมือทำได้เลยลูก`);
+                        });
+                    } else {
+                        fCanvas.loadFromJSON(templateData.canvasData, () => {
+                            fCanvas.renderAll();
+                            alert(`📥 คัดลอกใบงานสำเร็จ! ลงมือทำได้เลยลูก`);
+                        });
+                    }
+                } catch(e) { console.error(e); }
             }
-        } else {
-            alert("❌ ไม่พบใบงานต้นแบบชิ้นนี้ในระบบ");
-        }
-    } catch (error) {
-        console.error("❌ โคลนแม่แบบผิดพลาด:", error);
-    }
+        } else { alert("❌ ไม่พบใบงานต้นแบบชิ้นนี้ในระบบ"); }
+    } catch (error) { console.error("❌ โคลนแม่แบบผิดพลาด:", error); }
 }
-
-// ☁️ 3. ฟังก์ชันบันทึกกระดาน (อัปเกรด: กวาดเซฟครบทุกหน้า!)
+// ☁️ 3. ฟังก์ชันบันทึกกระดาน
 window.saveBoardToCloud = async function() {
     let btn = document.getElementById('btn-cloud-save');
     let oldText = btn.innerHTML;
@@ -2257,29 +2248,22 @@ window.saveBoardToCloud = async function() {
     btn.style.pointerEvents = "none";
 
     try {
-        // 1. อัปเดตลายเส้นหน้าปัจจุบันเข้า Memory ก่อน (กันลืมเซฟขีดล่าสุด)
         if (typeof saveCurrentPageToMem === 'function') saveCurrentPageToMem();
 
-        // 2. 🌟 รวมร่างทุกหน้า! (แพ็ก Array ทุกหน้าลงก้อน JSON เดียว)
-        const fullBoardData = {
-            pages: nbPagesFabric, 
-            currentPage: nbCurrentPage
-        };
+        const fullBoardData = { pages: nbPagesFabric, currentPage: nbCurrentPage };
         let boardString = JSON.stringify(fullBoardData);
 
         if (currentBoardId) {
-            // อัปเดตทับบอร์ดเดิม
             await setDoc(doc(db, "Boards", currentBoardId), {
                 canvasData: boardString,
                 updatedAt: new Date()
             }, { merge: true });
-            
-            alert("☁️ บันทึกครบทุกหน้าลงระบบคลาวด์สำเร็จแล้ว!");
         } else {
-            // สร้างบอร์ดใหม่
             let boardName = prompt("📌 ตั้งชื่อกระดานแม่แบบนี้ (เช่น ฟิสิกส์ ม.3):", "กระดานต้นแบบ");
             if (!boardName) boardName = "กระดานไร้ชื่อ";
 
+            isCurrentBoardTemplate = true; // 🌟 เซฟครั้งแรกต้องเป็นแม่แบบครูเสมอ
+            
             const docRef = await addDoc(collection(db, "Boards"), {
                 title: boardName,
                 canvasData: boardString,
@@ -2290,50 +2274,77 @@ window.saveBoardToCloud = async function() {
             currentBoardId = docRef.id;
             const newUrl = `${window.location.origin}${window.location.pathname}?boardId=${docRef.id}`;
             window.history.pushState({ path: newUrl }, '', newUrl);
-
-            alert(`☁️ บันทึกกระดานแม่แบบ "${boardName}" (ครบทุกหน้า) สำเร็จ!`);
         }
 
         window.showShareModal();
-
-    } catch (error) {
-        console.error("❌ บันทึกไม่สำเร็จ: ", error);
-        alert("บันทึกไม่สำเร็จ: " + error.message);
-    }
+    } catch (error) { alert("บันทึกไม่สำเร็จ: " + error.message); }
 
     btn.innerHTML = oldText;
     btn.style.pointerEvents = "auto";
 };
-// 🔗 4. ฟังก์ชันแจกจ่ายลิงก์สำหรับนำไปใช้ใน Google Classroom
+// 🔗 4. ฟังก์ชันแจกจ่ายลิงก์ (เวอร์ชัน Pop-up หรูหรา ก๊อปปี้ง่าย)
 window.showShareModal = function() {
-    if (!currentBoardId) {
-        alert("⚠️ ต้องกดเซฟกระดานก่อนสร้างลิงก์แชร์ครับ!");
-        return;
-    }
+    if (!currentBoardId) return;
 
     const baseUrl = `${window.location.origin}${window.location.pathname}`;
-    const templateLink = `${baseUrl}?templateId=${currentBoardId}`;
     const directLink = `${baseUrl}?boardId=${currentBoardId}`;
+    const templateLink = `${baseUrl}?templateId=${currentBoardId}`;
 
-    // ข้อความสรุปลิงก์เพื่อนำไปใช้งาน
-    let message = `🚀 จัดเตรียมลิงก์สำหรับนำไปแปะใน Google Classroom เรียบร้อยแล้วครับ\n\n` +
-                  `1️⃣ ลิงก์สำหรับแจกนักเรียน (เด็กกดปุ๊บ คัดลอกใบงานเป็นของตัวเองทันที):\n${templateLink}\n\n` +
-                  `2️⃣ ลิงก์ตรงสำหรับเปิดดูชิ้นนี้โดยตรง (สำหรับครูเปิดสอนหรือแชร์ดูร่วมกัน):\n${directLink}`;
+    let modalHtml = '';
 
-    // ทำการคัดลอก "ลิงก์สำหรับแจกนักเรียน (Template)" ลง Clipboard ในความจำเครื่องให้ครูอัตโนมัติเพื่อความสะดวก
-    navigator.clipboard.writeText(templateLink).then(() => {
-        alert(`${message}\n\n🤖 ระบบคัดลอก "ลิงก์ข้อที่ 1 (สำหรับแจกนักเรียน)" ลงในหน่วยความจำเครื่องให้เรียบร้อยแล้วครับ นำไปโพสต์สั่งงานใน Classroom ได้เลยครับ!`);
-    });
-};
+    if (isCurrentBoardTemplate) {
+        // กรณีเป็น "ครู" (เซฟแม่แบบ)
+        modalHtml = `
+            <div style="background: white; padding: 30px; border-radius: 16px; width: 90%; max-width: 550px; text-align: left; color: #1e293b; font-family: 'K2D', sans-serif; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
+                <h3 style="margin-top:0; color: #3b82f6; font-size: 20px;">🚀 แชร์กระดาน (โหมดคุณครู)</h3>
+                <p style="font-size: 15px; color: #64748b; margin-bottom: 20px;">จัดเตรียมลิงก์เรียบร้อยครับ กดปุ่มก๊อปปี้ด้านล่างได้เลย</p>
+                
+                <label style="font-weight: bold; font-size: 14px; color: #10b981;">1️⃣ ลิงก์แจกเด็ก (ทำสำเนาใบงานอัตโนมัติ):</label>
+                <div style="display:flex; gap: 8px; margin-top: 5px; margin-bottom: 20px;">
+                    <input type="text" value="${templateLink}" readonly style="flex: 1; padding: 10px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 13px; outline: none; background: #f8fafc; cursor: pointer;" onclick="this.select()">
+                    <button onclick="navigator.clipboard.writeText('${templateLink}'); this.innerText='✅ ก๊อปปี้แล้ว!';" style="background: #10b981; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: bold; transition: 0.2s;">📋 ก๊อปปี้</button>
+                </div>
 
-// รันระบบเมื่อ Fabric Canvas โหลดพร้อมใช้งาน
-if (typeof fCanvas !== 'undefined') {
-    initWorkspace();
-} else {
-    // รอเผื่อหน้าเว็บใช้เวลาสร้างตัวแปรตระกูล Canvas สักครู่
-    setTimeout(initWorkspace, 500);
-}
-// ==========================================
+                <label style="font-weight: bold; font-size: 14px; color: #f59e0b;">2️⃣ ลิงก์ของครู (เปิดดู/แก้ไขต้นฉบับ):</label>
+                <div style="display:flex; gap: 8px; margin-top: 5px; margin-bottom: 25px;">
+                    <input type="text" value="${directLink}" readonly style="flex: 1; padding: 10px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 13px; outline: none; background: #f8fafc; cursor: pointer;" onclick="this.select()">
+                    <button onclick="navigator.clipboard.writeText('${directLink}'); this.innerText='✅ ก๊อปปี้แล้ว!';" style="background: #f59e0b; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: bold; transition: 0.2s;">📋 ก๊อปปี้</button>
+                </div>
+
+                <div style="text-align: right;">
+                    <button onclick="document.getElementById('examate-share-modal').remove()" style="background: #e2e8f0; color: #475569; border: none; padding: 10px 24px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 15px;">ปิดหน้าต่าง</button>
+                </div>
+            </div>
+        `;
+    } else {
+        // กรณีเป็น "นักเรียน" (เซฟการบ้าน)
+        modalHtml = `
+            <div style="background: white; padding: 30px; border-radius: 16px; width: 90%; max-width: 500px; text-align: left; color: #1e293b; font-family: 'K2D', sans-serif; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
+                <h3 style="margin-top:0; color: #10b981; font-size: 20px;">✅ บันทึกผลงานสำเร็จ!</h3>
+                <p style="font-size: 15px; color: #64748b; margin-bottom: 20px;">ก๊อปปี้ลิงก์ด้านล่างไปแปะส่งคุณครูใน Classroom ได้เลยครับ</p>
+                
+                <label style="font-weight: bold; font-size: 14px; color: #3b82f6;">🔗 ลิงก์ส่งงาน:</label>
+                <div style="display:flex; gap: 8px; margin-top: 5px; margin-bottom: 25px;">
+                    <input type="text" value="${directLink}" readonly style="flex: 1; padding: 10px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 13px; outline: none; background: #f8fafc; cursor: pointer;" onclick="this.select()">
+                    <button onclick="navigator.clipboard.writeText('${directLink}'); this.innerText='✅ ก๊อปปี้แล้ว!';" style="background: #3b82f6; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: bold; transition: 0.2s;">📋 ก๊อปปี้</button>
+                </div>
+
+                <div style="text-align: right;">
+                    <button onclick="document.getElementById('examate-share-modal').remove()" style="background: #e2e8f0; color: #475569; border: none; padding: 10px 24px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 15px;">ปิดหน้าต่าง</button>
+                </div>
+            </div>
+        `;
+    }
+
+    let modalContainer = document.getElementById('examate-share-modal');
+    if (!modalContainer) {
+        modalContainer = document.createElement('div');
+        modalContainer.id = 'examate-share-modal';
+        modalContainer.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 100000; display: flex; justify-content: center; align-items: center;';
+        document.body.appendChild(modalContainer);
+    }
+    modalContainer.innerHTML = modalHtml;
+};// ==========================================
 // 🛸 ระบบลากย้ายแถบเครื่องมือ (Draggable UI)
 // ==========================================
 function makeToolbarDraggable(el) {
