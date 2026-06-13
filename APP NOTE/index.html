@@ -539,6 +539,17 @@
         let geoStartX = 0;
         let geoStartY = 0;
         let isPenOnlyMode = false;
+const _origToObject = fabric.Object.prototype.toObject;
+        fabric.Object.prototype.toObject = function(propertiesToInclude) {
+            return _origToObject.call(this, [
+                'isInteractiveWebBtn', // จำสถานะปุ่มหน้าต่างลอย
+                'webUrl',              // จำลิงก์เว็บจำลอง
+                'webTitle',            // จำชื่อหน้าต่าง
+                'linkUrl',             // จำลิงก์ปกติ (ถ้ามี)
+                'boxStyle',            // จำสไตล์กรอบข้อความ
+                'boxStroke'            // จำสีกรอบข้อความ
+            ].concat(propertiesToInclude || []));
+        };
 
         // ==========================================
         // 🚀 ปลุกกระดานเต็มจอ (Standalone Engine)
@@ -1764,7 +1775,7 @@ function handleNbImageUpload(e) {
             }
         }
 // ==========================================
-// 📄 2. ฟังก์ชัน: โหลด PDF (เวอร์ชัน Google Drive แก้บั๊กไม่แสดงผล)
+// 📄 2. ฟังก์ชัน: โหลด PDF (เวอร์ชัน Ultimate - โหลดปุ๊บติดปั๊บ)
 // ==========================================
 async function handleNbPdfUpload(e) {
     const file = e.target.files[0];
@@ -1774,13 +1785,8 @@ async function handleNbPdfUpload(e) {
     const notiBox = document.getElementById('ctx-notification');
     const notiText = document.getElementById('ctx-noti-text');
     
-    // ⚠️ จุดสำคัญที่ 2: แปะ Web App URL ตรงนี้ด้วยครับ (ต้องแปะทั้งปุ่มรูป และปุ่ม PDF ครับ) ⚠️
-    const gasWebUrl = 'เhttps://script.google.com/macros/s/AKfycbzpYfbpTDMPCYXSfz0I5uMvCxp_OEm4g7loVOJULd7upIZHFIziftkG21g81-2Bve1t/exec'; 
-
-    if(gasWebUrl.includes('เอา_Web_app')){ 
-        alert("⚠️ กัปตันลืมแปะลิงก์ Web App URL ในส่วนของ PDF ครับ!"); 
-        return; 
-    }
+    // ⚠️ 2. แปะลิงก์ Web App URL ตรงนี้ด้วยครับ ⚠️
+    const gasWebUrl = 'https://script.google.com/macros/s/AKfycbzpYfbpTDMPCYXSfz0I5uMvCxp_OEm4g7loVOJULd7upIZHFIziftkG21g81-2Bve1t/exec'; 
 
     if (notiBox) {
         document.getElementById('ctx-tools-container').style.display = 'none';
@@ -1809,7 +1815,7 @@ async function handleNbPdfUpload(e) {
             let loadedCount = 0;
 
             for (let pageNum = 1; pageNum <= pagesToLoad; pageNum++) {
-                if (notiText) notiText.innerText = `⏳ กำลังส่งหน้าที่ ${pageNum} / ${pagesToLoad} ขึ้น Google Drive...`;
+                if (notiText) notiText.innerText = `⏳ กำลังแยกหน้าและส่งหน้าที่ ${pageNum} / ${pagesToLoad}...`;
                 
                 const page = await pdf.getPage(pageNum);
                 const viewport = page.getViewport({ scale: 1.5 });
@@ -1819,8 +1825,25 @@ async function handleNbPdfUpload(e) {
                 tempCanvas.height = viewport.height;
                 tempCanvas.width = viewport.width;
 
+                // 🌟 เทพื้นขาว ป้องกัน PDF พื้นใสกลายเป็นสีดำ
+                context.fillStyle = "white";
+                context.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
                 await page.render({ canvasContext: context, viewport: viewport }).promise;
-                const compressedBase64 = tempCanvas.toDataURL('image/jpeg', 0.7);
+
+                const MAX_W = 1000;
+                let compressedBase64 = "";
+                if (tempCanvas.width > MAX_W) {
+                    const scale = MAX_W / tempCanvas.width;
+                    const wCanvas = document.createElement('canvas');
+                    wCanvas.width = MAX_W;
+                    wCanvas.height = tempCanvas.height * scale;
+                    const wCtx = wCanvas.getContext('2d');
+                    wCtx.drawImage(tempCanvas, 0, 0, wCanvas.width, wCanvas.height);
+                    compressedBase64 = wCanvas.toDataURL('image/jpeg', 0.8);
+                } else {
+                    compressedBase64 = tempCanvas.toDataURL('image/jpeg', 0.8);
+                }
 
                 try {
                     const res = await fetch(gasWebUrl, {
@@ -1831,7 +1854,8 @@ async function handleNbPdfUpload(e) {
 
                     if (data.status === 'success') {
                         await new Promise((resolve) => {
-                            fabric.Image.fromURL(data.url, function(img) {
+                            // 🌟 โหลดรูปลงกระดานทันทีด้วย Base64 (ติดปุ๊บทันที 100%)
+                            fabric.Image.fromURL(compressedBase64, function(img) {
                                 if (img) {
                                     let canvasScale = Math.min((cWidth * 0.9) / img.width, 1);
                                     img.set({
@@ -1840,17 +1864,26 @@ async function handleNbPdfUpload(e) {
                                         transparentCorners: false, originX: 'center', originY: 'top',
                                         left: cWidth / 2, top: currentTopY 
                                     });
+
+                                    // 🌟 ท่าไม้ตาย: สลับร่างเป็นลิงก์ Google Drive ซ่อนไว้รอตอนกดเซฟ!
+                                    const secureUrl = data.url.replace(/^http:\/\//i, 'https://');
+                                    const origToObject = img.toObject.bind(img);
+                                    img.toObject = function(propertiesToInclude) {
+                                        const obj = origToObject(propertiesToInclude);
+                                        obj.src = secureUrl; 
+                                        obj.crossOrigin = 'anonymous';
+                                        return obj;
+                                    };
+
                                     fCanvas.add(img);
                                     currentTopY += (img.height * canvasScale) + paddingBetweenPages;
                                     loadedCount++;
                                 }
                                 resolve();
-                            }, { crossOrigin: 'anonymous' }); 
+                            }); 
                         });
-                    }
-                } catch (uploadErr) {
-                    console.error(`อัปโหลดหน้าที่ ${pageNum} ไม่สำเร็จ:`, uploadErr);
-                }
+                    } else { alert(`❌ แจ้งเตือนหน้าที่ ${pageNum}: ` + data.message); }
+                } catch (uploadErr) { alert(`❌ อัปโหลดหน้าที่ ${pageNum} ไม่สำเร็จ: ` + uploadErr.message); }
             }
 
             if (notiBox) notiBox.style.display = 'none';
@@ -1862,10 +1895,7 @@ async function handleNbPdfUpload(e) {
 
             setTimeout(() => { alert(`✅ โหลด PDF สำเร็จครบ ${loadedCount} หน้าแล้วครับ!`); }, 300);
 
-        } catch (err) {
-            alert("❌ ระบบโหลด PDF ขัดข้อง: " + err.message);
-            if (notiBox) notiBox.style.display = 'none';
-        }
+        } catch (err) { alert("❌ ระบบโหลด PDF ขัดข้อง: " + err.message); if (notiBox) notiBox.style.display = 'none'; }
     };
     reader.readAsArrayBuffer(file);
     e.target.value = ""; 
