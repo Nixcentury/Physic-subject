@@ -2017,12 +2017,12 @@ function bindWebDoubleClickListener() {
 }
 bindWebDoubleClickListener();
 </script>
+
 <script type="module">
 import { initializeApp } from "firebase/app";
-import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "firebase/auth";
-import { getFirestore, doc, setDoc, collection, addDoc } from "firebase/firestore";
+import { getFirestore, doc, getDoc, setDoc, collection, addDoc } from "firebase/firestore";
 
-// 📡 1. กุญแจบ้านของกัปตัน (ของแท้)
+// 📡 1. กุญแจบ้านระบบคลาวด์
 const firebaseConfig = {
   apiKey: "AIzaSyDfkxDDnbzLUv85yDwqSpZwPCORx_eCGuo",
   authDomain: "examateapp-1007d.firebaseapp.com",
@@ -2035,89 +2035,184 @@ const firebaseConfig = {
 
 // สตาร์ทเครื่องยนต์ Firebase
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const db = getFirestore(app);
-const provider = new GoogleAuthProvider();
 
-let currentUser = null;
+// ตัวแปรแกนหลักในการคุมกระดานปัจจุบัน
+let currentBoardId = null;
 
-// 🔑 2. ฟังก์ชันล็อกอิน
-window.loginWithGoogle = async function() {
-    try {
-        await signInWithPopup(auth, provider);
-    } catch (error) {
-        alert("เข้าสู่ระบบไม่สำเร็จ: " + error.message);
-    }
-};
+// ฟังก์ชันดึงค่า Parameter จากลิงก์บนแถบ URL (เช่น ?boardId=xxx)
+function getUrlParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
 
-// 📡 3. ดักจับสถานะล็อกอิน (ทำงานอัตโนมัติ)
-onAuthStateChanged(auth, async (user) => {
+// 🚀 2. ฟังก์ชันเริ่มต้นระบบอัตโนมัติเมื่อเปิดหน้าเว็บ
+async function initWorkspace() {
+    // ซ่อนหน้าต่างบังจอล็อกอินเดิมทิ้งไปถาวร เพราะเราไม่ใช้ระบบล็อกอินแล้ว
     const loginOverlay = document.getElementById('examate-login-overlay');
-    
-    if (user) {
-        // ถ้าระบุตัวตนสำเร็จ -> เก็บข้อมูล
-        currentUser = { uid: user.uid, name: user.displayName, email: user.email };
-        
-        // แอบบันทึกชื่อลงฐานข้อมูลตาราง Users
-        await setDoc(doc(db, "Users", user.uid), {
-            name: user.displayName,
-            email: user.email,
-            role: "student", // ค่าเริ่มต้น
-            lastLogin: new Date()
-        }, { merge: true });
+    if (loginOverlay) loginOverlay.style.display = 'none';
 
-        // ปิดหน้าต่างบังจอล็อกอิน
-        if (loginOverlay) loginOverlay.style.display = 'none';
-        console.log("✅ เข้าสู่ระบบสำเร็จโดย: ", user.displayName);
-        
+    const boardId = getUrlParam('boardId');
+    const templateId = getUrlParam('templateId');
+
+    if (boardId) {
+        // [โหมดเปิดดู/ทำต่อ] -> มี ID บอร์ดอยู่แล้ว ดึงข้อมูลมาวาดทันที (ใช้ตอนเด็กทำกระดานตัวเองค้างไว้ หรือครูเปิดตรวจงาน)
+        currentBoardId = boardId;
+        await loadBoardData(boardId);
+    } else if (templateId) {
+        // [โหมดแจกใบงาน] -> เด็กกดลิงก์แม่แบบมาจาก Classroom ระบบจะทำการสแกนและคัดลอกทันที
+        await handleTemplateClone(templateId);
     } else {
-        // ถ้ายกเลิก หรือยังไม่ล็อกอิน -> โชว์หน้าต่างบังจอให้กดล็อกอิน
-        currentUser = null;
-        if (loginOverlay) loginOverlay.style.display = 'flex';
+        // [โหมดบอร์ดเปล่า] -> หน้ากระดานว่างๆ สำหรับครูเตรียมโจทย์ ทำเนื้อหา หรือสอนสดหน้าห้อง
+        console.log("💡 เปิดกระดานใหม่เอี่ยม เรียบร้อยครับ");
     }
-});
+}
 
-// ☁️ 4. ฟังก์ชันเซฟกระดานขึ้น Cloud
+// ฟังก์ชันโหลดข้อมูลข้อความ JSON จากคลาวด์มาวาดลง Fabric.js Canvas
+async function loadBoardData(id) {
+    try {
+        const docRef = doc(db, "Boards", id);
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            if (fCanvas && data.canvasData) {
+                fCanvas.loadFromJSON(data.canvasData, () => {
+                    fCanvas.renderAll();
+                    console.log(`📂 โหลดข้อมูลกระดาน "${data.title}" สำเร็จ`);
+                });
+            }
+        } else {
+            alert("❌ ไม่พบข้อมูลกระดานรหัสนี้ในระบบ");
+        }
+    } catch (error) {
+        console.error("❌ โหลดกระดานผิดพลาด:", error);
+    }
+}
+
+// ฟังก์ชันโคลนบอร์ดต้นฉบับแยกออกมาเป็นใบงานส่วนตัวของนักเรียนแต่ละคน
+async function handleTemplateClone(templateId) {
+    try {
+        const docRef = doc(db, "Boards", templateId);
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+            const templateData = docSnap.data();
+            
+            // ให้เด็กระบุตัวตนง่ายๆ เพื่อเพิ่มความชัดเจนตอนส่งงาน
+            let studentName = prompt("📝 พิมพ์ชื่อ-นามสกุล หรือ เลขที่ ของหนูก่อนเริ่มทำใบงานนะลูก:", "นักเรียน");
+            if (!studentName || studentName.trim() === "") studentName = "นักเรียนไร้นาม";
+
+            // สั่งสร้างแฟ้มเอกสารชิ้นใหม่ในฐานข้อมูลทันที โดยดึงเอาข้อมูลลายเส้นจากตัวแม่แบบมาใส่
+            const newDocRef = await addDoc(collection(db, "Boards"), {
+                title: `${templateData.title} - (${studentName})`,
+                canvasData: templateData.canvasData,
+                isTemplate: false,
+                parentTemplateId: templateId,
+                updatedAt: new Date()
+            });
+
+            currentBoardId = newDocRef.id;
+
+            // บังคับเปลี่ยนลิงก์บนแถบ URL ของเบราว์เซอร์ให้กลายเป็นไอดีบอร์ดใหม่ของเด็กคนนั้นทันที (โดยที่หน้าเว็บไม่รีเฟรชให้กระตุก)
+            const newUrl = `${window.location.origin}${window.location.pathname}?boardId=${newDocRef.id}`;
+            window.history.pushState({ path: newUrl }, '', newUrl);
+
+            // วาดภาพลายเส้นจากตัวแม่แบบลงบนกระดานให้นักเรียนลงมือทำต่อ
+            if (fCanvas && templateData.canvasData) {
+                fCanvas.loadFromJSON(templateData.canvasData, () => {
+                    fCanvas.renderAll();
+                    alert(`📥 คัดลอกใบงานต้นแบบสำเร็จ! ชิ้นงานนี้เป็นของหนูแล้ว ลงมือทำได้เลยลูก`);
+                });
+            }
+        } else {
+            alert("❌ ไม่พบใบงานต้นแบบชิ้นนี้ในระบบ");
+        }
+    } catch (error) {
+        console.error("❌ โคลนแม่แบบผิดพลาด:", error);
+    }
+}
+
+// ☁️ 3. ฟังก์ชันบันทึกกระดาน (ฉลาดขึ้น: ตรวจจับสิทธิ์อัตโนมัติ)
 window.saveBoardToCloud = async function() {
-    if (!currentUser) {
-        alert("⚠️ ต้องล็อกอินก่อนครับ!");
-        return;
-    }
-
-    let boardName = prompt("📌 ตั้งชื่อกระดานนี้ (เช่น ใบงานฟิสิกส์):", "กระดานของฉัน");
-    if (!boardName) return;
-
-    // เปลี่ยนปุ่มเป็นรูปนาฬิกาทรายระหว่างโหลด
     let btn = document.getElementById('btn-cloud-save');
     let oldText = btn.innerHTML;
     btn.innerHTML = "⏳";
     btn.style.pointerEvents = "none";
 
     try {
-        // ดูดข้อมูลกระดานมาเป็น JSON (ต้องมี fCanvas ทำงานอยู่)
         let boardData = JSON.stringify(fCanvas.toJSON());
 
-        // ส่งขึ้นฐานข้อมูลตาราง Boards
-        const docRef = await addDoc(collection(db, "Boards"), {
-            userId: currentUser.uid,
-            ownerEmail: currentUser.email,
-            title: boardName,
-            canvasData: boardData,
-            isTemplate: false,
-            updatedAt: new Date()
-        });
+        if (currentBoardId) {
+            // เคสที่ 1: เด็กกำลังทำงานในบอร์ดตัวเอง หรือครูกำลังแก้ไขบอร์ดเดิม -> ทำการอัปเดตทับข้อมูลเดิมทันที
+            await setDoc(doc(db, "Boards", currentBoardId), {
+                canvasData: boardData,
+                updatedAt: new Date()
+            }, { merge: true });
+            
+            alert("☁️ บันทึกความคืบหน้าลงระบบคลาวด์สำเร็จแล้ว!");
+        } else {
+            // เคสที่ 2: ครูเปิดกระดานใหม่เอี่ยมขึ้นมาวาดเนื้อหา/แปะ PDF เพื่อเตรียมทำเป็นแม่แบบใบงานแจกเด็ก
+            let boardName = prompt("📌 ตั้งชื่อกระดานแม่แบบนี้ (เช่น ใบงานฟิสิกส์ เรื่องแรง ม.3):", "กระดานต้นแบบ");
+            if (!boardName) boardName = "กระดานไร้ชื่อ";
 
-        alert(`☁️ เซฟกระดาน "${boardName}" ขึ้นคลาวด์สำเร็จแล้วครับ!`);
-        console.log("เซฟสำเร็จ ID: ", docRef.id);
+            const docRef = await addDoc(collection(db, "Boards"), {
+                title: boardName,
+                canvasData: boardData,
+                isTemplate: true, // กำหนดสถานะไว้ว่าเป็นตัวแม่แบบ
+                updatedAt: new Date()
+            });
+
+            currentBoardId = docRef.id;
+
+            // ปรับ URL เบราว์เซอร์ให้จำ ID นี้ไว้
+            const newUrl = `${window.location.origin}${window.location.pathname}?boardId=${docRef.id}`;
+            window.history.pushState({ path: newUrl }, '', newUrl);
+
+            alert(`☁️ บันทึกกระดานแม่แบบ "${boardName}" สำเร็จ!`);
+        }
+
+        // เมื่อบันทึกเสร็จ จะแสดงกล่องข้อความพร้อมลิงก์แชร์ให้ใช้งานได้ทันที
+        window.showShareModal();
+
     } catch (error) {
-        console.error("❌ เซฟไม่สำเร็จ: ", error);
-        alert("เซฟไม่สำเร็จ: " + error.message);
+        console.error("❌ บันทึกไม่สำเร็จ: ", error);
+        alert("บันทึกไม่สำเร็จ: " + error.message);
     }
 
-    // คืนค่าปุ่มให้กลับมาเป็นรูปเมฆเหมือนเดิม
     btn.innerHTML = oldText;
     btn.style.pointerEvents = "auto";
 };
+
+// 🔗 4. ฟังก์ชันแจกจ่ายลิงก์สำหรับนำไปใช้ใน Google Classroom
+window.showShareModal = function() {
+    if (!currentBoardId) {
+        alert("⚠️ ต้องกดเซฟกระดานก่อนสร้างลิงก์แชร์ครับ!");
+        return;
+    }
+
+    const baseUrl = `${window.location.origin}${window.location.pathname}`;
+    const templateLink = `${baseUrl}?templateId=${currentBoardId}`;
+    const directLink = `${baseUrl}?boardId=${currentBoardId}`;
+
+    // ข้อความสรุปลิงก์เพื่อนำไปใช้งาน
+    let message = `🚀 จัดเตรียมลิงก์สำหรับนำไปแปะใน Google Classroom เรียบร้อยแล้วครับ\n\n` +
+                  `1️⃣ ลิงก์สำหรับแจกนักเรียน (เด็กกดปุ๊บ คัดลอกใบงานเป็นของตัวเองทันที):\n${templateLink}\n\n` +
+                  `2️⃣ ลิงก์ตรงสำหรับเปิดดูชิ้นนี้โดยตรง (สำหรับครูเปิดสอนหรือแชร์ดูร่วมกัน):\n${directLink}`;
+
+    // ทำการคัดลอก "ลิงก์สำหรับแจกนักเรียน (Template)" ลง Clipboard ในความจำเครื่องให้ครูอัตโนมัติเพื่อความสะดวก
+    navigator.clipboard.writeText(templateLink).then(() => {
+        alert(`${message}\n\n🤖 ระบบคัดลอก "ลิงก์ข้อที่ 1 (สำหรับแจกนักเรียน)" ลงในหน่วยความจำเครื่องให้เรียบร้อยแล้วครับ นำไปโพสต์สั่งงานใน Classroom ได้เลยครับ!`);
+    });
+};
+
+// รันระบบเมื่อ Fabric Canvas โหลดพร้อมใช้งาน
+if (typeof fCanvas !== 'undefined') {
+    initWorkspace();
+} else {
+    // รอเผื่อหน้าเว็บใช้เวลาสร้างตัวแปรตระกูล Canvas สักครู่
+    setTimeout(initWorkspace, 500);
+}
 </script>
 </body>
 </html>
