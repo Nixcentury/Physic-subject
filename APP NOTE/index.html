@@ -897,56 +897,75 @@ const _origToObject = fabric.Object.prototype.toObject;
                 }, ['boxStyle', 'boxStroke']); 
             }
         }
+function toggleContextToolbar() {
+    const ctxBar = document.getElementById('nb-context-toolbar');
+    const toolsContainer = document.getElementById('ctx-tools-container');
+    const notiBox = document.getElementById('ctx-notification');
+    const textToolbar = document.getElementById('nb-text-toolbar'); 
+    
+    if (!ctxBar) return;
+    const activeObj = fCanvas.getActiveObject();
+    
+    // 1. ถ้ากำลังรอจิ้มวางรูป/กล่องข้อความ ให้แจ้งเตือนโชว์ที่เดิม (กลางจอบน)
+    if (pendingNbImage !== null || pendingNbText || pendingNbPostitColor || pendingNbGrid) {
+        if (toolsContainer) toolsContainer.style.display = 'none';
+        if (textToolbar) textToolbar.style.display = 'none';
+        if (notiBox) notiBox.style.display = 'flex';
+        ctxBar.style.display = 'flex';
+        ctxBar.classList.add('active');
+        ctxBar.style.top = '90px'; // กลับจุดศูนย์กลาง
+        ctxBar.style.left = '50%';
+        ctxBar.style.transform = 'translateX(-50%)';
+        return; 
+    }
 
-        function toggleContextToolbar() {
-            const ctxBar = document.getElementById('nb-context-toolbar');
-            const toolsContainer = document.getElementById('ctx-tools-container');
-            const notiBox = document.getElementById('ctx-notification');
-            const textToolbar = document.getElementById('nb-text-toolbar'); 
-            
-            if (!ctxBar) return;
-            const activeObj = fCanvas.getActiveObject();
-            
-            if (pendingNbImage !== null || pendingNbText || pendingNbPostitColor || pendingNbGrid) {
-                if (toolsContainer) toolsContainer.style.display = 'none';
-                if (textToolbar) textToolbar.style.display = 'none';
-                if (notiBox) notiBox.style.display = 'flex';
-                ctxBar.style.display = 'flex';
-                ctxBar.classList.add('active');
-                return; 
-            }
+    if (activeObj) {
+        if (notiBox) notiBox.style.display = 'none';
 
-            if (activeObj) {
-                if (notiBox) notiBox.style.display = 'none';
-                
-                if (activeObj.type === 'i-text' || activeObj.type === 'text' || activeObj.type === 'textbox') {
-                    ctxBar.classList.remove('active'); 
-                    ctxBar.style.display = 'none';
-                    if (toolsContainer) toolsContainer.style.display = 'none';
-
-                    if (textToolbar) {
-                        textToolbar.style.display = 'flex';
-                        textToolbar.style.zIndex = '10005'; // 💡 ให้อยู่สูงกว่าทุกเมนู
-                        
-                        updateTextSizeDisplays(activeObj.fontSize);
-                        const fontSelect = document.getElementById('nb-font-family-select');
-                        if (fontSelect && activeObj.fontFamily) {
-                            fontSelect.value = activeObj.fontFamily;
-                        }
-                    }
-                } else {
-                    if (textToolbar) textToolbar.style.display = 'none';
-                    ctxBar.style.display = 'flex';
-                    if (toolsContainer) toolsContainer.style.display = 'flex';
-                    ctxBar.classList.add('active'); 
-                }
-            } else {
-                ctxBar.classList.remove('active'); 
-                ctxBar.style.display = 'none';
-                if (textToolbar) textToolbar.style.display = 'none';
-            }
+        // 🤖 2. [ระบบสแกนพื้นที่] คำนวณจุดเกิดของเมนู ไม่ให้บังออบเจกต์
+        let bound = activeObj.getBoundingRect();
+        let menuTop = bound.top - 70; // ค่าเริ่มต้น: ให้ลอยอยู่ "เหนือ" ออบเจกต์ 70px
+        
+        // สแกน: ถ้าออบเจกต์อยู่สูงเกินไป (ชนขอบจอ) ให้ย้ายเมนูมาหลบ "ใต้" ออบเจกต์แทน
+        if (menuTop < 90) {
+            menuTop = bound.top + bound.height + 20; 
         }
 
+        if (activeObj.type === 'i-text' || activeObj.type === 'text' || activeObj.type === 'textbox') {
+            ctxBar.classList.remove('active'); 
+            ctxBar.style.display = 'none';
+            if (toolsContainer) toolsContainer.style.display = 'none';
+
+            if (textToolbar) {
+                textToolbar.style.display = 'flex';
+                textToolbar.style.zIndex = '10005';
+                
+                // อัปเดตตำแหน่งจุดเกิดใหม่ที่คำนวณไว้
+                textToolbar.style.top = menuTop + 'px';
+                textToolbar.style.left = '50%';
+                
+                updateTextSizeDisplays(activeObj.fontSize);
+                const fontSelect = document.getElementById('nb-font-family-select');
+                if (fontSelect && activeObj.fontFamily) {
+                    fontSelect.value = activeObj.fontFamily;
+                }
+            }
+        } else {
+            if (textToolbar) textToolbar.style.display = 'none';
+            ctxBar.style.display = 'flex';
+            if (toolsContainer) toolsContainer.style.display = 'flex';
+            ctxBar.classList.add('active'); 
+            
+            // อัปเดตตำแหน่งจุดเกิดใหม่ที่คำนวณไว้
+            ctxBar.style.top = menuTop + 'px';
+            ctxBar.style.left = '50%';
+        }
+    } else {
+        ctxBar.classList.remove('active'); 
+        ctxBar.style.display = 'none';
+        if (textToolbar) textToolbar.style.display = 'none';
+    }
+}
         function prepNbPostit(color) {
             if (!fCanvas) return;
             pendingNbText = false;
@@ -2290,6 +2309,56 @@ if (typeof fCanvas !== 'undefined') {
     // รอเผื่อหน้าเว็บใช้เวลาสร้างตัวแปรตระกูล Canvas สักครู่
     setTimeout(initWorkspace, 500);
 }
+// ==========================================
+// 🛸 ระบบลากย้ายแถบเครื่องมือ (Draggable UI)
+// ==========================================
+function makeToolbarDraggable(el) {
+    if (!el) return;
+    let isDragging = false, startX, startY, initialX, initialY;
+    el.style.cursor = 'grab';
+    
+    el.addEventListener('pointerdown', (e) => {
+        // ป้องกันไม่ให้ลากติดนิ้ว เวลาที่ตั้งใจจะกดปุ่มเมนู หรือ Dropdown
+        if (e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT' || e.target.closest('button')) return;
+        
+        isDragging = true;
+        el.style.cursor = 'grabbing';
+        el.style.transition = 'none'; // ปิดความหน่วงเวลาลาก
+        
+        // ปลดล็อกการจัดหน้าแบบกึ่งกลาง (translateX) ออก เพื่อให้ลากอิสระ
+        if (window.getComputedStyle(el).transform !== 'none') {
+            const rect = el.getBoundingClientRect();
+            const parentRect = el.parentElement.getBoundingClientRect();
+            el.style.transform = 'none';
+            el.style.left = (rect.left - parentRect.left) + 'px';
+            el.style.top = (rect.top - parentRect.top) + 'px';
+        }
+
+        startX = e.clientX;
+        startY = e.clientY;
+        initialX = el.offsetLeft;
+        initialY = el.offsetTop;
+        e.preventDefault();
+    });
+
+    document.addEventListener('pointermove', (e) => {
+        if (!isDragging) return;
+        el.style.left = (initialX + e.clientX - startX) + 'px';
+        el.style.top = (initialY + e.clientY - startY) + 'px';
+    });
+
+    document.addEventListener('pointerup', () => {
+        if (isDragging) {
+            isDragging = false;
+            el.style.cursor = 'grab';
+        }
+    });
+}
+
+// รอให้เว็บโหลดเสร็จ แล้วเสกให้แถบเครื่องมือหลักลากได้ทันที
+setTimeout(() => {
+    makeToolbarDraggable(document.getElementById('nb-floating-toolbar'));
+}, 1000);
 </script>
 </body>
 </html>
