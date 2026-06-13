@@ -2758,5 +2758,150 @@ setTimeout(() => {
     makeToolbarDraggable(document.getElementById('nb-floating-toolbar'));
 }, 1000);
 </script>
+<style>
+    /* แอนิเมชันลอยดุ๊กดิ๊ก */
+    @keyframes floatingCat {
+        0% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-12px) rotate(5deg); }
+        100% { transform: translateY(0px) rotate(0deg); }
+    }
+
+    /* ปุ่มน้องแมว */
+    #cat-bot-btn {
+        position: fixed; bottom: 30px; right: 30px;
+        width: 70px; height: 70px;
+        background: #fcd34d; border: 3px solid #f59e0b;
+        border-radius: 50%; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        font-size: 40px; text-align: center; line-height: 65px;
+        cursor: pointer; z-index: 10000;
+        animation: floatingCat 3s ease-in-out infinite;
+        transition: transform 0.2s;
+    }
+    #cat-bot-btn:hover { transform: scale(1.1); animation-play-state: paused; }
+
+    /* หน้าต่างแชทน้องแมว */
+    #cat-chat-window {
+        position: fixed; bottom: 110px; right: 30px;
+        width: 320px; background: #ffffff;
+        border: 2px solid #fcd34d; border-radius: 16px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        z-index: 9999; display: none; flex-direction: column;
+        overflow: hidden; font-family: 'K2D', sans-serif;
+    }
+
+    /* หัวแชท */
+    .cat-chat-header {
+        background: #fcd34d; padding: 12px 15px;
+        font-weight: bold; color: #78350f; display: flex;
+        justify-content: space-between; align-items: center;
+    }
+
+    /* พื้นที่แสดงข้อความ */
+    #cat-chat-messages {
+        height: 250px; padding: 15px; overflow-y: auto;
+        background: #fdfbc8; display: flex; flex-direction: column; gap: 10px;
+    }
+
+    /* สไตล์กล่องข้อความ */
+    .msg-bubble { max-width: 85%; padding: 8px 12px; border-radius: 12px; font-size: 14px; }
+    .msg-user { background: #10b981; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+    .msg-cat { background: #ffffff; color: #333; align-self: flex-start; border: 1px solid #fcd34d; border-bottom-left-radius: 2px; }
+
+    /* ช่องพิมพ์แชท */
+    .cat-chat-input-area {
+        display: flex; padding: 10px; background: #fff; border-top: 1px solid #fef3c7;
+    }
+    #cat-input-box {
+        flex: 1; border: 1px solid #ccc; border-radius: 20px;
+        padding: 8px 15px; outline: none; font-family: 'K2D', sans-serif;
+    }
+    #cat-send-btn {
+        background: #f59e0b; color: white; border: none;
+        border-radius: 50%; width: 35px; height: 35px;
+        margin-left: 8px; cursor: pointer; font-weight: bold;
+    }
+</style>
+
+<div id="cat-chat-window">
+    <div class="cat-chat-header">
+        <span>🐾 AI</span>
+        <button onclick="toggleCatChat()" style="background: none; border: none; cursor: pointer; font-weight: bold; color: #78350f;">✕</button>
+    </div>
+    <div id="cat-chat-messages">
+        <div class="msg-bubble msg-cat">เมี้ยว~ สวัสดีฮะ! 🐱</div>
+    </div>
+    <div class="cat-chat-input-area">
+        <input type="text" id="cat-input-box" placeholder="ถามครูเหมียวสิ..." onkeypress="handleCatEnter(event)">
+        <button id="cat-send-btn" onclick="sendToCat()">➤</button>
+    </div>
+</div>
+
+<div id="cat-bot-btn" onclick="toggleCatChat()" title="คุยกับครูเหมียว AI">🐱</div>
+
+<script>
+    // เปิด/ปิด หน้าต่างแชท
+    function toggleCatChat() {
+        let chatWindow = document.getElementById('cat-chat-window');
+        chatWindow.style.display = (chatWindow.style.display === 'flex') ? 'none' : 'flex';
+    }
+
+    // กด Enter เพื่อส่งข้อความ
+    function handleCatEnter(e) {
+        if (e.key === 'Enter') sendToCat();
+    }
+
+    // ส่งข้อความไปหา Gemini AI
+    async function sendToCat() {
+        let input = document.getElementById('cat-input-box');
+        let msgText = input.value.trim();
+        if (!msgText) return;
+
+        let msgBox = document.getElementById('cat-chat-messages');
+
+        // 1. โชว์ข้อความเด็ก
+        msgBox.innerHTML += `<div class="msg-bubble msg-user">${msgText}</div>`;
+        input.value = "";
+        msgBox.scrollTop = msgBox.scrollHeight; // เลื่อนจอลงล่างสุด
+
+        // 2. โชว์สถานะแมวกำลังพิมพ์
+        let typingId = "typing-" + Date.now();
+        msgBox.innerHTML += `<div id="${typingId}" class="msg-bubble msg-cat"><i>ครูเหมียวกำลังคิด... 🐾</i></div>`;
+        msgBox.scrollTop = msgBox.scrollHeight;
+try {
+            // 🌟 ดึงตัวแปร KEY ที่กัปตันประกอบร่างไว้แล้วในระบบมาใช้ได้เลยครับ!
+            let currentApiKey = KEY; 
+
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${currentApiKey}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{ 
+                            text: `You are an AI programming assistant for kids. Act like a cute, encouraging cat teacher. 
+                            Keep answers short, simple, and easy to understand. 
+                            Always end your sentences with cat sounds like "เมี้ยว", "เหมียว", or "ฮะ".
+                            User asked: ${msgText}` 
+                        }]
+                    }]
+                })
+            });
+
+            const result = await response.json();
+            if (result.error) throw new Error(result.error.message);
+
+            let catReply = result.candidates[0].content.parts[0].text.trim();
+            
+            // ลบสถานะกำลังพิมพ์ และใส่คำตอบจริง
+            document.getElementById(typingId).remove();
+            msgBox.innerHTML += `<div class="msg-bubble msg-cat">${catReply.replace(/\n/g, '<br>')}</div>`;
+
+        } catch (err) {
+            document.getElementById(typingId).remove();
+            msgBox.innerHTML += `<div class="msg-bubble msg-cat" style="color: red;">แง้วว! ระบบมีปัญหาฮะ: ${err.message} 😿</div>`;
+        }
+        
+        msgBox.scrollTop = msgBox.scrollHeight;
+    }
+</script>
 </body>
 </html>
