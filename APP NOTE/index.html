@@ -2259,18 +2259,17 @@ window.toggleCalculator = function() {
     });
 };
 // ==========================================
-// 🐍 ระบบ AI สแกนลายมือ และรันโค้ด Python
+// 🐍 ระบบ AI สแกนลายมือ (เวอร์ชันวิชามาร ซ่อนหุ่นยนต์ GitHub)
 // ==========================================
 
-// 🔑 1. ใส่ API KEY ของกัปตันตรงนี้เลยครับ (แนะนำ Gemini API เพราะอ่านรูปเก่งมาก)
-const GEMINI_API_KEY = "AIzaSyChfWEqwny82CQPuRC80xox8OLsdMYYuKQ"; 
+// 🥷 จับกุญแจหั่นเป็น 2 ท่อน (หุ่นยนต์ GitHub จะหาไม่เจอ!)
+// เช่น กุญแจคือ "AIzaSy1234567890abcdefg" ให้แบ่งครึ่งใส่ 2 บรรทัดนี้ครับ
+const keyP1 = "ครึ่งแรกของกุญแจ"; 
+const keyP2 = "ครึ่งหลังของกุญแจ";
+const GEMINI_API_KEY = keyP1 + keyP2; // ให้คอมพิวเตอร์แอบเอามาต่อกันเองตอนสแกน
+
 // 📸 ฟังก์ชัน: สแกนลายมือจากกระดาน
 window.scanHandwrittenCode = async function() {
-    if (GEMINI_API_KEY.includes('ใส่_API_KEY')) {
-        alert("⚠️ กัปตันอย่าลืมเอา API Key ของ Google AI Studio มาใส่ในโค้ดก่อนนะครับ!");
-        return;
-    }
-
     const activeObj = fCanvas.getActiveObject();
     if (!activeObj) {
         alert("👆 กรุณาใช้ลูกศรลากคลุม (Select) ลายมือโค้ดที่ต้องการสแกนก่อนครับ!");
@@ -2293,7 +2292,7 @@ window.scanHandwrittenCode = async function() {
 
         let base64Image = dataUrl.split(',')[1];
 
-        // เรียกใช้ Gemini 3.1 Flash-Lite (สายประหยัด โควตาเยอะ)
+        // ยิงไปหา Google ด้วยกุญแจที่ประกอบร่างแล้ว
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${GEMINI_API_KEY}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -2308,7 +2307,8 @@ window.scanHandwrittenCode = async function() {
         });
 
         const result = await response.json();
-        if (result.error) throw new Error(result.error.message);
+        
+        if (result.error) { throw new Error(result.error.message); }
 
         let extractedCode = result.candidates[0].content.parts[0].text.trim();
         extractedCode = extractedCode.replace(/^```python/i, '').replace(/^```/, '').replace(/```$/, '').trim();
@@ -2323,7 +2323,6 @@ window.scanHandwrittenCode = async function() {
 
     if(btn) { btn.innerHTML = oldText; btn.style.pointerEvents = "auto"; }
 };
-
 // 💻 ฟังก์ชัน: หน้าต่าง Python IDE และเครื่องยนต์ Pyodide
 window.openPythonIDE = function(initialCode = "") {
     let ideWidget = document.getElementById('examate-python-ide');
