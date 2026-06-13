@@ -2384,25 +2384,32 @@ window.openPythonIDE = function(initialCode = "") {
         
         let runBtn = header.querySelector('#btn-run-py');
         runBtn.innerHTML = "⏳..."; runBtn.style.pointerEvents = "none";
-        terminal.innerHTML = `<span style="color:#f59e0b;">⏳ กำลังสตาร์ทเครื่องยนต์ Python...</span>`;
+        terminal.innerHTML = `<span style="color:#f59e0b;">⏳ กำลังโหลดเครื่องยนต์ Python ลงเบราว์เซอร์...<br><br><small><i>(การโหลดครั้งแรกอาจใช้เวลา 5-15 วินาที แต่ครั้งต่อไปจะรันเร็วปรู๊ดปร๊าดทันทีครับ!)</i></small></span>`;
         
         try {
+            // 1. โหลดเครื่องยนต์
             if (!window.loadPyodide) {
                 await new Promise((resolve, reject) => {
                     let script = document.createElement('script');
-                    script.src = "[https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js](https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js)";
-                    script.onload = resolve; script.onerror = reject;
+                    // 🌟 เปลี่ยน URL เป็นเวอร์ชัน v0.23.4 (ตัวเสถียร 100% ไม่มีบินแน่นอน!)
+                    script.src = "https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js";
+                    script.onload = resolve; 
+                    // 🌟 แก้บั๊ก: ถ้าเน็ตหลุดหรือลิงก์พัง ให้ส่ง Error ออกมาตรงๆ
+                    script.onerror = () => reject(new Error("โหลดไฟล์เครื่องยนต์ไม่สำเร็จ (โปรดตรวจสอบอินเทอร์เน็ต)"));
                     document.head.appendChild(script);
                 });
             }
 
+            // 2. สตาร์ทเครื่องยนต์
             if (!window.pyodideInstance) {
                 window.pyodideInstance = await loadPyodide();
             }
 
+            // 3. เซ็ตค่าการพิมพ์ (print)
             const setupCode = `import sys\nimport io\nsys.stdout = io.StringIO()\nsys.stderr = io.StringIO()`;
             await window.pyodideInstance.runPythonAsync(setupCode);
             
+            // 4. รันโค้ด
             await window.pyodideInstance.runPythonAsync(code);
             
             const stdout = window.pyodideInstance.runPython("sys.stdout.getvalue()");
@@ -2411,11 +2418,16 @@ window.openPythonIDE = function(initialCode = "") {
             if (stderr) {
                 terminal.innerHTML = `<span style="color:#ef4444;">${stderr.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</span>`;
             } else {
-                terminal.innerHTML = `<span style="color:#10b981;">${stdout.replace(/</g, "&lt;").replace(/>/g, "&gt;") || '<i>(รันสำเร็จ แต่ไม่มีผลลัพธ์)</i>'}</span>`;
+                terminal.innerHTML = `<span style="color:#10b981;">${stdout.replace(/</g, "&lt;").replace(/>/g, "&gt;") || '<i>(รันสำเร็จ แต่ไม่มีคำสั่ง print)</i>'}</span>`;
             }
 
         } catch (e) {
-            terminal.innerHTML = `<span style="color:#ef4444;">❌ ข้อผิดพลาด:<br>${e.message.split('File "<exec>"')[1] || e.message}</span>`;
+            // 🌟 แก้บั๊ก .split() ที่ทำให้พังในรูป
+            let errMsg = e.message || "เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ";
+            if (errMsg.includes('File "<exec>"')) {
+                errMsg = errMsg.split('File "<exec>"')[1];
+            }
+            terminal.innerHTML = `<span style="color:#ef4444;">❌ ข้อผิดพลาด:<br>${errMsg}</span>`;
         }
         runBtn.innerHTML = "▶ RUN"; runBtn.style.pointerEvents = "auto";
     });
