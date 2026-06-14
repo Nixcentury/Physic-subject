@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Examate Board | กระดานส่วนตัว</title>
+    <title>nooknickie Board | กระดานส่วนตัว</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';</script>
@@ -244,6 +244,18 @@
     </style>
 </head>
 <body>
+         <div class="board-title-container" style="display: flex; align-items: center; gap: 8px; margin-left: 20px;">
+    <span style="font-size: 20px;">📝</span>
+    <input type="text" id="examate-board-name" value="กระดานไร้ชื่อ" 
+           placeholder="ตั้งชื่อกระดานที่นี่..."
+           title="คลิกเพื่อตั้งชื่อกระดาน"
+           onfocus="this.style.background='#f1f5f9'; this.style.borderColor='#3b82f6';"
+           onblur="this.style.background='transparent'; this.style.borderColor='transparent'; updateBoardName(this.value)"
+           style="background: transparent; border: 2px solid transparent; border-radius: 8px;
+                  color: #1e293b; font-family: 'K2D', sans-serif; font-size: 18px; font-weight: bold; 
+                  width: 220px; padding: 4px 8px; outline: none; transition: all 0.3s ease;
+                  text-overflow: ellipsis;">
+</div>
     <button id="btn-cloud-save" class="glass-tool-btn" onclick="saveBoardToCloud()" title="เซฟกระดานขึ้น Cloud" style="background:#dbeafe !important; font-size: 20px;">☁️</button>
     
     <div style="display: flex; background: #cbd5e1; width: 100vw; height: 100vh; flex-direction: column; overflow: hidden; position: relative;">
@@ -2528,6 +2540,37 @@ window.openPythonIDE = function(initialCode = "") {
         if (isDragging) { isDragging = false; header.style.cursor = 'grab'; }
     });
 };
+// ==========================================
+// 📝 ระบบจัดการชื่อกระดาน (เตรียมพร้อมสู่ระบบแฟ้ม)
+// ==========================================
+
+// ตัวแปรเก็บชื่อกระดานปัจจุบัน (ค่าเริ่มต้น)
+window.currentBoardName = "กระดานไร้ชื่อ";
+
+// ฟังก์ชันอัปเดตชื่อเมื่อมีการพิมพ์แก้
+window.updateBoardName = function(newName) {
+    let cleanName = newName.trim();
+    
+    // ถ้าเด็กลบข้อความจนเกลี้ยง ให้เด้งกลับไปใช้ชื่อเริ่มต้น
+    if (!cleanName) {
+        cleanName = "กระดานไร้ชื่อ";
+        document.getElementById('examate-board-name').value = cleanName;
+    }
+    
+    // บันทึกชื่อลงระบบ
+    window.currentBoardName = cleanName;
+    console.log("✅ อัปเดตชื่อกระดานเป็น: " + window.currentBoardName);
+    
+    // (อนาคต) ตรงนี้เราสามารถใส่คำสั่งออโต้เซฟลง LocalStorage ได้
+    // saveBoardState(); 
+};
+
+// ทริคเล็กๆ: ให้กด Enter แล้วหลุดจากการพิมพ์ (เหมือน Google Docs)
+document.getElementById('examate-board-name').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        this.blur(); // สั่งให้ออกจากการโฟกัส (จะไปทริกเกอร์ onblur อัตโนมัติ)
+    }
+});
 </script>
 
 <script type="module">
