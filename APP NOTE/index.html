@@ -451,7 +451,9 @@
           <div id="nb-context-toolbar" class="context-toolbar-hidden glass-brutal-frame" style="position: absolute; top: 90px; left: 50%; transform: translateX(-50%); z-index: 1000; display: none;">
     <div id="ctx-tools-container" style="display: flex; gap: 10px; align-items: center;">
         <button class="ctx-btn btn-save" onclick="saveSelectionAsImage()">💾 เซฟรูป</button>
-        <button class="ctx-btn btn-link" onclick="openLinkModal()">🔗 ใส่ลิงก์</button>
+        <button class="ctx-btn" onclick="openLinkFromObject()" style="background: #f0fdf4 !important; color: #16a34a; border: 1px solid #bbf7d0 !important; font-weight: bold; border-radius: 8px;">
+            🚀 เปิดเว็บ
+        </button>
         <button class="ctx-btn btn-crop" onclick="startCropImage()">✂️ ตัดรูป</button>
         <button class="ctx-btn btn-dup" onclick="duplicateObject()">👯 ทำซ้ำ</button>
         <button class="ctx-btn" onclick="scanHandwrittenCode()" title="สแกนลายมือเป็นโค้ด" style="background: #e6f4ea !important; color: #137333; border: 1px solid #ceead6 !important; font-weight: bold; padding: 6px 12px; border-radius: 8px; cursor: pointer;">
@@ -2166,6 +2168,30 @@ window.editInteractiveWebBtn = function() {
     
     // เซฟลงประวัติ (เผื่อกด Undo)
     if (typeof saveState === 'function') saveState();
+};
+// ==========================================
+// 🚀 5. ฟังก์ชัน: เปิดลิงก์จากวัตถุที่เลือก (ผ่านปุ่มเมนูลอย)
+// ==========================================
+window.openLinkFromObject = function() {
+    if (!fCanvas) return;
+    
+    let activeObj = fCanvas.getActiveObject();
+
+    if (!activeObj) return;
+
+    // ตรวจสอบว่าเป็น "ปุ่มเว็บ" ที่เราสร้างไว้หรือไม่
+    if (activeObj.isInteractiveWebBtn && activeObj.webUrl) {
+        // กางหน้าต่างลอย/แบ่งจอ ตามฟังก์ชันเดิมเลย
+        openWebWidget(activeObj.webUrl, activeObj.webTitle);
+    } 
+    // กรณีเป็นวัตถุธรรมดาที่เคยใส่ลิงก์ไว้แบบระบบเก่า (ถ้ามี)
+    else if (activeObj.link) {
+        window.open(activeObj.link, '_blank');
+    } 
+    // ถ้าไม่มีลิงก์อะไรเลย
+    else {
+        alert("⚠️ วัตถุที่เลือกยังไม่ได้เชื่อมโยงลิงก์ใดๆ ครับ");
+    }
 };
 // ==========================================
 // ⏪ ระบบไทม์แมชชีน (Undo / Redo) แบบกันเหนียว 100%
