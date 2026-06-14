@@ -454,10 +454,12 @@
         <button class="ctx-btn btn-link" onclick="openLinkModal()">🔗 ใส่ลิงก์</button>
         <button class="ctx-btn btn-crop" onclick="startCropImage()">✂️ ตัดรูป</button>
         <button class="ctx-btn btn-dup" onclick="duplicateObject()">👯 ทำซ้ำ</button>
-        
         <button class="ctx-btn" onclick="scanHandwrittenCode()" title="สแกนลายมือเป็นโค้ด" style="background: #e6f4ea !important; color: #137333; border: 1px solid #ceead6 !important; font-weight: bold; padding: 6px 12px; border-radius: 8px; cursor: pointer;">
             🐍 สแกนโค้ด
         </button>
+                <button class="ctx-btn" onclick="editInteractiveWebBtn()" style="background: #e0f2fe !important; color: #0284c7; border: 1px solid #bae6fd !important; font-weight: bold; border-radius: 8px;">
+    ✏️ แก้ไขเว็บ
+</button>
 
         <div class="ctx-divider"></div>
         <button class="ctx-btn btn-delete" onclick="deleteSelectedObject()">🗑️ ลบทิ้ง</button>
@@ -2113,6 +2115,58 @@ function bindWebDoubleClickListener() {
     }
 }
 bindWebDoubleClickListener();
+// ==========================================
+// ✏️ 4. ฟังก์ชัน: แก้ไขข้อความและลิงก์ของปุ่มเว็บ
+// ==========================================
+window.editInteractiveWebBtn = function() {
+    if (!fCanvas) return;
+    
+    // ดึงวัตถุที่กำลังคลิกเลือกอยู่
+    let activeObj = fCanvas.getActiveObject();
+
+    // เช็คว่าเลือกวัตถุอยู่ไหม และวัตถุนั้นใช่ปุ่มเว็บหรือเปล่า
+    if (!activeObj || !activeObj.isInteractiveWebBtn) {
+        alert("👆 กรุณาคลิกเลือก 'ปุ่มเว็บ' ที่ต้องการแก้ไขก่อนครับ!");
+        return;
+    }
+
+    // 1. เด้งถามชื่อใหม่ (ใส่ค่าเดิมไว้ให้แก้ง่ายๆ)
+    let newTitle = prompt("📌 แก้ไขชื่อปุ่ม:", activeObj.webTitle);
+    if (newTitle === null) return; // ถ้ากดยกเลิกให้หยุดทำงาน
+
+    // 2. เด้งถามลิงก์ใหม่ (ใส่ค่าเดิมไว้ให้)
+    let newUrl = prompt("🌐 แก้ไขลิงก์เว็บ หรือ YouTube:", activeObj.webUrl);
+    if (newUrl === null) return;
+
+    // 3. จัดการแปลงลิงก์ YouTube (เหมือนตอนสร้าง)
+    if (!newUrl.startsWith('http') && newUrl.trim() !== '') newUrl = 'https://' + newUrl;
+    if (newUrl.includes('youtube.com/watch?v=')) {
+        let videoId = new URL(newUrl).searchParams.get('v');
+        if(videoId) newUrl = 'https://www.youtube.com/embed/' + videoId;
+    } else if (newUrl.includes('youtu.be/')) {
+        let videoId = newUrl.split('youtu.be/')[1].split('?')[0];
+        if(videoId) newUrl = 'https://www.youtube.com/embed/' + videoId;
+    }
+
+    // 4. อัปเดตข้อมูลเบื้องหลังของปุ่ม
+    activeObj.set({ 
+        webTitle: newTitle, 
+        webUrl: newUrl 
+    });
+
+    // 5. เจาะกรุ๊ปเข้าไปอัปเดตตัวหนังสือบนปุ่ม
+    let textObj = activeObj.getObjects().find(obj => obj.type === 'text' || obj.type === 'i-text');
+    if (textObj) {
+        textObj.set({ text: "🌐 " + newTitle });
+        activeObj.addWithUpdate(); // สั่งให้กลุ่มคำนวณขนาดและตำแหน่งกึ่งกลางใหม่
+    }
+
+    // สั่งวาดกระดานใหม่ให้เห็นความเปลี่ยนแปลงทันที
+    fCanvas.requestRenderAll();
+    
+    // เซฟลงประวัติ (เผื่อกด Undo)
+    if (typeof saveState === 'function') saveState();
+};
 // ==========================================
 // ⏪ ระบบไทม์แมชชีน (Undo / Redo) แบบกันเหนียว 100%
 // ==========================================
