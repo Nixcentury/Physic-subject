@@ -17,6 +17,96 @@
   }
 </script>
     <style>
+/* สไตล์ปุ่มลอยครู AI (Movable Floating Button) */
+#cat-chat-btn {
+    position: fixed;
+    bottom: 20px; /* ตำแหน่งเริ่มต้นด้านล่าง */
+    right: 20px;  /* ตำแหน่งเริ่มต้นด้านขวา */
+    width: 60px;
+    height: 60px;
+    background-color: #fcd34d; /* สีเหลืองเหมือนในรูปกัปตัน */
+    border: 2px solid #fb923c; /* ขอบสีส้ม */
+    border-radius: 50%;
+    cursor: move; /* cursor รูป 4 ทิศตอนชี้ */
+    z-index: 9998; /* อยู่เหนือเนื้อหาอื่นๆ แต่ต่ำกว่าหน้าต่างแชทเล็กน้อย */
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: box-shadow 0.2s, background-color 0.2s, opacity 0.2s;
+    touch-action: none; /* บังคับให้ iPad ไม่เลื่อนจอตอนเราลากปุ่ม */
+    opacity: 1;
+}
+
+/* ตอน Hover (ถ้าปุ่มไม่กำลังถูกลาก) */
+#cat-chat-btn:hover:not(.dragging) {
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    background-color: #fce38a; /* เหลืองอ่อนลง */
+}
+
+/* ตอนกำลังถูกลาก (Dragging state) */
+#cat-chat-btn.dragging {
+    cursor: grabbing; /* รูปมือกำตอนลาก */
+    opacity: 0.7; /* โปร่งแสงนิดนึงเพื่อให้เห็นของข้างหลัง */
+    transition: none; /* ปิด transition เพื่อไม่ให้มีดีเลย์ตอนลากตามนิ้ว */
+}
+
+/* Emoji แมวข้างใน */
+.cat-emoji {
+    font-size: 32px;
+    user-select: none; /* ป้องกันการคลุมดำ emoji ตอนลาก */
+}
+
+/* สไตล์ Tooltip (คุยกับครู AI) ของเดิมกัปตัน */
+.cat-tooltip {
+    position: absolute;
+    background: #fff;
+    color: #333;
+    padding: 3px 8px;
+    border: 1px solid #000;
+    font-size: 11px;
+    white-space: nowrap;
+    display: none; /* เริ่มต้นซ่อน */
+    pointer-events: none; /* tooltip ไม่ขวางการลาก */
+}
+
+/* แสดง tooltip เฉพาะตอน hover และต้องไม่กำลังลาก */
+#cat-chat-btn:hover:not(.dragging) .cat-tooltip {
+    display: block;
+    right: 70px;
+    bottom: 12px;
+}
+                /* กล่องแชท AI ลอยตัว */
+#cat-chat-window {
+    position: fixed; /* ทำให้ลอยอยู่เหนือทุกอย่าง */
+    bottom: 20px;
+    right: 20px;
+    width: 300px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    z-index: 9999; /* ให้อยู่บนสุดเสมอ */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: opacity 0.3s ease;
+}
+
+/* แถบด้านบนสำหรับจับลาก */
+.cat-chat-header {
+    background: #fcd34d;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: grab; /* เปลี่ยนเมาส์เป็นรูปมือตอนชี้ */
+    user-select: none; /* ป้องกันการคลุมดำข้อความตอนลาก */
+    touch-action: none; /* ป้องกันจอ iPad เลื่อนตามตอนลากกล่อง */
+}
+.cat-chat-header:active {
+    cursor: grabbing; /* เปลี่ยนรูปมือตอนกำลังกำ/ลาก */
+}
         /* โหลดฟอนต์ไทยยอดนิยมจาก Google Fonts */
         @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;700&family=Itim&family=K2D:wght@300;700&family=Kanit:wght@300;700&family=Mali:wght@300;700&family=Noto+Sans+Thai:wght@300;700&family=Sarabun:wght@300;700&display=swap');
 
@@ -240,6 +330,22 @@
         }
                 .btn-run { background: #f3e8ff; color: #7e22ce; border-color: #d8b4fe; }
         .btn-run:hover { background: #d8b4fe; color: #fff; border-color: #a855f7; }
+                /* CSS สำหรับโซนเนื้อหาข้างในแฟ้ม (ซ่อนไว้ก่อน เปิดค่อยโชว์) */
+.folder-content {
+    display: none; /* เริ่มต้นให้พับเก็บไว้ */
+    flex-direction: column;
+    gap: 6px;
+    padding-left: 15px; 
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border-left: 2px dashed #cbd5e1; /* มีเส้นประนำสายตาให้รู้ว่าเป็นของแฟ้มนี้ */
+    margin-left: 15px;
+}
+/* อนิเมชันปุ่มลูกศร */
+.btn-toggle-folder {
+    background: none; border: none; cursor: pointer; font-size: 12px;
+    transition: transform 0.2s; pointer-events: none;
+}
 
     </style>
 </head>
@@ -507,8 +613,358 @@
             </div>
 
             <canvas id="nb-minimap" width="160" height="120" style="display: none; position: absolute; top: 25px; right: 25px; background-color: rgba(255, 255, 255, 0.9); border: 2px solid #3b82f6; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 999; cursor: crosshair; backdrop-filter: blur(4px);"></canvas>
+        </div> </div> 
+        <button id="btn-toggle-sidebar" onclick="toggleSidebar()" 
+        style="position: fixed; top: 15px; right: 20px; z-index: 9990;
+               background: #1e3a8a; color: white; border: none; padding: 8px 16px;
+               border-radius: 8px; font-family: 'K2D', sans-serif; font-weight: bold;
+               font-size: 15px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+               display: flex; align-items: center; gap: 6px; transition: all 0.2s;">
+    📁 แฟ้มผลงาน / ล็อกอิน
+</button>
+<button id="btn-toggle-sidebar" onclick="toggleSidebar()" 
+        style="position: fixed; top: 15px; right: 20px; z-index: 9990;
+               background: #1e3a8a; color: white; border: none; padding: 8px 16px;
+               border-radius: 8px; font-family: 'K2D', sans-serif; font-weight: bold;
+               font-size: 15px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+               display: flex; align-items: center; gap: 6px; transition: all 0.2s;">
+    📁 แฟ้มผลงาน / ล็อกอิน
+</button>
 
-        </div> </div> <script>
+<div id="examate-sidebar">
+    <div class="sidebar-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 20px;">📂</span>
+            <span id="sidebar-title-text" style="font-size: 16px;">คลังแฟ้มผลงาน</span>
+        </div>
+        <button onclick="toggleSidebar()" class="sidebar-close-btn">✕</button>
+    </div>
+
+    <div id="sidebar-login-view" class="sidebar-content-active">
+        <div style="text-align: center; margin: 20px 0 30px 0;">
+            <span style="font-size: 50px;">🔐</span>
+            <h3 style="margin: 10px 0 5px 0; color: #1e293b;">ล็อกอินเข้าคลังไฟล์</h3>
+            <p style="font-size: 13px; color: #64748b; margin: 0;">วาดเขียนก่อนได้ แล้วค่อยล็อกอินเพื่อเซฟลงแฟ้มส่วนตัวนะฮะ!</p>
+        </div>
+        
+        <div class="form-group">
+            <label>รหัสประจำตัว / Username</label>
+            <input type="text" id="login-username" placeholder="กรอกรหัสประจำตัวนักเรียน...">
+        </div>
+        <div class="form-group" style="margin-top: 15px;">
+            <label>รหัสผ่าน / Password</label>
+            <input type="password" id="login-password" placeholder="กรอกรหัสผ่าน...">
+        </div>
+        
+        <button onclick="realLogin()" class="btn-sidebar-login" style="margin-top: 25px;">
+            🔑 เข้าสู่ระบบ
+        </button>
+    </div>
+
+    <div id="sidebar-dashboard-view" class="sidebar-content-hidden">
+        
+        <div class="user-profile-card">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="font-size: 28px;">👨‍💻</div>
+                <div>
+                    <h4 id="user-display-name" style="margin: 0; color: #1e3a8a; font-size: 15px;">ศตวรรษ บุตรคล้อ (ครูนิก)</h4>
+                    <span style="font-size: 11px; color: #10b981; font-weight: bold;">● กำลังออนไลน์</span>
+                </div>
+            </div>
+            <button onclick="logoutSidebar()" class="btn-logout" title="ออกจากระบบ">⚙️ ออก</button>
+        </div>
+
+        <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+            <span>📁 แฟ้มส่วนตัว</span>
+            <button onclick="createNewFolder()" style="background: #e0f2fe; color: #0284c7; border: none; border-radius: 4px; font-size: 11px; font-weight: bold; padding: 3px 8px; cursor: pointer; font-family: 'K2D', sans-serif;">+ สร้างแฟ้ม</button>
+        </div>
+        
+        <div class="folder-list-container" id="folder-list-container">
+            </div>
+
+        <div class="section-title" style="margin-top: 20px;">📄 รายการกระดานทั้งหมด</div>
+        
+        <div class="file-list-container" id="board-list-container">
+            </div>
+
+        <div class="section-title" style="margin-top: 20px;">🕒 ประวัติเปิดล่าสุด</div>
+        <div class="file-list-container" id="recent-list-container">
+            </div>
+
+        <button class="floating-add-btn" onclick="addCustomLink()" title="เพิ่มกระดาน / โหลดเทมเพลต">＋</button>
+    </div>
+</div>
+<style>
+    #examate-sidebar {
+        position: fixed; top: 0; right: 0; width: 350px; height: 100vh;
+        background: #fafafa; border-left: 2px solid #e2e8f0;
+        box-shadow: -10px 0 30px rgba(0,0,0,0.1); z-index: 9995; font-family: 'K2D', sans-serif;
+        display: flex; flex-direction: column; transform: translateX(100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    #examate-sidebar.open { transform: translateX(0); }
+
+    .sidebar-header { background: #1e293b; color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+    .sidebar-close-btn { background: none; border: none; color: #94a3b8; font-size: 20px; cursor: pointer; }
+    .sidebar-close-btn:hover { color: white; }
+    .sidebar-content-active { display: flex; flex-direction: column; padding: 20px; flex: 1; overflow-y: auto; }
+    .sidebar-content-hidden { display: none !important; }
+
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 13px; font-weight: bold; color: #475569; }
+    .form-group input { padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: 'K2D', sans-serif; font-size: 14px; outline: none; }
+    .form-group input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+    .btn-sidebar-login { background: #1e3a8a; color: white; border: none; padding: 12px; border-radius: 8px; font-family: 'K2D', sans-serif; font-weight: bold; font-size: 15px; cursor: pointer; }
+
+    .user-profile-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .btn-logout { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
+    .section-title { font-size: 13px; font-weight: bold; color: #64748b; margin-bottom: 8px; letter-spacing: 0.5px; }
+
+    /* CSS ของตัวแฟ้มที่สร้างใหม่ */
+    .folder-list-container { display: flex; flex-direction: column; gap: 8px; min-height: 10px; }
+    .folder-item {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 10px 12px; background: #f1f5f9; border-radius: 8px;
+        cursor: pointer; transition: all 0.2s ease; border: 2px dashed transparent;
+    }
+    .folder-item.drag-over { background: #dbeafe !important; border-color: #3b82f6 !important; transform: scale(1.02); }
+    .btn-action-folder {
+        background: none; border: none; cursor: pointer; font-size: 13px;
+        opacity: 0.4; transition: opacity 0.2s; padding: 4px; border-radius: 4px;
+    }
+    .btn-action-folder:hover { opacity: 1; background: #e2e8f0; }
+
+    .file-list-container { display: flex; flex-direction: column; gap: 6px; padding-bottom: 80px;}
+    .file-item { background: white; padding: 10px 12px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; cursor: grab; user-select: none; touch-action: none; transition: all 0.2s; }
+    .file-item:active { cursor: grabbing; opacity: 0.6; }
+    .file-info-wrapper { display: flex; align-items: center; gap: 10px; pointer-events: none; }
+    .file-title-text { font-weight: 500; color: #1e293b; font-size: 13px; }
+    .file-folder-tag { font-size: 10px; background: #f1f5f9; color: #64748b; padding: 1px 6px; border-radius: 4px; display: inline-block; margin-top: 2px; }
+    .file-date { font-size: 11px; color: #94a3b8; }
+
+    .floating-add-btn { position: absolute; bottom: 30px; right: 20px; width: 50px; height: 50px; background: #10b981; color: white; border: none; border-radius: 50%; font-size: 26px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(16,185,129,0.4); display: flex; align-items: center; justify-content: center; transition: transform 0.2s; }
+    .floating-add-btn:hover { transform: scale(1.1) rotate(90deg); background: #059669; }
+</style>
+
+<script>
+    // เปิด/ปิด Sidebar และโหมดล็อกอิน
+    function toggleSidebar() { document.getElementById('examate-sidebar').classList.toggle('open'); }
+    function mockLogin() {
+        document.getElementById('sidebar-login-view').className = 'sidebar-content-hidden';
+        document.getElementById('sidebar-dashboard-view').className = 'sidebar-content-active';
+        document.getElementById('sidebar-title-text').innerText = "แผงควบคุมแดชบอร์ด";
+    }
+    function logoutSidebar() {
+        document.getElementById('sidebar-dashboard-view').className = 'sidebar-content-hidden';
+        document.getElementById('sidebar-login-view').className = 'sidebar-content-active';
+        document.getElementById('sidebar-title-text').innerText = "คลังแฟ้มผลงาน";
+    }
+
+    // ==========================================
+    // 📂 1. ฟังก์ชันสร้างแฟ้มใหม่ (+ สร้างแฟ้ม)
+    // ==========================================
+    function createNewFolder() {
+        let folderName = prompt("📂 ตั้งชื่อแฟ้มงานใหม่:");
+        if (!folderName || folderName.trim() === "") return;
+        
+        let safeName = folderName.trim();
+        let folderId = 'folder-' + Date.now(); // สร้างรหัสแฟ้มแบบสุ่มด้วยเวลา
+        let container = document.getElementById('folder-container');
+
+        // สร้าง HTML ของแฟ้มใหม่
+        let folderDiv = document.createElement('div');
+        folderDiv.className = 'folder-item';
+        folderDiv.id = folderId;
+        folderDiv.setAttribute('data-folder-id', folderId);
+        
+        // ผูก Event สำหรับลากวาง
+        folderDiv.ondragover = function(e) { e.preventDefault(); };
+        folderDiv.ondragenter = function(e) { folderDiv.classList.add('drag-over'); };
+        folderDiv.ondragleave = function(e) { folderDiv.classList.remove('drag-over'); };
+        folderDiv.ondrop = function(e) { dropFile(e, folderDiv); };
+        
+        // ผูก Event ดับเบิลคลิกเปลี่ยนชื่อ
+        folderDiv.ondblclick = function() { renameFolderById(folderId); };
+
+        // โครงสร้างภายในแฟ้ม (ชื่อ + ปุ่มแก้ไข + ปุ่มลบ)
+        folderDiv.innerHTML = `
+            <span class="folder-text" style="pointer-events: none;">📂 <span id="name-${folderId}">${safeName}</span></span>
+            <div style="display: flex; gap: 2px;">
+                <button onclick="event.stopPropagation(); renameFolderById('${folderId}')" class="btn-action-folder" title="เปลี่ยนชื่อ">✏️</button>
+                <button onclick="event.stopPropagation(); deleteFolderById('${folderId}')" class="btn-action-folder" title="ลบทิ้ง" style="color: #ef4444;">🗑️</button>
+            </div>
+        `;
+        
+        container.appendChild(folderDiv);
+        console.log("✅ สร้างแฟ้มใหม่รหัส:", folderId);
+    }
+
+    // ==========================================
+    // ✏️ 2. ฟังก์ชันแก้ไขชื่อแฟ้ม
+    // ==========================================
+    function renameFolderById(folderId) {
+        let nameSpan = document.getElementById(`name-${folderId}`);
+        if (!nameSpan) return;
+
+        let newName = prompt("✏️ แก้ไขชื่อแฟ้มงาน:", nameSpan.innerText);
+        if (newName !== null && newName.trim() !== "") {
+            let safeName = newName.trim();
+            nameSpan.innerText = safeName;
+            
+            // อัปเดตป้าย Tag ของโน้ตทุกใบที่อยู่ในแฟ้มนี้ให้ชื่อเปลี่ยนตาม
+            let allTags = document.querySelectorAll(`.file-folder-tag[data-current-folder="${folderId}"]`);
+            allTags.forEach(tag => {
+                tag.innerText = `📁 ${safeName}`;
+            });
+        }
+    }
+
+    // ==========================================
+    // 🗑️ 3. ฟังก์ชันลบแฟ้ม
+    // ==========================================
+    function deleteFolderById(folderId) {
+        let folderName = document.getElementById(`name-${folderId}`).innerText;
+        if (confirm(`⚠️ แน่ใจหรือไม่ว่าจะลบแฟ้ม "${folderName}" ?\n\n(กระดานที่อยู่ข้างในจะไม่ถูกลบทิ้ง แต่จะถูกย้ายออกมาด้านนอกครับ)`)) {
+            
+            // ลบแฟ้มออกจากหน้าจอ
+            let folderElem = document.getElementById(folderId);
+            if (folderElem) folderElem.remove();
+
+            // คืนค่าโน้ตทุกใบที่อยู่ในแฟ้มนี้ ให้กลับไปเป็นสถานะ "ไม่มีแฟ้ม"
+            let allTags = document.querySelectorAll(`.file-folder-tag[data-current-folder="${folderId}"]`);
+            allTags.forEach(tag => {
+                tag.innerText = "รากฐาน (ไม่มีแฟ้ม)";
+                tag.style.background = '#f1f5f9';
+                tag.style.color = '#64748b';
+                tag.setAttribute('data-current-folder', '');
+            });
+            console.log("🗑️ ลบแฟ้มสำเร็จ และคืนค่าโน้ตเรียบร้อยฮะ");
+        }
+    }
+
+    // ==========================================
+// 🧲 ระบบ Drag & Drop อัจฉริยะ (ลากปุ๊บ เซฟลงฐานข้อมูลปั๊บ)
+// ==========================================
+
+function dragStart(e) {
+    // จำ ID ของกระดานที่ถูกจับลาก
+    e.dataTransfer.setData("text/plain", e.target.id);
+}
+// ==========================================
+// 🧲 ระบบ Drag & Drop อัจฉริยะ (ลากปุ๊บ เซฟลงฐานข้อมูลปั๊บ)
+// ==========================================
+async function dropBoardToFolder(e, folderElem, targetFolderId, targetFolderName) {
+    e.preventDefault();
+    folderElem.classList.remove('drag-over'); // ลบเอฟเฟกต์แฟ้มสว่างออก
+
+    let boardId = e.dataTransfer.getData("text/plain");
+    // เช็กว่าใช่กระดานหรือเปล่า (กันคนลากมั่ว)
+    if (!boardId || !boardId.startsWith('board-')) return; 
+
+    let boardElem = document.getElementById(boardId);
+    if (boardElem) {
+        // 1. อัปเดตหน้าจอทันที (Optimistic UI) ให้เด็กรู้สึกว่าย้ายเร็วมาก
+        let tagElem = document.getElementById(`tag-${boardId}`);
+        if (tagElem) {
+            tagElem.innerText = `📁 ${targetFolderName}`;
+            tagElem.style.background = '#dbeafe';
+            tagElem.style.color = '#1e40af';
+            tagElem.setAttribute('data-current-folder', targetFolderId);
+        }
+        
+        // ทำให้กระดานเด้งดึ๋งๆ นิดนึงว่าย้ายสำเร็จ
+        boardElem.style.transition = 'all 0.3s';
+        boardElem.style.transform = 'scale(0.95)';
+        setTimeout(() => { boardElem.style.transform = 'scale(1)'; }, 200);
+
+        // 2. แอบยิงข้อมูลไปหาหลังบ้านเงียบๆ
+        try {
+            await fetch(GAS_LOGIN_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({
+                    action: 'moveItem',
+                    studentId: window.currentUserId,
+                    itemId: boardId,
+                    newFolderId: targetFolderId
+                })
+            });
+            console.log(`📦 ย้ายกระดาน ${boardId} เข้าแฟ้ม ${targetFolderId} ลงฐานข้อมูลสำเร็จ!`);
+            
+            // 🌟 พระเอกอยู่ตรงนี้: สั่งโหลดหน้าจอใหม่ เพื่อให้กระดานถูกจัดเรียงเข้าไปซ่อนในแฟ้มทันที
+            if (typeof fetchDashboardData === "function") {
+                fetchDashboardData(window.currentUserId);
+            }
+
+        } catch (err) {
+            console.error("❌ ย้ายแฟ้มไม่สำเร็จ:", err);
+            // ถ้าย้ายไม่สำเร็จ กัปตันสามารถใส่คำสั่งให้ tag กลับเป็นแบบเดิมตรงนี้ได้ฮะ
+        }
+    }
+}
+// 🚨 อย่าลืมเอา URL ตอน Deploy เว็บแอปของกัปตันมาใส่นะครับ
+const GAS_LOGIN_URL = "https://script.google.com/macros/s/AKfycbyg0fqlTiBx_BXJ6oNgCaPylMcu3I2INjT7gJy7RpcmABuDbeARiCVk78PbZwcr9fcl/exec"; 
+
+async function realLogin() {
+    let user = document.getElementById('login-username').value.trim();
+    let pass = document.getElementById('login-password').value.trim();
+    let loginBtn = document.querySelector('.btn-sidebar-login');
+
+    if(!user || !pass) {
+        alert("⚠️ กรุณากรอกรหัสประจำตัวและรหัสผ่านก่อนครับ!");
+        return;
+    }
+
+    let oldBtnText = loginBtn.innerHTML;
+    loginBtn.innerHTML = "⏳ กำลังตรวจสอบ...";
+    loginBtn.style.pointerEvents = "none";
+
+    try {
+        let response = await fetch(GAS_LOGIN_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'login', username: user, password: pass })
+        });
+
+        let result = await response.json();
+
+        if (result.status === "success") {
+            // ผ่านฉลุย! สลับหน้าจอแดชบอร์ดสไลด์
+            document.getElementById('sidebar-login-view').className = 'sidebar-content-hidden';
+            document.getElementById('sidebar-dashboard-view').className = 'sidebar-content-active';
+            document.getElementById('sidebar-title-text').innerText = "แผงควบคุมแดชบอร์ด";
+            
+            // 🌟 แสดงชื่อจริงนักเรียนดึงสดๆ จาก Col D ในชีต
+            document.getElementById('user-display-name').innerText = result.name;
+            
+            // 🌟 ผูกไอดีนักเรียน (Col C) เข้าระบบจำในเครื่อง
+            window.currentUserId = result.studentID; 
+            
+            document.getElementById('login-password').value = "";
+            console.log("🎯 ยินดีต้อนรับรหัสนักเรียน: " + window.currentUserId);
+
+            // ==========================================
+            // 🚀 โหลดข้อมูลแฟ้มและกระดานมาแสดงทันทีที่ล็อกอินผ่าน!
+            // ==========================================
+            if (typeof fetchDashboardData === "function") {
+                fetchDashboardData(window.currentUserId);
+            } else {
+                console.warn("⚠️ ไม่พบฟังก์ชัน fetchDashboardData");
+            }
+
+        } else {
+            alert("❌ ล็อกอินไม่สำเร็จ: " + result.message);
+        }
+
+    } catch (err) {
+        alert("❌ เชื่อมต่อเซิร์ฟเวอร์ไม่ได้: " + err.message);
+    }
+
+    loginBtn.innerHTML = oldBtnText;
+    loginBtn.style.pointerEvents = "auto";
+}
+</script>
+<script>
         // 🛡️ ป้องกันการซูมด้วยนิ้วบนเบราว์เซอร์
         document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
         document.addEventListener('gesturechange', function (e) { e.preventDefault(); });
@@ -2571,6 +3027,414 @@ document.getElementById('examate-board-name').addEventListener('keypress', funct
         this.blur(); // สั่งให้ออกจากการโฟกัส (จะไปทริกเกอร์ onblur อัตโนมัติ)
     }
 });
+// ==========================================
+// ฟังก์ชันปิด/เปิด หน้าต่างแชทแมว (เหมือนเดิม)
+// ==========================================
+function toggleCatChat() {
+    const chatWindow = document.getElementById('cat-chat-window');
+    if (chatWindow) {
+        if (chatWindow.style.display === "none") {
+            chatWindow.style.display = "flex";
+        } else {
+            chatWindow.style.display = "none";
+        }
+    }
+}
+
+// ==========================================
+// ฟังก์ชัน: ระบบลากปุ่ม (พร้อมแยกแยะ คลิก/ลาก)
+// ==========================================
+function makeDraggableButton(element) {
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    
+    // ตัวแปรสำหรับเช็กว่าคือการ "ลาก" หรือ "คลิก"
+    let startX, startY;
+    let dragThreshold = 5; // ถ้าลากเกิน 5px จะถือว่ากำลังลากปุ่ม ไม่ใช่คลิก
+    let isDragging = false;
+
+    element.onmousedown = dragStart;
+    element.ontouchstart = dragStart;
+
+    function dragStart(e) {
+        // e.preventDefault(); // ห้ามป้องกัน Default บน Touchstart นะครับเดี๋ยวคลิกปุ่มอื่นไม่ได้
+
+        // เก็บตำแหน่งเริ่มต้น
+        if (e.type === "touchstart") {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        } else {
+            startX = e.clientX;
+            startY = e.clientY;
+        }
+        
+        pos3 = startX;
+        pos4 = startY;
+
+        // Reset ค่า isDragging และ listeners
+        isDragging = false;
+
+        document.onmouseup = dragEnd;
+        document.onmousemove = dragAction;
+        document.ontouchend = dragEnd;
+        document.ontouchmove = dragAction;
+    }
+
+    function dragAction(e) {
+        // คำนวณตำแหน่งเมาส์/นิ้ว ปัจจุบัน
+        let clientX = e.type === "touchmove" ? e.touches[0].clientX : e.clientX;
+        let clientY = e.type === "touchmove" ? e.touches[0].clientY : e.clientY;
+
+        // เช็กระยะทางที่เลื่อนไป (ถ้าเกิน threshold ถึงจะถือว่าลาก)
+        if (!isDragging) {
+            let dx = Math.abs(clientX - startX);
+            let dy = Math.abs(clientY - startY);
+            if (dx > dragThreshold || dy > dragThreshold) {
+                isDragging = true;
+                element.classList.add('dragging'); // เพิ่ม class dragging เพื่อปิด tooltip
+            }
+        }
+
+        // ถ้ากำลังลาก ให้ขยับปุ่มตาม
+        if (isDragging) {
+            pos1 = pos3 - clientX;
+            pos2 = pos4 - clientY;
+            pos3 = clientX;
+            pos4 = clientY;
+            
+            element.style.top = (element.offsetTop - pos2) + "px";
+            element.style.left = (element.offsetLeft - pos1) + "px";
+            element.style.bottom = "auto";
+            element.style.right = "auto";
+        }
+    }
+
+    function dragEnd() {
+        // เมื่อปล่อยนิ้ว ถ้า isDragging เป็น false แปลว่ามันคือการ "คลิก"
+        if (!isDragging) {
+            toggleCatChat(); // เปิดหน้าต่างแชท
+        }
+
+        // ลบ class และ listeners
+        element.classList.remove('dragging');
+        document.onmouseup = null;
+        document.onmousemove = null;
+        document.ontouchend = null;
+        document.ontouchmove = null;
+    }
+}
+
+// เปิดใช้งานระบบลากทันทีเมื่อโหลดเว็บเสร็จ (เพิ่มระบบลากปุ่ม)
+window.addEventListener('DOMContentLoaded', () => {
+    const chatBtn = document.getElementById("cat-chat-btn");
+    if (chatBtn) {
+        makeDraggableButton(chatBtn);
+    }
+    // ระบบลากหน้าต่างแชท (ของเดิม)
+    const chatWindow = document.getElementById("cat-chat-window");
+    const chatHeader = document.getElementById("cat-chat-header");
+    if (chatWindow && chatHeader) {
+        makeDraggable(chatWindow, chatHeader);
+    }
+});
+// ==========================================
+// 🔄 ฟังก์ชันอัปเกรด: โหลดข้อมูลจาก Sheets มาแกะกล่องแล้ววาดลง UI
+// ==========================================
+async function fetchDashboardData(studentId) {
+    const folderContainer = document.getElementById('folder-list-container');
+    const boardContainer = document.getElementById('board-list-container');
+    const recentContainer = document.getElementById('recent-list-container');
+    
+    // ขึ้นสถานะกำลังโหลดให้เด็กเห็นแบบนุ่มนวล
+    if (folderContainer) folderContainer.innerHTML = '<span style="color:#1e3a8a; font-size:12px;">⏳ กำลังโหลดแฟ้มงาน...</span>';
+    if (boardContainer) boardContainer.innerHTML = '<span style="color:#1e3a8a; font-size:12px;">⏳ กำลังโหลดกระดาน...</span>';
+
+    try {
+        let response = await fetch(GAS_LOGIN_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+                action: 'loadDashboard',
+                studentId: studentId
+            })
+        });
+
+        let result = await response.json();
+        console.log("📦 ข้อมูลดิบส่งมาจากหลังบ้าน:", result); // กัปตันสามารถกด F12 ดูใน Console ได้เลยว่าของมาไหม
+
+        // 🎯 จุดผ่าตัดสำเร็จ: เช็กสถานะและแกะกล่องเอาเฉพาะกล่อง "data" ข้างในไปใช้
+        if (result.status === "success" && result.data) {
+            
+            // ส่งข้อมูลที่แกะกล่องแล้ว (result.data) ไปให้ฟังก์ชันวาดหน้าจอทำงาน
+            renderDashboard(result.data);
+            
+        } else {
+            if (folderContainer) folderContainer.innerHTML = '<span style="color:#64748b; font-size:12px;">ยังไม่มีแฟ้มงานฮะ</span>';
+            if (boardContainer) boardContainer.innerHTML = '<span style="color:#64748b; font-size:12px;">ยังไม่มีกระดานที่เซฟไว้</span>';
+        }
+
+    } catch (error) {
+        console.error("⚠️ โหลดแดชบอร์ดล้มเหลว:", error);
+        if (folderContainer) folderContainer.innerHTML = '<span style="color:#ef4444; font-size:12px;">❌ ระบบเชื่อมต่อฐานข้อมูลขัดข้อง</span>';
+    }
+}// ==========================================
+// 📁 ฟังก์ชัน: สร้างแฟ้มใหม่
+// ==========================================
+async function createNewFolder() {
+    // 1. เช็กก่อนว่าล็อกอินหรือยัง
+    let studentId = window.currentUserId;
+    if (!studentId) {
+        alert("⚠️ กรุณาล็อกอินเพื่อสร้างแฟ้มส่วนตัวครับ!");
+        return;
+    }
+
+    // 2. ถามชื่อแฟ้ม
+    let folderName = prompt("ตั้งชื่อแฟ้มใหม่ของคุณ:");
+    if (!folderName) return; // ถ้ากดยกเลิกหรือไม่พิมพ์อะไร ให้หยุดทำงาน
+
+    try {
+        // 3. ยิงข้อมูลไปหา GAS (action: saveBoard)
+        let response = await fetch(GAS_LOGIN_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+                action: 'saveBoard',
+                studentId: studentId,
+                itemType: 'FOLDER',
+                itemName: folderName,
+                shareUrl: '', // แฟ้มยังไม่มี URL เป็นของตัวเอง
+                parentFolderId: '' // ตอนสร้างใหม่ให้อยู่หน้าแรกสุด (ยังไม่ซ้อนแฟ้ม)
+            })
+        });
+
+        let result = await response.json();
+
+        // 4. ถ้าเซฟสำเร็จ ให้โหลดแดชบอร์ดใหม่เพื่อโชว์แฟ้มทันที
+        if (result.success) {
+            console.log("สร้างแฟ้มสำเร็จ: " + result.id);
+            fetchDashboardData(studentId); 
+        } else {
+            alert("❌ สร้างแฟ้มไม่สำเร็จ: " + result.message);
+        }
+
+    } catch (error) {
+        console.error("Error:", error);
+        alert("❌ เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ครับ");
+    }
+}
+
+// ==========================================
+// 💾 ฟังก์ชัน: เซฟกระดานปัจจุบัน
+// ==========================================
+async function saveCurrentBoard() {
+    let studentId = window.currentUserId;
+    if (!studentId) {
+        alert("⚠️ กรุณาล็อกอินก่อนเซฟกระดานครับ!");
+        return;
+    }
+
+    let boardName = prompt("ตั้งชื่อกระดานนี้:");
+    if (!boardName) return;
+
+    // ดึง URL ของกระดานหน้าปัจจุบันที่เปิดอยู่ (หรือ URL ที่ต้องการแชร์)
+    let currentUrl = window.location.href; 
+
+    try {
+        let response = await fetch(GAS_LOGIN_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+                action: 'saveBoard',
+                studentId: studentId,
+                itemType: 'BOARD',
+                itemName: boardName,
+                shareUrl: currentUrl, 
+                parentFolderId: '' 
+            })
+        });
+
+        let result = await response.json();
+
+        if (result.success) {
+            alert("✅ เซฟกระดานลงแดชบอร์ดเรียบร้อย!");
+            fetchDashboardData(studentId); // รีเฟรชแดชบอร์ดให้โชว์กระดานใหม่
+        } else {
+            alert("❌ เซฟไม่สำเร็จ: " + result.message);
+        }
+
+    } catch (error) {
+        console.error("Error:", error);
+        alert("❌ เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ครับ");
+    }
+}
+// ==========================================
+// ➕ ฟังก์ชัน: ให้เด็กกดปุ่ม + เพื่อเพิ่มลิงก์ผลงานเอง
+// ==========================================
+async function addCustomLink() {
+    // 1. เช็กก่อนว่าเด็กล็อกอินหรือยัง
+    let studentId = window.currentUserId;
+    if (!studentId) {
+        alert("⚠️ ต้องล็อกอินก่อนถึงจะบันทึกผลงานได้นะฮะ!");
+        return;
+    }
+
+    // 2. ถามชื่อผลงาน
+    let boardName = prompt("📝 ตั้งชื่อกระดานหรือผลงานนี้:");
+    if (!boardName) return; // ถ้ากดยกเลิก ก็หยุดแค่นี้
+
+    // 3. ถามลิงก์ (ฉลาดตรงที่เอา URL หน้าปัจจุบันมาใส่รอไว้เลย เด็กจะได้ไม่ต้องพิมพ์ถ้าแค่จะเซฟหน้านี้)
+    let defaultUrl = window.location.href;
+    let boardUrl = prompt("🔗 วางลิงก์ที่ต้องการบันทึก (หรือกด OK เพื่อใช้ลิงก์ปัจจุบัน):", defaultUrl);
+    if (!boardUrl) return;
+
+    try {
+        // 4. ส่งข้อมูลไปให้ Google Sheets (GAS) หลังบ้าน
+        let response = await fetch(GAS_LOGIN_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+                action: 'saveBoard',
+                studentId: studentId,
+                itemType: 'BOARD',
+                itemName: boardName,
+                shareUrl: boardUrl,
+                parentFolderId: '' // ช่วงแรกให้เก็บไว้ข้างนอกก่อน (เดี๋ยวสเต็ปหน้าเราทำลากเข้าแฟ้ม)
+            })
+        });
+
+        let result = await response.json();
+
+        // 5. ถ้าหลังบ้านบอกว่าเซฟผ่าน ก็โหลดแฟ้มใหม่มาโชว์เลย!
+        if (result.success) {
+            alert("✅ บันทึกผลงานลงคลังเรียบร้อย!");
+            // รีเฟรชข้อมูลแดชบอร์ด เพื่อให้ลิงก์ใหม่เด้งขึ้นมาโชว์ทันที
+            if (typeof fetchDashboardData === "function") {
+                fetchDashboardData(studentId);
+            }
+        } else {
+            alert("❌ บันทึกไม่สำเร็จ: " + result.message);
+        }
+
+    } catch (error) {
+        console.error("Error:", error);
+        alert("❌ เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ฮะ ลองใหม่อีกครั้งนะ");
+    }
+}
+// ==========================================
+// 🖥️ ฟังก์ชันวาดหน้าจอ (อัปเกรดมีปุ่ม "🚀 เปิด" ลิงก์)
+// ==========================================
+function renderDashboard(data) {
+    const folderContainer = document.getElementById('folder-list-container');
+    const boardContainer = document.getElementById('board-list-container');
+    folderContainer.innerHTML = '';
+    boardContainer.innerHTML = '';
+
+    // 1. วาดโครงสร้างแฟ้มก่อน 
+    if (data.folders && data.folders.length > 0) {
+        data.folders.forEach(folder => {
+            folderContainer.innerHTML += `
+                <div class="folder-wrapper">
+                    <div class="folder-item" id="${folder.id}" data-folder-id="${folder.id}"
+                         onclick="toggleFolder('${folder.id}')" style="cursor: pointer;"
+                         ondragover="event.preventDefault();"
+                         ondragenter="this.classList.add('drag-over');"
+                         ondragleave="this.classList.remove('drag-over');"
+                         ondrop="dropBoardToFolder(event, this, '${folder.id}', '${folder.name}')">
+                        
+                        <div style="display: flex; align-items: center; gap: 8px; pointer-events: none;">
+                            <button id="icon-${folder.id}" class="btn-toggle-folder">▶️</button>
+                            <span class="folder-text">📁 <span id="name-${folder.id}">${folder.name}</span></span>
+                        </div>
+                        
+                        <div style="display: flex; gap: 2px;">
+                            <button onclick="event.stopPropagation();" class="btn-action-folder" title="เปลี่ยนชื่อ">✏️</button>
+                        </div>
+                    </div>
+                    
+                    <div id="content-${folder.id}" class="folder-content"></div>
+                </div>
+            `;
+        });
+    } else {
+        folderContainer.innerHTML = '<span style="color:#94a3b8; font-size:12px; padding-left:10px;">ยังไม่มีแฟ้มงานฮะ</span>';
+    }
+
+    // 2. วาดกระดาน (อัปเกรดเพิ่มปุ่มเปิดลิงก์)
+    if (data.boards && data.boards.length > 0) {
+        data.boards.forEach(board => {
+            let folderName = "รากฐาน (ไม่มีแฟ้ม)";
+            let tagStyle = "background: #f1f5f9; color: #64748b;";
+            let targetContainerId = 'board-list-container'; 
+            
+            if (board.parentId) {
+               let parentFolder = data.folders.find(f => f.id === board.parentId);
+               if (parentFolder) {
+                   folderName = `📁 ${parentFolder.name}`;
+                   tagStyle = "background: #dbeafe; color: #1e40af;";
+                   targetContainerId = `content-${board.parentId}`; 
+               }
+            }
+
+            // 🌟 จุดที่มีการเปลี่ยนแปลง: เพิ่มปุ่ม <a> สำหรับเปิด URL
+            const boardHtml = `
+                <div class="file-item" id="${board.id}" draggable="true" ondragstart="dragStart(event)">
+                    <div class="file-info-wrapper" style="flex:1;">
+                        <span style="font-size: 16px;">📝</span>
+                        <div>
+                            <div class="file-title-text">${board.name}</div>
+                            <span class="file-folder-tag" id="tag-${board.id}" data-current-folder="${board.parentId || ''}" style="${tagStyle}">${folderName}</span>
+                        </div>
+                    </div>
+                    
+                    <a href="${board.url}" target="_blank" 
+                       style="background: #f0f9ff; color: #0284c7; border: 1px solid #bae6fd; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; text-decoration: none; display: flex; align-items: center; gap: 4px; transition: all 0.2s; z-index: 10;"
+                       onmouseover="this.style.background='#e0f2fe'; this.style.transform='scale(1.05)';"
+                       onmouseout="this.style.background='#f0f9ff'; this.style.transform='scale(1)';">
+                       เปิด 🚀
+                    </a>
+                </div>
+            `;
+            
+            let targetDiv = document.getElementById(targetContainerId);
+            if (targetDiv) {
+                targetDiv.innerHTML += boardHtml;
+            } else {
+                boardContainer.innerHTML += boardHtml; 
+            }
+        });
+    } else {
+        boardContainer.innerHTML = '<span style="color:#94a3b8; font-size:12px; padding-left:10px;">ไม่มีกระดานด้านนอกฮะ</span>';
+    }
+
+    if (data.folders) {
+        data.folders.forEach(folder => {
+            let contentDiv = document.getElementById(`content-${folder.id}`);
+            if (contentDiv && contentDiv.innerHTML.trim() === '') {
+                contentDiv.innerHTML = '<span style="color:#94a3b8; font-size:11px;">ไม่มีกระดานในแฟ้มนี้</span>';
+            }
+        });
+    }
+}
+// ==========================================
+// 📂 ฟังก์ชันกาง/พับแฟ้ม (Toggle Folder)
+// ==========================================
+function toggleFolder(folderId) {
+    let contentDiv = document.getElementById(`content-${folderId}`);
+    let iconBtn = document.getElementById(`icon-${folderId}`);
+    
+    if (contentDiv) {
+        if (contentDiv.style.display === "flex") {
+            // สั่งปิด
+            contentDiv.style.display = "none";
+            iconBtn.innerText = "▶️";
+            iconBtn.style.transform = "rotate(0deg)";
+        } else {
+            // สั่งเปิด
+            contentDiv.style.display = "flex";
+            iconBtn.innerText = "🔽";
+            iconBtn.style.transform = "rotate(0deg)"; // ขยับลูกศร
+        }
+    }
+}
 </script>
 
 <script type="module">
@@ -2946,20 +3810,25 @@ setTimeout(() => {
 </style>
 
 <div id="cat-chat-window">
-    <div class="cat-chat-header">
-        <span>🐾 AI</span>
-        <button onclick="toggleCatChat()" style="background: none; border: none; cursor: pointer; font-weight: bold; color: #78350f;">✕</button>
+    <div class="cat-chat-header" id="cat-chat-header">
+        <span style="font-weight: bold; color: #78350f;">🐾 AI แชท</span>
+        <button onclick="toggleCatChat()" style="background: none; border: none; cursor: pointer; font-size: 16px; font-weight: bold; color: #78350f; padding: 0 5px;">✕</button>
     </div>
-    <div id="cat-chat-messages">
-        <div class="msg-bubble msg-cat">เมี้ยว~ สวัสดีฮะ! 🐱</div>
+    
+    <div id="cat-chat-messages" style="height: 250px; overflow-y: auto; padding: 10px; background: #fafafa;">
+        <div class="msg-bubble msg-cat" style="background: #fef3c7; padding: 8px 12px; border-radius: 15px; display: inline-block; margin-bottom: 10px;">เมี้ยว~ สวัสดีฮะ! 🐱</div>
     </div>
-    <div class="cat-chat-input-area">
-        <input type="text" id="cat-input-box" placeholder="ถามครูเหมียวสิ..." onkeypress="handleCatEnter(event)">
-        <button id="cat-send-btn" onclick="sendToCat()">➤</button>
+    
+    <div class="cat-chat-input-area" style="display: flex; padding: 10px; border-top: 1px solid #e5e7eb;">
+        <input type="text" id="cat-input-box" placeholder="ถามครูเหมียวสิ..." onkeypress="handleCatEnter(event)" style="flex: 1; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; outline: none;">
+        <button id="cat-send-btn" onclick="sendToCat()" style="margin-left: 8px; background: #fbbf24; color: #78350f; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold;">➤</button>
     </div>
 </div>
 
-<div id="cat-bot-btn" onclick="toggleCatChat()" title="คุยกับครูเหมียว AI">🐱</div>
+<button id="cat-chat-btn" title="คุยกับครู AI">
+    <div class="cat-emoji">🐱</div>
+    <div class="cat-tooltip">คุยกับครู AI</div>
+</button>
 
 <script>
     // เปิด/ปิด หน้าต่างแชท
@@ -3025,6 +3894,88 @@ try {
         
         msgBox.scrollTop = msgBox.scrollHeight;
     }
+         // ==========================================
+// ฟังก์ชันปิด/เปิด หน้าต่างแชทแมว
+// ==========================================
+function toggleCatChat() {
+    const chatWindow = document.getElementById('cat-chat-window');
+    if (chatWindow.style.display === "none") {
+        chatWindow.style.display = "flex";
+    } else {
+        chatWindow.style.display = "none";
+    }
+}
+
+// ==========================================
+// ระบบลากหน้าต่าง (รองรับทั้ง Mouse และ Touch)
+// ==========================================
+function makeDraggable(element, header) {
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+    // เมื่อกดเมาส์ หรือ เอานิ้วแตะ
+    header.onmousedown = dragStart;
+    header.ontouchstart = dragStart;
+
+    function dragStart(e) {
+        // ถ้าเผลอไปกดโดนปุ่ม ✕ ให้ปล่อยผ่าน ไม่ต้องทำงานฟังก์ชันลาก
+        if (e.target.tagName.toLowerCase() === 'button') return; 
+        
+        e.preventDefault();
+        
+        // เก็บตำแหน่งเริ่มต้น
+        if (e.type === "touchstart") {
+            pos3 = e.touches[0].clientX;
+            pos4 = e.touches[0].clientY;
+        } else {
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+        }
+
+        // เมื่อเริ่มลาก ให้เรียกใช้ฟังก์ชันขยับหน้าต่าง
+        document.onmouseup = dragEnd;
+        document.onmousemove = dragAction;
+        document.ontouchend = dragEnd;
+        document.ontouchmove = dragAction;
+    }
+
+    function dragAction(e) {
+        e.preventDefault();
+        
+        // คำนวณตำแหน่งเมาส์/นิ้ว ที่เปลี่ยนไป
+        let clientX = e.type === "touchmove" ? e.touches[0].clientX : e.clientX;
+        let clientY = e.type === "touchmove" ? e.touches[0].clientY : e.clientY;
+
+        pos1 = pos3 - clientX;
+        pos2 = pos4 - clientY;
+        pos3 = clientX;
+        pos4 = clientY;
+
+        // สั่งให้กล่องแชทขยับตามนิ้ว
+        element.style.top = (element.offsetTop - pos2) + "px";
+        element.style.left = (element.offsetLeft - pos1) + "px";
+        
+        // ล้างค่า bottom/right เดิมทิ้ง เพื่อให้ top/left ทำงานได้สมบูรณ์
+        element.style.bottom = "auto";
+        element.style.right = "auto";
+    }
+
+    function dragEnd() {
+        // เมื่อปล่อยนิ้ว/เมาส์ ให้หยุดการทำงาน
+        document.onmouseup = null;
+        document.onmousemove = null;
+        document.ontouchend = null;
+        document.ontouchmove = null;
+    }
+}
+
+// เปิดใช้งานระบบลากทันทีเมื่อโหลดเว็บเสร็จ
+window.addEventListener('DOMContentLoaded', () => {
+    const chatWindow = document.getElementById("cat-chat-window");
+    const chatHeader = document.getElementById("cat-chat-header");
+    if (chatWindow && chatHeader) {
+        makeDraggable(chatWindow, chatHeader);
+    }
+});
 </script>
 </body>
 </html>
