@@ -18,15 +18,7 @@
 </script>
     <style>
 /* แช่แข็งหน้าเว็บ ไม่ให้เด้งดึ๋ง และไม่ให้บราวเซอร์แอบซูม */
-html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden; /* ห้ามมีแถบเลื่อนกวนใจ */
-    overscroll-behavior: none; /* ปิดเอฟเฟกต์ยางยืดของ iPad */
-    -webkit-text-size-adjust: 100%; /* ห้ามบราวเซอร์แอบขยายฟอนต์เอง */
-}
+
 /* สไตล์ปุ่มลอยครู AI (Movable Floating Button) */
 #cat-chat-btn {
     position: fixed;
@@ -137,10 +129,11 @@ html, body {
             --brutal-shadow-hover: 0 8px 24px rgba(15, 23, 42, 0.12);
         }
 
-        /* =========================================================
+       /* =========================================================
            🌍 2. ตั้งค่าพื้นฐาน (Global & Resets สำหรับกระดานเต็มจอ)
            ========================================================= */
         html, body { 
+            /* 🎨 ส่วนความสวยงาม */
             font-family: 'K2D', sans-serif; 
             background-color: var(--bg-cool); 
             color: var(--text-dark);
@@ -148,11 +141,13 @@ html, body {
             padding: 0;
             width: 100vw;
             height: 100vh;
-            overflow: hidden; 
+            overflow: hidden; /* ห้ามมีแถบเลื่อนกวนใจหน้าหลัก */
+
+            /* 🛡️ ยันต์กัน iPad ซูมและเด้งดึ๋ง (รวมไว้ที่นี่ที่เดียว) */
             overscroll-behavior: none; 
-            
-            -webkit-touch-callout: none;    
-            -webkit-user-select: none;      
+            -webkit-text-size-adjust: 100%; /* ห้ามบราวเซอร์ขยายฟอนต์เอง */
+            -webkit-touch-callout: none;    /* ปิดเมนูเด้งเวลาแตะค้าง */
+            -webkit-user-select: none;      /* กันการคลุมดำ */
             user-select: none;
         }
 
@@ -356,6 +351,40 @@ html, body {
     background: none; border: none; cursor: pointer; font-size: 12px;
     transition: transform 0.2s; pointer-events: none;
 }
+/* ==========================================
+       🛡️ เกราะป้องกัน Sidebar บีบอัดเนื้อหาจนเละ
+       ========================================== */
+       
+    /* 1. เปลี่ยนให้กล่องหลักเลิกบีบเนื้อหา และปล่อยให้ Scroll ทำงานปกติ */
+    .sidebar-content-active { 
+        display: block !important; /* เปลี่ยนจาก flex เป็น block */
+        padding: 20px; 
+        flex: 1; 
+        overflow-y: auto; 
+    }
+
+    /* 2. สั่งห้ามตัวแฟ้ม, ไฟล์ และหัวข้อ หดตัวเด็ดขาด (flex-shrink: 0) */
+    .folder-item, 
+    .file-item, 
+    .section-title,
+    .folder-list-container,
+    .file-list-container {
+        flex-shrink: 0 !important;
+        position: relative; /* จัดระเบียบเลเยอร์ไม่ให้ทับกัน */
+    }
+
+    /* 3. ดันระยะห่างให้แต่ละรายการนิดนึง จะได้ดูสบายตาขึ้น */
+    .folder-item {
+        margin-bottom: 8px;
+    }
+    .file-item {
+        margin-bottom: 8px;
+    }
+    .section-title {
+        margin-top: 25px !important; 
+        margin-bottom: 12px !important;
+        display: flex; /* ให้ไอคอนกับข้อความเรียงสวยๆ */
+    }
 
     </style>
 </head>
@@ -3484,11 +3513,18 @@ function renderDashboard(data) {
                     </div>
                     
                     <a href="${board.url}" target="_blank" 
-                       style="background: #f0f9ff; color: #0284c7; border: 1px solid #bae6fd; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; text-decoration: none; display: flex; align-items: center; gap: 4px; transition: all 0.2s; z-index: 10;"
-                       onmouseover="this.style.background='#e0f2fe'; this.style.transform='scale(1.05)';"
-                       onmouseout="this.style.background='#f0f9ff'; this.style.transform='scale(1)';">
-                       เปิด 🚀
-                    </a>
+       style="background: #f0f9ff; color: #0284c7; border: 1px solid #bae6fd; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; text-decoration: none; display: flex; align-items: center; gap: 4px; transition: all 0.2s; z-index: 10;"
+       onmouseover="this.style.background='#e0f2fe'; this.style.transform='scale(1.05)';"
+       onmouseout="this.style.background='#f0f9ff'; this.style.transform='scale(1)';">
+       เปิด 🚀
+    </a>
+
+    <button onclick="deleteBoard('${board.id}')" title="ลบกระดานนี้"
+            style="background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; z-index: 10;"
+            onmouseover="this.style.background='#ef4444'; this.style.color='white'; this.style.transform='scale(1.05)';"
+            onmouseout="this.style.background='#fee2e2'; this.style.color='#ef4444'; this.style.transform='scale(1)';">
+        🗑️
+    </button>
                 </div>
             `;
             
@@ -3531,6 +3567,23 @@ function toggleFolder(folderId) {
             iconBtn.innerText = "🔽";
             iconBtn.style.transform = "rotate(0deg)"; // ขยับลูกศร
         }
+    }
+}
+// ฟังก์ชันสำหรับลบกระดาน/ลิงก์
+function deleteBoard(boardId) {
+    // ถามย้ำเพื่อความชัวร์ ป้องกันมือลั่น
+    if (confirm("⚠️ แน่ใจนะครับว่าจะลบกระดานนี้ทิ้ง?\n(ลบแล้วกู้คืนไม่ได้นะฮะกัปตัน!)")) {
+        
+        // ---------------------------------------------------
+        // 🚨 กัปตันใส่โค้ดสำหรับ "ลบข้อมูลจริงๆ" ตรงนี้ครับ
+        // เช่น ลบจาก localStorage, หรือยิง API ไปลบใน Google Apps Script
+        // ลบเสร็จแล้วค่อยสั่งให้มันโหลดรายการไฟล์ใน Sidebar ใหม่อีกรอบ
+        // ---------------------------------------------------
+        
+        console.log("ลบกระดาน ID: " + boardId + " เรียบร้อย!");
+        
+        // ตัวอย่าง: ถ้ากัปตันมีฟังก์ชันโหลด Sidebar ใหม่ ให้เรียกตรงนี้เพื่อให้ปุ่มที่ลบหายไปจากหน้าจอ
+        // loadSidebarData(); 
     }
 }
 // ==========================================
