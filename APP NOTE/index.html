@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>nooknickie Board | กระดานส่วนตัว</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
@@ -17,6 +17,16 @@
   }
 </script>
     <style>
+/* แช่แข็งหน้าเว็บ ไม่ให้เด้งดึ๋ง และไม่ให้บราวเซอร์แอบซูม */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* ห้ามมีแถบเลื่อนกวนใจ */
+    overscroll-behavior: none; /* ปิดเอฟเฟกต์ยางยืดของ iPad */
+    -webkit-text-size-adjust: 100%; /* ห้ามบราวเซอร์แอบขยายฟอนต์เอง */
+}
 /* สไตล์ปุ่มลอยครู AI (Movable Floating Button) */
 #cat-chat-btn {
     position: fixed;
@@ -378,13 +388,14 @@
                     <button onclick="changeNbPage(1)" class="glass-tool-btn" style="padding: 4px 10px; font-weight: bold;">▶</button>
                     <button onclick="addNewNbPage()" class="glass-tool-btn" style="color: var(--success); font-weight: bold; margin-left: 5px;">➕ เพิ่มหน้า</button>
                 </div>    
-
-                <div id="nb-drawing-mode-switch" onclick="handlePenModeSwitchClick()" style="display: flex; align-items: center; background: #e2e8f0; border: 2px solid #cbd5e1; border-radius: 20px; padding: 2px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); position: relative; cursor: pointer; user-select: none; width: 190px; height: 32px; box-sizing: border-box;">
-                    <span id="nb-mode-thumb" style="position: absolute; top: 2px; left: 2px; height: 24px; width: 90px; background: #3b82f6; border-radius: 18px; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></span>
-                    <span id="label-mode-touch" style="flex: 1; text-align: center; color: white; font-size: 11px; font-weight: bold; position: relative; z-index: 2; transition: color 0.3s;">👆 นิ้ว/เมาส์</span>
-                    <span id="label-mode-pen" style="flex: 1; text-align: center; color: #64748b; font-size: 11px; font-weight: bold; position: relative; z-index: 2; transition: color 0.3s;">✏️ ปากกา</span>
-                </div>
-
+<div id="nb-drawing-mode-switch" onclick="handlePenModeSwitchClick()" style="display: flex; align-items: center; background: #e2e8f0; border: 2px solid #cbd5e1; border-radius: 20px; padding: 2px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); position: relative; cursor: pointer; user-select: none; width: 190px; height: 32px; box-sizing: border-box;">
+    
+    <span id="nb-mode-thumb" style="position: absolute; top: 2px; left: 2px; height: 24px; width: 90px; background: #3b82f6; border-radius: 18px; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transform: translateX(94px);"></span>
+    
+    <span id="label-mode-touch" style="flex: 1; text-align: center; color: #64748b; font-size: 11px; font-weight: bold; position: relative; z-index: 2; transition: color 0.3s;">👆 นิ้ว/เมาส์</span>
+    
+    <span id="label-mode-pen" style="flex: 1; text-align: center; color: white; font-size: 11px; font-weight: bold; position: relative; z-index: 2; transition: color 0.3s;">✏️ ปากกา</span>
+</div>
                 <div id="nb-joystick-zone" title="โยกจอยเพื่อเลื่อนกระดาน" style="position: relative; width: 36px; height: 36px; background: #f1f5f9; border: 2px solid #cbd5e1; border-radius: 50%; touch-action: none; cursor: crosshair; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
                     <div id="nb-joystick-knob" style="position: absolute; top: 8px; left: 8px; width: 20px; height: 20px; background: radial-gradient(circle, #60a5fa, #3b82f6); border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.3); transform: translate(0px, 0px); cursor: grab; display: flex; align-items: center; justify-content: center;">
                         <div style="width: 4px; height: 4px; background: white; border-radius: 50%;"></div>
@@ -763,6 +774,28 @@
 </style>
 
 <script>
+// ==========================================
+// 🛡️ ระบบป้องกัน iPad แอบซูมหน้าเว็บ (Anti-Browser Zoom)
+// ==========================================
+
+// 1. ดักจับและบล็อกเมื่อมีคนพยายามใช้ท่าทาง (Gesture) ซูมบน Safari
+document.addEventListener('gesturestart', function(e) {
+    e.preventDefault();
+});
+document.addEventListener('gesturechange', function(e) {
+    e.preventDefault();
+});
+document.addEventListener('gestureend', function(e) {
+    e.preventDefault();
+});
+
+// 2. ดักจับเมื่อมีคนใช้ 2 นิ้วถ่างจอ (ทัชสกรีนทั่วไป)
+document.addEventListener('touchmove', function(e) {
+    // ถ้านิ้วแตะจอมากกว่า 1 นิ้ว (เช่น ถ่างซูม) ให้ตัดจบการทำงานของบราวเซอร์ทันที!
+    if (e.touches.length > 1) {
+        e.preventDefault();
+    }
+}, { passive: false }); // ต้องตั้ง passive: false เพื่อให้ใช้คำสั่ง preventDefault() ได้
     // เปิด/ปิด Sidebar และโหมดล็อกอิน
     function toggleSidebar() { document.getElementById('examate-sidebar').classList.toggle('open'); }
     function mockLogin() {
@@ -1025,7 +1058,9 @@ async function realLogin() {
         let activeGeoShape = null;
         let geoStartX = 0;
         let geoStartY = 0;
-        let isPenOnlyMode = false;
+        // เปลี่ยนจาก false เป็น true เพื่อบอกระบบว่า "บังคับใช้ปากกาวาดเท่านั้นนะ"
+let isPenOnlyMode = true; 
+
 const _origToObject = fabric.Object.prototype.toObject;
         fabric.Object.prototype.toObject = function(propertiesToInclude) {
             return _origToObject.call(this, [
