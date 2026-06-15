@@ -396,6 +396,9 @@
     🧮 เครื่องคิดเลข
 </button>
                 <button id="btn-save-notebook" onclick="saveBoardToCloud()" class="glass-tool-btn" style="background: #e0f2fe !important; color: #0284c7; border: 1px solid #7dd3fc !important; padding: 6px 12px; font-weight: bold;">💾 เซฟกระดาน</button>
+<button onclick="shareAsTemplate()" class="btn-dashboard" style="background: #a855f7; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer;">
+    📢 แชร์เป็นเทมเพลต
+</button>
                        <button onclick="clearNotebook()" class="glass-tool-btn" style="padding: 6px 12px; font-weight: bold;">🧽 ล้างหน้านี้</button>
                 <button onclick="deleteNbPage(nbCurrentPage)" class="glass-tool-btn" style="background: #fee2e2 !important; color: #ef4444; border: 1px solid #fca5a5 !important; padding: 6px 12px; font-weight: bold;">🗑️ ลบหน้า</button> 
 <button onclick="openPythonIDE('')" class="glass-tool-btn" style="background: #1e1e1e !important; color: #10b981; border: 1px solid #333333 !important; padding: 6px 12px; font-weight: bold; border-radius: 8px;">
@@ -1021,11 +1024,33 @@ const _origToObject = fabric.Object.prototype.toObject;
                 'boxStroke'            // จำสีกรอบข้อความ
             ].concat(propertiesToInclude || []));
         };
-
-        // ==========================================
-        // 🚀 ปลุกกระดานเต็มจอ (Standalone Engine)
+// ==========================================
+        // 🚀 ปลุกกระดานเต็มจอ (Standalone Engine) + ระบบดักจับ Template
         // ==========================================
         function initNotebookStandalone() {
+            // 🌟 1. [ส่วนที่เพิ่มใหม่] ตรวจสอบโหมด Template จาก URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const boardId = urlParams.get('boardId');
+            const isTemplateMode = urlParams.get('isTemplate') === 'true';
+
+            if (isTemplateMode && boardId) {
+                console.log("📢 บอร์ดนี้เปิดในโหมดเทมเพลตครู!");
+                
+                // ใช้ setTimeout หน่วงเวลานิดนึงรอให้ปุ่มต่างๆ บนหน้าเว็บโหลดเสร็จก่อน
+                setTimeout(() => {
+                    // ค้นหาปุ่มเซฟกระดานอันเดิมบนหน้าจอ (หาจากคำสั่ง onclick)
+                    const saveBtn = document.querySelector('button[onclick="saveCurrentBoard()"]');
+                    if (saveBtn) {
+                        saveBtn.innerHTML = "📥 คัดลอกกระดานเป็นของฉัน";
+                        saveBtn.style.background = "#a855f7"; // เปลี่ยนเป็นสีม่วงโดดเด่น
+                        saveBtn.style.boxShadow = "0 0 10px rgba(168, 85, 247, 0.5)";
+                        // เปลี่ยนคำสั่งปุ่มให้วิ่งไปหาฟังก์ชันก๊อปปี้ไฟล์แทน
+                        saveBtn.onclick = () => cloneTemplateToStudent(boardId);
+                    }
+                }, 500);
+            }
+
+            // 🌟 2. [โค้ดเดิมของกัปตัน] เริ่มปลุก Fabric.js
             if (!fCanvas) {
                 const canvasEl = document.getElementById('notebook-canvas');
                 const parentEl = canvasEl.parentElement;
@@ -1177,7 +1202,7 @@ const _origToObject = fabric.Object.prototype.toObject;
                     updateNbPageText();
                 }
             }
-        }
+        }        
 
         // ==========================================
         // 🛠️ ชุดคำสั่งเดิมทั้งหมดของกัปตัน (ห้ามลบ!)
@@ -3433,6 +3458,113 @@ function toggleFolder(folderId) {
             iconBtn.innerText = "🔽";
             iconBtn.style.transform = "rotate(0deg)"; // ขยับลูกศร
         }
+    }
+}
+// ==========================================
+// 📢 ฟังก์ชัน: ครูสั่งล็อกบอร์ดนี้ให้กลายเป็น Template
+// ==========================================
+async function shareAsTemplate() {
+    // 1. เช็กก่อนว่าบอร์ดหน้าปัจจุบันมีไอดีไหม (ดึงจาก URL)
+    const urlParams = new URLSearchParams(window.location.search);
+    let currentBoardId = urlParams.get('boardId');
+    
+    if (!currentBoardId) {
+        alert("⚠️ กระดานนี้ยังไม่ได้ถูกเซฟลงคลังเลยครับ ต้องเซฟก่อนถึงจะแชร์ได้ฮะ!");
+        return;
+    }
+
+    // 2. 🔥 ด่านเช็กรหัสผ่านคุณครู (ตั้งเปลี่ยนรหัสตรงคำว่า 'nix1234' ได้เลยครับ)
+    let teacherPass = prompt("🔐 กรุณากรอกรหัสผ่านคุณครู เพื่อยืนยันการแชร์เป็นเทมเพลตส่วนกลาง:");
+    if (teacherPass !== "nix1234") { 
+        alert("❌ รหัสผ่านไม่ถูกต้อง! ไม่สามารถแชร์เป็นเทมเพลตได้ครับ");
+        return;
+    }
+
+    try {
+        // 3. ส่งข้อมูลไปบอก GAS หลังบ้านให้เปลี่ยนสถานะบอร์ดนี้
+        let response = await fetch(GAS_LOGIN_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+                action: 'markAsTemplate',
+                boardId: currentBoardId,
+                studentId: window.currentUserId // ส่งไอดีครูไปยืนยัน
+            })
+        });
+
+        let result = await response.json();
+
+        if (result.success) {
+            // สร้างลิงก์เทมเพลตให้ครูก๊อปปี้ไปส่งให้เด็กได้เลย
+            let templateLink = window.location.href + "&isTemplate=true";
+            
+            // สั่งให้คัดลอกลิงก์ลงคลิปบอร์ดคอมพิวเตอร์อัตโนมัติ
+            navigator.clipboard.writeText(templateLink);
+            
+            alert("🎯 สำเร็จ! เปลี่ยนกระดานนี้เป็น 'เทมเพลตส่วนกลาง' เรียบร้อยครับ\n\n🔗 ระบบก๊อปปี้ลิงก์สำหรับส่งให้เด็กให้แล้ว นำไปวางส่งในไลน์/แชทได้เลยฮะ!");
+            console.log("Template Link:", templateLink);
+        } else {
+            alert("❌ ตั้งค่าไม่สำเร็จ: " + result.message);
+        }
+
+    } catch (error) {
+        console.error("Error:", error);
+        alert("❌ เชื่อมต่อเซิร์ฟเวอร์หลังบ้านไม่ได้ครับกัปตัน");
+    }
+}
+async function cloneTemplateToStudent(templateBoardId) {
+    let studentId = window.currentUserId;
+    if (!studentId) {
+        alert("⚠️ กรุณาล็อกอินเข้าระบบแดชบอร์ดก่อนครับ ถึงจะบันทึกกระดานนี้เป็นของตัวเองได้ฮะ!");
+        return;
+    }
+
+    let newBoardName = prompt("📝 ตั้งชื่อกระดานสำหรับส่งงาน / เรียนส่วนตัวของคุณ:", "คัดลอก - กระดานสื่อการสอน");
+    if (!newBoardName) return;
+
+    // 1. ดึงลายเส้น (และรูปภาพ) บน Canvas ปัจจุบันของครู ออกมาเป็น JSON
+    let canvasJson = JSON.stringify(fCanvas.toJSON()); 
+    let newBoardId = 'board-' + Date.now(); // เสกไอดีกระดานใหม่ให้เด็ก
+
+    try {
+        // 2. ยิงข้อมูลไปหา GAS หลังบ้านเพื่อสั่งบันทึก "ชื่อกระดาน" ลงแดชบอร์ด
+        let response = await fetch(GAS_LOGIN_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+                action: 'saveBoard',
+                studentId: studentId,
+                itemType: 'BOARD',
+                itemName: newBoardName,
+                shareUrl: window.location.origin + window.location.pathname + "?boardId=" + newBoardId,
+                parentFolderId: '' 
+            })
+        });
+
+        let result = await response.json();
+
+        if (result.success) {
+            // ==========================================
+            // 🚨 จุดที่ต้องเพิ่ม: บันทึกลายเส้นลงไอดีกระดานใหม่!
+            // ==========================================
+            
+            // กรณีที่ 1: ถ้ากัปตันใช้ LocalStorage (ระบบจำในเครื่อง) ให้ใช้บรรทัดนี้:
+            // localStorage.setItem(newBoardId, canvasJson);
+            
+            // กรณีที่ 2: ถ้ากัปตันมีฟังก์ชันเซฟงานขึ้นฐานข้อมูล (เช่น saveBoardDataToDB) ให้เรียกใช้ตรงนี้
+            // await saveBoardDataToDB(newBoardId, canvasJson); 
+
+            alert("✅ คัดลอกแม่แบบเข้าคลังไฟล์ของคุณเรียบร้อยแล้วฮะ! ระบบกำลังพาไปหน้ากระดานส่วนตัวของคุณ...");
+            
+            // 3. วาร์ปเด็กไปหน้ากระดานใหม่ของตัวเอง (พร้อมลายเส้นครูที่ก๊อปมาแล้ว)
+            window.location.href = window.location.origin + window.location.pathname + "?boardId=" + newBoardId;
+            
+        } else {
+            alert("❌ คัดลอกล้มเหลว: " + result.message);
+        }
+    } catch (error) {
+        console.error(error);
+        alert("❌ เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูลครับ");
     }
 }
 </script>
