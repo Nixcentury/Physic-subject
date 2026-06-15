@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Graham's Law: Molecular Sprint</title>
+    <title>Graham's Law: Molecular Sprint V.4 (DOM Engine)</title>
     <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -31,17 +31,16 @@
 
         /* 🏁 Race Track */
         .race-track {
-            background: #fff; border: var(--border); height: 250px; position: relative;
+            background: #fff; border: var(--border); height: 260px; position: relative;
             background-image: 
                 linear-gradient(90deg, transparent 92%, #ef4444 92%, #ef4444 93%, transparent 93%),
                 linear-gradient(#f1f5f9 2px, transparent 2px);
-            background-size: 100% 100%, 100% 125px; overflow: hidden;
+            background-size: 100% 100%, 100% 130px; overflow: hidden;
             box-shadow: inset 5px 5px 0px rgba(0,0,0,0.05);
         }
         
-        /* แก้ไขเส้นชัยให้อยู่ที่ 85% ของจอ เพื่อให้คำนวณง่ายและตรงกับ Canvas */
         .finish-line-checker {
-            position: absolute; left: 85%; top: 0; bottom: 0; width: 25px;
+            position: absolute; right: 5%; top: 0; bottom: 0; width: 25px;
             background: repeating-linear-gradient(45deg, #000, #000 10px, #fff 10px, #fff 20px);
             border-left: 4px solid #ef4444; border-right: 4px solid #000; z-index: 5;
         }
@@ -49,6 +48,20 @@
         .lane-label {
             position: absolute; left: 10px; background: #000; color: #fff;
             padding: 2px 10px; font-weight: 800; font-size: 16px; z-index: 6; border-radius: 4px; border: 2px solid #fff;
+        }
+
+        /* 🟢 Gas Balls (DOM Based) */
+        .gas-ball {
+            position: absolute; left: 20px; width: 46px; height: 46px; border-radius: 50%;
+            border: 3px solid #000; display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 14px; color: #fff; z-index: 10;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.3); text-shadow: 1px 1px 0px rgba(0,0,0,0.5);
+            /* Background grid inside the ball to see rotation */
+            background-image: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), transparent);
+        }
+        .trail {
+            position: absolute; left: 45px; height: 16px; width: 0px;
+            border-radius: 8px; z-index: 5; opacity: 0.4;
         }
 
         /* 📊 Analytics Dashboard */
@@ -59,7 +72,7 @@
         .time-1 { color: #2563eb; }
         .time-2 { color: #ea580c; }
 
-        /* Formula Styling (HTML/CSS) */
+        /* Formula Styling */
         .formula-box {
             display: flex; align-items: center; justify-content: center; gap: 8px;
             font-size: 24px; font-weight: 900; margin-top: 5px; color: #4c1d95; font-family: 'K2D', sans-serif;
@@ -78,9 +91,10 @@
             width: 100%; border: 3px solid #000; padding: 10px; font-size: 18px; font-weight: 800; outline: none; background: #fff; cursor: pointer;
         }
         .gas-desc {
-            margin-top: 15px; font-size: 15px; color: #334155; min-height: 80px; border-top: 2px dashed #cbd5e1; padding-top: 10px; font-weight: 600; line-height: 1.5;
+            margin-top: 15px; font-size: 14px; color: #334155; min-height: 90px; border-top: 2px dashed #cbd5e1; padding-top: 10px; font-weight: 600; line-height: 1.6;
         }
-        .custom-box { margin-top: 10px; display: none; background: #e2e8f0; padding: 10px; border: 2px solid #000; }
+        .chem-props { background: #e2e8f0; border: 2px solid #94a3b8; padding: 8px; border-radius: 6px; margin-top: 8px; font-size: 13px; color: #0f172a; }
+        .custom-box { margin-top: 10px; display: none; background: #fef08a; padding: 10px; border: 2px solid #000; }
 
         .btn-start {
             background: #10b981; color: #fff; border: 4px solid #000; padding: 15px;
@@ -95,8 +109,6 @@
             box-shadow: 6px 6px 0px #b45309; display: none; margin-top: 10px; color: #92400e; line-height: 1.6; width: 100%;
         }
         .highlight { background: #fff; padding: 2px 8px; border: 2px solid #d97706; border-radius: 4px; color: #000;}
-
-        canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none;}
     </style>
 </head>
 <body>
@@ -105,10 +117,15 @@
     <h1 class="header-title">🏁 Graham's Sprint: สนามแข่งการแพร่ของแก๊ส</h1>
 
     <div class="race-track" id="track">
-        <div class="lane-label" style="top: 20px; background: #2563eb;">LANE 1</div>
+        <div class="lane-label" style="top: 15px; background: #2563eb;">LANE 1</div>
         <div class="lane-label" style="top: 145px; background: #ea580c;">LANE 2</div>
-        <div class="finish-line-checker"></div>
-        <canvas id="raceCanvas"></canvas>
+        <div class="finish-line-checker" id="finish-line"></div>
+        
+        <div class="trail" id="trail-1" style="top: 60px; background-color: #60a5fa;"></div>
+        <div class="gas-ball" id="ball-1" style="top: 45px; background-color: #60a5fa;">M=2</div>
+        
+        <div class="trail" id="trail-2" style="top: 190px; background-color: #334155;"></div>
+        <div class="gas-ball" id="ball-2" style="top: 175px; background-color: #334155;">M=44</div>
     </div>
 
     <div class="analysis-panel">
@@ -172,7 +189,7 @@
         </div>
     </div>
 
-    <button class="btn-start" id="startBtn" onclick="startRace()">🏁 ปล่อยตัวนักแข่ง (START RACE)</button>
+    <button class="btn-start" id="startBtn" onclick="startRace()">🏁 ปล่อยแก๊ส! (START SPRINT)</button>
 
     <div class="conclusion" id="conc-box"></div>
 </div>
@@ -194,24 +211,28 @@
     let c1 = gasDB['H2'].color, c2 = gasDB['CO2'].color;
     let n1 = gasDB['H2'].name, n2 = gasDB['CO2'].name;
 
-    // --- อัปเดตข้อมูลบน UI ---
+    // --- DOM Elements ---
+    const ball1 = document.getElementById('ball-1');
+    const ball2 = document.getElementById('ball-2');
+    const trail1 = document.getElementById('trail-1');
+    const trail2 = document.getElementById('trail-2');
+    const track = document.getElementById('track');
+    const finishLine = document.getElementById('finish-line');
+
     function updateGas(lane) {
         let selectVal = document.getElementById(`gas${lane}`).value;
         let customBox = document.getElementById(`custom-box-${lane}`);
-        let descBox = document.getElementById(`desc-${lane}`);
-        let badge = document.getElementById(`badge-${lane}`);
-
+        
         if (selectVal === 'Custom') {
             customBox.style.display = 'block';
-            descBox.innerHTML = '<b>แก๊สปริศนา X:</b> นักวิเคราะห์สามารถกำหนดมวลโมเลกุล (M) ขึ้นมาเอง เพื่อจำลองการแพร่แบบ Custom ได้เลย!';
             updateCustom(lane);
         } else {
             customBox.style.display = 'none';
             let g = gasDB[selectVal];
-            descBox.innerHTML = `<b>คุณสมบัติ:</b> ${g.desc}`;
-            badge.innerText = `M = ${g.m}`;
             if (lane === 1) { m1 = g.m; c1 = g.color; n1 = g.name; } 
             else { m2 = g.m; c2 = g.color; n2 = g.name; }
+            renderGasDescription(lane, g.desc, g.m);
+            syncDOMBalls();
             resetRaceUI();
         }
     }
@@ -219,23 +240,44 @@
     function updateCustom(lane) {
         let val = parseFloat(document.getElementById(`m${lane}-val`).value) || 1;
         if (val < 1) val = 1; 
-        document.getElementById(`badge-${lane}`).innerText = `M = ${val}`;
-        if (lane === 1) { m1 = val; c1 = '#000'; n1 = 'Gas X'; } 
-        else { m2 = val; c2 = '#000'; n2 = 'Gas Y'; }
+        if (lane === 1) { m1 = val; c1 = '#475569'; n1 = 'Gas X'; } 
+        else { m2 = val; c2 = '#475569'; n2 = 'Gas Y'; }
+        
+        let descText = '<b>แก๊สปริศนา X:</b> นักวิเคราะห์กำหนดมวลโมเลกุล (M) ขึ้นมาเอง เพื่อจำลองการแพร่แบบ Custom ได้เลย!';
+        renderGasDescription(lane, descText, val);
+        syncDOMBalls();
         resetRaceUI();
+    }
+
+    function renderGasDescription(lane, descText, mVal) {
+        let density = (mVal / 22.4).toFixed(3);
+        document.getElementById(`badge-${lane}`).innerText = `M = ${mVal}`;
+        document.getElementById(`desc-${lane}`).innerHTML = `
+            ${descText}
+            <div class="chem-props">
+                🧪 <b>มวลโมเลกุล (M):</b> ${mVal} g/mol <br>
+                ⚖️ <b>ความหนาแน่น (ที่ STP):</b> ${density} g/L
+            </div>
+        `;
+    }
+
+    function syncDOMBalls() {
+        ball1.style.backgroundColor = c1;
+        ball1.innerText = `M=${m1}`;
+        trail1.style.backgroundColor = c1;
+
+        ball2.style.backgroundColor = c2;
+        ball2.innerText = `M=${m2}`;
+        trail2.style.backgroundColor = c2;
     }
 
     // Initialize UI
     updateGas(1); updateGas(2);
 
-    // --- Race Engine (Physics System) ---
-    const canvas = document.getElementById('raceCanvas');
-    const ctx = canvas.getContext('2d');
-    let dpr = window.devicePixelRatio || 1;
+    // --- Race Engine (DOM System) ---
     let animationId;
     let isRacing = false;
-    
-    let x1 = 30, x2 = 30;
+    let x1 = 0, x2 = 0; // ระยะทางที่วิ่งไป (Pixel)
     let t1 = 0, t2 = 0; 
     let finishX = 0;
     
@@ -243,65 +285,45 @@
     let p1Finished = false;
     let p2Finished = false;
     
-    // ตั้งค่าพารามิเตอร์ความเร็ว (k)
-    const SPEED_CONSTANT = 500; 
-
-    function resizeCanvas() {
-        const rect = canvas.parentElement.getBoundingClientRect();
-        canvas.width = rect.width * dpr;
-        canvas.height = rect.height * dpr;
-        ctx.scale(dpr, dpr);
-        finishX = (canvas.width / dpr) * 0.85; // ตรงกับเส้นชัยใน CSS (left: 85%)
-        if(!isRacing) drawInitialState();
-    }
-    window.addEventListener('resize', resizeCanvas);
-    setTimeout(resizeCanvas, 100);
+    let SPEED_CONSTANT = 0; 
 
     function resetRaceUI() {
         if(animationId) cancelAnimationFrame(animationId);
         isRacing = false;
-        x1 = 30; x2 = 30; t1 = 0; t2 = 0;
+        x1 = 0; x2 = 0; t1 = 0; t2 = 0;
         p1Finished = false; p2Finished = false;
+        
+        // รีเซ็ตตำแหน่งลูกบอล DOM
+        ball1.style.transform = `translateX(0px) rotate(0deg)`;
+        ball2.style.transform = `translateX(0px) rotate(0deg)`;
+        trail1.style.width = `0px`;
+        trail2.style.width = `0px`;
+        
         document.getElementById('time-1').innerText = "0.00 s";
         document.getElementById('time-2').innerText = "0.00 s";
         document.getElementById('conc-box').style.display = 'none';
         document.getElementById('startBtn').disabled = false;
-        document.getElementById('startBtn').innerText = "🏁 ปล่อยตัวนักแข่ง (START RACE)";
-        drawInitialState();
-    }
-
-    function drawParticle(x, y, color, label) {
-        ctx.beginPath();
-        ctx.arc(x, y, 15, 0, Math.PI * 2);
-        ctx.fillStyle = color;
-        ctx.fill();
-        ctx.strokeStyle = '#0f172a';
-        ctx.lineWidth = 3;
-        ctx.stroke();
-
-        ctx.fillStyle = (color === '#000' || color === '#334155') ? '#fff' : '#000';
-        ctx.font = "bold 12px Arial";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(label, x, y);
-    }
-
-    function drawInitialState() {
-        if(!ctx) return;
-        ctx.clearRect(0, 0, canvas.width/dpr, canvas.height/dpr);
-        drawParticle(30, 60, c1, `M=${m1}`);
-        drawParticle(30, 185, c2, `M=${m2}`);
+        document.getElementById('startBtn').innerText = "🏁 ปล่อยแก๊ส! (START SPRINT)";
     }
 
     function startRace() {
         document.getElementById('startBtn').disabled = true;
-        document.getElementById('startBtn').innerText = "🔥 กำลังแข่งขัน...";
+        document.getElementById('startBtn').innerText = "🔥 แก๊สกำลังฟุ้งกระจาย...";
         document.getElementById('conc-box').style.display = 'none';
         
-        x1 = 30; x2 = 30; 
+        // คำนวณระยะเส้นชัยจริงๆ บนหน้าจอ
+        let trackWidth = track.clientWidth;
+        let startPos = 20; // left: 20px ใน CSS
+        // เส้นชัยอยู่ที่ right: 5% แปลว่าตำแหน่งคือ 95% ของความกว้าง ลบด้วยจุดเริ่มต้นและขนาดลูกบอลนิดหน่อย
+        finishX = (trackWidth * 0.95) - startPos - 46; 
+        
+        // จูนความเร็ว: แก๊สเบาสุด (H2) จะวิ่ง 4.5 วินาทีถึงเส้นชัย
+        let targetVelocityH2 = Math.max(10, finishX / 4.5); 
+        SPEED_CONSTANT = targetVelocityH2 * Math.sqrt(2);
+        
+        x1 = 0; x2 = 0; 
         t1 = 0; t2 = 0;
         p1Finished = false; p2Finished = false;
-        finishX = (canvas.width / dpr) * 0.85; // คอนเฟิร์มระยะเส้นชัยอีกครั้ง
         
         isRacing = true;
         lastTime = performance.now();
@@ -311,47 +333,40 @@
     function raceLoop(currentTime) {
         if (!isRacing) return;
 
-        // คำนวณเวลา Delta Time (dt)
         let dt = (currentTime - lastTime) / 1000;
-        if (dt > 0.1) dt = 0.1; // ป้องกันบั๊กกรณีสลับหน้าจอ (Cap at 0.1s)
+        if (dt > 0.1) dt = 0.1; 
         lastTime = currentTime;
 
-        // คำนวณความเร็วตาม Graham's Law (v = k / sqrt(M))
-        let v1 = SPEED_CONSTANT / Math.sqrt(m1);
-        let v2 = SPEED_CONSTANT / Math.sqrt(m2);
+        let v1_theo = SPEED_CONSTANT / Math.sqrt(m1);
+        let v2_theo = SPEED_CONSTANT / Math.sqrt(m2);
 
-        // เลื่อนตำแหน่งและจับเวลาทีละเลน
         if (!p1Finished) {
-            x1 += v1 * dt;
+            x1 += v1_theo * dt;
             t1 += dt;
             document.getElementById('time-1').innerText = t1.toFixed(2) + " s";
             if (x1 >= finishX) { x1 = finishX; p1Finished = true; }
+            
+            // อัปเดต DOM ลูกบอลที่ 1 (เลื่อน + หมุน)
+            ball1.style.transform = `translateX(${x1}px) rotate(${x1 * 3}deg)`;
+            trail1.style.width = `${x1}px`;
         }
 
         if (!p2Finished) {
-            x2 += v2 * dt;
+            x2 += v2_theo * dt;
             t2 += dt;
             document.getElementById('time-2').innerText = t2.toFixed(2) + " s";
             if (x2 >= finishX) { x2 = finishX; p2Finished = true; }
+            
+            // อัปเดต DOM ลูกบอลที่ 2
+            ball2.style.transform = `translateX(${x2}px) rotate(${x2 * 3}deg)`;
+            trail2.style.width = `${x2}px`;
         }
 
-        // ล้างและวาดเฟรมใหม่
-        ctx.clearRect(0, 0, canvas.width/dpr, canvas.height/dpr);
-        
-        // วาดเอฟเฟกต์หางเบลอ (Motion Blur)
-        if(!p1Finished) { ctx.fillStyle = c1; ctx.globalAlpha = 0.2; ctx.beginPath(); ctx.arc(x1-20, 60, 10, 0, Math.PI*2); ctx.fill(); }
-        if(!p2Finished) { ctx.fillStyle = c2; ctx.globalAlpha = 0.2; ctx.beginPath(); ctx.arc(x2-20, 185, 10, 0, Math.PI*2); ctx.fill(); }
-        ctx.globalAlpha = 1.0;
-
-        drawParticle(x1, 60, c1, `M=${m1}`);
-        drawParticle(x2, 185, c2, `M=${m2}`);
-
-        // ตรวจสอบผลแพ้ชนะ
         if (p1Finished && p2Finished) {
             isRacing = false;
             showConclusion();
             document.getElementById('startBtn').disabled = false;
-            document.getElementById('startBtn').innerText = "🔄 แข่งใหม่อีกครั้ง (RACE AGAIN)";
+            document.getElementById('startBtn').innerText = "🔄 ปล่อยแก๊สอีกครั้ง (RACE AGAIN)";
         } else {
             animationId = requestAnimationFrame(raceLoop);
         }
@@ -371,15 +386,15 @@
             ratioM = Math.sqrt(m1 / m2).toFixed(2);
             ratioT = (t1 / t2).toFixed(2);
         } else {
-            concBox.innerHTML = `💡 <b>สรุปผล:</b> แก๊สทั้งสองชนิดมีมวลโมเลกุล (M) <b>เท่ากัน</b> จึงมีอัตราการแพร่และเข้าเส้นชัยพร้อมกันเป๊ะ!`;
+            concBox.innerHTML = `💡 <b>สรุปผล:</b> แก๊สทั้งสองชนิดมีมวลโมเลกุล (M) <b>เท่ากัน</b> จึงมีอัตราการแพร่เท่ากันเป๊ะ!`;
             concBox.style.display = 'block';
             return;
         }
 
         concBox.innerHTML = `
             💡 <b>สรุปผลทางเคมี-ฟิสิกส์:</b><br><br>
-            ผู้ชนะคือ <span class="highlight">${winnerName} (M=${winnerM})</span> เพราะมีมวลโมเลกุล <b>"น้อยกว่า"</b> จึงแพร่ได้เร็วกว่า <span class="highlight">${loserName} (M=${loserM})</span><br><br>
-            จากการทดลอง <b>เวลาที่ใช้</b> ต่างกัน ${ratioT} เท่า <br>ซึ่งตรงกับ <b>รากที่สองของมวล (√M)</b> ที่ต่างกัน ${ratioM} เท่า ตามกฎของเกรแฮมพอดีเป๊ะ!
+            แก๊ส <span class="highlight">${winnerName} (M=${winnerM})</span> เคลื่อนที่เร็วกว่า <span class="highlight">${loserName} (M=${loserM})</span> อย่างชัดเจน เพราะมีมวลโมเลกุล <b>"เบากว่า"</b><br><br>
+            จากการทดลอง <b>เวลาที่ใช้</b> ต่างกัน ${ratioT} เท่า <br>ซึ่งตรงกับ <b>รากที่สองของมวล (√M)</b> ที่ต่างกัน ${ratioM} เท่า ตามทฤษฎีกฎของเกรแฮมเป๊ะ!
         `;
         concBox.style.display = 'block';
     }
