@@ -174,8 +174,17 @@
         }
 
         /* ซ่อน Scrollbar ของ Toolbar */
-        #nb-floating-toolbar::-webkit-scrollbar { display: none; }
-
+        #nb-floating-toolbar {
+    /* ... โค้ด position, background, z-index ของกัปตันเหมือนเดิม ... */
+    
+    display: flex;
+    flex-wrap: wrap; /* 💡 สั่งให้ปุ่มที่ล้นความกว้าง ตกลงมาเป็นชั้นที่ 2, 3 อัตโนมัติ */
+    gap: 8px;
+    align-items: center;
+    
+    max-width: 800px; /* 💡 กำหนดความกว้างเริ่มต้นให้ยาวๆ ไว้ก่อน */
+    transition: max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* 💡 ทำให้ตอนพับมันสมูท */
+}
         /* =========================================================
            🛸 3. แถบเครื่องมือกระดาน (Glass Academic UI)
            ========================================================= */
@@ -458,6 +467,9 @@
             <div id="nb-floating-toolbar" class="glass-brutal-frame" style="position: absolute; top: 15px; left: 50%; transform: translateX(-50%); display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; z-index: 1001; padding: 8px 15px;">
                 
                 <div style="display: flex; gap: 4px; align-items: center;">
+<button id="toolbar-fold-btn" class="glass-tool-btn" onclick="foldToolbar()" title="ปรับขนาดแถบเครื่องมือ" style="font-size: 16px; padding: 4px 8px; color: #3b82f6;">
+    ⊞
+</button>
                     <button class="glass-tool-btn" id="nb-hand-btn" onclick="setNbTool('hand', null, this)" title="เลื่อนจอ" style="font-size: 22px;">✋</button>
                     <button class="glass-tool-btn" id="nb-select-btn" onclick="setNbTool('select', null, this)" title="เลือก/ลากคลุม" style="font-size: 22px;">🔲</button>
                     <button class="glass-tool-btn" id="nb-eraser-stroke-btn" onclick="setNbTool('eraser-stroke', null, this)" title="ลบเส้น" style="font-size: 22px;">🧽</button>
@@ -613,6 +625,9 @@
                     <button class="glass-tool-btn" onclick="undoNb()" title="ย้อนกลับ" style="font-size: 18px;">↩️</button>
                     <button class="glass-tool-btn" onclick="redoNb()" title="ทำซ้ำ" style="font-size: 18px;">↪️</button>
                 </div>
+<button id="toolbar-fold-btn" class="glass-tool-btn" onclick="foldToolbar()" title="ปรับขนาดแถบเครื่องมือ" style="font-size: 16px; padding: 4px 8px; color: #3b82f6;">
+    ⊞
+</button>
             </div>
 
           <div id="nb-context-toolbar" class="context-toolbar-hidden glass-brutal-frame" style="position: absolute; top: 90px; left: 50%; transform: translateX(-50%); z-index: 1000; display: none;">
@@ -3797,6 +3812,36 @@ function resetZoom() {
     
     // บังคับให้กระดานวาดตัวเองใหม่กันภาพค้าง
     fCanvas.requestRenderAll();
+}
+// ==========================================
+// 📐 ระบบพับแถบเครื่องมือ (Foldable Toolbar)
+// ==========================================
+let toolbarFoldLevel = 0; 
+
+function foldToolbar() {
+    const toolbar = document.getElementById('nb-floating-toolbar');
+    const foldBtn = document.getElementById('toolbar-fold-btn');
+    
+    toolbarFoldLevel++;
+    if (toolbarFoldLevel > 2) toolbarFoldLevel = 0; // มี 3 ระดับ วนลูปกลับไปยาวสุด
+
+    if (toolbarFoldLevel === 0) {
+        // 🟢 ระดับ 1: ยาวสุด (1 แถว)
+        toolbar.style.maxWidth = '1000px'; 
+        foldBtn.style.transform = 'rotate(0deg)';
+        
+    } else if (toolbarFoldLevel === 1) {
+        // 🟡 ระดับ 2: แคบลง (ปุ่มจะไหลลงมาเป็น 2 แถว)
+        // 🚨 กัปตันลองปรับตัวเลข 350px ดูหน้างานครับ ให้มันพอดีเป็น 2 แถวสวยๆ
+        toolbar.style.maxWidth = '350px'; 
+        foldBtn.style.transform = 'rotate(90deg)';
+        
+    } else if (toolbarFoldLevel === 2) {
+        // 🔴 ระดับ 3: แคบสุดๆ (ไหลลงมาเป็น 3-4 แถว หรือแนวตั้ง)
+        // 🚨 ปรับตัวเลข 150px ดูหน้างานครับ
+        toolbar.style.maxWidth = '150px'; 
+        foldBtn.style.transform = 'rotate(180deg)';
+    }
 }
 </script>
 
