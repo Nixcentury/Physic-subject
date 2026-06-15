@@ -401,6 +401,12 @@
 </button>
                        <button onclick="clearNotebook()" class="glass-tool-btn" style="padding: 6px 12px; font-weight: bold;">🧽 ล้างหน้านี้</button>
                 <button onclick="deleteNbPage(nbCurrentPage)" class="glass-tool-btn" style="background: #fee2e2 !important; color: #ef4444; border: 1px solid #fca5a5 !important; padding: 6px 12px; font-weight: bold;">🗑️ ลบหน้า</button> 
+<button id="btn-focus-mode" onclick="toggleFocusMode()" class="glass-tool-btn" style="background: #fff; color: #1e293b; border: 2px solid #cbd5e1 !important; padding: 6px 12px; font-weight: bold; border-radius: 20px; cursor: pointer; transition: all 0.3s;">
+    🔓 โหมดปกติ (เลือก/ย้ายได้)
+</button>
+<button class="ctx-btn" onclick="lockSelectedAsBackground()" style="background: #fee2e2 !important; color: #ef4444; border: 1px solid #fca5a5 !important; font-weight: bold;">
+    🔒 ล็อกรูปติดพื้น
+</button>
 <button onclick="openPythonIDE('')" class="glass-tool-btn" style="background: #1e1e1e !important; color: #10b981; border: 1px solid #333333 !important; padding: 6px 12px; font-weight: bold; border-radius: 8px;">
     💻 พิมพ์โค้ด Python
 </button>
@@ -696,6 +702,13 @@
 
         <button class="floating-add-btn" onclick="addCustomLink()" title="เพิ่มกระดาน / โหลดเทมเพลต">＋</button>
     </div>
+</div>
+<div id="nb-zoom-controls" style="position: absolute; bottom: 20px; right: 20px; z-index: 1000; display: flex; align-items: center; background: rgba(255,255,255,0.95); border: 2px solid #cbd5e1; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow: hidden; backdrop-filter: blur(4px);">
+    <button onclick="changeZoom(-0.1)" style="background: transparent; border: none; border-right: 1px solid #cbd5e1; padding: 8px 12px; font-weight: bold; cursor: pointer; color: #475569; font-size: 16px;">➖</button>
+    
+    <div id="nb-zoom-display" onclick="resetZoom()" title="คลิกเพื่อรีเซ็ต 100%" style="padding: 8px 15px; font-weight: bold; font-family: 'K2D', sans-serif; font-size: 14px; color: #1e293b; cursor: pointer; min-width: 50px; text-align: center; user-select: none;">100%</div>
+    
+    <button onclick="changeZoom(0.1)" style="background: transparent; border: none; border-left: 1px solid #cbd5e1; padding: 8px 12px; font-weight: bold; cursor: pointer; color: #475569; font-size: 16px;">➕</button>
 </div>
 <style>
     #examate-sidebar {
@@ -1202,6 +1215,19 @@ const _origToObject = fabric.Object.prototype.toObject;
                     updateNbPageText();
                 }
             }
+
+                          // 🔍 ถ่าง 2 นิ้วซูม (หรือกลิ้งลูกกลิ้งเมาส์)
+                fCanvas.on('mouse:wheel', function(opt) {
+                    var delta = opt.e.deltaY;
+                    var zoom = fCanvas.getZoom();
+                    zoom *= 0.999 ** delta;
+                    if (zoom > 5) zoom = 5; if (zoom < 0.5) zoom = 0.5; 
+                    fCanvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
+                    opt.e.preventDefault(); opt.e.stopPropagation();
+                    
+                    // 🌟 [เติมบรรทัดนี้] ให้อัปเดตตัวเลขเปอร์เซ็นต์ซูมบนหน้าจอด้วย
+                    if (typeof updateZoomDisplay === 'function') updateZoomDisplay(zoom);
+                });
         }        
 
         // ==========================================
@@ -1640,95 +1666,107 @@ function toggleContextToolbar() {
             updateNbPageText();
         }
 
-        function setNbTool(tool, color, btnEl) {
-            if (fCanvas && fCanvas.getActiveObject() && tool === 'pen' && color) {
-                let obj = fCanvas.getActiveObject();
-                if (obj.type === 'path' || obj.type === 'line') obj.set({ stroke: color });
-                else obj.set({ fill: color });
-                fCanvas.requestRenderAll();
-                if (typeof saveState === 'function') saveState();
-                
-                // 💡 [แก้ไข] ปิด Dropdown อัตโนมัติเมื่อกดเลือกสี
-                document.activeElement.blur();
-                return; 
-            }
+       function setNbTool(tool, color, btnEl) {
+    // 🛡️ ด่านดักจับ: ถ้าเปิดโหมดโฟกัสอยู่ แล้วเด็กพยายามจะเปลี่ยนเป็นลูกศร หรือเปลี่ยนโหมดอื่น ให้บล็อกไว้
+    if (isFocusMode && tool !== 'pen' && tool !== 'laser' && tool !== 'eraser-stroke') {
+        alert("🔒 ตอนนี้เปิด 'โหมดเขียนโฟกัส' อยู่ครับ วัตถุถูกแช่แข็งไว้ทั้งหมดเพื่อกันมือลั่น หากต้องการย้ายรูป/แก้ไขข้อความ กรุณากดปิดโหมดโฟกัสก่อนฮะ!");
+        return; 
+    }
 
-            currentNbTool = tool; 
-            if (color) currentNbColor = color;
-            
-            document.querySelectorAll('.nb-color-btn').forEach(b => { 
-                b.style.transform = 'scale(1)'; 
-                b.style.borderColor = 'transparent'; 
-            });
-            
-            const tools = ['nb-eraser-stroke-btn', 'nb-laser-btn', 'nb-hand-btn', 'nb-select-btn'];
-            tools.forEach(id => {
-                let el = document.getElementById(id);
-                if (el) {
-                    el.style.backgroundColor = 'transparent';
-                    el.style.transform = 'scale(1)';
-                    if (id === 'nb-laser-btn') el.style.color = '#ef4444'; 
-                }
-            });
+    if (fCanvas && fCanvas.getActiveObject() && tool === 'pen' && color) {
+        let obj = fCanvas.getActiveObject();
+        if (obj.type === 'path' || obj.type === 'line') obj.set({ stroke: color });
+        else obj.set({ fill: color });
+        fCanvas.requestRenderAll();
+        if (typeof saveState === 'function') saveState();
+        
+        document.activeElement.blur();
+        return; 
+    }
 
-            if (fCanvas) {
-                fCanvas.isDrawingMode = (tool === 'pen' || tool === 'laser');
-                fCanvas.selection = (tool === 'select');
-                fCanvas.allowTouchScrolling = false; 
-
-                fCanvas.forEachObject(function(obj) {
-                    let isSelectMode = (tool === 'select');
-                    obj.selectable = isSelectMode;
-                    obj.evented = isSelectMode; 
-                    if (tool === 'eraser-stroke' && obj.type === 'path') {
-                        obj.evented = true; 
-                    }
-                    obj.setCoords(); 
-                });
-
-                if (tool === 'pen') {
-                    fCanvas.freeDrawingBrush.color = currentNbColor;
-                    fCanvas.freeDrawingBrush.width = currentNbWidth; 
-                    fCanvas.defaultCursor = 'crosshair';
-                    fCanvas.freeDrawingBrush.globalCompositeOperation = 'source-over'; 
-                } else if (tool === 'eraser-stroke') {
-                    fCanvas.defaultCursor = 'crosshair'; 
-                } else if (tool === 'hand') {
-                    fCanvas.defaultCursor = 'grab'; 
-                } else if (tool === 'laser') {
-                    fCanvas.freeDrawingBrush.color = "rgba(255, 0, 0, 0.5)";
-                    fCanvas.freeDrawingBrush.width = currentNbWidth * 2;
-                    fCanvas.defaultCursor = 'crosshair';
-                    fCanvas.freeDrawingBrush.globalCompositeOperation = 'source-over';
-                } else if (tool === 'select') {
-                    fCanvas.defaultCursor = 'default'; 
-                    fCanvas.skipTargetFind = false; 
-                    fCanvas.selectionColor = 'rgba(59, 130, 246, 0.2)'; 
-                    fCanvas.selectionBorderColor = '#3b82f6';
-                    fCanvas.selectionLineWidth = 2;
-                }
-
-                fCanvas.discardActiveObject(); 
-                fCanvas.requestRenderAll();
-            }
-
-            if (btnEl) {
-                if (tool === 'pen') { 
-                    btnEl.style.transform = 'scale(1.2)'; btnEl.style.borderColor = 'white'; 
-                } else if (tool === 'eraser-stroke') { 
-                    btnEl.style.backgroundColor = '#fca5a5'; btnEl.style.transform = 'scale(1.05)';
-                } else if (tool === 'laser') {
-                    btnEl.style.backgroundColor = '#ef4444'; btnEl.style.color = 'white'; btnEl.style.transform = 'scale(1.05)';
-                } else if (tool === 'hand') {
-                    btnEl.style.backgroundColor = '#bfdbfe'; btnEl.style.transform = 'scale(1.1)';
-                } else if (tool === 'select') {
-                    btnEl.style.backgroundColor = '#bfdbfe'; btnEl.style.transform = 'scale(1.05)';
-                }
-            }
-
-            // 💡 [แก้ไข] ปิด Dropdown อัตโนมัติเมื่อกดเลือกเครื่องมือต่างๆ
-            document.activeElement.blur();
+    currentNbTool = tool; 
+    if (color) currentNbColor = color;
+    
+    document.querySelectorAll('.nb-color-btn').forEach(b => { 
+        b.style.transform = 'scale(1)'; 
+        b.style.borderColor = 'transparent'; 
+    });
+    
+    const tools = ['nb-eraser-stroke-btn', 'nb-laser-btn', 'nb-hand-btn', 'nb-select-btn'];
+    tools.forEach(id => {
+        let el = document.getElementById(id);
+        if (el) {
+            el.style.backgroundColor = 'transparent';
+            el.style.transform = 'scale(1)';
+            if (id === 'nb-laser-btn') el.style.color = '#ef4444'; 
         }
+    });
+
+    if (fCanvas) {
+        fCanvas.isDrawingMode = (tool === 'pen' || tool === 'laser');
+        fCanvas.selection = (tool === 'select');
+        fCanvas.allowTouchScrolling = false; 
+
+        // 🌟 [จุดผ่าตัดใหญ่] ลอจิกการเปิดสิทธิ์การเลือกวัตถุ
+        fCanvas.forEachObject(function(obj) {
+            if (isFocusMode || obj.isBgLocked) {
+                // 🔒 ถ้าอยู่ในโหมดโฟกัส หรือวัตถุนี้ถูกล็อกติดพื้นชิ้นเดี่ยว -> ห้ามแตะ ห้ามเลือก คลิกทะลุร้อยเปอร์เซ็นต์
+                obj.selectable = false;
+                obj.evented = false;
+            } else {
+                // 🔓 โหมดปกติ: ให้เปิด-ปิด สิทธิ์ตามเครื่องมือ Select เหมือนเดิมของกัปตัน
+                let isSelectMode = (tool === 'select');
+                obj.selectable = isSelectMode;
+                obj.evented = isSelectMode; 
+                if (tool === 'eraser-stroke' && obj.type === 'path') {
+                    obj.evented = true; 
+                }
+            }
+            obj.setCoords(); 
+        });
+
+        if (tool === 'pen') {
+            fCanvas.freeDrawingBrush.color = currentNbColor;
+            fCanvas.freeDrawingBrush.width = currentNbWidth; 
+            fCanvas.defaultCursor = 'crosshair';
+            fCanvas.freeDrawingBrush.globalCompositeOperation = 'source-over'; 
+        } else if (tool === 'eraser-stroke') {
+            fCanvas.defaultCursor = 'crosshair'; 
+        } else if (tool === 'hand') {
+            fCanvas.defaultCursor = 'grab'; 
+        } else if (tool === 'laser') {
+            fCanvas.freeDrawingBrush.color = "rgba(255, 0, 0, 0.5)";
+            fCanvas.freeDrawingBrush.width = currentNbWidth * 2;
+            fCanvas.defaultCursor = 'crosshair';
+            fCanvas.freeDrawingBrush.globalCompositeOperation = 'source-over';
+        } else if (tool === 'select') {
+            fCanvas.defaultCursor = 'default'; 
+            fCanvas.skipTargetFind = false; 
+            fCanvas.selectionColor = 'rgba(59, 130, 246, 0.2)'; 
+            fCanvas.selectionBorderColor = '#3b82f6';
+            fCanvas.selectionLineWidth = 2;
+        }
+
+        fCanvas.discardActiveObject(); 
+        fCanvas.requestRenderAll();
+    }
+
+    if (btnEl) {
+        if (tool === 'pen') { 
+            btnEl.style.transform = 'scale(1.2)'; btnEl.style.borderColor = 'white'; 
+        } else if (tool === 'eraser-stroke') { 
+            btnEl.style.backgroundColor = '#fca5a5'; btnEl.style.transform = 'scale(1.05)';
+        } else if (tool === 'laser') {
+            btnEl.style.backgroundColor = '#ef4444'; btnEl.style.color = 'white'; btnEl.style.transform = 'scale(1.05)';
+        } else if (tool === 'hand') {
+            btnEl.style.backgroundColor = '#bfdbfe'; btnEl.style.transform = 'scale(1.1)';
+        } else if (tool === 'select') {
+            btnEl.style.backgroundColor = '#bfdbfe'; btnEl.style.transform = 'scale(1.05)';
+        }
+    }
+
+    document.activeElement.blur();
+}
 
         function clearNotebook(force = false) {
             if (!fCanvas) return;
@@ -3566,6 +3604,124 @@ async function cloneTemplateToStudent(templateBoardId) {
         console.error(error);
         alert("❌ เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูลครับ");
     }
+}
+// ==========================================
+// 🌟 1. ตัวแปรสถานะระบบ (Global States)
+// ==========================================
+let isFocusMode = false; // ตัวแปรจำสถานะโหมด
+
+// ==========================================
+// 🎛️ ปุ่มที่ 1: สวิตช์สลับโหมด (ปกติ <-> ล็อคโฟกัส)
+// ==========================================
+function toggleFocusMode() {
+    if (!fCanvas) return;
+    
+    const focusBtn = document.getElementById('btn-focus-mode');
+    
+    if (!isFocusMode) {
+        // 🛑 กำลังจะเข้าสู่ -> "โหมดล็อค (โฟกัสการเขียน)"
+        setNbTool('pen', currentNbColor, null); // แอบสลับเป็นปากกาก่อน
+        isFocusMode = true; // เปิดระบบล็อค
+        
+        focusBtn.innerHTML = "🔒 โหมดล็อค (โฟกัสการเขียน)";
+        focusBtn.style.background = "#f43f5e"; 
+        focusBtn.style.color = "#fff";
+        focusBtn.style.borderColor = "#e11d48";
+        
+        // แช่แข็งวัตถุทุกชิ้นบนกระดาน ให้จิ้มทะลุ
+        fCanvas.forEachObject(function(obj) {
+            obj.selectable = false;
+            obj.evented = false;
+        });
+        
+    } else {
+        // 🟢 กำลังจะกลับสู่ -> "โหมดปกติ (เลื่อน/ย้ายได้)"
+        isFocusMode = false; // ปิดระบบล็อคก่อน
+        
+        focusBtn.innerHTML = "🔓 โหมดปกติ (เลือก/ย้ายได้)";
+        focusBtn.style.background = "#fff";
+        focusBtn.style.color = "#1e293b";
+        focusBtn.style.borderColor = "#cbd5e1";
+        
+        // 🌟 ไฮไลท์: ปลุกวัตถุทุกชิ้นให้กลับมาขยับได้ (รวมถึงรูปที่เคยกดล็อคเดี่ยวๆ ไว้ด้วย!)
+        fCanvas.forEachObject(function(obj) {
+            if (obj.type !== 'path') { // ยกเว้นเส้นปากกา ไม่ต้องให้ขยับง่ายๆ
+                obj.selectable = true;
+                obj.evented = true;
+            }
+        });
+        
+        setNbTool('select', null, document.getElementById('nb-select-btn'));
+    }
+    
+    fCanvas.discardActiveObject();
+    fCanvas.requestRenderAll();
+}
+
+// ==========================================
+// 📌 ปุ่มที่ 2: ล็อครูปเดี่ยวติดพื้น (จากเมนูย่อย)
+// ==========================================
+function lockSelectedAsBackground() {
+    if (!fCanvas) return;
+    let activeObj = fCanvas.getActiveObject();
+    if (!activeObj) return;
+
+    // สั่งล็อครูปนี้ให้กลายเป็นพื้นหลังคลิกทะลุ
+    activeObj.set({
+        selectable: false,
+        evented: false,
+        lockMovementX: true, lockMovementY: true,
+        lockScalingX: true, lockScalingY: true,
+        lockRotation: true
+    });
+    activeObj.sendToBack(); // ดันไปอยู่หลังสุด
+    fCanvas.discardActiveObject();
+    fCanvas.requestRenderAll();
+    
+    // ซ่อนเมนูย่อย
+    let ctxMenu = document.getElementById('nb-context-toolbar');
+    if (ctxMenu) ctxMenu.style.display = 'none';
+}
+// ==========================================
+// 🔍 ฟังก์ชันระบบซูม (Zoom Controls)
+// ==========================================
+
+// อัปเดตตัวเลข % บนหน้าจอ
+function updateZoomDisplay(zoomValue) {
+    const display = document.getElementById('nb-zoom-display');
+    if (display) {
+        display.innerText = Math.round(zoomValue * 100) + '%';
+    }
+}
+
+// กดปุ่ม + หรือ - เพื่อซูมเข้า/ออก
+function changeZoom(delta) {
+    if (!fCanvas) return;
+    
+    let currentZoom = fCanvas.getZoom();
+    let newZoom = currentZoom + delta;
+    
+    // ล็อกเพดาน: ย่อสุด 50% (0.5), ขยายสุด 500% (5)
+    if (newZoom > 5) newZoom = 5;
+    if (newZoom < 0.5) newZoom = 0.5;
+    
+    // สั่งซูมโดยยึด "จุดกึ่งกลางหน้าจอ" เป็นศูนย์กลาง
+    const center = fCanvas.getCenter();
+    fCanvas.zoomToPoint(new fabric.Point(center.left, center.top), newZoom);
+    
+    updateZoomDisplay(newZoom);
+}
+
+// กดตรงตัวเลข 100% เพื่อรีเซ็ตกลับที่เดิม
+function resetZoom() {
+    if (!fCanvas) return;
+    
+    // รีเซ็ตทั้งระยะซูม และ พิกัดการเลื่อนจอ (Pan) กลับมาจุด 0,0 เริ่มต้น
+    fCanvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
+    updateZoomDisplay(1);
+    
+    // บังคับให้กระดานวาดตัวเองใหม่กันภาพค้าง
+    fCanvas.requestRenderAll();
 }
 </script>
 
