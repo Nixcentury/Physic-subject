@@ -1220,6 +1220,69 @@ const _origToObject = fabric.Object.prototype.toObject;
                     }
                 }, true);
                                 
+                                // ==========================================
+                // ✌️ ระบบ 2 นิ้วไถกระดาน (2-Finger Panning)
+                // ==========================================
+                let isTwoFingerPanning = false;
+                let lastTwoFingerX = 0;
+                let lastTwoFingerY = 0;
+
+                // 1. ดักจับตอนนิ้วแตะจอ
+                fCanvas.upperCanvasEl.addEventListener('touchstart', function(e) {
+                    // ถ้าแตะ 2 นิ้วพร้อมกัน
+                    if (e.touches.length === 2) {
+                        isTwoFingerPanning = true;
+                        
+                        // สั่งปิดโหมดวาดรูปชั่วคราว (เพื่อไม่ให้มันขีดเส้นมั่วตอนลาก)
+                        fCanvas.isDrawingMode = false; 
+                        
+                        // ยกเลิกเส้นที่อาจจะเผลอเริ่มวาดไปแล้วในจังหวะนิ้วแรกแตะ (กันจุดเลอะเทอะ)
+                        if (fCanvas._isCurrentlyDrawing) {
+                            fCanvas.freeDrawingBrush.onMouseUp({ e: e });
+                            fCanvas._isCurrentlyDrawing = false;
+                        }
+
+                        // หาพิกัด "จุดกึ่งกลาง" ระหว่าง 2 นิ้ว
+                        lastTwoFingerX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                        lastTwoFingerY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                    }
+                }, { passive: false });
+
+                // 2. ดักจับตอนกำลังไถนิ้ว
+                fCanvas.upperCanvasEl.addEventListener('touchmove', function(e) {
+                    if (isTwoFingerPanning && e.touches.length === 2) {
+                        e.preventDefault(); // บล็อกไม่ให้หน้าเว็บ(สีขาวด้านหลัง)เด้งดึ๋ง
+
+                        // คำนวณจุดกึ่งกลางใหม่
+                        let currentX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                        let currentY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+
+                        // หาความต่าง (ระยะที่ลากไป)
+                        let deltaX = currentX - lastTwoFingerX;
+                        let deltaY = currentY - lastTwoFingerY;
+
+                        // สั่งขยับกระดาน Fabric.js
+                        fCanvas.relativePan(new fabric.Point(deltaX, deltaY));
+
+                        // อัปเดตตำแหน่งล่าสุด
+                        lastTwoFingerX = currentX;
+                        lastTwoFingerY = currentY;
+                    }
+                }, { passive: false });
+
+                // 3. ดักจับตอนยกนิ้วออก
+                fCanvas.upperCanvasEl.addEventListener('touchend', function(e) {
+                    // ถ้ายกนิ้วขึ้นจนเหลือน้อยกว่า 2 นิ้ว (โหมดเลื่อนจบลง)
+                    if (isTwoFingerPanning && e.touches.length < 2) {
+                        isTwoFingerPanning = false;
+                        
+                        // คืนชีพโหมดวาดรูป (ถ้าก่อนหน้านี้เรายังเลือกปากกา/เลเซอร์อยู่)
+                        if (currentNbTool === 'pen' || currentNbTool === 'laser' || currentNbTool === 'eraser-partial') {
+                            fCanvas.isDrawingMode = true;
+                        }
+                    }
+                });
+
                 // 🧠 จิ้ม/ลาก/ปล่อย
                 let isErasing = false;
                 fCanvas.on('mouse:down', function(opt) {
@@ -1286,100 +1349,7 @@ const _origToObject = fabric.Object.prototype.toObject;
                 }
             }
 
-    }        
-// ==========================================
-                // ✌️ ระบบ 2 นิ้วอัจฉริยะ (ไถกระดาน + ถ่างซูม)
-                // ==========================================
-                let isTwoFingerTouch = false;
-                let lastTwoFingerCenter = { x: 0, y: 0 };
-                let lastPinchDistance = 0;
-
-                // ฟังก์ชันหา "ระยะห่าง" ระหว่าง 2 นิ้ว
-                function getDistance(touches) {
-                    let dx = touches[0].clientX - touches[1].clientX;
-                    let dy = touches[0].clientY - touches[1].clientY;
-                    return Math.sqrt(dx * dx + dy * dy);
-                }
-
-                // ฟังก์ชันหา "จุดกึ่งกลาง" ระหว่าง 2 นิ้ว
-                function getCenter(touches) {
-                    return {
-                        x: (touches[0].clientX + touches[1].clientX) / 2,
-                        y: (touches[0].clientY + touches[1].clientY) / 2
-                    };
-                }
-
-                // 1. ดักจับตอนนิ้วแตะจอ
-                fCanvas.upperCanvasEl.addEventListener('touchstart', function(e) {
-                    if (e.touches.length === 2) {
-                        isTwoFingerTouch = true;
-                        
-                        // ปิดโหมดปากกาชั่วคราว
-                        fCanvas.isDrawingMode = false;
-                        if (fCanvas._isCurrentlyDrawing) {
-                            fCanvas.freeDrawingBrush.onMouseUp({ e: e });
-                            fCanvas._isCurrentlyDrawing = false;
-                        }
-
-                        // จำค่าเริ่มต้น
-                        lastTwoFingerCenter = getCenter(e.touches);
-                        lastPinchDistance = getDistance(e.touches);
-                    }
-                }, { passive: false });
-
-                // 2. ดักจับตอนกำลังขยับนิ้ว
-                fCanvas.upperCanvasEl.addEventListener('touchmove', function(e) {
-                    if (isTwoFingerTouch && e.touches.length === 2) {
-                        e.preventDefault(); // บล็อกหน้าเว็บเด้ง
-
-                        let currentCenter = getCenter(e.touches);
-                        let currentDistance = getDistance(e.touches);
-
-                        // --- 🚀 กิจกรรมที่ 1: เลื่อนกระดาน (Pan) ---
-                        let deltaX = currentCenter.x - lastTwoFingerCenter.x;
-                        let deltaY = currentCenter.y - lastTwoFingerCenter.y;
-                        
-                        fCanvas.relativePan(new fabric.Point(deltaX, deltaY));
-
-                        // --- 🔍 กิจกรรมที่ 2: ถ่างนิ้วซูม (Pinch to Zoom) ---
-                        // ถ้าความห่างของนิ้วเปลี่ยนไป (ถ่างออก/บีบเข้า) เกิน 2 pixel (กันมันเซนซิทีฟเกินไป)
-                        if (Math.abs(currentDistance - lastPinchDistance) > 2) {
-                            
-                            let zoomRatio = currentDistance / lastPinchDistance; // หาอัตราการซูม
-                            let newZoom = fCanvas.getZoom() * zoomRatio;
-                            
-                            // จำกัดระยะซูมไม่ให้ล้นจอ
-                            if (newZoom > 5) newZoom = 5;
-                            if (newZoom < 0.5) newZoom = 0.5;
-
-                            // สั่งซูมโดยให้จุดศูนย์กลางอยู่ที่จุดกึ่งกลางระหว่างนิ้ว
-                            fCanvas.zoomToPoint({ x: currentCenter.x, y: currentCenter.y }, newZoom);
-                            
-                            // [อัปเดตตัวเลขเปอร์เซ็นต์ซูมบนหน้าจอ - ถ้ากัปตันมีฟังก์ชันนี้]
-                            if (typeof updateZoomDisplay === 'function') updateZoomDisplay(newZoom);
-                        }
-
-                        // อัปเดตค่าล่าสุด
-                        lastTwoFingerCenter = currentCenter;
-                        lastPinchDistance = currentDistance;
-                    }
-                }, { passive: false });
-
-                // 3. ดักจับตอนยกนิ้ว
-                fCanvas.upperCanvasEl.addEventListener('touchend', function(e) {
-                    if (isTwoFingerTouch && e.touches.length < 2) {
-                        isTwoFingerTouch = false;
-                        
-                        // คืนชีพโหมดปากกา (ถ้าก่อนหน้านี้เลือกเครื่องมือวาดไว้)
-                        if (currentNbTool === 'pen' || currentNbTool === 'laser' || currentNbTool === 'eraser-partial') {
-                            fCanvas.isDrawingMode = true;
-                        }
-                    }
-                });
-
-                // ==========================================
-                // 🖱️ เก็บระบบซูมด้วยลูกกลิ้งเมาส์ไว้ (สำหรับคอมพิวเตอร์)
-                // ==========================================
+                          // 🔍 ถ่าง 2 นิ้วซูม (หรือกลิ้งลูกกลิ้งเมาส์)
                 fCanvas.on('mouse:wheel', function(opt) {
                     var delta = opt.e.deltaY;
                     var zoom = fCanvas.getZoom();
@@ -1387,8 +1357,12 @@ const _origToObject = fabric.Object.prototype.toObject;
                     if (zoom > 5) zoom = 5; if (zoom < 0.5) zoom = 0.5; 
                     fCanvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
                     opt.e.preventDefault(); opt.e.stopPropagation();
+                    
+                    // 🌟 [เติมบรรทัดนี้] ให้อัปเดตตัวเลขเปอร์เซ็นต์ซูมบนหน้าจอด้วย
                     if (typeof updateZoomDisplay === 'function') updateZoomDisplay(zoom);
                 });
+        }        
+
         // ==========================================
         // 🛠️ ชุดคำสั่งเดิมทั้งหมดของกัปตัน (ห้ามลบ!)
         // ==========================================
