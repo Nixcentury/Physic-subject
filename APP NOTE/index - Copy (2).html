@@ -1219,6 +1219,69 @@ const _origToObject = fabric.Object.prototype.toObject;
                         }
                     }
                 }, true);
+                                
+                                // ==========================================
+                // ✌️ ระบบ 2 นิ้วไถกระดาน (2-Finger Panning)
+                // ==========================================
+                let isTwoFingerPanning = false;
+                let lastTwoFingerX = 0;
+                let lastTwoFingerY = 0;
+
+                // 1. ดักจับตอนนิ้วแตะจอ
+                fCanvas.upperCanvasEl.addEventListener('touchstart', function(e) {
+                    // ถ้าแตะ 2 นิ้วพร้อมกัน
+                    if (e.touches.length === 2) {
+                        isTwoFingerPanning = true;
+                        
+                        // สั่งปิดโหมดวาดรูปชั่วคราว (เพื่อไม่ให้มันขีดเส้นมั่วตอนลาก)
+                        fCanvas.isDrawingMode = false; 
+                        
+                        // ยกเลิกเส้นที่อาจจะเผลอเริ่มวาดไปแล้วในจังหวะนิ้วแรกแตะ (กันจุดเลอะเทอะ)
+                        if (fCanvas._isCurrentlyDrawing) {
+                            fCanvas.freeDrawingBrush.onMouseUp({ e: e });
+                            fCanvas._isCurrentlyDrawing = false;
+                        }
+
+                        // หาพิกัด "จุดกึ่งกลาง" ระหว่าง 2 นิ้ว
+                        lastTwoFingerX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                        lastTwoFingerY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                    }
+                }, { passive: false });
+
+                // 2. ดักจับตอนกำลังไถนิ้ว
+                fCanvas.upperCanvasEl.addEventListener('touchmove', function(e) {
+                    if (isTwoFingerPanning && e.touches.length === 2) {
+                        e.preventDefault(); // บล็อกไม่ให้หน้าเว็บ(สีขาวด้านหลัง)เด้งดึ๋ง
+
+                        // คำนวณจุดกึ่งกลางใหม่
+                        let currentX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                        let currentY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+
+                        // หาความต่าง (ระยะที่ลากไป)
+                        let deltaX = currentX - lastTwoFingerX;
+                        let deltaY = currentY - lastTwoFingerY;
+
+                        // สั่งขยับกระดาน Fabric.js
+                        fCanvas.relativePan(new fabric.Point(deltaX, deltaY));
+
+                        // อัปเดตตำแหน่งล่าสุด
+                        lastTwoFingerX = currentX;
+                        lastTwoFingerY = currentY;
+                    }
+                }, { passive: false });
+
+                // 3. ดักจับตอนยกนิ้วออก
+                fCanvas.upperCanvasEl.addEventListener('touchend', function(e) {
+                    // ถ้ายกนิ้วขึ้นจนเหลือน้อยกว่า 2 นิ้ว (โหมดเลื่อนจบลง)
+                    if (isTwoFingerPanning && e.touches.length < 2) {
+                        isTwoFingerPanning = false;
+                        
+                        // คืนชีพโหมดวาดรูป (ถ้าก่อนหน้านี้เรายังเลือกปากกา/เลเซอร์อยู่)
+                        if (currentNbTool === 'pen' || currentNbTool === 'laser' || currentNbTool === 'eraser-partial') {
+                            fCanvas.isDrawingMode = true;
+                        }
+                    }
+                });
 
                 // 🧠 จิ้ม/ลาก/ปล่อย
                 let isErasing = false;
@@ -1269,16 +1332,7 @@ const _origToObject = fabric.Object.prototype.toObject;
                     if (isErasing) { isErasing = false; if (typeof saveCurrentPageToMem === 'function') saveCurrentPageToMem(); if (typeof saveState === 'function') saveState(); }
                 });
 
-                // 🔍 ถ่าง 2 นิ้วซูม
-                fCanvas.on('mouse:wheel', function(opt) {
-                    var delta = opt.e.deltaY;
-                    var zoom = fCanvas.getZoom();
-                    zoom *= 0.999 ** delta;
-                    if (zoom > 5) zoom = 5; if (zoom < 0.5) zoom = 0.5; 
-                    fCanvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
-                    opt.e.preventDefault(); opt.e.stopPropagation();
-                });
-
+               
                 // 🔌 เสียบปลั๊กต่างๆ
                 setupTextEventsSafely();
                 fCanvas.on('after:render', updateMinimap);
