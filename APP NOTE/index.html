@@ -1421,13 +1421,21 @@ const _origToObject = fabric.Object.prototype.toObject;
             });
         }
 
-        // 🧠 จำลองฟังก์ชันเซฟเข้า Memory เผื่อกัปตันยังไม่ได้เขียน
-        function saveCurrentPageToMem() {
-            if(!fCanvas) return;
-            nbPages[nbCurrentPage] = fCanvas.toDataURL({ format: 'jpeg', quality: 0.8 });
-            nbPagesFabric[nbCurrentPage] = JSON.stringify(fCanvas.toJSON());
-        }
-
+        // ==========================================
+// 🧠 1. ฟังก์ชันจำสถานะหน้าปัจจุบันลง Memory 
+// ==========================================
+function saveCurrentPageToMem() {
+    if (!fCanvas) return;
+    
+    // ถ่ายรูปพรีวิว
+    nbPages[nbCurrentPage] = fCanvas.toDataURL({ format: 'jpeg', quality: 0.8 });
+    
+    // 🌟 ท่าไม้ตายปราบพยศ: บังคับให้ toJSON กวาดค่าพิเศษทั้งหมดลงกระเป๋าด้วย!
+    nbPagesFabric[nbCurrentPage] = JSON.stringify(fCanvas.toJSON([
+        'isInteractiveWebBtn', 'webUrl', 'webTitle', 'linkUrl', 'boxStyle', 'boxStroke',
+        'isPythonBtn', 'pyTitle', 'pyCode' // ถ้าไม่ใส่ตรงนี้ โค้ดจะร่วงหายตอนสลับหน้าครับ!
+    ]));
+}
         const origRenderBg = fabric.IText.prototype._renderBackground;
         fabric.IText.prototype._renderBackground = function(ctx) {
             if (origRenderBg) origRenderBg.call(this, ctx);
@@ -4009,7 +4017,8 @@ const db = getFirestore(app);
 // ตัวแปรแกนหลักในการคุมกระดานปัจจุบัน
 let currentBoardId = null;
 let isCurrentBoardTemplate = true;
-
+let currentDriveFileId = null; // 🌟 เพิ่มตัวนี้เข้าไปเพื่อจำรหัสไฟล์ใน Google Drive ครับ
+const gasUrl = "https://script.google.com/macros/s/AKfycbz91sPwaA4iVAClFKR-sfcXgo7ch14ND-vPJqZYOrnGvbbtkbCTaMwHURZsSQD0Z-xqaw/exec";
 // ฟังก์ชันดึงค่า Parameter จากลิงก์บนแถบ URL (เช่น ?boardId=xxx)
 function getUrlParam(param) {
     const urlParams = new URLSearchParams(window.location.search);
@@ -4038,21 +4047,35 @@ async function initWorkspace() {
     }
 }
 // ==========================================
-// 📂 3. โหมดปกติ: โหลดกระดาน (เปิดงานเก่า)
+// 📂 ฟังก์ชันโหลดกระดาน (ดึงรหัสไฟล์มาจำรอไว้เซฟทับ)
 // ==========================================
 async function loadBoardData(id) {
     try {
-        currentBoardId = id; // จำรหัสกระดานนี้ไว้ (เพื่อที่ตอนเซฟจะได้ไม่สร้างใหม่)
-
+        currentBoardId = id; 
         const docRef = doc(db, "Boards", id);
         const docSnap = await getDoc(docRef);
         
         if (docSnap.exists()) {
             const data = docSnap.data();
-            isCurrentBoardTemplate = data.isTemplate !== false; // จำว่าเป็นงานครูหรืองานเด็ก
+            isCurrentBoardTemplate = data.isTemplate !== false; 
+            
+            if(data.title) {
+                document.getElementById('examate-board-name').value = data.title;
+                window.currentBoardName = data.title;
+            }
 
-            if (fCanvas && data.canvasData) {
-                const parsed = JSON.parse(data.canvasData);
+            let canvasDataString = data.canvasData;
+
+            if (data.driveFileId) {
+                // 🌟 จำรหัสไฟล์ตัวนี้ไว้ในระบบเลย เพื่อให้เวลากดปุ่มเซฟครั้งต่อไป มันวิ่งไปเซฟทับที่ไฟล์นี้ทันที
+                currentDriveFileId = data.driveFileId; 
+                
+                let response = await fetch(`${gasUrl}?fileId=${data.driveFileId}`);
+                canvasDataString = await response.text();
+            }
+
+            if (fCanvas && canvasDataString) {
+                const parsed = JSON.parse(canvasDataString);
                 if (parsed.pages) {
                     nbPagesFabric = parsed.pages;
                     nbCurrentPage = parsed.currentPage || 0;
@@ -4064,9 +4087,10 @@ async function loadBoardData(id) {
                     });
                 }
             }
-        } else { alert("❌ ไม่พบข้อมูลกระดานรหัสนี้"); }
+        } else { alert("❌ 不พบข้อมูลกระดานรหัสนี้"); }
     } catch (error) { console.error("❌ โหลดกระดานพลาด:", error); }
-}// ==========================================
+}
+// ==========================================
 // 🧠 1. ระบบสมองกลอ่านลิงก์ (รันอัตโนมัติตอนเปิดเว็บ)
 // ==========================================
 window.addEventListener('DOMContentLoaded', async () => {
@@ -4090,7 +4114,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 });
 
 // ==========================================
-// 📥 2. โหมดนักเรียน: รับแม่แบบแล้วแปลงร่าง (แก้บั๊กลูป)
+// 📥 โหมดนักเรียน: รับแม่แบบแล้วคัดลอก (เด็กต้องแตกไฟล์ใหม่ของตัวเอง ห้ามทับครู!)
 // ==========================================
 async function handleTemplateClone(templateId) {
     try {
@@ -4102,26 +4126,33 @@ async function handleTemplateClone(templateId) {
             let studentName = prompt("📝 พิมพ์ชื่อ-นามสกุล หรือ เลขที่ ของหนูก่อนเริ่มทำใบงานนะลูก:", "นักเรียน");
             if (!studentName || studentName.trim() === "") studentName = "นักเรียนไร้นาม";
 
-            // 🌟 1. สร้างกระดานใหม่ของเด็ก "ทันที" ในฐานข้อมูล
+            // 🌟 จุดสำคัญ: สร้างบอร์ดใหม่ให้เด็ก แต่ตั้งค่า currentDriveFileId = null ไว้ก่อน 
+            // เพื่อที่เวลาเด็กกดเซฟครั้งแรก ระบบจะเสกไฟล์ชิ้นใหม่แยกเป็นผลงานส่วนตัวของเด็กคนนั้น ไม่ไปเขียนทับไฟล์ต้นฉบับของครูครับ!
+            currentDriveFileId = null; 
+
             const newDocRef = await addDoc(collection(db, "Boards"), {
                 title: `${templateData.title} - (${studentName})`,
-                canvasData: templateData.canvasData,
-                isTemplate: false, // ปิดโหมดแม่แบบ
+                driveFileId: null, // รอเด็กกดเซฟค่อยงอกไฟล์ในไดรฟ์ของตัวเอง
+                isTemplate: false, 
                 parentTemplateId: templateId,
                 updatedAt: new Date()
             });
 
-            // 🌟 2. จำรหัสกระดานใหม่ และเปลี่ยนสถานะตัวเองเป็นนักเรียน
             currentBoardId = newDocRef.id;
             isCurrentBoardTemplate = false; 
 
-            // 🌟 3. ท่าไม้ตาย! เปลี่ยน URL เบราว์เซอร์ให้กลายเป็นของเด็กทันที (ทำลายลูปลิงก์แม่แบบ)
             const newUrl = `${window.location.origin}${window.location.pathname}?boardId=${newDocRef.id}`;
             window.history.pushState({ path: newUrl }, '', newUrl);
 
-            // 🌟 4. โหลดภาพลงกระดาน
-            if (fCanvas && templateData.canvasData) {
-                const parsed = JSON.parse(templateData.canvasData);
+            let canvasDataString = templateData.canvasData; 
+            if (templateData.driveFileId) {
+                // เด็กดึงโครงโจทย์ Base64 จากคลังของครูมาวาดตั้งต้น
+                let response = await fetch(`${gasUrl}?fileId=${templateData.driveFileId}`);
+                canvasDataString = await response.text();
+            }
+
+            if (fCanvas && canvasDataString) {
+                const parsed = JSON.parse(canvasDataString);
                 if (parsed.pages) {
                     nbPagesFabric = parsed.pages;
                     nbCurrentPage = parsed.currentPage || 0;
@@ -4135,59 +4166,59 @@ async function handleTemplateClone(templateId) {
             }
         } else { alert("❌ ไม่พบใบงานต้นแบบชิ้นนี้"); }
     } catch (error) { console.error("❌ โคลนแม่แบบพลาด:", error); }
-}// ==========================================
-// ☁️ 4. ฟังก์ชันเซฟ V3 (อัปไฟล์ลง Drive + จดรหัสลง Firebase)
+}
+// ==========================================
+// ☁️ ฟังก์ชันเซฟใหญ่ (ฉลาดขึ้น: รู้จักสั่งเซฟทับไฟล์เดิม)
 // ==========================================
 window.saveBoardToCloud = async function() {
     let btn = document.getElementById('btn-cloud-save');
-    if(btn) { btn.innerHTML = "⏳ อัปโหลด..."; btn.style.pointerEvents = "none"; }
+    let backupBtn = document.getElementById('btn-save-notebook');
+    
+    if(btn) { btn.innerHTML = "⏳..."; btn.style.pointerEvents = "none"; }
+    if(backupBtn) { backupBtn.innerHTML = "⏳ อัปโหลด..."; backupBtn.style.pointerEvents = "none"; }
 
     try {
         if (typeof saveCurrentPageToMem === 'function') saveCurrentPageToMem();
 
-        // 1. แพ็คข้อมูลกระดาน (ใหญ่เบ้อเริ่ม)
         let boardString = JSON.stringify({ pages: nbPagesFabric, currentPage: nbCurrentPage });
         let boardName = document.getElementById('examate-board-name').value || "กระดานไร้ชื่อ";
 
-        // 🌟 2. ส่งของชิ้นใหญ่ไปฝากที่ Google Drive (ผ่าน Apps Script)
-        // 🚨 สำคัญมาก: กัปตันต้องเอา URL ของ Web App จาก Apps Script มาวางในเครื่องหมายคำพูดด้านล่างนี้นะครับ! 🚨
-        const gasUrl = "https://script.google.com/macros/s/AKfycbz91sPwaA4iVAClFKR-sfcXgo7ch14ND-vPJqZYOrnGvbbtkbCTaMwHURZsSQD0Z-xqaw/exec"; 
-        
+        // 🌟 ยิงไปหา Apps Script พร้อมส่ง currentDriveFileId ไปด้วย (ถ้ามีจะเซฟทับ ถ้าไม่มีจะสร้างใหม่)
         let response = await fetch(gasUrl, {
             method: 'POST',
-            // ท่าไม้ตายหลบหลีก CORS: ต้องส่งเป็น text/plain เท่านั้น
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({
                 canvasData: boardString,
-                fileName: boardName
+                fileName: boardName,
+                fileId: currentDriveFileId // 👈 พระเอกอยู่ตรงนี้ ส่งไปให้หลังบ้านเช็กสิทธิ์เซฟทับ
             })
         });
 
         let result = await response.json();
         if (!result.success) throw new Error(result.error);
 
-        // 🌟 3. ได้รหัสล็อกเกอร์ (fileId) กลับมาแล้ว! 
-        let driveFileId = result.fileId;
-        console.log("เซฟลง Drive สำเร็จ! รหัสไฟล์คือ: " + driveFileId);
+        // จำรหัสไฟล์ค้างไว้ในเครื่อง เผื่อกัปตันกดเซฟซ้ำอีกรอบในหน้านี้
+        currentDriveFileId = result.fileId; 
 
-        // 🌟 4. เอารหัสไฟล์ไปจดลง Firestore (ข้อมูลเบาหวิว เซฟผ่าน 100%)
+        // 💾 บันทึกสิทธิ์ลง Firebase
         if (currentBoardId) {
-            // โหมดอัปเดตกระดานเดิม
+            // 🟢 โหมดอัปเดตกระดานเดิม: ลิงก์เดิม ID เดิม แค่อัปเดตเวลาล่าสุด
             await setDoc(doc(db, "Boards", currentBoardId), {
-                driveFileId: driveFileId, // ✅ เก็บแค่ ID ของไฟล์แทนข้อมูลก้อนยักษ์
+                title: boardName,
+                driveFileId: currentDriveFileId, 
                 updatedAt: new Date()
             }, { merge: true });
-            
+            console.log("🔄 เซฟทับโครงสร้างเดิมสำเร็จ ลิงก์ไม่เปลี่ยน!");
         } else {
-            // โหมดสร้างกระดานแม่แบบใหม่
-            let promptName = prompt("📌 ตั้งชื่อกระดานแม่แบบนี้:", boardName);
+            // 🔵 โหมดสร้างกระดานใหม่แกะกล่องครั้งแรก: งอกไอดีลิงก์ใหม่ให้
+            let promptName = prompt("📌 ตั้งชื่อกระดานแม่แบบนี้เพื่อแชร์ในระบบ:", boardName);
             if (!promptName) promptName = "กระดานไร้ชื่อ";
 
             isCurrentBoardTemplate = true; 
             
             const docRef = await addDoc(collection(db, "Boards"), {
                 title: promptName,
-                driveFileId: driveFileId, // ✅ เก็บแค่ ID ของไฟล์แทน
+                driveFileId: currentDriveFileId, 
                 isTemplate: true,
                 updatedAt: new Date()
             });
@@ -4204,7 +4235,8 @@ window.saveBoardToCloud = async function() {
         alert("เซฟไม่สำเร็จ: " + error.message); 
     }
 
-    if(btn) { btn.innerHTML = "☁️ เซฟกระดาน"; btn.style.pointerEvents = "auto"; }
+    if(btn) { btn.innerHTML = "☁️"; btn.style.pointerEvents = "auto"; }
+    if(backupBtn) { backupBtn.innerHTML = "💾 เซฟ"; backupBtn.style.pointerEvents = "auto"; }
 };
 // 🔗 4. ฟังก์ชันแจกจ่ายลิงก์ (เวอร์ชัน Pop-up หรูหรา ก๊อปปี้ง่าย)
 window.showShareModal = function() {
