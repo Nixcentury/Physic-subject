@@ -3988,34 +3988,58 @@ async function handleTemplateClone(templateId) {
         } else { alert("❌ ไม่พบใบงานต้นแบบชิ้นนี้"); }
     } catch (error) { console.error("❌ โคลนแม่แบบพลาด:", error); }
 }// ==========================================
-// ☁️ 4. ฟังก์ชันเซฟ (กวาดเซฟและอัปเดตอย่างเดียว)
+// ☁️ 4. ฟังก์ชันเซฟ V3 (อัปไฟล์ลง Drive + จดรหัสลง Firebase)
 // ==========================================
 window.saveBoardToCloud = async function() {
     let btn = document.getElementById('btn-cloud-save');
-    if(btn) { btn.innerHTML = "⏳"; btn.style.pointerEvents = "none"; }
+    if(btn) { btn.innerHTML = "⏳ อัปโหลด..."; btn.style.pointerEvents = "none"; }
 
     try {
         if (typeof saveCurrentPageToMem === 'function') saveCurrentPageToMem();
 
+        // 1. แพ็คข้อมูลกระดาน (ใหญ่เบ้อเริ่ม)
         let boardString = JSON.stringify({ pages: nbPagesFabric, currentPage: nbCurrentPage });
+        let boardName = document.getElementById('examate-board-name').value || "กระดานไร้ชื่อ";
 
-        if (currentBoardId) {
-            // 🟢 ถ้ามี ID อยู่แล้ว -> อัปเดตข้อมูลทับของเดิม (ไม่มีการงอกบอร์ดใหม่เด็ดขาด!)
-            await setDoc(doc(db, "Boards", currentBoardId), {
+        // 🌟 2. ส่งของชิ้นใหญ่ไปฝากที่ Google Drive (ผ่าน Apps Script)
+        // 🚨 สำคัญมาก: กัปตันต้องเอา URL ของ Web App จาก Apps Script มาวางในเครื่องหมายคำพูดด้านล่างนี้นะครับ! 🚨
+        const gasUrl = "https://script.google.com/macros/s/AKfycbz91sPwaA4iVAClFKR-sfcXgo7ch14ND-vPJqZYOrnGvbbtkbCTaMwHURZsSQD0Z-xqaw/exec"; 
+        
+        let response = await fetch(gasUrl, {
+            method: 'POST',
+            // ท่าไม้ตายหลบหลีก CORS: ต้องส่งเป็น text/plain เท่านั้น
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
+            body: JSON.stringify({
                 canvasData: boardString,
+                fileName: boardName
+            })
+        });
+
+        let result = await response.json();
+        if (!result.success) throw new Error(result.error);
+
+        // 🌟 3. ได้รหัสล็อกเกอร์ (fileId) กลับมาแล้ว! 
+        let driveFileId = result.fileId;
+        console.log("เซฟลง Drive สำเร็จ! รหัสไฟล์คือ: " + driveFileId);
+
+        // 🌟 4. เอารหัสไฟล์ไปจดลง Firestore (ข้อมูลเบาหวิว เซฟผ่าน 100%)
+        if (currentBoardId) {
+            // โหมดอัปเดตกระดานเดิม
+            await setDoc(doc(db, "Boards", currentBoardId), {
+                driveFileId: driveFileId, // ✅ เก็บแค่ ID ของไฟล์แทนข้อมูลก้อนยักษ์
                 updatedAt: new Date()
             }, { merge: true });
             
         } else {
-            // 🔵 ถ้าเพิ่งสร้างกระดานเปล่าๆ มาวาดใหม่ -> สร้างเป็นแม่แบบให้ครู
-            let boardName = prompt("📌 ตั้งชื่อกระดานแม่แบบนี้ (เช่น ฟิสิกส์ ม.3):", "กระดานต้นแบบ");
-            if (!boardName) boardName = "กระดานไร้ชื่อ";
+            // โหมดสร้างกระดานแม่แบบใหม่
+            let promptName = prompt("📌 ตั้งชื่อกระดานแม่แบบนี้:", boardName);
+            if (!promptName) promptName = "กระดานไร้ชื่อ";
 
             isCurrentBoardTemplate = true; 
             
             const docRef = await addDoc(collection(db, "Boards"), {
-                title: boardName,
-                canvasData: boardString,
+                title: promptName,
+                driveFileId: driveFileId, // ✅ เก็บแค่ ID ของไฟล์แทน
                 isTemplate: true,
                 updatedAt: new Date()
             });
@@ -4096,56 +4120,7 @@ window.showShareModal = function() {
         document.body.appendChild(modalContainer);
     }
     modalContainer.innerHTML = modalHtml;
-};// ==========================================
-// 🛸 ระบบลากย้ายแถบเครื่องมือ (Draggable UI)
-// ==========================================
-function makeToolbarDraggable(el) {
-    if (!el) return;
-    let isDragging = false, startX, startY, initialX, initialY;
-    el.style.cursor = 'grab';
-    
-    el.addEventListener('pointerdown', (e) => {
-        // ป้องกันไม่ให้ลากติดนิ้ว เวลาที่ตั้งใจจะกดปุ่มเมนู หรือ Dropdown
-        if (e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT' || e.target.closest('button')) return;
-        
-        isDragging = true;
-        el.style.cursor = 'grabbing';
-        el.style.transition = 'none'; // ปิดความหน่วงเวลาลาก
-        
-        // ปลดล็อกการจัดหน้าแบบกึ่งกลาง (translateX) ออก เพื่อให้ลากอิสระ
-        if (window.getComputedStyle(el).transform !== 'none') {
-            const rect = el.getBoundingClientRect();
-            const parentRect = el.parentElement.getBoundingClientRect();
-            el.style.transform = 'none';
-            el.style.left = (rect.left - parentRect.left) + 'px';
-            el.style.top = (rect.top - parentRect.top) + 'px';
-        }
-
-        startX = e.clientX;
-        startY = e.clientY;
-        initialX = el.offsetLeft;
-        initialY = el.offsetTop;
-        e.preventDefault();
-    });
-
-    document.addEventListener('pointermove', (e) => {
-        if (!isDragging) return;
-        el.style.left = (initialX + e.clientX - startX) + 'px';รัน
-        el.style.top = (initialY + e.clientY - startY) + 'px';
-    });
-
-    document.addEventListener('pointerup', () => {
-        if (isDragging) {
-            isDragging = false;
-            el.style.cursor = 'grab';
-        }
-    });
-}
-
-// รอให้เว็บโหลดเสร็จ แล้วเสกให้แถบเครื่องมือหลักลากได้ทันที
-setTimeout(() => {
-    makeToolbarDraggable(document.getElementById('nb-floating-toolbar'));
-}, 1000);
+};
 </script>
 <style>
     /* แอนิเมชันลอยดุ๊กดิ๊ก */
