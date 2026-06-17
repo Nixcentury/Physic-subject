@@ -54,6 +54,42 @@
             margin: 0 4px;
         }
 /* แช่แข็งหน้าเว็บ ไม่ให้เด้งดึ๋ง และไม่ให้บราวเซอร์แอบซูม */
+               /* ==========================================
+           🌟 CSS แถบสไลด์อัจฉริยะ (Dynamic Ribbon)
+           ========================================== */
+        #dynamic-ribbon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: inset 0 -5px 10px rgba(0,0,0,0.02);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            width: 100%;
+            /* สถานะซ่อนตัว */
+            max-height: 0;
+            opacity: 0;
+            padding: 0 15px;
+            z-index: 1004; /* อยู่ใต้ Super Top Bar */
+            flex-shrink: 0;
+        }
+
+        #dynamic-ribbon.active {
+            /* สถานะโชว์ตัว (ดันกระดานลงไปนิดนึง ไม่บังจอ!) */
+            max-height: 60px;
+            opacity: 1;
+            padding: 8px 15px;
+        }
+
+        /* ปรับหน้าตา Context Menu ใหม่ให้เข้ากับ Ribbon */
+        .ribbon-menu-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
 
 /* สไตล์ปุ่มลอยครู AI (Movable Floating Button) */
 #cat-chat-btn {
@@ -435,13 +471,12 @@
     </style>
 </head>
 <body>
-    
-    <div style="display: flex; flex-direction: column; width: 100vw; height: 100vh; overflow: hidden; background: #f1f5f9;">
+<div style="display: flex; flex-direction: column; width: 100vw; height: 100vh; overflow: hidden; background: #f1f5f9;">
 
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 20px; background: white; flex-shrink: 0; z-index: 1006; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
             <div class="board-title-container" style="display: flex; align-items: center; gap: 8px;">
                 <span style="font-size: 20px;">📝</span>
-                <input type="text" id="examate-board-name" value="กระดานไร้ชื่อ" placeholder="ตั้งชื่อกระดานที่นี่..." title="คลิกเพื่อตั้งชื่อกระดาน" onfocus="this.style.background='#f1f5f9'; this.style.borderColor='#3b82f6';" onblur="this.style.background='transparent'; this.style.borderColor='transparent'; updateBoardName(this.value)" style="background: transparent; border: 2px solid transparent; border-radius: 8px; color: #1e293b; font-family: 'K2D', sans-serif; font-size: 18px; font-weight: bold; width: 220px; padding: 4px 8px; outline: none; transition: all 0.3s ease; text-overflow: ellipsis;">
+                <input type="text" id="examate-board-name" value="กระดานไร้ชื่อ" placeholder="ตั้งชื่อกระดานที่นี่..." onfocus="this.style.background='#f1f5f9'; this.style.borderColor='#3b82f6';" onblur="this.style.background='transparent'; this.style.borderColor='transparent'; updateBoardName(this.value)" style="background: transparent; border: 2px solid transparent; border-radius: 8px; color: #1e293b; font-family: 'K2D', sans-serif; font-size: 18px; font-weight: bold; width: 220px; padding: 4px 8px; outline: none; transition: all 0.3s ease; text-overflow: ellipsis;">
                 <span style="color: var(--primary); font-weight: 900; font-size: 15px; margin-left: 10px;">| 📄 nooknickie Board</span>
             </div>
             <button id="btn-cloud-save" class="glass-tool-btn" onclick="saveBoardToCloud()" title="เซฟกระดานขึ้น Cloud" style="background:#dbeafe !important; font-size: 20px; padding: 4px 10px;">☁️</button>
@@ -456,13 +491,13 @@
                 <button onclick="addNewNbPage()" class="glass-tool-btn" style="color: var(--success); font-weight: bold; margin-left: 5px;">➕ เพิ่มหน้า</button>
             </div>
 
-            <div id="nb-drawing-mode-switch" onclick="handlePenModeSwitchClick()" style="display: flex; align-items: center; background: #e2e8f0; border: 2px solid #cbd5e1; border-radius: 20px; padding: 2px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); position: relative; cursor: pointer; user-select: none; width: 190px; height: 32px; box-sizing: border-box; flex-shrink: 0;">
-                <span id="nb-mode-thumb" style="position: absolute; top: 2px; left: 2px; height: 24px; width: 90px; background: #3b82f6; border-radius: 18px; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 2px 4px rgba(0,0,0,0.2); transform: translateX(94px);"></span>
-                <span id="label-mode-touch" style="flex: 1; text-align: center; color: #64748b; font-size: 11px; font-weight: bold; position: relative; z-index: 2; transition: color 0.3s;">👆 นิ้ว/เมาส์</span>
-                <span id="label-mode-pen" style="flex: 1; text-align: center; color: white; font-size: 11px; font-weight: bold; position: relative; z-index: 2; transition: color 0.3s;">✏️ ปากกา</span>
+            <div id="nb-drawing-mode-switch" onclick="handlePenModeSwitchClick()" style="display: flex; align-items: center; background: #e2e8f0; border: 2px solid #cbd5e1; border-radius: 20px; padding: 2px; position: relative; cursor: pointer; user-select: none; width: 190px; height: 32px; box-sizing: border-box; flex-shrink: 0;">
+                <span id="nb-mode-thumb" style="position: absolute; top: 2px; left: 2px; height: 24px; width: 90px; background: #3b82f6; border-radius: 18px; transition: transform 0.3s; transform: translateX(94px);"></span>
+                <span id="label-mode-touch" style="flex: 1; text-align: center; color: #64748b; font-size: 11px; font-weight: bold; position: relative; z-index: 2;">👆 นิ้ว/เมาส์</span>
+                <span id="label-mode-pen" style="flex: 1; text-align: center; color: white; font-size: 11px; font-weight: bold; position: relative; z-index: 2;">✏️ ปากกา</span>
             </div>
 
-            <div id="nb-joystick-zone" title="โยกจอยเพื่อเลื่อนกระดาน" style="position: relative; width: 36px; height: 36px; background: #f1f5f9; border: 2px solid #cbd5e1; border-radius: 50%; touch-action: none; cursor: crosshair; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); flex-shrink: 0;">
+            <div id="nb-joystick-zone" title="โยกจอยเพื่อเลื่อนกระดาน" style="position: relative; width: 36px; height: 36px; background: #f1f5f9; border: 2px solid #cbd5e1; border-radius: 50%; touch-action: none; cursor: crosshair; flex-shrink: 0;">
                 <div id="nb-joystick-knob" style="position: absolute; top: 8px; left: 8px; width: 20px; height: 20px; background: radial-gradient(circle, #60a5fa, #3b82f6); border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;"><div style="width: 4px; height: 4px; background: white; border-radius: 50%;"></div></div>
             </div>
 
@@ -470,40 +505,33 @@
 
             <div class="tool-group">
                 <button class="glass-tool-btn" id="nb-hand-btn" onclick="setNbTool('hand', null, this)" title="เลื่อนจอ" style="font-size: 22px;">✋</button>
-                <button class="glass-tool-btn" id="nb-select-btn" onclick="setNbTool('select', null, this)" title="เลือก/ลากคลุม" style="font-size: 22px;">🔲</button>
+                <button class="glass-tool-btn" id="nb-select-btn" onclick="setNbTool('select', null, this)" title="เลือกปกติ" style="font-size: 22px;">🔲</button>
+                <button class="glass-tool-btn" id="nb-select-pen-btn" onclick="setNbTool('select-pen', null, this)" title="เลือกเฉพาะปากกา" style="font-size: 22px;">🪢</button>
                 <button class="glass-tool-btn" id="nb-laser-btn" onclick="setNbTool('laser', null, this)" title="เลเซอร์" style="font-size: 22px;">🔴</button>
-
-                <div class="nb-dropdown" tabindex="0" style="position: relative; display: inline-block;">
-                    <button class="glass-tool-btn" style="font-size: 20px; font-weight: 900; color: #3b82f6; gap: 2px; padding: 4px 8px;">T <span style="font-size: 10px; color: #64748b;">▼</span></button>
-                    <div class="nb-dropdown-content" style="min-width: 220px; padding: 12px; text-align: center;">
-                        <button class="glass-tool-btn" style="width: 100%; background: #e0f2fe !important; color: #0369a1; border: 1px solid #7dd3fc !important; margin-bottom: 12px; justify-content: center; font-size: 14px;" onclick="addNbText()">✨ + จิ้มเพื่อสร้างข้อความ</button>
-                        <select id="nb-font-family-select" class="nb-font-select" onchange="changeTextProp('fontFamily', this.value)"><option value="Kanit">Kanit</option><option value="K2D">K2D</option><option value="Sarabun">Sarabun</option></select>
-                        <div style="display: flex; gap: 5px; justify-content: center; margin-bottom: 8px;"><button class="glass-tool-btn" onclick="changeTextProp('fontSize', -2)">-</button><span id="text-size-display" style="font-size: 14px; font-weight: bold; width: 30px; line-height: 28px;">28</span><button class="glass-tool-btn" onclick="changeTextProp('fontSize', 2)">+</button></div>
-                    </div>
-                </div>
-
+                
+                <button class="glass-tool-btn" onclick="toggleRibbonMenu('text-add')" title="พิมพ์ข้อความ" style="font-size: 20px; font-weight: 900; color: #3b82f6; padding: 4px 8px;">T</button>
+                
                 <button class="glass-tool-btn" onclick="document.getElementById('nb-image-upload').click()" title="แทรกรูป" style="font-size: 22px;">🖼️</button>
                 <input type="file" id="nb-image-upload" accept="image/*" style="display:none;" onchange="handleNbImageUpload(event)">
-                <button class="glass-tool-btn" onclick="document.getElementById('nb-pdf-upload').click()" title="แทรกชีต PDF" style="font-size: 22px;">📄</button>
+                <button class="glass-tool-btn" onclick="document.getElementById('nb-pdf-upload').click()" title="แทรก PDF" style="font-size: 22px;">📄</button>
                 <input type="file" id="nb-pdf-upload" accept="application/pdf" style="display: none;" onchange="handleNbPdfUpload(event)">
-                <button class="glass-tool-btn" onclick="openInteractiveWeb()" title="แทรกเว็บ" style="font-size: 22px;">🌐</button>
             </div>
 
             <div class="tool-divider"></div>
 
             <div class="tool-group">
                 <button class="glass-tool-btn" id="nb-eraser-stroke-btn" onclick="setNbTool('eraser-stroke', null, this)" title="ลบเส้น" style="font-size: 22px;">🧽</button>
-                <button class="sub-tool-item" onclick="setNbTool('pen', '#e74c3c', this)" style="width:24px; height:24px; border-radius:50%; background-color:#e74c3c !important; cursor:pointer;"></button>
-                <button class="sub-tool-item" onclick="setNbTool('pen', '#3b82f6', this)" style="width:24px; height:24px; border-radius:50%; background-color:#3b82f6 !important; cursor:pointer;"></button>
-                <button class="sub-tool-item" onclick="setNbTool('pen', '#10b981', this)" style="width:24px; height:24px; border-radius:50%; background-color:#10b981 !important; cursor:pointer;"></button>
-                <button class="sub-tool-item" onclick="setNbTool('pen', '#0f172a', this)" style="width:24px; height:24px; border-radius:50%; background-color:#0f172a !important; cursor:pointer;"></button>
-                <div title="เลือกสีอื่นๆ" style="position: relative; width: 24px; height: 24px; border-radius: 50%; background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red); cursor: pointer; border: 1px solid rgba(0,0,0,0.1);"><input type="color" id="nb-color-picker" onchange="setNbCustomColor(this.value)" style="opacity: 0; position: absolute; inset: 0; cursor: pointer;"></div>
+                <button class="sub-tool-item" onclick="setNbTool('pen', '#e74c3c', this)" style="width:24px; height:24px; border-radius:50%; background-color:#e74c3c !important; cursor:pointer; flex-shrink: 0;"></button>
+                <button class="sub-tool-item" onclick="setNbTool('pen', '#3b82f6', this)" style="width:24px; height:24px; border-radius:50%; background-color:#3b82f6 !important; cursor:pointer; flex-shrink: 0;"></button>
+                <button class="sub-tool-item" onclick="setNbTool('pen', '#10b981', this)" style="width:24px; height:24px; border-radius:50%; background-color:#10b981 !important; cursor:pointer; flex-shrink: 0;"></button>
+                <button class="sub-tool-item" onclick="setNbTool('pen', '#0f172a', this)" style="width:24px; height:24px; border-radius:50%; background-color:#0f172a !important; cursor:pointer; flex-shrink: 0;"></button>
+                <div title="เลือกสีอื่นๆ" style="position: relative; width: 24px; height: 24px; border-radius: 50%; background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red); cursor: pointer; border: 1px solid rgba(0,0,0,0.1); flex-shrink: 0;"><input type="color" id="nb-color-picker" onchange="setNbCustomColor(this.value)" style="opacity: 0; position: absolute; inset: 0; cursor: pointer;"></div>
                 
                 <div style="width: 1px; height: 20px; background: #cbd5e1; margin: 0 4px;"></div>
                 
-                <button class="sub-tool-item" onclick="setHighlighter('#fef08a')" style="width: 20px; height: 20px; background-color: #fef08a !important; border-radius: 4px;"></button>
-                <button class="sub-tool-item" onclick="setHighlighter('#bbf7d0')" style="width: 20px; height: 20px; background-color: #bbf7d0 !important; border-radius: 4px;"></button>
-                <button class="sub-tool-item" onclick="setHighlighter('#fecdd3')" style="width: 20px; height: 20px; background-color: #fecdd3 !important; border-radius: 4px;"></button>
+                <button class="sub-tool-item" onclick="setHighlighter('#fef08a')" style="width: 20px; height: 20px; background-color: #fef08a !important; border-radius: 4px; flex-shrink: 0;"></button>
+                <button class="sub-tool-item" onclick="setHighlighter('#bbf7d0')" style="width: 20px; height: 20px; background-color: #bbf7d0 !important; border-radius: 4px; flex-shrink: 0;"></button>
+                <button class="sub-tool-item" onclick="setHighlighter('#fecdd3')" style="width: 20px; height: 20px; background-color: #fecdd3 !important; border-radius: 4px; flex-shrink: 0;"></button>
                 
                 <div style="width: 1px; height: 20px; background: #cbd5e1; margin: 0 4px;"></div>
                 
@@ -511,72 +539,108 @@
                 <button class="glass-tool-btn nb-size-btn" onclick="changeNbWidth(3)" style="font-size: 11px; font-weight: bold;">0.3</button>
                 <button class="glass-tool-btn nb-size-btn" onclick="changeNbWidth(5)" style="font-size: 11px; font-weight: bold; color: #1e293b;">0.5</button>
             </div>
-            <button class="glass-tool-btn" id="nb-select-pen-btn" onclick="setNbTool('select-pen', null, this)" title="เลือกเฉพาะลายเส้นปากกา" style="font-size: 22px;">
-    🪢
-</button>
+
+            <div class="tool-divider"></div>
+
+            <div class="tool-group">
+                <button class="glass-tool-btn" onclick="toggleRibbonMenu('shapes')" style="font-size: 14px; font-weight: bold; color: #334155; gap: 5px;">📐 รูปร่าง <span style="font-size: 10px;">▼</span></button>
+                <button class="glass-tool-btn" onclick="toggleRibbonMenu('postit')" style="font-size: 14px; font-weight: bold; color: #334155; gap: 5px;">📝 โพสต์อิท <span style="font-size: 10px;">▼</span></button>
+                <button class="glass-tool-btn" onclick="toggleRibbonMenu('grid')" style="font-size: 14px; font-weight: bold; color: #334155; gap: 5px;">📈 กราฟ <span style="font-size: 10px;">▼</span></button>
+            </div>
 
             <div class="tool-divider"></div>
 
             <div class="tool-group">
                 <button class="glass-tool-btn" onclick="undoNb()" title="ย้อนกลับ" style="font-size: 18px;">↩️</button>
                 <button class="glass-tool-btn" onclick="redoNb()" title="ทำซ้ำ" style="font-size: 18px;">↪️</button>
-                
-                <button onclick="toggleCalculator()" class="glass-tool-btn" style="background: #4f46e5 !important; color: white; border: 1px solid #6366f1 !important; padding: 6px 12px; font-weight: bold; border-radius: 8px;">🧮 เครื่องคิดเลข</button>
-                <button onclick="openPythonIDE('')" class="glass-tool-btn" style="background: #1e1e1e !important; color: #10b981; border: 1px solid #333333 !important; padding: 6px 12px; font-weight: bold; border-radius: 8px;">💻 โค้ด Python</button>
-                
+                <button onclick="toggleCalculator()" class="glass-tool-btn" style="background: #4f46e5 !important; color: white; border: 1px solid #6366f1 !important; padding: 6px 12px; font-weight: bold; border-radius: 8px;">🧮 คิดเลข</button>
+                <button onclick="createPythonCapsuleBtn()" class="glass-tool-btn" style="background: #1e1e1e !important; color: #10b981; border: 1px solid #333333 !important; padding: 6px 12px; font-weight: bold; border-radius: 8px;">💻 แทรกโค้ด Python</button>
+                <button onclick="openInteractiveWeb()" title="แทรกเว็บ" style="font-size: 22px;">🌐</button>
                 <button id="btn-toggle-map" onclick="toggleMinimap()" class="glass-tool-btn" style="border: 1px solid #cbd5e1 !important; padding: 6px 12px; font-weight: bold;">🗺️ โชว์แผนที่</button>
-                <button id="btn-save-notebook" onclick="saveBoardToCloud()" class="glass-tool-btn" style="background: #e0f2fe !important; color: #0284c7; border: 1px solid #7dd3fc !important; padding: 6px 12px; font-weight: bold;">💾 เซฟกระดาน</button>
-                <button onclick="shareAsTemplate()" class="glass-tool-btn" style="background: #a855f7 !important; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold;">📢 แชร์เทมเพลต</button>
-                
-                <button onclick="clearNotebook()" class="glass-tool-btn" style="padding: 6px 12px; font-weight: bold;">🧽 ล้างหน้านี้</button>
+                <button id="btn-save-notebook" onclick="saveBoardToCloud()" class="glass-tool-btn" style="background: #e0f2fe !important; color: #0284c7; border: 1px solid #7dd3fc !important; padding: 6px 12px; font-weight: bold;">💾 เซฟ</button>
+                <button onclick="shareAsTemplate()" class="glass-tool-btn" style="background: #a855f7 !important; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold;">📢 แชร์</button>
+                <button onclick="clearNotebook()" class="glass-tool-btn" style="padding: 6px 12px; font-weight: bold;">🧽 ล้างหน้า</button>
                 <button onclick="deleteNbPage(nbCurrentPage)" class="glass-tool-btn" style="background: #fee2e2 !important; color: #ef4444; border: 1px solid #fca5a5 !important; padding: 6px 12px; font-weight: bold;">🗑️ ลบหน้า</button>
             </div>
+        </div>
 
+        <div id="dynamic-ribbon">
+            
+            <div id="ctx-tools-container" class="ribbon-menu-group" style="display: none;">
+                <button class="ctx-btn btn-save" onclick="saveSelectionAsImage()">💾 เซฟรูป</button>
+                <button class="ctx-btn" onclick="openLinkFromObject()" style="background: #f0fdf4 !important; color: #16a34a; border: 1px solid #bbf7d0 !important; font-weight: bold; border-radius: 8px;">🚀 เปิดเว็บ</button>
+                <button class="ctx-btn btn-crop" onclick="startCropImage()">✂️ ตัดรูป</button>
+                <button class="ctx-btn btn-dup" onclick="duplicateObject()">👯 ทำซ้ำ</button>
+                <button class="ctx-btn" onclick="scanHandwrittenCode()" style="background: #e6f4ea !important; color: #137333; border: 1px solid #ceead6 !important; font-weight: bold; padding: 6px 12px; border-radius: 8px;">🐍 สแกนโค้ด</button>
+                <button class="ctx-btn" onclick="editInteractiveWebBtn()" style="background: #e0f2fe !important; color: #0284c7; border: 1px solid #bae6fd !important; font-weight: bold; border-radius: 8px;">✏️ แก้ไขเว็บ</button>
+                <div class="ctx-divider" style="height: 20px;"></div>
+                <button class="ctx-btn btn-delete" onclick="deleteSelectedObject()">🗑️ ลบทิ้ง</button>
+            </div>
+
+            <div id="nb-text-toolbar" class="ribbon-menu-group" style="display: none;">
+                <button class="glass-tool-btn" style="border-radius: 0; padding: 4px 8px;" onclick="changeTextProp('fontSize', -2)">-</button>
+                <span id="text-size-display-toolbar" style="font-size: 14px; font-weight: bold; width: 30px; text-align: center;">28</span>
+                <button class="glass-tool-btn" style="border-radius: 0; padding: 4px 8px;" onclick="changeTextProp('fontSize', 2)">+</button>
+                <div style="width: 1px; height: 20px; background: rgba(0,0,0,0.1);"></div>
+                <button class="glass-tool-btn" style="font-weight: 900; font-family: serif;" onclick="toggleTextProp('fontWeight', 'bold', 'normal')">B</button>
+                <button class="glass-tool-btn" style="font-style: italic; font-family: serif;" onclick="toggleTextProp('fontStyle', 'italic', 'normal')">I</button>
+                <button class="glass-tool-btn" style="color: #ef4444;" title="ลบ" onclick="deleteSelectedObject()">🗑️</button>
+            </div>
+
+            <div id="ribbon-text-add" class="ribbon-menu-group" style="display: none;">
+                <button class="ctx-btn" style="background: #e0f2fe; color: #0369a1; border-color: #7dd3fc;" onclick="addNbText(); toggleRibbonMenu(null);">✨ + จิ้มกระดานเพื่อสร้างข้อความ</button>
+                <div class="ctx-divider" style="height: 20px;"></div>
+                <span style="font-size: 13px; font-weight: bold; color: #475569;">ฟอนต์:</span>
+                <select id="nb-font-family-select" class="nb-font-select" onchange="changeTextProp('fontFamily', this.value)" style="margin: 0; padding: 4px 8px; width: auto; font-size: 13px;">
+                    <option value="Kanit">Kanit</option><option value="K2D">K2D</option><option value="Sarabun">Sarabun</option>
+                </select>
+            </div>
+
+            <div id="ribbon-shapes" class="ribbon-menu-group" style="display: none;">
+                <button class="glass-tool-btn" onclick="addNbGeometry('line'); toggleRibbonMenu(null);" style="font-size: 20px;">➖</button>
+                <button class="glass-tool-btn" onclick="addNbGeometry('dashed'); toggleRibbonMenu(null);" style="font-size: 20px;">╌</button>
+                <button class="glass-tool-btn" onclick="addNbGeometry('ray'); toggleRibbonMenu(null);" style="font-size: 20px;">⟶</button>
+                <button class="glass-tool-btn" onclick="addNbGeometry('double'); toggleRibbonMenu(null);" style="font-size: 20px;">⟷</button>
+                <div class="ctx-divider" style="height: 20px;"></div>
+                <button class="glass-tool-btn" onclick="addNbGeometry('rect'); toggleRibbonMenu(null);" style="font-size: 20px;">🟩</button>
+                <button class="glass-tool-btn" onclick="addNbGeometry('circle'); toggleRibbonMenu(null);" style="font-size: 20px;">⭕</button>
+                <button class="glass-tool-btn" onclick="addNbGeometry('triangle'); toggleRibbonMenu(null);" style="font-size: 20px;">🔺</button>
+                <button class="glass-tool-btn" onclick="addNbGeometry('hexagon'); toggleRibbonMenu(null);" style="font-size: 20px;">⬡</button>
+                <button class="glass-tool-btn" onclick="addNbGeometry('r-triangle'); toggleRibbonMenu(null);" style="font-size: 20px;">📐</button>
+            </div>
+
+            <div id="ribbon-postit" class="ribbon-menu-group" style="display: none;">
+                <span style="font-size: 13px; font-weight: bold; color: #475569;">เลือกสีโพสต์อิท:</span>
+                <button class="glass-tool-btn" style="width: 28px; height: 28px; background: #fef08a !important; border: 1px solid #eab308 !important;" onclick="prepNbPostit('#fef08a'); toggleRibbonMenu(null);"></button>
+                <button class="glass-tool-btn" style="width: 28px; height: 28px; background: #bbf7d0 !important; border: 1px solid #22c55e !important;" onclick="prepNbPostit('#bbf7d0'); toggleRibbonMenu(null);"></button>
+                <button class="glass-tool-btn" style="width: 28px; height: 28px; background: #fecdd3 !important; border: 1px solid #f43f5e !important;" onclick="prepNbPostit('#fecdd3'); toggleRibbonMenu(null);"></button>
+                <button class="glass-tool-btn" style="width: 28px; height: 28px; background: #bfdbfe !important; border: 1px solid #3b82f6 !important;" onclick="prepNbPostit('#bfdbfe'); toggleRibbonMenu(null);"></button>
+            </div>
+
+            <div id="ribbon-grid" class="ribbon-menu-group" style="display: none;">
+                <button class="ctx-btn" onclick="prepNbGrid('square'); toggleRibbonMenu(null);">▦ สี่เหลี่ยม</button>
+                <button class="ctx-btn" onclick="prepNbGrid('isometric'); toggleRibbonMenu(null);">⬡ ไอโซเมตริก</button>
+                <button class="ctx-btn" onclick="prepNbGrid('polar'); toggleRibbonMenu(null);">🎯 พิกัดเชิงขั้ว</button>
+            </div>
+
+            <div id="ctx-notification" class="ribbon-menu-group" style="display: none; border-radius: 8px; font-family: 'K2D', sans-serif; font-weight: bold; font-size: 15px; padding: 4px 15px; color: #1e293b;">
+                <span id="ctx-noti-text">📸 จิ้มบนกระดาน เพื่อวางรูป...</span>
+            </div>
+            
         </div>
 
         <div id="examate-workspace" style="flex: 1; position: relative; overflow: hidden; background: #ffffff;">
-            
             <canvas id="notebook-canvas" style="width: 100%; height: 100%;"></canvas>
-
-         <div id="nb-context-toolbar" class="context-toolbar-hidden glass-brutal-frame" style="position: absolute; top: 15px; left: 50%; transform: translateX(-50%); z-index: 1000; display: none; padding: 10px 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); max-width: 90%; width: max-content;">
-    
-    <div id="ctx-tools-container" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; align-items: center;">
-        
-        <button class="ctx-btn btn-save" onclick="saveSelectionAsImage()">💾 เซฟรูป</button>
-        <button class="ctx-btn" onclick="openLinkFromObject()" style="background: #f0fdf4 !important; color: #16a34a; border: 1px solid #bbf7d0 !important; font-weight: bold; border-radius: 8px;">🚀 เปิดเว็บ</button>
-        <button class="ctx-btn btn-crop" onclick="startCropImage()">✂️ ตัดรูป</button>
-        <button class="ctx-btn btn-dup" onclick="duplicateObject()">👯 ทำซ้ำ</button>
-        <button class="ctx-btn" onclick="scanHandwrittenCode()" style="background: #e6f4ea !important; color: #137333; border: 1px solid #ceead6 !important; font-weight: bold; padding: 6px 12px; border-radius: 8px;">🐍 สแกนโค้ด</button>
-        <button class="ctx-btn" onclick="editInteractiveWebBtn()" style="background: #e0f2fe !important; color: #0284c7; border: 1px solid #bae6fd !important; font-weight: bold; border-radius: 8px;">✏️ แก้ไขเว็บ</button>
-        
-        <div class="ctx-divider" style="height: 20px; display: inline-block;"></div>
-        
-        <button class="ctx-btn btn-delete" onclick="deleteSelectedObject()">🗑️ ลบทิ้ง</button>
-        
-    </div>
-</div>
-
-            <div id="nb-text-toolbar" class="glass-brutal-frame" style="position: absolute; top: 15px; left: 50%; transform: translateX(-50%); z-index: 1002; padding: 6px 15px; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
-                <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center;">
-                    <button class="glass-tool-btn" style="border-radius: 0; padding: 4px 8px;" onclick="changeTextProp('fontSize', -2)">-</button>
-                    <span id="text-size-display-toolbar" style="font-size: 14px; font-weight: bold; width: 30px; text-align: center;">28</span>
-                    <button class="glass-tool-btn" style="border-radius: 0; padding: 4px 8px;" onclick="changeTextProp('fontSize', 2)">+</button>
-                    <div style="width: 1px; height: 20px; background: rgba(0,0,0,0.1);"></div>
-                    <button class="glass-tool-btn" style="font-weight: 900; font-family: serif;" onclick="toggleTextProp('fontWeight', 'bold', 'normal')">B</button>
-                    <button class="glass-tool-btn" style="font-style: italic; font-family: serif;" onclick="toggleTextProp('fontStyle', 'italic', 'normal')">I</button>
-                    <button class="glass-tool-btn" style="color: #ef4444;" title="ลบ" onclick="deleteSelectedObject()">🗑️</button>
-                </div>
-            </div>
-
+            
             <canvas id="nb-minimap" width="160" height="120" style="display: none; position: absolute; top: 25px; right: 25px; background-color: rgba(255, 255, 255, 0.9); border: 2px solid #3b82f6; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 999; cursor: crosshair; backdrop-filter: blur(4px);"></canvas>
             
             <div id="nb-zoom-controls" style="position: absolute; bottom: 20px; right: 20px; z-index: 1000; display: flex; align-items: center; background: rgba(255,255,255,0.95); border: 2px solid #cbd5e1; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow: hidden;">
                 <button onclick="changeZoom(-0.1)" style="background: transparent; border: none; border-right: 1px solid #cbd5e1; padding: 8px 12px; font-weight: bold; cursor: pointer; color: #475569; font-size: 16px;">➖</button>
-                <div id="nb-zoom-display" onclick="resetZoom()" title="คลิกเพื่อรีเซ็ต 100%" style="padding: 8px 15px; font-weight: bold; font-family: 'K2D', sans-serif; font-size: 14px; color: #1e293b; cursor: pointer;">100%</div>
+                <div id="nb-zoom-display" onclick="resetZoom()" title="คลิกเพื่อรีเซ็ต 100%" style="padding: 8px 15px; font-weight: bold; font-family: 'K2D', sans-serif; font-size: 14px; color: #1e293b; cursor: pointer; min-width: 50px; text-align: center; user-select: none;">100%</div>
                 <button onclick="changeZoom(0.1)" style="background: transparent; border: none; border-left: 1px solid #cbd5e1; padding: 8px 12px; font-weight: bold; cursor: pointer; color: #475569; font-size: 16px;">➕</button>
             </div>
-
         </div> 
+    </div>
         <button id="btn-toggle-sidebar" onclick="toggleSidebar()" 
         style="position: fixed; top: 15px; right: 20px; z-index: 9990;
                background: #1e3a8a; color: white; border: none; padding: 8px 16px;
@@ -673,7 +737,6 @@
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     #examate-sidebar.open { transform: translateX(0); }
-
     .sidebar-header { background: #1e293b; color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
     .sidebar-close-btn { background: none; border: none; color: #94a3b8; font-size: 20px; cursor: pointer; }
     .sidebar-close-btn:hover { color: white; }
@@ -1012,10 +1075,12 @@ const _origToObject = fabric.Object.prototype.toObject;
                 'webTitle',            // จำชื่อหน้าต่าง
                 'linkUrl',             // จำลิงก์ปกติ (ถ้ามี)
                 'boxStyle',            // จำสไตล์กรอบข้อความ
-                'boxStroke'            // จำสีกรอบข้อความ
+                'boxStroke',           // จำสีกรอบข้อความ
+                'isPythonBtn',         // 🌟 [เพิ่มใหม่] จำว่านี่คือปุ่ม Python
+                'pyTitle',             // 🌟 [เพิ่มใหม่] จำชื่อโจทย์ Python
+                'pyCode'               // 🌟 [เพิ่มใหม่] จำโค้ดที่เด็กพิมพ์เซฟไว้
             ].concat(propertiesToInclude || []));
-        };
-// ==========================================
+        };// ==========================================
         // 🚀 ปลุกกระดานเต็มจอ (Standalone Engine) + ระบบดักจับ Template
         // ==========================================
         function initNotebookStandalone() {
@@ -1493,76 +1558,65 @@ const _origToObject = fabric.Object.prototype.toObject;
                 }, ['boxStyle', 'boxStroke']); 
             }
         }
+// ==========================================
+// 🚀 ฟังก์ชันควบคุม Ribbon อัจฉริยะ (แบบดันกระดานลง)
+// ==========================================
 function toggleContextToolbar() {
-    const ctxBar = document.getElementById('nb-context-toolbar');
-    const toolsContainer = document.getElementById('ctx-tools-container');
+// 💡 เติม 2 บรรทัดนี้เข้าไป เพื่อล้างค่าเมนูรูปร่าง/กราฟ ตอนที่เราลากคลุมวัตถุ
+    activeRibbonMenu = null;
+    document.querySelectorAll('.ribbon-menu-group').forEach(m => m.style.display = 'none');
+    const ribbon = document.getElementById('dynamic-ribbon');
+    const ctxTools = document.getElementById('ctx-tools-container');
+    const textTools = document.getElementById('nb-text-toolbar');
     const notiBox = document.getElementById('ctx-notification');
-    const textToolbar = document.getElementById('nb-text-toolbar'); 
     
-    if (!ctxBar) return;
-    const activeObj = fCanvas.getActiveObject();
+    if (!ribbon) return;
+    const activeObj = fCanvas ? fCanvas.getActiveObject() : null;
     
-    // 1. ถ้ากำลังรอจิ้มวางรูป/กล่องข้อความ ให้แจ้งเตือนโชว์ที่เดิม (กลางจอบน)
+    // 1. ถ้ากำลังอยู่ในโหมด "รอจิ้มวาง" (รูป/ข้อความ/โพสต์อิท/กราฟ)
     if (pendingNbImage !== null || pendingNbText || pendingNbPostitColor || pendingNbGrid) {
-        if (toolsContainer) toolsContainer.style.display = 'none';
-        if (textToolbar) textToolbar.style.display = 'none';
+        if (ctxTools) ctxTools.style.display = 'none';
+        if (textTools) textTools.style.display = 'none';
         if (notiBox) notiBox.style.display = 'flex';
-        ctxBar.style.display = 'flex';
-        ctxBar.classList.add('active');
-        ctxBar.style.top = '90px'; // กลับจุดศูนย์กลาง
-        ctxBar.style.left = '50%';
-        ctxBar.style.transform = 'translateX(-50%)';
+        ribbon.classList.add('active'); // สั่ง Ribbon รูดลงมา!
         return; 
     }
 
+    // 2. ถ้ากัปตันกดเลือกวัตถุบนกระดาน
     if (activeObj) {
         if (notiBox) notiBox.style.display = 'none';
 
-        // 🤖 2. [ระบบสแกนพื้นที่] คำนวณจุดเกิดของเมนู ไม่ให้บังออบเจกต์
-        let bound = activeObj.getBoundingRect();
-        let menuTop = bound.top - 70; // ค่าเริ่มต้น: ให้ลอยอยู่ "เหนือ" ออบเจกต์ 70px
-        
-        // สแกน: ถ้าออบเจกต์อยู่สูงเกินไป (ชนขอบจอ) ให้ย้ายเมนูมาหลบ "ใต้" ออบเจกต์แทน
-        if (menuTop < 90) {
-            menuTop = bound.top + bound.height + 20; 
-        }
-
+        // ถ้าเลือกเป็นตัวหนังสือ ให้โชว์ Text Tools
         if (activeObj.type === 'i-text' || activeObj.type === 'text' || activeObj.type === 'textbox') {
-            ctxBar.classList.remove('active'); 
-            ctxBar.style.display = 'none';
-            if (toolsContainer) toolsContainer.style.display = 'none';
-
-            if (textToolbar) {
-                textToolbar.style.display = 'flex';
-                textToolbar.style.zIndex = '10005';
-                
-                // อัปเดตตำแหน่งจุดเกิดใหม่ที่คำนวณไว้
-                textToolbar.style.top = menuTop + 'px';
-                textToolbar.style.left = '50%';
-                
-                updateTextSizeDisplays(activeObj.fontSize);
-                const fontSelect = document.getElementById('nb-font-family-select');
-                if (fontSelect && activeObj.fontFamily) {
-                    fontSelect.value = activeObj.fontFamily;
-                }
+            if (ctxTools) ctxTools.style.display = 'none';
+            if (textTools) textTools.style.display = 'flex';
+            ribbon.classList.add('active'); // รูดลงมา!
+            
+            updateTextSizeDisplays(activeObj.fontSize);
+            const fontSelect = document.getElementById('nb-font-family-select');
+            if (fontSelect && activeObj.fontFamily) {
+                fontSelect.value = activeObj.fontFamily;
             }
         } else {
-            if (textToolbar) textToolbar.style.display = 'none';
-            ctxBar.style.display = 'flex';
-            if (toolsContainer) toolsContainer.style.display = 'flex';
-            ctxBar.classList.add('active'); 
-            
-            // อัปเดตตำแหน่งจุดเกิดใหม่ที่คำนวณไว้
-            ctxBar.style.top = menuTop + 'px';
-            ctxBar.style.left = '50%';
+            // ถ้าเลือกรูปภาพ ลายเส้น ให้โชว์ Context Tools ปกติ
+            if (textTools) textTools.style.display = 'none';
+            if (ctxTools) ctxTools.style.display = 'flex';
+            ribbon.classList.add('active'); // รูดลงมา!
         }
     } else {
-        ctxBar.classList.remove('active'); 
-        ctxBar.style.display = 'none';
-        if (textToolbar) textToolbar.style.display = 'none';
+        // 3. ถ้าไม่ได้เลือกอะไรเลย ให้ Ribbon หดกลับขึ้นไป!
+        ribbon.classList.remove('active');
+        
+        // รอให้ Ribbon รูดเก็บเสร็จ (300ms) ค่อยซ่อนปุ่มข้างในกันเหนียว
+        setTimeout(() => {
+            if (!ribbon.classList.contains('active')) {
+                if (ctxTools) ctxTools.style.display = 'none';
+                if (textTools) textTools.style.display = 'none';
+                if (notiBox) notiBox.style.display = 'none';
+            }
+        }, 300);
     }
-}
-        function prepNbPostit(color) {
+}        function prepNbPostit(color) {
             if (!fCanvas) return;
             pendingNbText = false;
             pendingNbImage = null;
@@ -2707,12 +2761,20 @@ function openWebWidget(url, title) {
         document.addEventListener('pointermove', onResizeMove); document.addEventListener('pointerup', onResizeUp);
     });
 }
-// 📡 3. สายลับแอบฟัง: จับจังหวะการ "ดับเบิลคลิก"
+// ==========================================
+// 📡 สายลับแอบฟัง: จับจังหวะการ "ดับเบิลคลิก" (แยกปุ่มเว็บ vs ปุ่ม Python)
+// ==========================================
 function bindWebDoubleClickListener() {
     if (fCanvas && !fCanvas.__hasWebDblClick) {
         fCanvas.on('mouse:dblclick', function(opt) {
-            if (opt.target && opt.target.isInteractiveWebBtn) {
-                openWebWidget(opt.target.webUrl, opt.target.webTitle);
+            if (opt.target) {
+                if (opt.target.isInteractiveWebBtn) {
+                    // ถ้าเป็นปุ่มเว็บ เปิดหน้าต่างเว็บ
+                    openWebWidget(opt.target.webUrl, opt.target.webTitle);
+                } else if (opt.target.isPythonBtn) {
+                    // 🌟 ถ้าเป็นปุ่ม Python เปิด IDE พร้อมส่งโค้ดและตัวมันเองไปให้แก้ไข
+                    openPythonIDE(opt.target.pyCode, opt.target.pyTitle, opt.target);
+                }
             }
         });
         fCanvas.__hasWebDblClick = true;
@@ -3007,8 +3069,48 @@ window.scanHandwrittenCode = async function() {
 
     if(btn) { btn.innerHTML = oldText; btn.style.pointerEvents = "auto"; }
 };
-// 💻 ฟังก์ชัน: หน้าต่าง Python IDE และเครื่องยนต์ Pyodide
-window.openPythonIDE = function(initialCode = "") {
+// ==========================================
+// 🐍 ฟังก์ชันสร้าง "แคปซูลโค้ด" ไปแปะบนกระดาน
+// ==========================================
+window.createPythonCapsuleBtn = function() {
+    if (!fCanvas) return;
+    let title = prompt("📌 ตั้งชื่อโจทย์ Python (เช่น ข้อ 1: ตัดเกรด):", "โจทย์ Python");
+    if (!title) return;
+    
+    // สร้างปุ่มรูปร่างแคปซูล
+    let rect = new fabric.Rect({
+        width: 250, height: 50, fill: '#1e1e1e', rx: 12, ry: 12,
+        originX: 'center', originY: 'center',
+        shadow: new fabric.Shadow({ color: 'rgba(0,0,0,0.3)', blur: 8, offsetX: 2, offsetY: 4 })
+    });
+    let text = new fabric.Text("🐍 " + title, {
+        fontFamily: 'K2D, sans-serif', fontSize: 18, fill: '#10b981', fontWeight: 'bold',
+        originX: 'center', originY: 'center'
+    });
+    
+    // มัดรวมกันแล้วแอบซ่อน โค้ดว่างๆ ไว้ข้างใน
+    let btnGroup = new fabric.Group([rect, text], {
+        left: fCanvas.getVpCenter().x, top: fCanvas.getVpCenter().y,
+        originX: 'center', originY: 'center',
+        borderColor: '#10b981', cornerColor: '#10b981',
+        transparentCorners: false, cornerSize: 12,
+        isPythonBtn: true, 
+        pyTitle: title, 
+        pyCode: "# พิมพ์โค้ด Python ของคุณที่นี่...\nprint('Hello Examate!')"
+    });
+
+    fCanvas.add(btnGroup);
+    fCanvas.setActiveObject(btnGroup);
+    fCanvas.requestRenderAll();
+    
+    if (typeof saveState === 'function') saveState();
+    alert("✅ สร้างปุ่มโจทย์ Python สำเร็จ!\n(ดับเบิลคลิกเพื่อเขียนโค้ดและรันได้เลยครับ)");
+};
+
+// ==========================================
+// 💻 ฟังก์ชัน: หน้าต่าง Python IDE (อัปเกรดมีปุ่มเซฟโค้ด)
+// ==========================================
+window.openPythonIDE = function(initialCode = "", title = "Python Code Compiler", targetObj = null) {
     let ideWidget = document.getElementById('examate-python-ide');
     if (ideWidget) ideWidget.remove(); 
 
@@ -3029,9 +3131,12 @@ window.openPythonIDE = function(initialCode = "") {
         display: flex; justify-content: space-between; align-items: center; 
         cursor: grab; user-select: none; border-bottom: 1px solid #333;
     `;
+    
+    // 🌟 พระเอกอยู่ตรงนี้: เพิ่มปุ่ม "💾 เซฟโค้ด" เข้าไป
     header.innerHTML = `
-        <span>🐍 Python Code Compiler</span> 
+        <span>🐍 ${title}</span> 
         <div style="display: flex; gap: 8px;">
+            <button id="btn-save-py" style="background: #3b82f6; color: white; border: none; border-radius: 6px; padding: 4px 12px; cursor: pointer; font-weight: bold; font-size: 13px;">💾 เซฟโค้ด</button>
             <button id="btn-run-py" style="background: #10b981; color: white; border: none; border-radius: 6px; padding: 4px 12px; cursor: pointer; font-weight: bold; font-size: 13px;">▶ RUN</button>
             <button onclick="document.getElementById('examate-python-ide').remove()" style="background: #ef4444; color: white; border: none; border-radius: 6px; padding: 4px 10px; cursor: pointer; font-weight: bold; font-size: 13px;">✕</button>
         </div>
@@ -3060,7 +3165,22 @@ window.openPythonIDE = function(initialCode = "") {
     ideWidget.appendChild(terminal);
     document.body.appendChild(ideWidget);
 
-    // 🚀 ระบบเครื่องยนต์ Pyodide (รันฟรีบนเบราว์เซอร์ ไม่ต้องง้อเซิร์ฟเวอร์ Piston!)
+    // 💾 ระบบเซฟโค้ดยัดกลับเข้าปุ่ม
+    let saveBtn = header.querySelector('#btn-save-py');
+    if (!targetObj) {
+        saveBtn.style.display = 'none'; // ซ่อนปุ่มเซฟ ถ้าแค่กดรันธรรมดาไม่ได้มาจากปุ่ม
+    } else {
+        saveBtn.addEventListener('click', () => {
+            targetObj.set('pyCode', codeInput.value); // ยัดโค้ดใหม่ใส่แคปซูล!
+            if (typeof saveState === 'function') saveState();
+            if (typeof saveCurrentPageToMem === 'function') saveCurrentPageToMem();
+            alert("💾 บันทึกโค้ดลงในปุ่มโจทย์เรียบร้อยแล้ว!\n(อย่าลืมกด 'เซฟกระดาน' เพื่อส่งงานให้คุณครูด้วยนะครับ)");
+            saveBtn.innerText = "✅ เซฟแล้ว";
+            setTimeout(() => saveBtn.innerText = "💾 เซฟโค้ด", 2000);
+        });
+    }
+
+    // 🚀 ระบบเครื่องยนต์ Pyodide
     header.querySelector('#btn-run-py').addEventListener('click', async () => {
         const code = codeInput.value;
         if (!code.trim()) return;
@@ -3070,29 +3190,22 @@ window.openPythonIDE = function(initialCode = "") {
         terminal.innerHTML = `<span style="color:#f59e0b;">⏳ กำลังโหลดเครื่องยนต์ Python ลงเบราว์เซอร์...<br><br><small><i>(การโหลดครั้งแรกอาจใช้เวลา 5-15 วินาที แต่ครั้งต่อไปจะรันเร็วปรู๊ดปร๊าดทันทีครับ!)</i></small></span>`;
         
         try {
-            // 1. โหลดเครื่องยนต์
             if (!window.loadPyodide) {
                 await new Promise((resolve, reject) => {
                     let script = document.createElement('script');
-                    // 🌟 เปลี่ยน URL เป็นเวอร์ชัน v0.23.4 (ตัวเสถียร 100% ไม่มีบินแน่นอน!)
                     script.src = "https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js";
                     script.onload = resolve; 
-                    // 🌟 แก้บั๊ก: ถ้าเน็ตหลุดหรือลิงก์พัง ให้ส่ง Error ออกมาตรงๆ
                     script.onerror = () => reject(new Error("โหลดไฟล์เครื่องยนต์ไม่สำเร็จ (โปรดตรวจสอบอินเทอร์เน็ต)"));
                     document.head.appendChild(script);
                 });
             }
 
-            // 2. สตาร์ทเครื่องยนต์
             if (!window.pyodideInstance) {
                 window.pyodideInstance = await loadPyodide();
             }
 
-            // 3. เซ็ตค่าการพิมพ์ (print)
             const setupCode = `import sys\nimport io\nsys.stdout = io.StringIO()\nsys.stderr = io.StringIO()`;
             await window.pyodideInstance.runPythonAsync(setupCode);
-            
-            // 4. รันโค้ด
             await window.pyodideInstance.runPythonAsync(code);
             
             const stdout = window.pyodideInstance.runPython("sys.stdout.getvalue()");
@@ -3105,7 +3218,6 @@ window.openPythonIDE = function(initialCode = "") {
             }
 
         } catch (e) {
-            // 🌟 แก้บั๊ก .split() ที่ทำให้พังในรูป
             let errMsg = e.message || "เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ";
             if (errMsg.includes('File "<exec>"')) {
                 errMsg = errMsg.split('File "<exec>"')[1];
@@ -3835,6 +3947,42 @@ function foldToolbar() {
         // 🚨 ปรับตัวเลข 150px ดูหน้างานครับ
         toolbar.style.maxWidth = '150px'; 
         foldBtn.style.transform = 'rotate(180deg)';
+    }
+}
+// ==========================================
+// 🎛️ ระบบสลับเมนูย่อยของ Ribbon
+// ==========================================
+let activeRibbonMenu = null;
+
+function toggleRibbonMenu(menuId) {
+    const ribbon = document.getElementById('dynamic-ribbon');
+    const allMenus = document.querySelectorAll('.ribbon-menu-group');
+    
+    // ถ้าสั่งให้ปิด (ส่งค่า null หรือกดปุ่มเดิมซ้ำ)
+    if (!menuId || activeRibbonMenu === menuId) {
+        ribbon.classList.remove('active');
+        activeRibbonMenu = null;
+        // รอเมนูรูดกลับขึ้นไปค่อยซ่อนเนื้อใน
+        setTimeout(() => {
+            if (!ribbon.classList.contains('active')) {
+                allMenus.forEach(m => m.style.display = 'none');
+            }
+        }, 300);
+        return;
+    }
+    
+    // ปิดทุกเมนูย่อยที่เปิดค้างไว้ก่อน
+    allMenus.forEach(m => m.style.display = 'none');
+    
+    // เปิดโชว์เฉพาะเมนูเป้าหมาย
+    const targetMenu = document.getElementById('ribbon-' + menuId);
+    if (targetMenu) {
+        targetMenu.style.display = 'flex';
+        ribbon.classList.add('active'); // สั่งรูดลงมา!
+        activeRibbonMenu = menuId;
+        
+        // เซฟตี้: ล้างโหมดการวาดบนกระดานชั่วคราว เพื่อเตรียมรับคำสั่งใหม่
+        if(fCanvas) fCanvas.isDrawingMode = false; 
     }
 }
 </script>
