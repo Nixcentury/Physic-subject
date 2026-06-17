@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dalton's Perfect 20 Chamber V.2</title>
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #000000;
+            --accent: #10b981;
+            --bg-body: #f0fdf4;
+            --border: 4px solid #000000;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+            
+            /* Gas Themes */
+            --c-blue: #3b82f6;
+            --c-red: #ef4444;
+            --c-green: #22c55e;
+        }
+
+        * { box-sizing: border-box; font-family: 'K2D', sans-serif; user-select: none; }
+        body { background-color: var(--bg-body); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; color: var(--text); overflow-x: hidden; }
+
+        .container {
+            background: var(--card-bg); border: var(--border); box-shadow: 10px 10px 0px #000;
+            width: 100%; max-width: 1200px; padding: 20px; display: flex; flex-direction: column; gap: 20px;
+        }
+
+        .header-title {
+            margin: 0; padding: 15px; background: var(--accent); color: #fff; border: var(--border);
+            font-size: 24px; font-weight: 900; text-transform: uppercase; text-align: center;
+            box-shadow: 5px 5px 0px #000; letter-spacing: 1px;
+        }
+        .header-subtitle { display: block; font-size: 14px; font-weight: 600; color: #d1fae5; margin-top: 5px; }
+
+        .main-layout { display: flex; gap: 20px; flex-wrap: wrap; }
+
+        /* 🧪 Mixing Tank Area */
+        .simulation-panel { flex: 1.2; min-width: 320px; display: flex; flex-direction: column; gap: 15px; }
+        
+        .chamber-box {
+            width: 100%; height: 380px; background: #fafafa; border: 6px solid #1e293b; border-radius: 20px;
+            position: relative; overflow: hidden; box-shadow: inset 8px 8px 0px rgba(0,0,0,0.05), 6px 6px 0px #000;
+            background-image: radial-gradient(#e2e8f0 2px, transparent 2px); background-size: 25px 25px;
+        }
+
+        /* 🔵🔴🟢 Particle Styles */
+        .particle {
+            position: absolute; width: 22px; height: 22px; border-radius: 50%;
+            border: 2px solid #000; transition: background-color 0.15s;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+        }
+
+        /* 📊 Dashboard & Stats Table */
+        .dashboard-panel { flex: 1.5; min-width: 400px; display: flex; flex-direction: column; gap: 15px; }
+        
+        .const-banner {
+            background: #f8fafc; border: 3px solid #000; padding: 10px; font-weight: 800; font-size: 15px;
+            display: flex; justify-content: space-around; text-align: center; box-shadow: 4px 4px 0px #000;
+        }
+
+        .total-pressure-box {
+            background: #ffedd5; border: 4px solid #f97316; padding: 15px; text-align: center;
+            box-shadow: 5px 5px 0px #000; border-radius: 12px;
+        }
+        .total-label { font-size: 16px; font-weight: 900; color: #ea580c; }
+        .total-value { font-size: 42px; font-weight: 900; color: #ea580c; font-family: monospace; }
+
+        /* 📋 Table Styling */
+        table { width: 100%; border-collapse: collapse; border: 3px solid #000; box-shadow: 5px 5px 0px #000; background: #fff;}
+        th, td { border: 2px solid #000; padding: 10px; text-align: center; font-weight: 800; font-size: 15px; }
+        th { background: #f1f5f9; font-weight: 900; }
+
+        /* 🕹️ Adjust Buttons (+/-) */
+        .adj-container { display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-adj {
+            background: #e2e8f0; border: 2px solid #000; font-weight: 900; font-size: 18px;
+            width: 32px; height: 32px; border-radius: 6px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 2px 2px 0px #000; transition: 0.1s;
+        }
+        .btn-adj:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px #000; }
+        .btn-adj.add { background: #10b981; color: #fff; }
+        .btn-adj.sub { background: #ef4444; color: #fff; }
+
+        /* 🕹️ Interactive Buttons */
+        .btn-row { display: flex; gap: 12px; }
+        .btn {
+            flex: 1; border: 3px solid #000; padding: 12px; font-size: 18px; font-weight: 900;
+            cursor: pointer; box-shadow: 4px 4px 0px #000; transition: 0.1s; text-transform: uppercase;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0px #000; }
+        .btn-random { background: #8b5cf6; color: #fff; }
+        .btn-reset { background: #f87171; color: #fff; }
+
+        .socratic-note {
+            background: #fef9c3; border: 2px dashed #ca8a04; padding: 12px; font-size: 14px;
+            font-weight: 700; color: #713f12; line-height: 1.5; border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="header-title">
+        🧪 Dalton's Perfect 20: ห้องปฏิบัติการความดันย่อย
+        <span class="header-subtitle">พิสูจน์กฎของดอลตันผ่านเศษส่วนโมลคงที่ (Fixed n_total = 20 โมเลกุล)</span>
+    </h1>
+
+    <div class="const-banner">
+        <div>📦 ปริมาตรรวมถัง (V)<br><span style="color:#2563eb; font-size:18px; font-family:monospace;">49.26 L</span></div>
+        <div>🔥 อุณหภูมิระบบ (T)<br><span style="color:#b45309; font-size:18px; font-family:monospace;">300 K (27°C)</span></div>
+        <div>✨ ค่าคงที่แก๊ส (R)<br><span style="color:#64748b; font-size:18px; font-family:monospace;">0.0821</span></div>
+    </div>
+
+    <div class="main-layout">
+        <div class="simulation-panel">
+            <div class="chamber-box" id="chamber">
+                </div>
+            <div class="socratic-note">
+                💡 <b>Socratic Hint:</b> ลองกดปุ่ม <b>[+]</b> หรือ <b>[-]</b> ที่ตารางเพื่อเปลี่ยนสัดส่วนโมเลกุล แล้วสังเกตว่า <b>"ความดันรวม (P_total)"</b> ขยับหรือไม่?
+            </div>
+        </div>
+
+        <div class="dashboard-panel">
+            <div class="total-pressure-box">
+                <div class="total-label">⏱️ ความดันรวมภายในถัง (P_total = n_total * R * T / V)</div>
+                <div class="total-value" id="p-total">10.00 atm</div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ชนิดแก๊ส (M = 28)</th>
+                        <th>ปรับโมล (n)</th>
+                        <th>เศษส่วนโมล (X)</th>
+                        <th>ความดันย่อย (P)</th>
+                        <th>ปริมาตร (V)</th>
+                        <th>อุณหภูมิ (T)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="color: var(--c-blue);">
+                        <td>🔵 N₂ (Nitrogen)</td>
+                        <td>
+                            <div class="adj-container">
+                                <button class="btn-adj sub" onclick="decreaseGas(0)">-</button>
+                                <span id="n-blue" style="width: 25px; font-weight: 900; font-size: 18px;">0</span>
+                                <button class="btn-adj add" onclick="increaseGas(0)">+</button>
+                            </div>
+                        </td>
+                        <td id="x-blue">0.00</td>
+                        <td id="p-blue">0.0 atm</td>
+                        <td>49.26 L</td>
+                        <td>300 K</td>
+                    </tr>
+                    <tr style="color: var(--c-red);">
+                        <td>🔴 CO (Carbon Monoxide)</td>
+                        <td>
+                            <div class="adj-container">
+                                <button class="btn-adj sub" onclick="decreaseGas(1)">-</button>
+                                <span id="n-red" style="width: 25px; font-weight: 900; font-size: 18px;">0</span>
+                                <button class="btn-adj add" onclick="increaseGas(1)">+</button>
+                            </div>
+                        </td>
+                        <td id="x-red">0.00</td>
+                        <td id="p-red">0.0 atm</td>
+                        <td>49.26 L</td>
+                        <td>300 K</td>
+                    </tr>
+                    <tr style="color: var(--c-green);">
+                        <td>🟢 C₂H₄ (Ethylene)</td>
+                        <td>
+                            <div class="adj-container">
+                                <button class="btn-adj sub" onclick="decreaseGas(2)">-</button>
+                                <span id="n-green" style="width: 25px; font-weight: 900; font-size: 18px;">0</span>
+                                <button class="btn-adj add" onclick="increaseGas(2)">+</button>
+                            </div>
+                        </td>
+                        <td id="x-green">0.00</td>
+                        <td id="p-green">0.0 atm</td>
+                        <td>49.26 L</td>
+                        <td>300 K</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="btn-row">
+                <button class="btn btn-random" onclick="randomizeColors()">🎲 สุ่มจำนวนสี (Randomize)</button>
+                <button class="btn btn-reset" onclick="resetToDefault()">🔄 เริ่มต้นสีฟ้า (Reset)</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const TOTAL_MOLECULES = 20;
+    const chamber = document.getElementById('chamber');
+    
+    let particles = [];
+    
+    const gasTypes = [
+        { id: 'blue', color: '#3b82f6' },  // Index 0: N2
+        { id: 'red', color: '#ef4444' },   // Index 1: CO
+        { id: 'green', color: '#22c55e' }  // Index 2: C2H4
+    ];
+
+    function initSimulation() {
+        chamber.innerHTML = '';
+        particles = [];
+        
+        let w = chamber.clientWidth || 450;
+        let h = chamber.clientHeight || 380;
+
+        for (let i = 0; i < TOTAL_MOLECULES; i++) {
+            let el = document.createElement('div');
+            el.className = 'particle';
+            
+            el.style.backgroundColor = gasTypes[0].color;
+            chamber.appendChild(el);
+
+            let x = Math.random() * (w - 24);
+            let y = Math.random() * (h - 24);
+
+            let angle = Math.random() * Math.PI * 2;
+            let speed = 120; 
+            let vx = Math.cos(angle) * speed;
+            let vy = Math.sin(angle) * speed;
+
+            particles.push({
+                el: el,
+                typeIdx: 0,
+                x: x, y: y,
+                vx: vx, vy: vy
+            });
+        }
+        calculateDalton();
+    }
+
+    // --- กลไกขโมยประชากร (Steal Population) ---
+    function increaseGas(targetTypeIdx) {
+        // หาอนุภาคที่ "ไม่ใช่" สีเป้าหมาย
+        let availableTargets = particles.filter(p => p.typeIdx !== targetTypeIdx);
+        
+        if (availableTargets.length > 0) {
+            // สุ่มหยิบมา 1 ตัวแล้วเปลี่ยนสี
+            let pToChange = availableTargets[Math.floor(Math.random() * availableTargets.length)];
+            pToChange.typeIdx = targetTypeIdx;
+            pToChange.el.style.backgroundColor = gasTypes[targetTypeIdx].color;
+            calculateDalton();
+        }
+    }
+
+    function decreaseGas(targetTypeIdx) {
+        // หาอนุภาคที่ "เป็น" สีเป้าหมาย
+        let availableTargets = particles.filter(p => p.typeIdx === targetTypeIdx);
+        
+        if (availableTargets.length > 0) {
+            let pToChange = availableTargets[Math.floor(Math.random() * availableTargets.length)];
+            // เปลี่ยนเป็นสีอื่นแบบสุ่ม (ที่ไม่ใช่สีเดิม)
+            let newType = (targetTypeIdx + 1 + Math.floor(Math.random() * 2)) % 3;
+            pToChange.typeIdx = newType;
+            pToChange.el.style.backgroundColor = gasTypes[newType].color;
+            calculateDalton();
+        }
+    }
+
+    function randomizeColors() {
+        for (let p of particles) {
+            let randIdx = Math.floor(Math.random() * 3);
+            p.typeIdx = randIdx;
+            p.el.style.backgroundColor = gasTypes[randIdx].color;
+        }
+        calculateDalton();
+    }
+
+    function resetToDefault() {
+        for (let p of particles) {
+            p.typeIdx = 0;
+            p.el.style.backgroundColor = gasTypes[0].color;
+        }
+        calculateDalton();
+    }
+
+    function calculateDalton() {
+        let count = { blue: 0, red: 0, green: 0 };
+        
+        for (let p of particles) {
+            let typeId = gasTypes[p.typeIdx].id;
+            count[typeId]++;
+        }
+
+        ['blue', 'red', 'green'].forEach(color => {
+            let n = count[color];
+            let x = n / TOTAL_MOLECULES; 
+            let p_partial = x * 10.0;    
+
+            document.getElementById(`n-${color}`).innerText = n;
+            document.getElementById(`x-${color}`).innerText = x.toFixed(2);
+            document.getElementById(`p-${color}`).innerText = p_partial.toFixed(1) + " atm";
+        });
+    }
+
+    // --- Physics Core Loop Engine ---
+    let lastTime = 0;
+    function animationLoop(timestamp) {
+        if (!lastTime) lastTime = timestamp;
+        let dt = (timestamp - lastTime) / 1000;
+        if (dt > 0.1) dt = 0.1; 
+        lastTime = timestamp;
+
+        let w = chamber.clientWidth;
+        let h = chamber.clientHeight;
+
+        for (let p of particles) {
+            p.x += p.vx * dt;
+            p.y += p.vy * dt;
+
+            if (p.x <= 0) { p.x = 0; p.vx *= -1; }
+            else if (p.x + 22 >= w) { p.x = w - 22; p.vx *= -1; }
+
+            if (p.y <= 0) { p.y = 0; p.vy *= -1; }
+            else if (p.y + 22 >= h) { p.y = h - 22; p.vy *= -1; }
+
+            p.el.style.transform = `translate(${p.x}px, ${p.y}px)`;
+        }
+
+        requestAnimationFrame(animationLoop);
+    }
+
+    setTimeout(() => {
+        initSimulation();
+        requestAnimationFrame(animationLoop);
+    }, 200);
+
+    window.addEventListener('resize', () => {
+        let w = chamber.clientWidth;
+        let h = chamber.clientHeight;
+        for (let p of particles) {
+            if (p.x + 22 > w) p.x = w - 22;
+            if (p.y + 22 > h) p.y = h - 22;
+        }
+    });
+</script>
+</body>
+</html>
