@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Boiling Point: The Mixture V3</title>
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #ef4444;
+            --bg-body: #f8fafc;
+            --border: 4px solid #000;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+        }
+
+        * { box-sizing: border-box; font-family: 'K2D', sans-serif; user-select: none; }
+        body { background-color: var(--bg-body); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; color: var(--text); overflow-x: hidden; }
+
+        .container {
+            background: var(--card-bg); border: var(--border); box-shadow: 8px 8px 0px #000;
+            width: 100%; max-width: 1100px; padding: 20px; display: flex; flex-direction: column; gap: 20px;
+        }
+
+        .header-title {
+            margin: 0; padding: 15px; background: var(--primary); color: #fff; border: var(--border);
+            font-size: 24px; font-weight: 900; text-transform: uppercase; text-align: center;
+            box-shadow: 4px 4px 0px #ef4444; letter-spacing: 1px;
+        }
+        .subtitle { display: block; font-size: 14px; font-weight: 600; color: #94a3b8; margin-top: 5px; }
+
+        /* 🎛️ Control Panel */
+        .controls {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #f1f5f9; padding: 15px; border: var(--border); border-radius: 8px;
+        }
+        .select-box { display: flex; flex-direction: column; gap: 5px; }
+        .select-box label { font-weight: 900; font-size: 18px; display: flex; justify-content: space-between; align-items: center;}
+        .select-box label.blue { color: #3b82f6; }
+        .select-box label.red { color: #ef4444; }
+        select { border: 3px solid #000; padding: 10px; font-size: 16px; font-weight: 800; border-radius: 6px; cursor: pointer; background: #fff; outline: none; }
+
+        /* ℹ️ Info Cards */
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .info-card { background: #fff; border: 3px dashed #cbd5e1; padding: 10px; border-radius: 6px; font-size: 14px; line-height: 1.5; color: #334155; }
+        .info-card b { color: #0f172a; }
+
+        /* 🏟️ The Arena */
+        .arena {
+            display: flex; justify-content: center; align-items: flex-end; gap: 50px;
+            background: #fff; border: var(--border); padding: 40px 20px; position: relative;
+            box-shadow: inset 4px 4px 0px rgba(0,0,0,0.05); border-radius: 12px; height: 380px; overflow: hidden;
+            background-image: radial-gradient(#e2e8f0 2px, transparent 2px); background-size: 20px 20px;
+        }
+
+        /* 🌡️ Thermometer */
+        .thermometer-container { display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 10;}
+        .temp-display { background: #000; color: #10b981; font-family: monospace; font-size: 32px; font-weight: 900; padding: 5px 15px; border-radius: 6px; border: 3px solid #cbd5e1; width: 150px; text-align: center; }
+        .thermometer {
+            width: 30px; height: 200px; border: 4px solid #000; border-radius: 15px 15px 0 0; background: #fff; position: relative;
+            display: flex; align-items: flex-end; justify-content: center;
+        }
+        .mercury { width: 14px; height: 0%; background: #ef4444; transition: height 0.1s linear; border-radius: 10px 10px 0 0;}
+        .bulb { width: 50px; height: 50px; background: #ef4444; border: 4px solid #000; border-radius: 50%; margin-top: -10px; z-index: 2; position: relative; }
+
+        /* 🧪 The Big Flask */
+        .flask-system { display: flex; flex-direction: column; align-items: center; z-index: 5; }
+        .flask {
+            width: 160px; height: 180px; border: 5px solid #0f172a; border-radius: 20px 20px 80px 80px;
+            background: rgba(255,255,255,0.7); position: relative; display: flex; justify-content: center; align-items: flex-end;
+            box-shadow: inset -8px -8px 0px rgba(0,0,0,0.1); overflow: hidden; padding-bottom: 10px;
+        }
+        
+        .dot {
+            position: absolute; width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgba(0,0,0,0.5);
+            transition: top 1.5s ease-in, opacity 1s, left 1.5s ease-in-out; bottom: 15px;
+        }
+        .dot.blue { background-color: #3b82f6; }
+        .dot.red { background-color: #ef4444; }
+        .dot.evaporating { top: -20px !important; opacity: 0; transform: scale(1.5); }
+
+        /* 🔥 Burner */
+        .burner { width: 120px; height: 25px; background: #334155; border: 4px solid #000; border-radius: 12px; margin-top: 10px; position: relative; }
+        .flame {
+            position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%);
+            width: 80px; height: 50px; background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" fill="%23f97316" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C12 2 6 10 6 15C6 18.3137 8.68629 21 12 21C15.3137 21 18 18.3137 18 15C18 10 12 2 12 2Z"/></svg>') no-repeat center bottom;
+            opacity: 0; transition: 0.3s;
+        }
+
+        /* 🔘 Buttons */
+        .btn-row { display: flex; gap: 10px; margin-top: 5px; }
+        .btn {
+            color: #fff; border: 4px solid #000; padding: 15px; font-size: 20px; font-weight: 900; cursor: pointer; box-shadow: 4px 4px 0px #000; transition: 0.1s; text-transform: uppercase; border-radius: 8px; flex: 1; text-align: center;
+        }
+        .btn:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px #000; }
+        .btn:disabled { background: #94a3b8 !important; cursor: not-allowed; box-shadow: none; transform: translate(4px, 4px); color: #e2e8f0;}
+        
+        .btn-random { background: #8b5cf6; }
+        .btn-heat { background: #10b981; flex: 2; }
+        .btn-pause { background: #f59e0b; display: none; }
+
+        /* 📋 Result Panel */
+        .result-panel {
+            background: #fff; border: 4px dashed #3b82f6; padding: 20px; display: none;
+            flex-direction: column; gap: 15px; border-radius: 12px; margin-top: 10px;
+        }
+        .result-header { font-size: 24px; font-weight: 900; text-align: center; color: #1e3a8a; line-height: 1.4;}
+        .explanation-box { background: #fef08a; border: 3px solid #ca8a04; padding: 20px; font-size: 20px; font-weight: 800; color: #713f12; text-align: center; border-radius: 8px; }
+
+        @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 25% { transform: translate(-2px, -1px) rotate(-1deg); } 50% { transform: translate(1px, -2px) rotate(1deg); } 75% { transform: translate(-1px, 2px) rotate(-1deg); } 100% { transform: translate(1px, -1px) rotate(0deg); } }
+        .shaking { animation: shake 0.3s infinite; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="header-title">🧪 Boiling Mixture Simulator<span class="subtitle">การกลั่นลำดับส่วน: ศึกประชันความอึด ใครจะระเหยหนีไฟไปก่อน?</span></h1>
+
+    <div class="controls">
+        <div class="select-box">
+            <label class="blue">🔵 สาร A (สีน้ำเงิน)</label>
+            <select id="sel-a" onchange="resetArena()"></select>
+            <div class="info-card" id="info-a"></div>
+        </div>
+        <div class="select-box">
+            <label class="red">🔴 สาร B (สีแดง)</label>
+            <select id="sel-b" onchange="resetArena()"></select>
+            <div class="info-card" id="info-b"></div>
+        </div>
+    </div>
+
+    <div class="arena">
+        <div class="thermometer-container">
+            <div class="temp-display" id="temp-display">-50 °C</div>
+            <div>
+                <div class="thermometer"><div class="mercury" id="mercury"></div></div>
+                <div class="bulb"></div>
+            </div>
+        </div>
+
+        <div class="flask-system">
+            <div class="flask" id="flask"></div>
+            <div class="burner"><div class="flame" id="flame"></div></div>
+        </div>
+    </div>
+
+    <div class="btn-row">
+        <button class="btn btn-random" id="btn-random" onclick="randomizeMatch()">🎲 สุ่มคู่แข่ง</button>
+        <button class="btn btn-heat" id="btn-heat" onclick="startHeating()">🔥 จุดไฟต้มสาร</button>
+        <button class="btn btn-pause" id="btn-pause" onclick="togglePause()">⏸️ หยุดเวลา</button>
+    </div>
+
+    <div class="result-panel" id="result-panel">
+        <div class="result-header" id="result-header"></div>
+        <div class="explanation-box">
+            🤔 <b>คำถาม:</b> ทำไมถึงเป็นแบบนี้? <br>ให้นักเรียนลองอธิบายเหตุผลโดยใช้ข้อมูล <b>"โครงสร้าง"</b> และ <b>"แรงยึดเหนี่ยว"</b> ดูสิ!
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // 🗄️ ฐานข้อมูล 12 อรหันต์ พร้อมข้อมูลตั้งต้น
+    const database = [
+        { id: 'iso', name: "Isobutane", struct: "CH₃CH(CH₃)₂", mw: 58.12, odor: "ไม่มีกลิ่น, ติดไฟง่าย", bp: -11.7 },
+        { id: 'ene', name: "1-Butene", struct: "CH₂=CHCH₂CH₃", mw: 56.11, odor: "กลิ่นหอมเอียนๆ", bp: -6.3 },
+        { id: 'ane', name: "Butane", struct: "CH₃(CH₂)₂CH₃", mw: 58.12, odor: "แก๊สกระป๋อง, ไม่มีกลิ่น", bp: -0.5 },
+        { id: 'yne', name: "1-Butyne", struct: "CH≡CCH₂CH₃", mw: 54.09, odor: "กลิ่นฉุนคล้ายกระเทียม", bp: 8.1 },
+        { id: 'eth', name: "Diethyl ether", struct: "CH₃CH₂-O-CH₂CH₃", mw: 74.12, odor: "กลิ่นยาสลบ, ระเหยง่าย", bp: 34.6 },
+        { id: 'ald', name: "Butanal", struct: "CH₃(CH₂)₂CHO", mw: 72.11, odor: "กลิ่นเหม็นฉุนแสบจมูก", bp: 75 },
+        { id: 'est', name: "Ethyl acetate", struct: "CH₃COOCH₂CH₃", mw: 88.11, odor: "กลิ่นยาล้างเล็บ/ผลไม้", bp: 77.1 },
+        { id: 'ket', name: "Butanone", struct: "CH₃COCH₂CH₃", mw: 72.11, odor: "กลิ่นหอมหวานปนฉุน", bp: 80 },
+        { id: 'ami', name: "1-Butylamine", struct: "CH₃(CH₂)₂CH₂NH₂", mw: 73.14, odor: "กลิ่นแอมโมเนีย/คาวปลา", bp: 78 },
+        { id: 'alc', name: "1-Butanol", struct: "CH₃(CH₂)₂CH₂OH", mw: 74.12, odor: "กลิ่นแอลกอฮอล์แรง", bp: 117.7 },
+        { id: 'aci', name: "Butanoic acid", struct: "CH₃(CH₂)₂COOH", mw: 88.11, odor: "กลิ่นอ้วก/เนยบูดรุนแรง", bp: 164 },
+        { id: 'amd', name: "Butanamide", struct: "CH₃(CH₂)₂CONH₂", mw: 87.12, odor: "ไม่มีกลิ่น (เป็นของแข็ง)", bp: 216 }
+    ];
+
+    const selA = document.getElementById('sel-a');
+    const selB = document.getElementById('sel-b');
+    
+    database.forEach(mol => {
+        selA.add(new Option(`${mol.name} (${mol.struct})`, mol.id));
+        selB.add(new Option(`${mol.name} (${mol.struct})`, mol.id));
+    });
+    
+    selA.value = 'ane'; 
+    selB.value = 'alc';
+
+    let currentTemp = -50;
+    let heatingInterval;
+    let isPaused = false;
+    let molA, molB;
+    let boiledA = false, boiledB = false;
+
+    function randomizeMatch() {
+        let randA = Math.floor(Math.random() * database.length);
+        let randB;
+        do { randB = Math.floor(Math.random() * database.length); } while(randA === randB);
+        
+        selA.value = database[randA].id;
+        selB.value = database[randB].id;
+        resetArena();
+    }
+
+    function updateInfoCards() {
+        molA = database.find(m => m.id === selA.value);
+        molB = database.find(m => m.id === selB.value);
+
+        document.getElementById('info-a').innerHTML = `<b>มวลโมเลกุล:</b> ${molA.mw} g/mol<br><b>ลักษณะ:</b> ${molA.odor}`;
+        document.getElementById('info-b').innerHTML = `<b>มวลโมเลกุล:</b> ${molB.mw} g/mol<br><b>ลักษณะ:</b> ${molB.odor}`;
+    }
+
+    function resetArena() {
+        clearInterval(heatingInterval);
+        currentTemp = -50;
+        isPaused = false;
+        boiledA = false; boiledB = false;
+        
+        document.getElementById('temp-display').innerText = "-50 °C";
+        document.getElementById('mercury').style.height = "0%";
+        document.getElementById('flame').style.opacity = "0";
+        document.getElementById('flask').classList.remove('shaking');
+        document.getElementById('result-panel').style.display = "none";
+        
+        // แก้บั๊กปุ่มกลับมาเป็นโหมด Start Heating
+        let btnHeat = document.getElementById('btn-heat');
+        btnHeat.disabled = false;
+        btnHeat.innerText = "🔥 จุดไฟต้มสาร";
+        btnHeat.onclick = startHeating;
+        btnHeat.style.background = "#10b981"; // สีเขียว
+
+        let btnPause = document.getElementById('btn-pause');
+        btnPause.style.display = "none";
+        btnPause.innerText = "⏸️ หยุดสังเกต";
+
+        document.getElementById('btn-random').disabled = false;
+
+        updateInfoCards();
+        generateParticles();
+    }
+
+    function generateParticles() {
+        const flask = document.getElementById('flask');
+        flask.innerHTML = '';
+        for(let i=0; i<15; i++) {
+            createDot(flask, 'blue');
+            createDot(flask, 'red');
+        }
+    }
+
+    function createDot(container, colorClass) {
+        let dot = document.createElement('div');
+        dot.className = `dot ${colorClass}`;
+        let leftPos = 20 + Math.random() * 90;
+        let bottomPos = 10 + Math.random() * 40;
+        dot.style.left = `${leftPos}px`;
+        dot.style.bottom = `${bottomPos}px`;
+        container.appendChild(dot);
+    }
+
+    function startHeating() {
+        if (selA.value === selB.value) {
+            alert("⚠️ กรุณาเลือกสารที่ไม่ซ้ำกันครับ!");
+            return;
+        }
+
+        let btnHeat = document.getElementById('btn-heat');
+        btnHeat.innerText = "🔥 กำลังต้ม... (HEATING)";
+        btnHeat.disabled = true;
+        
+        document.getElementById('btn-random').disabled = true;
+        document.getElementById('btn-pause').style.display = "block";
+        document.getElementById('flame').style.opacity = "1";
+        document.getElementById('flask').classList.add('shaking');
+
+        heatingInterval = setInterval(() => {
+            if(isPaused) return; // ถ้ากดหยุด ให้ข้ามการบวกอุณหภูมิไปเลย
+
+            currentTemp += 1; 
+            
+            document.getElementById('temp-display').innerText = `${currentTemp} °C`;
+            let percent = ((currentTemp + 50) / 300) * 100;
+            if(percent > 100) percent = 100;
+            document.getElementById('mercury').style.height = `${percent}%`;
+
+            if (currentTemp >= molA.bp && !boiledA) {
+                boiledA = true; evaporateParticles('blue'); checkFinish();
+            }
+
+            if (currentTemp >= molB.bp && !boiledB) {
+                boiledB = true; evaporateParticles('red'); checkFinish();
+            }
+
+            if ((boiledA && boiledB) || currentTemp >= 250) {
+                endExperiment();
+            }
+        }, 50); 
+    }
+
+    function togglePause() {
+        isPaused = !isPaused;
+        let btnPause = document.getElementById('btn-pause');
+        let flask = document.getElementById('flask');
+        let flame = document.getElementById('flame');
+
+        if(isPaused) {
+            btnPause.innerText = "▶️ ต้มต่อ (RESUME)";
+            flask.classList.remove('shaking');
+            flame.style.opacity = "0.4"; // หรี่ไฟ
+        } else {
+            btnPause.innerText = "⏸️ หยุดสังเกต";
+            flask.classList.add('shaking');
+            flame.style.opacity = "1"; // เร่งไฟ
+        }
+    }
+
+    function evaporateParticles(colorClass) {
+        let dots = document.querySelectorAll(`.dot.${colorClass}`);
+        dots.forEach(dot => {
+            setTimeout(() => {
+                let randomDrift = -20 + Math.random() * 40;
+                dot.style.left = `calc(${dot.style.left} + ${randomDrift}px)`;
+                dot.classList.add('evaporating');
+            }, Math.random() * 800);
+        });
+    }
+
+    function endExperiment() {
+        clearInterval(heatingInterval);
+        document.getElementById('flame').style.opacity = "0";
+        document.getElementById('flask').classList.remove('shaking');
+        document.getElementById('btn-pause').style.display = "none";
+    }
+
+    function checkFinish() {
+        if (boiledA && boiledB) {
+            setTimeout(showResult, 1500); 
+        }
+    }
+
+    function showResult() {
+        let loser, loserColor, winner, winnerColor;
+        
+        if (molA.bp < molB.bp) {
+            loser = molA; loserColor = "🔵 สีน้ำเงิน";
+            winner = molB; winnerColor = "🔴 สีแดง";
+        } else {
+            loser = molB; loserColor = "🔴 สีแดง";
+            winner = molA; winnerColor = "🔵 สีน้ำเงิน";
+        }
+
+        document.getElementById('result-header').innerHTML = `
+            🛑 สิ้นสุดการทดลอง!<br>
+            สารที่ทนไฟไม่ไหว และระเหยกลายเป็นไอก่อนคือ <br>
+            <span style="color:#ef4444; font-size: 32px;">${loserColor} (${loser.name})</span><br>
+            <span style="color:#475569; font-size: 18px;">ระเหยหนีไปที่อุณหภูมิ ${loser.bp} °C</span><br><br>
+            ส่วน <span style="color:#10b981;">${winnerColor} (${winner.name})</span> ทนไฟได้ถึง ${winner.bp} °C
+        `;
+        
+        document.getElementById('result-panel').style.display = "flex";
+        
+        // สลับปุ่มกลับเป็น Reset
+        let btnHeat = document.getElementById('btn-heat');
+        btnHeat.disabled = false;
+        btnHeat.style.background = "#f59e0b"; // เปลี่ยนเป็นสีส้มเพื่อเตือนให้รีเซ็ต
+        btnHeat.innerText = "🔄 รีเซ็ตการทดลอง (RESET)";
+        btnHeat.onclick = resetArena; // สั่งให้ตอนกด ทำการรีเซ็ต!
+    }
+
+    resetArena();
+
+</script>
+</body>
+</html>
