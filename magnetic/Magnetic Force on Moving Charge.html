@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Electromagnetism Master Lab</title>
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #000000;
+            --accent: #facc15;
+            --bg-body: #f8fafc;
+            --border: 4px solid #000000;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+        }
+
+        * { box-sizing: border-box; font-family: 'K2D', sans-serif; user-select: none; -webkit-user-select: none; }
+        body { background-color: var(--bg-body); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; color: var(--text); overflow-x: hidden;}
+
+        .container {
+            background: var(--card-bg); border: var(--border); box-shadow: 8px 8px 0px #000;
+            width: 100%; max-width: 1200px; padding: 20px; display: flex; flex-direction: column; gap: 20px; border-radius: 12px;
+        }
+
+        .header-title {
+            margin: 0; padding: 15px; background: var(--accent); border: var(--border);
+            font-size: 24px; font-weight: 900; text-transform: uppercase; text-align: center;
+            box-shadow: 4px 4px 0px #000; letter-spacing: 1px; border-radius: 8px;
+        }
+        .header-subtitle { display: block; font-size: 14px; font-weight: 600; color: #333; margin-top: 5px; }
+
+        /* 🗂️ Tabs System */
+        .tabs { display: flex; gap: 10px; flex-wrap: wrap; }
+        .tab-btn {
+            flex: 1; min-width: 150px; padding: 15px; font-size: 18px; font-weight: 900; cursor: pointer;
+            border: 3px solid #000; background: #e2e8f0; color: #475569; transition: 0.2s;
+            border-radius: 8px 8px 0 0; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.1); text-align: center;
+        }
+        .tab-btn.active { background: #3b82f6; color: #fff; border-bottom: 3px solid #3b82f6; box-shadow: none; }
+        .tab-content { display: none; flex-direction: column; gap: 20px; animation: fadeIn 0.3s; }
+        .tab-content.active { display: flex; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 🎛️ แผงหน้าปัด (Dashboard) */
+        .dashboard {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;
+            background: #ecfdf5; border: var(--border); padding: 15px; box-shadow: 4px 4px 0px #000; border-radius: 8px;
+        }
+        .dash-box { background: #fff; border: 3px solid #000; padding: 15px; text-align: center; border-radius: 6px;}
+        .dash-label { font-size: 16px; font-weight: 800; color: #0f172a; }
+        .dash-label span { display: block; font-size: 12px; color: #64748b; font-weight: 600; }
+        .dash-value { font-size: 32px; font-weight: 900; color: #2563eb; font-family: monospace; margin-top: 5px; }
+        .formula-tag { font-size: 16px; background: #e0f2fe; padding: 8px; display: inline-block; margin-top: 5px; font-weight: bold; border: 2px solid #3b82f6; border-radius: 4px;}
+
+        .main-layout { display: flex; flex-wrap: wrap; gap: 20px; }
+
+        /* 🎛️ แผงควบคุม (Controls) */
+        .controls-panel { flex: 1; min-width: 350px; display: flex; flex-direction: column; gap: 15px; }
+        .control-group { background: #fff; border: 3px solid #000; padding: 15px 20px; box-shadow: 3px 3px 0px #000; border-radius: 8px;}
+        .control-group label { font-size: 16px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
+        .control-label-en { font-size: 12px; font-weight: 600; color: #64748b; display: block; margin-top: -2px; }
+        .val-badge { background: #e2e8f0; border: 2px solid #000; padding: 4px 10px; border-radius: 4px; color: #2563eb; font-size: 18px; font-family: monospace;}
+        
+        input[type="range"] { width: 100%; margin-top: 15px; cursor: pointer; border: 2px solid #000; padding: 5px; outline: none; accent-color: #000; height: 10px; border-radius: 5px; }
+
+        .btn-reset {
+            background: #f87171; color: #fff; border: 3px solid #000; padding: 15px; font-size: 18px; font-weight: 900; cursor: pointer;
+            box-shadow: 4px 4px 0px #000; transition: 0.1s; text-align: center; text-transform: uppercase; margin-top: auto; border-radius: 8px;
+        }
+        .btn-reset:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #000; }
+
+        .note-box { background: #fef3c7; padding: 15px; border: 3px dashed #d97706; font-size: 15px; font-weight: 600; color: #b45309; line-height: 1.5; border-radius: 8px;}
+
+        /* 🎬 จอแสดงผลกราฟิก (Canvas) */
+        .visual-panel {
+            flex: 1.5; min-width: 400px; height: 480px; background: #fff; border: 4px solid #000; position: relative;
+            display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 8px;
+            background-image: radial-gradient(#cbd5e1 2px, transparent 2px); background-size: 25px 25px;
+            box-shadow: inset 4px 4px 0px rgba(0,0,0,0.05);
+        }
+
+        /* 📝 ส่วนแจกแจงการคำนวณ */
+        .calc-breakdown {
+            background: #f8fafc; border: 3px solid #64748b; padding: 20px; border-radius: 8px;
+            box-shadow: 4px 4px 0px #64748b; display: flex; flex-direction: column; gap: 10px;
+        }
+        .calc-header { font-size: 20px; font-weight: 900; color: #334155; margin-bottom: 5px; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px; }
+        .calc-step { font-size: 16px; color: #0f172a; background: #fff; padding: 20px; border: 2px dashed #94a3b8; font-family: monospace; line-height: 1.8; border-radius: 8px;}
+        .calc-step span.formula { color: #2563eb; font-weight: bold; font-size: 20px; }
+        .calc-step span.highlight { color: #ea580c; font-weight: bold; background: #ffedd5; padding: 2px 6px; border-radius: 4px; border: 1px solid #ea580c;}
+        .calc-step span.result { color: #059669; font-weight: bold; font-size: 20px; background: #d1fae5; padding: 4px 10px; border-radius: 6px; border: 2px solid #10b981;}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="header-title">
+        🧲 ห้องปฏิบัติการสนามแม่เหล็ก (Electromagnetism Master Lab)
+        <span class="header-subtitle">Magnetic Fields generated by various Current Conductor shapes</span>
+    </h1>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('straight')" id="tab-btn-straight">1. ลวดตรงยาว</button>
+        <button class="tab-btn" onclick="switchTab('circular')" id="tab-btn-circular">2. ลวดวงกลม</button>
+        <button class="tab-btn" onclick="switchTab('solenoid')" id="tab-btn-solenoid">3. โซลินอยด์</button>
+        <button class="tab-btn" onclick="switchTab('toroid')" id="tab-btn-toroid">4. ทอรอยด์</button>
+    </div>
+
+    <div id="tab-straight" class="tab-content active">
+        <div class="dashboard">
+            <div class="dash-box" style="border-color: #ef4444;"><div class="dash-label" style="color: #ef4444;">กระแส (I)</div><div class="dash-value" id="dash-i-str" style="color: #ef4444;">1.0A</div></div>
+            <div class="dash-box" style="border-color: #3b82f6;"><div class="dash-label" style="color: #3b82f6;">สนามแม่เหล็ก (B)</div><div class="dash-value" id="dash-b-str">2.00</div><div style="font-size:14px; font-weight:bold; color:#64748b;">× 10⁻⁷ T</div></div>
+            <div class="dash-box"><div class="dash-label">สมการ <span>Formula</span></div><div class="formula-tag">B = (μ₀·I) / (2π·d)</div></div>
+        </div>
+        <div class="main-layout">
+            <div class="controls-panel">
+                <div class="note-box">💡 <b>จุดสังเกต:</b> สำหรับลวดตรง μ₀ (4π×10⁻⁷) หาร 2π จะเหลือสัมประสิทธิ์ <b>2</b> เสมอ</div>
+                <div class="control-group" style="background: #fef2f2;">
+                    <label><div>กระแสไฟฟ้า <span class="control-label-en">Current (I)</span></div><span class="val-badge" id="lbl-i-str" style="color: #ef4444;">1.0 A</span></label>
+                    <input type="range" id="in-i-str" min="0.5" max="15.0" step="0.5" value="1.0" oninput="updateStraight()">
+                </div>
+                <div class="control-group" style="background: #eff6ff;">
+                    <label><div>ระยะห่าง <span class="control-label-en">Distance (d)</span></div><span class="val-badge" id="lbl-d-str">1.0 m</span></label>
+                    <input type="range" id="in-d-str" min="0.5" max="10.0" step="0.5" value="1.0" oninput="updateStraight()">
+                </div>
+                <button class="btn-reset" onclick="resetStraight()">🔄 รีเซ็ตค่าเริ่มต้น</button>
+            </div>
+            <div class="visual-panel">
+                <svg width="400" height="400" viewBox="0 0 400 400">
+                    <line x1="200" y1="40" x2="200" y2="360" stroke="#94a3b8" stroke-width="16" stroke-linecap="round"/>
+                    <line x1="200" y1="280" x2="200" y2="120" stroke="#ef4444" stroke-width="6" marker-end="url(#arrowhead-red)"/>
+                    <text x="220" y="100" font-weight="900" fill="#ef4444" font-size="24">I</text>
+                    <ellipse cx="200" cy="200" rx="80" ry="25" fill="none" stroke="#3b82f6" stroke-width="3" id="vis-b-ring-str" stroke-dasharray="10,6"/>
+                    <line x1="200" y1="200" x2="280" y2="200" stroke="#000" stroke-width="3" stroke-dasharray="6,4" id="vis-d-line-str"/>
+                </svg>
+            </div>
+        </div>
+        <div class="calc-breakdown">
+            <div class="calc-header">📝 Calculation Breakdown</div>
+            <div class="calc-step" id="calc-str"></div>
+        </div>
+    </div>
+
+    <div id="tab-circular" class="tab-content">
+        <div class="dashboard">
+            <div class="dash-box" style="border-color: #ef4444;"><div class="dash-label" style="color: #ef4444;">กระแส (I)</div><div class="dash-value" id="dash-i-cir" style="color: #ef4444;">1.0A</div></div>
+            <div class="dash-box" style="border-color: #d97706;"><div class="dash-label" style="color: #d97706;">จำนวนรอบ (N)</div><div class="dash-value" id="dash-n-cir" style="color: #d97706;">1</div></div>
+            <div class="dash-box" style="border-color: #3b82f6;"><div class="dash-label" style="color: #3b82f6;">สนามแม่เหล็ก (B)</div><div class="dash-value" id="dash-b-cir">2.00π</div><div style="font-size:14px; font-weight:bold; color:#64748b;">× 10⁻⁷ T</div></div>
+            <div class="dash-box"><div class="dash-label">สมการ <span>Formula</span></div><div class="formula-tag">B = (μ₀·I·N) / (2R)</div></div>
+        </div>
+        <div class="main-layout">
+            <div class="controls-panel">
+                <div class="note-box">💡 <b>จุดสังเกต:</b> ตัวส่วนคือ 2R (ไม่มี π) ทำให้ 4π ตัดกับ 2 แล้ว <b>ติดค่า π</b> เอาไว้เสมอ!</div>
+                <div class="control-group" style="background: #fef2f2;">
+                    <label><div>กระแสไฟฟ้า <span class="control-label-en">Current (I)</span></div><span class="val-badge" id="lbl-i-cir" style="color: #ef4444;">1.0 A</span></label>
+                    <input type="range" id="in-i-cir" min="0.5" max="15.0" step="0.5" value="1.0" oninput="updateCircular()">
+                </div>
+                <div class="control-group" style="background: #fffbeb;">
+                    <label><div>จำนวนรอบ <span class="control-label-en">Turns (N)</span></div><span class="val-badge" id="lbl-n-cir" style="color: #d97706;">1</span></label>
+                    <input type="range" id="in-n-cir" min="1" max="20" step="1" value="1" oninput="updateCircular()">
+                </div>
+                <div class="control-group" style="background: #eff6ff;">
+                    <label><div>รัศมี <span class="control-label-en">Radius (R)</span></div><span class="val-badge" id="lbl-r-cir">1.0 m</span></label>
+                    <input type="range" id="in-r-cir" min="0.5" max="10.0" step="0.5" value="1.0" oninput="updateCircular()">
+                </div>
+                <button class="btn-reset" onclick="resetCircular()">🔄 รีเซ็ตค่าเริ่มต้น</button>
+            </div>
+            <div class="visual-panel">
+                <svg width="500" height="450" viewBox="0 0 500 450">
+                    <ellipse cx="250" cy="250" rx="120" ry="50" fill="none" stroke="#94a3b8" stroke-width="6" id="vis-coil-cir"/>
+                    <path d="M 240 300 Q 250 300 260 298" fill="none" stroke="#ef4444" stroke-width="6" marker-end="url(#arrowhead-red)" id="vis-i-arrow-cir"/>
+                    <text x="250" y="325" font-weight="900" fill="#ef4444" font-size="20" id="txt-i-cir">I</text>
+                    <circle cx="250" cy="250" r="4" fill="#000"/>
+                    <line x1="250" y1="250" x2="370" y2="250" stroke="#000" stroke-width="3" stroke-dasharray="6,4" id="vis-r-line-cir"/>
+                    <text x="310" y="240" font-weight="900" fill="#0f172a" font-size="18" id="txt-r-cir">1.0 m</text>
+                    <line x1="250" y1="250" x2="250" y2="100" stroke="#3b82f6" stroke-width="6" id="vis-b-line-cir" stroke-linecap="round"/>
+                    <polygon points="250,90 260,105 240,105" fill="#3b82f6" id="vis-b-head-cir"/>
+                    <text x="270" y="100" font-weight="900" fill="#3b82f6" font-size="24" id="txt-b-cir">B</text>
+                </svg>
+            </div>
+        </div>
+        <div class="calc-breakdown">
+            <div class="calc-header">📝 Calculation Breakdown</div>
+            <div class="calc-step" id="calc-cir"></div>
+        </div>
+    </div>
+
+    <div id="tab-solenoid" class="tab-content">
+        <div class="dashboard">
+            <div class="dash-box" style="border-color: #ef4444;"><div class="dash-label" style="color: #ef4444;">กระแส (I)</div><div class="dash-value" id="dash-i-sol" style="color: #ef4444;">1.0A</div></div>
+            <div class="dash-box" style="border-color: #d97706;"><div class="dash-label" style="color: #d97706;">จำนวนรอบ (N)</div><div class="dash-value" id="dash-n-sol" style="color: #d97706;">10</div></div>
+            <div class="dash-box" style="border-color: #3b82f6;"><div class="dash-label" style="color: #3b82f6;">สนามแม่เหล็ก (B)</div><div class="dash-value" id="dash-b-sol">4.00π</div><div style="font-size:14px; font-weight:bold; color:#64748b;">× 10⁻⁷ T</div></div>
+            <div class="dash-box"><div class="dash-label">สมการ <span>Formula</span></div><div class="formula-tag">B = (μ₀·I·N) / L</div></div>
+        </div>
+        <div class="main-layout">
+            <div class="controls-panel">
+                <div class="note-box">💡 <b>จุดสังเกต:</b> ค่าสนามแม่เหล็กภายในแปรผกผันกับ<b>ความยาว (L)</b> ถ้ายืดโซลินอยด์ออก สนามจะอ่อนลง!</div>
+                <div class="control-group" style="background: #fef2f2;">
+                    <label><div>กระแสไฟฟ้า <span class="control-label-en">Current (I)</span></div><span class="val-badge" id="lbl-i-sol" style="color: #ef4444;">1.0 A</span></label>
+                    <input type="range" id="in-i-sol" min="0.5" max="15.0" step="0.5" value="1.0" oninput="updateSolenoid()">
+                </div>
+                <div class="control-group" style="background: #fffbeb;">
+                    <label><div>จำนวนรอบ <span class="control-label-en">Turns (N)</span></div><span class="val-badge" id="lbl-n-sol" style="color: #d97706;">10</span></label>
+                    <input type="range" id="in-n-sol" min="5" max="30" step="1" value="10" oninput="updateSolenoid()">
+                </div>
+                <div class="control-group" style="background: #f0fdf4;">
+                    <label><div>ความยาวขดลวด <span class="control-label-en">Length (L)</span></div><span class="val-badge" id="lbl-l-sol" style="color:#059669;">1.0 m</span></label>
+                    <input type="range" id="in-l-sol" min="0.5" max="5.0" step="0.5" value="1.0" oninput="updateSolenoid()">
+                </div>
+                <button class="btn-reset" onclick="resetSolenoid()">🔄 รีเซ็ตค่าเริ่มต้น</button>
+            </div>
+            <div class="visual-panel">
+                <svg width="500" height="400" viewBox="0 0 500 400">
+                    <g id="vis-solenoid-coils"></g>
+                    
+                    <line x1="100" y1="200" x2="400" y2="200" stroke="#3b82f6" stroke-width="4" marker-end="url(#arrowhead-blue)" id="vis-b-line-sol"/>
+                    <text x="420" y="205" font-weight="900" fill="#3b82f6" font-size="24">B</text>
+                    
+                    <line x1="150" y1="260" x2="350" y2="260" stroke="#000" stroke-width="3" id="vis-l-line-sol"/>
+                    <line x1="150" y1="250" x2="150" y2="270" stroke="#000" stroke-width="3" id="vis-l-mark1-sol"/>
+                    <line x1="350" y1="250" x2="350" y2="270" stroke="#000" stroke-width="3" id="vis-l-mark2-sol"/>
+                           </svg>
+            </div>
+        </div>
+        <div class="calc-breakdown">
+            <div class="calc-header">📝 Calculation Breakdown</div>
+            <div class="calc-step" id="calc-sol"></div>
+        </div>
+    </div>
+
+    <div id="tab-toroid" class="tab-content">
+        <div class="dashboard">
+            <div class="dash-box" style="border-color: #ef4444;"><div class="dash-label" style="color: #ef4444;">กระแส (I)</div><div class="dash-value" id="dash-i-tor" style="color: #ef4444;">1.0A</div></div>
+            <div class="dash-box" style="border-color: #d97706;"><div class="dash-label" style="color: #d97706;">จำนวนรอบ (N)</div><div class="dash-value" id="dash-n-tor" style="color: #d97706;">20</div></div>
+            <div class="dash-box" style="border-color: #3b82f6;"><div class="dash-label" style="color: #3b82f6;">สนามแม่เหล็ก (B)</div><div class="dash-value" id="dash-b-tor">40.0</div><div style="font-size:14px; font-weight:bold; color:#64748b;">× 10⁻⁷ T</div></div>
+            <div class="dash-box"><div class="dash-label">สมการ <span>Formula</span></div><div class="formula-tag">B = (μ₀·I·N) / (2π·R)</div></div>
+        </div>
+        <div class="main-layout">
+            <div class="controls-panel">
+                <div class="note-box">💡 <b>จุดสังเกต:</b> ทอรอยด์ก็คือการเอาโซลินอยด์มาขดเป็นโดนัท ตัวส่วน <b>2πR</b> ก็คือเส้นรอบวงที่ทำหน้าที่เสมือนความยาว (L) นั่นเอง!</div>
+                <div class="control-group" style="background: #fef2f2;">
+                    <label><div>กระแสไฟฟ้า <span class="control-label-en">Current (I)</span></div><span class="val-badge" id="lbl-i-tor" style="color: #ef4444;">1.0 A</span></label>
+                    <input type="range" id="in-i-tor" min="0.5" max="15.0" step="0.5" value="1.0" oninput="updateToroid()">
+                </div>
+                <div class="control-group" style="background: #fffbeb;">
+                    <label><div>จำนวนรอบ <span class="control-label-en">Turns (N)</span></div><span class="val-badge" id="lbl-n-tor" style="color: #d97706;">20</span></label>
+                    <input type="range" id="in-n-tor" min="10" max="60" step="5" value="20" oninput="updateToroid()">
+                </div>
+                <div class="control-group" style="background: #eff6ff;">
+                    <label><div>รัศมีเฉลี่ย <span class="control-label-en">Mean Radius (R)</span></div><span class="val-badge" id="lbl-r-tor">1.0 m</span></label>
+                    <input type="range" id="in-r-tor" min="0.5" max="5.0" step="0.5" value="1.0" oninput="updateToroid()">
+                </div>
+                <button class="btn-reset" onclick="resetToroid()">🔄 รีเซ็ตค่าเริ่มต้น</button>
+            </div>
+            <div class="visual-panel">
+                <svg width="500" height="450" viewBox="0 0 500 450">
+                    <circle cx="250" cy="225" r="120" fill="none" stroke="#e2e8f0" stroke-width="40"/>
+                    <circle cx="250" cy="225" r="120" fill="none" stroke="#3b82f6" stroke-width="4" stroke-dasharray="10,6" id="vis-b-line-tor"/>
+                    
+                    <g id="vis-toroid-coils"></g>
+
+                    <circle cx="250" cy="225" r="4" fill="#000"/>
+                    <line x1="250" y1="225" x2="370" y2="225" stroke="#000" stroke-width="3" stroke-dasharray="6,4" id="vis-r-line-tor"/>
+                    <text x="310" y="215" font-weight="900" fill="#0f172a" font-size="18" id="txt-r-tor">1.0 m</text>
+                </svg>
+            </div>
+        </div>
+        <div class="calc-breakdown">
+            <div class="calc-header">📝 Calculation Breakdown</div>
+            <div class="calc-step" id="calc-tor"></div>
+        </div>
+    </div>
+
+    <svg style="width:0;height:0;position:absolute;">
+        <defs>
+            <marker id="arrowhead-red" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#ef4444" /></marker>
+            <marker id="arrowhead-blue" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#3b82f6" /></marker>
+        </defs>
+    </svg>
+
+</div>
+
+<script>
+    // Tab Switching Logic
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        document.getElementById(`tab-btn-${tabId}`).classList.add('active');
+        document.getElementById(`tab-${tabId}`).classList.add('active');
+        
+        if(tabId === 'straight') updateStraight();
+        if(tabId === 'circular') updateCircular();
+        if(tabId === 'solenoid') updateSolenoid();
+        if(tabId === 'toroid') updateToroid();
+    }
+
+    // ==========================================
+    // 1. Straight Wire Logic
+    // ==========================================
+    function resetStraight() { document.getElementById('in-i-str').value = 1.0; document.getElementById('in-d-str').value = 1.0; updateStraight(); }
+    function updateStraight() {
+        let I = parseFloat(document.getElementById('in-i-str').value);
+        let d = parseFloat(document.getElementById('in-d-str').value);
+        document.getElementById('lbl-i-str').innerText = I.toFixed(1) + " A";
+        document.getElementById('lbl-d-str').innerText = d.toFixed(1) + " m";
+        document.getElementById('dash-i-str').innerText = I.toFixed(1);
+
+        let displayB = (2 * I) / d; // 2 * 10^-7 * I / d
+        document.getElementById('dash-b-str').innerText = displayB.toFixed(2);
+
+        let pxR = 50 + (d * 10); 
+        document.getElementById('vis-compass-str').setAttribute('transform', `translate(${200 + pxR}, 200)`);
+        document.getElementById('vis-d-line-str').setAttribute('x2', 200 + pxR);        
+        let ring = document.getElementById('vis-b-ring-str');
+        ring.setAttribute('rx', pxR);
+        ring.setAttribute('ry', pxR * 0.3);
+        ring.setAttribute('stroke-width', 1 + (displayB / 10) > 10 ? 10 : 1 + (displayB / 10));
+
+        document.getElementById('calc-str').innerHTML = `
+            B = [ <span class="highlight">4π</span> × 10⁻⁷ × ${I.toFixed(1)} ] / [ <span class="highlight">2π</span> × ${d.toFixed(1)} ]<br>
+            B = [ <span class="highlight">2</span> × 10⁻⁷ × ${I.toFixed(1)} ] / ${d.toFixed(1)}<br>
+            B = <span class="result">${displayB.toFixed(2)} × 10⁻⁷ Tesla</span>
+        `;
+    }
+
+    // ==========================================
+    // 2. Circular Coil Logic
+    // ==========================================
+    function resetCircular() { document.getElementById('in-i-cir').value=1.0; document.getElementById('in-n-cir').value=1; document.getElementById('in-r-cir').value=1.0; updateCircular(); }
+    function updateCircular() {
+        let I = parseFloat(document.getElementById('in-i-cir').value);
+        let N = parseInt(document.getElementById('in-n-cir').value);
+        let R = parseFloat(document.getElementById('in-r-cir').value);
+        
+        document.getElementById('lbl-i-cir').innerText = I.toFixed(1) + " A";
+        document.getElementById('lbl-n-cir').innerText = N;
+        document.getElementById('lbl-r-cir').innerText = R.toFixed(1) + " m";
+        document.getElementById('dash-i-cir').innerText = I.toFixed(1);
+        document.getElementById('dash-n-cir').innerText = N;
+
+        let bPrefix = (2 * I * N) / R;
+        document.getElementById('dash-b-cir').innerText = bPrefix.toFixed(2) + "π";
+
+        let pxR = 50 + (R * 15); 
+        let coil = document.getElementById('vis-coil-cir');
+        coil.setAttribute('rx', pxR); coil.setAttribute('ry', pxR * 0.35);
+        coil.setAttribute('stroke-width', 4 + (N * 0.6));
+        
+        document.getElementById('vis-r-line-cir').setAttribute('x2', 250 + pxR);
+        document.getElementById('txt-r-cir').setAttribute('x', 250 + pxR/2);
+      
+        document.getElementById('vis-i-arrow-cir').setAttribute('d', `M ${250 - 10} ${250 + pxR*0.35} Q 250 ${250 + pxR*0.35} ${250 + 10} ${250 + pxR*0.35 - 1}`);
+        document.getElementById('txt-i-cir').setAttribute('y', 250 + pxR*0.35 + 25);
+
+        let bLen = Math.min(30 + (bPrefix * 3), 150);
+        let bStroke = Math.min(2 + (bPrefix / 5), 15);
+        document.getElementById('vis-b-line-cir').setAttribute('y2', 250 - bLen);
+        document.getElementById('vis-b-line-cir').setAttribute('stroke-width', bStroke);
+        document.getElementById('vis-b-head-cir').setAttribute('points', `250,${250 - bLen - 10} ${250+10+(bStroke/2)},${250 - bLen + 5} ${250-10-(bStroke/2)},${250 - bLen + 5}`);
+        document.getElementById('txt-b-cir').setAttribute('y', 250 - bLen - 15);
+
+        document.getElementById('calc-cir').innerHTML = `
+            B = [ <span class="highlight">4π</span> × 10⁻⁷ × ${I.toFixed(1)} × ${N} ] / [ <span class="highlight">2</span> × ${R.toFixed(1)} ]<br>
+            B = [ <span class="highlight">2π</span> × 10⁻⁷ × ${I.toFixed(1)} × ${N} ] / ${R.toFixed(1)}<br>
+            B = <span class="result">${bPrefix.toFixed(2)}π × 10⁻⁷ Tesla</span>
+        `;
+    }
+
+    // ==========================================
+    // 3. Solenoid Logic
+    // ==========================================
+    function resetSolenoid() { document.getElementById('in-i-sol').value=1.0; document.getElementById('in-n-sol').value=10; document.getElementById('in-l-sol').value=1.0; updateSolenoid(); }
+    function updateSolenoid() {
+        let I = parseFloat(document.getElementById('in-i-sol').value);
+        let N = parseInt(document.getElementById('in-n-sol').value);
+        let L = parseFloat(document.getElementById('in-l-sol').value);
+        
+        document.getElementById('lbl-i-sol').innerText = I.toFixed(1) + " A";
+        document.getElementById('lbl-n-sol').innerText = N;
+        document.getElementById('lbl-l-sol').innerText = L.toFixed(1) + " m";
+        document.getElementById('dash-i-sol').innerText = I.toFixed(1);
+        document.getElementById('dash-n-sol').innerText = N;
+
+        let bPrefix = (4 * Math.PI * I * N) / L; // Actual prefix before 10^-7
+        let displayBPrefix = (4 * I * N) / L; // Display as Xπ
+        document.getElementById('dash-b-sol').innerText = displayBPrefix.toFixed(2) + "π";
+
+        // Draw Dynamic Solenoid Coils
+        let pxL = 100 + (L * 40); // Map length visually
+        let startX = 250 - (pxL/2);
+        let spacing = pxL / N;
+        
+        let coilHTML = '';
+        for(let i=0; i<N; i++){
+            let cx = startX + (i * spacing);
+            coilHTML += `<ellipse cx="${cx}" cy="200" rx="${spacing/1.5}" ry="40" fill="none" stroke="#94a3b8" stroke-width="3"/>`;
+        }
+        document.getElementById('vis-solenoid-coils').innerHTML = coilHTML;
+
+        // Visual L Marker
+        document.getElementById('vis-l-line-sol').setAttribute('x1', startX);
+        document.getElementById('vis-l-line-sol').setAttribute('x2', startX + pxL);
+        document.getElementById('vis-l-mark1-sol').setAttribute('x1', startX); document.getElementById('vis-l-mark1-sol').setAttribute('x2', startX);
+        document.getElementById('vis-l-mark2-sol').setAttribute('x1', startX + pxL); document.getElementById('vis-l-mark2-sol').setAttribute('x2', startX + pxL);
+        document.getElementById('txt-l-sol').innerText = `L = ${L.toFixed(1)} m`;
+
+        let bStroke = Math.min(2 + (displayBPrefix / 20), 12);
+        document.getElementById('vis-b-line-sol').setAttribute('stroke-width', bStroke);
+
+        document.getElementById('calc-sol').innerHTML = `
+            B = [ <span class="highlight">4π</span> × 10⁻⁷ × ${I.toFixed(1)} × ${N} ] / ${L.toFixed(1)}<br>
+            B = <span class="result">${displayBPrefix.toFixed(2)}π × 10⁻⁷ Tesla</span>
+        `;
+    }
+
+    // ==========================================
+    // 4. Toroid Logic
+    // ==========================================
+    function resetToroid() { document.getElementById('in-i-tor').value=1.0; document.getElementById('in-n-tor').value=20; document.getElementById('in-r-tor').value=1.0; updateToroid(); }
+    function updateToroid() {
+        let I = parseFloat(document.getElementById('in-i-tor').value);
+        let N = parseInt(document.getElementById('in-n-tor').value);
+        let R = parseFloat(document.getElementById('in-r-tor').value);
+        
+        document.getElementById('lbl-i-tor').innerText = I.toFixed(1) + " A";
+        document.getElementById('lbl-n-tor').innerText = N;
+        document.getElementById('lbl-r-tor').innerText = R.toFixed(1) + " m";
+        document.getElementById('dash-i-tor').innerText = I.toFixed(1);
+        document.getElementById('dash-n-tor').innerText = N;
+
+        let displayB = (2 * I * N) / R; // 4pi/2pi = 2
+        document.getElementById('dash-b-tor').innerText = displayB.toFixed(2);
+
+        // Visual Update
+        let pxR = 50 + (R * 50); // Base radius mapping
+        let donutThickness = 30; // visual thickness of toroid ring
+        
+        // Update B Field line radius
+        document.getElementById('vis-b-line-tor').setAttribute('r', pxR);
+        document.getElementById('vis-b-line-tor').setAttribute('stroke-width', Math.min(2 + displayB/20, 10));
+
+        // Draw Dynamic Toroid Coils
+        let coilHTML = '';
+        let innerR = pxR - (donutThickness/2);
+        let outerR = pxR + (donutThickness/2);
+        let cx = 250, cy = 225;
+        
+        // Background Donut
+        coilHTML += `<circle cx="${cx}" cy="${cy}" r="${pxR}" fill="none" stroke="#e2e8f0" stroke-width="${donutThickness}"/>`;
+
+        for(let i=0; i<N; i++){
+            let angle = (i * 2 * Math.PI) / N;
+            let x1 = cx + innerR * Math.cos(angle);
+            let y1 = cy + innerR * Math.sin(angle);
+            let x2 = cx + outerR * Math.cos(angle);
+            let y2 = cy + outerR * Math.sin(angle);
+            coilHTML += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>`;
+        }
+        document.getElementById('vis-toroid-coils').innerHTML = coilHTML;
+
+        // Radius Line
+        document.getElementById('vis-r-line-tor').setAttribute('x2', cx + pxR);
+        document.getElementById('txt-r-tor').setAttribute('x', cx + (pxR/2));
+        document.getElementById('calc-tor').innerHTML = `
+            B = [ <span class="highlight">4π</span> × 10⁻⁷ × ${I.toFixed(1)} × ${N} ] / [ <span class="highlight">2π</span> × ${R.toFixed(1)} ]<br>
+            B = [ <span class="highlight">2</span> × 10⁻⁷ × ${I.toFixed(1)} × ${N} ] / ${R.toFixed(1)}<br>
+            B = <span class="result">${displayB.toFixed(2)} × 10⁻⁷ Tesla</span>
+        `;
+    }
+
+    // Initialize the default tab
+    switchTab('straight');
+
+</script>
+</body>
+</html>

@@ -2,572 +2,491 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>The Grand Unified Electromagnetism Lab</title>
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #0a0f1d;
-            --panel-bg: #151f32;
-            --primary: #00f0ff; /* Cyan */
-            --secondary: #ff0055; /* Pink/Red */
-            --accent: #ffcc00; /* Yellow */
-            --text-main: #e2e8f0;
-            --text-muted: #94a3b8;
+            --primary: #0f172a;
+            --accent: #facc15;
+            --bg-body: #f8fafc;
+            --border: 4px solid #000000;
+            --card-bg: #ffffff;
+            --text: #0f172a;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; font-family: 'K2D', sans-serif; }
+        body { background-color: var(--bg-body); padding: 15px; display: flex; flex-direction: column; align-items: center; color: var(--text); }
+
+        .container {
+            background: var(--card-bg); border: var(--border); box-shadow: 8px 8px 0px #000;
+            width: 100%; max-width: 1150px; padding: 20px; display: flex; flex-direction: column; gap: 20px; border-radius: 12px;
+        }
+
+        .header-title {
+            margin: 0; padding: 15px; background: var(--accent); border: var(--border);
+            font-size: 24px; font-weight: 900; text-transform: uppercase; text-align: center;
+            box-shadow: 4px 4px 0px #000; letter-spacing: 1px; border-radius: 8px;
+        }
+
+        /* 🗂️ Tabs System */
+        .tabs { display: flex; gap: 10px; flex-wrap: wrap; }
+        .tab-btn {
+            flex: 1; min-width: 180px; padding: 15px; font-size: 18px; font-weight: 900; cursor: pointer;
+            border: 3px solid #000; background: #e2e8f0; color: #475569; transition: 0.1s;
+            border-radius: 8px; box-shadow: 4px 4px 0px #000; text-align: center;
+        }
+        .tab-btn.active { background: #3b82f6; color: #fff; box-shadow: 1px 1px 0px #000; transform: translate(3px, 3px); }
+
+        /* 🎛️ Dashboard */
+        .dashboard {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px;
+            background: #ecfdf5; border: var(--border); padding: 15px; box-shadow: 4px 4px 0px #000; border-radius: 8px;
+        }
+        .dash-box { background: #fff; border: 3px solid #000; padding: 12px; text-align: center; border-radius: 6px;}
+        .dash-label { font-size: 15px; font-weight: 800; color: #0f172a; }
+        .dash-label span { display: block; font-size: 12px; color: #64748b; font-weight: 600; }
+        .dash-value { font-size: 28px; font-weight: 900; color: #2563eb; font-family: monospace; margin-top: 5px; }
+
+        .main-layout { display: flex; flex-wrap: wrap; gap: 20px; }
+
+        /* 🎛️ Controls Panel */
+        .controls-panel { flex: 1; min-width: 350px; display: flex; flex-direction: column; gap: 12px; }
+        .control-group { background: #fff; border: 3px solid #000; padding: 12px 18px; box-shadow: 3px 3px 0px #000; border-radius: 8px;}
+        .control-group label { font-size: 16px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
+        .val-badge { background: #e2e8f0; border: 2px solid #000; padding: 2px 8px; border-radius: 4px; color: #2563eb; font-size: 18px; font-family: monospace;}
         
-        body {
-            font-family: 'Sarabun', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+        input[type="range"] { width: 100%; margin-top: 10px; cursor: pointer; border: 2px solid #000; padding: 2px; outline: none; accent-color: #000; height: 10px; border-radius: 5px; }
 
-        /* HEADER */
-        header {
-            background: linear-gradient(90deg, #0f172a 0%, #1e293b 100%);
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid var(--primary);
-            box-shadow: 0 4px 20px rgba(0, 240, 255, 0.2);
-            z-index: 10;
+        /* Toggles */
+        .toggle-group { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+        .tgl-btn {
+            flex: 1; padding: 8px; font-weight: 800; border: 2px solid #000; background: #fff; min-width: 100px;
+            border-radius: 6px; cursor: pointer; text-align: center; font-size: 14px; box-shadow: 2px 2px 0px #000;
         }
-        .app-title { font-family: 'Chakra Petch', sans-serif; font-size: 24px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 2px;}
-        .app-title span { color: var(--text-main); }
+        .tgl-btn:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px #000; }
+        .tgl-btn.active { background: #3b82f6; color: #fff; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.3); }
+        .tgl-btn.active.positive { background: #22c55e; }
+        .tgl-btn.active.danger { background: #ef4444; }
+        .tgl-btn.active.warning { background: #f59e0b; }
 
-        /* MAIN LAYOUT */
-        .main-container { display: flex; flex: 1; overflow: hidden; }
+        .btn-pause { background: #f59e0b; color: #fff; font-size: 18px; padding: 12px; font-weight: 900; border: 3px solid #000; border-radius: 8px; cursor: pointer; box-shadow: 4px 4px 0px #000; transition: 0.1s; margin-bottom: 5px;}
+        .btn-pause.paused { background: #10b981; }
+        .btn-pause:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #000; }
 
-        /* SIDEBAR (MODES) */
-        .sidebar {
-            width: 280px;
-            background-color: var(--panel-bg);
-            border-right: 1px solid rgba(255,255,255,0.1);
-            display: flex;
-            flex-direction: column;
-            padding: 20px 10px;
-            gap: 10px;
-        }
-        .mode-btn {
-            background: transparent;
-            color: var(--text-muted);
-            border: 1px solid transparent;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: left;
-            font-family: 'Chakra Petch', sans-serif;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .mode-btn i { font-size: 20px; width: 24px; text-align: center; }
-        .mode-btn:hover { background: rgba(0, 240, 255, 0.05); color: var(--text-main); }
-        .mode-btn.active {
-            background: rgba(0, 240, 255, 0.1);
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
-        }
+        .note-box { background: #fef3c7; padding: 12px; border: 3px dashed #d97706; font-size: 14px; font-weight: 600; color: #b45309; line-height: 1.5; border-radius: 8px;}
 
-        /* WORKSPACE */
-        .workspace {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            position: relative;
+        /* 🎬 Visual Canvas Area */
+        .visual-panel {
+            flex: 1.4; min-width: 400px; height: 460px; background: #fff; border: 4px solid #000; position: relative;
+            display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 8px;
+            background-image: radial-gradient(#cbd5e1 2px, transparent 2px); background-size: 25px 25px;
+            box-shadow: inset 4px 4px 0px rgba(0,0,0,0.05);
         }
+        canvas { width: 100%; height: 100%; display: block; }
 
-        /* CANVAS AREA */
-        .canvas-container { flex: 1; background: #050810; position: relative; overflow: hidden; }
-        canvas { display: block; width: 100%; height: 100%; }
-        
-        /* OVERLAY HUD */
-        .hud-overlay {
-            position: absolute; top: 20px; left: 20px;
-            background: rgba(15, 23, 42, 0.8);
-            border-left: 4px solid var(--primary);
-            padding: 15px 25px;
-            border-radius: 4px;
-            backdrop-filter: blur(5px);
-            pointer-events: none;
+        /* 📝 Calculation Breakdown */
+        .calc-breakdown {
+            background: #f8fafc; border: 3px solid #64748b; padding: 15px; border-radius: 8px;
+            box-shadow: 4px 4px 0px #64748b; display: flex; flex-direction: column; gap: 8px;
         }
-        .hud-title { font-family: 'Chakra Petch', sans-serif; font-size: 20px; color: var(--accent); margin-bottom: 5px; }
-        .hud-desc { font-size: 14px; color: var(--text-main); }
-        
-        .hud-stats {
-            position: absolute; top: 20px; right: 20px;
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid var(--primary);
-            padding: 15px; border-radius: 8px;
-            font-family: 'Chakra Petch', monospace;
-            color: var(--primary);
-            pointer-events: none;
-            min-width: 200px;
-        }
-
-        /* CONTROLS AREA */
-        .controls-panel {
-            height: 180px;
-            background: var(--panel-bg);
-            border-top: 1px solid rgba(255,255,255,0.1);
-            padding: 20px;
-            display: flex;
-            gap: 40px;
-            align-items: center;
-        }
-        .control-group { flex: 1; display: flex; flex-direction: column; gap: 10px; }
-        .control-group label { font-family: 'Chakra Petch', sans-serif; font-size: 14px; color: var(--accent); }
-        input[type="range"] { width: 100%; accent-color: var(--primary); cursor: pointer; }
-        
-        /* ACTION BUTTONS */
-        .action-btn {
-            background: var(--primary); color: #000;
-            border: none; padding: 15px 30px;
-            font-family: 'Chakra Petch', sans-serif; font-weight: 700; font-size: 18px;
-            border-radius: 8px; cursor: pointer;
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
-            transition: transform 0.1s, box-shadow 0.2s;
-            text-transform: uppercase;
-        }
-        .action-btn:active { transform: scale(0.95); }
-        
-        .radio-group { display: flex; gap: 15px; }
-        .radio-group label { display: flex; align-items: center; gap: 5px; color: var(--text-main); font-size: 16px; cursor:pointer;}
-        .radio-group input { accent-color: var(--secondary); transform: scale(1.2); }
-
+        .calc-header { font-size: 18px; font-weight: 900; color: #334155; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; }
+        .calc-step { font-size: 15px; color: #0f172a; background: #fff; padding: 15px; border: 2px dashed #94a3b8; font-family: monospace; line-height: 1.6; border-radius: 8px;}
+        .calc-step span.formula { color: #2563eb; font-weight: bold; font-size: 18px; }
+        .calc-step span.highlight { color: #ea580c; font-weight: bold; background: #ffedd5; padding: 2px 6px; border-radius: 4px; border: 1px solid #ea580c;}
+        .calc-step span.result { color: #059669; font-weight: bold; font-size: 20px; background: #d1fae5; padding: 4px 10px; border-radius: 6px; border: 2px solid #10b981;}
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="app-title">ELECTROMAGNETISM <span>LAB</span></div>
-        <div style="font-family: 'Chakra Petch'; color: var(--primary);"><i class="fa-solid fa-atom"></i> Interactive Physics Simulator</div>
-    </header>
+<div class="container">
+    <h1 class="header-title">
+        🧲 ห้องปฏิบัติการแม่เหล็กไฟฟ้า (Unified Electromagnetism Lab)
+    </h1>
 
-    <div class="main-container">
-        <div class="sidebar">
-            <button class="mode-btn active" onclick="setMode(1)" id="btn-mode-1">
-                <i class="fa-solid fa-hurricane"></i> 
-                <div>1. ประจุหลุดโลก<br><small style="font-size:12px;color:var(--text-muted)">Particle Accelerator</small></div>
-            </button>
-            <button class="mode-btn" onclick="setMode(2)" id="btn-mode-2">
-                <i class="fa-solid fa-bolt"></i>
-                <div>2. สปริงบอร์ดลวดสายฟ้า<br><small style="font-size:12px;color:var(--text-muted)">Jumping Wire Arena</small></div>
-            </button>
-            <button class="mode-btn" onclick="setMode(3)" id="btn-mode-3">
-                <i class="fa-solid fa-arrows-left-right"></i>
-                <div>3. ดวลแรงผลัก/ดูด<br><small style="font-size:12px;color:var(--text-muted)">Parallel Wires War</small></div>
-            </button>
-            <button class="mode-btn" onclick="setMode(4)" id="btn-mode-4">
-                <i class="fa-solid fa-gears"></i>
-                <div>4. มอเตอร์ DIY Lab<br><small style="font-size:12px;color:var(--text-muted)">Commutator Motor</small></div>
-            </button>
-        </div>
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('particle')" id="tab-btn-particle">1. ประจุหลุดโลก</button>
+        <button class="tab-btn" onclick="switchTab('wire')" id="tab-btn-wire">2. สปริงบอร์ดลวดสายฟ้า</button>
+        <button class="tab-btn" onclick="switchTab('parallel')" id="tab-btn-parallel">3. ศึกสายขนานดูด-ผลัก</button>
+    </div>
 
-        <div class="workspace">
-            <div class="canvas-container">
-                <canvas id="simCanvas"></canvas>
-                <div class="hud-overlay">
-                    <div class="hud-title" id="hud-title">Loading...</div>
-                    <div class="hud-desc" id="hud-desc">Initializing simulation</div>
-                </div>
-                <div class="hud-stats" id="hud-stats">
-                    </div>
-            </div>
+    <div class="dashboard" id="main-dashboard"></div>
 
-            <div class="controls-panel" id="controls-panel">
-                </div>
+    <div class="main-layout">
+        <div class="controls-panel" id="main-controls"></div>
+        <div class="visual-panel">
+            <canvas id="labCanvas" width="550" height="460"></canvas>
         </div>
     </div>
 
-<script>
-    const canvas = document.getElementById('simCanvas');
-    const ctx = canvas.getContext('2d');
-    const hudTitle = document.getElementById('hud-title');
-    const hudDesc = document.getElementById('hud-desc');
-    const hudStats = document.getElementById('hud-stats');
-    const controlsPanel = document.getElementById('controls-panel');
+    <div class="calc-breakdown">
+        <div class="calc-header" id="calc-header">📝 วิเคราะห์ทางคณิตศาสตร์ (Mathematical Proof)</div>
+        <div class="calc-step" id="calc-text"></div>
+    </div>
+</div>
 
-    let currentMode = 1;
-    let animationId;
-    let time = 0;
-    
-    // Global State for Modes
+<script>
+    const canvas = document.getElementById('labCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let currentTab = 'particle';
+    let animationFrameId;
+    let simTime = 0;
+
+    // 📦 ฐานข้อมูลและสถานะของแต่ละโหมด (เพิ่มระบบ Direction/Pause)
     let state = {
-        m1_theta: 45, m1_v: 50,
-        m2_predict: null, m2_fired: false, m2_b_dir: 1, m2_i_dir: 1, m2_y_offset: 0,
-        m3_i1: 20, m3_i2: 20, m3_d: 100,
-        m4_commutator: true, m4_speed: 0.05, m4_angle: 0
+        particle: { q: 1, v: 50, B: 2, bDir: 'in', path: [], isPaused: false },
+        wire: { I_mag: 3, I_dir: 1, l: 1.5, B_mag: 2, B_dir: 1 },
+        parallel: { i1_mag: 15, i2_mag: 15, d: 1.5, dir: 'same' }
     };
 
-    function resize() {
-        canvas.width = canvas.parentElement.clientWidth;
-        canvas.height = canvas.parentElement.clientHeight;
-    }
-    window.addEventListener('resize', resize);
-    resize();
-
-    // ==========================================
-    // UI MANAGEMENT
-    // ==========================================
-    function setMode(mode) {
-        currentMode = mode;
-        time = 0;
-        cancelAnimationFrame(animationId);
+    function switchTab(tabId) {
+        currentTab = tabId;
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(`tab-btn-${tabId}`).classList.add('active');
         
-        // Update Sidebar UI
-        for(let i=1; i<=4; i++) {
-            document.getElementById(`btn-mode-${i}`).classList.remove('active');
-        }
-        document.getElementById(`btn-mode-${mode}`).classList.add('active');
-
-        // Build Controls
-        buildControls(mode);
-        
-        // Start Loop
-        gameLoop();
+        state.particle.path = [];
+        simTime = 0;
+        buildUI();
     }
 
-    function buildControls(mode) {
-        let html = '';
-        if (mode === 1) {
-            hudTitle.innerText = "Mode 1: ประจุหลุดโลก (Helical Path)";
-            hudDesc.innerText = "ปรับมุมยิง (θ) เพื่อสังเกตการเปลี่ยนจากวงกลมเป็นเกลียวสปริง";
-            html = `
-                <div class="control-group">
-                    <label>มุมยิง (Angle θ): <span id="lbl_m1_theta">${state.m1_theta}</span>°</label>
-                    <input type="range" min="0" max="90" value="${state.m1_theta}" oninput="state.m1_theta=this.value; document.getElementById('lbl_m1_theta').innerText=this.value; time=0;">
-                </div>
-                <div class="control-group">
-                    <label>ความเร็ว (Velocity): <span id="lbl_m1_v">${state.m1_v}</span> m/s</label>
-                    <input type="range" min="10" max="100" value="${state.m1_v}" oninput="state.m1_v=this.value; document.getElementById('lbl_m1_v').innerText=this.value; time=0;">
-                </div>
+    // ฟังก์ชันจัดการ State ผ่านปุ่ม
+    function togglePause() { state.particle.isPaused = !state.particle.isPaused; buildUI(); }
+    function setParticleQ(val) { state.particle.q = val; state.particle.path = []; simTime = 0; buildUI(); }
+    function setParticleBDir(dir) { state.particle.bDir = dir; state.particle.path = []; simTime = 0; buildUI(); }
+    function setWireIDir(d) { state.wire.I_dir = d; buildUI(); }
+    function setWireBDir(d) { state.wire.B_dir = d; buildUI(); }
+    function setParallelDir(d) { state.parallel.dir = d; buildUI(); }
+
+    function buildUI() {
+        const dash = document.getElementById('main-dashboard');
+        const controls = document.getElementById('main-controls');
+
+        if (currentTab === 'particle') {
+            dash.innerHTML = `
+                <div class="dash-box" style="border-color: #ef4444;"><div class="dash-label">ชนิดประจุ (q)</div><div class="dash-value" style="color:#ef4444;">${state.particle.q > 0 ? '+1' : '-1'} C</div></div>
+                <div class="dash-box" style="border-color: #10b981;"><div class="dash-label">ความเร็ว (v)</div><div class="dash-value" style="color:#10b981;">${state.particle.v} m/s</div></div>
+                <div class="dash-box" style="border-color: #3b82f6;"><div class="dash-label">รัศมีความโค้ง (R)</div><div class="dash-value" id="dash-r-val">0.00 m</div></div>
             `;
-        } else if (mode === 2) {
-            hudTitle.innerText = "Mode 2: สปริงบอร์ดลวดสายฟ้า (Jumping Wire)";
-            hudDesc.innerText = "ทายทิศทางของแรง (F) ด้วยกฎมือขวา ก่อนสับสวิตช์!";
-            state.m2_fired = false; state.m2_y_offset = 0;
-            html = `
+            controls.innerHTML = `
+                <button class="btn-pause ${state.particle.isPaused ? 'paused' : ''}" onclick="togglePause()">
+                    ${state.particle.isPaused ? '▶️ เล่นต่อ (RESUME)' : '⏸️ หยุดเวลาให้อธิบาย (PAUSE)'}
+                </button>
                 <div class="control-group">
-                    <label>ทิศสนามแม่เหล็ก (B Field)</label>
-                    <div class="radio-group">
-                        <label><input type="radio" name="bdir" checked onclick="state.m2_b_dir=1; resetM2();"> พุ่งขึ้น (Up)</label>
-                        <label><input type="radio" name="bdir" onclick="state.m2_b_dir=-1; resetM2();"> พุ่งลง (Down)</label>
+                    <label>1. ชนิดของประจุ (Charge)</label>
+                    <div class="toggle-group">
+                        <button class="tgl-btn positive ${state.particle.q > 0 ? 'active' : ''}" onclick="setParticleQ(1)">ประจุบวก (+)</button>
+                        <button class="tgl-btn danger ${state.particle.q < 0 ? 'active' : ''}" onclick="setParticleQ(-1)">ประจุลบ (-)</button>
                     </div>
                 </div>
                 <div class="control-group">
-                    <label>ทิศกระแสไฟฟ้า (Current I)</label>
-                    <div class="radio-group">
-                        <label><input type="radio" name="idir" checked onclick="state.m2_i_dir=1; resetM2();"> ซ้ายไปขวา (→)</label>
-                        <label><input type="radio" name="idir" onclick="state.m2_i_dir=-1; resetM2();"> ขวาไปซ้าย (←)</label>
+                    <label>2. ทิศสนามแม่เหล็ก (B-Field)</label>
+                    <div class="toggle-group">
+                        <button class="tgl-btn ${state.particle.bDir === 'in' ? 'active' : ''}" onclick="setParticleBDir('in')">พุ่งเข้า (⊗)</button>
+                        <button class="tgl-btn warning ${state.particle.bDir === 'out' ? 'active' : ''}" onclick="setParticleBDir('out')">พุ่งออก (⊙)</button>
                     </div>
                 </div>
                 <div class="control-group">
-                    <label style="color:var(--secondary)">ทำนายทิศทางแรง (Predict F):</label>
-                    <select id="m2_predict" style="padding:10px; font-family:'Sarabun'; background:#0a0f1d; color:#fff; border:1px solid var(--secondary);">
-                        <option value="none">-- เลือกทิศทางก่อนทดลอง --</option>
-                        <option value="up">กระเด้งเข้าหาตัว (เด้งขึ้น)</option>
-                        <option value="down">กดติดราง (เด้งลง)</option>
-                    </select>
-                </div>
-                <button class="action-btn" onclick="fireM2()">⚡ สับสวิตช์ (POWER ON)</button>
-            `;
-        } else if (mode === 3) {
-            hudTitle.innerText = "Mode 3: ดวลแรงผลัก/ดูด (Parallel Wires)";
-            hudDesc.innerText = "ปรับกระแสไฟฟ้าเพื่อดูการโก่งตัวของเส้นลวด (F/L)";
-            html = `
-                <div class="control-group">
-                    <label>กระแสลวด 1 (I₁): <span id="lbl_m3_i1">${state.m3_i1}</span> A</label>
-                    <input type="range" min="-50" max="50" value="${state.m3_i1}" oninput="state.m3_i1=this.value; document.getElementById('lbl_m3_i1').innerText=this.value;">
+                    <label>ความเร็วประจุ (v): <span class="val-badge">${state.particle.v} m/s</span></label>
+                    <input type="range" min="20" max="80" value="${state.particle.v}" oninput="state.particle.v=parseInt(this.value); state.particle.path=[]; simTime=0; buildUI();">
                 </div>
                 <div class="control-group">
-                    <label>กระแสลวด 2 (I₂): <span id="lbl_m3_i2">${state.m3_i2}</span> A</label>
-                    <input type="range" min="-50" max="50" value="${state.m3_i2}" oninput="state.m3_i2=this.value; document.getElementById('lbl_m3_i2').innerText=this.value;">
-                </div>
-                <div class="control-group">
-                    <label>ระยะห่าง (d): <span id="lbl_m3_d">${state.m3_d}</span> mm</label>
-                    <input type="range" min="50" max="250" value="${state.m3_d}" oninput="state.m3_d=this.value; document.getElementById('lbl_m3_d').innerText=this.value;">
+                    <label>สนามแม่เหล็ก (B): <span class="val-badge">${state.particle.B} T</span></label>
+                    <input type="range" min="1" max="5" value="${state.particle.B}" oninput="state.particle.B=parseInt(this.value); state.particle.path=[]; simTime=0; buildUI();">
                 </div>
             `;
-        } else if (mode === 4) {
-            hudTitle.innerText = "Mode 4: มอเตอร์ DIY Lab (Commutator)";
-            hudDesc.innerText = "ทดลองถอด/ใส่ คอมมิวเตเตอร์ เพื่อสังเกตการหมุนของแรงคู่ควบ";
-            html = `
-                <div class="control-group" style="justify-content:center;">
-                    <label style="font-size:18px;">ระบบคอมมิวเตเตอร์ (Commutator)</label>
-                    <div class="radio-group">
-                        <label><input type="radio" name="comm" checked onclick="state.m4_commutator=true;"> ติดตั้ง (ON)</label>
-                        <label><input type="radio" name="comm" onclick="state.m4_commutator=false;"> ถอดออก (OFF)</label>
+        } 
+        else if (currentTab === 'wire') {
+            dash.innerHTML = `
+                <div class="dash-box" style="border-color: #ef4444;"><div class="dash-label">กระแสไฟฟ้า (I)</div><div class="dash-value" style="color:#ef4444;">${state.wire.I_mag} A</div></div>
+                <div class="dash-box" style="border-color: #d97706;"><div class="dash-label">ความยาวลวด (l)</div><div class="dash-value" style="color:#d97706;">${state.wire.l.toFixed(1)} m</div></div>
+                <div class="dash-box" style="border-color: #3b82f6;"><div class="dash-label">แรงกระทำ (F)</div><div class="dash-value" id="dash-f-val">0.00 N</div></div>
+            `;
+            controls.innerHTML = `
+                <div class="note-box">💡 <b>จัดการทิศทาง:</b> ปรับทิศกระแส (I) และทิศสนามแม่เหล็ก (B) เพื่อให้นักเรียนลองใช้มือขวาทายทิศของแรง (F) ก่อนดูค่าจำลอง</div>
+                <div class="control-group">
+                    <label>1. ทิศทางกระแส (I) และ แม่เหล็ก (B)</label>
+                    <div class="toggle-group">
+                        <button class="tgl-btn ${state.wire.I_dir === 1 ? 'active' : ''}" onclick="setWireIDir(1)">I ไปขวา (→)</button>
+                        <button class="tgl-btn ${state.wire.I_dir === -1 ? 'active' : ''}" onclick="setWireIDir(-1)">I ไปซ้าย (←)</button>
+                        <button class="tgl-btn positive ${state.wire.B_dir === 1 ? 'active' : ''}" onclick="setWireBDir(1)">B พุ่งขึ้น (↑)</button>
+                        <button class="tgl-btn positive ${state.wire.B_dir === -1 ? 'active' : ''}" onclick="setWireBDir(-1)">B พุ่งลง (↓)</button>
                     </div>
+                </div>
+                <div class="control-group">
+                    <label>ขนาดกระแสไฟฟ้า (I): <span class="val-badge" style="color:#ef4444;">${state.wire.I_mag} A</span></label>
+                    <input type="range" min="0" max="5" step="1" value="${state.wire.I_mag}" oninput="state.wire.I_mag=parseInt(this.value); buildUI();">
+                </div>
+                <div class="control-group">
+                    <label>ความยาวลวด (l): <span class="val-badge" style="color:#d97706;">${state.wire.l.toFixed(1)} m</span></label>
+                    <input type="range" min="0.5" max="2.5" step="0.5" value="${state.wire.l}" oninput="state.wire.l=parseFloat(this.value); buildUI();">
+                </div>
+                <div class="control-group">
+                    <label>ความเข้มแม่เหล็ก (B): <span class="val-badge" style="color:#3b82f6;">${state.wire.B_mag} T</span></label>
+                    <input type="range" min="1" max="5" value="${state.wire.B_mag}" oninput="state.wire.B_mag=parseInt(this.value); buildUI();">
+                </div>
+            `;
+        } 
+        else if (currentTab === 'parallel') {
+            dash.innerHTML = `
+                <div class="dash-box" style="border-color: #ef4444;"><div class="dash-label">กระแสลวด 1 (I₁)</div><div class="dash-value" style="color:#ef4444;">${state.parallel.i1_mag} A</div></div>
+                <div class="dash-box" style="border-color: #d97706;"><div class="dash-label">กระแสลวด 2 (I₂)</div><div class="dash-value" style="color:#d97706;">${state.parallel.i2_mag} A</div></div>
+                <div class="dash-box" style="border-color: #3b82f6;"><div class="dash-label">แรงต่อความยาว (F/L)</div><div class="dash-value" id="dash-f-len-val">0.00</div><div style="font-size:12px; font-weight:bold; color:#64748b;">× 10⁻⁷ N/m</div></div>
+            `;
+            controls.innerHTML = `
+                <div class="control-group">
+                    <label>1. รูปแบบการไหลของกระแส</label>
+                    <div class="toggle-group">
+                        <button class="tgl-btn positive ${state.parallel.dir === 'same' ? 'active' : ''}" onclick="setParallelDir('same')">ทิศทางเดียวกัน (↑↑)</button>
+                        <button class="tgl-btn warning ${state.parallel.dir === 'opposite' ? 'active' : ''}" onclick="setParallelDir('opposite')">ทิศสวนทางกัน (↑↓)</button>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>ขนาดกระแสเส้นที่ 1 (I₁): <span class="val-badge" style="color:#ef4444;">${state.parallel.i1_mag} A</span></label>
+                    <input type="range" min="0" max="25" step="5" value="${state.parallel.i1_mag}" oninput="state.parallel.i1_mag=parseInt(this.value); buildUI();">
+                </div>
+                <div class="control-group">
+                    <label>ขนาดกระแสเส้นที่ 2 (I₂): <span class="val-badge" style="color:#d97706;">${state.parallel.i2_mag} A</span></label>
+                    <input type="range" min="0" max="25" step="5" value="${state.parallel.i2_mag}" oninput="state.parallel.i2_mag=parseInt(this.value); buildUI();">
+                </div>
+                <div class="control-group">
+                    <label>ระยะห่าง (d): <span class="val-badge">${state.parallel.d.toFixed(1)} m</span></label>
+                    <input type="range" min="0.5" max="3.0" step="0.5" value="${state.parallel.d}" oninput="state.parallel.d=parseFloat(this.value); buildUI();">
                 </div>
             `;
         }
-        controlsPanel.innerHTML = html;
+        calculatePhysics();
+    }
+
+    function calculatePhysics() {
+        const calcText = document.getElementById('calc-text');
+
+        if (currentTab === 'particle') {
+            let q = state.particle.q, v = state.particle.v, B = state.particle.B;
+            let R = (1 * v) / (Math.abs(q) * B);
+            document.getElementById('dash-r-val').innerText = R.toFixed(2) + " m";
+
+            calcText.innerHTML = `
+                <span style="color:#64748b; font-weight:800;">สมการรัศมีความโค้ง:</span>
+                <span class="formula">R = m·v / (|q|·B)</span><br><br>
+                R = [ <span class="highlight">1 kg</span> × ${v} ] / [ <span class="highlight">${Math.abs(q)} C</span> × ${B} T ]<br>
+                R = <span class="result">${R.toFixed(2)} เมตร</span>
+            `;
+        } 
+        else if (currentTab === 'wire') {
+            let I = state.wire.I_dir * state.wire.I_mag;
+            let l = state.wire.l;
+            let B = state.wire.B_dir * state.wire.B_mag;
+            
+            let F = I * l * B; // ถ้าเครื่องหมายเหมือนกัน F>0 (พุ่งออก/ขึ้น)
+            document.getElementById('dash-f-val').innerText = Math.abs(F).toFixed(2) + " N";
+
+            calcText.innerHTML = `
+                <span style="color:#64748b; font-weight:800;">สมการแรงแม่เหล็ก:</span>
+                <span class="formula">F = I·l·B·sin(90°)</span><br><br>
+                F = <span class="highlight">${state.wire.I_mag} A</span> × <span class="highlight">${l.toFixed(1)} m</span> × <span class="highlight">${state.wire.B_mag} T</span> × 1<br>
+                F = <span class="result">${Math.abs(F).toFixed(2)} นิวตัน</span> <br>
+                <span style="font-size:14px; color:#64748b;">(ทิศทาง: ${F > 0 ? 'เด้งพุ่งขึ้นด้านบน ⇧' : F < 0 ? 'กดลงติดราง ⇩' : 'ไม่มีแรงกระทำ'})</span>
+            `;
+        } 
+        else if (currentTab === 'parallel') {
+            let i1 = state.parallel.i1_mag;
+            // ถ้าสวนทางกัน ให้ i2 ติดลบในสมการ
+            let i2 = state.parallel.dir === 'same' ? state.parallel.i2_mag : -state.parallel.i2_mag; 
+            let d = state.parallel.d;
+
+            let fLenPrefix = (2 * i1 * i2) / d;
+            document.getElementById('dash-f-len-val').innerText = Math.abs(fLenPrefix).toFixed(2);
+
+            calcText.innerHTML = `
+                <span style="color:#64748b; font-weight:800;">สมการแรงดึงดูดระหว่างลวด:</span>
+                <span class="formula">F/L = (2 × 10⁻⁷ · I₁ · I₂) / d</span><br><br>
+                F/L = [ <span class="highlight">2</span> × ${i1} × ${Math.abs(i2)} ] / ${d.toFixed(1)}<br>
+                F/L = <span class="result">${Math.abs(fLenPrefix).toFixed(2)} × 10⁻⁷ N/m</span> <br>
+                <span style="font-size:14px; color:#64748b;">(สถานะ: ${i1*i2 > 0 ? 'ดึงดูดเข้าหากัน ➔ 👈' : i1*i2 < 0 ? 'ผลักออกจากกัน 👈 ➔' : 'ไม่มีแรงกระทำ'})</span>
+            `;
+        }
     }
 
     // ==========================================
-    // PHYSICS & RENDERING FUNCTIONS
+    // RENDER ENGINE
     // ==========================================
-    
-    function drawGrid() {
-        ctx.strokeStyle = 'rgba(255,255,255,0.05)';
-        ctx.lineWidth = 1;
-        for(let i=0; i<canvas.width; i+=50) { ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,canvas.height); ctx.stroke(); }
-        for(let j=0; j<canvas.height; j+=50) { ctx.beginPath(); ctx.moveTo(0,j); ctx.lineTo(canvas.width,j); ctx.stroke(); }
-    }
-
-    function renderMode1() {
-        const cx = 100, cy = canvas.height / 2;
-        const theta = state.m1_theta * (Math.PI / 180);
-        const v = state.m1_v;
-        const m = 1, q = 1, B = 2; // Constants
+    function loop() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         
-        const R = (m * v * Math.sin(theta)) / (q * B);
-        const pitch = (theta === Math.PI/2) ? 0 : (2 * Math.PI * m * v * Math.cos(theta)) / (q * B);
+        if (currentTab === 'particle') renderParticle();
+        else if (currentTab === 'wire') renderWire();
+        else if (currentTab === 'parallel') renderParallel();
 
-        hudStats.innerHTML = `<div>R (Radius) = ${R.toFixed(1)} m</div><div style="color:var(--accent)">Pitch (p) = ${pitch.toFixed(1)} m</div>`;
+        animationFrameId = requestAnimationFrame(loop);
+    }
 
-        // Draw B Field Lines (dots for going into screen)
-        ctx.fillStyle = 'rgba(0, 240, 255, 0.2)';
-        for(let i=cx; i<canvas.width; i+=60) {
-            for(let j=50; j<canvas.height-50; j+=60) {
-                ctx.fillText("✕", i, j); // Field into screen
-            }
+    function renderParticle() {
+        let cx = canvas.width / 2;
+        let cy = canvas.height / 2;
+        let q = state.particle.q, v = state.particle.v, B = state.particle.B, bDir = state.particle.bDir;
+
+        // Draw B-Field
+        ctx.font = '16px monospace'; ctx.fillStyle = 'rgba(15, 23, 42, 0.15)';
+        let symbol = bDir === 'in' ? '⊗' : '⊙';
+        for (let x = 40; x < canvas.width; x += 50) { for (let y = 40; y < canvas.height; y += 50) ctx.fillText(symbol, x, y); }
+
+        let R = (1 * v) / (Math.abs(q) * B) * 3.5;
+        let angularVelocity = (B * Math.abs(q) / 1) * 0.02;
+        let directionFactor = (q * (bDir === 'in' ? 1 : -1) > 0) ? 1 : -1;
+        
+        // PAUSE SYSTEM
+        if (!state.particle.isPaused) {
+            simTime += angularVelocity * directionFactor;
         }
 
-        // Draw Path
-        ctx.beginPath();
-        ctx.strokeStyle = varColor('--primary');
-        ctx.lineWidth = 3;
-        for(let i=0; i<=time; i+=0.1) {
-            let x = cx + i * v * Math.cos(theta) * 0.3; // forward
-            let y = cy + R * Math.sin(i * q * B / m) * 4;
-            let z = R * Math.cos(i * q * B / m);
-            if(i===0) ctx.moveTo(x, y - z); else ctx.lineTo(x, y - z);
+        let orbitCx = cx;
+        let orbitCy = cy + R;
+        let px = orbitCx + R * Math.sin(simTime);
+        let py = orbitCy - R * Math.cos(simTime);
+
+        if(!state.particle.isPaused) {
+            state.particle.path.push({ x: px, y: py });
+            if(state.particle.path.length > 80) state.particle.path.shift();
+        }
+
+        // Draw Trail
+        ctx.beginPath(); ctx.strokeStyle = '#3b82f6'; ctx.lineWidth = 4;
+        for (let i = 0; i < state.particle.path.length; i++) {
+            if (i === 0) ctx.moveTo(state.particle.path[i].x, state.particle.path[i].y);
+            else ctx.lineTo(state.particle.path[i].x, state.particle.path[i].y);
         }
         ctx.stroke();
 
-        // Particle Head
-        let px = cx + time * v * Math.cos(theta) * 0.3;
-        let py = cy + R * Math.sin(time * q * B / m) * 4;
-        let pz = R * Math.cos(time * q * B / m);
-        
-        ctx.fillStyle = '#ffcc00';
-        ctx.beginPath(); ctx.arc(px, py - pz, 10, 0, Math.PI*2); ctx.fill();
-        ctx.shadowBlur = 15; ctx.shadowColor = '#ffcc00'; ctx.fill(); ctx.shadowBlur = 0; // Glow
+        // Draw Particle
+        ctx.beginPath(); ctx.arc(px, py, 12, 0, Math.PI * 2);
+        ctx.fillStyle = q > 0 ? '#22c55e' : '#ef4444'; ctx.fill();
+        ctx.strokeStyle = '#000'; ctx.lineWidth = 3; ctx.stroke();
+        ctx.fillStyle = '#fff'; ctx.font = 'bold 16px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(q > 0 ? '+' : '-', px, py);
 
-        time += 0.05;
-        if(px > canvas.width + 50) time = 0;
+        // Draw Vectors
+        let fx = orbitCx - px, fy = orbitCy - py;
+        let fLen = Math.sqrt(fx*fx + fy*fy);
+        if(fLen > 0) drawVector(px, py, px + (fx/fLen)*50, py + (fy/fLen)*50, '#ea580c', 'FB');
+        let vx = -fy * directionFactor, vy = fx * directionFactor;
+        let vLen = Math.sqrt(vx*vx + vy*vy);
+        if(vLen > 0) drawVector(px, py, px + (vx/vLen)*50, py + (vy/vLen)*50, '#10b981', 'v');
     }
 
-    function resetM2() { state.m2_fired = false; state.m2_y_offset = 0; }
-    function fireM2() {
-        const predict = document.getElementById('m2_predict').value;
-        if(predict === 'none') { alert("กัปตัน! ให้นักเรียนทายทิศทางแรง F ก่อนสับสวิตช์ครับ!"); return; }
-        state.m2_fired = true;
-    }
+    function renderWire() {
+        let cx = canvas.width / 2;
+        let cy = canvas.height / 2;
+        let I_mag = state.wire.I_mag, I_dir = state.wire.I_dir, l = state.wire.l, B_mag = state.wire.B_mag, B_dir = state.wire.B_dir;
+        let F = (I_dir * I_mag) * l * (B_dir * B_mag);
 
-    function renderMode2() {
-        const cx = canvas.width / 2;
-        const cy = canvas.height / 2;
-        
-        // F = I x B rule. (Simplified: I right(1) x B up(1) = F out of screen (we represent as down/up on 2D))
-        // Standard Right Hand: I right, B up (into page if 3D, let's assume B up is Y up, I is X right -> F is Z out (jump up))
-        let forceDir = (state.m2_i_dir * state.m2_b_dir === 1) ? 1 : -1; // 1 = Jump Up, -1 = Jump Down
-        
-        if (state.m2_fired) {
-            // Animate jump
-            state.m2_y_offset += (forceDir * 100 - state.m2_y_offset) * 0.1; 
+        // Draw B-Field Arrows passing through the center area
+        if(B_mag > 0) {
+            for(let x = cx - 100; x <= cx + 100; x += 50) {
+                if (B_dir > 0) { // พุ่งขึ้น
+                    drawVector(x, cy + 90, x, cy - 70, 'rgba(59, 130, 246, 0.4)', '');
+                } else { // พุ่งลง
+                    drawVector(x, cy - 70, x, cy + 90, 'rgba(59, 130, 246, 0.4)', '');
+                }
+            }
+            // Label B field
+            ctx.fillStyle = '#3b82f6'; ctx.font = 'bold 18px sans-serif';
+            ctx.fillText(B_dir > 0 ? 'B (พุ่งขึ้น)' : 'B (พุ่งลง)', cx + 120, B_dir > 0 ? cy - 80 : cy + 100);
         }
-
-        hudStats.innerHTML = `<div>F = ILB sin(90°)</div><div>I Dir: ${state.m2_i_dir>0?'→':'←'}</div><div>B Dir: ${state.m2_b_dir>0?'↑':'↓'}</div>`;
-
-        // Draw Magnet Poles
-        ctx.fillStyle = state.m2_b_dir > 0 ? 'rgba(255, 0, 85, 0.2)' : 'rgba(0, 150, 255, 0.2)'; // N (Red) / S (Blue) bottom
-        ctx.fillRect(cx - 200, cy + 50, 400, 100);
-        ctx.fillStyle = '#fff'; ctx.font = '24px Chakra Petch'; ctx.fillText(state.m2_b_dir > 0 ? "N" : "S", cx - 10, cy + 110);
 
         // Draw Rails
-        ctx.strokeStyle = '#555'; ctx.lineWidth = 10;
-        ctx.beginPath(); ctx.moveTo(cx - 150, 0); ctx.lineTo(cx - 150, canvas.height); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(cx + 150, 0); ctx.lineTo(cx + 150, canvas.height); ctx.stroke();
+        ctx.strokeStyle = '#64748b'; ctx.lineWidth = 6;
+        ctx.beginPath(); ctx.moveTo(cx - 130, cy - 20); ctx.lineTo(cx + 130, cy - 20); ctx.stroke();
 
-        // Draw Jumping Wire
-        let wireY = cy - state.m2_y_offset;
-        ctx.strokeStyle = '#00f0ff'; ctx.lineWidth = 15;
-        ctx.beginPath(); ctx.moveTo(cx - 160, wireY); ctx.lineTo(cx + 160, wireY); ctx.stroke();
-        
-        // Draw I Vector (Current)
-        ctx.fillStyle = '#ffcc00'; ctx.font = '20px Arial';
-        if(state.m2_i_dir > 0) ctx.fillText("I →", cx, wireY - 20); else ctx.fillText("← I", cx - 30, wireY - 20);
+        let targetYOffset = F * -15; // F>0 เด้งขึ้น
+        let currentY = cy - 20 + targetYOffset;
 
-        // Feedback Text if fired
-        if(state.m2_fired && Math.abs(state.m2_y_offset) > 90) {
-            const pred = document.getElementById('m2_predict').value;
-            const actual = forceDir > 0 ? 'up' : 'down';
-            ctx.font = '30px Sarabun';
-            if(pred === actual) {
-                ctx.fillStyle = '#00ff00'; ctx.fillText("🎉 ทำนายถูกต้อง! (ทิศทางตามกฎมือขวา)", cx - 200, cy - 150);
+        // Draw Wire
+        ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 14;
+        ctx.beginPath(); ctx.moveTo(cx - 140, currentY); ctx.lineTo(cx + 140, currentY); ctx.stroke();
+        ctx.strokeStyle = '#facc15'; ctx.lineWidth = 6;
+        ctx.beginPath(); ctx.moveTo(cx - 140, currentY); ctx.lineTo(cx + 140, currentY); ctx.stroke();
+
+        // Draw I Vector
+        if (I_mag > 0) {
+            ctx.fillStyle = '#ef4444'; ctx.font = 'bold 16px sans-serif';
+            if (I_dir > 0) {
+                ctx.fillText("I ➔", cx - 15, currentY - 18);
             } else {
-                ctx.fillStyle = '#ff0055'; ctx.fillText("❌ ทำนายผิด! ลองกางมือขวาใหม่อีกครั้ง", cx - 200, cy - 150);
+                ctx.fillText("← I", cx - 15, currentY - 18);
             }
+        }
+
+        // Draw F Vector
+        if (F !== 0) {
+            drawVector(cx, currentY, cx, currentY + (F > 0 ? -60 : 60), '#ea580c', `F`);
         }
     }
 
-    function renderMode3() {
-        const cx = canvas.width / 2;
-        const cy = canvas.height / 2;
-        const i1 = state.m3_i1;
-        const i2 = state.m3_i2;
-        const d = state.m3_d;
+    function renderParallel() {
+        let cx = canvas.width / 2;
+        let cy = canvas.height / 2;
+        let i1 = state.parallel.i1_mag;
+        let i2 = state.parallel.dir === 'same' ? state.parallel.i2_mag : -state.parallel.i2_mag;
+        let d = state.parallel.d;
 
-        // Force calculation (F/L) ~ I1*I2 / d
-        const forceMagn = (i1 * i2) / d; // simplified scaling
-        const interactText = (i1 * i2 > 0) ? "ดึงดูดเข้าหากัน (Attract)" : (i1 * i2 < 0) ? "ผลักออกจากกัน (Repel)" : "ไม่มีแรงกระทำ";
-        
-        hudStats.innerHTML = `<div>F/L ∝ (I₁I₂)/d</div><div style="color:var(--accent)">สถานะ: ${interactText}</div>`;
+        let forceScale = (i1 * i2) / d; 
+        let bend = forceScale * 0.8; 
+        let wireSpacing = d * 60; 
+        let leftWireX = cx - wireSpacing;
+        let rightWireX = cx + wireSpacing;
 
-        // Calculate bending (Bezier control point offset)
-        const bendOffset = forceMagn * 20;
-        
-        // Draw Wire 1 (Left)
-        ctx.strokeStyle = '#00f0ff'; ctx.lineWidth = 10;
-        ctx.beginPath();
-        ctx.moveTo(cx - d, 50);
-        ctx.quadraticCurveTo(cx - d + bendOffset, cy, cx - d, canvas.height - 50);
-        ctx.stroke();
-        // Label I1
-        ctx.fillStyle = '#fff'; ctx.font='18px Arial'; 
-        ctx.fillText(`I₁: ${i1}A ${i1>0?'↓':'↑'}`, cx - d - 80, cy);
+        // Draw Wires
+        drawSingleWire(leftWireX, bend, cy, '#3b82f6');
+        drawSingleWire(rightWireX, -bend, cy, '#ff0055');
 
-        // Draw Wire 2 (Right)
-        ctx.strokeStyle = '#ff0055'; ctx.lineWidth = 10;
-        ctx.beginPath();
-        ctx.moveTo(cx + d, 50);
-        ctx.quadraticCurveTo(cx + d - bendOffset, cy, cx + d, canvas.height - 50);
-        ctx.stroke();
-        // Label I2
-        ctx.fillText(`I₂: ${i2}A ${i2>0?'↓':'↑'}`, cx + d + 30, cy);
+        // Draw Direction Arrows
+        ctx.fillStyle = '#0f172a'; ctx.font = 'bold 16px sans-serif';
+        if(i1 !== 0) {
+            drawVector(leftWireX - 20, cy + 40, leftWireX - 20, cy - 40, '#0f172a', '');
+            ctx.fillText(`I₁`, leftWireX - 40, cy);
+        }
+        if(i2 !== 0) {
+            if(state.parallel.dir === 'same') drawVector(rightWireX + 20, cy + 40, rightWireX + 20, cy - 40, '#0f172a', '');
+            else drawVector(rightWireX + 20, cy - 40, rightWireX + 20, cy + 40, '#0f172a', '');
+            ctx.fillText(`I₂`, rightWireX + 35, cy);
+        }
 
-        // Draw Force Arrows if interacting
-        if(Math.abs(forceMagn) > 1) {
-            ctx.strokeStyle = '#ffcc00'; ctx.lineWidth = 3;
-            // Draw center arrows based on attract/repel
-            if(forceMagn > 0) { // Attract
-                drawArrow(ctx, cx - d + bendOffset + 20, cy, cx - 20, cy);
-                drawArrow(ctx, cx + d - bendOffset - 20, cy, cx + 20, cy);
+        // Draw Force Vectors
+        if (forceScale !== 0) {
+            let fColor = '#facc15';
+            if (forceScale > 0) { // Attract
+                drawVector(leftWireX + bend/2 + 10, cy, leftWireX + bend/2 + 50, cy, fColor, 'F');
+                drawVector(rightWireX - bend/2 - 10, cy, rightWireX - bend/2 - 50, cy, fColor, 'F');
             } else { // Repel
-                drawArrow(ctx, cx - d + bendOffset - 20, cy, cx - d - 50, cy);
-                drawArrow(ctx, cx + d - bendOffset + 20, cy, cx + d + 50, cy);
+                drawVector(leftWireX + bend/2 - 10, cy, leftWireX + bend/2 - 50, cy, fColor, 'F');
+                drawVector(rightWireX - bend/2 + 10, cy, rightWireX - bend/2 + 50, cy, fColor, 'F');
             }
         }
     }
 
-    function renderMode4() {
-        const cx = canvas.width / 2;
-        const cy = canvas.height / 2;
-
-        if(state.m4_commutator) {
-            // Continuous rotation
-            state.m4_angle += state.m4_speed; 
-        } else {
-            // Oscillation (no commutator, torque reverses)
-            state.m4_angle = Math.sin(time * 2) * (Math.PI / 3); // Swings back and forth
-            time += 0.05;
-        }
-
-        const angle = state.m4_angle;
-        // Visual Torque calculation
-        const torque = Math.cos(angle);
-        
-        hudStats.innerHTML = `<div>โมเมนต์ (τ) = NIAB cos(θ)</div><div style="color:${torque>0?'#00f0ff':'#ff0055'}">แรงบิด: ${Math.abs(torque).toFixed(2)}</div>`;
-
-        // Draw Magnets
-        ctx.fillStyle = 'rgba(255, 0, 85, 0.6)'; ctx.fillRect(cx - 300, cy - 80, 80, 160); // N
-        ctx.fillStyle = '#fff'; ctx.font='24px Arial'; ctx.fillText('N', cx - 265, cy + 10);
-        
-        ctx.fillStyle = 'rgba(0, 150, 255, 0.6)'; ctx.fillRect(cx + 220, cy - 80, 80, 160); // S
-        ctx.fillStyle = '#fff'; ctx.fillText('S', cx + 255, cy + 10);
-
-        // Draw Rotating Armature (Loop) 2.5D Projection
-        ctx.save();
-        ctx.translate(cx, cy);
-        
-        // Commutator Rings
-        ctx.lineWidth = 8;
-        if(state.m4_commutator) {
-            // Split rings rotating
-            ctx.strokeStyle = Math.cos(angle) > 0 ? '#ffcc00' : '#00f0ff';
-            ctx.beginPath(); ctx.arc(0, 0, 40, angle - 1.5, angle + 1.5); ctx.stroke();
-            ctx.strokeStyle = Math.cos(angle) > 0 ? '#00f0ff' : '#ffcc00';
-            ctx.beginPath(); ctx.arc(0, 0, 40, angle + 1.6, angle + 4.6); ctx.stroke();
-        } else {
-            // Solid ring
-            ctx.strokeStyle = '#ffcc00';
-            ctx.beginPath(); ctx.arc(0, 0, 40, 0, Math.PI*2); ctx.stroke();
-        }
-
-        // Loop wire
-        ctx.scale(Math.cos(angle), 1); // 3D spin effect
-        ctx.strokeStyle = '#fff'; ctx.lineWidth = 6;
-        ctx.strokeRect(-150, -100, 300, 200);
-        
-        // Force Vectors on loop edges
-        if(Math.abs(torque) > 0.1) {
-            ctx.strokeStyle = '#ff0055'; ctx.lineWidth = 4;
-            drawArrow(ctx, -150, 0, -150, torque > 0 ? -60 : 60); // Left edge force
-            drawArrow(ctx, 150, 0, 150, torque > 0 ? 60 : -60);   // Right edge force
-        }
-
-        ctx.restore();
+    function drawSingleWire(x, bend, cy, color) {
+        ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 10;
+        ctx.beginPath(); ctx.moveTo(x, 40); ctx.quadraticCurveTo(x + bend, cy, x, canvas.height - 40); ctx.stroke();
+        ctx.strokeStyle = color; ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.moveTo(x, 40); ctx.quadraticCurveTo(x + bend, cy, x, canvas.height - 40); ctx.stroke();
     }
 
-    // Helper: Draw Arrow
-    function drawArrow(ctx, fromx, fromy, tox, toy) {
-        var headlen = 10; 
-        var dx = tox - fromx;
-        var dy = toy - fromy;
-        var angle = Math.atan2(dy, dx);
+    function drawVector(x1, y1, x2, y2, color, label) {
+        ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+        let angle = Math.atan2(y2 - y1, x2 - x1);
         ctx.beginPath();
-        ctx.moveTo(fromx, fromy);
-        ctx.lineTo(tox, toy);
-        ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
-        ctx.moveTo(tox, toy);
-        ctx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
-        ctx.stroke();
+        ctx.moveTo(x2, y2);
+        ctx.lineTo(x2 - 12 * Math.cos(angle - Math.PI / 6), y2 - 12 * Math.sin(angle - Math.PI / 6));
+        ctx.lineTo(x2 - 12 * Math.cos(angle + Math.PI / 6), y2 - 12 * Math.sin(angle + Math.PI / 6));
+        ctx.fill();
+        ctx.font = 'bold 16px sans-serif';
+        if(label) ctx.fillText(label, x2 + 15 * Math.cos(angle), y2 + 15 * Math.sin(angle));
     }
 
-    function varColor(name) {
-        return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-    }
-
-    // Main Loop
-    function gameLoop() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawGrid();
-
-        if(currentMode === 1) renderMode1();
-        else if(currentMode === 2) renderMode2();
-        else if(currentMode === 3) renderMode3();
-        else if(currentMode === 4) renderMode4();
-
-        animationId = requestAnimationFrame(gameLoop);
-    }
-
-    // Initialize
-    setMode(1);
-
+    switchTab('particle');
+    loop();
 </script>
 </body>
 </html>
