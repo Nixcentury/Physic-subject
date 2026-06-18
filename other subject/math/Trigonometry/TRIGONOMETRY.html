@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Unit Circle & Trig Values Randomizer</title>
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --primary: #0f172a;
+            --bg-body: #f8fafc;
+            --border: 4px solid #000;
+            --card-bg: #ffffff;
+            --pos-color: #22c55e; 
+            --neg-color: #ef4444; 
+        }
+
+        * { box-sizing: border-box; font-family: 'K2D', sans-serif; user-select: none; }
+        body { background-color: var(--bg-body); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; color: var(--primary); }
+
+        .container {
+            background: var(--card-bg); border: var(--border); box-shadow: 8px 8px 0px #000;
+            width: 100%; max-width: 900px; padding: 20px; display: flex; flex-direction: column; gap: 20px; border-radius: 12px;
+        }
+
+        .header-title {
+            margin: 0; padding: 15px; background: #6366f1; color: #fff; border: var(--border);
+            font-size: 24px; font-weight: 900; text-transform: uppercase; text-align: center;
+            box-shadow: 4px 4px 0px #312e81; border-radius: 8px; letter-spacing: 1px;
+        }
+
+        .main-layout { display: flex; gap: 20px; flex-wrap: wrap; }
+
+        .canvas-container {
+            flex: 1.2; min-width: 320px; display: flex; justify-content: center; position: relative;
+            background: #f1f5f9; border: var(--border); border-radius: 8px;
+            box-shadow: inset 4px 4px 0px rgba(0,0,0,0.05); padding: 20px 0;
+            background-image: linear-gradient(#e2e8f0 1px, transparent 1px), linear-gradient(90deg, #e2e8f0 1px, transparent 1px);
+            background-size: 20px 20px; background-position: center;
+        }
+
+        canvas { max-width: 100%; height: auto; display: block; }
+
+        /* 🎛️ Dashboard & Answers */
+        .dashboard { flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 15px; }
+        
+        .answer-box {
+            border: 3px solid #000; padding: 15px; border-radius: 8px; text-align: center;
+            display: flex; flex-direction: column; justify-content: center; opacity: 0; transition: 0.3s;
+        }
+        .answer-box.revealed { opacity: 1; }
+        
+        .ans-pos { background: #dcfce7; box-shadow: 4px 4px 0px var(--pos-color); }
+        .ans-neg { background: #fee2e2; box-shadow: 4px 4px 0px var(--neg-color); }
+
+        .ans-title { font-size: 16px; font-weight: 900; margin-bottom: 5px; }
+        .ans-pos .ans-title { color: #166534; }
+        .ans-neg .ans-title { color: #991b1b; }
+
+        .ans-value { font-size: 32px; font-weight: 900; display: flex; justify-content: center; gap: 15px; align-items: center; }
+        
+        /* 📐 Trig Panel (MathJax) */
+        .trig-panel {
+            background: #fff; border: 4px dashed #8b5cf6; padding: 15px; border-radius: 8px;
+            display: flex; justify-content: space-around; align-items: center; text-align: center;
+            box-shadow: inset 3px 3px 0px rgba(0,0,0,0.05);
+        }
+        .trig-item { font-size: 24px; font-weight: bold; color: #4c1d95; opacity: 0; transition: 0.3s;}
+        .trig-item.revealed { opacity: 1; }
+
+        /* 🕹️ Controls */
+        .controls { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 5px; }
+        .btn {
+            padding: 15px; font-size: 18px; font-weight: 900; border: 3px solid #000; border-radius: 8px;
+            cursor: pointer; box-shadow: 4px 4px 0px #000; transition: 0.1s; text-transform: uppercase;
+        }
+        .btn:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px #000; }
+        
+        .btn-rand { background: #64748b; color: #fff; grid-column: span 2; font-size: 20px;}
+        .btn-pos { background: var(--pos-color); color: #fff; }
+        .btn-neg { background: var(--neg-color); color: #fff; }
+        .btn-trig { background: #8b5cf6; color: #fff; grid-column: span 2; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="header-title">📐 Co-Terminal & Trig Randomizer</h1>
+
+    <div class="main-layout">
+        <div class="canvas-container">
+            <canvas id="trigCanvas" width="450" height="450"></canvas>
+        </div>
+
+        <div class="dashboard">
+            <div class="answer-box ans-pos" id="box-pos">
+                <div class="ans-title">ทิศทวนเข็มนาฬิกา (มุมบวก)</div>
+                <div class="ans-value">
+                    <span id="deg-pos">0°</span>
+                    <span style="color: #cbd5e1;">|</span>
+                    <span id="rad-pos" style="font-family: serif; font-size: 36px;"></span>
+                </div>
+            </div>
+            <div class="answer-box ans-neg" id="box-neg">
+                <div class="ans-title">ทิศตามเข็มนาฬิกา (มุมลบ)</div>
+                <div class="ans-value">
+                    <span id="deg-neg">0°</span>
+                    <span style="color: #cbd5e1;">|</span>
+                    <span id="rad-neg" style="font-family: serif; font-size: 36px;"></span>
+                </div>
+            </div>
+
+            <div class="trig-panel">
+                <div class="trig-item" id="val-sin">\(\sin = ?\)</div>
+                <div class="trig-item" id="val-cos">\(\cos = ?\)</div>
+                <div class="trig-item" id="val-tan">\(\tan = ?\)</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-pos" onclick="revealPositive()">🟢 1. เฉลยมุมบวก</button>
+        <button class="btn btn-neg" onclick="revealNegative()">🔴 2. เฉลยมุมลบ</button>
+        <button class="btn btn-trig" onclick="revealTrig()">✨ 3. เฉลยค่า Sin, Cos, Tan</button>
+        <button class="btn btn-rand" onclick="generateRandomAngle()">🎲 สุ่มโจทย์ใหม่ (NEXT)</button>
+    </div>
+</div>
+
+<script>
+    // ฐานข้อมูลมุมมาตรฐาน + ค่า Trig แบบ LaTeX สำหรับ MathJax
+    const angleData = [
+        // Q1
+        { deg: 30, rad: "\\frac{\\pi}{6}", ref: 30, negDeg: -330, negRad: "-\\frac{11\\pi}{6}", sin: "\\frac{1}{2}", cos: "\\frac{\\sqrt{3}}{2}", tan: "\\frac{\\sqrt{3}}{3}" },
+        { deg: 45, rad: "\\frac{\\pi}{4}", ref: 45, negDeg: -315, negRad: "-\\frac{7\\pi}{4}", sin: "\\frac{\\sqrt{2}}{2}", cos: "\\frac{\\sqrt{2}}{2}", tan: "1" },
+        { deg: 60, rad: "\\frac{\\pi}{3}", ref: 60, negDeg: -300, negRad: "-\\frac{5\\pi}{3}", sin: "\\frac{\\sqrt{3}}{2}", cos: "\\frac{1}{2}", tan: "\\sqrt{3}" },
+        // Q2
+        { deg: 120, rad: "\\frac{2\\pi}{3}", ref: 60, negDeg: -240, negRad: "-\\frac{4\\pi}{3}", sin: "\\frac{\\sqrt{3}}{2}", cos: "-\\frac{1}{2}", tan: "-\\sqrt{3}" },
+        { deg: 135, rad: "\\frac{3\\pi}{4}", ref: 45, negDeg: -225, negRad: "-\\frac{5\\pi}{4}", sin: "\\frac{\\sqrt{2}}{2}", cos: "-\\frac{\\sqrt{2}}{2}", tan: "-1" },
+        { deg: 150, rad: "\\frac{5\\pi}{6}", ref: 30, negDeg: -210, negRad: "-\\frac{7\\pi}{6}", sin: "\\frac{1}{2}", cos: "-\\frac{\\sqrt{3}}{2}", tan: "-\\frac{\\sqrt{3}}{3}" },
+        // Q3
+        { deg: 210, rad: "\\frac{7\\pi}{6}", ref: 30, negDeg: -150, negRad: "-\\frac{5\\pi}{6}", sin: "-\\frac{1}{2}", cos: "-\\frac{\\sqrt{3}}{2}", tan: "\\frac{\\sqrt{3}}{3}" },
+        { deg: 225, rad: "\\frac{5\\pi}{4}", ref: 45, negDeg: -135, negRad: "-\\frac{3\\pi}{4}", sin: "-\\frac{\\sqrt{2}}{2}", cos: "-\\frac{\\sqrt{2}}{2}", tan: "1" },
+        { deg: 240, rad: "\\frac{4\\pi}{3}", ref: 60, negDeg: -120, negRad: "-\\frac{2\\pi}{3}", sin: "-\\frac{\\sqrt{3}}{2}", cos: "-\\frac{1}{2}", tan: "\\sqrt{3}" },
+        // Q4
+        { deg: 300, rad: "\\frac{5\\pi}{3}", ref: 60, negDeg: -60, negRad: "-\\frac{\\pi}{3}", sin: "-\\frac{\\sqrt{3}}{2}", cos: "\\frac{1}{2}", tan: "-\\sqrt{3}" },
+        { deg: 315, rad: "\\frac{7\\pi}{4}", ref: 45, negDeg: -45, negRad: "-\\frac{\\pi}{4}", sin: "-\\frac{\\sqrt{2}}{2}", cos: "\\frac{\\sqrt{2}}{2}", tan: "-1" },
+        { deg: 330, rad: "\\frac{11\\pi}{6}", ref: 30, negDeg: -30, negRad: "-\\frac{\\pi}{6}", sin: "-\\frac{1}{2}", cos: "\\frac{\\sqrt{3}}{2}", tan: "-\\frac{\\sqrt{3}}{3}" }
+    ];
+
+    const canvas = document.getElementById('trigCanvas');
+    const ctx = canvas.getContext('2d');
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    const radius = 150;
+
+    let currentAngle = null;
+    let showPos = false;
+    let showNeg = false;
+
+    function generateRandomAngle() {
+        let newAngle;
+        do {
+            newAngle = angleData[Math.floor(Math.random() * angleData.length)];
+        } while (currentAngle && newAngle.deg === currentAngle.deg);
+        
+        currentAngle = newAngle;
+        showPos = false;
+        showNeg = false;
+
+        // Reset UI Elements
+        document.getElementById('box-pos').classList.remove('revealed');
+        document.getElementById('box-neg').classList.remove('revealed');
+        
+        // Reset Trig MathJax Elements
+        document.getElementById('val-sin').classList.remove('revealed');
+        document.getElementById('val-cos').classList.remove('revealed');
+        document.getElementById('val-tan').classList.remove('revealed');
+        document.getElementById('val-sin').innerHTML = "\\(\\sin = ?\\)";
+        document.getElementById('val-cos').innerHTML = "\\(\\cos = ?\\)";
+        document.getElementById('val-tan').innerHTML = "\\(\\tan = ?\\)";
+        
+        // เรนเดอร์ MathJax ใหม่สำหรับเครื่องหมาย ?
+        if (window.MathJax) { MathJax.typesetPromise(); }
+
+        drawScene();
+    }
+
+    function revealPositive() {
+        if(!currentAngle) return;
+        showPos = true;
+        document.getElementById('box-pos').classList.add('revealed');
+        document.getElementById('deg-pos').innerText = `+${currentAngle.deg}°`;
+        
+        // ใช้ MathJax เรนเดอร์เรเดียน
+        document.getElementById('rad-pos').innerHTML = `\\(${currentAngle.rad}\\)`;
+        if (window.MathJax) MathJax.typesetPromise([document.getElementById('rad-pos')]);
+
+        drawScene();
+    }
+
+    function revealNegative() {
+        if(!currentAngle) return;
+        showNeg = true;
+        document.getElementById('box-neg').classList.add('revealed');
+        document.getElementById('deg-neg').innerText = `${currentAngle.negDeg}°`;
+        
+        // ใช้ MathJax เรนเดอร์เรเดียน
+        document.getElementById('rad-neg').innerHTML = `\\(${currentAngle.negRad}\\)`;
+        if (window.MathJax) MathJax.typesetPromise([document.getElementById('rad-neg')]);
+
+        drawScene();
+    }
+
+    function revealTrig() {
+        if(!currentAngle) return;
+        
+        let sinEl = document.getElementById('val-sin');
+        let cosEl = document.getElementById('val-cos');
+        let tanEl = document.getElementById('val-tan');
+
+        // อัปเดตโครงสร้าง LaTeX
+        sinEl.innerHTML = `\\(\\sin = ${currentAngle.sin}\\)`;
+        cosEl.innerHTML = `\\(\\cos = ${currentAngle.cos}\\)`;
+        tanEl.innerHTML = `\\(\\tan = ${currentAngle.tan}\\)`;
+
+        // ใส่ Class เพื่อโชว์ (Fade In)
+        sinEl.classList.add('revealed');
+        cosEl.classList.add('revealed');
+        tanEl.classList.add('revealed');
+
+        // สั่งให้ MathJax ประมวลผลสมการที่เพิ่งใส่เข้าไปใหม่
+        if (window.MathJax) {
+            MathJax.typesetPromise([sinEl, cosEl, tanEl]);
+        }
+    }
+
+    function drawScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // แกน X, Y
+        ctx.beginPath();
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 2;
+        ctx.moveTo(0, cy); ctx.lineTo(canvas.width, cy);
+        ctx.moveTo(cx, 0); ctx.lineTo(cx, canvas.height);
+        ctx.stroke();
+
+        // วงกลม 1 หน่วย
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+        ctx.fillStyle = '#e0f2fe';
+        ctx.fill();
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        if (!currentAngle) return;
+
+        let mathRad = currentAngle.deg * Math.PI / 180;
+        let canvasRad = -mathRad; 
+        let tx = cx + radius * Math.cos(canvasRad);
+        let ty = cy + radius * Math.sin(canvasRad);
+
+        // สามเหลี่ยมมุมอ้างอิง
+        ctx.beginPath();
+        ctx.moveTo(cx, cy); 
+        ctx.lineTo(tx, ty); 
+        ctx.lineTo(tx, cy); 
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(250, 204, 21, 0.4)';
+        ctx.fill();
+        ctx.strokeStyle = '#d97706';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // ส่วนโค้งมุมอ้างอิง
+        ctx.beginPath();
+        let refArcRadius = 40;
+        if (currentAngle.deg > 0 && currentAngle.deg <= 90) { ctx.arc(cx, cy, refArcRadius, 0, canvasRad, true); }
+        else if (currentAngle.deg > 90 && currentAngle.deg <= 180) { ctx.arc(cx, cy, refArcRadius, Math.PI, canvasRad, false); }
+        else if (currentAngle.deg > 180 && currentAngle.deg <= 270) { ctx.arc(cx, cy, refArcRadius, Math.PI, canvasRad, true); }
+        else { ctx.arc(cx, cy, refArcRadius, 0, canvasRad, false); }
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        ctx.fillStyle = '#000';
+        ctx.font = 'bold 18px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        let txtOffset = 60;
+        let txtAngle = canvasRad;
+        if(currentAngle.deg > 90 && currentAngle.deg <= 180) txtAngle = Math.PI - (currentAngle.ref * Math.PI/180)/2;
+        else if(currentAngle.deg > 180 && currentAngle.deg <= 270) txtAngle = Math.PI + (currentAngle.ref * Math.PI/180)/2;
+        else if(currentAngle.deg > 270) txtAngle = -(currentAngle.ref * Math.PI/180)/2;
+        else txtAngle = canvasRad / 2;
+        ctx.fillText(`${currentAngle.ref}°`, cx + txtOffset * Math.cos(txtAngle), cy + txtOffset * Math.sin(txtAngle));
+
+        // เส้นรัศมีหลัก (Terminal Side)
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(tx, ty);
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 4;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(tx, ty, 6, 0, 2*Math.PI);
+        ctx.fillStyle = '#0f172a';
+        ctx.fill();
+
+        // เฉลยทิศทวนเข็ม
+        if (showPos) {
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius + 15, 0, canvasRad, true);
+            ctx.strokeStyle = '#22c55e';
+            ctx.lineWidth = 5;
+            ctx.stroke();
+            drawArrowHead(cx, cy, radius + 15, canvasRad, true, '#22c55e');
+        }
+
+        // เฉลยทิศตามเข็ม
+        if (showNeg) {
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius + 30, 0, canvasRad, false);
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = 5;
+            ctx.stroke();
+            drawArrowHead(cx, cy, radius + 30, canvasRad, false, '#ef4444');
+        }
+    }
+
+    function drawArrowHead(x, y, r, theta, ccw, color) {
+        let arrowAngle = ccw ? theta - Math.PI/2 : theta + Math.PI/2;
+        let ax = x + r * Math.cos(theta);
+        let ay = y + r * Math.sin(theta);
+        
+        ctx.save();
+        ctx.translate(ax, ay);
+        ctx.rotate(theta);
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        if (ccw) {
+            ctx.lineTo(10, 10);
+            ctx.lineTo(-10, 10);
+        } else {
+            ctx.lineTo(10, -10);
+            ctx.lineTo(-10, -10);
+        }
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.restore();
+    }
+
+    // ดีเลย์นิดนึงรอ MathJax โหลดเสร็จก่อนสุ่มโจทย์แรก
+    setTimeout(generateRandomAngle, 500);
+
+</script>
+</body>
+</html>
