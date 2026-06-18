@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Physics Mechanics Interactive Lab</title>
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --bg-body: #f8fafc;
+            --border: 4px solid #000;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+        }
+
+        * { box-sizing: border-box; font-family: 'K2D', sans-serif; user-select: none; }
+        body { background-color: var(--bg-body); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; color: var(--text); overflow-x: hidden; }
+
+        .container {
+            background: var(--card-bg); border: var(--border); box-shadow: 8px 8px 0px #000;
+            width: 100%; max-width: 1100px; padding: 20px; display: flex; flex-direction: column; gap: 20px; border-radius: 12px;
+        }
+
+        .header-title {
+            margin: 0; padding: 15px; background: var(--primary); color: #fff; border: var(--border);
+            font-size: 24px; font-weight: 900; text-transform: uppercase; text-align: center;
+            box-shadow: 4px 4px 0px #64748b; letter-spacing: 1px; border-radius: 8px;
+        }
+
+        /* 🗂️ Tabs */
+        .tabs { display: flex; gap: 10px; margin-bottom: 10px; }
+        .tab-btn {
+            flex: 1; padding: 15px; font-size: 18px; font-weight: 900; cursor: pointer; border: 3px solid #000;
+            background: #e2e8f0; color: #475569; transition: 0.2s; border-radius: 8px 8px 0 0; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.1);
+        }
+        .tab-btn.active { background: #3b82f6; color: #fff; border-bottom: 3px solid #3b82f6; box-shadow: none; }
+        
+        .mode-panel { display: none; gap: 20px; flex-wrap: wrap; animation: fadeIn 0.3s; }
+        .mode-panel.active { display: flex; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 🎛️ Controls & UI */
+        .control-panel { flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 15px; background: #f1f5f9; padding: 20px; border: 3px solid #000; border-radius: 8px; }
+        .arena { flex: 2; min-width: 350px; height: 450px; background: #fff; border: 4px solid #0f172a; border-radius: 12px; position: relative; overflow: hidden; box-shadow: inset 5px 5px 0px rgba(0,0,0,0.05); background-image: linear-gradient(#e2e8f0 1px, transparent 1px), linear-gradient(90deg, #e2e8f0 1px, transparent 1px); background-size: 20px 20px; }
+
+        .slider-group { background: #fff; border: 2px solid #000; padding: 10px; border-radius: 6px; }
+        .slider-group label { display: flex; justify-content: space-between; font-weight: 900; font-size: 16px; margin-bottom: 5px; }
+        .val-badge { color: #ea580c; font-family: monospace; font-size: 18px; }
+        input[type="range"] { width: 100%; cursor: pointer; }
+
+        .stat-box { background: #1e293b; color: #fff; padding: 15px; border: 3px solid #000; border-radius: 8px; font-size: 16px; font-weight: 800; display: flex; flex-direction: column; gap: 8px; }
+        .stat-val { color: #10b981; font-family: monospace; font-size: 20px; float: right; }
+        .highlight-alert { background: #ef4444; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 14px; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        /* =========================================
+           MODE 1: NEWTON'S LAWS (Falling Box)
+           ========================================= */
+        .rope { position: absolute; left: 50%; top: 0; width: 4px; background: #475569; transform: translateX(-50%); z-index: 1;}
+        .mass-box {
+            position: absolute; left: 50%; width: 60px; height: 60px; background: #8b5cf6; border: 4px solid #000;
+            border-radius: 8px; transform: translateX(-50%); display: flex; align-items: center; justify-content: center;
+            font-weight: 900; color: #fff; font-size: 16px; z-index: 2; box-shadow: 4px 4px 0px rgba(0,0,0,0.3);
+        }
+        .vector-arrow { position: absolute; left: 50%; width: 4px; transform: translateX(-50%); z-index: 3; transition: height 0.1s; }
+        .arrow-up { bottom: 100%; background: #10b981; transform-origin: bottom center; }
+        .arrow-up::after { content: ''; position: absolute; top: -10px; left: -6px; border-width: 0 8px 10px 8px; border-style: solid; border-color: transparent transparent #10b981 transparent; }
+        .arrow-down { top: 100%; background: #ef4444; transform-origin: top center; }
+        .arrow-down::after { content: ''; position: absolute; bottom: -10px; left: -6px; border-width: 10px 8px 0 8px; border-style: solid; border-color: #ef4444 transparent transparent transparent; }
+
+        /* =========================================
+           MODE 2: TORQUE & MOMENTS (Lever)
+           ========================================= */
+        .fulcrum { position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 30px solid transparent; border-right: 30px solid transparent; border-bottom: 50px solid #475569; z-index: 2; }
+        .plank { position: absolute; bottom: 100px; left: 10%; right: 10%; height: 16px; background: #d97706; border: 3px solid #000; border-radius: 8px; transform-origin: center center; z-index: 3; }
+        .weight { position: absolute; bottom: 16px; width: 40px; height: 40px; background: #3b82f6; border: 3px solid #000; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #fff; transform: translateX(-50%); }
+        .weight-left { background: #ec4899; }
+        .weight-right { background: #06b6d4; }
+        .force-arrow { position: absolute; top: 100%; left: 50%; width: 4px; background: #ef4444; transform: translateX(-50%); z-index: 4; }
+        .force-arrow::after { content: ''; position: absolute; bottom: -10px; left: -6px; border-width: 10px 8px 0 8px; border-style: solid; border-color: #ef4444 transparent transparent transparent; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="header-title">⚙️ Physics Mechanics Interactive Lab</h1>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab(1)" id="tab-btn-1">โหมด 1: แรงและกฎการเคลื่อนที่</button>
+        <button class="tab-btn" onclick="switchTab(2)" id="tab-btn-2">โหมด 2: โมเมนต์และคานสมดุล</button>
+    </div>
+
+    <div class="mode-panel active" id="mode-1">
+        <div class="control-panel">
+            <div style="font-weight: 900; font-size: 18px; color: #1e3a8a;">🎯 ภารกิจ: ปรับแรงตึงเชือก (T) ให้วัตถุเคลื่อนที่ด้วยความเร็วคงที่!</div>
+            
+            <div class="slider-group">
+                <label>⚖️ มวลของวัตถุ (m) <span class="val-badge" id="val-m">5 kg</span></label>
+                <input type="range" id="slide-m" min="1" max="10" step="1" value="5" oninput="updateMode1()">
+            </div>
+            
+            <div class="slider-group">
+                <label>🧵 แรงตึงเชือกดึงขึ้น (T) <span class="val-badge" id="val-t">20 N</span></label>
+                <input type="range" id="slide-t" min="0" max="100" step="5" value="20" oninput="updateMode1()">
+            </div>
+                        <div class="slider-group" style="border-color: #3b82f6; background: #eff6ff;">
+                <label style="color: #1d4ed8;">💨 ตั้ง/แทรกแซง ความเร็ว (v) <span class="val-badge" id="val-v-set" style="color: #1d4ed8;">0 m/s</span></label>
+                <input type="range" id="slide-v" min="-30" max="30" step="1" value="0" oninput="overrideVelocity()">
+            </div>
+
+            <button id="btn-pause-m1" onclick="togglePauseM1()" style="background: #f59e0b; color: #fff; padding: 12px; font-size: 18px; font-weight: 900; border: 3px solid #000; border-radius: 8px; cursor: pointer; box-shadow: 4px 4px 0px #000; transition: 0.1s; margin-bottom: 5px;">⏸️ หยุดเวลาให้อธิบาย (PAUSE)</button>
+
+            <div class="stat-box">
+                <div>⬇️ น้ำหนัก (W = mg): <span class="stat-val" id="stat-w">50 N</span></div>
+                <div>⬆️ แรงตึงเชือก (T): <span class="stat-val" id="stat-t">20 N</span></div>
+                <hr style="border-color: #475569; width: 100%;">
+                <div>🔄 แรงลัพธ์ (ΣF): <span class="stat-val" id="stat-fnet" style="color: #f59e0b;">-30 N (ลง)</span></div>
+                <div>🚀 ความเร่ง (a): <span class="stat-val" id="stat-a" style="color: #f59e0b;">-6.0 m/s²</span></div>
+                <div>💨 ความเร็ว (v): <span class="stat-val" id="stat-v">0.0 m/s</span></div>
+            </div>
+
+            <div class="stat-box" id="status-box-1" style="background: #fee2e2; border-color: #ef4444; color: #991b1b; text-align: center;">
+                <div style="font-size: 20px;">⚠️ สภาพการเคลื่อนที่ ⚠️</div>
+                <div id="status-text-1">ความเร็วเปลี่ยนแปลง (มีความเร่ง)</div>
+            </div>
+        </div>
+
+        <div class="arena" id="arena-1">
+            <div class="rope" id="m1-rope"></div>
+            <div class="mass-box" id="m1-box">
+                <span id="m1-label">5kg</span>
+                <div class="vector-arrow arrow-up" id="vec-t"></div>
+                <div class="vector-arrow arrow-down" id="vec-w"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mode-panel" id="mode-2">
+        <div class="control-panel">
+            <div style="font-weight: 900; font-size: 18px; color: #1e3a8a;">🎯 ภารกิจ: ปรับแรงและระยะทาง ให้คานอยู่ในสมดุลรักษาระดับ!</div>
+            
+            <div class="slider-group" style="border-color: #ec4899; background: #fdf2f8;">
+                <label style="color: #be185d;">📦 แรงกดฝั่งซ้าย (F₁) <span class="val-badge" id="val-f1">20 N</span></label>
+                <input type="range" id="slide-f1" min="0" max="50" step="5" value="20" oninput="updateMode2()">
+                <label style="color: #be185d; margin-top: 10px;">📏 ระยะซ้ายถึงจุดหมุน (d₁) <span class="val-badge" id="val-d1">4 m</span></label>
+                <input type="range" id="slide-d1" min="1" max="5" step="0.5" value="4" oninput="updateMode2()">
+            </div>
+            
+            <div class="slider-group" style="border-color: #06b6d4; background: #ecfeff;">
+                <label style="color: #0e7490;">📦 แรงกดฝั่งขวา (F₂) <span class="val-badge" id="val-f2">40 N</span></label>
+                <input type="range" id="slide-f2" min="0" max="50" step="5" value="40" oninput="updateMode2()">
+                <label style="color: #0e7490; margin-top: 10px;">📏 ระยะขวาถึงจุดหมุน (d₂) <span class="val-badge" id="val-d2">2 m</span></label>
+                <input type="range" id="slide-d2" min="1" max="5" step="0.5" value="2" oninput="updateMode2()">
+            </div>
+
+            <div class="stat-box">
+                <div>↩️ โมเมนต์ทวน (M_ทวน): <span class="stat-val" id="stat-mccw">80 N·m</span></div>
+                <div>↪️ โมเมนต์ตาม (M_ตาม): <span class="stat-val" id="stat-mcw">80 N·m</span></div>
+                <hr style="border-color: #475569; width: 100%;">
+                <div id="status-text-2" style="text-align: center; font-size: 20px; color: #10b981;">✅ สมดุลการหมุน (คานไม่เอียง)</div>
+            </div>
+        </div>
+
+        <div class="arena" id="arena-2" style="display: flex; flex-direction: column; justify-content: flex-end;">
+            <div class="fulcrum"></div>
+            <div class="plank" id="m2-plank">
+                <div class="weight weight-left" id="m2-w1" style="left: 10%;"><span id="l1-lbl">20N</span>
+                    <div class="force-arrow" id="vec-f1"></div>
+                </div>
+                <div class="weight weight-right" id="m2-w2" style="left: 90%;"><span id="l2-lbl">40N</span>
+                    <div class="force-arrow" id="vec-f2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // ==========================================
+    // TAB MANAGEMENT
+    // ==========================================
+    let currentMode = 1;
+    function switchTab(mode) {
+        currentMode = mode;
+        document.getElementById('tab-btn-1').classList.remove('active');
+        document.getElementById('tab-btn-2').classList.remove('active');
+        document.getElementById('mode-1').classList.remove('active');
+        document.getElementById('mode-2').classList.remove('active');
+
+        document.getElementById(`tab-btn-${mode}`).classList.add('active');
+        document.getElementById(`mode-${mode}`).classList.add('active');
+        
+        if (mode === 1) { yPos = 50; velocity = 0; } // Reset falling box
+    }
+
+    // ==========================================
+    // MODE 1: NEWTON'S LAWS PHYSICS ENGINE
+    // ==========================================
+    // ==========================================
+    // MODE 1: NEWTON'S LAWS PHYSICS ENGINE
+    // ==========================================
+    const g = 10; 
+    let yPos = 50; 
+    let velocity = 0; 
+    let isPausedM1 = false; // เพิ่มตัวแปรเช็คสถานะหยุด
+
+    function togglePauseM1() {
+        isPausedM1 = !isPausedM1;
+        let btn = document.getElementById('btn-pause-m1');
+        if(isPausedM1) {
+            btn.innerText = "▶️ เล่นต่อ (RESUME)";
+            btn.style.background = "#10b981";
+        } else {
+            btn.innerText = "⏸️ หยุดเวลาให้อธิบาย (PAUSE)";
+            btn.style.background = "#f59e0b";
+        }
+    }
+
+    function overrideVelocity() {
+        let vSet = parseFloat(document.getElementById('slide-v').value);
+        velocity = -vSet * 10; // แปลงหน่วยจาก m/s ให้เป็น Pixel speed (ติดลบเพราะทิศชี้ขึ้น)
+        document.getElementById('val-v-set').innerText = vSet + " m/s";
+    }
+    function updateMode1() {
+        let m = parseFloat(document.getElementById('slide-m').value);
+        let T = parseFloat(document.getElementById('slide-t').value);
+        let W = m * g;
+        let Fnet = T - W; // + is UP, - is DOWN
+        let a = Fnet / m;
+
+        // Update UI Text
+        document.getElementById('val-m').innerText = m + " kg";
+        document.getElementById('val-t').innerText = T + " N";
+        document.getElementById('stat-w').innerText = W + " N";
+        document.getElementById('stat-t').innerText = T + " N";
+        
+        let dirF = Fnet > 0 ? " (ขึ้น)" : Fnet < 0 ? " (ลง)" : "";
+        document.getElementById('stat-fnet').innerText = Math.abs(Fnet) + " N" + dirF;
+        document.getElementById('stat-a').innerText = a.toFixed(1) + " m/s²";
+        
+        // Update Box UI
+        document.getElementById('m1-label').innerText = m + "kg";
+        document.getElementById('vec-t').style.height = (T) + "px";
+        document.getElementById('vec-w').style.height = (W) + "px";
+
+        let statusBox = document.getElementById('status-box-1');
+        let statusText = document.getElementById('status-text-1');
+        
+        if (Fnet === 0) {
+            statusBox.style.background = '#d1fae5';
+            statusBox.style.borderColor = '#10b981';
+            statusBox.style.color = '#047857';
+            statusText.innerText = "✨ สมดุลกล (ความเร็วคงที่) ✨";
+        } else {
+            statusBox.style.background = '#fee2e2';
+            statusBox.style.borderColor = '#ef4444';
+            statusBox.style.color = '#991b1b';
+            statusText.innerText = "⚠️ ความเร็วเปลี่ยนแปลง (มีความเร่ง)";
+        }
+    }
+
+    // ==========================================
+    // MODE 2: TORQUE PHYSICS ENGINE
+    // ==========================================
+    let targetAngle = 0;
+    let currentAngle = 0;
+
+    function updateMode2() {
+        let F1 = parseFloat(document.getElementById('slide-f1').value);
+        let d1 = parseFloat(document.getElementById('slide-d1').value);
+        let F2 = parseFloat(document.getElementById('slide-f2').value);
+        let d2 = parseFloat(document.getElementById('slide-d2').value);
+
+        let M_ccw = F1 * d1; // ทวนเข็มนาฬิกา (ซ้าย)
+        let M_cw = F2 * d2;  // ตามเข็มนาฬิกา (ขวา)
+
+        document.getElementById('val-f1').innerText = F1 + " N";
+        document.getElementById('val-d1').innerText = d1 + " m";
+        document.getElementById('val-f2').innerText = F2 + " N";
+        document.getElementById('val-d2').innerText = d2 + " m";
+
+        document.getElementById('stat-mccw').innerText = M_ccw + " N·m";
+        document.getElementById('stat-mcw').innerText = M_cw + " N·m";
+
+        let statusText = document.getElementById('status-text-2');
+        
+        if (M_ccw === M_cw) {
+            statusText.innerText = "✅ สมดุลการหมุน (M_ทวน = M_ตาม)";
+            statusText.style.color = "#10b981";
+            targetAngle = 0;
+        } else if (M_ccw > M_cw) {
+            statusText.innerText = "🔄 คานหมุนทวนเข็มนาฬิกา (ซ้ายเอียงลง)";
+            statusText.style.color = "#ec4899";
+            targetAngle = -20; // limit tilt angle visually
+        } else {
+            statusText.innerText = "🔁 คานหมุนตามเข็มนาฬิกา (ขวาเอียงลง)";
+            statusText.style.color = "#06b6d4";
+            targetAngle = 20;
+        }
+
+        // Update Visual positions on plank
+        // Plank center is 50%. Distance max is 5m -> let's map 5m = 45% of plank
+        let posL = 50 - (d1 / 5 * 45); 
+        let posR = 50 + (d2 / 5 * 45);
+        
+        document.getElementById('m2-w1').style.left = posL + "%";
+        document.getElementById('m2-w2').style.left = posR + "%";
+        document.getElementById('l1-lbl').innerText = F1 + "N";
+        document.getElementById('l2-lbl').innerText = F2 + "N";
+        
+        document.getElementById('vec-f1').style.height = (F1 * 1.5) + "px";
+        document.getElementById('vec-f2').style.height = (F2 * 1.5) + "px";
+        
+        if(F1 === 0) document.getElementById('vec-f1').style.height = "0px";
+        if(F2 === 0) document.getElementById('vec-f2').style.height = "0px";
+    }
+
+    // ==========================================
+    // MAIN ANIMATION LOOP
+    // ==========================================
+    let lastTime = 0;
+    function gameLoop(timestamp) {
+        if (!lastTime) lastTime = timestamp;
+        let dt = (timestamp - lastTime) / 1000;
+        if (dt > 0.1) dt = 0.1;
+        lastTime = timestamp;
+
+        if (currentMode === 1) {
+            // คลุมด้วยระบบ Pause
+            if (!isPausedM1) {
+                let m = parseFloat(document.getElementById('slide-m').value);
+                let T = parseFloat(document.getElementById('slide-t').value);
+                let Fnet = T - (m * g); 
+                let a = Fnet / m; 
+                
+                velocity += a * dt; 
+                
+                if (velocity > 300) velocity = 300; 
+                if (velocity < -300) velocity = -300;
+
+                yPos -= velocity * dt; 
+
+                let arenaH = 450;
+                if (yPos > arenaH + 50) yPos = -50; 
+                if (yPos < -50) yPos = arenaH + 50;
+
+                let box = document.getElementById('m1-box');
+                let rope = document.getElementById('m1-rope');
+                
+                box.style.top = yPos + "px";
+                rope.style.height = (yPos + 30) + "px"; 
+
+                // ซิงค์ค่าความเร็วกลับไปที่หน้าจอ
+                let currentV = (-velocity / 10).toFixed(1);
+                document.getElementById('stat-v').innerText = currentV + " m/s";
+            }
+        } else if (currentMode === 2) {
+            // Mode 2: Seesaw Tilt Animation
+            // Smoothly interpolate currentAngle towards targetAngle
+            currentAngle += (targetAngle - currentAngle) * 5 * dt;
+            document.getElementById('m2-plank').style.transform = `rotate(${currentAngle}deg)`;
+        }
+
+        requestAnimationFrame(gameLoop);
+    }
+
+    // Initialize
+    updateMode1();
+    updateMode2();
+    requestAnimationFrame(gameLoop);
+
+</script>
+</body>
+</html>
