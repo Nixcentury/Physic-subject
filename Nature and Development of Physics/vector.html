@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vector Summation Master Lab (3 Vectors Edition)</title>
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #000000;
+            --accent: #facc15;
+            --bg-body: #f8fafc;
+            --border: 4px solid #000000;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+        }
+
+        * { box-sizing: border-box; font-family: 'K2D', sans-serif; user-select: none; -webkit-user-select: none; }
+        body { background-color: var(--bg-body); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; color: var(--text); overflow-x: hidden;}
+
+        .container {
+            background: var(--card-bg); border: var(--border); box-shadow: 8px 8px 0px #000;
+            width: 100%; max-width: 1200px; padding: 20px; display: flex; flex-direction: column; gap: 20px; border-radius: 12px;
+        }
+
+        .header-title {
+            margin: 0; padding: 15px; background: var(--accent); border: var(--border);
+            font-size: 24px; font-weight: 900; text-transform: uppercase; text-align: center;
+            box-shadow: 4px 4px 0px #000; letter-spacing: 1px; border-radius: 8px;
+        }
+
+        /* 📊 Dashboard */
+        .dashboard {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px;
+            background: #eff6ff; border: var(--border); padding: 15px; box-shadow: 4px 4px 0px #000; border-radius: 8px;
+        }
+        .dash-box { background: #fff; border: 3px solid #000; padding: 12px; text-align: center; border-radius: 6px;}
+        .dash-label { font-size: 16px; font-weight: 800; color: #0f172a; }
+        .dash-value { font-size: 26px; font-weight: 900; color: #2563eb; font-family: monospace; margin-top: 5px; }
+        .dash-value.hidden { color: #d97706; font-size: 28px; }
+
+        .main-layout { display: flex; flex-wrap: wrap; gap: 20px; }
+
+        /* 🎛️ Controls & Info Panel */
+        .controls-panel { flex: 1; min-width: 380px; display: flex; flex-direction: column; gap: 15px; }
+        .vector-card {
+            border: 3px solid #000; padding: 12px 18px; box-shadow: 4px 4px 0px #000; border-radius: 8px;
+            display: flex; justify-content: space-between; align-items: center; font-weight: 800;
+        }
+        .v-a { background: #fee2e2; border-color: #ef4444; }
+        .v-b { background: #fef9c3; border-color: #ca8a04; }
+        .v-c { background: #dcfce7; border-color: #22c55e; }
+
+        .badge-q { background: #000; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 14px; }
+
+        /* 🔘 Action Buttons */
+        .action-btns { display: flex; gap: 12px; margin-top: 10px; }
+        .btn-action {
+            color: #fff; border: 3px solid #000; padding: 15px; font-size: 18px; font-weight: 900; cursor: pointer;
+            box-shadow: 4px 4px 0px #000; transition: 0.1s; text-align: center; border-radius: 8px; flex: 1;
+        }
+        .btn-action:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #000; }
+        .btn-action:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; transform: translate(4px, 4px); background: #94a3b8 !important;}
+        .btn-random { background: #8b5cf6; }
+        .btn-reveal { background: #10b981; }
+
+        /* 🎨 Interactive Canvas */
+        .visual-panel {
+            flex: 1.2; min-width: 400px; height: 460px; background: #fff; border: 4px solid #000; position: relative;
+            display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 8px;
+            background-image: radial-gradient(#cbd5e1 2px, transparent 2px); background-size: 20px 20px;
+            box-shadow: inset 4px 4px 0px rgba(0,0,0,0.05);
+        }
+
+        /* 📝 Solutions Breakdown */
+        .calc-breakdown {
+            background: #f8fafc; border: 3px solid #000; padding: 20px; border-radius: 8px;
+            box-shadow: 4px 4px 0px #000; display: flex; flex-direction: column; gap: 15px;
+        }
+        .calc-header { font-size: 20px; font-weight: 900; color: #0f172a; border-bottom: 3px solid #000; padding-bottom: 8px; }
+        
+        .grid-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
+        .step-card { background: #fff; border: 2px solid #000; padding: 15px; border-radius: 6px; box-shadow: 2px 2px 0px #000; }
+        .step-title { font-weight: 900; font-size: 16px; margin-bottom: 10px; background: #e2e8f0; padding: 4px 8px; display: inline-block; border: 2px solid #000; border-radius: 4px;}
+        
+        .math-block { font-family: monospace; font-size: 15px; line-height: 1.8; }
+        .highlight-x { color: #dc2626; font-weight: bold; }
+        .highlight-y { color: #2563eb; font-weight: bold; }
+        .result-box { background: #d1fae5; border: 2px solid #10b981; padding: 10px; font-weight: bold; border-radius: 6px; text-align: center; font-size: 18px; margin-top: 10px;}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="header-title">🎲 Vector Multi-Summation Lab (3 Vectors Pack)</h1>
+
+    <div class="dashboard">
+        <div class="dash-box" style="border-color: #dc2626;"><div class="dash-label">ผลรวมแกน X (ΣFₓ)</div><div class="dash-value" id="dash-sfx" style="color: #dc2626;">0.00</div></div>
+        <div class="dash-box" style="border-color: #2563eb;"><div class="dash-label">ผลรวมแกน Y (ΣFᵧ)</div><div class="dash-value" id="dash-sfy" style="color: #2563eb;">0.00</div></div>
+        <div class="dash-box" style="border-color: #10b981;"><div class="dash-label">ขนาดเวกเตอร์ลัพธ์ (R)</div><div class="dash-value" id="dash-r" style="color: #10b981;">0.00</div></div>
+        <div class="dash-box" style="border-color: #8b5cf6;"><div class="dash-label">ทิศทาง (θ ลัพธ์)</div><div class="dash-value" id="dash-ang" style="color: #8b5cf6;">0.0°</div></div>
+    </div>
+
+    <div class="main-layout">
+        <div class="controls-panel">
+            <div style="font-size: 18px; font-weight: 900; margin-bottom: 5px;">📍 เวกเตอร์โจทย์ปัจจุบัน:</div>
+            
+            <div class="vector-card v-a">
+                <div>เวกเตอร์ A (<span style="color:#dc2626;">A</span>)</div>
+                <div id="info-va">ขนาด: 50 | มุม: 37° <span class="badge-q">Q1</span></div>
+            </div>
+
+            <div class="vector-card v-b">
+                <div>เวกเตอร์ B (<span style="color:#b45309;">B</span>)</div>
+                <div id="info-vb">ขนาด: 40 | มุม: 60° <span class="badge-q">Q2</span></div>
+            </div>
+
+            <div class="vector-card v-c">
+                <div>เวกเตอร์ C (<span style="color:#15803d;">C</span>)</div>
+                <div id="info-vc">ขนาด: 30 | มุม: 45° <span class="badge-q">Q4</span></div>
+            </div>
+
+            <div class="action-btns">
+                <button class="btn-action btn-random" onclick="generateThreeVectors()">🎲 สุ่มโจทย์ใหม่</button>
+                <button class="btn-action btn-reveal" id="btn-reveal" onclick="revealSolution()" disabled>🟢 เฉลยคำตอบ</button>
+            </div>
+            
+            <div style="background: #fffbeb; padding: 12px; border: 2px dashed #ca8a04; font-size: 14px; font-weight: 600; color: #854d0e; border-radius: 6px; margin-top: 10px;">
+                💡 <b>กติกาสากลของ Lab นี้:</b> มุมทุกมุมจะถูกกางวัดอิงกระทำกับ <b>"แกน X"</b> เสมอ เพื่อให้นักเรียนโฟกัสหลักการ "แตกชิดมุมเป็น Cos / แตกห่างมุมเป็น Sin" และเครื่องหมายพิกัดประจำแต่ละจตุภาคครับ!
+            </div>
+        </div>
+
+        <div class="visual-panel">
+            <svg width="400" height="400" viewBox="0 0 400 400" style="overflow: visible;" id="vector-svg">
+                <line x1="40" y1="200" x2="360" y2="200" stroke="#000" stroke-width="3"/>
+                <line x1="200" y1="40" x2="200" y2="360" stroke="#000" stroke-width="3"/>
+                <text x="365" y="205" font-weight="900" font-size="14">+X</text>
+                <text x="15" y="205" font-weight="900" font-size="14">-X</text>
+                <text x="193" y="25" font-weight="900" font-size="14">+Y</text>
+                <text x="193" y="385" font-weight="900" font-size="14">-Y</text>
+                
+                <line x1="200" y1="200" x2="200" y2="200" stroke="#10b981" stroke-width="5" id="vis-vr" stroke-dasharray="5,3" marker-end="url(#arrow-green)" style="display:none;"/>
+
+                <line x1="200" y1="200" x2="280" y2="140" stroke="#ef4444" stroke-width="4" id="vis-va" marker-end="url(#arrow-red)"/>
+                <line x1="200" y1="200" x2="140" y2="120" stroke="#ca8a04" stroke-width="4" id="vis-vb" marker-end="url(#arrow-yellow)"/>
+                <line x1="200" y1="200" x2="260" y2="260" stroke="#22c55e" stroke-width="4" id="vis-vc" marker-end="url(#arrow-green-main)"/>
+            </svg>
+        </div>
+    </div>
+
+    <div class="calc-breakdown">
+        <div class="calc-header">📝 วิธีทำขั้นตอนการคำนวณ (Calculation Steps)</div>
+        <div id="challenge-msg" style="text-align: center; padding: 20px; font-weight: bold; color: #ca8a04; font-size: 18px;">
+            🚀 กดปุ่ม "🎲 สุ่มโจทย์ใหม่" แล้วให้นักเรียนเริ่มคำนวณรวมเวกเตอร์ในกระดาษทดได้เลยครับ!
+        </div>
+        
+        <div class="grid-steps" id="steps-area" style="display: none;">
+            <div class="step-card">
+                <div class="step-title" style="background:#fee2e2;">1. แตกส่วนประกอบเวกเตอร์</div>
+                <div class="math-block" id="step-decomp"></div>
+            </div>
+            <div class="step-card">
+                <div class="step-title" style="background:#eff6ff;">2. รวมแรงแยกแกน X เเละ Y</div>
+                <div class="math-block" id="step-sum"></div>
+            </div>
+            <div class="step-card">
+                <div class="step-title" style="background:#dcfce7;">3. หาเวกเตอร์ลัพธ์สุดท้าย</div>
+                <div class="math-block" id="step-result"></div>
+            </div>
+        </div>
+    </div>
+
+    <svg style="width:0;height:0;position:absolute;">
+        <defs>
+            <marker id="arrow-red" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#ef4444" /></marker>
+            <marker id="arrow-yellow" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#ca8a04" /></marker>
+            <marker id="arrow-green-main" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#22c55e" /></marker>
+            <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#10b981" /></marker>
+        </defs>
+    </svg>
+</div>
+
+<script>
+    // ตารางค่าตรีโกณมิติมุมยอดนิยมที่กำหนด
+    const trigTable = {
+        30: { cos: Math.sqrt(3)/2, sin: 0.5, cosStr: "√3/2", sinStr: "1/2" },
+        45: { cos: Math.sqrt(2)/2, sin: Math.sqrt(2)/2, cosStr: "√2/2", sinStr: "√2/2" },
+        60: { cos: 0.5, sin: Math.sqrt(3)/2, cosStr: "1/2", sinStr: "√3/2" },
+        37: { cos: 0.8, sin: 0.6, cosStr: "4/5", sinStr: "3/5" },
+        53: { cos: 0.6, sin: 0.8, cosStr: "3/5", sinStr: "4/5" }
+    };
+
+    let vectors = [];
+    let isHidden = true;
+    let solutionData = {};
+
+    function getRandomElement(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function generateThreeVectors() {
+        isHidden = true;
+        document.getElementById('btn-reveal').disabled = false;
+        document.getElementById('challenge-msg').style.display = "block";
+        document.getElementById('challenge-msg').innerHTML = "🤔 โหมดท้าทายความสามารถ! ปรับพารามิเตอร์เวกเตอร์ 3 ตัวเรียบร้อย ลองให้เด็กๆ คำนวณลงกระดาษทด แล้วกดปุ่ม <b>'เฉลยคำตอบ'</b> เพื่อดูพิกัดรวมครับ";
+        document.getElementById('steps-area').style.display = "none";
+        document.getElementById('vis-vr').style.display = "none";
+
+        // ล้างกล่องแดชบอร์ดด้านบนซ่อนคำตอบไว้ก่อน
+        document.getElementById('dash-sfx').innerText = "???";
+        document.getElementById('dash-sfy').innerText = "???";
+        document.getElementById('dash-r').innerText = "???";
+        document.getElementById('dash-ang').innerText = "???";
+
+        const magnitudes = [10, 20, 25, 30, 40, 50, 60, 100];
+        const angles = [30, 45, 60, 37, 53];
+        const quadrants = [1, 2, 3, 4];
+
+        vectors = [
+            { name: 'A', mag: getRandomElement(magnitudes), ang: getRandomElement(angles), q: getRandomElement(quadrants), color: '#ef4444' },
+            { name: 'B', mag: getRandomElement(magnitudes), ang: getRandomElement(angles), q: getRandomElement(quadrants), color: '#ca8a04' },
+            { name: 'C', mag: getRandomElement(magnitudes), ang: getRandomElement(angles), q: getRandomElement(quadrants), color: '#22c55e' }
+        ];
+
+        // อัปเดตข้อมูล UI Cards ด้านซ้าย
+        updateVectorCard('va', vectors[0]);
+        updateVectorCard('vb', vectors[1]);
+        updateVectorCard('vc', vectors[2]);
+
+        // อัปเดตการวาดรูปโครงสร้างเวกเตอร์บน SVG Canvas
+        drawVectorOnCanvas('vis-va', vectors[0]);
+        drawVectorOnCanvas('vis-vb', vectors[1]);
+        drawVectorOnCanvas('vis-vc', vectors[2]);
+
+        // คำนวณผลลัพธ์ล่วงหน้าเตรียมเก็บไว้เฉลย
+        calculateSolution();
+    }
+
+    function updateVectorCard(id, v) {
+        document.getElementById(`info-${id}`).innerHTML = `ขนาด: <b>${v.mag}</b> | มุม: <b>${v.ang}°</b> ติดแกน X <span class="badge-q">Q${v.q}</span>`;
+    }
+
+    function drawVectorOnCanvas(domId, v) {
+        let rad = (v.ang * Math.PI) / 180;
+        let dx = Math.cos(rad);
+        let dy = Math.sin(rad);
+
+        // กำหนดพิกัดทิศทางเวกเตอร์อิงตาม Quadrant
+        if (v.q === 1) { dy = -dy; }
+        else if (v.q === 2) { dx = -dx; dy = -dy; }
+        else if (v.q === 3) { dx = -dx; }
+        else if (v.q === 4) { /* dx เป็นบวก, dy เป็นบวกในระนาบจอภาพดิ่งลงด้านล่าง */ }
+
+        // สเกลความยาวลูกศรในระบบแสดงผลเพื่อให้พอดีกับพื้นที่ Canvas
+        let scale = Math.min(40 + (v.mag * 1.2), 140); 
+        let targetX = 200 + (dx * scale);
+        let targetY = 200 + (dy * scale);
+
+        let line = document.getElementById(domId);
+        line.setAttribute('x2', targetX);
+        line.setAttribute('y2', targetY);
+    }
+
+    function calculateSolution() {
+        let sumX = 0;
+        let sumY = 0;
+        let decompText = "";
+
+        vectors.forEach(v => {
+            let t = trigTable[v.ang];
+            let vx = v.mag * t.cos;
+            let vy = v.mag * t.sin;
+            let signX = "+", signY = "+";
+
+            if (v.q === 1) { /* + , + */ }
+            else if (v.q === 2) { signX = "-"; vx = -vx; }
+            else if (v.q === 3) { signX = "-"; signY = "-"; vx = -vx; vy = -vy; }
+            else if (v.q === 4) { signY = "-"; vy = -vy; }
+
+            sumX += vx;
+            sumY += vy;
+
+            decompText += `<b>เวกเตอร์ ${v.name} (Q${v.q}):</b><br>
+            • ${v.name}ₓ = ${signX}${v.mag} cos(${v.ang}°) = ${signX}${v.mag}(${t.cosStr}) = <span class="highlight-x">${vx.toFixed(2)}</span><br>
+            • ${v.name}ᵧ = ${signY}${v.mag} sin(${v.ang}°) = ${signY}${v.mag}(${t.sinStr}) = <span class="highlight-y">${vy.toFixed(2)}</span><br><br>`;
+        });
+
+        let R = Math.sqrt(sumX*sumX + sumY*sumY);
+        let alphaRad = Math.atan2(Math.abs(sumY), Math.abs(sumX));
+        let alphaDeg = (alphaRad * 180) / Math.PI;
+
+        solutionData = {
+            sumX: sumX,
+            sumY: sumY,
+            R: R,
+            angle: alphaDeg,
+            decompText: decompText
+        };
+    }
+
+    function revealSolution() {
+        isHidden = false;
+        document.getElementById('btn-reveal').disabled = true;
+        document.getElementById('challenge-msg').style.display = "none";
+        document.getElementById('steps-area').style.display = "grid";
+
+        // แสดงผลลัพธ์ในแดชบอร์ดด้านบน
+        document.getElementById('dash-sfx').innerText = solutionData.sumX.toFixed(2);
+        document.getElementById('dash-sfy').innerText = solutionData.sumY.toFixed(2);
+        document.getElementById('dash-r').innerText = solutionData.R.toFixed(2);
+        document.getElementById('dash-ang').innerText = solutionData.angle.toFixed(1) + "°";
+
+        // เรนเดอร์กล่องขั้นตอนคำนวณแยกแต่ละขั้นตอน
+        document.getElementById('step-decomp').innerHTML = solutionData.decompText;
+
+        document.getElementById('step-sum').innerHTML = `
+            <b>รวมในแนวแกน X:</b><br>
+            ΣFₓ = Aₓ + Bₓ + Cₓ<br>
+            ΣFₓ = (${vectors[0].name}ₓ) + (${vectors[1].name}ₓ) + (${vectors[2].name}ₓ)<br>
+            ΣFₓ = <span class="highlight-x">${solutionData.sumX.toFixed(2)}</span><br><br>
+            <b>รวมในแนวแกน Y:</b><br>
+            ΣFᵧ = Aᵧ + Bᵧ + Cᵧ<br>
+            ΣFᵧ = (${vectors[0].name}ᵧ) + (${vectors[1].name}ᵧ) + (${vectors[2].name}ᵧ)<br>
+            ΣFᵧ = <span class="highlight-y">${solutionData.sumY.toFixed(2)}</span>
+        `;
+
+        document.getElementById('step-result').innerHTML = `
+            ใช้ทฤษฎีบทพีทาโกรัส:<br>
+            R = √[ (ΣFₓ)² + (ΣFᵧ)² ]<br>
+            R = √[ (${solutionData.sumX.toFixed(2)})² + (${solutionData.sumY.toFixed(2)})² ]<br>
+            R = <span class="highlight-x" style="color:#10b981;">${solutionData.R.toFixed(2)} หน่วย</span><br><br>
+            <b>หาทิศทางของมุมลัพธ์ (tan α):</b><br>
+            tan α = | ΣFᵧ / ΣFₓ |<br>
+            tan α = | ${Math.abs(solutionData.sumY).toFixed(2)} / ${Math.abs(solutionData.sumX).toFixed(2)} |<br>
+            α = <span class="highlight-y" style="color:#8b5cf6;">${solutionData.angle.toFixed(1)}°</span> (เทียบแกน X)
+        `;
+
+        // วาดเวกเตอร์ผลลัพธ์สีเขียวสะท้อนแสงลงในหน้าจอ Canvas
+        let vrLine = document.getElementById('vis-vr');
+        vrLine.style.display = "block";
+        
+        let rad = Math.atan2(solutionData.sumY, solutionData.sumX);
+        let scale = Math.min(40 + (solutionData.R * 1.2), 140);
+        
+        // พิกัดใน SVG แกน Y ด้านบนคือพิกัดติดลบ
+        let targetX = 200 + (Math.cos(rad) * scale);
+        let targetY = 200 - (Math.sin(rad) * scale); 
+
+        vrLine.setAttribute('x2', targetX);
+        vrLine.setAttribute('y2', targetY);
+    }
+
+    // เริ่มต้นตัวแอปพลิเคชันระบบแล็บตอนโหลดหน้าเว็บ
+    generateThreeVectors();
+</script>
+</body>
+</html>
