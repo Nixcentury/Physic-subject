@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Diffusion Rate in a Tube | Graham's Law Lab Draft V2</title>
+  <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #000000;
+      --accent: #10b981;
+      --bg-body: #ecfdf5;
+      --border: 4px solid #000000;
+      --shadow: 6px 6px 0px #000000;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --blue: #3b82f6;
+      --orange: #f97316;
+      --red: #ef4444;
+      --green: #10b981;
+      --yellow: #f59e0b;
+      --purple: #8b5cf6;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'K2D', sans-serif;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-body);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    .container {
+      background: var(--card-bg);
+      border: var(--border);
+      box-shadow: 8px 8px 0px #000;
+      width: 100%;
+      max-width: 1300px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      border-radius: 16px;
+    }
+
+    .header-title {
+      margin: 0;
+      padding: 15px;
+      background: var(--accent);
+      color: #fff;
+      border: var(--border);
+      font-size: clamp(21px, 3vw, 30px);
+      font-weight: 900;
+      text-align: center;
+      box-shadow: 4px 4px 0px #000;
+      letter-spacing: 0.2px;
+      border-radius: 12px;
+      line-height: 1.25;
+    }
+
+    .header-title span {
+      display: block;
+      font-size: clamp(14px, 2vw, 18px);
+      margin-top: 6px;
+      color: #ecfdf5;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      background: #f0fdf4;
+      border: var(--border);
+      padding: 15px;
+      box-shadow: 4px 4px 0px #000;
+      border-radius: 12px;
+    }
+
+    .dash-box {
+      background: #fff;
+      border: 3px solid #000;
+      padding: 15px;
+      text-align: center;
+      position: relative;
+      transition: 0.3s;
+      border-radius: 10px;
+    }
+
+    .dash-label {
+      font-size: 16px;
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.35;
+    }
+
+    .dash-value {
+      font-size: clamp(26px, 4vw, 36px);
+      font-weight: 900;
+      font-family: monospace;
+      margin-top: 5px;
+    }
+
+    .main-layout {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .controls-panel {
+      flex: 1;
+      min-width: 390px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .visual-panel {
+      flex: 1.5;
+      min-width: 500px;
+      min-height: 470px;
+      background: #fff;
+      border: 4px solid #000;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background-image: radial-gradient(#e2e8f0 2px, transparent 2px);
+      background-size: 25px 25px;
+      box-shadow: inset 4px 4px 0px rgba(0,0,0,0.05);
+      border-radius: 12px;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: 470px;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      background: #fff;
+      border: 3px solid #000;
+      padding: 12px;
+      box-shadow: 3px 3px 0px #000;
+      border-radius: 12px;
+    }
+
+    .tab-btn {
+      border: 3px solid #000;
+      background: #f8fafc;
+      color: #0f172a;
+      padding: 12px 8px;
+      font-size: 15px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 3px 3px 0px #000;
+      transition: 0.08s;
+      border-radius: 9px;
+      line-height: 1.2;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+      transform: translate(3px, 3px);
+      box-shadow: none;
+    }
+
+    .concept-card, .action-card {
+      background: #fff;
+      border: 3px solid #000;
+      padding: 15px;
+      box-shadow: 3px 3px 0px #000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border-radius: 12px;
+    }
+
+    .concept-card {
+      background: #f8fafc;
+      line-height: 1.55;
+      font-weight: 800;
+    }
+
+    .concept-title {
+      color: #047857;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .formula-chip {
+      display: inline-block;
+      background: #dcfce7;
+      border: 2px solid #059669;
+      color: #064e3b;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-family: monospace;
+      font-weight: 900;
+      margin-top: 4px;
+    }
+
+    .action-card label {
+      font-size: 16px;
+      font-weight: 900;
+      text-align: center;
+      line-height: 1.35;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    input[type="number"] {
+      flex: 2;
+      border: 3px solid #000;
+      padding: 10px;
+      font-size: 20px;
+      font-weight: 900;
+      text-align: center;
+      outline: none;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    input[type="number"]:focus {
+      border-color: var(--accent);
+      background: #f0fdf4;
+    }
+
+    .btn-action {
+      border: 3px solid #000;
+      padding: 10px 15px;
+      font-size: 18px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 3px 3px 0px #000;
+      transition: 0.1s;
+      text-align: center;
+      border-radius: 8px;
+      flex: 1;
+    }
+
+    .btn-action:active,
+    .btn-action.active {
+      transform: translate(3px, 3px);
+      box-shadow: none;
+    }
+
+    .btn-check {
+      background: #3b82f6;
+      color: #fff;
+    }
+
+    .btn-random {
+      background: #f59e0b;
+      color: #fff;
+      padding: 15px;
+      font-size: 20px;
+      width: 100%;
+      margin-top: auto;
+    }
+
+    .calc-breakdown {
+      background: #f0fdf4;
+      border: 3px solid #10b981;
+      padding: 20px;
+      box-shadow: 4px 4px 0px #10b981;
+      margin-top: 10px;
+      text-align: center;
+      display: none;
+      border-radius: 12px;
+    }
+
+    .calc-header {
+      font-size: 22px;
+      font-weight: 900;
+      margin-bottom: 15px;
+      line-height: 1.4;
+    }
+
+    .math-display {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      font-size: clamp(20px, 3vw, 28px);
+      font-weight: 900;
+      font-family: monospace;
+      color: #0f172a;
+      flex-wrap: wrap;
+    }
+
+    .fraction {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0 10px;
+    }
+
+    .fraction span:first-child {
+      border-bottom: 4px solid #000;
+      padding-bottom: 5px;
+      margin-bottom: 5px;
+    }
+
+    .constant-r {
+      background: #a7f3d0;
+      padding: 10px 20px;
+      border: 3px solid #059669;
+      border-radius: 8px;
+      color: #064e3b;
+      font-size: clamp(24px, 4vw, 32px);
+    }
+
+    .note {
+      background: #fffbeb;
+      border: 3px solid #000;
+      box-shadow: 3px 3px 0px #000;
+      border-radius: 12px;
+      padding: 12px;
+      font-weight: 800;
+      line-height: 1.55;
+      color: #78350f;
+    }
+
+    @media (max-width: 760px) {
+      body { padding: 10px; }
+      .container { padding: 12px; box-shadow: 4px 4px 0px #000; }
+      .dashboard { grid-template-columns: 1fr; }
+      .controls-panel, .visual-panel { min-width: 100%; }
+      .visual-panel { min-height: 420px; }
+      canvas { min-height: 420px; }
+      .tabs { grid-template-columns: 1fr; }
+      .input-group { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1 class="header-title">
+    💨 การวัดอัตราการแพร่ในท่อ
+    <span>Diffusion Rate Measurement in a Tube</span>
+  </h1>
+
+  <div class="dashboard">
+    <div class="dash-box" style="border-color:#ef4444;color:#ef4444;">
+      <div class="dash-label" id="lbl-var1">ระยะทาง / Distance (d)</div>
+      <div class="dash-value"><span id="val-var1">0</span> <span id="unit-var1" style="font-size:16px;">cm</span></div>
+    </div>
+
+    <div class="dash-box" style="border-color:#f97316;color:#f97316;">
+      <div class="dash-label">เวลา / Time (t)</div>
+      <div class="dash-value"><span id="val-t">0</span> <span style="font-size:16px;">s</span></div>
+    </div>
+
+    <div class="dash-box" style="border-color:#10b981;color:#10b981;">
+      <div class="dash-label">อัตราการแพร่ / Diffusion rate (r)</div>
+      <div class="dash-value"><span id="val-r">?</span> <span id="unit-r" style="font-size:16px;">cm/s</span></div>
+    </div>
+  </div>
+
+  <div class="main-layout">
+    <div class="controls-panel">
+
+      <div class="tabs" role="tablist" aria-label="Diffusion measurement modes">
+        <button class="tab-btn active" id="tab-distance" onclick="setMode('distance')">📏 ระยะทาง<br>Distance</button>
+        <button class="tab-btn" id="tab-volume" onclick="setMode('volume')">🎈 ปริมาตร<br>Volume</button>
+        <button class="tab-btn" id="tab-moles" onclick="setMode('moles')">⚛️ จำนวนโมล<br>Moles</button>
+      </div>
+
+      <div class="concept-card">
+        <div class="concept-title" id="concept-title">📏 วัดจากระยะทาง / Distance method</div>
+        <div id="concept-text">
+          วัดว่าแก๊สแพร่ไปได้ไกลเท่าไรในเวลาที่กำหนด<br>
+          Measure how far the gas diffuses in a given time.
+        </div>
+        <div class="formula-chip" id="formula-chip">r = d / t</div>
+      </div>
+
+      <div class="action-card" style="border-color:#3b82f6;">
+        <label id="answer-label">✍️ คำนวณอัตราการแพร่ / Calculate diffusion rate</label>
+        <div class="input-group">
+          <input type="number" id="input-r" step="0.01" placeholder="กรอกตัวเลข / Enter number" onfocus="clearFeedback()">
+          <button class="btn-action btn-check" onclick="checkAnswer(this)">ตรวจ / Check</button>
+        </div>
+      </div>
+
+      <button class="btn-action btn-random" onclick="generateProblem()">🎲 สุ่มโจทย์ใหม่ / New Random Problem</button>
+
+      <div class="note">
+        ภาพหลักเป็น “ท่อแพร่” เหมือนกันทุกแท็บ เพื่อเน้นว่าทั้ง 3 แบบคือวิธีวัดอัตราการแพร่ในสถานการณ์เดียวกัน<br>
+        The main visual remains the same diffusion tube in every tab, showing that all three modes are measurement methods for the same process.
+      </div>
+    </div>
+
+    <div class="visual-panel">
+      <canvas id="simCanvas"></canvas>
+    </div>
+  </div>
+
+  <div class="calc-breakdown" id="feedback-panel">
+    <div class="calc-header" id="feedback-msg">✨ ถูกต้อง! นี่คือวิธีคิด / Correct! Here is the method.</div>
+    <div class="math-display">
+      <div>r</div>
+      <div>=</div>
+      <div class="fraction"><span id="math-var1">100</span><span id="math-t">10</span></div>
+      <div>=</div>
+      <div class="constant-r"><span id="math-ans">10.00</span> <span id="math-unit" style="font-size:18px;">cm/s</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let mode = 'distance';
+  let var1 = 0;
+  let t = 0;
+  let actualR = 0;
+  let currentUnit = 'cm/s';
+  let numeratorSymbol = 'd';
+
+  const canvas = document.getElementById('simCanvas');
+  const ctx = canvas.getContext('2d');
+  let dpr = window.devicePixelRatio || 1;
+  let animationFrame = null;
+  let animProgress = 0;
+  let particles = [];
+
+  function resizeCanvas() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  window.addEventListener('resize', function() {
+    resizeCanvas();
+  });
+
+  function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function pick(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  function setMode(newMode) {
+    mode = newMode;
+
+    document.querySelectorAll('.tab-btn').forEach(function(btn) {
+      btn.classList.remove('active');
+    });
+    document.getElementById('tab-' + mode).classList.add('active');
+
+    generateProblem();
+  }
+
+  function setModeText() {
+    const title = document.getElementById('concept-title');
+    const text = document.getElementById('concept-text');
+    const formula = document.getElementById('formula-chip');
+    const label = document.getElementById('answer-label');
+
+    if (mode === 'distance') {
+      title.innerHTML = '📏 วัดจากระยะทาง / Distance method';
+      text.innerHTML = 'วัดว่าแก๊สแพร่ไปได้ไกลเท่าไรในเวลาที่กำหนด<br>Measure how far the gas diffuses in a given time.';
+      formula.innerText = 'r = d / t';
+      label.innerHTML = '✍️ คำนวณ r จาก d/t / Calculate r from d/t';
+    } else if (mode === 'volume') {
+      title.innerHTML = '🎈 วัดจากปริมาตร / Volume method';
+      text.innerHTML = 'วัดปริมาตรแก๊สที่แพร่ผ่านปลายท่อในเวลาที่กำหนด<br>Measure the gas volume collected at the tube end in a given time.';
+      formula.innerText = 'r = V / t';
+      label.innerHTML = '✍️ คำนวณ r จาก V/t / Calculate r from V/t';
+    } else {
+      title.innerHTML = '⚛️ วัดจากจำนวนโมล / Mole method';
+      text.innerHTML = 'วัดจำนวนโมลของแก๊สที่แพร่ผ่านปลายท่อในเวลาที่กำหนด<br>Measure the amount of gas in moles passing through the tube end in a given time.';
+      formula.innerText = 'r = n / t';
+      label.innerHTML = '✍️ คำนวณ r จาก n/t / Calculate r from n/t';
+    }
+  }
+
+  function generateProblem() {
+    setModeText();
+
+    if (mode === 'distance') {
+      var1 = pick([20, 30, 40, 50, 60, 80, 100, 120]);
+      t = pick([5, 10, 12, 15, 20, 25, 30, 40]);
+      numeratorSymbol = 'd';
+      currentUnit = 'cm/s';
+
+      document.getElementById('lbl-var1').innerHTML = 'ระยะทาง / Distance (d)';
+      document.getElementById('unit-var1').innerText = 'cm';
+      document.getElementById('unit-r').innerText = currentUnit;
+
+    } else if (mode === 'volume') {
+      var1 = pick([50, 80, 100, 120, 150, 200, 240, 300, 400, 500]);
+      t = pick([10, 20, 25, 30, 40, 50, 60, 80, 100]);
+      numeratorSymbol = 'V';
+      currentUnit = 'mL/s';
+
+      document.getElementById('lbl-var1').innerHTML = 'ปริมาตร / Volume (V)';
+      document.getElementById('unit-var1').innerText = 'mL';
+      document.getElementById('unit-r').innerText = currentUnit;
+
+    } else {
+      var1 = pick([0.2, 0.4, 0.5, 0.8, 1.0, 1.2, 1.5, 2.0, 2.5, 3.0]);
+      t = pick([2, 4, 5, 8, 10, 12, 15, 20]);
+      numeratorSymbol = 'n';
+      currentUnit = 'mol/s';
+
+      document.getElementById('lbl-var1').innerHTML = 'จำนวนโมล / Amount (n)';
+      document.getElementById('unit-var1').innerText = 'mol';
+      document.getElementById('unit-r').innerText = currentUnit;
+    }
+
+    actualR = var1 / t;
+
+    document.getElementById('val-var1').innerText = formatValue(var1);
+    document.getElementById('val-t').innerText = t;
+    document.getElementById('val-r').innerText = '?';
+    document.getElementById('input-r').value = '';
+    document.getElementById('input-r').style.background = '#fff';
+    document.getElementById('input-r').style.borderColor = '#000';
+    clearFeedback();
+
+    animProgress = 0;
+    initParticles();
+  }
+
+  function formatValue(n) {
+    if (mode === 'moles') return Number(n).toFixed(1).replace(/\.0$/, '');
+    return String(n);
+  }
+
+  function clearFeedback() {
+    document.getElementById('feedback-panel').style.display = 'none';
+  }
+
+  function checkAnswer(btn) {
+    btn.classList.add('active');
+    setTimeout(function() {
+      btn.classList.remove('active');
+    }, 150);
+
+    const input = document.getElementById('input-r');
+    const userVal = parseFloat(input.value);
+    const panel = document.getElementById('feedback-panel');
+    const msg = document.getElementById('feedback-msg');
+
+    if (isNaN(userVal)) {
+      panel.style.display = 'block';
+      panel.style.borderColor = '#ef4444';
+      panel.style.boxShadow = '4px 4px 0px #ef4444';
+      msg.style.color = '#b91c1c';
+      msg.innerHTML = '⚠️ กรุณากรอกตัวเลขก่อนตรวจ / Please enter a number first.';
+      return;
+    }
+
+    const ok = Math.abs(userVal - actualR) <= Math.max(0.05, Math.abs(actualR) * 0.02);
+
+    if (ok) {
+      panel.style.borderColor = '#10b981';
+      panel.style.boxShadow = '4px 4px 0px #10b981';
+      msg.style.color = '#047857';
+      msg.innerHTML = '✨ ถูกต้องยอดเยี่ยม! / Excellent, correct!';
+      document.getElementById('val-r').innerText = actualR.toFixed(2);
+      input.style.background = '#dcfce7';
+      input.style.borderColor = '#10b981';
+    } else {
+      panel.style.borderColor = '#ef4444';
+      panel.style.boxShadow = '4px 4px 0px #ef4444';
+      msg.style.color = '#b91c1c';
+      msg.innerHTML = '❌ ยังไม่ตรง ลองดูสูตรอีกครั้ง / Not quite. Check the formula again.';
+      input.style.background = '#fee2e2';
+      input.style.borderColor = '#ef4444';
+    }
+
+    document.getElementById('math-var1').innerText = numeratorSymbol + ' = ' + formatValue(var1);
+    document.getElementById('math-t').innerText = 't = ' + t;
+    document.getElementById('math-ans').innerText = actualR.toFixed(2);
+    document.getElementById('math-unit').innerText = currentUnit;
+    panel.style.display = 'block';
+  }
+
+  function initParticles() {
+    particles = [];
+    const count = mode === 'distance' ? 45 : mode === 'volume' ? 55 : 65;
+
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        phase: Math.random(),
+        offset: (Math.random() - 0.5) * 34,
+        radius: mode === 'moles' ? 4 + Math.random() * 2 : 3 + Math.random() * 3,
+        alpha: 0.45 + Math.random() * 0.45,
+        wiggle: Math.random() * Math.PI * 2
+      });
+    }
+  }
+
+  function drawTubeScene() {
+    const w = canvas.width / dpr;
+    const h = canvas.height / dpr;
+    ctx.clearRect(0, 0, w, h);
+
+    const tubeX = 70;
+    const tubeY = h * 0.43;
+    const tubeW = w - 140;
+    const tubeH = 82;
+    const centerY = tubeY + tubeH / 2;
+    const detectorX = tubeX + tubeW;
+
+    const speed = Math.max(0.004, Math.min(0.030, actualR * 0.0025));
+    animProgress += speed;
+
+    drawTitle(w);
+    drawGasSource(tubeX, centerY);
+    drawTube(tubeX, tubeY, tubeW, tubeH);
+    drawScale(tubeX, tubeY + tubeH + 24, tubeW);
+    drawParticles(tubeX, centerY, tubeW);
+    drawDetector(detectorX, centerY);
+    drawModeOverlay(w, h, tubeX, tubeY, tubeW, tubeH);
+  }
+
+  function drawTitle(w) {
+    ctx.save();
+    ctx.fillStyle = '#0f172a';
+    ctx.font = '900 18px K2D';
+    ctx.textAlign = 'center';
+    ctx.fillText('ท่อแพร่แก๊ส / Gas diffusion tube', w / 2, 38);
+    ctx.restore();
+  }
+
+  function drawGasSource(x, y) {
+    ctx.save();
+    ctx.fillStyle = '#fee2e2';
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 4;
+    roundRect(ctx, x - 45, y - 50, 56, 100, 12, true, true);
+
+    ctx.fillStyle = '#ef4444';
+    ctx.beginPath();
+    ctx.arc(x - 17, y, 18, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = '#7f1d1d';
+    ctx.font = '900 13px K2D';
+    ctx.textAlign = 'center';
+    ctx.fillText('แหล่งแก๊ส', x - 17, y + 68);
+    ctx.fillText('Gas source', x - 17, y + 84);
+    ctx.restore();
+  }
+
+  function drawTube(x, y, tubeW, tubeH) {
+    ctx.save();
+    ctx.fillStyle = '#ffffff';
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 5;
+    roundRect(ctx, x, y, tubeW, tubeH, 18, true, true);
+
+    ctx.strokeStyle = '#94a3b8';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([7, 7]);
+    ctx.beginPath();
+    ctx.moveTo(x + 16, y + tubeH / 2);
+    ctx.lineTo(x + tubeW - 16, y + tubeH / 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = 'rgba(16,185,129,0.12)';
+    roundRect(ctx, x + 4, y + 5, tubeW - 8, tubeH - 10, 16, true, false);
+    ctx.restore();
+  }
+
+  function drawScale(x, y, tubeW) {
+    ctx.save();
+    ctx.strokeStyle = '#000';
+    ctx.fillStyle = '#000';
+    ctx.lineWidth = 2;
+    ctx.font = '800 12px K2D';
+    ctx.textAlign = 'center';
+
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + tubeW, y);
+    ctx.stroke();
+
+    const divisions = 6;
+    for (let i = 0; i <= divisions; i++) {
+      const px = x + (tubeW / divisions) * i;
+      ctx.beginPath();
+      ctx.moveTo(px, y - 8);
+      ctx.lineTo(px, y + 8);
+      ctx.stroke();
+
+      if (mode === 'distance') {
+        const label = Math.round((var1 / divisions) * i);
+        ctx.fillText(label + ' cm', px, y + 25);
+      } else {
+        ctx.fillText(i === 0 ? '0' : '', px, y + 25);
+      }
+    }
+
+    if (mode !== 'distance') {
+      ctx.fillText('ระยะทางในท่อ / tube distance', x + tubeW / 2, y + 25);
+    }
+
+    ctx.restore();
+  }
+
+  function drawParticles(x, centerY, tubeW) {
+    ctx.save();
+    const baseColor = mode === 'distance' ? '239,68,68' : mode === 'volume' ? '59,130,246' : '16,185,129';
+
+    particles.forEach(function(p) {
+      let progress = (p.phase + animProgress) % 1;
+      let px = x + 18 + progress * (tubeW - 36);
+      let py = centerY + p.offset + Math.sin(animProgress * 20 + p.wiggle) * 4;
+
+      ctx.fillStyle = 'rgba(' + baseColor + ',' + p.alpha + ')';
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.arc(px, py, p.radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+    });
+
+    // flow arrow
+    ctx.strokeStyle = '#0f172a';
+    ctx.fillStyle = '#0f172a';
+    ctx.lineWidth = 4;
+    const arrowY = centerY - 72;
+    ctx.beginPath();
+    ctx.moveTo(x + 70, arrowY);
+    ctx.lineTo(x + tubeW - 70, arrowY);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x + tubeW - 70, arrowY);
+    ctx.lineTo(x + tubeW - 88, arrowY - 9);
+    ctx.lineTo(x + tubeW - 88, arrowY + 9);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.font = '900 14px K2D';
+    ctx.textAlign = 'center';
+    ctx.fillText('ทิศการแพร่ / diffusion direction', x + tubeW / 2, arrowY - 10);
+    ctx.restore();
+  }
+
+  function drawDetector(x, y) {
+    ctx.save();
+    ctx.fillStyle = '#dbeafe';
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 4;
+    roundRect(ctx, x - 8, y - 58, 58, 116, 12, true, true);
+
+    ctx.fillStyle = '#2563eb';
+    ctx.beginPath();
+    ctx.arc(x + 20, y, 15, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = '#1e3a8a';
+    ctx.font = '900 13px K2D';
+    ctx.textAlign = 'center';
+    ctx.fillText('ตัวตรวจจับ', x + 20, y + 75);
+    ctx.fillText('Detector', x + 20, y + 91);
+    ctx.restore();
+  }
+
+  function drawModeOverlay(w, h, tubeX, tubeY, tubeW, tubeH) {
+    ctx.save();
+    const panelX = 45;
+    const panelY = h - 118;
+    const panelW = w - 90;
+    const panelH = 84;
+
+    ctx.fillStyle = '#ffffff';
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 3;
+    roundRect(ctx, panelX, panelY, panelW, panelH, 12, true, true);
+
+    ctx.fillStyle = '#0f172a';
+    ctx.font = '900 16px K2D';
+    ctx.textAlign = 'left';
+
+    if (mode === 'distance') {
+      ctx.fillText('📏 Distance mode: วัดระยะที่แก๊สแพร่ได้ / measure distance traveled', panelX + 18, panelY + 30);
+      ctx.font = '900 18px monospace';
+      ctx.fillText('r = d/t = ' + formatValue(var1) + ' cm / ' + t + ' s', panelX + 18, panelY + 60);
+
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(tubeX + 18, tubeY + tubeH + 2);
+      ctx.lineTo(tubeX + tubeW - 18, tubeY + tubeH + 2);
+      ctx.stroke();
+
+    } else if (mode === 'volume') {
+      ctx.fillText('🎈 Volume mode: วัดปริมาตรแก๊สที่เก็บได้ / measure collected gas volume', panelX + 18, panelY + 30);
+      ctx.font = '900 18px monospace';
+      ctx.fillText('r = V/t = ' + formatValue(var1) + ' mL / ' + t + ' s', panelX + 18, panelY + 60);
+
+      const bagX = tubeX + tubeW + 60;
+      const bagY = tubeY + tubeH / 2;
+      ctx.fillStyle = 'rgba(59,130,246,0.28)';
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.ellipse(bagX, bagY, 35, 48, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#1e3a8a';
+      ctx.font = '900 12px K2D';
+      ctx.textAlign = 'center';
+      ctx.fillText('V = ' + formatValue(var1) + ' mL', bagX, bagY + 5);
+
+    } else {
+      ctx.fillText('⚛️ Mole mode: วัดจำนวนโมลที่ผ่านปลายท่อ / measure amount passing through', panelX + 18, panelY + 30);
+      ctx.font = '900 18px monospace';
+      ctx.fillText('r = n/t = ' + formatValue(var1) + ' mol / ' + t + ' s', panelX + 18, panelY + 60);
+
+      const counterX = tubeX + tubeW + 58;
+      const counterY = tubeY + tubeH / 2;
+      ctx.fillStyle = '#dcfce7';
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 3;
+      roundRect(ctx, counterX - 38, counterY - 26, 76, 52, 10, true, true);
+
+      ctx.fillStyle = '#065f46';
+      ctx.font = '900 13px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('n = ' + formatValue(var1), counterX, counterY - 2);
+      ctx.fillText('mol', counterX, counterY + 15);
+    }
+
+    ctx.restore();
+  }
+
+  function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+    const r = Math.min(radius, width / 2, height / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + width, y, x + width, y + height, r);
+    ctx.arcTo(x + width, y + height, x, y + height, r);
+    ctx.arcTo(x, y + height, x, y, r);
+    ctx.arcTo(x, y, x + width, y, r);
+    ctx.closePath();
+    if (fill) ctx.fill();
+    if (stroke) ctx.stroke();
+  }
+
+  function drawLoop() {
+    drawTubeScene();
+    animationFrame = requestAnimationFrame(drawLoop);
+  }
+
+  setTimeout(function() {
+    resizeCanvas();
+    generateProblem();
+    initParticles();
+    if (animationFrame) cancelAnimationFrame(animationFrame);
+    drawLoop();
+  }, 100);
+</script>
+</body>
+</html>

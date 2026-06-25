@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graham's Law Density Proof Lab</title>
+  <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f3e8ff;
+      --card: #ffffff;
+      --ink: #0f172a;
+      --accent: #8b5cf6;
+      --blue: #2563eb;
+      --orange: #ea580c;
+      --green: #10b981;
+      --red: #ef4444;
+      --yellow: #facc15;
+      --border: 4px solid #000;
+      --shadow: 6px 6px 0 #000;
+    }
+
+    * { box-sizing: border-box; font-family: 'K2D', sans-serif; }
+    body {
+      margin: 0;
+      padding: 18px;
+      background: var(--bg);
+      color: var(--ink);
+      display: flex;
+      justify-content: center;
+      overflow-x: hidden;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1250px;
+      background: var(--card);
+      border: var(--border);
+      border-radius: 18px;
+      box-shadow: 10px 10px 0 #000;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    h1 {
+      margin: 0;
+      padding: 16px;
+      background: var(--accent);
+      color: #fff;
+      border: var(--border);
+      border-radius: 12px;
+      box-shadow: 5px 5px 0 #000;
+      text-align: center;
+      font-size: clamp(22px, 3.2vw, 32px);
+      font-weight: 900;
+      line-height: 1.25;
+    }
+
+    h1 span {
+      display: block;
+      margin-top: 6px;
+      font-size: clamp(14px, 2vw, 18px);
+      color: #f5f3ff;
+    }
+
+    .note {
+      background: #fffbeb;
+      border: 3px solid #000;
+      border-radius: 12px;
+      box-shadow: 4px 4px 0 #000;
+      padding: 12px 14px;
+      font-weight: 800;
+      line-height: 1.6;
+      color: #78350f;
+    }
+
+    .race-track {
+      height: 270px;
+      border: var(--border);
+      border-radius: 12px;
+      background: #fff;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 5px 5px 0 rgba(0,0,0,0.05);
+      background-image:
+        linear-gradient(#f1f5f9 2px, transparent 2px),
+        linear-gradient(90deg, transparent 92%, rgba(239,68,68,0.20) 92%, rgba(239,68,68,0.20) 100%);
+      background-size: 100% 135px, 100% 100%;
+    }
+
+    .finish-line {
+      position: absolute;
+      right: 5%;
+      top: 0;
+      bottom: 0;
+      width: 28px;
+      background: repeating-linear-gradient(45deg, #000, #000 10px, #fff 10px, #fff 20px);
+      border-left: 4px solid var(--red);
+      border-right: 4px solid #000;
+      z-index: 5;
+    }
+
+    .lane-label {
+      position: absolute;
+      left: 10px;
+      color: #fff;
+      background: #000;
+      border: 2px solid #fff;
+      border-radius: 7px;
+      padding: 4px 10px;
+      font-weight: 900;
+      z-index: 6;
+      line-height: 1.25;
+      font-size: 13px;
+    }
+
+    .gas-ball {
+      position: absolute;
+      left: 20px;
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      border: 4px solid #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 900;
+      font-size: 11px;
+      text-align: center;
+      box-shadow: 4px 4px 0 rgba(0,0,0,0.25);
+      z-index: 10;
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+      background-image: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.5), transparent 40%);
+    }
+
+    .trail {
+      position: absolute;
+      left: 47px;
+      height: 18px;
+      border-radius: 999px;
+      width: 0;
+      opacity: 0.35;
+      z-index: 4;
+    }
+
+    .track-caption {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 12px;
+      background: rgba(255,255,255,0.93);
+      border: 3px solid #000;
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-weight: 900;
+      text-align: center;
+      box-shadow: 3px 3px 0 #000;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .panel {
+      background: #fff;
+      border: 3px solid #000;
+      border-radius: 12px;
+      box-shadow: 5px 5px 0 #000;
+      padding: 15px;
+    }
+
+    .panel-title {
+      margin: 0 0 10px 0;
+      font-size: 19px;
+      font-weight: 900;
+      line-height: 1.35;
+    }
+
+    .gas-select-grid, .pt-grid, .ratio-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .control-card {
+      background: #f8fafc;
+      border: 2px solid #000;
+      border-radius: 10px;
+      padding: 12px;
+      box-shadow: 2px 2px 0 #000;
+    }
+
+    label {
+      display: block;
+      font-weight: 900;
+      margin-bottom: 6px;
+      line-height: 1.35;
+    }
+
+    select, input[type="number"] {
+      width: 100%;
+      border: 3px solid #000;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 17px;
+      font-weight: 900;
+      background: #fff;
+      outline: none;
+    }
+
+    input[type="number"]:focus, select:focus {
+      border-color: var(--accent);
+      background: #faf5ff;
+    }
+
+    .mini-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .custom-box {
+      margin-top: 8px;
+      display: none;
+      background: #fef3c7;
+      border: 2px dashed #92400e;
+      border-radius: 8px;
+      padding: 8px;
+    }
+
+    .stat {
+      background: #f8fafc;
+      border: 2px solid #000;
+      border-radius: 10px;
+      padding: 10px;
+      font-weight: 900;
+      text-align: center;
+      line-height: 1.45;
+    }
+
+    .stat .big {
+      display: block;
+      margin-top: 5px;
+      font-family: 'K2D', monospace;
+      font-size: clamp(20px, 2.8vw, 26px);
+      color: var(--accent);
+    }
+
+    .formula-strip {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      background: #faf5ff;
+      border: 3px solid #6d28d9;
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 3px 3px 0 #6d28d9;
+      font-weight: 900;
+      font-size: clamp(17px, 2.4vw, 24px);
+      color: #4c1d95;
+      text-align: center;
+      line-height: 1.45;
+    }
+
+    .frac {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      vertical-align: middle;
+      line-height: 1.05;
+      padding: 0 4px;
+    }
+
+    .frac span:first-child {
+      border-bottom: 3px solid currentColor;
+      padding: 0 7px 3px 7px;
+    }
+
+    .frac span:last-child {
+      padding-top: 3px;
+    }
+
+    .proof-box {
+      background: #ecfdf5;
+      border: 3px solid #059669;
+      border-radius: 12px;
+      box-shadow: 3px 3px 0 #059669;
+      padding: 12px;
+      margin-top: 12px;
+      line-height: 1.65;
+      font-weight: 800;
+    }
+
+    .proof-box .line {
+      padding: 6px 0;
+      border-bottom: 1px dashed rgba(0,0,0,0.25);
+    }
+
+    .proof-box .line:last-child { border-bottom: none; }
+
+    .highlight {
+      background: #fff;
+      border: 2px solid #000;
+      border-radius: 7px;
+      padding: 2px 8px;
+      font-weight: 900;
+      color: #000;
+      display: inline-block;
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    button {
+      flex: 1;
+      min-width: 190px;
+      border: 4px solid #000;
+      border-radius: 10px;
+      padding: 13px;
+      font-size: 18px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 5px 5px 0 #000;
+      transition: 0.08s;
+    }
+
+    button:active:not(:disabled) {
+      transform: translate(3px, 3px);
+      box-shadow: 2px 2px 0 #000;
+    }
+
+    button:disabled {
+      background: #94a3b8 !important;
+      color: #334155 !important;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: translate(5px, 5px);
+    }
+
+    .btn-start { background: var(--green); color: #fff; }
+    .btn-reset { background: var(--yellow); color: #111827; }
+    .btn-update { background: var(--blue); color: #fff; }
+
+    .conclusion {
+      display: none;
+      background: #fef08a;
+      border: 4px solid #d97706;
+      border-radius: 12px;
+      box-shadow: 6px 6px 0 #b45309;
+      padding: 16px;
+      font-weight: 900;
+      line-height: 1.6;
+      color: #78350f;
+    }
+
+    @media (max-width: 860px) {
+      body { padding: 10px; }
+      .container { padding: 12px; box-shadow: 5px 5px 0 #000; }
+      .grid, .gas-select-grid, .pt-grid, .ratio-grid { grid-template-columns: 1fr; }
+      .race-track { height: 285px; }
+      .track-caption { width: 92%; font-size: 13px; }
+      button { min-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>
+      🧪 Graham's Law: พิสูจน์ด้วยมวลโมเลกุลและความหนาแน่น
+      <span>Proof by Molar Mass Ratio and Density Ratio</span>
+    </h1>
+
+    <div class="note">
+      📌 <b>สูตรสำคัญ / Key Idea:</b> ถ้าใช้ A เป็นแก๊สอ้างอิง จะได้ / If A is the reference gas: 
+      <b>r<sub>A</sub>/r<sub>B</sub> = √(M<sub>B</sub>/M<sub>A</sub>)</b> 
+      ดังนั้น / Therefore: <b>r<sub>B</sub> = r<sub>A</sub> / √(M<sub>B</sub>/M<sub>A</sub>)</b><br>
+      เมื่อใช้ความหนาแน่นที่ P, T เดียวกัน จะได้ผลเท่ากันคือ / When using density at identical P, T: 
+      <b>r<sub>A</sub>/r<sub>B</sub> = √(ρ<sub>B</sub>/ρ<sub>A</sub>)</b>
+    </div>
+
+    <div class="race-track" id="track">
+      <div class="finish-line"></div>
+      <div class="lane-label" style="top:16px;background:#2563eb;">LANE A<br>Gas A</div>
+      <div class="lane-label" style="top:151px;background:#ea580c;">LANE B<br>Gas B</div>
+
+      <div class="trail" id="trailA" style="top:66px;background:#60a5fa;"></div>
+      <div class="gas-ball" id="ballA" style="top:48px;background:#60a5fa;">A</div>
+
+      <div class="trail" id="trailB" style="top:201px;background:#334155;"></div>
+      <div class="gas-ball" id="ballB" style="top:183px;background:#334155;">B</div>
+
+      <div class="track-caption" id="trackCaption">
+        เปรียบเทียบความเร็วการแพร่ / Compare diffusion speeds
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="panel">
+        <h2 class="panel-title">⚙️ เลือกแก๊สและอัตราอ้างอิง / Select Gases and Reference Rate</h2>
+        <div class="gas-select-grid">
+          <div class="control-card" style="border-color:#2563eb;background:#eff6ff;">
+            <label>แก๊ส A / Gas A</label>
+            <select id="gasA" onchange="handleGasChange()"></select>
+            <div class="custom-box" id="customA">
+              <label>M<sub>A</sub> กำหนดเอง / Custom (g/mol)</label>
+              <input type="number" id="customMA" value="30" min="1" step="0.1" oninput="updateAll(false)">
+            </div>
+            <div class="mini-row">
+              <div class="stat">M<sub>A</sub><span class="big" id="MAbox">2</span></div>
+              <div class="stat">ρ<sub>A</sub><span class="big" id="rhoAbox">?</span></div>
+            </div>
+          </div>
+
+          <div class="control-card" style="border-color:#ea580c;background:#fff7ed;">
+            <label>แก๊ส B / Gas B</label>
+            <select id="gasB" onchange="handleGasChange()"></select>
+            <div class="custom-box" id="customB">
+              <label>M<sub>B</sub> กำหนดเอง / Custom (g/mol)</label>
+              <input type="number" id="customMB" value="50" min="1" step="0.1" oninput="updateAll(false)">
+            </div>
+            <div class="mini-row">
+              <div class="stat">M<sub>B</sub><span class="big" id="MBbox">44</span></div>
+              <div class="stat">ρ<sub>B</sub><span class="big" id="rhoBbox">?</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-grid" style="margin-top:12px;">
+          <div class="control-card">
+            <label>อัตราการแพร่ของ A / Reference Rate r<sub>A</sub> (cm/s)</label>
+            <input type="number" id="rateA" value="10" min="0.1" step="0.1" oninput="updateAll(false)">
+          </div>
+          <div class="control-card">
+            <label>ค่าคงที่แก๊ส / Gas Constant R</label>
+            <input type="number" id="gasR" value="0.0821" step="0.0001" oninput="updateAll(false)">
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2 class="panel-title">🌡️ ใส่ P และ T เพื่อหาความหนาแน่น / Use P and T to Find Density</h2>
+        <div class="pt-grid">
+          <div class="control-card">
+            <label>ความดัน / Pressure P (atm)</label>
+            <input type="number" id="pressure" value="1.00" min="0.01" step="0.01" oninput="updateAll(false)">
+          </div>
+          <div class="control-card">
+            <label>อุณหภูมิ / Temperature T (K)</label>
+            <input type="number" id="temperature" value="273" min="1" step="1" oninput="updateAll(false)">
+          </div>
+        </div>
+
+        <div class="proof-box">
+          <div class="line"><b>สูตรความหนาแน่น / Density Formula:</b> ρ = PM/RT</div>
+          <div class="line">ρ<sub>A</sub> = <span class="highlight" id="rhoAcalc">?</span> g/L</div>
+          <div class="line">ρ<sub>B</sub> = <span class="highlight" id="rhoBcalc">?</span> g/L</div>
+          <div class="line">เพราะ P, T เท่ากัน / Because P, T are identical: ρ<sub>B</sub>/ρ<sub>A</sub> = M<sub>B</sub>/M<sub>A</sub></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 class="panel-title">🔍 แดชบอร์ดการพิสูจน์ / Proof Dashboard</h2>
+      <div class="ratio-grid">
+        <div class="stat" style="border-color:#6d28d9;background:#faf5ff;">
+          √(M<sub>B</sub>/M<sub>A</sub>)<br>
+          <span class="big" id="sqrtMassBox">?</span>
+          <div style="font-size:13px;color:#475569;margin-top:4px;">อัตราส่วนมวลโมเลกุล / Molar mass ratio</div>
+        </div>
+        <div class="stat" style="border-color:#059669;background:#ecfdf5;">
+          √(ρ<sub>B</sub>/ρ<sub>A</sub>)<br>
+          <span class="big" id="sqrtDensityBox">?</span>
+          <div style="font-size:13px;color:#475569;margin-top:4px;">อัตราส่วนความหนาแน่น / Density ratio</div>
+        </div>
+        <div class="stat" style="border-color:#2563eb;background:#eff6ff;">
+          r<sub>A</sub>/r<sub>B</sub><br>
+          <span class="big" id="rateRatioBox">?</span>
+          <div style="font-size:13px;color:#475569;margin-top:4px;">อัตราส่วนอัตราการแพร่ / Rate ratio</div>
+        </div>
+        <div class="stat" style="border-color:#ea580c;background:#fff7ed;">
+          r<sub>B</sub> คาดการณ์ / Predicted<br>
+          <span class="big" id="rateBBox">?</span>
+          <div style="font-size:13px;color:#475569;margin-top:4px;">cm/s</div>
+        </div>
+      </div>
+
+      <div class="formula-strip" style="margin-top:12px;">
+        <span>Graham:</span>
+        <span>r<sub>A</sub>/r<sub>B</sub></span>
+        <span>=</span>
+        <span>√(M<sub>B</sub>/M<sub>A</sub>)</span>
+        <span>=</span>
+        <span>√(ρ<sub>B</sub>/ρ<sub>A</sub>)</span>
+      </div>
+
+      <div class="proof-box" id="proofText">
+        กำลังคำนวณ... / Calculating...
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button class="btn-update" onclick="updateAll(true)">🔄 คำนวณใหม่ / Recalculate</button>
+      <button class="btn-start" id="startBtn" onclick="startRace()">🏁 เริ่มแข่ง / Start Race</button>
+      <button class="btn-reset" onclick="resetRace()">↩️ รีเซ็ต / Reset</button>
+    </div>
+
+    <div class="conclusion" id="conclusion"></div>
+  </div>
+
+  <script>
+    const gasDB = {
+      H2:  { formula:'H₂',  name:'Hydrogen',         M:2.016,  color:'#60a5fa' },
+      He:  { formula:'He',  name:'Helium',           M:4.003,  color:'#fcd34d' },
+      CH4: { formula:'CH₄', name:'Methane',          M:16.04,  color:'#4ade80' },
+      NH3: { formula:'NH₃', name:'Ammonia',          M:17.03,  color:'#c084fc' },
+      N2:  { formula:'N₂',  name:'Nitrogen',         M:28.02,  color:'#94a3b8' },
+      O2:  { formula:'O₂',  name:'Oxygen',           M:32.00,  color:'#f87171' },
+      CO2: { formula:'CO₂', name:'Carbon dioxide',  M:44.01,  color:'#334155' },
+      SO2: { formula:'SO₂', name:'Sulfur dioxide',  M:64.07,  color:'#b45309' },
+      X:   { formula:'X',   name:'Custom gas',      M:30.00,  color:'#475569' }
+    };
+
+    let state = {
+      MA: 2.016, MB: 44.01, rhoA: 0, rhoB: 0,
+      rA: 10, rB: 0, sqrtMass: 0, sqrtDensity: 0,
+      colorA: '#60a5fa', colorB: '#334155', nameA: 'Hydrogen', nameB: 'Carbon dioxide'
+    };
+
+    let animId = null;
+    let running = false;
+    let xA = 0, xB = 0, tA = 0, tB = 0, finishX = 0, lastTime = 0;
+    let doneA = false, doneB = false;
+
+    const gasASelect = document.getElementById('gasA');
+    const gasBSelect = document.getElementById('gasB');
+    const ballA = document.getElementById('ballA');
+    const ballB = document.getElementById('ballB');
+    const trailA = document.getElementById('trailA');
+    const trailB = document.getElementById('trailB');
+    const track = document.getElementById('track');
+
+    function initSelects() {
+      const keys = Object.keys(gasDB);
+      keys.forEach(function(key) {
+        const g = gasDB[key];
+        const label = key === 'X'
+          ? '-- Custom gas / แก๊สกำหนดเอง --'
+          : g.formula + ' (' + g.name + ')';
+        const optA = document.createElement('option');
+        optA.value = key; optA.textContent = label;
+        const optB = document.createElement('option');
+        optB.value = key; optB.textContent = label;
+        gasASelect.appendChild(optA);
+        gasBSelect.appendChild(optB);
+      });
+      gasASelect.value = 'H2';
+      gasBSelect.value = 'CO2';
+    }
+
+    function fmt(n, d=3) {
+      if (!isFinite(n)) return '?';
+      return Number(n).toFixed(d).replace(/0+$/, '').replace(/\.$/, '');
+    }
+
+    // เปลี่ยนคำเฉพาะกิจเพื่อรองรับ 2 ภาษาในส่วน Custom Input
+    function getGasData(which) {
+      const select = which === 'A' ? gasASelect : gasBSelect;
+      const selected = select.value;
+      if (selected === 'X') {
+        const inputId = which === 'A' ? 'customMA' : 'customMB';
+        const M = Math.max(0.001, parseFloat(document.getElementById(inputId).value) || 1);
+        return { formula: which === 'A' ? 'Xᴬ' : 'Xᴮ', name: 'Custom gas ' + which + ' / แก๊สกำหนดเอง ' + which, M: M, color: '#475569' };
+      }
+      return gasDB[selected];
+    }
+
+    function handleGasChange() {
+      document.getElementById('customA').style.display = gasASelect.value === 'X' ? 'block' : 'none';
+      document.getElementById('customB').style.display = gasBSelect.value === 'X' ? 'block' : 'none';
+      updateAll(false);
+    }
+
+    function updateAll(showConclusion) {
+      const gA = getGasData('A');
+      const gB = getGasData('B');
+      const P = Math.max(0.0001, parseFloat(document.getElementById('pressure').value) || 1);
+      const T = Math.max(0.0001, parseFloat(document.getElementById('temperature').value) || 273);
+      const R = Math.max(0.0001, parseFloat(document.getElementById('gasR').value) || 0.0821);
+      const rA = Math.max(0.0001, parseFloat(document.getElementById('rateA').value) || 10);
+
+      const MA = gA.M;
+      const MB = gB.M;
+      const rhoA = P * MA / (R * T);
+      const rhoB = P * MB / (R * T);
+      const sqrtMass = Math.sqrt(MB / MA);
+      const sqrtDensity = Math.sqrt(rhoB / rhoA);
+      const rB_mass = rA / sqrtMass;
+      const rB_density = rA / sqrtDensity;
+
+      state = {
+        MA, MB, rhoA, rhoB, rA, rB: rB_mass,
+        sqrtMass, sqrtDensity,
+        colorA: gA.color, colorB: gB.color,
+        nameA: gA.formula + ' / ' + gA.name,
+        nameB: gB.formula + ' / ' + gB.name
+      };
+
+      document.getElementById('MAbox').textContent = fmt(MA, 3) + ' g/mol';
+      document.getElementById('MBbox').textContent = fmt(MB, 3) + ' g/mol';
+      document.getElementById('rhoAbox').textContent = fmt(rhoA, 4) + ' g/L';
+      document.getElementById('rhoBbox').textContent = fmt(rhoB, 4) + ' g/L';
+      document.getElementById('rhoAcalc').textContent = fmt(rhoA, 5);
+      document.getElementById('rhoBcalc').textContent = fmt(rhoB, 5);
+      document.getElementById('sqrtMassBox').textContent = fmt(sqrtMass, 4);
+      document.getElementById('sqrtDensityBox').textContent = fmt(sqrtDensity, 4);
+      document.getElementById('rateRatioBox').textContent = fmt(rA / rB_mass, 4);
+      document.getElementById('rateBBox').textContent = fmt(rB_mass, 3);
+
+      ballA.style.backgroundColor = gA.color;
+      ballB.style.backgroundColor = gB.color;
+      trailA.style.backgroundColor = gA.color;
+      trailB.style.backgroundColor = gB.color;
+      ballA.textContent = 'A\nM=' + fmt(MA, 1);
+      ballB.textContent = 'B\nM=' + fmt(MB, 1);
+      ballA.style.whiteSpace = 'pre-line';
+      ballB.style.whiteSpace = 'pre-line';
+
+      const diff = Math.abs(sqrtMass - sqrtDensity);
+      // เพิ่มการแปลภาษาไทยและอังกฤษในส่วนขั้นตอนการพิสูจน์
+      document.getElementById('proofText').innerHTML =
+        '<div class="line">1) จากมวลโมเลกุล / From Molar Mass: √(M<sub>B</sub>/M<sub>A</sub>) = √(' + fmt(MB,3) + '/' + fmt(MA,3) + ') = <span class="highlight">' + fmt(sqrtMass,4) + '</span></div>' +
+        '<div class="line">2) ดังนั้น / Therefore: r<sub>B</sub> = r<sub>A</sub> / √(M<sub>B</sub>/M<sub>A</sub>) = ' + fmt(rA,2) + ' / ' + fmt(sqrtMass,4) + ' = <span class="highlight">' + fmt(rB_mass,3) + ' cm/s</span></div>' +
+        '<div class="line">3) จากความหนาแน่น / From Density: √(ρ<sub>B</sub>/ρ<sub>A</sub>) = √(' + fmt(rhoB,5) + '/' + fmt(rhoA,5) + ') = <span class="highlight">' + fmt(sqrtDensity,4) + '</span></div>' +
+        '<div class="line">4) r<sub>B</sub> จากความหนาแน่น / From Density = ' + fmt(rA,2) + ' / ' + fmt(sqrtDensity,4) + ' = <span class="highlight">' + fmt(rB_density,3) + ' cm/s</span></div>' +
+        '<div class="line">ผลต่างของสองวิธี / Difference between methods ≈ <span class="highlight">' + fmt(diff,6) + '</span> → พิสูจน์ได้ว่าใช้ density แทน M ได้เมื่อ P,T เท่ากัน / Density can replace M when P,T are identical.</div>';
+
+      document.getElementById('trackCaption').innerHTML =
+        'r<sub>A</sub> = ' + fmt(rA,2) + ' cm/s | r<sub>B</sub> = ' + fmt(rB_mass,2) + ' cm/s | r<sub>A</sub>/r<sub>B</sub> = ' + fmt(sqrtMass,3);
+
+      resetRace();
+      if (showConclusion) showProofConclusion();
+    }
+
+    function resetRace() {
+      if (animId) cancelAnimationFrame(animId);
+      running = false;
+      xA = 0; xB = 0; tA = 0; tB = 0; doneA = false; doneB = false;
+      ballA.style.transform = 'translateX(0px) rotate(0deg)';
+      ballB.style.transform = 'translateX(0px) rotate(0deg)';
+      trailA.style.width = '0px';
+      trailB.style.width = '0px';
+      document.getElementById('startBtn').disabled = false;
+      document.getElementById('startBtn').textContent = '🏁 เริ่มแข่ง / Start Race';
+      document.getElementById('conclusion').style.display = 'none';
+    }
+
+    function startRace() {
+      updateAll(false);
+      document.getElementById('startBtn').disabled = true;
+      document.getElementById('startBtn').textContent = '🔥 กำลังแพร่... / Diffusing...';
+
+      const trackWidth = track.clientWidth;
+      finishX = Math.max(160, trackWidth * 0.95 - 20 - 54);
+      const fastest = Math.max(state.rA, state.rB);
+      const pixelScale = finishX / 4.0 / fastest;
+
+      xA = 0; xB = 0; tA = 0; tB = 0; doneA = false; doneB = false;
+      running = true;
+      lastTime = performance.now();
+
+      function loop(now) {
+        if (!running) return;
+        let dt = (now - lastTime) / 1000;
+        if (dt > 0.1) dt = 0.1;
+        lastTime = now;
+
+        if (!doneA) {
+          xA += state.rA * pixelScale * dt;
+          tA += dt;
+          if (xA >= finishX) { xA = finishX; doneA = true; }
+          ballA.style.transform = 'translateX(' + xA + 'px) rotate(' + (xA * 3) + 'deg)';
+          trailA.style.width = xA + 'px';
+        }
+
+        if (!doneB) {
+          xB += state.rB * pixelScale * dt;
+          tB += dt;
+          if (xB >= finishX) { xB = finishX; doneB = true; }
+          ballB.style.transform = 'translateX(' + xB + 'px) rotate(' + (xB * 3) + 'deg)';
+          trailB.style.width = xB + 'px';
+        }
+
+        document.getElementById('trackCaption').innerHTML =
+          't<sub>A</sub> = ' + fmt(tA,2) + ' s | t<sub>B</sub> = ' + fmt(tB,2) + ' s | r<sub>A</sub>/r<sub>B</sub> = ' + fmt(state.sqrtMass,3);
+
+        if (doneA && doneB) {
+          running = false;
+          document.getElementById('startBtn').disabled = false;
+          document.getElementById('startBtn').textContent = '🔄 แข่งอีกครั้ง / Race Again';
+          showRaceConclusion(tA, tB);
+        } else {
+          animId = requestAnimationFrame(loop);
+        }
+      }
+
+      animId = requestAnimationFrame(loop);
+    }
+
+    // เพิ่มการแปลภาษาในหน้าต่างสรุปผลการพิสูจน์
+    function showProofConclusion() {
+      const box = document.getElementById('conclusion');
+      box.innerHTML =
+        '✅ <b>พิสูจน์สำเร็จ / Proof Complete:</b><br>' +
+        '√(M<sub>B</sub>/M<sub>A</sub>) = <span class="highlight">' + fmt(state.sqrtMass,4) + '</span> และ √(ρ<sub>B</sub>/ρ<sub>A</sub>) = <span class="highlight">' + fmt(state.sqrtDensity,4) + '</span><br>' +
+        'สองค่านี้เท่ากันเป๊ะเพราะ ρ = PM/RT และแก๊สทั้งสองอยู่ภายใต้ P, T เดียวกัน / These two values perfectly match because ρ = PM/RT and both gases share the exact same P and T.';
+      box.style.display = 'block';
+    }
+
+    // เพิ่มการแปลภาษาในหน้าต่างสรุปผลหลังวิ่งเสร็จ
+    function showRaceConclusion(timeA, timeB) {
+      const box = document.getElementById('conclusion');
+      const faster = state.rA >= state.rB ? 'A' : 'B';
+      const ratioTime = faster === 'A' ? timeB / timeA : timeA / timeB;
+      box.innerHTML =
+        '🏁 <b>ผลการแข่งขัน / Race Result:</b><br>' +
+        'แก๊ส ' + faster + ' แพร่เร็วกว่า / Gas ' + faster + ' diffuses faster.<br>' +
+        'อัตราส่วนเวลาโดยประมาณ / Approx. Time Ratio = <span class="highlight">' + fmt(ratioTime,3) + '</span><br>' +
+        'อัตราส่วนตามกฎของเกรแฮม / Graham\'s Law Ratio = <span class="highlight">' + fmt(Math.max(state.rA, state.rB) / Math.min(state.rA, state.rB),3) + '</span>';
+      box.style.display = 'block';
+    }
+
+    initSelects();
+    handleGasChange();
+  </script>
+</body>
+</html>
