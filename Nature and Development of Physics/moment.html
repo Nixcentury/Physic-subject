@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Moment Equilibrium of a Lever | 10 Random Questions</title>
+  <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --ink: #0f172a;
+      --accent: #facc15;
+      --red: #ef4444;
+      --blue: #2563eb;
+      --green: #10b981;
+      --purple: #8b5cf6;
+      --amber: #f59e0b;
+      --border: 4px solid #000;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'K2D', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 18px;
+      background: var(--bg);
+      color: var(--ink);
+      display: flex;
+      justify-content: center;
+      overflow-x: hidden;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1220px;
+      background: #fff;
+      border: var(--border);
+      border-radius: 16px;
+      box-shadow: 8px 8px 0 #000;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    h1 {
+      margin: 0;
+      padding: 16px;
+      background: var(--accent);
+      border: var(--border);
+      border-radius: 12px;
+      box-shadow: 4px 4px 0 #000;
+      text-align: center;
+      font-size: clamp(20px, 3vw, 30px);
+      font-weight: 900;
+      line-height: 1.25;
+    }
+
+    .subtitle {
+      display: block;
+      margin-top: 6px;
+      font-size: clamp(14px, 2vw, 18px);
+      color: #334155;
+      font-weight: 800;
+    }
+
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .score-card, .rule-card {
+      background: #fff;
+      border: 3px solid #000;
+      border-radius: 12px;
+      box-shadow: 4px 4px 0 #000;
+      padding: 12px 14px;
+      font-weight: 900;
+      line-height: 1.55;
+    }
+
+    .score-card {
+      flex: 0.8;
+      min-width: 230px;
+      text-align: center;
+      background: #eff6ff;
+    }
+
+    .rule-card {
+      flex: 1.4;
+      min-width: 300px;
+      background: #fffbeb;
+      color: #78350f;
+    }
+
+    .progress-wrap {
+      width: 100%;
+      height: 14px;
+      background: #e2e8f0;
+      border: 2px solid #000;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 10%;
+      background: var(--green);
+      transition: width 0.25s ease;
+    }
+
+    .main-layout {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+    }
+
+    .left-panel {
+      flex: 1;
+      min-width: 350px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .visual-panel {
+      flex: 1.1;
+      min-width: 340px;
+      min-height: 500px;
+      border: var(--border);
+      border-radius: 12px;
+      box-shadow: inset 4px 4px 0 rgba(0,0,0,0.06);
+      background-color: #fff;
+      background-image: radial-gradient(#cbd5e1 2px, transparent 2px);
+      background-size: 20px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      padding: 10px;
+    }
+
+    .problem-card {
+      background: #f8fafc;
+      border: 3px solid #000;
+      border-radius: 12px;
+      box-shadow: 4px 4px 0 #000;
+      padding: 15px;
+      line-height: 1.65;
+      font-weight: 800;
+    }
+
+    .problem-title {
+      display: inline-block;
+      background: #0f172a;
+      color: #fff;
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 10px;
+      font-weight: 900;
+      font-size: 16px;
+    }
+
+    .side-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .side-card {
+      background: #fff;
+      border: 2px solid #000;
+      border-radius: 10px;
+      padding: 11px 12px;
+      box-shadow: 2px 2px 0 #000;
+      line-height: 1.7;
+      font-weight: 900;
+    }
+
+    .left-side {
+      background: #fee2e2;
+      border-color: var(--red);
+    }
+
+    .right-side {
+      background: #dbeafe;
+      border-color: var(--blue);
+    }
+
+    .unknown {
+      display: inline-block;
+      background: #000;
+      color: #fff;
+      border-radius: 8px;
+      padding: 2px 8px;
+      font-weight: 900;
+    }
+
+    .answer-box {
+      background: #fff;
+      border: 3px solid #000;
+      border-radius: 12px;
+      box-shadow: 4px 4px 0 #000;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .answer-field label {
+      display: block;
+      font-weight: 900;
+      margin-bottom: 7px;
+      font-size: 15px;
+    }
+
+    .answer-line {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      border: 2px solid #000;
+      border-radius: 8px;
+      padding: 11px;
+      font-size: 19px;
+      font-weight: 900;
+      text-align: center;
+      background: #fff;
+    }
+
+    .unit {
+      font-weight: 900;
+      min-width: 32px;
+      font-size: 17px;
+    }
+
+    .feedback {
+      grid-column: 1 / -1;
+      display: none;
+      border: 2px solid #000;
+      border-radius: 10px;
+      padding: 10px;
+      font-weight: 900;
+      line-height: 1.55;
+    }
+
+    .feedback.ok {
+      display: block;
+      background: #dcfce7;
+      color: #065f46;
+      border-color: #10b981;
+    }
+
+    .feedback.no {
+      display: block;
+      background: #fee2e2;
+      color: #991b1b;
+      border-color: #ef4444;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      flex: 1;
+      min-width: 145px;
+      border: 3px solid #000;
+      border-radius: 10px;
+      box-shadow: 4px 4px 0 #000;
+      color: #fff;
+      font-size: 17px;
+      font-weight: 900;
+      padding: 14px;
+      cursor: pointer;
+      transition: 0.08s;
+    }
+
+    button:active:not(:disabled) {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 #000;
+    }
+
+    button:disabled {
+      background: #94a3b8 !important;
+      opacity: 0.55;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: translate(4px, 4px);
+    }
+
+    .btn-new { background: var(--purple); }
+    .btn-check { background: #2563eb; }
+    .btn-reveal { background: var(--green); }
+    .btn-next { background: var(--amber); color: #111827; }
+    .btn-print { background: #334155; }
+
+    .solution-box {
+      border: var(--border);
+      border-radius: 12px;
+      box-shadow: 4px 4px 0 #000;
+      background: #f8fafc;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .solution-header {
+      font-size: 20px;
+      font-weight: 900;
+      padding-bottom: 8px;
+      border-bottom: 3px solid #000;
+    }
+
+    .challenge-msg {
+      background: #fff7ed;
+      border: 2px dashed #fb923c;
+      border-radius: 10px;
+      color: #9a3412;
+      padding: 16px;
+      text-align: center;
+      font-weight: 900;
+      line-height: 1.7;
+    }
+
+    .grid-steps {
+      display: none;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+    }
+
+    .step-card {
+      background: #fff;
+      border: 2px solid #000;
+      border-radius: 9px;
+      box-shadow: 2px 2px 0 #000;
+      padding: 14px;
+      line-height: 1.8;
+    }
+
+    .step-title {
+      display: inline-block;
+      font-weight: 900;
+      border: 2px solid #000;
+      border-radius: 6px;
+      padding: 4px 9px;
+      margin-bottom: 9px;
+      background: #e2e8f0;
+    }
+
+    .math {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 15px;
+    }
+
+    .result {
+      margin-top: 10px;
+      background: #d1fae5;
+      border: 2px solid #10b981;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 18px;
+      text-align: center;
+      font-weight: 900;
+    }
+
+    .summary-list {
+      display: none;
+      background: #f1f5f9;
+      border: 3px solid #000;
+      border-radius: 12px;
+      box-shadow: 4px 4px 0 #000;
+      padding: 16px;
+    }
+
+    .summary-list h2 {
+      margin: 0 0 10px 0;
+      font-size: 21px;
+      font-weight: 900;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 10px;
+    }
+
+    .summary-item {
+      background: #fff;
+      border: 2px solid #000;
+      border-radius: 8px;
+      padding: 10px;
+      font-weight: 800;
+      line-height: 1.55;
+    }
+
+    @media (max-width: 760px) {
+      body { padding: 10px; }
+      .container { padding: 12px; box-shadow: 4px 4px 0 #000; }
+      .visual-panel { min-height: 360px; }
+      .answer-box { grid-template-columns: 1fr; }
+      button { min-width: 100%; }
+    }
+
+    @media print {
+      body { background: #fff; padding: 0; }
+      .container { border: none; box-shadow: none; max-width: 100%; }
+      .buttons, .answer-box { display: none; }
+      .visual-panel { min-height: 420px; }
+      .grid-steps { display: grid !important; }
+      .challenge-msg { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>
+    ⚖️ สมดุลโมเมนต์ของคาน: หาแรงหรือหาระยะ
+    <span class="subtitle">Moment Equilibrium of a Lever: Find Force or Lever Arm</span>
+  </h1>
+
+  <div class="topbar">
+    <div class="score-card">
+      <div id="progress-text">ข้อที่ 1 / 10</div>
+      <div class="progress-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+    </div>
+    <div class="rule-card">
+      📌 หลักการ / Rule: คานสมดุลเมื่อ <b>โมเมนต์ตามเข็ม = โมเมนต์ทวนเข็ม</b><br>
+      <b>F₁d₁ = F₂d₂</b> โดย d คือระยะตั้งฉากจากจุดหมุนถึงแนวแรง
+    </div>
+  </div>
+
+  <div class="main-layout">
+    <div class="left-panel">
+      <div class="problem-card">
+        <div class="problem-title" id="question-title">🎯 Question 1</div>
+        <div id="problem-text">...</div>
+
+        <div class="side-grid">
+          <div class="side-card left-side">
+            <div>ด้านซ้าย / Left side</div>
+            <div id="left-info">...</div>
+          </div>
+
+          <div class="side-card right-side">
+            <div>ด้านขวา / Right side</div>
+            <div id="right-info">...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="answer-box">
+        <div class="answer-field">
+          <label id="answer-label" for="answer-input">คำตอบ / Answer</label>
+          <div class="answer-line">
+            <input id="answer-input" type="number" step="0.01" placeholder="กรอกคำตอบ">
+            <span class="unit" id="answer-unit">N</span>
+          </div>
+        </div>
+        <button class="btn-check" id="btn-check" onclick="checkAnswer()">✅ ตรวจ / Check</button>
+        <div id="feedback" class="feedback"></div>
+      </div>
+
+      <div class="buttons">
+        <button class="btn-new" onclick="newSet()">🎲 สุ่มชุดใหม่ / New Set</button>
+        <button class="btn-reveal" id="btn-reveal" onclick="revealSolution()" disabled>🟢 เฉลย / Reveal</button>
+        <button class="btn-next" id="btn-next" onclick="nextQuestion()" disabled>➡️ ข้อถัดไป / Next</button>
+        <button class="btn-print" onclick="window.print()">🖨️ พิมพ์ / Print</button>
+      </div>
+    </div>
+
+    <div class="visual-panel">
+      <svg width="460" height="430" viewBox="0 0 460 430" style="width:100%; max-width:460px; overflow:visible;">
+        <!-- Beam -->
+        <line x1="60" y1="210" x2="400" y2="210" stroke="#0f172a" stroke-width="14" stroke-linecap="round"/>
+        <polygon points="230,220 205,270 255,270" fill="#64748b" stroke="#000" stroke-width="3"/>
+        <line x1="230" y1="190" x2="230" y2="230" stroke="#000" stroke-width="3"/>
+        <text x="198" y="295" font-size="16" font-weight="900" fill="#334155">จุดหมุน / pivot</text>
+
+        <!-- Left force -->
+        <line id="left-force-line" x1="140" y1="125" x2="140" y2="195" stroke="#ef4444" stroke-width="6" marker-end="url(#arrow-red)"/>
+        <text id="left-force-label" x="105" y="115" fill="#dc2626" font-size="18" font-weight="900">F₁</text>
+        <line id="left-distance-line" x1="140" y1="240" x2="230" y2="240" stroke="#ef4444" stroke-width="3" stroke-dasharray="7,5"/>
+        <line id="left-tick-a" x1="140" y1="230" x2="140" y2="250" stroke="#ef4444" stroke-width="3"/>
+        <line id="left-tick-b" x1="230" y1="230" x2="230" y2="250" stroke="#ef4444" stroke-width="3"/>
+        <text id="left-distance-label" x="170" y="264" fill="#dc2626" font-size="16" font-weight="900">d₁</text>
+
+        <!-- Right force -->
+        <line id="right-force-line" x1="320" y1="125" x2="320" y2="195" stroke="#2563eb" stroke-width="6" marker-end="url(#arrow-blue)"/>
+        <text id="right-force-label" x="303" y="115" fill="#2563eb" font-size="18" font-weight="900">F₂</text>
+        <line id="right-distance-line" x1="230" y1="240" x2="320" y2="240" stroke="#2563eb" stroke-width="3" stroke-dasharray="7,5"/>
+        <line id="right-tick-a" x1="230" y1="230" x2="230" y2="250" stroke="#2563eb" stroke-width="3"/>
+        <line id="right-tick-b" x1="320" y1="230" x2="320" y2="250" stroke="#2563eb" stroke-width="3"/>
+        <text id="right-distance-label" x="265" y="264" fill="#2563eb" font-size="16" font-weight="900">d₂</text>
+
+        <path d="M 105 80 Q 80 210 105 340" fill="none" stroke="#ef4444" stroke-width="3" stroke-dasharray="8,6"/>
+        <text x="58" y="73" fill="#dc2626" font-weight="900" font-size="14">ทวนเข็ม / CCW</text>
+
+        <path d="M 355 80 Q 405 210 355 340" fill="none" stroke="#2563eb" stroke-width="3" stroke-dasharray="8,6"/>
+        <text x="332" y="73" fill="#2563eb" font-weight="900" font-size="14">ตามเข็ม / CW</text>
+
+        <defs>
+          <marker id="arrow-red" markerWidth="9" markerHeight="7" refX="7" refY="3.5" orient="auto">
+            <polygon points="0 0, 9 3.5, 0 7" fill="#dc2626"/>
+          </marker>
+          <marker id="arrow-blue" markerWidth="9" markerHeight="7" refX="7" refY="3.5" orient="auto">
+            <polygon points="0 0, 9 3.5, 0 7" fill="#2563eb"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+  </div>
+
+  <div class="solution-box">
+    <div class="solution-header">📝 เฉลยขั้นตอน / Solution Breakdown</div>
+    <div class="challenge-msg" id="challenge-msg">
+      กรอกคำตอบก่อน แล้วกดตรวจคำตอบ<br>
+      Enter your answer first, then check it.
+    </div>
+
+    <div class="grid-steps" id="steps-area">
+      <div class="step-card">
+        <div class="step-title" style="background:#fee2e2;">1. เขียนเงื่อนไข / Condition</div>
+        <div class="math" id="step-condition"></div>
+      </div>
+      <div class="step-card">
+        <div class="step-title" style="background:#dbeafe;">2. แทนค่า / Substitute</div>
+        <div class="math" id="step-substitute"></div>
+      </div>
+      <div class="step-card">
+        <div class="step-title" style="background:#dcfce7;">3. คำตอบ / Answer</div>
+        <div class="math" id="step-answer"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-list" id="summary-list">
+    <h2>📋 สรุปคำตอบทั้ง 10 ข้อ / Answer Summary</h2>
+    <div class="summary-grid" id="summary-grid"></div>
+  </div>
+</div>
+
+<script>
+  const forcePool = [5, 8, 10, 12, 15, 16, 20, 24, 25, 30, 40, 48, 50, 60, 80, 100, 120];
+  const distancePool = [0.10, 0.15, 0.20, 0.25, 0.30, 0.40, 0.50, 0.60, 0.75, 0.80, 1.00, 1.20, 1.50];
+
+  let pairGroups = {};
+  let usableMoments = [];
+  let questions = [];
+  let currentIndex = 0;
+  let checkedOnce = false;
+
+  function buildPairs() {
+    pairGroups = {};
+    forcePool.forEach(function(F) {
+      distancePool.forEach(function(d) {
+        const moment = Math.round(F * d * 1000) / 1000;
+        const key = moment.toFixed(3);
+        if (!pairGroups[key]) pairGroups[key] = [];
+        pairGroups[key].push({ F, d, moment });
+      });
+    });
+
+    usableMoments = Object.keys(pairGroups).filter(function(key) {
+      return pairGroups[key].length >= 2;
+    });
+  }
+
+  function pick(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  function fNum(n) {
+    if (Math.abs(n) < 0.005) return "0.00";
+    return (Math.round(n * 100) / 100).toFixed(2);
+  }
+
+  function fSmart(n) {
+    const rounded = Math.round(n * 100) / 100;
+    if (Number.isInteger(rounded)) return String(rounded);
+    return rounded.toFixed(2).replace(/0+$/, "").replace(/\.$/, "");
+  }
+
+  function makeQuestion(no) {
+    const key = pick(usableMoments);
+    const group = pairGroups[key].slice();
+
+    let left = pick(group);
+    let right = pick(group.filter(function(p) {
+      return !(p.F === left.F && p.d === left.d);
+    }));
+
+    if (!right) right = pick(group);
+
+    const missingTypes = ["leftF", "leftD", "rightF", "rightD"];
+    const missing = pick(missingTypes);
+
+    let answer, unit, answerLabel, unknownLabel;
+    if (missing === "leftF") {
+      answer = left.F;
+      unit = "N";
+      answerLabel = "หาแรงด้านซ้าย F₁ / Find left force F₁";
+      unknownLabel = "F₁";
+    } else if (missing === "leftD") {
+      answer = left.d;
+      unit = "m";
+      answerLabel = "หาระยะด้านซ้าย d₁ / Find left distance d₁";
+      unknownLabel = "d₁";
+    } else if (missing === "rightF") {
+      answer = right.F;
+      unit = "N";
+      answerLabel = "หาแรงด้านขวา F₂ / Find right force F₂";
+      unknownLabel = "F₂";
+    } else {
+      answer = right.d;
+      unit = "m";
+      answerLabel = "หาระยะด้านขวา d₂ / Find right distance d₂";
+      unknownLabel = "d₂";
+    }
+
+    return {
+      no,
+      left,
+      right,
+      missing,
+      answer,
+      unit,
+      answerLabel,
+      unknownLabel,
+      student: null,
+      correct: false
+    };
+  }
+
+  function newSet() {
+    questions = [];
+    for (let i = 1; i <= 10; i++) {
+      questions.push(makeQuestion(i));
+    }
+    currentIndex = 0;
+    document.getElementById("summary-list").style.display = "none";
+    showQuestion();
+  }
+
+  function updateProgress() {
+    const percent = ((currentIndex + 1) / 10) * 100;
+    document.getElementById("progress-text").innerText = "ข้อที่ " + (currentIndex + 1) + " / 10";
+    document.getElementById("progress-bar").style.width = percent + "%";
+  }
+
+  function valueOrUnknown(type, field, value, unit) {
+    const q = questions[currentIndex];
+    if (q.missing === type) return "<span class='unknown'>?</span>";
+    return fSmart(value) + " " + unit;
+  }
+
+  function showQuestion() {
+    checkedOnce = false;
+    const q = questions[currentIndex];
+    updateProgress();
+
+    document.getElementById("question-title").innerText = "🎯 Question " + q.no + " / 10";
+    document.getElementById("problem-text").innerHTML =
+      "คานอยู่ในสมดุล มีแรงกดลง 2 แรงกระทำคนละข้างของจุดหมุน<br>" +
+      "A lever is in equilibrium with two downward forces on opposite sides of the pivot.<br>" +
+      "<b>จงหา: " + q.answerLabel + "</b>";
+
+    document.getElementById("left-info").innerHTML =
+      "F₁ = " + valueOrUnknown("leftF", "F", q.left.F, "N") + "<br>" +
+      "d₁ = " + valueOrUnknown("leftD", "d", q.left.d, "m");
+
+    document.getElementById("right-info").innerHTML =
+      "F₂ = " + valueOrUnknown("rightF", "F", q.right.F, "N") + "<br>" +
+      "d₂ = " + valueOrUnknown("rightD", "d", q.right.d, "m");
+
+    document.getElementById("answer-label").innerText = q.answerLabel;
+    document.getElementById("answer-unit").innerText = q.unit;
+    document.getElementById("answer-input").value = "";
+    document.getElementById("answer-input").style.background = "#fff";
+    document.getElementById("answer-input").style.borderColor = "#000";
+
+    const feedback = document.getElementById("feedback");
+    feedback.className = "feedback";
+    feedback.style.display = "none";
+    feedback.innerHTML = "";
+
+    document.getElementById("steps-area").style.display = "none";
+    document.getElementById("challenge-msg").style.display = "block";
+    document.getElementById("challenge-msg").innerHTML =
+      "กรอกคำตอบก่อน แล้วกดตรวจคำตอบ<br>Enter your answer first, then check it.";
+
+    document.getElementById("btn-check").disabled = false;
+    document.getElementById("btn-reveal").disabled = true;
+    document.getElementById("btn-next").disabled = true;
+
+    updateSvg(q, false);
+  }
+
+  function updateSvg(q, reveal) {
+    const leftX = 230 - (70 + q.left.d * 75);
+    const rightX = 230 + (70 + q.right.d * 75);
+
+    const leftIds = ["left-force-line", "left-distance-line", "left-tick-a", "left-tick-b"];
+    const rightIds = ["right-force-line", "right-distance-line", "right-tick-a", "right-tick-b"];
+
+    document.getElementById("left-force-line").setAttribute("x1", leftX);
+    document.getElementById("left-force-line").setAttribute("x2", leftX);
+    document.getElementById("left-force-label").setAttribute("x", leftX - 26);
+
+    document.getElementById("left-distance-line").setAttribute("x1", leftX);
+    document.getElementById("left-distance-line").setAttribute("x2", 230);
+    document.getElementById("left-tick-a").setAttribute("x1", leftX);
+    document.getElementById("left-tick-a").setAttribute("x2", leftX);
+    document.getElementById("left-tick-b").setAttribute("x1", 230);
+    document.getElementById("left-tick-b").setAttribute("x2", 230);
+    document.getElementById("left-distance-label").setAttribute("x", (leftX + 230)/2 - 10);
+
+    document.getElementById("right-force-line").setAttribute("x1", rightX);
+    document.getElementById("right-force-line").setAttribute("x2", rightX);
+    document.getElementById("right-force-label").setAttribute("x", rightX - 16);
+
+    document.getElementById("right-distance-line").setAttribute("x1", 230);
+    document.getElementById("right-distance-line").setAttribute("x2", rightX);
+    document.getElementById("right-tick-a").setAttribute("x1", 230);
+    document.getElementById("right-tick-a").setAttribute("x2", 230);
+    document.getElementById("right-tick-b").setAttribute("x1", rightX);
+    document.getElementById("right-tick-b").setAttribute("x2", rightX);
+    document.getElementById("right-distance-label").setAttribute("x", (rightX + 230)/2 - 10);
+
+    document.getElementById("left-force-label").textContent =
+      q.missing === "leftF" && !reveal ? "F₁=?" : "F₁";
+    document.getElementById("right-force-label").textContent =
+      q.missing === "rightF" && !reveal ? "F₂=?" : "F₂";
+    document.getElementById("left-distance-label").textContent =
+      q.missing === "leftD" && !reveal ? "d₁=?" : "d₁";
+    document.getElementById("right-distance-label").textContent =
+      q.missing === "rightD" && !reveal ? "d₂=?" : "d₂";
+  }
+
+  function tolerance(q) {
+    if (q.unit === "N") return Math.max(0.05, Math.abs(q.answer) * 0.02);
+    return Math.max(0.005, Math.abs(q.answer) * 0.02);
+  }
+
+  function checkAnswer() {
+    const q = questions[currentIndex];
+    const val = parseFloat(document.getElementById("answer-input").value);
+    const feedback = document.getElementById("feedback");
+
+    if (isNaN(val)) {
+      feedback.className = "feedback no";
+      feedback.innerHTML = "⚠️ กรุณากรอกคำตอบก่อนตรวจ";
+      return;
+    }
+
+    q.student = val;
+    checkedOnce = true;
+
+    const ok = Math.abs(val - q.answer) <= tolerance(q);
+    q.correct = ok;
+
+    document.getElementById("answer-input").style.background = ok ? "#dcfce7" : "#fee2e2";
+    document.getElementById("answer-input").style.borderColor = ok ? "#10b981" : "#ef4444";
+
+    if (ok) {
+      feedback.className = "feedback ok";
+      feedback.innerHTML = "✅ ถูกต้อง! ระบบจะแสดงเฉลยวิธีทำให้ตรวจทาน";
+      revealSolution();
+    } else {
+      feedback.className = "feedback no";
+      feedback.innerHTML =
+        "❌ ยังไม่ตรง ลองตรวจว่าใช้ F₁d₁ = F₂d₂ แล้วจัดรูปถูกไหม<br>" +
+        "Not correct yet. Check the equation F₁d₁ = F₂d₂.";
+      document.getElementById("btn-reveal").disabled = false;
+    }
+  }
+
+  function revealSolution() {
+    const q = questions[currentIndex];
+
+    document.getElementById("btn-check").disabled = true;
+    document.getElementById("btn-reveal").disabled = true;
+    document.getElementById("btn-next").disabled = currentIndex >= 9;
+    document.getElementById("challenge-msg").style.display = "none";
+    document.getElementById("steps-area").style.display = "grid";
+
+    const leftMoment = q.left.F * q.left.d;
+    const rightMoment = q.right.F * q.right.d;
+
+    document.getElementById("step-condition").innerHTML =
+      "โมเมนต์ทวนเข็ม = โมเมนต์ตามเข็ม<br>" +
+      "Counterclockwise moment = Clockwise moment<br><br>" +
+      "<b>F₁d₁ = F₂d₂</b>";
+
+    let sub = "";
+    let solve = "";
+    if (q.missing === "leftF") {
+      sub = "F₁(" + fSmart(q.left.d) + ") = " + fSmart(q.right.F) + "(" + fSmart(q.right.d) + ")";
+      solve = "F₁ = [" + fSmart(q.right.F) + "(" + fSmart(q.right.d) + ")] / " + fSmart(q.left.d);
+    } else if (q.missing === "leftD") {
+      sub = fSmart(q.left.F) + "(d₁) = " + fSmart(q.right.F) + "(" + fSmart(q.right.d) + ")";
+      solve = "d₁ = [" + fSmart(q.right.F) + "(" + fSmart(q.right.d) + ")] / " + fSmart(q.left.F);
+    } else if (q.missing === "rightF") {
+      sub = fSmart(q.left.F) + "(" + fSmart(q.left.d) + ") = F₂(" + fSmart(q.right.d) + ")";
+      solve = "F₂ = [" + fSmart(q.left.F) + "(" + fSmart(q.left.d) + ")] / " + fSmart(q.right.d);
+    } else {
+      sub = fSmart(q.left.F) + "(" + fSmart(q.left.d) + ") = " + fSmart(q.right.F) + "(d₂)";
+      solve = "d₂ = [" + fSmart(q.left.F) + "(" + fSmart(q.left.d) + ")] / " + fSmart(q.right.F);
+    }
+
+    document.getElementById("step-substitute").innerHTML =
+      sub + "<br>" +
+      "โมเมนต์แต่ละข้าง = " + fSmart(leftMoment) + " N·m";
+
+    const studentText = checkedOnce && q.student !== null
+      ? "<br><br>คำตอบที่กรอก / Your input: " + fSmart(q.student) + " " + q.unit
+      : "";
+
+    document.getElementById("step-answer").innerHTML =
+      solve + "<br>" +
+      q.unknownLabel + " = <b>" + fSmart(q.answer) + " " + q.unit + "</b>" +
+      "<div class='result'>คำตอบ / Answer: " + q.unknownLabel + " = " + fSmart(q.answer) + " " + q.unit + studentText + "</div>";
+
+    updateSvg(q, true);
+
+    if (currentIndex === 9) renderSummary();
+  }
+
+  function nextQuestion() {
+    if (currentIndex < 9) {
+      currentIndex++;
+      showQuestion();
+    }
+  }
+
+  function renderSummary() {
+    const box = document.getElementById("summary-list");
+    const grid = document.getElementById("summary-grid");
+    grid.innerHTML = "";
+
+    questions.forEach(function(q) {
+      const item = document.createElement("div");
+      item.className = "summary-item";
+      const attempt = q.student === null ? "ไม่ได้กรอก / no input" : "ตอบ: " + fSmart(q.student) + " " + q.unit;
+      item.innerHTML =
+        "<b>ข้อ " + q.no + "</b><br>" +
+        "เฉลย: " + q.unknownLabel + " = " + fSmart(q.answer) + " " + q.unit + "<br>" +
+        attempt;
+      grid.appendChild(item);
+    });
+
+    box.style.display = "block";
+  }
+
+  buildPairs();
+  newSet();
+</script>
+</body>
+</html>
