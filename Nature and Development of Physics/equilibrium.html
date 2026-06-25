@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equilibrium 3 Forces Lab | Student Input Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #facc15;
+            --bg: #f8fafc;
+            --ink: #0f172a;
+            --red: #ef4444;
+            --blue: #2563eb;
+            --green: #10b981;
+            --purple: #8b5cf6;
+            --amber: #f59e0b;
+            --border: 4px solid #000;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'K2D', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 18px;
+            background: var(--bg);
+            color: var(--ink);
+            display: flex;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1240px;
+            background: #fff;
+            border: var(--border);
+            border-radius: 16px;
+            box-shadow: 8px 8px 0 #000;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        h1 {
+            margin: 0;
+            padding: 16px;
+            background: var(--accent);
+            border: var(--border);
+            border-radius: 12px;
+            box-shadow: 4px 4px 0 #000;
+            text-align: center;
+            font-size: clamp(20px, 3vw, 30px);
+            font-weight: 900;
+            line-height: 1.25;
+        }
+
+        .subtitle {
+            display: block;
+            margin-top: 6px;
+            font-size: clamp(14px, 2vw, 18px);
+            color: #334155;
+            font-weight: 800;
+        }
+
+        .topbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: stretch;
+        }
+
+        .score-card, .rule-card {
+            background: #fff;
+            border: 3px solid #000;
+            border-radius: 12px;
+            box-shadow: 4px 4px 0 #000;
+            padding: 12px 14px;
+            font-weight: 900;
+            line-height: 1.55;
+        }
+
+        .score-card {
+            flex: 0.8;
+            min-width: 230px;
+            text-align: center;
+            background: #eff6ff;
+        }
+
+        .rule-card {
+            flex: 1.4;
+            min-width: 300px;
+            background: #fffbeb;
+            color: #78350f;
+        }
+
+        .progress-wrap {
+            width: 100%;
+            height: 14px;
+            background: #e2e8f0;
+            border: 2px solid #000;
+            border-radius: 99px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 10%;
+            background: var(--green);
+            transition: width 0.25s ease;
+        }
+
+        .main-layout {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+        }
+
+        .left-panel {
+            flex: 1;
+            min-width: 350px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .visual-panel {
+            flex: 1.1;
+            min-width: 340px;
+            min-height: 510px;
+            border: var(--border);
+            border-radius: 12px;
+            box-shadow: inset 4px 4px 0 rgba(0,0,0,0.06);
+            background-color: #ffffff;
+            background-image: radial-gradient(#cbd5e1 2px, transparent 2px);
+            background-size: 20px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 10px;
+        }
+
+        .problem-card {
+            background: #f8fafc;
+            border: 3px solid #000;
+            border-radius: 12px;
+            box-shadow: 4px 4px 0 #000;
+            padding: 15px;
+            line-height: 1.65;
+            font-weight: 800;
+        }
+
+        .problem-title {
+            display: inline-block;
+            background: #0f172a;
+            color: #fff;
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-bottom: 10px;
+            font-weight: 900;
+            font-size: 16px;
+        }
+
+        .force-row {
+            background: #fff;
+            border: 2px solid #000;
+            border-radius: 10px;
+            margin-top: 9px;
+            padding: 10px 12px;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            box-shadow: 2px 2px 0 #000;
+        }
+
+        .f1 { background: #fee2e2; border-color: var(--red); }
+        .f2 { background: #dbeafe; border-color: var(--blue); }
+        .f3 { background: #dcfce7; border-color: var(--green); }
+
+        .badge {
+            display: inline-block;
+            background: #000;
+            color: #fff;
+            border-radius: 999px;
+            padding: 2px 8px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+
+        .answer-box {
+            background: #ffffff;
+            border: 3px solid #000;
+            border-radius: 12px;
+            box-shadow: 4px 4px 0 #000;
+            padding: 14px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 12px;
+        }
+
+        .answer-field {
+            background: #f8fafc;
+            border: 2px solid #64748b;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .answer-field label {
+            display: block;
+            font-weight: 900;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        .answer-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            border: 2px solid #000;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 18px;
+            font-weight: 900;
+            text-align: center;
+        }
+
+        .unit {
+            font-weight: 900;
+            min-width: 28px;
+        }
+
+        .feedback {
+            grid-column: 1 / -1;
+            display: none;
+            border: 2px solid #000;
+            border-radius: 10px;
+            padding: 10px;
+            font-weight: 900;
+            line-height: 1.55;
+        }
+
+        .feedback.ok {
+            display: block;
+            background: #dcfce7;
+            color: #065f46;
+            border-color: #10b981;
+        }
+
+        .feedback.no {
+            display: block;
+            background: #fee2e2;
+            color: #991b1b;
+            border-color: #ef4444;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            flex: 1;
+            min-width: 150px;
+            border: 3px solid #000;
+            border-radius: 10px;
+            box-shadow: 4px 4px 0 #000;
+            color: #fff;
+            font-size: 17px;
+            font-weight: 900;
+            padding: 14px;
+            cursor: pointer;
+            transition: 0.08s;
+        }
+
+        button:active:not(:disabled) {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 #000;
+        }
+
+        button:disabled {
+            background: #94a3b8 !important;
+            opacity: 0.55;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: translate(4px, 4px);
+        }
+
+        .btn-new { background: var(--purple); }
+        .btn-check { background: #2563eb; }
+        .btn-reveal { background: var(--green); }
+        .btn-next { background: var(--amber); color: #111827; }
+        .btn-print { background: #334155; }
+
+        .solution-box {
+            border: var(--border);
+            border-radius: 12px;
+            box-shadow: 4px 4px 0 #000;
+            background: #f8fafc;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .solution-header {
+            font-size: 20px;
+            font-weight: 900;
+            padding-bottom: 8px;
+            border-bottom: 3px solid #000;
+        }
+
+        .challenge-msg {
+            background: #fff7ed;
+            border: 2px dashed #fb923c;
+            border-radius: 10px;
+            color: #9a3412;
+            padding: 16px;
+            text-align: center;
+            font-weight: 900;
+            line-height: 1.7;
+        }
+
+        .grid-steps {
+            display: none;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 14px;
+        }
+
+        .step-card {
+            background: #fff;
+            border: 2px solid #000;
+            border-radius: 9px;
+            box-shadow: 2px 2px 0 #000;
+            padding: 14px;
+            line-height: 1.75;
+        }
+
+        .step-title {
+            display: inline-block;
+            font-weight: 900;
+            border: 2px solid #000;
+            border-radius: 6px;
+            padding: 4px 9px;
+            margin-bottom: 9px;
+            background: #e2e8f0;
+        }
+
+        .math {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 15px;
+        }
+
+        .hl-red { color: #dc2626; font-weight: 900; }
+        .hl-blue { color: #2563eb; font-weight: 900; }
+        .hl-green { color: #059669; font-weight: 900; }
+
+        .result {
+            margin-top: 10px;
+            background: #d1fae5;
+            border: 2px solid #10b981;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 18px;
+            text-align: center;
+            font-weight: 900;
+        }
+
+        .summary-list {
+            display: none;
+            background: #f1f5f9;
+            border: 3px solid #000;
+            border-radius: 12px;
+            box-shadow: 4px 4px 0 #000;
+            padding: 16px;
+        }
+
+        .summary-list h2 {
+            margin: 0 0 10px 0;
+            font-size: 21px;
+            font-weight: 900;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 10px;
+        }
+
+        .summary-item {
+            background: #fff;
+            border: 2px solid #000;
+            border-radius: 8px;
+            padding: 10px;
+            font-weight: 800;
+            line-height: 1.55;
+        }
+
+        @media (max-width: 760px) {
+            body { padding: 10px; }
+            .container { padding: 12px; box-shadow: 4px 4px 0 #000; }
+            .visual-panel { min-height: 360px; }
+            button { min-width: 100%; }
+        }
+
+        @media print {
+            body { background: #fff; padding: 0; }
+            .container { border: none; box-shadow: none; max-width: 100%; }
+            .buttons, .answer-box { display: none; }
+            .visual-panel { min-height: 420px; }
+            .grid-steps { display: grid !important; }
+            .challenge-msg { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>
+        ⚖️ สมดุลแรง 3 แรง: ตอบ F₂ และ F₃ ก่อนเฉลย
+        <span class="subtitle">Three-Force Equilibrium: Students Enter F₂ and F₃ Before Reveal</span>
+    </h1>
+
+    <div class="topbar">
+        <div class="score-card">
+            <div id="progress-text">ข้อที่ 1 / 10</div>
+            <div class="progress-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+        </div>
+        <div class="rule-card">
+            📌 หลักการ / Rule: วัตถุสมดุลเมื่อ <b>ΣFₓ = 0</b> และ <b>ΣFᵧ = 0</b><br>
+            ให้แรง F₁ มา 1 แรง และให้แนวของ F₂, F₃ มาแล้ว ให้เด็กกรอกขนาด F₂ และ F₃ ก่อนจึงค่อยดูเฉลย
+        </div>
+    </div>
+
+    <div class="main-layout">
+        <div class="left-panel">
+            <div class="problem-card">
+                <div class="problem-title" id="question-title">🎯 Question 1</div>
+                <div id="problem-text"></div>
+
+                <div class="force-row f1">
+                    <div><b>F₁</b> = แรงที่ทราบค่า / Known force</div>
+                    <div id="info-f1">...</div>
+                </div>
+
+                <div class="force-row f2">
+                    <div><b>F₂</b> = แรงไม่ทราบค่า / Unknown force</div>
+                    <div id="info-f2">...</div>
+                </div>
+
+                <div class="force-row f3">
+                    <div><b>F₃</b> = แรงไม่ทราบค่า / Unknown force</div>
+                    <div id="info-f3">...</div>
+                </div>
+            </div>
+
+            <div class="answer-box">
+                <div class="answer-field">
+                    <label for="ans-f2">คำตอบ F₂ / Enter F₂</label>
+                    <div class="answer-line">
+                        <input id="ans-f2" type="number" step="0.01" placeholder="เช่น 40">
+                        <span class="unit">N</span>
+                    </div>
+                </div>
+
+                <div class="answer-field">
+                    <label for="ans-f3">คำตอบ F₃ / Enter F₃</label>
+                    <div class="answer-line">
+                        <input id="ans-f3" type="number" step="0.01" placeholder="เช่น 60">
+                        <span class="unit">N</span>
+                    </div>
+                </div>
+
+                <div id="feedback" class="feedback"></div>
+            </div>
+
+            <div class="buttons">
+                <button class="btn-new" onclick="newSet()">🎲 สุ่มชุดใหม่ / New Set</button>
+                <button class="btn-check" id="btn-check" onclick="checkAnswer()">✅ ตรวจคำตอบ / Check</button>
+                <button class="btn-reveal" id="btn-reveal" onclick="revealSolution()" disabled>🟢 เฉลย / Reveal</button>
+                <button class="btn-next" id="btn-next" onclick="nextQuestion()" disabled>➡️ ข้อถัดไป / Next</button>
+                <button class="btn-print" onclick="window.print()">🖨️ พิมพ์ / Print</button>
+            </div>
+        </div>
+
+        <div class="visual-panel">
+            <svg width="440" height="440" viewBox="0 0 440 440" style="width:100%; max-width:440px; overflow:visible;">
+                <line x1="50" y1="220" x2="390" y2="220" stroke="#0f172a" stroke-width="3"/>
+                <line x1="220" y1="50" x2="220" y2="390" stroke="#0f172a" stroke-width="3"/>
+                <text x="395" y="225" font-weight="900" font-size="14">+X</text>
+                <text x="20" y="225" font-weight="900" font-size="14">−X</text>
+                <text x="212" y="35" font-weight="900" font-size="14">+Y</text>
+                <text x="212" y="410" font-weight="900" font-size="14">−Y</text>
+
+                <line id="line-f1" x1="220" y1="220" x2="220" y2="220" stroke="#dc2626" stroke-width="5" marker-end="url(#arrow-red)"/>
+                <text id="label-f1" x="230" y="210" font-weight="900" font-size="18" fill="#dc2626">F₁</text>
+
+                <line id="line-f2-guide" x1="220" y1="220" x2="220" y2="220" stroke="#2563eb" stroke-width="4" stroke-dasharray="8,6" marker-end="url(#arrow-blue-light)"/>
+                <text id="label-f2-guide" x="230" y="210" font-weight="900" font-size="16" fill="#2563eb">แนว F₂</text>
+
+                <line id="line-f3-guide" x1="220" y1="220" x2="220" y2="220" stroke="#10b981" stroke-width="4" stroke-dasharray="8,6" marker-end="url(#arrow-green-light)"/>
+                <text id="label-f3-guide" x="230" y="210" font-weight="900" font-size="16" fill="#059669">แนว F₃</text>
+
+                <line id="line-f2" x1="220" y1="220" x2="220" y2="220" stroke="#2563eb" stroke-width="6" marker-end="url(#arrow-blue)" style="display:none;"/>
+                <text id="label-f2" x="230" y="210" font-weight="900" font-size="18" fill="#2563eb" style="display:none;">F₂</text>
+
+                <line id="line-f3" x1="220" y1="220" x2="220" y2="220" stroke="#10b981" stroke-width="6" marker-end="url(#arrow-green)" style="display:none;"/>
+                <text id="label-f3" x="230" y="210" font-weight="900" font-size="18" fill="#059669" style="display:none;">F₃</text>
+
+                <circle cx="220" cy="220" r="6" fill="#111827"/>
+                <text x="232" y="242" font-weight="900" font-size="13" fill="#334155">จุดสมดุล / equilibrium point</text>
+
+                <defs>
+                    <marker id="arrow-red" markerWidth="9" markerHeight="7" refX="7" refY="3.5" orient="auto">
+                        <polygon points="0 0, 9 3.5, 0 7" fill="#dc2626"/>
+                    </marker>
+                    <marker id="arrow-blue" markerWidth="9" markerHeight="7" refX="7" refY="3.5" orient="auto">
+                        <polygon points="0 0, 9 3.5, 0 7" fill="#2563eb"/>
+                    </marker>
+                    <marker id="arrow-green" markerWidth="9" markerHeight="7" refX="7" refY="3.5" orient="auto">
+                        <polygon points="0 0, 9 3.5, 0 7" fill="#10b981"/>
+                    </marker>
+                    <marker id="arrow-blue-light" markerWidth="9" markerHeight="7" refX="7" refY="3.5" orient="auto">
+                        <polygon points="0 0, 9 3.5, 0 7" fill="#93c5fd"/>
+                    </marker>
+                    <marker id="arrow-green-light" markerWidth="9" markerHeight="7" refX="7" refY="3.5" orient="auto">
+                        <polygon points="0 0, 9 3.5, 0 7" fill="#86efac"/>
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+    </div>
+
+    <div class="solution-box">
+        <div class="solution-header">📝 เฉลยขั้นตอน / Solution Breakdown</div>
+        <div class="challenge-msg" id="challenge-msg">
+            ให้กรอก F₂ และ F₃ ก่อน แล้วกดตรวจคำตอบ<br>
+            Enter F₂ and F₃ first, then check your answer.
+        </div>
+
+        <div class="grid-steps" id="steps-area">
+            <div class="step-card">
+                <div class="step-title" style="background:#fee2e2;">1. เขียนองค์ประกอบแรง / Components</div>
+                <div class="math" id="step-components"></div>
+            </div>
+            <div class="step-card">
+                <div class="step-title" style="background:#dbeafe;">2. ตั้ง 2 สมการ / Two equations</div>
+                <div class="math" id="step-equations"></div>
+            </div>
+            <div class="step-card">
+                <div class="step-title" style="background:#dcfce7;">3. แก้ระบบสมการ / Solve</div>
+                <div class="math" id="step-solve"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="summary-list" id="summary-list">
+        <h2>📋 สรุปคำตอบทั้ง 10 ข้อ / Answer Summary</h2>
+        <div class="summary-grid" id="summary-grid"></div>
+    </div>
+</div>
+
+<script>
+    const angleData = {
+        0:   { c: 1, s: 0, cText: "1", sText: "0" },
+        30:  { c: Math.sqrt(3)/2, s: 0.5, cText: "√3/2", sText: "1/2" },
+        45:  { c: Math.sqrt(2)/2, s: Math.sqrt(2)/2, cText: "√2/2", sText: "√2/2" },
+        60:  { c: 0.5, s: Math.sqrt(3)/2, cText: "1/2", sText: "√3/2" },
+        90:  { c: 0, s: 1, cText: "0", sText: "1" },
+        120: { c: -0.5, s: Math.sqrt(3)/2, cText: "-1/2", sText: "√3/2" },
+        135: { c: -Math.sqrt(2)/2, s: Math.sqrt(2)/2, cText: "-√2/2", sText: "√2/2" },
+        150: { c: -Math.sqrt(3)/2, s: 0.5, cText: "-√3/2", sText: "1/2" },
+        180: { c: -1, s: 0, cText: "-1", sText: "0" },
+        210: { c: -Math.sqrt(3)/2, s: -0.5, cText: "-√3/2", sText: "-1/2" },
+        225: { c: -Math.sqrt(2)/2, s: -Math.sqrt(2)/2, cText: "-√2/2", sText: "-√2/2" },
+        240: { c: -0.5, s: -Math.sqrt(3)/2, cText: "-1/2", sText: "-√3/2" },
+        270: { c: 0, s: -1, cText: "0", sText: "-1" },
+        300: { c: 0.5, s: -Math.sqrt(3)/2, cText: "1/2", sText: "-√3/2" },
+        315: { c: Math.sqrt(2)/2, s: -Math.sqrt(2)/2, cText: "√2/2", sText: "-√2/2" },
+        330: { c: Math.sqrt(3)/2, s: -0.5, cText: "√3/2", sText: "-1/2" }
+    };
+
+    const directionPairs = [
+        [30, 120],
+        [45, 135],
+        [60, 150],
+        [30, 150],
+        [45, 120],
+        [60, 135],
+        [210, 330],
+        [225, 315],
+        [210, 300],
+        [240, 330],
+        [0, 120],
+        [180, 60],
+        [270, 30],
+        [90, 300]
+    ];
+
+    const magnitudes = [20, 25, 30, 40, 50, 60, 80, 100, 120];
+
+    let questions = [];
+    let currentIndex = 0;
+    let revealed = false;
+    let checkedOnce = false;
+
+    function pick(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function f2(n) {
+        if (Math.abs(n) < 0.005) return "0.00";
+        return (Math.round(n * 100) / 100).toFixed(2);
+    }
+
+    function angleLabel(angle) {
+        return angle + "° จากแกน +X / " + angle + "° from +X";
+    }
+
+    function vectorTextFromComponents(x, y) {
+        let mag = Math.sqrt(x*x + y*y);
+        let angle = Math.atan2(y, x) * 180 / Math.PI;
+        if (angle < 0) angle += 360;
+        return {
+            mag: mag,
+            angle: angle,
+            text: f2(mag) + " N ที่มุม " + f2(angle) + "° จากแกน +X"
+        };
+    }
+
+    function makeQuestion(i) {
+        let pair = pick(directionPairs);
+        if (Math.random() < 0.5) pair = [pair[1], pair[0]];
+
+        let a2 = pair[0];
+        let a3 = pair[1];
+
+        let m2 = pick(magnitudes);
+        let m3 = pick(magnitudes);
+
+        let u2 = angleData[a2];
+        let u3 = angleData[a3];
+
+        // Create a guaranteed equilibrium case:
+        // F1 + F2 + F3 = 0, so F1 = -(F2 + F3)
+        let f2x = m2 * u2.c;
+        let f2y = m2 * u2.s;
+        let f3x = m3 * u3.c;
+        let f3y = m3 * u3.s;
+
+        let f1x = -(f2x + f3x);
+        let f1y = -(f2y + f3y);
+        let f1Polar = vectorTextFromComponents(f1x, f1y);
+
+        return {
+            no: i + 1,
+            f1x, f1y,
+            f1Mag: f1Polar.mag,
+            f1Angle: f1Polar.angle,
+            f1Text: f1Polar.text,
+            a2, a3,
+            m2, m3,
+            u2, u3,
+            f2x, f2y,
+            f3x, f3y,
+            studentF2: null,
+            studentF3: null,
+            wasCorrect: false
+        };
+    }
+
+    function newSet() {
+        questions = [];
+        for (let i = 0; i < 10; i++) questions.push(makeQuestion(i));
+        currentIndex = 0;
+        showQuestion();
+        document.getElementById("summary-list").style.display = "none";
+    }
+
+    function updateProgress() {
+        let percent = ((currentIndex + 1) / 10) * 100;
+        document.getElementById("progress-text").innerText = "ข้อที่ " + (currentIndex + 1) + " / 10";
+        document.getElementById("progress-bar").style.width = percent + "%";
+    }
+
+    function setLine(id, vx, vy, scale, visible=true) {
+        const line = document.getElementById(id);
+        const x2 = 220 + vx * scale;
+        const y2 = 220 - vy * scale;
+        line.setAttribute("x2", x2);
+        line.setAttribute("y2", y2);
+        line.style.display = visible ? "block" : "none";
+        return {x: x2, y: y2};
+    }
+
+    function setLabel(id, pos, text, dx=8, dy=-8, visible=true) {
+        const label = document.getElementById(id);
+        label.setAttribute("x", pos.x + dx);
+        label.setAttribute("y", pos.y + dy);
+        label.textContent = text;
+        label.style.display = visible ? "block" : "none";
+    }
+
+    function clearAnswerUI() {
+        document.getElementById("ans-f2").value = "";
+        document.getElementById("ans-f3").value = "";
+        document.getElementById("ans-f2").style.background = "#fff";
+        document.getElementById("ans-f2").style.borderColor = "#000";
+        document.getElementById("ans-f3").style.background = "#fff";
+        document.getElementById("ans-f3").style.borderColor = "#000";
+
+        const feedback = document.getElementById("feedback");
+        feedback.className = "feedback";
+        feedback.style.display = "none";
+        feedback.innerHTML = "";
+    }
+
+    function showQuestion() {
+        revealed = false;
+        checkedOnce = false;
+        const q = questions[currentIndex];
+        updateProgress();
+
+        document.getElementById("question-title").innerText = "🎯 Question " + q.no + " / 10";
+        document.getElementById("problem-text").innerHTML =
+            "ให้แรง 3 แรงกระทำที่จุดเดียวกันและระบบอยู่ในสมดุล<br>" +
+            "Given three concurrent forces in equilibrium. Find the two unknown magnitudes.";
+
+        document.getElementById("info-f1").innerHTML =
+            "<b>" + q.f1Text + "</b><br>" +
+            "องค์ประกอบ: F₁ₓ = " + f2(q.f1x) + " N, F₁ᵧ = " + f2(q.f1y) + " N";
+
+        document.getElementById("info-f2").innerHTML =
+            "ขนาด = <b>?</b>, ทิศ = <b>" + angleLabel(q.a2) + "</b>";
+
+        document.getElementById("info-f3").innerHTML =
+            "ขนาด = <b>?</b>, ทิศ = <b>" + angleLabel(q.a3) + "</b>";
+
+        document.getElementById("steps-area").style.display = "none";
+        document.getElementById("challenge-msg").style.display = "block";
+        document.getElementById("challenge-msg").innerHTML =
+            "กรอก <b>F₂</b> และ <b>F₃</b> ก่อน แล้วกดตรวจคำตอบ<br>" +
+            "Enter F₂ and F₃ first, then check your answer.";
+
+        document.getElementById("btn-check").disabled = false;
+        document.getElementById("btn-reveal").disabled = true;
+        document.getElementById("btn-next").disabled = true;
+
+        clearAnswerUI();
+        drawQuestion(false);
+    }
+
+    function drawQuestion(showAnswer) {
+        const q = questions[currentIndex];
+        const maxMag = Math.max(q.f1Mag, q.m2, q.m3, 1);
+        const scale = Math.min(125 / maxMag, 4);
+
+        const f1pos = setLine("line-f1", q.f1x, q.f1y, scale, true);
+        setLabel("label-f1", f1pos, "F₁");
+
+        const guideLen = Math.min(90, Math.max(70, maxMag * scale * 0.75));
+        const g2pos = setLine("line-f2-guide", q.u2.c * guideLen, q.u2.s * guideLen, 1, !showAnswer);
+        setLabel("label-f2-guide", g2pos, "แนว F₂ / dir F₂", 8, -8, !showAnswer);
+
+        const g3pos = setLine("line-f3-guide", q.u3.c * guideLen, q.u3.s * guideLen, 1, !showAnswer);
+        setLabel("label-f3-guide", g3pos, "แนว F₃ / dir F₃", 8, -8, !showAnswer);
+
+        const f2pos = setLine("line-f2", q.f2x, q.f2y, scale, showAnswer);
+        setLabel("label-f2", f2pos, "F₂ = " + f2(q.m2) + " N", 8, -8, showAnswer);
+
+        const f3pos = setLine("line-f3", q.f3x, q.f3y, scale, showAnswer);
+        setLabel("label-f3", f3pos, "F₃ = " + f2(q.m3) + " N", 8, 18, showAnswer);
+    }
+
+    function tolerance(ans) {
+        return Math.max(0.05, Math.abs(ans) * 0.02);
+    }
+
+    function checkAnswer() {
+        const q = questions[currentIndex];
+        const f2Val = parseFloat(document.getElementById("ans-f2").value);
+        const f3Val = parseFloat(document.getElementById("ans-f3").value);
+        const feedback = document.getElementById("feedback");
+
+        if (isNaN(f2Val) || isNaN(f3Val)) {
+            feedback.className = "feedback no";
+            feedback.innerHTML = "⚠️ กรุณากรอกทั้ง F₂ และ F₃ ก่อนตรวจคำตอบ";
+            return;
+        }
+
+        q.studentF2 = f2Val;
+        q.studentF3 = f3Val;
+        checkedOnce = true;
+
+        const f2Ok = Math.abs(f2Val - q.m2) <= tolerance(q.m2);
+        const f3Ok = Math.abs(f3Val - q.m3) <= tolerance(q.m3);
+        q.wasCorrect = f2Ok && f3Ok;
+
+        document.getElementById("ans-f2").style.background = f2Ok ? "#dcfce7" : "#fee2e2";
+        document.getElementById("ans-f2").style.borderColor = f2Ok ? "#10b981" : "#ef4444";
+        document.getElementById("ans-f3").style.background = f3Ok ? "#dcfce7" : "#fee2e2";
+        document.getElementById("ans-f3").style.borderColor = f3Ok ? "#10b981" : "#ef4444";
+
+        if (q.wasCorrect) {
+            feedback.className = "feedback ok";
+            feedback.innerHTML = "✅ ถูกต้อง! ระบบจะแสดงเฉลยวิธีทำให้ตรวจทาน";
+            revealSolution();
+        } else {
+            feedback.className = "feedback no";
+            feedback.innerHTML =
+                "❌ ยังไม่ตรง ลองแก้คำตอบอีกครั้ง หรือกด “เฉลย” หลังจากลองคิดแล้ว<br>" +
+                "Not correct yet. Try again, or reveal the solution after attempting.";
+            document.getElementById("btn-reveal").disabled = false;
+        }
+    }
+
+    function revealSolution() {
+        const q = questions[currentIndex];
+        revealed = true;
+
+        document.getElementById("btn-reveal").disabled = true;
+        document.getElementById("btn-check").disabled = true;
+        document.getElementById("btn-next").disabled = currentIndex >= 9;
+        document.getElementById("challenge-msg").style.display = "none";
+        document.getElementById("steps-area").style.display = "grid";
+
+        const b1 = -q.f1x;
+        const b2 = -q.f1y;
+
+        const a = q.u2.c;
+        const b = q.u3.c;
+        const c = q.u2.s;
+        const d = q.u3.s;
+        const D = a*d - b*c;
+
+        const xSolve = (b1*d - b*b2) / D;
+        const ySolve = (a*b2 - b1*c) / D;
+
+        document.getElementById("step-components").innerHTML =
+            "<b>F₁ ที่ทราบ / Known F₁</b><br>" +
+            "F₁ = " + f2(q.f1Mag) + " N ที่มุม " + f2(q.f1Angle) + "°<br>" +
+            "F₁ₓ = <span class='hl-red'>" + f2(q.f1x) + " N</span><br>" +
+            "F₁ᵧ = <span class='hl-blue'>" + f2(q.f1y) + " N</span><br><br>" +
+            "<b>F₂ = x</b> ที่มุม " + q.a2 + "° → " +
+            "F₂ₓ = x(" + q.u2.cText + "), F₂ᵧ = x(" + q.u2.sText + ")<br>" +
+            "<b>F₃ = y</b> ที่มุม " + q.a3 + "° → " +
+            "F₃ₓ = y(" + q.u3.cText + "), F₃ᵧ = y(" + q.u3.sText + ")";
+
+        document.getElementById("step-equations").innerHTML =
+            "<b>ΣFₓ = 0</b><br>" +
+            "(" + f2(q.f1x) + ") + x(" + q.u2.cText + ") + y(" + q.u3.cText + ") = 0<br>" +
+            f2(a) + "x + " + f2(b) + "y = " + f2(b1) + "<br><br>" +
+            "<b>ΣFᵧ = 0</b><br>" +
+            "(" + f2(q.f1y) + ") + x(" + q.u2.sText + ") + y(" + q.u3.sText + ") = 0<br>" +
+            f2(c) + "x + " + f2(d) + "y = " + f2(b2);
+
+        const studentText = checkedOnce && q.studentF2 !== null
+            ? "<br><br>คำตอบที่กรอก / Your input:<br>F₂ = " + f2(q.studentF2) + " N, F₃ = " + f2(q.studentF3) + " N"
+            : "";
+
+        document.getElementById("step-solve").innerHTML =
+            "แก้ระบบสมการ 2 ตัวแปร / Solve the 2×2 system<br>" +
+            "x = F₂ = <span class='hl-blue'>" + f2(xSolve) + " N</span><br>" +
+            "y = F₃ = <span class='hl-green'>" + f2(ySolve) + " N</span><br>" +
+            "<div class='result'>" +
+            "คำตอบ / Answer:<br>" +
+            "F₂ = " + f2(q.m2) + " N ที่มุม " + q.a2 + "°<br>" +
+            "F₃ = " + f2(q.m3) + " N ที่มุม " + q.a3 + "°" +
+            studentText +
+            "</div>";
+
+        drawQuestion(true);
+        if (currentIndex === 9) renderSummary();
+    }
+
+    function nextQuestion() {
+        if (currentIndex < 9) {
+            currentIndex++;
+            showQuestion();
+        }
+    }
+
+    function renderSummary() {
+        const box = document.getElementById("summary-list");
+        const grid = document.getElementById("summary-grid");
+        grid.innerHTML = "";
+
+        questions.forEach(function(q) {
+            const item = document.createElement("div");
+            item.className = "summary-item";
+            const attempt = q.studentF2 === null ? "ไม่ได้กรอก / no input" : "ตอบ: F₂=" + f2(q.studentF2) + ", F₃=" + f2(q.studentF3);
+            item.innerHTML =
+                "<b>ข้อ " + q.no + "</b><br>" +
+                "F₁: " + f2(q.f1Mag) + " N @ " + f2(q.f1Angle) + "°<br>" +
+                "เฉลย: F₂ = " + f2(q.m2) + " N @ " + q.a2 + "°<br>" +
+                "เฉลย: F₃ = " + f2(q.m3) + " N @ " + q.a3 + "°<br>" +
+                attempt;
+            grid.appendChild(item);
+        });
+
+        box.style.display = "block";
+    }
+
+    newSet();
+</script>
+</body>
+</html>
