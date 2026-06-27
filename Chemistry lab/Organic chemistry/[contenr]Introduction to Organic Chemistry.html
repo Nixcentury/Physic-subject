@@ -1,0 +1,643 @@
+```html
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CONTENT_Organic_Chemistry_Intro.html</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/smiles-drawer@2.4.1/dist/smiles-drawer.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+            line-height: 1.7;
+        }
+        .page-container {
+            max-width: 980px;
+            margin: 2rem auto;
+            background: white;
+            padding: 3rem 4rem;
+            border-radius: 18px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+        .section-header {
+            border-bottom: 3px solid #16a34a;
+            padding-bottom: 0.5rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1.25rem;
+            color: #15803d;
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+        .topic-title {
+            color: #111827;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 1.75rem;
+            margin-bottom: 0.85rem;
+            border-left: 4px solid #f59e0b;
+            padding-left: 0.75rem;
+        }
+        .lang-th {
+            margin-bottom: 0.45rem;
+        }
+        .lang-en {
+            color: #4b5563;
+            font-size: 0.96em;
+            border-left: 3px solid #d1d5db;
+            padding-left: 1rem;
+            margin-bottom: 1rem;
+            background-color: #f9fafb;
+            padding-top: 0.45rem;
+            padding-bottom: 0.45rem;
+            border-radius: 0 8px 8px 0;
+        }
+        .highlight-box {
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            border: 1px solid;
+        }
+        .math-box {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 0.85rem 0;
+            text-align: center;
+            font-size: 1.05rem;
+            overflow-x: auto;
+        }
+        .image-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            margin: 1rem 0;
+        }
+        .image-card-header {
+            background: #ecfdf5;
+            color: #15803d;
+            font-weight: 700;
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid #bbf7d0;
+        }
+        .formula-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+        .compound-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 1rem;
+        }
+        .compound-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 1rem;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.04);
+        }
+        .molecule-canvas {
+            width: 100%;
+            max-width: 280px;
+            height: 180px;
+            display: block;
+            margin: 0.5rem auto;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+        }
+        .mini-label {
+            display: inline-block;
+            background: #ecfdf5;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+            border-radius: 999px;
+            padding: 0.15rem 0.65rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .bond-box {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 1rem;
+            text-align: center;
+        }
+        .bond-symbol {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #15803d;
+        }
+        @media (max-width: 768px) {
+            .page-container {
+                margin: 0;
+                border-radius: 0;
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-container">
+
+        <div class="text-center mb-10">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                เคมีอินทรีย์เบื้องต้น
+            </h1>
+            <div class="text-2xl text-green-700 font-semibold">
+                Introduction to Organic Chemistry
+            </div>
+            <p class="text-gray-600 mt-3">
+                เห็นสารอินทรีย์รอบตัว แยกจากสารอนินทรีย์ และอ่านโครงสร้างแบบมุมเบื้องต้น<br>
+                See organic compounds around us, compare them with inorganic compounds, and read basic skeletal structures
+            </p>
+        </div>
+
+        <!-- Part 1 -->
+        <h2 class="section-header">
+            Part 1: เคมีอินทรีย์อยู่รอบตัวเรา
+            <span class="font-normal text-xl text-gray-500">(Organic Chemistry Around Us)</span>
+        </h2>
+
+        <div class="lang-th">
+            🇹🇭 เคมีอินทรีย์ไม่ได้อยู่แค่ในห้องทดลอง แต่เกี่ยวข้องกับของรอบตัวเรา เช่น แก๊สหุงต้ม แอลกอฮอล์ น้ำส้มสายชู น้ำยาล้างเล็บ พลาสติก ยา กลิ่นอาหาร และกลิ่นผลไม้
+        </div>
+        <div class="lang-en">
+            🇬🇧 Organic chemistry is not only found in laboratories. It is related to everyday substances such as cooking gas, alcohol, vinegar, nail polish remover, plastics, medicines, food smells, and fruit smells.
+        </div>
+
+        <div class="highlight-box bg-green-50 border-green-200">
+            <div class="lang-th font-semibold text-green-900">
+                🧠 จำสั้น ๆ: สารอินทรีย์มักมีคาร์บอนเป็นโครงหลัก และมักมีพันธะ C-H
+            </div>
+            <div class="lang-en bg-transparent border-l-2 border-green-300 text-green-800">
+                🧠 Short memory: Organic compounds are usually carbon-based and often contain C-H bonds.
+            </div>
+        </div>
+
+        <div class="compound-grid mt-4">
+            <div class="compound-card">
+                <div class="text-3xl mb-2">🔥</div>
+                <div class="font-bold text-green-800">แก๊สหุงต้ม / LPG</div>
+                <div class="text-sm text-gray-600">Propane, Butane</div>
+                <div class="math-box">$$C_3H_8,\ C_4H_{10}$$</div>
+            </div>
+
+            <div class="compound-card">
+                <div class="text-3xl mb-2">🧴</div>
+                <div class="font-bold text-green-800">แอลกอฮอล์ / Alcohol</div>
+                <div class="text-sm text-gray-600">Ethanol</div>
+                <div class="math-box">$$C_2H_5OH$$</div>
+            </div>
+
+            <div class="compound-card">
+                <div class="text-3xl mb-2">🍶</div>
+                <div class="font-bold text-green-800">น้ำส้มสายชู / Vinegar</div>
+                <div class="text-sm text-gray-600">Acetic acid</div>
+                <div class="math-box">$$CH_3COOH$$</div>
+            </div>
+
+            <div class="compound-card">
+                <div class="text-3xl mb-2">💅</div>
+                <div class="font-bold text-green-800">น้ำยาล้างเล็บ / Nail polish remover</div>
+                <div class="text-sm text-gray-600">Acetone</div>
+                <div class="math-box">$$C_3H_6O$$</div>
+            </div>
+
+            <div class="compound-card">
+                <div class="text-3xl mb-2">🛍️</div>
+                <div class="font-bold text-green-800">ถุงพลาสติก / Plastic bag</div>
+                <div class="text-sm text-gray-600">Polyethylene</div>
+                <div class="math-box">$$\left(C_2H_4\right)_n$$</div>
+            </div>
+
+            <div class="compound-card">
+                <div class="text-3xl mb-2">💊</div>
+                <div class="font-bold text-green-800">ยาแก้ปวด / Pain reliever</div>
+                <div class="text-sm text-gray-600">Paracetamol</div>
+                <div class="math-box">$$C_8H_9NO_2$$</div>
+            </div>
+        </div>
+
+        <div class="highlight-box bg-yellow-50 border-yellow-300">
+            <div class="lang-th font-semibold text-yellow-900">
+                🔗 อ่านเพิ่มเติม: สารอินทรีย์กับกลิ่นในชีวิตประจำวัน
+            </div>
+            <div class="lang-en bg-transparent border-l-2 border-yellow-300 text-yellow-800">
+                🔗 Further reading: Organic compounds and everyday smells
+            </div>
+
+            <div class="lang-th">
+                🇹🇭 สำหรับนักเรียนที่สนใจ สามารถเปิดดูตารางตัวอย่างสารอินทรีย์ที่เกี่ยวข้องกับกลิ่นต่าง ๆ ได้จากลิงก์นี้
+            </div>
+            <div class="lang-en">
+                🇬🇧 Interested students can explore a table of organic compounds related to different smells from the link below.
+            </div>
+
+            <div class="mt-3">
+                <a href="https://jameskennedymonash.wordpress.com/wp-content/uploads/2014/01/table-of-organic-compounds-and-their-smells-w12.pdf"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-5 py-2 rounded-lg shadow">
+                    เปิด PDF: Organic Compounds and Their Smells
+                </a>
+            </div>
+        </div>
+
+        <!-- Part 2 -->
+        <h2 class="section-header">
+            Part 2: อินทรีย์ vs อนินทรีย์
+            <span class="font-normal text-xl text-gray-500">(Organic vs Inorganic Compounds)</span>
+        </h2>
+
+        <div class="lang-th">
+            🇹🇭 สารประกอบอินทรีย์และอนินทรีย์อาจดูคล้ายกันเพราะเป็น “สารเคมี” เหมือนกัน แต่โดยภาพรวมมีโครงสร้าง พันธะ และสมบัติบางอย่างต่างกัน
+        </div>
+        <div class="lang-en">
+            🇬🇧 Organic and inorganic compounds may both be chemicals, but they generally differ in structure, bonding, and some physical and chemical properties.
+        </div>
+
+        <div class="image-card">
+            <div class="image-card-header">อินทรีย์ vs อนินทรีย์ / Organic vs Inorganic Compounds</div>
+            <div class="p-4 text-center">
+                <img src="https://chemistrytalk.org/wp-content/uploads/2023/03/TC_603912-difference-between-organic-and-inorganic-5b1168493128340036a3aa4b.png"
+                     alt="Difference between organic and inorganic compounds"
+                     class="mx-auto rounded-lg max-w-full max-h-[560px] object-contain">
+                <div class="text-xs text-gray-500 mt-2">
+                    Image source: Chemistry Talk
+                </div>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto mt-4">
+            <table class="w-full border-collapse text-sm">
+                <thead>
+                    <tr class="bg-green-100 text-green-900">
+                        <th class="border border-green-200 p-3 text-left">จุดเปรียบเทียบ<br>Comparison</th>
+                        <th class="border border-green-200 p-3 text-left">สารอินทรีย์<br>Organic Compounds</th>
+                        <th class="border border-green-200 p-3 text-left">สารอนินทรีย์<br>Inorganic Compounds</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="border border-gray-200 p-3 font-semibold">โครงสร้างหลัก<br>Main structure</td>
+                        <td class="border border-gray-200 p-3">มักมี C เป็นโครงหลัก และมักมี C-H bond<br>Usually carbon-based and often contains C-H bonds</td>
+                        <td class="border border-gray-200 p-3">มักไม่มี C-H bond เป็นแกนหลัก<br>Usually does not have C-H bonds as the main structure</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-200 p-3 font-semibold">พันธะเด่น<br>Common bonding</td>
+                        <td class="border border-gray-200 p-3">มักเป็นพันธะโคเวเลนต์<br>Often covalent</td>
+                        <td class="border border-gray-200 p-3">หลายชนิดเป็นไอออนิก เช่น เกลือ<br>Many are ionic, such as salts</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-200 p-3 font-semibold">การเผาไหม้<br>Burning</td>
+                        <td class="border border-gray-200 p-3">หลายชนิดติดไฟได้ และอาจเกิดเขม่า<br>Many are combustible and may produce soot</td>
+                        <td class="border border-gray-200 p-3">หลายชนิดไม่ติดไฟง่าย<br>Many do not burn easily</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-200 p-3 font-semibold">จุดหลอมเหลว<br>Melting point</td>
+                        <td class="border border-gray-200 p-3">หลายชนิดมีจุดหลอมเหลวไม่สูงมาก<br>Many have relatively lower melting points</td>
+                        <td class="border border-gray-200 p-3">สารไอออนิกหลายชนิดมีจุดหลอมเหลวสูงมาก<br>Many ionic compounds have very high melting points</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-gray-200 p-3 font-semibold">ตัวอย่าง<br>Examples</td>
+                        <td class="border border-gray-200 p-3">เอทานอล, แอซีโตน, กรดแอซีติก, พลาสติก<br>Ethanol, acetone, acetic acid, plastics</td>
+                        <td class="border border-gray-200 p-3">NaCl, KNO₃, KMnO₄, HCl, H₂SO₄<br>NaCl, KNO₃, KMnO₄, HCl, H₂SO₄</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="highlight-box bg-red-50 border-red-200">
+            <div class="lang-th font-semibold text-red-900">
+                🚨 จุดดัก: มี C ไม่ได้แปลว่าเป็นสารอินทรีย์เสมอ เช่น \(CO_2\), \(CO\), \(CaCO_3\), \(Na_2CO_3\) มักจัดเป็นสารอนินทรีย์
+            </div>
+            <div class="lang-en bg-transparent border-l-2 border-red-300 text-red-800">
+                🚨 Trap: Having carbon does not always mean a compound is organic. For example, \(CO_2\), \(CO\), \(CaCO_3\), and \(Na_2CO_3\) are usually classified as inorganic.
+            </div>
+        </div>
+
+        <!-- Part 3 -->
+        <h2 class="section-header">
+            Part 3: ตัวอย่างสารอินทรีย์และการอ่านโครงสร้างแบบมุม
+            <span class="font-normal text-xl text-gray-500">(Examples and Reading Skeletal Structures)</span>
+        </h2>
+
+        <div class="lang-th">
+            🇹🇭 ในเคมีอินทรีย์ เรามักเขียนโครงสร้างแบบมุม หรือ skeletal structure เพื่อให้ดูง่ายขึ้น โดยจะไม่เขียน C และ H ทุกตัวออกมาตรง ๆ
+        </div>
+        <div class="lang-en">
+            🇬🇧 In organic chemistry, skeletal structures are commonly used to make structures easier to read. Carbon and many hydrogen atoms are not written explicitly.
+        </div>
+
+        <div class="highlight-box bg-blue-50 border-blue-200">
+            <div class="font-bold text-blue-900 mb-2">
+                📌 วิธีอ่านโครงสร้างแบบมุม / How to Read Skeletal Structures
+            </div>
+
+            <div class="lang-th">
+                1) ปลายเส้นและมุมทุกจุด หมายถึงคาร์บอน \(C\)
+            </div>
+            <div class="lang-en">
+                1) Every line end and corner represents a carbon atom \(C\).
+            </div>
+
+            <div class="lang-th">
+                2) ไฮโดรเจนที่ติดกับคาร์บอนมักไม่เขียน ให้เติมเองจนคาร์บอนครบ 4 พันธะ
+            </div>
+            <div class="lang-en">
+                2) Hydrogens attached to carbon are usually omitted. Add them mentally until each carbon has 4 bonds.
+            </div>
+
+            <div class="lang-th">
+                3) ธาตุอื่น เช่น \(O\), \(N\), \(Cl\), \(Br\) ต้องเขียนให้เห็น
+            </div>
+            <div class="lang-en">
+                3) Other atoms such as \(O\), \(N\), \(Cl\), and \(Br\) are written explicitly.
+            </div>
+
+            <div class="lang-th">
+                4) พันธะคู่และพันธะสามต้องนับเป็น 2 และ 3 พันธะ
+            </div>
+            <div class="lang-en">
+                4) Double and triple bonds count as 2 and 3 bonds.
+            </div>
+        </div>
+
+        <div class="compound-grid mt-4">
+
+            <div class="compound-card">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="font-bold text-green-800">Propane</div>
+                    <span class="mini-label">LPG</span>
+                </div>
+                <canvas class="molecule-canvas" width="280" height="180" data-smiles="CCC"></canvas>
+                <div class="lang-th text-sm">
+                    🇹🇭 เส้นโซ่คาร์บอน 3 ตัว ปลายเส้นและมุมคือ C ส่วน H ถูกซ่อนไว้
+                </div>
+                <div class="lang-en text-sm">
+                    🇬🇧 A chain of 3 carbons. Line ends and corners are C atoms; H atoms are hidden.
+                </div>
+                <div class="math-box">SMILES: <code>CCC</code></div>
+            </div>
+
+            <div class="compound-card">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="font-bold text-green-800">Ethanol</div>
+                    <span class="mini-label">Alcohol</span>
+                </div>
+                <canvas class="molecule-canvas" width="280" height="180" data-smiles="CCO"></canvas>
+                <div class="lang-th text-sm">
+                    🇹🇭 มีคาร์บอน 2 ตัว และมี O เขียนให้เห็นชัดเจน
+                </div>
+                <div class="lang-en text-sm">
+                    🇬🇧 It has 2 carbon atoms and an oxygen atom written explicitly.
+                </div>
+                <div class="math-box">SMILES: <code>CCO</code></div>
+            </div>
+
+            <div class="compound-card">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="font-bold text-green-800">Acetic Acid</div>
+                    <span class="mini-label">Vinegar</span>
+                </div>
+                <canvas class="molecule-canvas" width="280" height="180" data-smiles="CC(=O)O"></canvas>
+                <div class="lang-th text-sm">
+                    🇹🇭 มีคาร์บอน 2 ตัว เห็นพันธะคู่ \(C=O\) และ O อีกตัว
+                </div>
+                <div class="lang-en text-sm">
+                    🇬🇧 It has 2 carbon atoms, a \(C=O\) double bond, and another oxygen atom.
+                </div>
+                <div class="math-box">SMILES: <code>CC(=O)O</code></div>
+            </div>
+
+            <div class="compound-card">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="font-bold text-green-800">Acetone</div>
+                    <span class="mini-label">Remover</span>
+                </div>
+                <canvas class="molecule-canvas" width="280" height="180" data-smiles="CC(=O)C"></canvas>
+                <div class="lang-th text-sm">
+                    🇹🇭 มีคาร์บอน 3 ตัว โดยคาร์บอนตรงกลางมีพันธะคู่กับ O
+                </div>
+                <div class="lang-en text-sm">
+                    🇬🇧 It has 3 carbon atoms. The middle carbon has a double bond to oxygen.
+                </div>
+                <div class="math-box">SMILES: <code>CC(=O)C</code></div>
+            </div>
+
+        </div>
+
+        <div class="highlight-box bg-yellow-50 border-yellow-300">
+            <div class="lang-th font-semibold text-yellow-900">
+                🧠 จำสั้น ๆ: เวลาเห็นเส้นซิกแซกในเคมีอินทรีย์ ให้คิดว่า “มุมคือ C และ H บน C ถูกซ่อนไว้”
+            </div>
+            <div class="lang-en bg-transparent border-l-2 border-yellow-300 text-yellow-800">
+                🧠 Short memory: When you see zigzag lines in organic chemistry, remember: “corners are C atoms, and H atoms on carbon are hidden.”
+            </div>
+        </div>
+
+        <!-- Part 4 -->
+        <h2 class="section-header">
+            Part 4: จำนวนแขนของธาตุและสรุปจำสั้น
+            <span class="font-normal text-xl text-gray-500">(Bonding Rules and Short Summary)</span>
+        </h2>
+
+        <div class="lang-th">
+            🇹🇭 ก่อนวาดหรืออ่านโครงสร้างอินทรีย์ ควรจำจำนวนพันธะที่ธาตุสำคัญมักสร้างได้ เพราะจะช่วยตรวจคำตอบได้เร็วมาก
+        </div>
+        <div class="lang-en">
+            🇬🇧 Before drawing or reading organic structures, it is useful to remember the typical number of bonds made by common atoms.
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mt-4">
+            <div class="bond-box">
+                <div class="bond-symbol">C</div>
+                <div class="font-bold">4 แขน</div>
+                <div class="text-sm text-gray-600">4 bonds</div>
+            </div>
+
+            <div class="bond-box">
+                <div class="bond-symbol">H</div>
+                <div class="font-bold">1 แขน</div>
+                <div class="text-sm text-gray-600">1 bond</div>
+            </div>
+
+            <div class="bond-box">
+                <div class="bond-symbol">O</div>
+                <div class="font-bold">2 แขน</div>
+                <div class="text-sm text-gray-600">2 bonds</div>
+            </div>
+
+            <div class="bond-box">
+                <div class="bond-symbol">N</div>
+                <div class="font-bold">3 แขน</div>
+                <div class="text-sm text-gray-600">3 bonds</div>
+            </div>
+
+            <div class="bond-box">
+                <div class="bond-symbol">X</div>
+                <div class="font-bold">1 แขน</div>
+                <div class="text-sm text-gray-600">Halogen: Cl, Br, I</div>
+            </div>
+        </div>
+
+        <div class="highlight-box bg-indigo-50 border-indigo-200">
+            <div class="font-bold text-indigo-900 mb-2">
+                📌 สรุปจำสั้น / Short Summary
+            </div>
+
+            <div class="lang-th">
+                1) สารอินทรีย์อยู่รอบตัวเรา เช่น เชื้อเพลิง แอลกอฮอล์ น้ำส้มสายชู พลาสติก กลิ่น และยา
+            </div>
+            <div class="lang-en">
+                1) Organic compounds are around us, such as fuels, alcohols, vinegar, plastics, smells, and medicines.
+            </div>
+
+            <div class="lang-th">
+                2) สารอินทรีย์มักมีคาร์บอนเป็นโครงหลัก และมักมีพันธะ C-H
+            </div>
+            <div class="lang-en">
+                2) Organic compounds are usually carbon-based and often contain C-H bonds.
+            </div>
+
+            <div class="lang-th">
+                3) สารอนินทรีย์หลายชนิดเป็นเกลือ แร่ กรดแก่ หรือสารไอออนิกที่มีจุดหลอมเหลวสูง
+            </div>
+            <div class="lang-en">
+                3) Many inorganic compounds are salts, minerals, strong acids, or ionic compounds with high melting points.
+            </div>
+
+            <div class="lang-th">
+                4) ในโครงสร้างแบบมุม ปลายเส้นและมุมคือ C ส่วน H ที่ติดกับ C มักถูกซ่อนไว้
+            </div>
+            <div class="lang-en">
+                4) In skeletal structures, line ends and corners are C atoms, while H atoms attached to carbon are usually hidden.
+            </div>
+
+            <div class="lang-th">
+                5) ตรวจโครงสร้างง่ายที่สุด: C ทุกตัวต้องครบ 4 แขน
+            </div>
+            <div class="lang-en">
+                5) The easiest structure check: every carbon should have 4 bonds.
+            </div>
+        </div>
+
+        <div class="highlight-box bg-red-50 border-red-200">
+            <div class="lang-th font-bold text-red-900 mb-2">
+                🚨 จุดดักข้อสอบ
+            </div>
+            <div class="lang-en bg-transparent border-l-2 border-red-300 text-red-800">
+                🚨 Exam Traps
+            </div>
+
+            <div class="lang-th">
+                1) มี C ไม่ได้แปลว่าเป็นอินทรีย์เสมอ ต้องดูว่าเป็นสารกลุ่มใดและมี C-H เป็นโครงหลักหรือไม่
+            </div>
+            <div class="lang-en">
+                1) Having carbon does not always mean a compound is organic. Check the compound type and whether C-H bonds are part of the main structure.
+            </div>
+
+            <div class="lang-th">
+                2) การเกิดเขม่าเป็น “เบาะแส” ของสารอินทรีย์หลายชนิด แต่ไม่ใช่กฎตายตัวของทุกสาร
+            </div>
+            <div class="lang-en">
+                2) Producing soot is a clue for many organic compounds, but it is not an absolute rule for every compound.
+            </div>
+
+            <div class="lang-th">
+                3) สารไอออนิกหลายชนิดมีจุดหลอมเหลวสูง เพราะแรงยึดเหนี่ยวในโครงผลึกไอออนิกแข็งแรง
+            </div>
+            <div class="lang-en">
+                3) Many ionic compounds have high melting points because the attractions in ionic crystal lattices are strong.
+            </div>
+
+            <div class="lang-th">
+                4) โครงสร้างแบบมุมไม่เขียน H บน C แต่ไม่ได้แปลว่าไม่มี H
+            </div>
+            <div class="lang-en">
+                4) Skeletal structures do not show H atoms on carbon, but that does not mean the H atoms are absent.
+            </div>
+        </div>
+
+        <div class="highlight-box bg-green-50 border-green-200">
+            <div class="lang-th font-bold text-green-900 text-lg">
+                ✅ สรุปปิดบท
+            </div>
+            <div class="lang-en bg-transparent border-l-2 border-green-300 text-green-800">
+                ✅ Final Lesson Summary
+            </div>
+
+            <div class="lang-th text-gray-800 mt-2">
+                🇹🇭 เคมีอินทรีย์คือเคมีของสารที่มีคาร์บอนเป็นโครงหลัก พบได้รอบตัวเรา และเริ่มอ่านได้จากโครงสร้างแบบมุม โดยจำว่า “มุมคือ C, H บน C ถูกซ่อนไว้, และ C ต้องครบ 4 แขน”
+            </div>
+            <div class="lang-en bg-transparent border-l-2 border-green-300 text-green-800">
+                🇬🇧 Organic chemistry is the chemistry of carbon-based compounds found all around us. We can begin reading organic structures by remembering: “corners are C atoms, H atoms on carbon are hidden, and carbon should have 4 bonds.”
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function drawSmilesStructures() {
+            const canvases = document.querySelectorAll('canvas[data-smiles]');
+
+            if (typeof SmilesDrawer === 'undefined') {
+                canvases.forEach(canvas => {
+                    const smiles = canvas.getAttribute('data-smiles');
+                    const fallback = document.createElement('div');
+                    fallback.className = 'math-box text-sm';
+                    fallback.innerHTML = 'SMILES: <code>' + smiles + '</code><br><span class="text-red-600">SmilesDrawer library did not load.</span>';
+                    canvas.replaceWith(fallback);
+                });
+                return;
+            }
+
+            canvases.forEach(canvas => {
+                const smiles = canvas.getAttribute('data-smiles');
+                const drawer = new SmilesDrawer.Drawer({
+                    width: 280,
+                    height: 180
+                });
+
+                SmilesDrawer.parse(
+                    smiles,
+                    function(tree) {
+                        drawer.draw(tree, canvas, 'light', false);
+                    },
+                    function(error) {
+                        const fallback = document.createElement('div');
+                        fallback.className = 'math-box text-sm';
+                        fallback.innerHTML = 'SMILES: <code>' + smiles + '</code><br><span class="text-red-600">Cannot draw this structure.</span>';
+                        canvas.replaceWith(fallback);
+                    }
+                );
+            });
+        }
+
+        window.addEventListener('load', drawSmilesStructures);
+    </script>
+</body>
+</html>
+```

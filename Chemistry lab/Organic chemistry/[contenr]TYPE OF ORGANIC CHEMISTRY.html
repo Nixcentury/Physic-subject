@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CONTENT_Organic_Classification_and_IUPAC_Intro.html</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/smiles-drawer@2.4.1/dist/smiles-drawer.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+            line-height: 1.7;
+        }
+
+        .page-container {
+            max-width: 1080px;
+            margin: 2rem auto;
+            background: white;
+            padding: 3rem 4rem;
+            border-radius: 18px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+
+        .section-header {
+            border-bottom: 3px solid #0f766e;
+            padding-bottom: 0.5rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1.25rem;
+            color: #0f766e;
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .topic-title {
+            color: #111827;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 1.75rem;
+            margin-bottom: 0.85rem;
+            border-left: 4px solid #f59e0b;
+            padding-left: 0.75rem;
+        }
+
+        .lang-th {
+            margin-bottom: 0.45rem;
+        }
+
+        .lang-en {
+            color: #4b5563;
+            font-size: 0.96em;
+            border-left: 3px solid #d1d5db;
+            padding-left: 1rem;
+            margin-bottom: 1rem;
+            background-color: #f9fafb;
+            padding-top: 0.45rem;
+            padding-bottom: 0.45rem;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .highlight-box {
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            border: 1px solid;
+        }
+
+        .math-box {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 0.8rem;
+            margin: 0.75rem 0;
+            text-align: center;
+            font-size: 1.02rem;
+            overflow-x: auto;
+        }
+
+        .formula-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 1rem;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .info-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 1rem;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.04);
+        }
+
+        .info-card:hover {
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            transform: translateY(-1px);
+            transition: 0.2s;
+        }
+
+        .card-title {
+            font-weight: 700;
+            color: #0f766e;
+            font-size: 1.08rem;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #ccfbf1;
+            color: #0f766e;
+            border: 1px solid #99f6e4;
+            border-radius: 999px;
+            padding: 0.15rem 0.65rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .family-badge {
+            display: inline-block;
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+            border-radius: 999px;
+            padding: 0.15rem 0.65rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            margin-top: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.94rem;
+        }
+
+        th {
+            background: #ccfbf1;
+            color: #134e4a;
+            font-weight: 700;
+            border: 1px solid #99f6e4;
+            padding: 0.75rem;
+            text-align: left;
+        }
+
+        td {
+            border: 1px solid #e5e7eb;
+            padding: 0.7rem;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) td {
+            background: #f9fafb;
+        }
+
+        .root-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+            gap: 0.7rem;
+            margin-top: 1rem;
+        }
+
+        .root-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 0.7rem;
+            background: white;
+            text-align: center;
+        }
+
+        .root-number {
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .root-name {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #0f766e;
+        }
+
+        .example-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 1rem;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.04);
+        }
+
+        .example-title {
+            font-weight: 700;
+            color: #0f766e;
+            font-size: 1.08rem;
+        }
+
+        .name-break {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 0.75rem;
+            margin: 0.65rem 0;
+        }
+
+        .molecule-canvas {
+            width: 100%;
+            max-width: 300px;
+            height: 190px;
+            display: block;
+            margin: 0.5rem auto;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+        }
+
+        code {
+            background: #f3f4f6;
+            padding: 0.1rem 0.35rem;
+            border-radius: 5px;
+            color: #7c2d12;
+        }
+
+        @media (max-width: 768px) {
+            .page-container {
+                margin: 0;
+                border-radius: 0;
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-container">
+
+        <div class="text-center mb-10">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                การจำแนกและการอ่านชื่อสารอินทรีย์เบื้องต้น
+            </h1>
+            <div class="text-2xl text-teal-700 font-semibold">
+                Organic Classification and Basic IUPAC Naming
+            </div>
+            <p class="text-gray-600 mt-3">
+                เป้าหมายหลัก: แยกประเภทสารได้ อ่านชื่อ IUPAC เป็น และจับจำนวนคาร์บอนจากชื่อได้<br>
+                Main goal: classify organic compounds, read IUPAC names, and identify carbon numbers from names
+            </p>
+        </div>
+
+        <!-- Part 1 -->
+        <h2 class="section-header">
+            Part 1: แผนที่การจำแนกสารอินทรีย์
+            <span class="font-normal text-xl text-gray-500">(Map of Organic Classification)</span>
+        </h2>
+
+        <div class="lang-th">
+            🇹🇭 เวลาเจอสารอินทรีย์ 1 ตัว เราไม่จำเป็นต้องท่องชื่อก่อนเสมอ ให้เริ่มจากการดู “ลักษณะสำคัญ” ของโครงสร้าง เช่น มีพันธะคู่ไหม เป็นวงไหม หรือมีหมู่ฟังก์ชันอะไร
+        </div>
+        <div class="lang-en">
+            🇬🇧 When we see an organic compound, we do not always need to memorize its name first. We can start by looking at key structural features, such as double bonds, rings, or functional groups.
+        </div>
+
+        <div class="highlight-box bg-teal-50 border-teal-200">
+            <div class="font-bold text-teal-900 mb-2">
+                🧠 ดูสารอินทรีย์ให้เป็นระบบ / Read organic compounds systematically
+            </div>
+            <div class="math-box bg-white">
+                $$\text{ดูพันธะ} \Rightarrow \text{ดูโครงคาร์บอน} \Rightarrow \text{ดูหมู่ฟังก์ชัน} \Rightarrow \text{อ่านชื่อ IUPAC}$$
+                $$\text{Bonding} \Rightarrow \text{Carbon skeleton} \Rightarrow \text{Functional group} \Rightarrow \text{IUPAC name}$$
+            </div>
+        </div>
+
+        <h3 class="topic-title">1.1 จำแนกตามความอิ่มตัว <span class="text-gray-500 font-normal">(Classification by Saturation)</span></h3>
+
+        <div class="card-grid">
+            <div class="info-card">
+                <div class="flex justify-between items-start gap-2">
+                    <div class="card-title">Saturated</div>
+                    <span class="badge">อิ่มตัว</span>
+                </div>
+                <div class="math-box">$$C-C$$</div>
+                <div class="lang-th text-sm">
+                    🇹🇭 มีแต่พันธะเดี่ยวระหว่าง C กับ C เช่น แอลเคน มักเกิดปฏิกิริยาแทนที่
+                </div>
+                <div class="lang-en text-sm">
+                    🇬🇧 Contains only single C-C bonds, such as alkanes. Often undergoes substitution.
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="flex justify-between items-start gap-2">
+                    <div class="card-title">Unsaturated</div>
+                    <span class="badge">ไม่อิ่มตัว</span>
+                </div>
+                <div class="math-box">$$C=C \quad \text{or} \quad C \equiv C$$</div>
+                <div class="lang-th text-sm">
+                    🇹🇭 มีพันธะคู่หรือพันธะสาม เช่น แอลคีน แอลไคน์ มักเกิดปฏิกิริยาเติม
+                </div>
+                <div class="lang-en text-sm">
+                    🇬🇧 Contains double or triple bonds, such as alkenes and alkynes. Often undergoes addition.
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="flex justify-between items-start gap-2">
+                    <div class="card-title">Aromatic</div>
+                    <span class="badge">อะโรมาติก</span>
+                </div>
+                <div class="math-box">$$\text{benzene ring}$$</div>
+                <div class="lang-th text-sm">
+                    🇹🇭 มีวงเบนซีน แม้ดูเหมือนมีพันธะคู่ แต่เสถียรมาก จึงมักชอบแทนที่มากกว่าเติม
+                </div>
+                <div class="lang-en text-sm">
+                    🇬🇧 Contains a benzene ring. Although it appears to have double bonds, it is very stable and often undergoes substitution rather than addition.
+                </div>
+            </div>
+        </div>
+
+        <div class="highlight-box bg-red-50 border-red-200">
+            <div class="lang-th font-semibold text-red-900">
+                🚨 จุดดัก: เบนซีนมีพันธะคู่ในวง แต่ไม่ทำตัวเหมือนแอลคีนทั่วไป เพราะมีเรโซแนนซ์ทำให้เสถียรมาก
+            </div>
+            <div class="lang-en bg-transparent border-l-2 border-red-300 text-red-800">
+                🚨 Trap: Benzene has double bonds in the ring, but it does not behave like a normal alkene because resonance makes it highly stable.
+            </div>
+        </div>
+<h3 class="topic-title">1.2 จำแนกตามโครงคาร์บอน <span class="text-gray-500 font-normal">(Classification by Carbon Skeleton)</span></h3>
+
+<div class="card-grid">
+    <div class="info-card">
+        <div class="card-title">Aliphatic</div>
+        <div class="math-box">$$\text{open chain}$$</div>
+        <div class="lang-th text-sm">
+            🇹🇭 โซ่เปิด อาจเป็นโซ่ตรงหรือโซ่กิ่ง เช่น แอลเคน แอลคีน แอลไคน์
+        </div>
+        <div class="lang-en text-sm">
+            🇬🇧 Open-chain compounds, either straight or branched, such as alkanes, alkenes, and alkynes.
+        </div>
+
+        <div class="mt-3">
+            <div class="font-semibold text-sm text-gray-700 text-center">Hexane / โซ่ตรง</div>
+            <canvas class="molecule-canvas" width="300" height="190" data-smiles="CCCCCC"></canvas>
+            <div class="text-xs text-gray-500 text-center">SMILES: <code>CCCCCC</code></div>
+        </div>
+
+        <div class="mt-3">
+            <div class="font-semibold text-sm text-gray-700 text-center">2-Methylbutane / โซ่กิ่ง</div>
+            <canvas class="molecule-canvas" width="300" height="190" data-smiles="CC(C)CC"></canvas>
+            <div class="text-xs text-gray-500 text-center">SMILES: <code>CC(C)CC</code></div>
+        </div>
+    </div>
+
+    <div class="info-card">
+        <div class="card-title">Alicyclic</div>
+        <div class="math-box">$$\text{non-aromatic ring}$$</div>
+        <div class="lang-th text-sm">
+            🇹🇭 เป็นวง แต่ไม่ใช่วงเบนซีน เช่น cyclohexane จึงเป็นวงคาร์บอนธรรมดา ไม่ใช่อะโรมาติก
+        </div>
+        <div class="lang-en text-sm">
+            🇬🇧 Ring compounds that are not benzene-like, such as cyclohexane. They are carbon rings but not aromatic.
+        </div>
+
+        <div class="mt-3">
+            <div class="font-semibold text-sm text-gray-700 text-center">Cyclohexane / วงคาร์บอนธรรมดา</div>
+            <canvas class="molecule-canvas" width="300" height="190" data-smiles="C1CCCCC1"></canvas>
+            <div class="text-xs text-gray-500 text-center">SMILES: <code>C1CCCCC1</code></div>
+        </div>
+    </div>
+
+    <div class="info-card">
+        <div class="card-title">Aromatic</div>
+        <div class="math-box">$$\text{benzene ring}$$</div>
+        <div class="lang-th text-sm">
+            🇹🇭 มีวงเบนซีนเป็นโครงสร้างสำคัญ เช่น benzene, toluene มีความเสถียรสูงจากเรโซแนนซ์
+        </div>
+        <div class="lang-en text-sm">
+            🇬🇧 Contains a benzene ring as an important structural feature, such as benzene and toluene. Aromatic rings are stabilized by resonance.
+        </div>
+
+        <div class="mt-3">
+            <div class="font-semibold text-sm text-gray-700 text-center">Benzene / วงเบนซีน</div>
+            <canvas class="molecule-canvas" width="300" height="190" data-smiles="c1ccccc1"></canvas>
+            <div class="text-xs text-gray-500 text-center">SMILES: <code>c1ccccc1</code></div>
+        </div>
+
+        <div class="mt-3">
+            <div class="font-semibold text-sm text-gray-700 text-center">Toluene / เบนซีนมีกิ่ง methyl</div>
+            <canvas class="molecule-canvas" width="300" height="190" data-smiles="Cc1ccccc1"></canvas>
+            <div class="text-xs text-gray-500 text-center">SMILES: <code>Cc1ccccc1</code></div>
+        </div>
+    </div>
+</div>
+
+<div class="highlight-box bg-yellow-50 border-yellow-300">
+    <div class="lang-th font-semibold text-yellow-900">
+        🧠 จำสั้น ๆ: โซ่เปิด = aliphatic, วงธรรมดา = alicyclic, วงเบนซีน = aromatic
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-yellow-300 text-yellow-800">
+        🧠 Quick memory: open chain = aliphatic, normal ring = alicyclic, benzene ring = aromatic.
+    </div>
+</div>
+
+
+        <h3 class="topic-title">1.3 จำแนกตามหมู่ฟังก์ชัน <span class="text-gray-500 font-normal">(Classification by Functional Groups)</span></h3>
+
+        <div class="lang-th">
+            🇹🇭 หมู่ฟังก์ชันคือส่วนของโมเลกุลที่บอก “ตระกูล” ของสารอินทรีย์ และมักเป็นบริเวณที่กำหนดสมบัติหรือปฏิกิริยาหลักของสาร
+        </div>
+        <div class="lang-en">
+            🇬🇧 A functional group is the part of a molecule that identifies the compound family and often controls its main properties or reactions.
+        </div>
+
+        <div class="table-wrap">
+<table>
+    <thead>
+        <tr>
+            <th>ตระกูล / Family</th>
+            <th>ชื่อหมู่ / Group Name</th>
+            <th>รูปแบบทั่วไป / General Pattern</th>
+            <th>จำสั้น / Quick Memory</th>
+            <th>Suffix ที่พบบ่อย / Common Suffix</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Alkane</td>
+            <td>Single bond<br>พันธะเดี่ยว</td>
+            <td>\(C-C\)</td>
+            <td>พันธะเดี่ยวหมด / single bonds only</td>
+            <td>-ane</td>
+        </tr>
+        <tr>
+            <td>Alkene</td>
+            <td>Carbon-carbon double bond<br>พันธะคู่ C=C</td>
+            <td>\(C=C\)</td>
+            <td>มีพันธะคู่ / has a double bond</td>
+            <td>-ene</td>
+        </tr>
+        <tr>
+            <td>Alkyne</td>
+            <td>Carbon-carbon triple bond<br>พันธะสาม C≡C</td>
+            <td>\(C \equiv C\)</td>
+            <td>มีพันธะสาม / has a triple bond</td>
+            <td>-yne</td>
+        </tr>
+        <tr>
+            <td>Alcohol</td>
+            <td>Hydroxyl group<br>หมู่ไฮดรอกซิล</td>
+            <td>\(R-OH\)</td>
+            <td>มี OH / has OH</td>
+            <td>-ol</td>
+        </tr>
+        <tr>
+            <td>Ether</td>
+            <td>Alkoxy group / Ether linkage<br>หมู่แอลคอกซี / พันธะอีเทอร์</td>
+            <td>\(R-O-R'\)</td>
+            <td>O คั่นกลาง / O in the middle</td>
+            <td>alkoxy- prefix</td>
+        </tr>
+        <tr>
+            <td>Aldehyde</td>
+            <td>Formyl group / Aldehyde group<br>หมู่ฟอร์มิล / หมู่แอลดีไฮด์</td>
+            <td>\(R-CHO\)</td>
+            <td>CHO ปลายสาย / CHO at the end</td>
+            <td>-al</td>
+        </tr>
+        <tr>
+            <td>Ketone</td>
+            <td>Carbonyl group<br>หมู่คาร์บอนิล</td>
+            <td>\(R-CO-R'\)</td>
+            <td>C=O กลางสาย / C=O in the middle</td>
+            <td>-one</td>
+        </tr>
+        <tr>
+            <td>Carboxylic acid</td>
+            <td>Carboxyl group<br>หมู่คาร์บอกซิล</td>
+            <td>\(R-COOH\)</td>
+            <td>กรดอินทรีย์ / organic acid</td>
+            <td>-oic acid</td>
+        </tr>
+        <tr>
+            <td>Ester</td>
+            <td>Ester group<br>หมู่เอสเทอร์</td>
+            <td>\(R-COO-R'\)</td>
+            <td>COO คั่นกลาง / has COO linkage</td>
+            <td>-oate</td>
+        </tr>
+        <tr>
+            <td>Amine</td>
+            <td>Amino group<br>หมู่อะมิโน</td>
+            <td>\(R-NH_2\)</td>
+            <td>มี N / contains N</td>
+            <td>-amine</td>
+        </tr>
+        <tr>
+            <td>Amide</td>
+            <td>Amide group<br>หมู่เอไมด์</td>
+            <td>\(R-CONH_2\)</td>
+            <td>C=O ติด N / C=O attached to N</td>
+            <td>-amide</td>
+        </tr>
+    </tbody>
+</table>
+
+        </div>
+
+        <!-- Part 2 -->
+        <h2 class="section-header">
+            Part 2: จับจำนวนคาร์บอนจาก Root Name
+            <span class="font-normal text-xl text-gray-500">(Carbon Numbers from Root Names)</span>
+        </h2>
+
+        <div class="lang-th">
+            🇹🇭 การอ่านชื่อ IUPAC ต้องเริ่มจากการจับจำนวนคาร์บอนในโซ่หลักให้ได้ก่อน เช่น meth- คือ C1, eth- คือ C2, prop- คือ C3 และ but- คือ C4
+        </div>
+        <div class="lang-en">
+            🇬🇧 Reading IUPAC names begins with identifying the number of carbon atoms in the main chain. For example, meth- means C1, eth- means C2, prop- means C3, and but- means C4.
+        </div>
+
+        <div class="highlight-box bg-yellow-50 border-yellow-300">
+            <div class="lang-th font-semibold text-yellow-900">
+                🧠 จำก่อน: C1–C10 เจอบ่อยที่สุด แต่รู้ C11–C20 ไว้จะอ่านชื่อสารยาว ๆ ได้ดีขึ้น
+            </div>
+            <div class="lang-en bg-transparent border-l-2 border-yellow-300 text-yellow-800">
+                🧠 Remember first: C1–C10 are the most common, but knowing C11–C20 helps with longer organic names.
+            </div>
+        </div>
+
+        <div id="rootGrid" class="root-grid"></div>
+
+        <h3 class="topic-title">Prefix บอกจำนวนซ้ำ <span class="text-gray-500 font-normal">(Prefixes for Repeated Groups)</span></h3>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>จำนวน / Number</th>
+                        <th>Prefix</th>
+                        <th>ตัวอย่าง / Example</th>
+                        <th>ความหมาย / Meaning</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>mono-</td>
+                        <td>monochloro</td>
+                        <td>มี Cl 1 ตัว / one chlorine</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>di-</td>
+                        <td>dimethyl</td>
+                        <td>มีกิ่ง methyl 2 กิ่ง / two methyl branches</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>tri-</td>
+                        <td>trimethyl</td>
+                        <td>มีกิ่ง methyl 3 กิ่ง / three methyl branches</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>tetra-</td>
+                        <td>tetrachloro</td>
+                        <td>มี Cl 4 ตัว / four chlorines</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>penta-</td>
+                        <td>pentane</td>
+                        <td>โซ่หลัก C5 / five carbons</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>hexa-</td>
+                        <td>hexane</td>
+                        <td>โซ่หลัก C6 / six carbons</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Part 3 -->
+        <h2 class="section-header">
+            Part 3: อ่านชื่อ IUPAC แบบจับโครง
+            <span class="font-normal text-xl text-gray-500">(Reading IUPAC Names by Parts)</span>
+        </h2>
+
+<div class="lang-th">
+    🇹🇭 การอ่านชื่อ IUPAC ไม่ใช่แค่จำ root กับ suffix แต่ต้องมี “ลำดับการตัดสินใจ” ว่าจะเลือกอะไรเป็นโซ่หลัก นับเลขจากด้านไหน และหมู่ใดมีความสำคัญที่สุดในการตั้งชื่อ
+</div>
+<div class="lang-en">
+    🇬🇧 Reading IUPAC names is not only about memorizing roots and suffixes. We also need a decision order: which chain is the parent chain, where numbering starts, and which functional group has the highest priority.
+</div>
+
+<div class="highlight-box bg-teal-50 border-teal-200">
+    <div class="font-bold text-teal-900 mb-2">
+        🧭 คู่มือการอ่านชื่อ IUPAC แบบเป็นขั้นตอน / IUPAC Decision Guide
+    </div>
+
+    <div class="math-box bg-white">
+        $$\text{เลือกหมู่หลัก} \Rightarrow \text{เลือกโซ่หลัก} \Rightarrow \text{นับเลข} \Rightarrow \text{หากิ่ง/ตำแหน่ง} \Rightarrow \text{ประกอบชื่อ}$$
+        $$\text{Main group} \Rightarrow \text{Parent chain} \Rightarrow \text{Numbering} \Rightarrow \text{Branches/positions} \Rightarrow \text{Name}$$
+    </div>
+</div>
+
+<div class="card-grid">
+    <div class="info-card">
+        <div class="card-title">Step 1: เลือกหมู่ฟังก์ชันหลัก</div>
+        <div class="text-sm text-gray-600 mb-2">Choose the principal functional group</div>
+
+        <div class="lang-th text-sm">
+            🇹🇭 ถ้ามีหลายหมู่ ให้เลือกหมู่ที่มีลำดับความสำคัญสูงที่สุดเป็น “คำลงท้าย” หรือ suffix
+        </div>
+        <div class="lang-en text-sm">
+            🇬🇧 If there are multiple groups, choose the highest-priority group as the suffix.
+        </div>
+
+        <div class="math-box bg-white">
+            $$\text{main functional group} = \text{suffix}$$
+        </div>
+    </div>
+
+    <div class="info-card">
+        <div class="card-title">Step 2: เลือกโซ่หลัก</div>
+        <div class="text-sm text-gray-600 mb-2">Choose the parent chain</div>
+
+        <div class="lang-th text-sm">
+            🇹🇭 โซ่หลักต้องมีหมู่ฟังก์ชันหลักอยู่ในโซ่ และควรเป็นโซ่ที่ยาวที่สุดเท่าที่ทำได้
+        </div>
+        <div class="lang-en text-sm">
+            🇬🇧 The parent chain must contain the principal functional group and should be as long as possible.
+        </div>
+
+        <div class="math-box bg-white">
+            $$\text{parent chain} = \text{longest chain containing the main group}$$
+        </div>
+    </div>
+
+    <div class="info-card">
+        <div class="card-title">Step 3: ตัดสินใจทิศทางการนับเลข</div>
+        <div class="text-sm text-gray-600 mb-2">Decide the numbering direction</div>
+
+        <div class="lang-th text-sm">
+            🇹🇭 เริ่มนับจากด้านที่ทำให้หมู่ฟังก์ชันหลักได้เลขน้อยที่สุด ถ้าเสมอกันจึงดูพันธะคู่/สาม และกิ่งตามลำดับ
+        </div>
+        <div class="lang-en text-sm">
+            🇬🇧 Number from the end that gives the principal functional group the lowest number. If tied, consider multiple bonds, then branches.
+        </div>
+
+        <div class="math-box bg-white">
+            $$\text{lowest number for the main group first}$$
+        </div>
+    </div>
+
+    <div class="info-card">
+        <div class="card-title">Step 4: ประกอบชื่อ</div>
+        <div class="text-sm text-gray-600 mb-2">Build the name</div>
+
+        <div class="lang-th text-sm">
+            🇹🇭 ใส่ตำแหน่งกิ่ง ชื่อกิ่ง root ของโซ่หลัก และ suffix ของตระกูลสาร
+        </div>
+        <div class="lang-en text-sm">
+            🇬🇧 Add branch positions, branch names, the root of the parent chain, and the suffix of the compound family.
+        </div>
+
+        <div class="math-box bg-white">
+            $$\text{position + branch + root + suffix}$$
+        </div>
+    </div>
+</div>
+
+<div class="highlight-box bg-orange-50 border-orange-200">
+    <div class="font-bold text-orange-900 mb-2">
+        🏆 ลำดับความสำคัญที่ใช้บ่อยใน A-Level / Common Priority Order
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>ลำดับ / Priority</th>
+                    <th>หมู่ / Group</th>
+                    <th>รูปแบบ / Pattern</th>
+                    <th>เมื่อเป็นหมู่หลัก / Main suffix</th>
+                    <th>จำสั้น / Quick Memory</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Carboxylic acid</td>
+                    <td>\(R-COOH\)</td>
+                    <td>-oic acid</td>
+                    <td>กรดมาก่อน / acid first</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Ester</td>
+                    <td>\(R-COO-R'\)</td>
+                    <td>-oate</td>
+                    <td>COO คั่นกลาง / COO linkage</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Aldehyde</td>
+                    <td>\(R-CHO\)</td>
+                    <td>-al</td>
+                    <td>CHO ปลายสาย / CHO at end</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Ketone</td>
+                    <td>\(R-CO-R'\)</td>
+                    <td>-one</td>
+                    <td>C=O กลางสาย / carbonyl in chain</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Alcohol</td>
+                    <td>\(R-OH\)</td>
+                    <td>-ol</td>
+                    <td>OH / hydroxyl</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>Amine</td>
+                    <td>\(R-NH_2\)</td>
+                    <td>-amine</td>
+                    <td>มี N / contains N</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>Alkene / Alkyne</td>
+                    <td>\(C=C,\ C \equiv C\)</td>
+                    <td>-ene, -yne</td>
+                    <td>พันธะคู่/สาม / multiple bonds</td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td>Branch / Halogen</td>
+                    <td>\(-CH_3,\ -Cl,\ -Br\)</td>
+                    <td>prefix</td>
+                    <td>มักเป็นคำนำหน้า / usually prefix</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="highlight-box bg-blue-50 border-blue-200">
+    <div class="font-bold text-blue-900 mb-2">
+        🔢 กฎการตัดสินใจเรื่องตัวเลข / Numbering Rules
+    </div>
+
+    <div class="lang-th">
+        1) ให้หมู่ฟังก์ชันหลักได้เลขน้อยที่สุดก่อน
+    </div>
+    <div class="lang-en">
+        1) Give the principal functional group the lowest possible number first.
+    </div>
+
+    <div class="lang-th">
+        2) ถ้าหมู่หลักเสมอกัน ให้พันธะคู่หรือพันธะสามได้เลขน้อยกว่า
+    </div>
+    <div class="lang-en">
+        2) If the main group is tied, give the double or triple bond the lower number.
+    </div>
+
+    <div class="lang-th">
+        3) ถ้ายังเสมอกัน ให้กิ่งได้ชุดตัวเลขที่น้อยที่สุด
+    </div>
+    <div class="lang-en">
+        3) If still tied, give substituents the lowest set of numbers.
+    </div>
+
+    <div class="lang-th">
+        4) หมู่ \(-COOH\) และ \(-CHO\) อยู่ปลายสาย และ C ของหมู่นั้นเป็นตำแหน่ง 1 เสมอ
+    </div>
+    <div class="lang-en">
+        4) \(-COOH\) and \(-CHO\) are terminal groups, and the carbon in that group is always position 1.
+    </div>
+</div>
+
+<div class="highlight-box bg-red-50 border-red-200">
+    <div class="lang-th font-bold text-red-900 mb-2">
+        🚨 จุดดักสำคัญ
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-red-300 text-red-800">
+        🚨 Important Traps
+    </div>
+
+    <div class="lang-th">
+        🇹🇭 คาร์บอนในหมู่ \(-COOH\), \(-CHO\), \(-CO-\), และ \(-COO-\) ต้องนับเป็นส่วนหนึ่งของโซ่หลักเสมอ
+    </div>
+    <div class="lang-en">
+        🇬🇧 The carbon in \(-COOH\), \(-CHO\), \(-CO-\), and \(-COO-\) must be counted as part of the parent structure.
+    </div>
+
+    <div class="lang-th">
+        🇹🇭 ถ้ามีทั้ง \(-OH\) และ \(C=C\) ให้เลือก \(-OH\) เป็นหมู่หลักก่อน แล้วค่อยระบุตำแหน่งพันธะคู่
+    </div>
+    <div class="lang-en">
+        🇬🇧 If both \(-OH\) and \(C=C\) are present, prioritize \(-OH\) as the main group before numbering the double bond.
+    </div>
+
+    <div class="lang-th">
+        🇹🇭 ถ้ามีหมู่ที่สำคัญกว่า หมู่ที่สำคัญน้อยกว่าอาจเปลี่ยนไปเป็น prefix เช่น hydroxy-, amino-, oxo-, chloro-, methyl-
+    </div>
+    <div class="lang-en">
+        🇬🇧 If a higher-priority group is present, lower-priority groups may become prefixes, such as hydroxy-, amino-, oxo-, chloro-, and methyl-.
+    </div>
+</div>
+
+        <h3 class="topic-title">Suffix บอกตระกูลสาร <span class="text-gray-500 font-normal">(Suffix Indicates the Compound Family)</span></h3>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Suffix</th>
+                        <th>ตระกูล / Family</th>
+                        <th>ตัวอย่าง / Example</th>
+                        <th>อ่านเร็ว / Quick Reading</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>-ane</td>
+                        <td>Alkane</td>
+                        <td>butane</td>
+                        <td>C4 พันธะเดี่ยวหมด / C4 alkane</td>
+                    </tr>
+                    <tr>
+                        <td>-ene</td>
+                        <td>Alkene</td>
+                        <td>but-2-ene</td>
+                        <td>C4 มีพันธะคู่ที่ตำแหน่ง 2 / C4 with double bond at 2</td>
+                    </tr>
+                    <tr>
+                        <td>-yne</td>
+                        <td>Alkyne</td>
+                        <td>ethyne</td>
+                        <td>C2 มีพันธะสาม / C2 with triple bond</td>
+                    </tr>
+                    <tr>
+                        <td>-ol</td>
+                        <td>Alcohol</td>
+                        <td>propan-1-ol</td>
+                        <td>C3 มี OH ที่ C1 / C3 alcohol with OH at C1</td>
+                    </tr>
+                    <tr>
+                        <td>-al</td>
+                        <td>Aldehyde</td>
+                        <td>ethanal</td>
+                        <td>C2 มี CHO ที่ปลายสาย / C2 aldehyde</td>
+                    </tr>
+                    <tr>
+                        <td>-one</td>
+                        <td>Ketone</td>
+                        <td>propanone</td>
+                        <td>C3 มี C=O กลางสาย / C3 ketone</td>
+                    </tr>
+                    <tr>
+                        <td>-oic acid</td>
+                        <td>Carboxylic acid</td>
+                        <td>ethanoic acid</td>
+                        <td>C2 กรดคาร์บอกซิลิก / C2 carboxylic acid</td>
+                    </tr>
+                    <tr>
+                        <td>-amide</td>
+                        <td>Amide</td>
+                        <td>ethanamide</td>
+                        <td>C2 amide / C2 amide</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 class="topic-title">ตัวอย่างอ่านชื่อ IUPAC <span class="text-gray-500 font-normal">(IUPAC Reading Examples)</span></h3>
+
+        <div id="iupacExamples" class="card-grid"></div>
+
+        <div class="highlight-box bg-red-50 border-red-200">
+            <div class="lang-th font-bold text-red-900 mb-2">
+                🚨 จุดดักในการอ่านชื่อ
+            </div>
+            <div class="lang-en bg-transparent border-l-2 border-red-300 text-red-800">
+                🚨 Naming Traps
+            </div>
+
+            <div class="lang-th">
+                1) \(COOH\), \(CHO\), \(CO\), \(COO\) มีคาร์บอนอยู่ในหมู่ฟังก์ชัน ต้องนับ C ตัวนั้นด้วย
+            </div>
+            <div class="lang-en">
+                1) \(COOH\), \(CHO\), \(CO\), and \(COO\) contain carbon atoms that must be counted.
+            </div>
+
+            <div class="lang-th">
+                2) หมู่กรด \(-COOH\) และแอลดีไฮด์ \(-CHO\) อยู่ปลายสาย และคาร์บอนของหมู่นั้นเป็น C1 เสมอ
+            </div>
+            <div class="lang-en">
+                2) \(-COOH\) and \(-CHO\) groups are at the end of the chain, and their carbon is always C1.
+            </div>
+
+            <div class="lang-th">
+                3) ถ้ามีหมู่ฟังก์ชันและพันธะคู่ ให้ให้ความสำคัญกับหมู่ฟังก์ชันหลักก่อน
+            </div>
+            <div class="lang-en">
+                3) If both a functional group and a double bond are present, prioritize the main functional group.
+            </div>
+        </div>
+
+        <!-- Part 4 -->
+        <h2 class="section-header">
+            Part 4: เห็นโครงสร้างจริงด้วย SmilesDrawer
+            <span class="font-normal text-xl text-gray-500">(Seeing Real Structures with SmilesDrawer)</span>
+        </h2>
+
+        <div class="lang-th">
+            🇹🇭 ส่วนนี้ใช้ SmilesDrawer ช่วยวาดโครงสร้างจริงจาก SMILES เพื่อให้นักเรียนเห็นว่า ชื่อ IUPAC ที่อ่านไปสามารถแปลงเป็นโครงสร้างแบบเส้นและมุมได้
+        </div>
+        <div class="lang-en">
+            🇬🇧 This section uses SmilesDrawer to draw real structures from SMILES, helping students see how IUPAC names connect to line-angle structures.
+        </div>
+
+        <div class="highlight-box bg-yellow-50 border-yellow-300">
+            <div class="lang-th font-semibold text-yellow-900">
+                หมายเหตุ: รูปแบบทั่วไปเช่น \(R-OH\) ใช้เป็น “แพตเทิร์นจำหมู่ฟังก์ชัน” แต่ SMILES ใช้กับสารจริง เช่น ethanol = <code>CCO</code>
+            </div>
+            <div class="lang-en bg-transparent border-l-2 border-yellow-300 text-yellow-800">
+                Note: General patterns such as \(R-OH\) are used to remember functional groups, while SMILES is used for real compounds, such as ethanol = <code>CCO</code>.
+            </div>
+        </div>
+
+        <div id="structureExamples" class="card-grid"></div>
+
+        <div class="highlight-box bg-indigo-50 border-indigo-200">
+            <div class="font-bold text-indigo-900 mb-2">
+                📌 สรุปจำสั้น / Short Summary
+            </div>
+
+            <div class="lang-th">
+                1) ดูพันธะก่อน: เดี่ยว = alkane, คู่ = alkene, สาม = alkyne, วงเบนซีน = aromatic
+            </div>
+            <div class="lang-en">
+                1) Look at bonds first: single = alkane, double = alkene, triple = alkyne, benzene ring = aromatic.
+            </div>
+
+            <div class="lang-th">
+                2) ดูหมู่ฟังก์ชัน: \(R-OH\) = alcohol, \(R-COOH\) = carboxylic acid, \(R-COO-R'\) = ester
+            </div>
+            <div class="lang-en">
+                2) Look at functional groups: \(R-OH\) = alcohol, \(R-COOH\) = carboxylic acid, \(R-COO-R'\) = ester.
+            </div>
+
+            <div class="lang-th">
+                3) อ่าน IUPAC โดยแยกชื่อเป็นตำแหน่ง กิ่ง root และ suffix
+            </div>
+            <div class="lang-en">
+                3) Read IUPAC names by separating position, branch, root, and suffix.
+            </div>
+
+            <div class="lang-th">
+                4) Root บอกจำนวน C ส่วน suffix บอกตระกูลของสาร
+            </div>
+            <div class="lang-en">
+                4) The root tells the number of carbons, while the suffix tells the compound family.
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const roots = [
+            [1, "meth-", "เมท-"],
+            [2, "eth-", "เอท-"],
+            [3, "prop-", "โพรพ-"],
+            [4, "but-", "บิวท-"],
+            [5, "pent-", "เพนท-"],
+            [6, "hex-", "เฮกซ-"],
+            [7, "hept-", "เฮปท-"],
+            [8, "oct-", "ออกท-"],
+            [9, "non-", "โนน-"],
+            [10, "dec-", "เดค-"],
+            [11, "undec-", "อันเดค-"],
+            [12, "dodec-", "โดเดค-"],
+            [13, "tridec-", "ไตรเดค-"],
+            [14, "tetradec-", "เตตราเดค-"],
+            [15, "pentadec-", "เพนตาเดค-"],
+            [16, "hexadec-", "เฮกซาเดค-"],
+            [17, "heptadec-", "เฮปตาเดค-"],
+            [18, "octadec-", "ออกตาเดค-"],
+            [19, "nonadec-", "โนนาเดค-"],
+            [20, "eicos-", "ไอโคซ-"]
+        ];
+
+        const iupacExamples = [
+            {
+                name: "butane",
+                th: "บิวเทน",
+                break: "but- + -ane",
+                meaning: "but- = C4, -ane = alkane",
+                thMeaning: "โซ่หลักมี C 4 ตัว และเป็นแอลเคน"
+            },
+            {
+                name: "but-2-ene",
+                th: "บิวต์-2-อีน",
+                break: "but- + 2 + -ene",
+                meaning: "but- = C4, -ene = alkene, 2 = double bond position",
+                thMeaning: "โซ่หลัก C4 มีพันธะคู่เริ่มที่ C2"
+            },
+            {
+                name: "ethyne",
+                th: "เอไทน์",
+                break: "eth- + -yne",
+                meaning: "eth- = C2, -yne = alkyne",
+                thMeaning: "โซ่หลัก C2 มีพันธะสาม"
+            },
+            {
+                name: "propan-1-ol",
+                th: "โพรแพน-1-ออล",
+                break: "prop- + 1 + -ol",
+                meaning: "prop- = C3, -ol = alcohol, 1 = OH position",
+                thMeaning: "แอลกอฮอล์ C3 มี OH ที่ C1"
+            },
+            {
+                name: "propanone",
+                th: "โพรพาโนน",
+                break: "prop- + -one",
+                meaning: "prop- = C3, -one = ketone",
+                thMeaning: "คีโตน C3 มีหมู่ C=O กลางสาย"
+            },
+            {
+                name: "ethanoic acid",
+                th: "กรดเอทาโนอิก",
+                break: "eth- + -oic acid",
+                meaning: "eth- = C2, -oic acid = carboxylic acid",
+                thMeaning: "กรดคาร์บอกซิลิก C2 และ C ของ COOH ต้องนับด้วย"
+            },
+            {
+                name: "2-methylbutane",
+                th: "2-เมทิลบิวเทน",
+                break: "2-methyl + butane",
+                meaning: "butane = main chain C4, methyl = C1 branch at C2",
+                thMeaning: "โซ่หลัก C4 มีกิ่ง methyl ที่ C2"
+            },
+            {
+                name: "methyl ethanoate",
+                th: "เมทิลเอทาโนเอต",
+                break: "methyl + ethanoate",
+                meaning: "ester name: alkyl part + carboxylate part",
+                thMeaning: "เป็นเอสเทอร์ อ่านเป็นส่วนแอลคิล + ส่วนกรด"
+            }
+        ];
+
+        const structures = [
+            {
+                name: "Butane",
+                iupac: "butane",
+                family: "Alkane",
+                smiles: "CCCC",
+                noteTh: "but- = C4, -ane = พันธะเดี่ยวหมด",
+                noteEn: "but- = C4, -ane = all single bonds"
+            },
+            {
+                name: "But-2-ene",
+                iupac: "but-2-ene",
+                family: "Alkene",
+                smiles: "CC=CC",
+                noteTh: "C4 มีพันธะคู่ที่ตำแหน่ง 2",
+                noteEn: "C4 with a double bond at position 2"
+            },
+            {
+                name: "Ethyne",
+                iupac: "ethyne",
+                family: "Alkyne",
+                smiles: "C#C",
+                noteTh: "eth- = C2, -yne = พันธะสาม",
+                noteEn: "eth- = C2, -yne = triple bond"
+            },
+            {
+                name: "Ethanol",
+                iupac: "ethanol",
+                family: "Alcohol",
+                smiles: "CCO",
+                noteTh: "eth- = C2, -ol = alcohol",
+                noteEn: "eth- = C2, -ol = alcohol"
+            },
+            {
+                name: "Propanone",
+                iupac: "propanone",
+                family: "Ketone",
+                smiles: "CC(=O)C",
+                noteTh: "C3 มี C=O กลางสาย",
+                noteEn: "C3 with C=O in the middle"
+            },
+            {
+                name: "Ethanoic Acid",
+                iupac: "ethanoic acid",
+                family: "Carboxylic acid",
+                smiles: "CC(=O)O",
+                noteTh: "C2 โดยนับ C ใน COOH ด้วย",
+                noteEn: "C2, including the carbon in COOH"
+            },
+            {
+                name: "Methyl Ethanoate",
+                iupac: "methyl ethanoate",
+                family: "Ester",
+                smiles: "CC(=O)OC",
+                noteTh: "เอสเทอร์ มีรูปแบบ R-COO-R'",
+                noteEn: "Ester with the pattern R-COO-R'"
+            },
+            {
+                name: "Benzene",
+                iupac: "benzene",
+                family: "Aromatic",
+                smiles: "c1ccccc1",
+                noteTh: "วงเบนซีน เสถียรจากเรโซแนนซ์",
+                noteEn: "Benzene ring stabilized by resonance"
+            }
+        ];
+
+        function renderRoots() {
+            const rootGrid = document.getElementById('rootGrid');
+            roots.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'root-card';
+                card.innerHTML = `
+                    <div class="root-number">C${item[0]}</div>
+                    <div class="root-name">${item[1]}</div>
+                    <div class="text-sm text-gray-600">${item[2]}</div>
+                `;
+                rootGrid.appendChild(card);
+            });
+        }
+
+        function renderIupacExamples() {
+            const container = document.getElementById('iupacExamples');
+            iupacExamples.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'example-card';
+                card.innerHTML = `
+                    <div class="flex items-start justify-between gap-3 mb-2">
+                        <div>
+                            <div class="example-title">${index + 1}. ${item.name}</div>
+                            <div class="text-sm text-gray-600">${item.th}</div>
+                        </div>
+                        <span class="family-badge">IUPAC</span>
+                    </div>
+
+                    <div class="name-break">
+                        <div class="font-bold text-gray-800">แยกชื่อ / Name breakdown</div>
+                        <div class="math-box bg-white">${item.break}</div>
+                    </div>
+
+                    <div class="lang-th text-sm">
+                        🇹🇭 ${item.thMeaning}
+                    </div>
+                    <div class="lang-en text-sm">
+                        🇬🇧 ${item.meaning}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderStructures() {
+            const container = document.getElementById('structureExamples');
+            structures.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'example-card';
+                card.innerHTML = `
+                    <div class="flex items-start justify-between gap-3 mb-2">
+                        <div>
+                            <div class="example-title">${index + 1}. ${item.name}</div>
+                            <div class="text-sm text-gray-600">${item.iupac}</div>
+                        </div>
+                        <span class="badge">${item.family}</span>
+                    </div>
+
+                    <canvas class="molecule-canvas" width="300" height="190" data-smiles="${item.smiles}"></canvas>
+                    <div class="text-xs text-gray-500 text-center mb-2">SMILES: <code>${item.smiles}</code></div>
+
+                    <div class="lang-th text-sm">
+                        🇹🇭 ${item.noteTh}
+                    </div>
+                    <div class="lang-en text-sm">
+                        🇬🇧 ${item.noteEn}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function drawSmilesStructures() {
+            const canvases = document.querySelectorAll('canvas[data-smiles]');
+
+            if (typeof SmilesDrawer === 'undefined') {
+                canvases.forEach(canvas => {
+                    const smiles = canvas.getAttribute('data-smiles');
+                    const fallback = document.createElement('div');
+                    fallback.className = 'math-box text-sm';
+                    fallback.innerHTML = 'SMILES: <code>' + smiles + '</code><br><span class="text-red-600">SmilesDrawer library did not load.</span>';
+                    canvas.replaceWith(fallback);
+                });
+                return;
+            }
+
+            canvases.forEach(canvas => {
+                const smiles = canvas.getAttribute('data-smiles');
+                const drawer = new SmilesDrawer.Drawer({
+                    width: 300,
+                    height: 190
+                });
+
+                SmilesDrawer.parse(
+                    smiles,
+                    function(tree) {
+                        drawer.draw(tree, canvas, 'light', false);
+                    },
+                    function(error) {
+                        const fallback = document.createElement('div');
+                        fallback.className = 'math-box text-sm';
+                        fallback.innerHTML = 'SMILES: <code>' + smiles + '</code><br><span class="text-red-600">Cannot draw this structure.</span>';
+                        canvas.replaceWith(fallback);
+                    }
+                );
+            });
+        }
+
+        window.addEventListener('load', function() {
+            renderRoots();
+            renderIupacExamples();
+            renderStructures();
+            drawSmilesStructures();
+        });
+    </script>
+</body>
+</html>
+```

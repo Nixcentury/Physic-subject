@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CONTENT_Organic_Structural_Formulas.html</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/smiles-drawer@2.4.1/dist/smiles-drawer.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+            line-height: 1.7;
+        }
+
+        .page-container {
+            max-width: 1060px;
+            margin: 2rem auto;
+            background: white;
+            padding: 3rem 4rem;
+            border-radius: 18px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+
+        .section-header {
+            border-bottom: 3px solid #7c3aed;
+            padding-bottom: 0.5rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1.25rem;
+            color: #6d28d9;
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .topic-title {
+            color: #111827;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 1.75rem;
+            margin-bottom: 0.85rem;
+            border-left: 4px solid #f59e0b;
+            padding-left: 0.75rem;
+        }
+
+        .lang-th {
+            margin-bottom: 0.45rem;
+        }
+
+        .lang-en {
+            color: #4b5563;
+            font-size: 0.96em;
+            border-left: 3px solid #d1d5db;
+            padding-left: 1rem;
+            margin-bottom: 1rem;
+            background-color: #f9fafb;
+            padding-top: 0.45rem;
+            padding-bottom: 0.45rem;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .highlight-box {
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            border: 1px solid;
+        }
+
+        .math-box {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 0.8rem;
+            margin: 0.75rem 0;
+            text-align: center;
+            font-size: 1.02rem;
+            overflow-x: auto;
+        }
+
+        .formula-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 1rem;
+        }
+
+        .example-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .example-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 1rem;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.04);
+        }
+
+        .example-card:hover {
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            transform: translateY(-1px);
+            transition: 0.2s;
+        }
+
+        .compound-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #5b21b6;
+        }
+
+        .compound-subtitle {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #ede9fe;
+            color: #5b21b6;
+            border: 1px solid #ddd6fe;
+            border-radius: 999px;
+            padding: 0.15rem 0.65rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .formula-row {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 0.65rem 0.75rem;
+            margin: 0.5rem 0;
+        }
+
+        .formula-label {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 0.2rem;
+        }
+
+        .formula-text {
+            font-family: 'Times New Roman', serif;
+            font-size: 1.12rem;
+            color: #111827;
+            word-break: break-word;
+        }
+
+        .molecule-canvas {
+            width: 100%;
+            max-width: 280px;
+            height: 180px;
+            display: block;
+            margin: 0.5rem auto;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+        }
+
+        .group-header {
+            background: #ede9fe;
+            border: 1px solid #ddd6fe;
+            color: #5b21b6;
+            font-weight: 700;
+            border-radius: 14px;
+            padding: 0.9rem 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .step-box {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 1rem;
+        }
+
+        .lewis-wrap {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .lewis-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 1rem;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.04);
+        }
+
+        .lewis-svg {
+            width: 100%;
+            height: 260px;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            margin: 0.75rem 0;
+        }
+
+        .svg-atom {
+            font-family: 'Prompt', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            fill: #111827;
+        }
+
+        .svg-small {
+            font-family: 'Prompt', sans-serif;
+            font-size: 14px;
+            fill: #374151;
+        }
+
+        .svg-bond {
+            stroke: #111827;
+            stroke-width: 3;
+            stroke-linecap: round;
+        }
+
+        .svg-dot {
+            fill: #111827;
+        }
+
+        .quick-check {
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            color: #9a3412;
+            border-radius: 12px;
+            padding: 0.85rem 1rem;
+            margin-top: 0.75rem;
+        }
+
+        code {
+            background: #f3f4f6;
+            padding: 0.1rem 0.35rem;
+            border-radius: 5px;
+            color: #7c2d12;
+        }
+
+        @media (max-width: 768px) {
+            .page-container {
+                margin: 0;
+                border-radius: 0;
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-container">
+
+        <div class="text-center mb-10">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                การเขียนสูตรโครงสร้างของสารประกอบอินทรีย์
+            </h1>
+            <div class="text-2xl text-purple-700 font-semibold">
+                Structural Formulas of Organic Compounds
+            </div>
+            <p class="text-gray-600 mt-3">
+                ฝึกแปลงสูตรเต็ม สูตรแบบย่อ และสูตรเส้นและมุม พร้อมอ่าน H ที่ซ่อนอยู่<br>
+                Practice converting full, condensed, and line-angle structures, including hidden hydrogens
+            </p>
+        </div>
+
+        <!-- Part 1 -->
+        <h2 class="section-header">
+            Part 1: แปลงสูตรเต็ม สูตรย่อ และสูตรเส้นและมุม
+            <span class="font-normal text-xl text-gray-500">(Full, Condensed, and Line-Angle Structures)</span>
+        </h2>
+
+        <div class="lang-th">
+            🇹🇭 สารประกอบอินทรีย์หนึ่งชนิดสามารถเขียนได้หลายรูปแบบ เช่น แบบกางอะตอมให้เห็นมากขึ้น แบบย่อเพื่อประหยัดพื้นที่ และแบบเส้นและมุมที่นิยมใช้มากในข้อสอบ เพราะเขียนเร็วและอ่านโครงสร้างคาร์บอนได้ง่าย
+        </div>
+        <div class="lang-en">
+            🇬🇧 One organic compound can be represented in several ways: an expanded structure, a condensed formula, and a line-angle structure. Line-angle structures are commonly used in exams because they are fast and compact.
+        </div>
+
+        <div class="highlight-box bg-purple-50 border-purple-200">
+            <div class="font-bold text-purple-900 mb-2">
+                🧠 เป้าหมายของบทนี้ / Goal of this lesson
+            </div>
+            <div class="math-box bg-white">
+                $$\text{สูตรเต็ม} \longleftrightarrow \text{สูตรแบบย่อ} \longleftrightarrow \text{สูตรเส้นและมุม}$$
+                $$\text{Full structure} \longleftrightarrow \text{Condensed formula} \longleftrightarrow \text{Line-angle structure}$$
+            </div>
+        </div>
+
+        <h3 class="topic-title">กฎจำเร็วของสูตรเส้นและมุม <span class="text-gray-500 font-normal">(Quick Rules for Line-Angle Structures)</span></h3>
+
+        <div class="formula-grid">
+            <div class="step-box">
+                <div class="font-bold text-purple-800">1) ปลายเส้น = C</div>
+                <div class="text-sm text-gray-600">Every line end represents a carbon atom.</div>
+            </div>
+            <div class="step-box">
+                <div class="font-bold text-purple-800">2) มุมหัก = C</div>
+                <div class="text-sm text-gray-600">Every corner represents a carbon atom.</div>
+            </div>
+            <div class="step-box">
+                <div class="font-bold text-purple-800">3) H บน C ถูกซ่อน</div>
+                <div class="text-sm text-gray-600">Hydrogens attached to carbon are hidden.</div>
+            </div>
+            <div class="step-box">
+                <div class="font-bold text-purple-800">4) O, N, Cl, Br ต้องเขียน</div>
+                <div class="text-sm text-gray-600">Heteroatoms must be written explicitly.</div>
+            </div>
+        </div>
+
+        <div class="highlight-box bg-yellow-50 border-yellow-300">
+            <div class="lang-th font-semibold text-yellow-900">
+                💡 สูตรแตก H: คาร์บอนต้องครบ 4 แขนเสมอ
+            </div>
+            <div class="lang-en bg-transparent border-l-2 border-yellow-300 text-yellow-800">
+                💡 Hidden-H rule: carbon should always have 4 bonds.
+            </div>
+
+            <div class="formula-grid mt-3">
+                <div class="math-box bg-white">ปลายสาย: 1 เส้น → \(CH_3\)<br>Line end: 1 bond → \(CH_3\)</div>
+                <div class="math-box bg-white">กลางสาย: 2 เส้น → \(CH_2\)<br>Middle carbon: 2 bonds → \(CH_2\)</div>
+                <div class="math-box bg-white">จุดแตกกิ่ง: 3 เส้น → \(CH\)<br>Branch point: 3 bonds → \(CH\)</div>
+                <div class="math-box bg-white">ต่อครบ 4 เส้น → \(C\)<br>4 bonds → \(C\) with no H</div>
+            </div>
+        </div>
+
+        <h3 class="topic-title">วงเล็บในสูตรแบบย่อ <span class="text-gray-500 font-normal">(Parentheses in Condensed Formulas)</span></h3>
+
+        <div class="formula-grid">
+            <div class="highlight-box bg-green-50 border-green-200">
+                <div class="font-bold text-green-900">แบบที่ 1: กลุ่มซ้ำในสายตรง</div>
+                <div class="text-sm text-gray-700 mb-2">Repeated groups in a straight chain</div>
+                <div class="math-box bg-white">
+                    $$CH_3(CH_2)_4CH_3$$
+                </div>
+                <div class="lang-th text-sm">
+                    🇹🇭 หมายถึง \(CH_2\) ซ้ำ 4 กลุ่มอยู่ตรงกลาง เป็นสายตรงของ hexane
+                </div>
+                <div class="lang-en text-sm">
+                    🇬🇧 This means four repeated \(CH_2\) groups in the middle, forming a straight chain of hexane.
+                </div>
+            </div>
+
+            <div class="highlight-box bg-orange-50 border-orange-200">
+                <div class="font-bold text-orange-900">แบบที่ 2: กิ่งที่แตกออก</div>
+                <div class="text-sm text-gray-700 mb-2">A branch attached to the main chain</div>
+                <div class="math-box bg-white">
+                    $$CH_3CH(CH_3)CH_3$$
+                </div>
+                <div class="lang-th text-sm">
+                    🇹🇭 \(CH_3\) ในวงเล็บเป็นกิ่งที่เกาะกับ C ตรงกลาง ไม่ใช่ต่อยาวเป็นเส้นตรง
+                </div>
+                <div class="lang-en text-sm">
+                    🇬🇧 The \(CH_3\) in parentheses is a branch attached to the middle carbon, not part of a straight line.
+                </div>
+            </div>
+        </div>
+
+        <h3 class="topic-title">ตัวอย่างฝึกแปลงสูตร <span class="text-gray-500 font-normal">(Conversion Examples)</span></h3>
+
+        <div id="examplesContainer"></div>
+
+        <!-- Part 2 -->
+        <h2 class="section-header">
+            Part 2: สูตรโครงสร้างลิวอิสแบบจุด
+            <span class="font-normal text-xl text-gray-500">(Lewis Dot Structures)</span>
+        </h2>
+
+        <div class="lang-th">
+            🇹🇭 สูตรโครงสร้างลิวอิสแบบจุดใช้จุดแทนอิเล็กตรอนเวเลนซ์ และใช้เส้นแทนอิเล็กตรอนคู่ร่วมพันธะ 1 คู่ ในบทนี้เราดูเพียงตัวอย่างเล็กน้อย เพราะการวาดแบบจุดใน HTML ค่อนข้างละเอียด และโดยปกติจะฝึกวาดในห้องเรียนมากกว่า
+        </div>
+        <div class="lang-en">
+            🇬🇧 Lewis dot structures use dots to represent valence electrons and lines to represent shared electron pairs. In this lesson, we include only a few examples because drawing full Lewis structures in HTML can become complicated, and this skill is usually practiced in class.
+        </div>
+
+        <div class="highlight-box bg-blue-50 border-blue-200">
+            <div class="font-bold text-blue-900 mb-2">📌 จำก่อนวาด / Remember Before Drawing</div>
+            <div class="formula-grid">
+                <div class="math-box bg-white">C สร้าง 4 พันธะ<br>C makes 4 bonds</div>
+                <div class="math-box bg-white">H สร้าง 1 พันธะ<br>H makes 1 bond</div>
+                <div class="math-box bg-white">O สร้าง 2 พันธะ + lone pairs 2 คู่<br>O makes 2 bonds + 2 lone pairs</div>
+                <div class="math-box bg-white">N สร้าง 3 พันธะ + lone pair 1 คู่<br>N makes 3 bonds + 1 lone pair</div>
+            </div>
+        </div>
+
+        <div class="lewis-wrap">
+
+            <div class="lewis-card">
+                <div class="compound-name">Methane</div>
+                <div class="compound-subtitle">มีเทน \(CH_4\)</div>
+
+                <svg class="lewis-svg" viewBox="0 0 360 260">
+                    <text x="170" y="138" class="svg-atom">C</text>
+
+                    <text x="170" y="48" class="svg-atom">H</text>
+                    <line x1="180" y1="62" x2="180" y2="112" class="svg-bond"/>
+
+                    <text x="170" y="238" class="svg-atom">H</text>
+                    <line x1="180" y1="146" x2="180" y2="198" class="svg-bond"/>
+
+                    <text x="58" y="138" class="svg-atom">H</text>
+                    <line x1="95" y1="128" x2="155" y2="128" class="svg-bond"/>
+
+                    <text x="282" y="138" class="svg-atom">H</text>
+                    <line x1="205" y1="128" x2="270" y2="128" class="svg-bond"/>
+
+                    <text x="95" y="22" class="svg-small">C มี 4 พันธะครบ</text>
+                    <text x="95" y="245" class="svg-small">Carbon has 4 bonds.</text>
+                </svg>
+
+                <div class="lang-th text-sm">
+                    🇹🇭 มีเทนเป็นตัวอย่างที่ง่ายที่สุด: C อยู่ตรงกลาง และต่อกับ H 4 ตัว ทำให้ C ครบ 4 แขน
+                </div>
+                <div class="lang-en text-sm">
+                    🇬🇧 Methane is the simplest example: carbon is in the center and bonds to four hydrogen atoms.
+                </div>
+            </div>
+
+            <div class="lewis-card">
+                <div class="compound-name">Methanol</div>
+                <div class="compound-subtitle">เมทานอล \(CH_3OH\)</div>
+
+                <svg class="lewis-svg" viewBox="0 0 420 260">
+                    <text x="135" y="138" class="svg-atom">C</text>
+                    <text x="255" y="138" class="svg-atom">O</text>
+                    <text x="355" y="138" class="svg-atom">H</text>
+
+                    <line x1="165" y1="128" x2="245" y2="128" class="svg-bond"/>
+                    <line x1="285" y1="128" x2="345" y2="128" class="svg-bond"/>
+
+                    <text x="135" y="48" class="svg-atom">H</text>
+                    <line x1="145" y1="62" x2="145" y2="112" class="svg-bond"/>
+
+                    <text x="135" y="238" class="svg-atom">H</text>
+                    <line x1="145" y1="146" x2="145" y2="198" class="svg-bond"/>
+
+                    <text x="42" y="138" class="svg-atom">H</text>
+                    <line x1="80" y1="128" x2="125" y2="128" class="svg-bond"/>
+
+                    <circle cx="260" cy="85" r="4" class="svg-dot"/>
+                    <circle cx="275" cy="85" r="4" class="svg-dot"/>
+                    <circle cx="260" cy="175" r="4" class="svg-dot"/>
+                    <circle cx="275" cy="175" r="4" class="svg-dot"/>
+
+                    <text x="218" y="35" class="svg-small">O มี lone pairs 2 คู่</text>
+                    <text x="218" y="232" class="svg-small">O has 2 lone pairs.</text>
+                </svg>
+
+                <div class="lang-th text-sm">
+                    🇹🇭 เมทานอลมี C ต่อกับ H 3 ตัว และต่อกับ O อีก 1 ตัว ส่วน O ต่อกับ H และมีอิเล็กตรอนคู่โดดเดี่ยว 2 คู่
+                </div>
+                <div class="lang-en text-sm">
+                    🇬🇧 Methanol has carbon bonded to three hydrogens and one oxygen. Oxygen is bonded to hydrogen and has two lone pairs.
+                </div>
+            </div>
+
+        </div>
+
+        <div class="highlight-box bg-indigo-50 border-indigo-200">
+            <div class="font-bold text-indigo-900 mb-2">📌 สรุปจำสั้น / Short Summary</div>
+
+            <div class="lang-th">
+                1) สูตรแบบย่อรวม H ไว้กับ C เช่น \(CH_3\), \(CH_2\), \(CH\)
+            </div>
+            <div class="lang-en">
+                1) Condensed formulas group hydrogens with carbon, such as \(CH_3\), \(CH_2\), and \(CH\).
+            </div>
+
+            <div class="lang-th">
+                2) สูตรเส้นและมุมซ่อน C และ H ที่ติดกับ C ไว้ แต่ยังต้องนับให้ครบ
+            </div>
+            <div class="lang-en">
+                2) Line-angle structures hide carbon atoms and hydrogens attached to carbon, but they must still be counted.
+            </div>
+
+            <div class="lang-th">
+                3) วงเล็บในสูตรแบบย่ออาจหมายถึง “กลุ่มซ้ำ” หรือ “กิ่ง” ต้องดูตำแหน่งให้ดี
+            </div>
+            <div class="lang-en">
+                3) Parentheses in condensed formulas may mean repeated groups or branches. Check the position carefully.
+            </div>
+
+            <div class="lang-th">
+                4) Lewis dot structure ใช้จุดแทนอิเล็กตรอน และเส้นแทนพันธะ
+            </div>
+            <div class="lang-en">
+                4) Lewis dot structures use dots for electrons and lines for bonds.
+            </div>
+        </div>
+
+        <div class="highlight-box bg-red-50 border-red-200">
+            <div class="lang-th font-bold text-red-900 mb-2">
+                🚨 จุดดักข้อสอบ
+            </div>
+            <div class="lang-en bg-transparent border-l-2 border-red-300 text-red-800">
+                🚨 Exam Traps
+            </div>
+
+            <div class="lang-th">
+                1) อย่าคิดว่าวงเล็บทุกอันคือสายตรง บางครั้งวงเล็บคือกิ่ง เช่น \(CH_3CH(CH_3)CH_3\)
+            </div>
+            <div class="lang-en">
+                1) Do not assume every parenthesis is part of a straight chain. Sometimes it represents a branch, such as \(CH_3CH(CH_3)CH_3\).
+            </div>
+
+            <div class="lang-th">
+                2) ในสูตรเส้นและมุม ถ้าไม่เห็น H บน C ไม่ได้แปลว่าไม่มี H
+            </div>
+            <div class="lang-en">
+                2) In line-angle structures, hidden hydrogens on carbon are still present.
+            </div>
+
+            <div class="lang-th">
+                3) จุดแตกกิ่งมักเป็น \(CH\) หรือ \(C\) เพราะ C ตรงนั้นต่อกับหลายด้าน
+            </div>
+            <div class="lang-en">
+                3) A branch point is often \(CH\) or \(C\) because that carbon is connected to several groups.
+            </div>
+
+            <div class="lang-th">
+                4) ตรวจคำตอบง่ายที่สุด: C ทุกตัวต้องครบ 4 แขน
+            </div>
+            <div class="lang-en">
+                4) The easiest check: every carbon should have 4 bonds.
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const examples = [
+            {
+                group: "A: สายตรงง่าย / Simple Straight Chains",
+                name: "Ethane",
+                th: "อีเทน",
+                type: "straight chain",
+                full: "H<sub>3</sub>C—CH<sub>3</sub>",
+                condensed: "CH<sub>3</sub>CH<sub>3</sub>",
+                hiddenH: "C ทั้งสองตัวเป็นปลายสาย → แต่ละตัวคือ CH<sub>3</sub>",
+                hiddenHEn: "Both carbons are line ends → each carbon is CH<sub>3</sub>.",
+                smiles: "CC"
+            },
+            {
+                group: "A: สายตรงง่าย / Simple Straight Chains",
+                name: "Propane",
+                th: "โพรเพน",
+                type: "straight chain",
+                full: "H<sub>3</sub>C—CH<sub>2</sub>—CH<sub>3</sub>",
+                condensed: "CH<sub>3</sub>CH<sub>2</sub>CH<sub>3</sub>",
+                hiddenH: "ปลายสองด้านเป็น CH<sub>3</sub>, ตรงกลางเป็น CH<sub>2</sub>",
+                hiddenHEn: "The two ends are CH<sub>3</sub>, and the middle carbon is CH<sub>2</sub>.",
+                smiles: "CCC"
+            },
+            {
+                group: "A: สายตรงง่าย / Simple Straight Chains",
+                name: "Butane",
+                th: "บิวเทน",
+                type: "straight chain",
+                full: "H<sub>3</sub>C—CH<sub>2</sub>—CH<sub>2</sub>—CH<sub>3</sub>",
+                condensed: "CH<sub>3</sub>CH<sub>2</sub>CH<sub>2</sub>CH<sub>3</sub>",
+                hiddenH: "มี C 4 ตัว: ปลายเป็น CH<sub>3</sub>, กลางสองตัวเป็น CH<sub>2</sub>",
+                hiddenHEn: "There are 4 carbons: the ends are CH<sub>3</sub>, and the two middle carbons are CH<sub>2</sub>.",
+                smiles: "CCCC"
+            },
+            {
+                group: "A: สายตรงง่าย / Simple Straight Chains",
+                name: "Hexane",
+                th: "เฮกเซน",
+                type: "repeated group",
+                full: "H<sub>3</sub>C—CH<sub>2</sub>—CH<sub>2</sub>—CH<sub>2</sub>—CH<sub>2</sub>—CH<sub>3</sub>",
+                condensed: "CH<sub>3</sub>(CH<sub>2</sub>)<sub>4</sub>CH<sub>3</sub>",
+                hiddenH: "วงเล็บ (CH<sub>2</sub>)<sub>4</sub> คือ CH<sub>2</sub> ซ้ำ 4 กลุ่มในสายตรง",
+                hiddenHEn: "(CH<sub>2</sub>)<sub>4</sub> means four repeated CH<sub>2</sub> groups in a straight chain.",
+                smiles: "CCCCCC"
+            },
+
+            {
+                group: "B: มี O แต่ยังอ่านง่าย / Compounds Containing O",
+                name: "Methanol",
+                th: "เมทานอล",
+                type: "oxygen",
+                full: "H<sub>3</sub>C—O—H",
+                condensed: "CH<sub>3</sub>OH",
+                hiddenH: "C เป็น CH<sub>3</sub>, ส่วน O และ H ต้องเขียนให้เห็น",
+                hiddenHEn: "Carbon is CH<sub>3</sub>; O and H on oxygen must be written explicitly.",
+                smiles: "CO"
+            },
+            {
+                group: "B: มี O แต่ยังอ่านง่าย / Compounds Containing O",
+                name: "Ethanol",
+                th: "เอทานอล",
+                type: "oxygen",
+                full: "H<sub>3</sub>C—CH<sub>2</sub>—O—H",
+                condensed: "CH<sub>3</sub>CH<sub>2</sub>OH",
+                hiddenH: "ปลายซ้ายเป็น CH<sub>3</sub>, C ถัดมาเป็น CH<sub>2</sub>, แล้วต่อกับ OH",
+                hiddenHEn: "The left end is CH<sub>3</sub>, the next carbon is CH<sub>2</sub>, then it is bonded to OH.",
+                smiles: "CCO"
+            },
+            {
+                group: "B: มี O แต่ยังอ่านง่าย / Compounds Containing O",
+                name: "Propan-1-ol",
+                th: "โพรแพน-1-ออล",
+                type: "oxygen",
+                full: "H<sub>3</sub>C—CH<sub>2</sub>—CH<sub>2</sub>—O—H",
+                condensed: "CH<sub>3</sub>CH<sub>2</sub>CH<sub>2</sub>OH",
+                hiddenH: "มี C 3 ตัวเรียงตรง และปลายด้านหนึ่งต่อกับ OH",
+                hiddenHEn: "There are 3 carbons in a straight chain, with OH attached to one end.",
+                smiles: "CCCO"
+            },
+
+            {
+                group: "C: พันธะคู่และ C=O / Double Bonds and Carbonyl Groups",
+                name: "Ethene",
+                th: "อีทีน",
+                type: "double bond",
+                full: "H<sub>2</sub>C=CH<sub>2</sub>",
+                condensed: "CH<sub>2</sub>=CH<sub>2</sub>",
+                hiddenH: "พันธะคู่ C=C นับเป็น 2 แขน ทำให้ C แต่ละตัวเหลือ H 2 ตัว",
+                hiddenHEn: "The C=C double bond counts as 2 bonds, so each carbon has 2 hydrogens.",
+                smiles: "C=C"
+            },
+            {
+                group: "C: พันธะคู่และ C=O / Double Bonds and Carbonyl Groups",
+                name: "Acetaldehyde",
+                th: "แอซีทัลดีไฮด์",
+                type: "carbonyl",
+                full: "H<sub>3</sub>C—C(=O)—H",
+                condensed: "CH<sub>3</sub>CHO",
+                hiddenH: "คาร์บอนของ CHO ต่อกับ CH<sub>3</sub>, O แบบพันธะคู่ และ H อีก 1 ตัว",
+                hiddenHEn: "The CHO carbon is bonded to CH<sub>3</sub>, double-bonded to O, and bonded to one H.",
+                smiles: "CC=O"
+            },
+            {
+                group: "C: พันธะคู่และ C=O / Double Bonds and Carbonyl Groups",
+                name: "Acetone",
+                th: "แอซีโตน",
+                type: "carbonyl",
+                full: "H<sub>3</sub>C—C(=O)—CH<sub>3</sub>",
+                condensed: "CH<sub>3</sub>COCH<sub>3</sub>",
+                hiddenH: "คาร์บอนตรงกลางมีพันธะคู่กับ O และต่อกับ CH<sub>3</sub> สองด้าน จึงไม่มี H",
+                hiddenHEn: "The middle carbon is double-bonded to O and bonded to two CH<sub>3</sub> groups, so it has no H.",
+                smiles: "CC(=O)C"
+            },
+            {
+                group: "C: พันธะคู่และ C=O / Double Bonds and Carbonyl Groups",
+                name: "Acetic Acid",
+                th: "กรดแอซีติก",
+                type: "carbonyl",
+                full: "H<sub>3</sub>C—C(=O)—O—H",
+                condensed: "CH<sub>3</sub>COOH",
+                hiddenH: "คาร์บอนของ COOH ไม่มี H เพราะต่อกับ CH<sub>3</sub>, O แบบพันธะคู่ และ O อีกตัว",
+                hiddenHEn: "The COOH carbon has no H because it bonds to CH<sub>3</sub>, double-bonds to O, and bonds to another O.",
+                smiles: "CC(=O)O"
+            },
+
+            {
+                group: "D: โครงสร้างแบบกิ่ง / Branched Structures",
+                name: "2-Methylpropane",
+                th: "2-เมทิลโพรเพน",
+                type: "branched",
+                full: "CH<sub>3</sub>—CH(CH<sub>3</sub>)—CH<sub>3</sub>",
+                condensed: "(CH<sub>3</sub>)<sub>3</sub>CH",
+                hiddenH: "C ตรงกลางต่อกับ CH<sub>3</sub> 3 กลุ่ม และมี H อีก 1 ตัว → เป็น CH",
+                hiddenHEn: "The middle carbon bonds to three CH<sub>3</sub> groups and one H → it is CH.",
+                smiles: "CC(C)C"
+            },
+            {
+                group: "D: โครงสร้างแบบกิ่ง / Branched Structures",
+                name: "2-Methylbutane",
+                th: "2-เมทิลบิวเทน",
+                type: "branched",
+                full: "CH<sub>3</sub>—CH(CH<sub>3</sub>)—CH<sub>2</sub>—CH<sub>3</sub>",
+                condensed: "CH<sub>3</sub>CH(CH<sub>3</sub>)CH<sub>2</sub>CH<sub>3</sub>",
+                hiddenH: "C ตัวที่ 2 เป็นจุดแตกกิ่ง จึงเป็น CH ไม่ใช่ CH<sub>2</sub>",
+                hiddenHEn: "The second carbon is a branch point, so it is CH, not CH<sub>2</sub>.",
+                smiles: "CC(C)CC"
+            },
+            {
+                group: "D: โครงสร้างแบบกิ่ง / Branched Structures",
+                name: "2,2-Dimethylpropane",
+                th: "2,2-ไดเมทิลโพรเพน",
+                type: "branched",
+                full: "C(CH<sub>3</sub>)<sub>4</sub>",
+                condensed: "C(CH<sub>3</sub>)<sub>4</sub>",
+                hiddenH: "C ตรงกลางต่อกับ CH<sub>3</sub> 4 กลุ่มครบ 4 แขน จึงไม่มี H",
+                hiddenHEn: "The central carbon bonds to four CH<sub>3</sub> groups, so it has no H.",
+                smiles: "CC(C)(C)C"
+            }
+        ];
+
+        function renderExamples() {
+            const container = document.getElementById('examplesContainer');
+            let currentGroup = "";
+
+            examples.forEach((item, index) => {
+                if (item.group !== currentGroup) {
+                    currentGroup = item.group;
+                    const header = document.createElement('div');
+                    header.className = 'group-header';
+                    header.textContent = currentGroup;
+                    container.appendChild(header);
+                }
+
+                const card = document.createElement('div');
+                card.className = 'example-card';
+
+                card.innerHTML = `
+                    <div class="flex items-start justify-between gap-3 mb-2">
+                        <div>
+                            <div class="compound-name">${index + 1}. ${item.name}</div>
+                            <div class="compound-subtitle">${item.th}</div>
+                        </div>
+                        <span class="badge">${item.type}</span>
+                    </div>
+
+                    <div class="formula-row">
+                        <div class="formula-label">สูตรแบบกาง H ตามกลุ่ม C / Expanded group formula</div>
+                        <div class="formula-text">${item.full}</div>
+                    </div>
+
+                    <div class="formula-row">
+                        <div class="formula-label">สูตรแบบย่อ / Condensed formula</div>
+                        <div class="formula-text">${item.condensed}</div>
+                    </div>
+
+                    <div class="formula-row">
+                        <div class="formula-label">สูตรเส้นและมุม / Line-angle structure</div>
+                        <canvas class="molecule-canvas" width="280" height="180" data-smiles="${item.smiles}"></canvas>
+                        <div class="text-xs text-gray-500 text-center">SMILES: <code>${item.smiles}</code></div>
+                    </div>
+
+                    <div class="quick-check">
+                        <div class="font-bold mb-1">แตก H / Hidden H</div>
+                        <div class="text-sm">🇹🇭 ${item.hiddenH}</div>
+                        <div class="text-sm text-gray-700 mt-1">🇬🇧 ${item.hiddenHEn}</div>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function drawSmilesStructures() {
+            const canvases = document.querySelectorAll('canvas[data-smiles]');
+
+            if (typeof SmilesDrawer === 'undefined') {
+                canvases.forEach(canvas => {
+                    const smiles = canvas.getAttribute('data-smiles');
+                    const fallback = document.createElement('div');
+                    fallback.className = 'math-box text-sm';
+                    fallback.innerHTML = 'SMILES: <code>' + smiles + '</code><br><span class="text-red-600">SmilesDrawer library did not load.</span>';
+                    canvas.replaceWith(fallback);
+                });
+                return;
+            }
+
+            canvases.forEach(canvas => {
+                const smiles = canvas.getAttribute('data-smiles');
+                const drawer = new SmilesDrawer.Drawer({
+                    width: 280,
+                    height: 180
+                });
+
+                SmilesDrawer.parse(
+                    smiles,
+                    function(tree) {
+                        drawer.draw(tree, canvas, 'light', false);
+                    },
+                    function(error) {
+                        const fallback = document.createElement('div');
+                        fallback.className = 'math-box text-sm';
+                        fallback.innerHTML = 'SMILES: <code>' + smiles + '</code><br><span class="text-red-600">Cannot draw this structure.</span>';
+                        canvas.replaceWith(fallback);
+                    }
+                );
+            });
+        }
+
+        window.addEventListener('load', function() {
+            renderExamples();
+            drawSmilesStructures();
+        });
+    </script>
+</body>
+</html>
+
