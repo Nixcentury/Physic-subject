@@ -1,11 +1,13 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>สรุปเนื้อหา: Kinematics of Rotation</title>
+    <title>การเคลื่อนที่แบบวงกลมและการหมุน (Circular and Rotational Motion)</title>
     <script src="https://cdn.tailwindcss.com/"></script>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <script>
         MathJax = {
             tex: {
@@ -15,335 +17,2284 @@
         };
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-    
+
     <style>
         body {
             font-family: 'Google Sans', 'Product Sans', 'Prompt', sans-serif;
-            background-color: #f8fafc;
-            color: #334155;
+            background-color: #f3f4f6;
+            color: #1f2937;
             line-height: 1.6;
         }
         .page-container {
-            max-width: 900px;
-            margin: 3rem auto;
+            max-width: 960px;
+            margin: 2rem auto;
             background-color: #ffffff;
-            padding: 4rem 5rem;
-            box-shadow: 0 4px 20px -2px rgba(50, 50, 93, 0.08), 0 2px 8px -1px rgba(0, 0, 0, 0.04);
-            border-radius: 20px;
+            padding: 3.5rem 4.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            border-radius: 16px;
         }
         .section-header {
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 0.75rem;
-            margin-top: 3.5rem;
-            margin-bottom: 2rem;
-            color: #1e3a8a;
-            font-size: 1.6rem;
+            border-bottom: 3px solid #3b82f6;
+            padding-bottom: 0.5rem;
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            color: #1d4ed8;
+            font-size: 1.75rem;
             font-weight: 700;
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
+        }
+        .topic-title {
+            color: #111827;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #f59e0b;
+            padding-left: 0.75rem;
         }
         .lang-th {
             margin-bottom: 0.5rem;
-            font-weight: 400;
-            color: #334155;
         }
         .lang-en {
-            color: #64748b;
-            font-size: 0.92em;
+            color: #4b5563;
+            font-size: 0.95em;
             border-left: 3px solid #cbd5e1;
             padding-left: 1rem;
-            margin-bottom: 1.75rem;
-            font-style: normal;
+            margin-bottom: 1.5rem;
+            background-color: #f8fafc;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-radius: 0 8px 8px 0;
         }
         .highlight-box {
-            background-color: #f0fdf4;
-            border: 1px solid #bbf7d0;
+            background-color: #eff6ff;
+            border: 1px solid #bfdbfe;
             padding: 1.5rem;
             margin: 1.5rem 0;
-            border-radius: 14px;
+            border-radius: 12px;
         }
         .math-box {
-            background-color: #f8fafc;
-            border: 1px solid #ebd9fc;
-            border-radius: 12px;
-            padding: 1.25rem;
-            margin: 0.75rem 0;
-            text-align: center;
-            font-size: 1.3rem;
-            box-shadow: sm;
-        }
-        .linear-rotational-box {
-            background-color: #f8fafc;
+            background-color: #ffffff;
             border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            text-align: center;
+            font-size: 1.15rem;
+            box-shadow: inset 0 2px 4px 0 rgba(0,0,0,0.02);
+            overflow-x: auto;
         }
-        ul.custom-list {
-            list-style-type: none;
-            padding-left: 0;
+        .image-card {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.04);
+            margin: 1rem 0;
         }
-        ul.custom-list > li {
-            margin-bottom: 1.75rem;
+        .image-card-header {
+            background-color: #eff6ff;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #dbeafe;
+            font-weight: 700;
+            color: #1d4ed8;
         }
-        .rule-th::before {
-            content: '📌';
-            margin-right: 0.5rem;
+        .image-card img {
+            max-height: 320px;
+            object-fit: contain;
+            margin: 0 auto;
         }
-        /* Image Container Style */
-        .illustration-container {
-            background-color: #f8fafc;
-            border: 2px dashed #cbd5e1;
-            border-radius: 14px;
-            padding: 2rem;
-            margin: 1.5rem 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 200px;
-            color: #94a3b8;
-            transition: all 0.2s ease;
-        }
-        .illustration-container:hover {
-            border-color: #93c5fd;
-            background-color: #f0fdfa;
-            color: #64748b;
+        .formula-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
         }
         @media (max-width: 768px) {
             .page-container {
                 margin: 0;
-                padding: 2rem 1.5rem;
+                padding: 1.5rem;
                 border-radius: 0;
             }
         }
     </style>
 </head>
+
 <body>
-
     <div class="page-container">
-        
-        <div class="text-center mb-14">
-            <h1 class="text-3xl font-bold mb-3 text-slate-900 tracking-tight">สรุปเนื้อหา: ปริมาณและการเคลื่อนที่แบบหมุน</h1>
-            <p class="text-xl text-blue-600 font-medium tracking-wide uppercase text-sm">Kinematics & Dynamics of Rotation</p>
-        </div>
 
-        <h2 class="section-header">
-            <span>1. แปลงร่างตัวแปร: จาก "แนวตรง" สู่ "แนวหมุน"</span>
-            <span class="font-normal text-sm text-slate-400 uppercase tracking-wider">Variable Transformation: Linear to Rotational</span>
-        </h2>
-        
-        <div class="lang-th">
-            การเคลื่อนที่แบบหมุนมีปริมาณทางฟิสิกส์ที่เลียนแบบมาจากปริมาณในแนวตรงอย่างเป็นระบบ เพียงแค่เปลี่ยนบริบทจากระยะทางเชิงเส้นเป็นมุมที่กวาดไป:
-        </div>
-        <div class="lang-en">
-            Rotational motion mirrors linear motion perfectly. The concepts are identical, but the context shifts from traveling along a straight line to sweeping through an angle:
-        </div>
+        <div class="text-center mb-10">
+            <h1 class="text-3xl font-bold mb-3 text-gray-900">
+                การเคลื่อนที่แบบวงกลมและการหมุน<br>
+                <span class="text-2xl text-blue-600 font-medium">(Circular and Rotational Motion)</span>
+            </h1>
+                    </div>
 
-        <ul class="custom-list ml-2 mt-6">
-            <li class="grid grid-cols-1 md:grid-cols-2 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100">
-                <div><span class="font-semibold text-slate-800">📍 การกระจัด (Displacement):</span></div>
-                <div class="text-slate-700 md:text-right">แนวตรง: $s$ (m) ➡️ แนวหมุน: $\theta$ (rad)</div>
-            </li>
-            <li class="grid grid-cols-1 md:grid-cols-2 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100">
-                <div><span class="font-semibold text-slate-800">🚀 ความเร็วต้น (Initial Velocity):</span></div>
-                <div class="text-slate-700 md:text-right">แนวตรง: $u$ (m/s) ➡️ แนวหมุน: $\omega_0$ (rad/s)</div>
-            </li>
-            <li class="grid grid-cols-1 md:grid-cols-2 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100">
-                <div><span class="font-semibold text-slate-800">🏁 ความเร็วปลาย (Final Velocity):</span></div>
-                <div class="text-slate-700 md:text-right">แนวตรง: $v$ (m/s) ➡️ แนวหมุน: $\omega$ (rad/s)</div>
-            </li>
-            <li class="grid grid-cols-1 md:grid-cols-2 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100">
-                <div><span class="font-semibold text-slate-800">⚡ ความเร่ง (Acceleration):</span></div>
-                <div class="text-slate-700 md:text-right">แนวตรง: $a$ (m/s$^2$) ➡️ แนวหมุน: $\alpha$ (rad/s$^2$)</div>
-            </li>
-            <li class="bg-amber-50 p-4 rounded-xl border border-amber-200 mt-4">
-                <div class="font-semibold text-amber-800 mb-1">⏱️ เวลา (Time):</div>
-                <div class="text-amber-900 text-sm">
-                    <strong>แนวตรง:</strong> $t$ (วินาที, s) ➡️ <strong>แนวหมุน:</strong> $t$ (วินาที, s)
-                </div>
-                <div class="text-amber-700 text-xs mt-1 italic">
-                    (เวลาเป็นสิ่งเดียวที่เท่ากันในทั้งสองระบบ! / Time remains the absolute constant in both realms!)
-                </div>
-            </li>
-        </ul>
-
-        <h2 class="section-header">
-            <span>2. เทียบ 5 สูตรทองคำ (ความเร่งคงที่)</span>
-            <span class="font-normal text-sm text-slate-400 uppercase tracking-wider">The 5 Golden Equations - Constant Acceleration</span>
-        </h2>
-    </li>
-
-           <div class="illustration-container" style="padding: 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSudSc8xIVeDXZOD2PkJKU6KILw_2gYAO12CNMqrQhwOA&s" 
-         alt="Angular Acceleration & Rotational Direction" 
-         class="max-w-full h-auto max-h-[180px] rounded-lg shadow-sm border border-slate-100 object-contain mb-3">
     
-    <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
-        พื้นที่แสดงรูปภาพ: ความเร่งเชิงมุม ($\alpha$) และทิศทางการหมุน
-    </span>
-    <span class="text-[10px] mt-0.5 text-slate-400 italic text-center">
-        (Angular Acceleration ($\alpha$) & Rotational Direction)
-    </span>
+<!-- Part 0 -->
+<h2 class="section-header">
+    Part 0: ทบทวนการเคลื่อนที่แนวตรงแบบความเร่งคงตัว
+    <span class="font-normal text-xl text-gray-500">(Review of Linear Motion with Constant Acceleration)</span>
+</h2>
+
+<div class="lang-th">
+    🇹🇭 ก่อนเข้าสู่การเคลื่อนที่แบบวงกลม ควรทบทวนการเคลื่อนที่แนวตรงแบบความเร่งคงตัวก่อน เพราะสูตรของการหมุนจำนวนมากมีรูปแบบคู่ขนานกับสูตรการเคลื่อนที่แนวตรง โดยใช้ปริมาณหลัก 5 ตัว คือ $u, v, a, t, s$
+</div>
+<div class="lang-en">
+    🇬🇧 Before studying circular motion, we should review linear motion with constant acceleration, because many rotational formulas have parallel forms with linear motion formulas. The five main quantities are $u, v, a, t, s$.
 </div>
 
-            <li class="mt-8 bg-purple-50/50 border border-purple-100 rounded-2xl p-6 shadow-sm">
-        
-        <div class="lang-th">
-            เมื่อโครงสร้างตัวแปรเหมือนกัน สูตรคำนวณภายใต้เงื่อนไขความเร่งคงที่จึงถอดแบบกันมาเป๊ะๆ:
-        </div>
-        <div class="lang-en">
-            Since the variables share a direct correspondence, the kinematic formulas share the exact same mathematical structure:
+<div class="image-card">
+    <div class="image-card-header">รูปทวนสูตรแนวตรง / Linear motion formula review</div>
+    <div class="p-4 text-center">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgkYOpPYlevec-vIfhPaOemprEvjKPm-qx-4BiPPkAUBGBMGxxJyzNQYgYgX3tnJrS-PiCXn7pN_SI08GNLw10sJ6rO_5bvHEGpiGza8LKqDLW_fvUoL23uOzRgRC9rDDbMRTJjwHXxa6wG/s1600/116.png" alt="Linear motion formulas">
+    </div>
+</div>
+
+<div class="highlight-box bg-blue-50 border-blue-200">
+    <div class="font-bold text-blue-800 mb-3 text-lg">
+        📌 ปริมาณที่ต้องรู้ / Quantities to Know
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-3 text-sm">
+        <div class="bg-white border border-blue-100 rounded-lg p-3 text-center">
+            <div class="font-bold text-blue-800 text-xl">$u$</div>
+            <div class="lang-th text-gray-700 mb-0">ความเร็วต้น</div>
+            <div class="lang-en bg-transparent border-none p-0 m-0 text-xs">initial velocity</div>
         </div>
 
-        <div class="overflow-x-auto my-6 rounded-xl border border-slate-200 shadow-sm">
-            <table class="min-w-full bg-white text-center border-collapse">
-                <thead class="bg-slate-50 border-b border-slate-200">
+        <div class="bg-white border border-blue-100 rounded-lg p-3 text-center">
+            <div class="font-bold text-blue-800 text-xl">$v$</div>
+            <div class="lang-th text-gray-700 mb-0">ความเร็วปลาย</div>
+            <div class="lang-en bg-transparent border-none p-0 m-0 text-xs">final velocity</div>
+        </div>
+
+        <div class="bg-white border border-blue-100 rounded-lg p-3 text-center">
+            <div class="font-bold text-blue-800 text-xl">$a$</div>
+            <div class="lang-th text-gray-700 mb-0">ความเร่ง</div>
+            <div class="lang-en bg-transparent border-none p-0 m-0 text-xs">acceleration</div>
+        </div>
+
+        <div class="bg-white border border-blue-100 rounded-lg p-3 text-center">
+            <div class="font-bold text-blue-800 text-xl">$t$</div>
+            <div class="lang-th text-gray-700 mb-0">เวลา</div>
+            <div class="lang-en bg-transparent border-none p-0 m-0 text-xs">time</div>
+        </div>
+
+        <div class="bg-white border border-blue-100 rounded-lg p-3 text-center">
+            <div class="font-bold text-blue-800 text-xl">$s$</div>
+            <div class="lang-th text-gray-700 mb-0">การกระจัด</div>
+            <div class="lang-en bg-transparent border-none p-0 m-0 text-xs">displacement</div>
+        </div>
+    </div>
+</div>
+
+<h3 class="topic-title">0.1 สูตรตั้งต้น 2 สูตรหลัก <span class="text-gray-500 font-normal">(Two Main Starting Formulas)</span></h3>
+
+<div class="lang-th">
+    🇹🇭 สูตรการเคลื่อนที่แนวตรงแบบความเร่งคงตัวสามารถสร้างได้จาก 2 แนวคิดหลัก คือ นิยามของความเร่ง และระยะทางเท่ากับความเร็วเฉลี่ยคูณเวลา
+</div>
+<div class="lang-en">
+    🇬🇧 The equations of linear motion with constant acceleration can be built from two main ideas: the definition of acceleration and displacement equals average velocity multiplied by time.
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="highlight-box bg-sky-50 border-sky-200">
+        <div class="lang-th font-semibold text-sky-900">
+            1) นิยามของความเร่ง
+        </div>
+        <div class="lang-en bg-transparent border-l-2 border-sky-300 text-sky-800">
+            1) Definition of acceleration
+        </div>
+        <div class="math-box">
+            $$a = \frac{v-u}{t}$$
+        </div>
+    </div>
+
+    <div class="highlight-box bg-green-50 border-green-200">
+        <div class="lang-th font-semibold text-green-900">
+            2) การกระจัด = ความเร็วเฉลี่ย × เวลา
+        </div>
+        <div class="lang-en bg-transparent border-l-2 border-green-300 text-green-800">
+            2) Displacement = average velocity × time
+        </div>
+        <div class="math-box">
+            $$s = \bar{v}t$$
+            $$\bar{v} = \frac{u+v}{2}$$
+        </div>
+    </div>
+</div>
+
+<h3 class="topic-title">0.2 พิสูจน์สูตรที่ 1 <span class="text-gray-500 font-normal">(Deriving Equation 1)</span></h3>
+
+<div class="lang-th">
+    🇹🇭 เริ่มจากนิยามของความเร่ง คือ ความเร็วเปลี่ยนไปเท่าไรในช่วงเวลา $t$
+</div>
+<div class="lang-en">
+    🇬🇧 Start from the definition of acceleration, which tells how much velocity changes during time $t$.
+</div>
+
+<div class="math-box">
+    $$a = \frac{v-u}{t}$$
+    $$at = v-u$$
+    $$v = u+at$$
+</div>
+
+<div class="highlight-box bg-gray-50 border-gray-200">
+    <div class="lang-th font-semibold text-gray-800">
+        ✅ สูตรที่ 1: $v = u+at$
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-gray-300 text-gray-700">
+        ✅ Equation 1: $v = u+at$
+    </div>
+</div>
+
+<h3 class="topic-title">0.3 พิสูจน์สูตรที่ 2 <span class="text-gray-500 font-normal">(Deriving Equation 2)</span></h3>
+
+<div class="lang-th">
+    🇹🇭 เมื่อความเร่งคงตัว ความเร็วจะเปลี่ยนอย่างสม่ำเสมอ ดังนั้นความเร็วเฉลี่ยหาได้จากค่าเฉลี่ยของความเร็วต้นและความเร็วปลาย
+</div>
+<div class="lang-en">
+    🇬🇧 When acceleration is constant, velocity changes uniformly. Therefore, the average velocity can be found from the average of the initial and final velocities.
+</div>
+
+<div class="math-box">
+    $$\bar{v} = \frac{u+v}{2}$$
+    $$s = \bar{v}t$$
+    $$s = \frac{u+v}{2}t$$
+</div>
+
+<div class="highlight-box bg-gray-50 border-gray-200">
+    <div class="lang-th font-semibold text-gray-800">
+        ✅ สูตรที่ 2: $s = \frac{u+v}{2}t$
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-gray-300 text-gray-700">
+        ✅ Equation 2: $s = \frac{u+v}{2}t$
+    </div>
+</div>
+
+<h3 class="topic-title">0.4 พิสูจน์สูตรที่ 3 <span class="text-gray-500 font-normal">(Deriving Equation 3)</span></h3>
+
+<div class="lang-th">
+    🇹🇭 ใช้สูตรที่ 2 แล้วแทน $v$ ด้วย $u+at$ จากสูตรที่ 1
+</div>
+<div class="lang-en">
+    🇬🇧 Use Equation 2 and substitute $v$ with $u+at$ from Equation 1.
+</div>
+
+<div class="math-box">
+    $$s = \frac{u+v}{2}t$$
+    $$v = u+at$$
+    $$s = \frac{u+(u+at)}{2}t$$
+    $$s = \frac{2u+at}{2}t$$
+    $$s = ut+\frac{1}{2}at^2$$
+</div>
+
+<div class="highlight-box bg-gray-50 border-gray-200">
+    <div class="lang-th font-semibold text-gray-800">
+        ✅ สูตรที่ 3: $s = ut+\frac{1}{2}at^2$
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-gray-300 text-gray-700">
+        ✅ Equation 3: $s = ut+\frac{1}{2}at^2$
+    </div>
+</div>
+
+<h3 class="topic-title">0.5 พิสูจน์สูตรที่ 4 <span class="text-gray-500 font-normal">(Deriving Equation 4)</span></h3>
+
+<div class="lang-th">
+    🇹🇭 สูตรนี้คล้ายสูตรที่ 3 แต่เปลี่ยนให้เขียนในรูปของความเร็วปลาย $v$ โดยใช้ $u = v-at$
+</div>
+<div class="lang-en">
+    🇬🇧 This equation is similar to Equation 3, but it is written in terms of the final velocity $v$ by using $u = v-at$.
+</div>
+
+<div class="math-box">
+    $$s = \frac{u+v}{2}t$$
+    $$u = v-at$$
+    $$s = \frac{(v-at)+v}{2}t$$
+    $$s = \frac{2v-at}{2}t$$
+    $$s = vt-\frac{1}{2}at^2$$
+</div>
+
+<div class="highlight-box bg-gray-50 border-gray-200">
+    <div class="lang-th font-semibold text-gray-800">
+        ✅ สูตรที่ 4: $s = vt-\frac{1}{2}at^2$
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-gray-300 text-gray-700">
+        ✅ Equation 4: $s = vt-\frac{1}{2}at^2$
+    </div>
+</div>
+
+<h3 class="topic-title">0.6 พิสูจน์สูตรที่ 5 <span class="text-gray-500 font-normal">(Deriving Equation 5)</span></h3>
+
+<div class="lang-th">
+    🇹🇭 สูตรนี้เป็นสูตรที่ไม่มีเวลา $t$ เหมาะกับโจทย์ที่ไม่ให้เวลามา เริ่มจากสูตรที่ 1 เพื่อจัดรูปหา $t$
+</div>
+<div class="lang-en">
+    🇬🇧 This equation does not contain time $t$, so it is useful when time is not given. Start from Equation 1 and rearrange it to find $t$.
+</div>
+
+<div class="math-box">
+    $$v = u+at$$
+    $$v-u = at$$
+    $$t = \frac{v-u}{a}$$
+</div>
+
+<div class="lang-th">
+    🇹🇭 จากนั้นแทนค่า $t = \frac{v-u}{a}$ ลงในสูตร $s = \frac{u+v}{2}t$
+</div>
+<div class="lang-en">
+    🇬🇧 Then substitute $t = \frac{v-u}{a}$ into $s = \frac{u+v}{2}t$.
+</div>
+
+<div class="math-box">
+    $$s = \frac{u+v}{2}\left(\frac{v-u}{a}\right)$$
+    $$s = \frac{(u+v)(v-u)}{2a}$$
+    $$s = \frac{v^2-u^2}{2a}$$
+    $$2as = v^2-u^2$$
+    $$v^2 = u^2+2as$$
+</div>
+
+<div class="highlight-box bg-gray-50 border-gray-200">
+    <div class="lang-th font-semibold text-gray-800">
+        ✅ สูตรที่ 5: $v^2 = u^2+2as$
+</div>
+
+<div class="highlight-box bg-gray-50 border-gray-200">
+    <div class="lang-th font-semibold text-gray-800">
+        ✅ สูตร    </div>
+    <div class="lang-en bg-transparent border-l-2 border-gray-300 text-gray-700">
+        ✅ Equation 5: $v^2 = u^2+2as$
+    </div>
+</div>
+</div>
+<h3 class="topic-title">0.7 สรุป 5 สูตรหลัก <span class="text-gray-500 font-normal">(Summary of the Five Main Equations)</span></h3>
+
+<div class="highlight-box bg-blue-50 border-blue-200">
+    <div class="font-bold text-blue-800 mb-2">📌 5 สูตรหลัก / Five main equations</div>
+    <div class="formula-grid">
+        <div class="math-box">$$v = u + at$$</div>
+        <div class="math-box">$$s = \frac{u+v}{2}t$$</div>
+        <div class="math-box">$$s = ut + \frac{1}{2}at^2$$</div>
+        <div class="math-box">$$s = vt - \frac{1}{2}at^2$$</div>
+        <div class="math-box">$$v^2 = u^2 + 2as$$</div>
+    </div>
+</div>
+
+<h3 class="topic-title">0.8 หมายเหตุสำคัญ: ความเร็วคงที่ <span class="text-gray-500 font-normal">(Important Note: Constant Velocity)</span></h3>
+
+<div class="highlight-box bg-yellow-50 border-yellow-300">
+    <div class="lang-th font-semibold text-yellow-900">
+        ⚠️ ถ้าโจทย์บอกว่าเคลื่อนที่ด้วยความเร็วคงที่ แปลว่าไม่มีความเร่ง
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-yellow-300 text-yellow-800">
+        ⚠️ If a problem says the object moves with constant velocity, it means there is no acceleration.
+    </div>
+
+    <div class="math-box bg-white">
+        $$a = 0$$
+        $$v = u$$
+        $$s = vt$$
+    </div>
+
+    <div class="lang-th font-semibold text-yellow-900 mt-3">
+        🇹🇭 จำง่าย: ความเร็วคงที่ใช้แค่ $s=vt$ จบ ไม่ต้องใช้ 5 สูตรเต็ม
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-yellow-300 text-yellow-800">
+        🇬🇧 Easy memory: For constant velocity, just use $s=vt$. There is no need to use all five equations.
+    </div>
+</div>
+
+<div class="highlight-box bg-green-50 border-green-200">
+    <div class="lang-th font-semibold text-green-900">
+        💡 สะพานไปสู่บทถัดไป: ในการเคลื่อนที่แบบหมุน เราจะเห็นสูตรที่มีหน้าตาคล้ายกัน เช่น $v$ จะเปลี่ยนเป็น $\omega$, $a$ จะเปลี่ยนเป็น $\alpha$, และ $s$ จะเปลี่ยนเป็น $\theta$
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-green-300 text-green-800">
+        💡 Bridge to the next part: In rotational motion, we will see similar-looking formulas, where $v$ becomes $\omega$, $a$ becomes $\alpha$, and $s$ becomes $\theta$.
+    </div>
+</div>
+<!-- Part 1 -->
+<h2 class="section-header">
+    Part 1: ภาพรวมการเคลื่อนที่แบบวงกลม
+    <span class="font-normal text-xl text-gray-500">(Overview of Circular Motion)</span>
+</h2>
+
+<div class="lang-th">
+    🇹🇭 การเคลื่อนที่แบบวงกลม คือ การเคลื่อนที่ของวัตถุที่มีเส้นทางเป็นวงกลมหรือส่วนหนึ่งของวงกลม โดยวัตถุจะเคลื่อนที่รอบจุดศูนย์กลางหรือแกนหมุน จุดสำคัญคือ เราสามารถอธิบายการเคลื่อนที่แบบนี้ได้ทั้งในมุมมอง “ตามแนวเส้นรอบวง” และมุมมอง “การหมุนรอบศูนย์กลาง”
+</div>
+<div class="lang-en">
+    🇬🇧 Circular motion is the motion of an object along a circular path or part of a circular path. The object moves around a center or an axis of rotation. The key idea is that this motion can be described from two viewpoints: motion along the circumference and rotation around the center.
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="image-card">
+        <div class="image-card-header">รูปภาพรวมปริมาณวงกลม / Overview of circular quantities</div>
+        <div class="p-4 text-center">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbCMkcxajVPLByZ_-HnYJLfr8eonYDbCKHvq9KJ5FKVQ&s=10" alt="Circular motion overview">
+        </div>
+        <div class="px-4 pb-4 text-sm text-gray-700">
+            <div class="lang-th mb-1">
+                🇹🇭 รูปนี้ใช้ดูภาพรวมของปริมาณในการเคลื่อนที่แบบวงกลม เช่น รัศมี ความเร็วเชิงมุม ความเร็วตามแนวสัมผัส และความเร่ง
+            </div>
+            <div class="lang-en bg-transparent border-l-2 border-gray-300 text-gray-600 mb-0">
+                🇬🇧 This figure gives an overview of quantities in circular motion, such as radius, angular velocity, tangential velocity, and acceleration.
+            </div>
+        </div>
+    </div>
+
+    <div class="image-card">
+        <div class="image-card-header">รูป $r, \theta, s$ / Radius, angle, and arc length</div>
+        <div class="p-4 text-center">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrGFu1UAOMDp0aCYqClo7p7zhLbPe6TRRybBwry8igdbj3bg-BzXnGLAI&s=10" alt="Radius angle arc length">
+        </div>
+        <div class="px-4 pb-4 text-sm text-gray-700">
+            <div class="lang-th mb-1">
+                🇹🇭 รูปนี้ใช้เน้นความสัมพันธ์พื้นฐานระหว่างรัศมี $r$, มุมที่กวาดได้ $\theta$, และระยะตามแนวโค้ง $s$
+            </div>
+            <div class="lang-en bg-transparent border-l-2 border-gray-300 text-gray-600 mb-0">
+                🇬🇧 This figure emphasizes the basic relationship among radius $r$, swept angle $\theta$, and arc length $s$.
+            </div>
+        </div>
+    </div>
+</div>
+
+<h3 class="topic-title">
+    1.1 สองมุมมองของการเคลื่อนที่แบบวงกลม
+    <span class="text-gray-500 font-normal">(Two Viewpoints of Circular Motion)</span>
+</h3>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="highlight-box bg-blue-50 border-blue-200">
+        <div class="lang-th font-semibold text-blue-900">
+            📏 มุมมองเชิงเส้น
+        </div>
+        <div class="lang-en bg-transparent border-l-2 border-blue-300 text-blue-800">
+            📏 Linear viewpoint
+        </div>
+
+        <div class="lang-th text-gray-800">
+            🇹🇭 มองว่าวัตถุเคลื่อนที่ไปตามแนวเส้นรอบวงหรือแนวเส้นสัมผัสของวงกลม เช่น วัตถุเคลื่อนที่ไปได้ระยะทางเท่าไร และมีความเร็วตามแนวสัมผัสเท่าไร
+        </div>
+        <div class="lang-en bg-transparent border-l-2 border-blue-300 text-blue-800">
+            🇬🇧 This viewpoint describes the object as moving along the circumference or along the tangent to the circle, such as how far it travels and how fast it moves tangentially.
+        </div>
+    </div>
+
+    <div class="highlight-box bg-purple-50 border-purple-200">
+        <div class="lang-th font-semibold text-purple-900">
+            🌀 มุมมองเชิงมุม
+        </div>
+        <div class="lang-en bg-transparent border-l-2 border-purple-300 text-purple-800">
+            🌀 Angular viewpoint
+        </div>
+
+        <div class="lang-th text-gray-800">
+            🇹🇭 มองว่าวัตถุหมุนรอบจุดศูนย์กลาง โดยสนใจว่ารัศมีกวาดมุมไปได้เท่าไร และกวาดมุมได้เร็วแค่ไหน
+        </div>
+        <div class="lang-en bg-transparent border-l-2 border-purple-300 text-purple-800">
+            🇬🇧 This viewpoint describes the object as rotating around the center, focusing on how much angle the radius sweeps and how fast the angle is swept.
+        </div>
+    </div>
+</div>
+
+<h3 class="topic-title">
+    1.2 จุดศูนย์กลาง รัศมี และเส้นสัมผัส
+    <span class="text-gray-500 font-normal">(Center, Radius, and Tangent)</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 ในการเคลื่อนที่แบบวงกลม รัศมี $r$ จะลากจากจุดศูนย์กลางไปยังตำแหน่งของวัตถุเสมอ ส่วนทิศของความเร็วเชิงเส้น $v$ จะอยู่ในแนวเส้นสัมผัสของวงกลม ไม่ได้ชี้เข้าศูนย์กลาง
+</div>
+<div class="lang-en">
+    🇬🇧 In circular motion, the radius $r$ always points from the center to the position of the object. The direction of linear velocity $v$ is along the tangent to the circle, not toward the center.
+</div>
+
+<div class="highlight-box bg-yellow-50 border-yellow-300">
+    <div class="lang-th font-semibold text-yellow-900">
+        ⚠️ จุดดักสำคัญ: ความเร็ว $v$ ชี้ตามแนวเส้นสัมผัส แต่ความเร่งสู่ศูนย์กลาง $a_c$ ชี้เข้าหาศูนย์กลาง
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-yellow-300 text-yellow-800">
+        ⚠️ Important trap: Velocity $v$ points along the tangent, but centripetal acceleration $a_c$ points toward the center.
+    </div>
+</div>
+
+<h3 class="topic-title">
+    1.3 มุมที่กวาดและระยะตามแนวโค้ง
+    <span class="text-gray-500 font-normal">(Swept Angle and Arc Length)</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 เมื่อวัตถุเคลื่อนที่บนวงกลม รัศมีจะกวาดมุมไปได้ $\theta$ และวัตถุจะเคลื่อนที่ไปตามแนวโค้งเป็นระยะ $s$ แนวคิดนี้เป็นจุดเริ่มต้นของสูตรเชื่อมระหว่างปริมาณเชิงเส้นและปริมาณเชิงมุม
+</div>
+<div class="lang-en">
+    🇬🇧 When an object moves along a circle, the radius sweeps an angle $\theta$, and the object travels along the arc length $s$. This idea is the starting point for connecting linear and angular quantities.
+</div>
+
+<div class="math-box">
+    $$\text{linear viewpoint} \longleftrightarrow \text{angular viewpoint}$$
+    $$s \longleftrightarrow \theta$$
+</div>
+
+<div class="highlight-box bg-orange-50 border-orange-200">
+    <div class="lang-th font-semibold text-orange-900">
+        💡 ยังไม่ต้องรีบใช้สูตรในส่วนนี้ ให้จำภาพก่อนว่า $s$ คือระยะตามแนวโค้ง ส่วน $\theta$ คือมุมที่รัศมีกวาดได้
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-orange-300 text-orange-800">
+        💡 Do not rush to use formulas in this part. First remember the picture: $s$ is the distance along the arc, while $\theta$ is the angle swept by the radius.
+    </div>
+</div>
+
+<h3 class="topic-title">
+    1.4 วงกลมแบบอัตราเร็วคงที่และไม่คงที่
+    <span class="text-gray-500 font-normal">(Uniform and Non-uniform Circular Motion)</span>
+</h3>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="highlight-box bg-green-50 border-green-200">
+        <div class="lang-th font-semibold text-green-900">
+            ✅ อัตราเร็วคงที่
+        </div>
+        <div class="lang-en bg-transparent border-l-2 border-green-300 text-green-800">
+            ✅ Constant speed
+        </div>
+        <div class="lang-th text-gray-800">
+            🇹🇭 ขนาดของความเร็วไม่เปลี่ยน แต่ทิศทางของความเร็วเปลี่ยนตลอดเวลา จึงยังมีความเร่งสู่ศูนย์กลาง
+        </div>
+        <div class="lang-en bg-transparent border-l-2 border-green-300 text-green-800">
+            🇬🇧 The magnitude of velocity does not change, but its direction changes continuously. Therefore, centripetal acceleration still exists.
+        </div>
+    </div>
+
+    <div class="highlight-box bg-red-50 border-red-200">
+        <div class="lang-th font-semibold text-red-900">
+            🔁 อัตราเร็วไม่คงที่
+        </div>
+        <div class="lang-en bg-transparent border-l-2 border-red-300 text-red-800">
+            🔁 Non-constant speed
+        </div>
+        <div class="lang-th text-gray-800">
+            🇹🇭 ทั้งขนาดและทิศทางของความเร็วเปลี่ยนได้ จึงอาจมีทั้งความเร่งแนวสัมผัสและความเร่งสู่ศูนย์กลาง
+        </div>
+        <div class="lang-en bg-transparent border-l-2 border-red-300 text-red-800">
+            🇬🇧 Both the magnitude and direction of velocity may change. Therefore, both tangential acceleration and centripetal acceleration may exist.
+        </div>
+    </div>
+</div>
+
+<div class="highlight-box bg-green-50 border-green-200">
+    <div class="lang-th font-semibold text-green-900">
+        💡 สะพานไปสู่ Part 2: เมื่อเข้าใจภาพรวมแล้ว ต่อไปเราจะจับคู่ปริมาณเชิงเส้นกับปริมาณเชิงมุม เช่น $s$ คู่กับ $\theta$, $v$ คู่กับ $\omega$, และ $a_t$ คู่กับ $\alpha$
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-green-300 text-green-800">
+        💡 Bridge to Part 2: After understanding the overview, we will match linear quantities with angular quantities, such as $s$ with $\theta$, $v$ with $\omega$, and $a_t$ with $\alpha$.
+    </div>
+</div>
+
+        <!-- Part 2 -->
+        <h2 class="section-header">
+            Part 2: ปริมาณเชิงเส้นและปริมาณเชิงมุม
+            <span class="font-normal text-xl text-gray-500">(Linear and Angular Quantities)</span>
+        </h2>
+
+        <div class="lang-th">
+            🇹🇭 ปริมาณเชิงเส้นอธิบายการเคลื่อนที่ตามแนวเส้นรอบวง ส่วนปริมาณเชิงมุมอธิบายการหมุนรอบแกน
+        </div>
+        <div class="lang-en">
+            🇬🇧 Linear quantities describe motion along the circumference, while angular quantities describe rotation around an axis.
+        </div>
+
+        <div class="overflow-x-auto bg-white rounded-xl shadow border border-gray-200">
+            <table class="min-w-full text-sm text-left border-collapse">
+                <thead class="bg-blue-50 text-blue-900">
                     <tr>
-                        <th class="py-3.5 px-4 text-sm font-semibold text-slate-700 border-r border-slate-200 w-1/2">การเคลื่อนที่แนวตรง (Linear Motion)</th>
-                        <th class="py-3.5 px-4 text-sm font-semibold text-slate-700 w-1/2">การเคลื่อนที่แบบหมุน (Rotational Motion)</th>
+                        <th class="p-3 border">ปริมาณเชิงเส้น<br><span class="text-xs text-gray-600">Linear Quantity</span></th>
+                        <th class="p-3 border">ปริมาณเชิงมุม<br><span class="text-xs text-gray-600">Angular Quantity</span></th>
+                        <th class="p-3 border">ความหมาย<br><span class="text-xs text-gray-600">Meaning</span></th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-200 text-base text-slate-700">
-                    <tr class="hover:bg-slate-50/50">
-                        <td class="py-3.5 border-r border-slate-200">1. $v = u + at$</td>
-                        <td class="py-3.5">1. $\omega = \omega_0 + \alpha t$</td>
+                <tbody>
+                    <tr>
+                        <td class="p-3 border font-bold">$s$</td>
+                        <td class="p-3 border font-bold">$\theta$</td>
+                        <td class="p-3 border">ระยะตามแนวโค้ง ↔ มุมที่กวาด<br><span class="text-xs text-gray-600">Arc length ↔ angle swept</span></td>
                     </tr>
-                    <tr class="bg-slate-50/30 hover:bg-slate-50/50">
-                        <td class="py-3.5 border-r border-slate-200">2. $s = u t + \frac{1}{2}at^2$</td>
-                        <td class="py-3.5">2. $\theta = \omega_0 t + \frac{1}{2}\alpha t^2$</td>
+                    <tr class="bg-gray-50">
+                        <td class="p-3 border font-bold">$v$</td>
+                        <td class="p-3 border font-bold">$\omega$</td>
+                        <td class="p-3 border">ความเร็วตามแนวสัมผัส ↔ ความเร็วเชิงมุม<br><span class="text-xs text-gray-600">Tangential velocity ↔ angular velocity</span></td>
                     </tr>
-                    <tr class="hover:bg-slate-50/50">
-                        <td class="py-3.5 border-r border-slate-200">3. $v^2 = u^2 + 2as$</td>
-                        <td class="py-3.5">3. $\omega^2 = \omega_0^2 + 2\alpha\theta$</td>
-                    </tr>
-                    <tr class="bg-slate-50/30 hover:bg-slate-50/50">
-                        <td class="py-3.5 border-r border-slate-200">4. $s = \left(\frac{u + v}{2}\right)t$</td>
-                        <td class="py-3.5">4. $\theta = \left(\frac{\omega_0 + \omega}{2}\right)t$</td>
-                    </tr>
-                    <tr class="hover:bg-slate-50/50">
-                        <td class="py-3.5 border-r border-slate-200">5. $s = vt - \frac{1}{2}at^2$</td>
-                        <td class="py-3.5">5. $\theta = \omega t - \frac{1}{2}\alpha t^2$</td>
+                    <tr>
+                        <td class="p-3 border font-bold">$a_t$</td>
+                        <td class="p-3 border font-bold">$\alpha$</td>
+                        <td class="p-3 border">ความเร่งแนวสัมผัส ↔ ความเร่งเชิงมุม<br><span class="text-xs text-gray-600">Tangential acceleration ↔ angular acceleration</span></td>
                     </tr>
                 </tbody>
             </table>
         </div>
+<!-- Part 3 -->
+<h2 class="section-header">
+    Part 3: สูตรเชื่อมเชิงเส้นกับเชิงมุม
+    <span class="font-normal text-xl text-gray-500">(Connecting Linear and Angular Quantities)</span>
+</h2>
 
-        <h2 class="section-header">
-            <span>3. สะพานเชื่อม: "ปริมาณเชิงเส้น" vs "ปริมาณเชิงมุม"</span>
-            <span class="font-normal text-sm text-slate-400 uppercase tracking-wider">The Bridge: Linear vs. Angular Quantities</span>
-        </h2>
-
-        <div class="highlight-box">
-            <div class="lang-th mb-1 text-emerald-900 font-medium">
-                ถ้าอยากรู้ปริมาณในแนวเส้นสัมผัส (ที่ขอบหรือจุดใดๆ บนวัตถุที่หมุน) กฎง่ายๆ คือ <strong>"เอาปริมาณเชิงมุม คูณด้วย รัศมี ($r$)"</strong>
-            </div>
-            <div class="text-emerald-700 text-sm italic">
-                To find the tangential quantity at any point on a rotating object, multiply the angular quantity by the radius ($r$).
-            </div>
-        </div>
-
-        <div class="illustration-container" style="padding: 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-    <img src="https://www.kofastudy.com/wp-content/uploads/2020/09/Rack-and-Pinion-1.jpg" 
-         alt="Linear and Rotational Relationship" 
-         class="max-w-full h-auto max-h-[180px] rounded-lg shadow-sm border border-slate-100 object-contain mb-3">
-    
-    <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
-        แผนภาพความสัมพันธ์: ปริมาณเชิงเส้นสัมผัส และปริมาณเชิงมุม
-    </span>
-    <span class="text-[10px] mt-0.5 text-slate-400 italic text-center">
-        (Relationship between Tangential Linear and Angular Quantities)
-    </span>
+<div class="lang-th">
+    🇹🇭 หลังจากรู้แล้วว่าการเคลื่อนที่แบบวงกลมสามารถมองได้ทั้งเชิงเส้นและเชิงมุม เราจะเชื่อมสองมุมมองนี้เข้าด้วยกัน โดยใช้รัศมีของวงกลม $r$ เป็นตัวเชื่อมหลัก
+</div>
+<div class="lang-en">
+    🇬🇧 After understanding that circular motion can be viewed both linearly and angularly, we connect these two viewpoints using the radius of the circle, $r$, as the main link.
 </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-            <div class="bg-slate-50 border border-slate-150 p-4 rounded-xl text-center">
-                <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Tangential Displacement</div>
-                <div class="text-sm font-medium text-slate-800 mb-2">การกระจัดเชิงเส้น</div>
-                <div class="bg-white border border-slate-200 py-2 rounded-lg font-mono text-xl text-blue-600 font-bold">$$s = \theta r$$</div>
-            </div>
-            <div class="bg-slate-50 border border-slate-150 p-4 rounded-xl text-center">
-                <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Tangential Velocity</div>
-                <div class="text-sm font-medium text-slate-800 mb-2">ความเร็วเชิงเส้น</div>
-                <div class="bg-white border border-slate-200 py-2 rounded-lg font-mono text-xl text-blue-600 font-bold">$$v = \omega r$$</div>
-            </div>
-            <div class="bg-slate-50 border border-slate-150 p-4 rounded-xl text-center">
-                <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Tangential Acceleration</div>
-                <div class="text-sm font-medium text-slate-800 mb-2">ความเร่งเชิงเส้น</div>
-                <div class="bg-white border border-slate-200 py-2 rounded-lg font-mono text-xl text-blue-600 font-bold">$$a = \alpha r$$</div>
-            </div>
+<div class="image-card">
+    <div class="image-card-header">สูตรเชื่อมเชิงเส้นกับเชิงมุม / Linear-angular connections</div>
+    <div class="p-4 text-center">
+        <img src="https://images.openai.com/static-rsc-4/AYZ8vyGlL43FT9xSvi-ookl8gYvXsgEFM5yb6V0dTYQTecuY72BSgbdrLQY4yfIK3zpS1MyUugo0Tf_vOeQUOWf8rV_t-FhMpKaDdCGq99qHdCDGHFq56jeeJdAKNZZ7pdbYW2clsLVvOUAQhInxwX321B4MHMo64Db01YLbUxk7fWme98FfgZoXrg0kCtzt?purpose=fullsize" alt="Linear angular formulas">
+    </div>
+    <div class="px-4 pb-4 text-sm text-gray-700">
+        <div class="lang-th mb-1">
+            🇹🇭 รูปนี้ใช้แสดงว่าเมื่อรัศมีกวาดมุม $\theta$ วัตถุที่ขอบวงกลมจะเคลื่อนที่ไปตามแนวโค้งเป็นระยะ $s$ และมีความเร็วตามแนวสัมผัส
         </div>
-
-        <h2 class="section-header">
-            <span>4. ทอร์ก (Torque: $\tau$)</span>
-            <span class="font-normal text-sm text-slate-400 uppercase tracking-wider">Rotational Dynamics Principles</span>
-        </h2>
-
-        <ul class="custom-list space-y-4">
-            <li class="border-l-4 border-indigo-500 pl-4 py-1">
-                <div class="font-semibold text-slate-900 mb-0.5">📝 นิยาม (Definition):</div>
-                <div class="text-slate-700">ทอร์ก หรือโมเมนต์ของแรง คือ <strong>"พลังหรือความพยายามในการบิด"</strong> เพื่อทำให้วัตถุหมุนรอบแกนหมุน</div>
-                <div class="text-slate-500 text-sm italic">Torque (or Moment of Force) is the "twisting force" or the tendency of a force to cause an object to rotate about an axis.</div>
-            </li>
-            <li class="border-l-4 border-indigo-500 pl-4 py-1">
-                <div class="font-semibold text-slate-900 mb-0.5">💡 หลักการ (Principle):</div>
-                <div class="text-slate-700">แรงที่ไม่ได้ผ่านจุดหมุนจะทำให้เกิดทอร์กเสมอ</div>
-                <div class="text-slate-500 text-sm italic">Any force applied at a distance from the pivot point (not passing through the axis) generates torque.</div>
-            </li>
-            <li class="border-l-4 border-indigo-500 pl-4 py-1">
-                <div class="font-semibold text-slate-900 mb-0.5">🔢 สมการพื้นฐาน (Formula):</div>
-                <div class="text-slate-700">$$\tau = F \times r_\perp$$</div>
-                <div class="text-slate-500 text-xs mt-1 text-center">
-                    (แรง $\times$ ระยะห่างตั้งฉากจากแนวแรงถึงจุดหมุน / Force $\times$ Perpendicular distance from the pivot to the line of action)
-                </div>
-            </li>
-        </ul>
-
-        <h2 class="section-header">
-            <span>5. โมเมนต์ความเฉื่อย (Moment of Inertia: $I$)</span>
-            <span class="font-normal text-sm text-slate-400 uppercase tracking-wider">Rotational Inertia & Newton's Law</span>
-        </h2>
-
-        <ul class="custom-list">
-            <li class="mb-4">
-                <div class="font-semibold text-slate-900 mb-0.5">📝 นิยาม (Definition):</div>
-                <div class="text-slate-700">ตัวต้านทานการเปลี่ยนสภาพการหมุน หรือ <strong>"ความขี้เกียจที่จะหมุนของวัตถุ"</strong></div>
-                <div class="text-slate-500 text-sm italic">The resistance of an object to changes in its rotational motion—metaphorically, "an object's laziness to rotate."</div>
-            </li>
-            <li class="mb-6">
-                <div class="font-semibold text-slate-900 mb-0.5">⚖️ ปัจจัย (Factors):</div>
-                <div class="text-slate-700">ขึ้นอยู่กับ "มวล" และ "การกระจายมวล" ยิ่งมวลอยู่ไกลจากแกนหมุน วัตถุยิ่งขี้เกียจหมุน (ค่า $I$ มาก ทำให้หมุนยากและหยุดหมุนยาก)</div>
-                <div class="text-slate-500 text-sm italic">It depends on both the "mass" and "how that mass is distributed" relative to the axis of rotation. The further the mass is from the axis, the greater the $I$, making it harder to start or stop rotating.</div>
-            </li>
-
-            <div class="illustration-container" style="padding: 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvJl-G5N3KFqvCrSITIv9CXRkBhQnfOZCnlDO82miWig&s=10" 
-         alt="Moment of Inertia and Torque Distribution" 
-         class="max-w-full h-auto max-h-[180px] rounded-lg shadow-sm border border-slate-100 object-contain mb-3"
-         onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=500';">
-    
-    <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">
-        พื้นที่แสดงรูปภาพ: การกระจายมวลของรูปทรงต่าง ๆ และการเกิดทอร์กลัพธ์
-    </span>
-    <span class="text-[10px] mt-0.5 text-slate-400 italic text-center">
-        (Mass Distribution of Various Shapes & Net Torque Generation)
-    </span>
+        <div class="lang-en bg-transparent border-l-2 border-gray-300 text-gray-600 mb-0">
+            🇬🇧 This figure shows that when the radius sweeps an angle $\theta$, the object at the edge of the circle moves along the arc length $s$ and has tangential velocity.
+        </div>
+    </div>
 </div>
 
-            <li class="mt-8 bg-purple-50/50 border border-purple-100 rounded-2xl p-6 shadow-sm">
-                <div class="font-semibold text-xl text-purple-900 text-center mb-2">🍎 กฎข้อที่ 2 ของนิวตันสำหรับการหมุน</div>
-                <div class="text-center text-xs text-purple-500 uppercase tracking-wider font-medium mb-4">Newton's Second Law for Rotation</div>
-                <div class="text-center text-slate-600 text-sm mb-2">จากแนวตรง $F = ma$ เมื่อเป็นแนวหมุนจะแปลงร่างเป็น:</div>
-                
-                <div class="bg-white border border-purple-200 text-purple-900 font-mono font-bold rounded-xl py-4 my-2 text-2xl shadow-inner text-center max-w-xs mx-auto">
-                    $$ \tau_{\text{net}} = I\alpha $$
-                </div>
-                <div class="text-xs text-purple-800 text-center mt-3 leading-relaxed">
-                    (ทอร์กลัพธ์ = โมเมนต์ความเฉื่อย $\times$ ความเร่งเชิงมุม)<br>
-                    (Net Torque = Moment of Inertia $\times$ Angular Acceleration)
-                </div>
-            </li>
-        </ul>
+<h3 class="topic-title">
+    3.1 จุดเริ่มต้น: ความยาวส่วนโค้ง
+    <span class="text-gray-500 font-normal">(Starting Point: Arc Length)</span>
+</h3>
 
+<div class="lang-th">
+    🇹🇭 สูตรพื้นฐานที่สุดของบทนี้มาจากความสัมพันธ์ระหว่างความยาวส่วนโค้ง $s$, รัศมี $r$, และมุมที่กวาดได้ $\theta$
+</div>
+<div class="lang-en">
+    🇬🇧 The most fundamental formula in this section comes from the relationship among arc length $s$, radius $r$, and the swept angle $\theta$.
+</div>
+
+<div class="math-box">
+    $$s = r\theta$$
+</div>
+
+<div class="highlight-box bg-yellow-50 border-yellow-300">
+    <div class="lang-th font-semibold text-yellow-900">
+        ⚠️ เงื่อนไขสำคัญ: มุม $\theta$ ต้องอยู่ในหน่วยเรเดียนเท่านั้น สูตร $s=r\theta$ จึงจะใช้ได้ตรง ๆ
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-yellow-300 text-yellow-800">
+        ⚠️ Important condition: The angle $\theta$ must be measured in radians for the formula $s=r\theta$ to be used directly.
+    </div>
+</div>
+
+<h3 class="topic-title">
+    3.2 พิสูจน์สูตรความเร็ว $v = r\omega$
+    <span class="text-gray-500 font-normal">(Deriving the Velocity Formula $v = r\omega$)</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 เริ่มจากสูตรความยาวส่วนโค้ง $s=r\theta$ แล้วหารทั้งสองข้างด้วยเวลา $t$
+</div>
+<div class="lang-en">
+    🇬🇧 Start from the arc length formula $s=r\theta$, then divide both sides by time $t$.
+</div>
+
+<div class="math-box">
+    $$s = r\theta$$
+    $$\frac{s}{t} = r\frac{\theta}{t}$$
+</div>
+
+<div class="lang-th">
+    🇹🇭 โดย $\frac{s}{t}$ คือความเร็วเชิงเส้น $v$ และ $\frac{\theta}{t}$ คือความเร็วเชิงมุม $\omega$
+</div>
+<div class="lang-en">
+    🇬🇧 Here, $\frac{s}{t}$ is linear velocity $v$, and $\frac{\theta}{t}$ is angular velocity $\omega$.
+</div>
+
+<div class="math-box">
+    $$v = r\omega$$
+</div>
+
+<div class="highlight-box bg-blue-50 border-blue-200">
+    <div class="lang-th font-semibold text-blue-900">
+        ✅ สูตรเชื่อมความเร็ว: $v = r\omega$
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-blue-300 text-blue-800">
+        ✅ Velocity connection formula: $v = r\omega$
+    </div>
+</div>
+
+<h3 class="topic-title">
+    3.3 พิสูจน์สูตรความเร่งแนวสัมผัส $a_t = r\alpha$
+    <span class="text-gray-500 font-normal">(Deriving the Tangential Acceleration Formula $a_t = r\alpha$)</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 จากสูตร $v=r\omega$ ถ้าความเร็วเชิงมุม $\omega$ เปลี่ยนไป ความเร็วเชิงเส้น $v$ ก็เปลี่ยนไปด้วย จึงเกิดความเร่งแนวสัมผัส
+</div>
+<div class="lang-en">
+    🇬🇧 From the formula $v=r\omega$, if angular velocity $\omega$ changes, linear velocity $v$ also changes. This produces tangential acceleration.
+</div>
+
+<div class="math-box">
+    $$v = r\omega$$
+    $$\frac{\Delta v}{\Delta t} = r\frac{\Delta \omega}{\Delta t}$$
+</div>
+
+<div class="lang-th">
+    🇹🇭 โดย $\frac{\Delta v}{\Delta t}$ คือความเร่งแนวสัมผัส $a_t$ และ $\frac{\Delta \omega}{\Delta t}$ คือความเร่งเชิงมุม $\alpha$
+</div>
+<div class="lang-en">
+    🇬🇧 Here, $\frac{\Delta v}{\Delta t}$ is tangential acceleration $a_t$, and $\frac{\Delta \omega}{\Delta t}$ is angular acceleration $\alpha$.
+</div>
+
+<div class="math-box">
+    $$a_t = r\alpha$$
+</div>
+
+<div class="highlight-box bg-purple-50 border-purple-200">
+    <div class="lang-th font-semibold text-purple-900">
+        ✅ สูตรเชื่อมความเร่งแนวสัมผัส: $a_t = r\alpha$
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-purple-300 text-purple-800">
+        ✅ Tangential acceleration connection formula: $a_t = r\alpha$
+    </div>
+</div>
+
+<h3 class="topic-title">
+    3.4 สรุปสูตรเชื่อม 3 สูตร
+    <span class="text-gray-500 font-normal">(Summary of the Three Connection Formulas)</span>
+</h3>
+
+<div class="highlight-box bg-green-50 border-green-200">
+    <div class="lang-th font-semibold text-green-900 mb-2">
+        📌 ปริมาณเชิงเส้นที่ขอบวงกลม = ปริมาณเชิงมุม × รัศมี
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-green-300 text-green-800">
+        📌 Linear quantity at the edge of the circle = angular quantity × radius
     </div>
 
+    <div class="formula-grid mt-4">
+        <div class="math-box">$$s = r\theta$$</div>
+        <div class="math-box">$$v = r\omega$$</div>
+        <div class="math-box">$$a_t = r\alpha$$</div>
+    </div>
+</div>
+
+<h3 class="topic-title">
+    3.5 แปลความหมายของแต่ละสูตร
+    <span class="text-gray-500 font-normal">(Meaning of Each Formula)</span>
+</h3>
+
+<div class="overflow-x-auto bg-white rounded-xl shadow border border-gray-200">
+    <table class="min-w-full text-sm text-left border-collapse">
+        <thead class="bg-blue-50 text-blue-900">
+            <tr>
+                <th class="p-3 border">สูตร<br><span class="text-xs text-gray-600">Formula</span></th>
+                <th class="p-3 border">ความหมายภาษาไทย<br><span class="text-xs text-gray-600">Thai Meaning</span></th>
+                <th class="p-3 border">English Meaning</th>
+            </tr>
+        </thead>
+        <tbody class="text-gray-800">
+            <tr>
+                <td class="p-3 border font-bold text-blue-700">$s = r\theta$</td>
+                <td class="p-3 border">ระยะตามแนวโค้งขึ้นกับรัศมีและมุมที่กวาดได้</td>
+                <td class="p-3 border">Arc length depends on the radius and the swept angle.</td>
+            </tr>
+            <tr class="bg-gray-50">
+                <td class="p-3 border font-bold text-blue-700">$v = r\omega$</td>
+                <td class="p-3 border">ความเร็วตามแนวสัมผัสขึ้นกับรัศมีและความเร็วเชิงมุม</td>
+                <td class="p-3 border">Tangential velocity depends on the radius and angular velocity.</td>
+            </tr>
+            <tr>
+                <td class="p-3 border font-bold text-blue-700">$a_t = r\alpha$</td>
+                <td class="p-3 border">ความเร่งแนวสัมผัสขึ้นกับรัศมีและความเร่งเชิงมุม</td>
+                <td class="p-3 border">Tangential acceleration depends on the radius and angular acceleration.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="highlight-box bg-orange-50 border-orange-200">
+    <div class="lang-th font-semibold text-orange-900">
+        🚨 จุดดัก: $a_t = r\alpha$ คือความเร่งแนวสัมผัส ไม่ใช่ความเร่งสู่ศูนย์กลาง ส่วนความเร่งสู่ศูนย์กลาง $a_c$ จะเรียนใน Part 4
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-orange-300 text-orange-800">
+        🚨 Trap: $a_t = r\alpha$ is tangential acceleration, not centripetal acceleration. Centripetal acceleration $a_c$ will be studied in Part 4.
+    </div>
+</div>
+
+<div class="highlight-box bg-indigo-50 border-indigo-200">
+    <div class="lang-th font-semibold text-indigo-900">
+        💡 สะพานไปสู่ Part 4: แม้เราจะรู้ $a_t$ แล้ว แต่ในการเคลื่อนที่แบบวงกลมยังมีความเร่งอีกชนิดหนึ่งที่สำคัญมาก คือ ความเร่งสู่ศูนย์กลาง $a_c$
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-indigo-300 text-indigo-800">
+        💡 Bridge to Part 4: Although we now know $a_t$, circular motion also has another very important acceleration: centripetal acceleration $a_c$.
+    </div>
+</div>
+<!-- Part 4 -->
+<h2 class="section-header">
+    Part 4: ความเร่งสู่ศูนย์กลาง
+    <span class="font-normal text-xl text-gray-500">(Centripetal Acceleration)</span>
+</h2>
+
+<div class="lang-th">
+    🇹🇭 ในการเคลื่อนที่แบบวงกลม แม้วัตถุจะเคลื่อนที่ด้วยอัตราเร็วคงที่ แต่ทิศทางของความเร็วเปลี่ยนตลอดเวลา ดังนั้นความเร็วในฐานะเวกเตอร์จึงเปลี่ยน และทำให้เกิดความเร่งที่ชี้เข้าสู่ศูนย์กลาง เรียกว่า <strong>ความเร่งสู่ศูนย์กลาง</strong>
+</div>
+<div class="lang-en">
+    🇬🇧 In circular motion, even if an object moves with constant speed, the direction of velocity changes continuously. Therefore, velocity as a vector changes, producing an acceleration directed toward the center. This is called <strong>centripetal acceleration</strong>.
+</div>
+
+<div class="image-card">
+    <div class="image-card-header">พิสูจน์แนวคิด $a_c$ / Deriving the idea of $a_c$</div>
+    <div class="p-4 text-center">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdEg_-d0lbc7isgKSMhyzi0t8J0OsBiUnNP8kFukMxKA&s=10" alt="Centripetal acceleration derivation">
+    </div>
+    <div class="px-4 pb-4 text-sm text-gray-700">
+        <div class="lang-th mb-1">
+            🇹🇭 รูปนี้ใช้แสดงว่าเวกเตอร์ความเร็ว $\vec{v}_1$ และ $\vec{v}_2$ มีขนาดเท่ากัน แต่มีทิศทางต่างกัน จึงเกิดการเปลี่ยนความเร็ว $\Delta \vec{v}$
+        </div>
+        <div class="lang-en bg-transparent border-l-2 border-gray-300 text-gray-600 mb-0">
+            🇬🇧 This figure shows that the velocity vectors $\vec{v}_1$ and $\vec{v}_2$ have the same magnitude but different directions, so a change in velocity $\Delta \vec{v}$ occurs.
+        </div>
+    </div>
+</div>
+
+<h3 class="topic-title">
+    4.1 อัตราเร็วคงที่ แต่ความเร็วไม่คงที่
+    <span class="text-gray-500 font-normal">(Constant Speed but Changing Velocity)</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 ต้องแยกคำว่า <strong>อัตราเร็ว</strong> กับ <strong>ความเร็ว</strong> ให้ชัดเจน อัตราเร็วเป็นปริมาณสเกลาร์ มีแต่ขนาด ส่วนความเร็วเป็นปริมาณเวกเตอร์ มีทั้งขนาดและทิศทาง
+</div>
+<div class="lang-en">
+    🇬🇧 We must clearly distinguish <strong>speed</strong> from <strong>velocity</strong>. Speed is a scalar quantity with magnitude only, while velocity is a vector quantity with both magnitude and direction.
+</div>
+
+<div class="highlight-box bg-blue-50 border-blue-200">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-white p-4 rounded-lg border border-blue-100">
+            <div class="lang-th font-semibold text-blue-900">
+                อัตราเร็วคงที่
+            </div>
+            <div class="lang-en bg-transparent border-l-2 border-blue-300 text-blue-800">
+                Constant speed
+            </div>
+            <div class="math-box">
+                $$|\vec{v}| = \text{constant}$$
+            </div>
+            <div class="lang-th text-gray-700">
+                🇹🇭 ขนาดของความเร็วไม่เปลี่ยน
+            </div>
+            <div class="lang-en bg-transparent border-none p-0 m-0 text-gray-600 text-sm">
+                🇬🇧 The magnitude of velocity does not change.
+            </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-lg border border-blue-100">
+            <div class="lang-th font-semibold text-blue-900">
+                ความเร็วเปลี่ยน
+            </div>
+            <div class="lang-en bg-transparent border-l-2 border-blue-300 text-blue-800">
+                Changing velocity
+            </div>
+            <div class="math-box">
+                $$\text{direction of } \vec{v} \text{ changes}$$
+            </div>
+            <div class="lang-th text-gray-700">
+                🇹🇭 ทิศทางของความเร็วเปลี่ยนตลอดเวลา
+            </div>
+            <div class="lang-en bg-transparent border-none p-0 m-0 text-gray-600 text-sm">
+                🇬🇧 The direction of velocity changes continuously.
+            </div>
+        </div>
+    </div>
+</div>
+
+<h3 class="topic-title">
+    4.2 แนวคิดจากเวกเตอร์ความเร็ว
+    <span class="text-gray-500 font-normal">(Idea from Velocity Vectors)</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 พิจารณาวัตถุเคลื่อนที่จากตำแหน่งที่ 1 ไปตำแหน่งที่ 2 บนวงกลม ในช่วงเวลาสั้น ๆ ความเร็วที่ตำแหน่งที่ 1 คือ $\vec{v}_1$ และความเร็วที่ตำแหน่งที่ 2 คือ $\vec{v}_2$ ทั้งสองมีขนาดเท่ากัน แต่ทิศทางต่างกัน
+</div>
+<div class="lang-en">
+    🇬🇧 Consider an object moving from position 1 to position 2 on a circle during a very short time interval. The velocity at position 1 is $\vec{v}_1$, and the velocity at position 2 is $\vec{v}_2$. These two velocities have the same magnitude but different directions.
+</div>
+
+<div class="math-box">
+    $$|\vec{v}_1| = |\vec{v}_2| = v$$
+    $$\Delta \vec{v} = \vec{v}_2 - \vec{v}_1$$
+</div>
+
+<div class="lang-th">
+    🇹🇭 เมื่อช่วงเวลาสั้นมาก ๆ เวกเตอร์การเปลี่ยนความเร็ว $\Delta \vec{v}$ จะมีทิศเข้าสู่ศูนย์กลาง ดังนั้นความเร่งซึ่งเกิดจาก $\frac{\Delta \vec{v}}{\Delta t}$ ก็จะชี้เข้าสู่ศูนย์กลางด้วย
+</div>
+<div class="lang-en">
+    🇬🇧 When the time interval becomes very small, the change in velocity vector $\Delta \vec{v}$ points toward the center. Therefore, the acceleration produced by $\frac{\Delta \vec{v}}{\Delta t}$ also points toward the center.
+</div>
+
+<div class="highlight-box bg-purple-50 border-purple-200">
+    <div class="lang-th font-semibold text-purple-900">
+        📌 สรุปแนวคิด: ความเร่งสู่ศูนย์กลางเกิดจากการเปลี่ยน “ทิศทาง” ของความเร็ว ไม่ใช่จำเป็นต้องเกิดจากการเปลี่ยน “ขนาด” ของความเร็ว
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-purple-300 text-purple-800">
+        📌 Key idea: Centripetal acceleration is caused by a change in the “direction” of velocity, not necessarily by a change in the “magnitude” of velocity.
+    </div>
+</div>
+
+<h3 class="topic-title">
+    4.3 พิสูจน์สูตร $a_c = \frac{v^2}{r}$
+    <span class="text-gray-500 font-normal">(Deriving $a_c = \frac{v^2}{r}$)</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 ให้รัศมีของวงกลมเป็น $r$ และในช่วงเวลาสั้น ๆ วัตถุเคลื่อนที่ไปตามส่วนโค้งยาว $\Delta s$ พร้อมกับรัศมีกวาดมุม $\Delta \theta$
+</div>
+<div class="lang-en">
+    🇬🇧 Let the radius of the circle be $r$. During a very short time interval, the object moves along an arc length $\Delta s$, while the radius sweeps an angle $\Delta \theta$.
+</div>
+
+<div class="math-box">
+    $$\Delta s = r\Delta \theta$$
+    $$\Delta \theta = \frac{\Delta s}{r}$$
+</div>
+
+<div class="lang-th">
+    🇹🇭 จากรูปเวกเตอร์ความเร็ว เมื่อมุม $\Delta \theta$ มีค่าน้อยมาก จะประมาณได้ว่า ขนาดของการเปลี่ยนความเร็วสัมพันธ์กับมุมที่เปลี่ยนไปดังนี้
+</div>
+<div class="lang-en">
+    🇬🇧 From the velocity vector diagram, when the angle $\Delta \theta$ is very small, the magnitude of the change in velocity can be approximated as follows.
+</div>
+
+<div class="math-box">
+    $$\Delta v \approx v\Delta \theta$$
+</div>
+
+<div class="lang-th">
+    🇹🇭 แทนค่า $\Delta \theta = \frac{\Delta s}{r}$ ลงไป จะได้
+</div>
+<div class="lang-en">
+    🇬🇧 Substitute $\Delta \theta = \frac{\Delta s}{r}$ into the equation.
+</div>
+
+<div class="math-box">
+    $$\Delta v \approx v\left(\frac{\Delta s}{r}\right)$$
+    $$\Delta v \approx \frac{v\Delta s}{r}$$
+</div>
+
+<div class="lang-th">
+    🇹🇭 จากนั้นหารทั้งสองข้างด้วยช่วงเวลา $\Delta t$
+</div>
+<div class="lang-en">
+    🇬🇧 Then divide both sides by the time interval $\Delta t$.
+</div>
+
+<div class="math-box">
+    $$\frac{\Delta v}{\Delta t} \approx \frac{v}{r}\frac{\Delta s}{\Delta t}$$
+</div>
+
+<div class="lang-th">
+    🇹🇭 เมื่อช่วงเวลาสั้นมาก ๆ จะได้ว่า $\frac{\Delta v}{\Delta t}$ คือความเร่งสู่ศูนย์กลาง $a_c$ และ $\frac{\Delta s}{\Delta t}$ คืออัตราเร็ว $v$
+</div>
+<div class="lang-en">
+    🇬🇧 When the time interval becomes very small, $\frac{\Delta v}{\Delta t}$ becomes centripetal acceleration $a_c$, and $\frac{\Delta s}{\Delta t}$ becomes speed $v$.
+</div>
+
+<div class="math-box">
+    $$a_c = \frac{v}{r}(v)$$
+    $$a_c = \frac{v^2}{r}$$
+</div>
+
+<div class="highlight-box bg-green-50 border-green-200">
+    <div class="lang-th font-semibold text-green-900">
+        ✅ สูตรที่ได้: $a_c = \frac{v^2}{r}$
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-green-300 text-green-800">
+        ✅ Resulting formula: $a_c = \frac{v^2}{r}$
+    </div>
+</div>
+
+<h3 class="topic-title">
+    4.4 เขียน $a_c$ ในรูปของ $\omega$
+    <span class="text-gray-500 font-normal">(Writing $a_c$ in Terms of $\omega$)</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 จาก Part 3 เรารู้ว่า $v = r\omega$ จึงสามารถแทนลงในสูตร $a_c = \frac{v^2}{r}$ ได้
+</div>
+<div class="lang-en">
+    🇬🇧 From Part 3, we know that $v = r\omega$, so we can substitute it into $a_c = \frac{v^2}{r}$.
+</div>
+
+<div class="math-box">
+    $$a_c = \frac{v^2}{r}$$
+    $$v = r\omega$$
+    $$a_c = \frac{(r\omega)^2}{r}$$
+    $$a_c = \frac{r^2\omega^2}{r}$$
+    $$a_c = \omega^2r$$
+</div>
+
+<div class="highlight-box bg-blue-50 border-blue-200">
+    <div class="lang-th font-semibold text-blue-900 mb-2">
+        📌 สรุปสูตรความเร่งสู่ศูนย์กลาง
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-blue-300 text-blue-800">
+        📌 Summary of centripetal acceleration formulas
+    </div>
+
+    <div class="formula-grid mt-4">
+        <div class="math-box">$$a_c = \frac{v^2}{r}$$</div>
+        <div class="math-box">$$a_c = \omega^2r$$</div>
+    </div>
+</div>
+
+<h3 class="topic-title">
+    4.5 ทิศทางของความเร่งสู่ศูนย์กลาง
+    <span class="text-gray-500 font-normal">(Direction of Centripetal Acceleration)</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 ความเร่งสู่ศูนย์กลางมีทิศชี้เข้าสู่จุดศูนย์กลางของวงกลมเสมอ ไม่ได้ชี้ไปตามแนวการเคลื่อนที่ของวัตถุ
+</div>
+<div class="lang-en">
+    🇬🇧 Centripetal acceleration always points toward the center of the circle. It does not point along the direction of motion of the object.
+</div>
+
+<div class="highlight-box bg-orange-50 border-orange-200">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-white p-4 rounded-lg border border-orange-100">
+            <div class="lang-th font-semibold text-orange-900">
+                ความเร็ว $v$
+            </div>
+            <div class="lang-en bg-transparent border-l-2 border-orange-300 text-orange-800">
+                Velocity $v$
+            </div>
+            <div class="lang-th text-gray-800">
+                🇹🇭 ชี้ตามแนวเส้นสัมผัสของวงกลม
+            </div>
+            <div class="lang-en bg-transparent border-none p-0 m-0 text-gray-600 text-sm">
+                🇬🇧 Points along the tangent to the circle.
+            </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-lg border border-orange-100">
+            <div class="lang-th font-semibold text-orange-900">
+                ความเร่ง $a_c$
+            </div>
+            <div class="lang-en bg-transparent border-l-2 border-orange-300 text-orange-800">
+                Acceleration $a_c$
+            </div>
+            <div class="lang-th text-gray-800">
+                🇹🇭 ชี้เข้าสู่ศูนย์กลางของวงกลม
+            </div>
+            <div class="lang-en bg-transparent border-none p-0 m-0 text-gray-600 text-sm">
+                🇬🇧 Points toward the center of the circle.
+            </div>
+        </div>
+    </div>
+</div>
+
+<h3 class="topic-title">
+    4.6 จุดดักข้อสอบ
+    <span class="text-gray-500 font-normal">(Exam Traps)</span>
+</h3>
+
+<div class="highlight-box bg-red-50 border-red-200">
+    <div class="lang-th font-bold text-red-900 mb-2">
+        🚨 จุดดักที่ 1: อัตราเร็วคงที่ไม่ได้แปลว่าไม่มีความเร่ง
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-red-300 text-red-800">
+        🚨 Trap 1: Constant speed does not mean zero acceleration.
+    </div>
+
+    <div class="lang-th text-gray-800">
+        🇹🇭 ถ้าวัตถุเคลื่อนที่เป็นวงกลม ทิศทางของความเร็วเปลี่ยนตลอดเวลา จึงยังมีความเร่งสู่ศูนย์กลาง
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-red-300 text-red-800">
+        🇬🇧 If an object moves in a circle, the direction of velocity changes continuously, so centripetal acceleration still exists.
+    </div>
+</div>
+
+<div class="highlight-box bg-red-50 border-red-200">
+    <div class="lang-th font-bold text-red-900 mb-2">
+        🚨 จุดดักที่ 2: $a_t$ กับ $a_c$ ไม่ใช่ตัวเดียวกัน
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-red-300 text-red-800">
+        🚨 Trap 2: $a_t$ and $a_c$ are not the same.
+    </div>
+
+    <div class="math-box bg-white">
+        $$a_t = r\alpha$$
+        $$a_c = \frac{v^2}{r} = \omega^2r$$
+    </div>
+
+    <div class="lang-th text-gray-800">
+        🇹🇭 $a_t$ เกิดจากการเปลี่ยนขนาดของความเร็ว ส่วน $a_c$ เกิดจากการเปลี่ยนทิศทางของความเร็ว
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-red-300 text-red-800">
+        🇬🇧 $a_t$ is caused by a change in the magnitude of velocity, while $a_c$ is caused by a change in the direction of velocity.
+    </div>
+</div>
+
+<div class="highlight-box bg-indigo-50 border-indigo-200">
+    <div class="lang-th font-semibold text-indigo-900">
+        💡 สะพานไปสู่ Part 5: เมื่อมีความเร่งสู่ศูนย์กลาง จะต้องมีแรงลัพธ์ที่ชี้เข้าสู่ศูนย์กลางด้วย แรงลัพธ์นี้เรียกว่า แรงสู่ศูนย์กลาง
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-indigo-300 text-indigo-800">
+        💡 Bridge to Part 5: When centripetal acceleration exists, there must also be a net force directed toward the center. This net force is called centripetal force.
+    </div>
+</div>
+<!-- Part 5 -->
+<h2 class="section-header">
+    Part 5: แรงสู่ศูนย์กลางและแรงหนีศูนย์กลาง
+    <span class="font-normal text-xl text-gray-500">(Centripetal Force and Centrifugal Force)</span>
+</h2>
+
+<div class="lang-th">
+    🇹🇭 จาก Part 4 เรารู้ว่าเมื่อวัตถุเคลื่อนที่เป็นวงกลม จะมีความเร่งสู่ศูนย์กลาง $a_c$ ดังนั้นตามกฎข้อที่ 2 ของนิวตัน จะต้องมีแรงลัพธ์ที่ชี้เข้าสู่ศูนย์กลางด้วย แรงลัพธ์นี้เรียกว่า <strong>แรงสู่ศูนย์กลาง</strong>
+</div>
+<div class="lang-en">
+    🇬🇧 From Part 4, we know that when an object moves in a circle, it has centripetal acceleration $a_c$. Therefore, according to Newton’s second law, there must be a net force directed toward the center. This net force is called <strong>centripetal force</strong>.
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="image-card">
+        <div class="image-card-header">ตัวอย่างแรงสู่ศูนย์กลาง / Example of centripetal force</div>
+        <div class="p-4 text-center">
+            <img src="https://www.shutterstock.com/image-illustration/centrifugal-force-diagram-simple-easy-260nw-530105902.jpg" alt="Centripetal and centrifugal force example">
+        </div>
+        <div class="px-4 pb-4 text-sm text-gray-700">
+            <div class="lang-th mb-1">
+                🇹🇭 รูปนี้ใช้ช่วยมองภาพว่าแรงสู่ศูนย์กลางมีทิศเข้าสู่ศูนย์กลาง ส่วนแรงหนีศูนย์กลางมีทิศออกจากศูนย์กลางเมื่อมองจากกรอบอ้างอิงที่กำลังหมุน
+            </div>
+            <div class="lang-en bg-transparent border-l-2 border-gray-300 text-gray-600 mb-0">
+                🇬🇧 This figure helps show that centripetal force points toward the center, while centrifugal force points away from the center when viewed from a rotating frame of reference.
+            </div>
+        </div>
+    </div>
+
+    <div class="image-card">
+        <div class="image-card-header">Centripetal vs Centrifugal</div>
+        <div class="p-4 text-center">
+            <img src="https://cdn1.byjus.com/wp-content/uploads/2023/02/Centripetal-And-Centrifugal-Force.png" alt="Centripetal and centrifugal comparison">
+        </div>
+        <div class="px-4 pb-4 text-sm text-gray-700">
+            <div class="lang-th mb-1">
+                🇹🇭 รูปนี้ใช้เปรียบเทียบแรงสู่ศูนย์กลางกับแรงหนีศูนย์กลาง โดยเน้นว่าทิศของแรงทั้งสองตรงข้ามกัน แต่ไม่ได้หมายความว่าเป็นแรงคู่กิริยา-ปฏิกิริยา
+            </div>
+            <div class="lang-en bg-transparent border-l-2 border-gray-300 text-gray-600 mb-0">
+                🇬🇧 This figure compares centripetal force and centrifugal force. Their directions are opposite, but this does not mean they are an action-reaction pair.
+            </div>
+        </div>
+    </div>
+</div>
+
+<h3 class="topic-title">
+    5.1 จากความเร่งสู่ศูนย์กลางสู่แรงสู่ศูนย์กลาง
+    <span class="text-gray-500 font-normal">(From Centripetal Acceleration to Centripetal Force)</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 จากกฎข้อที่ 2 ของนิวตัน แรงลัพธ์เท่ากับมวลคูณความเร่ง
+</div>
+<div class="lang-en">
+    🇬🇧 From Newton’s second law, the net force equals mass multiplied by acceleration.
+</div>
+
+<div class="math-box">
+    $$\sum F = ma$$
+</div>
+
+<div class="lang-th">
+    🇹🇭 ในการเคลื่อนที่แบบวงกลม ความเร่งที่ชี้เข้าสู่ศูนย์กลางคือ $a_c$ ดังนั้นแรงลัพธ์ในแนวรัศมีจึงเป็น
+</div>
+<div class="lang-en">
+    🇬🇧 In circular motion, the acceleration directed toward the center is $a_c$. Therefore, the net radial force is
+</div>
+
+<div class="math-box">
+    $$F_c = ma_c$$
+</div>
+
+<div class="lang-th">
+    🇹🇭 จาก Part 4 เรามี $a_c = \frac{v^2}{r} = \omega^2r$ จึงแทนลงในสมการแรงได้
+</div>
+<div class="lang-en">
+    🇬🇧 From Part 4, we have $a_c = \frac{v^2}{r} = \omega^2r$, so we can substitute it into the force equation.
+</div>
+
+<div class="math-box">
+    $$F_c = ma_c$$
+    $$F_c = m\left(\frac{v^2}{r}\right)$$
+    $$F_c = \frac{mv^2}{r}$$
+</div>
+
+<div class="math-box">
+    $$F_c = ma_c$$
+    $$F_c = m(\omega^2r)$$
+    $$F_c = m\omega^2r$$
+</div>
+
+<div class="highlight-box bg-blue-50 border-blue-200">
+    <div class="lang-th font-semibold text-blue-900 mb-2">
+        📌 สรุปสูตรแรงสู่ศูนย์กลาง
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-blue-300 text-blue-800">
+        📌 Summary of centripetal force formulas
+    </div>
+
+    <div class="math-box bg-white">
+        $$F_c = ma_c = \frac{mv^2}{r} = m\omega^2r$$
+    </div>
+</div>
+
+<h3 class="topic-title">
+    5.2 แรงสู่ศูนย์กลางไม่ใช่แรงชนิดใหม่
+    <span class="text-gray-500 font-normal">(Centripetal Force Is Not a New Type of Force)</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 คำว่า “แรงสู่ศูนย์กลาง” ไม่ได้หมายถึงแรงชนิดใหม่ แต่หมายถึง <strong>บทบาทของแรงลัพธ์</strong> ที่ทำให้วัตถุเคลื่อนที่เป็นวงกลม โดยแรงจริงที่ทำหน้าที่นี้อาจเป็นแรงตึงเชือก แรงเสียดทาน แรงโน้มถ่วง หรือแรงปฏิกิริยาปกติ แล้วแต่สถานการณ์
+</div>
+<div class="lang-en">
+    🇬🇧 The term “centripetal force” does not mean a new type of force. It refers to the <strong>role of the net force</strong> that keeps an object moving in a circle. The actual force providing this role may be tension, friction, gravity, or normal force, depending on the situation.
+</div>
+
+<div class="overflow-x-auto bg-white rounded-xl shadow border border-gray-200">
+    <table class="min-w-full text-sm text-left border-collapse">
+        <thead class="bg-red-50 text-red-900">
+            <tr>
+                <th class="p-3 border">สถานการณ์<br><span class="text-xs text-gray-600">Situation</span></th>
+                <th class="p-3 border">แรงจริงที่ทำหน้าที่เป็น $F_c$<br><span class="text-xs text-gray-600">Actual force acting as $F_c$</span></th>
+                <th class="p-3 border">สมการที่ใช้<br><span class="text-xs text-gray-600">Equation used</span></th>
+            </tr>
+        </thead>
+        <tbody class="text-gray-800">
+            <tr>
+                <td class="p-3 border">
+                    ลูกบอลผูกเชือกหมุนเป็นวงกลม<br>
+                    <span class="text-xs text-gray-600">A ball tied to a string moving in a circle</span>
+                </td>
+                <td class="p-3 border">
+                    แรงตึงเชือก<br>
+                    <span class="text-xs text-gray-600">Tension</span>
+                </td>
+                <td class="p-3 border font-bold text-red-700">
+                    $$T = \frac{mv^2}{r}$$
+                </td>
+            </tr>
+
+            <tr class="bg-gray-50">
+                <td class="p-3 border">
+                    รถเลี้ยวบนถนนราบ<br>
+                    <span class="text-xs text-gray-600">A car turning on a flat road</span>
+                </td>
+                <td class="p-3 border">
+                    แรงเสียดทาน<br>
+                    <span class="text-xs text-gray-600">Friction</span>
+                </td>
+                <td class="p-3 border font-bold text-red-700">
+                    $$f = \frac{mv^2}{r}$$
+                </td>
+            </tr>
+
+            <tr>
+                <td class="p-3 border">
+                    ดาวเทียมโคจรรอบโลก<br>
+                    <span class="text-xs text-gray-600">A satellite orbiting Earth</span>
+                </td>
+                <td class="p-3 border">
+                    แรงโน้มถ่วง<br>
+                    <span class="text-xs text-gray-600">Gravity</span>
+                </td>
+                <td class="p-3 border font-bold text-red-700">
+                    $$F_g = F_c$$
+                    $$\frac{GMm}{r^2} = \frac{mv^2}{r}$$
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="highlight-box bg-red-50 border-red-200">
+    <div class="lang-th font-semibold text-red-900">
+        🚨 จุดดักข้อสอบ: อย่าเขียนแรงสู่ศูนย์กลางเพิ่มเป็นแรงใหม่ในแผนภาพแรง ถ้าโจทย์มีแรงตึงเชือกเป็นแรงที่ดึงเข้าศูนย์กลางแล้ว แรงตึงเชือกนั้นแหละคือแรงที่ทำหน้าที่เป็น $F_c$
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-red-300 text-red-800">
+        🚨 Exam trap: Do not add centripetal force as an extra new force in a free-body diagram. If tension pulls the object toward the center, that tension is the force acting as $F_c$.
+    </div>
+</div>
+
+<h3 class="topic-title">
+    5.3 แรงสู่ศูนย์กลางและแรงหนีศูนย์กลาง
+    <span class="text-gray-500 font-normal">(Centripetal Force and Centrifugal Force)</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 แรงสู่ศูนย์กลางและแรงหนีศูนย์กลางเป็นคำที่มักทำให้นักเรียนสับสน เพราะมีทิศตรงข้ามกัน แต่มีความหมายทางฟิสิกส์ต่างกัน
+</div>
+<div class="lang-en">
+    🇬🇧 Centripetal force and centrifugal force often confuse students because they point in opposite directions, but they have different physical meanings.
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="highlight-box bg-blue-50 border-blue-200">
+        <div class="lang-th font-semibold text-blue-900">
+            🔵 แรงสู่ศูนย์กลาง
+        </div>
+        <div class="lang-en bg-transparent border-l-2 border-blue-300 text-blue-800">
+            🔵 Centripetal force
+        </div>
+
+        <div class="math-box bg-white">
+            $$\text{Direction: toward the center}$$
+        </div>
+
+        <div class="lang-th text-gray-800">
+            🇹🇭 เป็นแรงลัพธ์จริงที่ชี้เข้าสู่ศูนย์กลาง และเป็นแรงที่จำเป็นต่อการทำให้วัตถุเคลื่อนที่เป็นวงกลม
+        </div>
+        <div class="lang-en bg-transparent border-l-2 border-blue-300 text-blue-800">
+            🇬🇧 It is a real net force directed toward the center and is necessary for keeping an object moving in a circle.
+        </div>
+    </div>
+
+    <div class="highlight-box bg-orange-50 border-orange-200">
+        <div class="lang-th font-semibold text-orange-900">
+            🟠 แรงหนีศูนย์กลาง
+        </div>
+        <div class="lang-en bg-transparent border-l-2 border-orange-300 text-orange-800">
+            🟠 Centrifugal force
+        </div>
+
+        <div class="math-box bg-white">
+            $$\text{Direction: away from the center}$$
+        </div>
+
+        <div class="lang-th text-gray-800">
+            🇹🇭 เป็นแรงเสมือนที่ใช้เมื่อผู้สังเกตอยู่ในกรอบอ้างอิงที่กำลังหมุน เช่น คนที่นั่งอยู่ในรถที่กำลังเลี้ยว
+        </div>
+        <div class="lang-en bg-transparent border-l-2 border-orange-300 text-orange-800">
+            🇬🇧 It is a pseudo force used when the observer is in a rotating frame of reference, such as a person sitting in a turning car.
+        </div>
+    </div>
+</div>
+
+<h3 class="topic-title">
+    5.4 กรอบอ้างอิงสำคัญมาก
+    <span class="text-gray-500 font-normal">(Frame of Reference Matters)</span>
+</h3>
+
+<div class="highlight-box bg-purple-50 border-purple-200">
+    <div class="lang-th font-semibold text-purple-900 mb-2">
+        👀 ผู้สังเกตที่อยู่นอกระบบหมุน
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-purple-300 text-purple-800">
+        👀 Observer outside the rotating system
+    </div>
+
+    <div class="lang-th text-gray-800">
+        🇹🇭 จะเห็นว่าวัตถุต้องมีแรงลัพธ์ดึงเข้าสู่ศูนย์กลาง เพื่อให้เปลี่ยนทิศทางและเคลื่อนที่เป็นวงกลม
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-purple-300 text-purple-800">
+        🇬🇧 This observer sees that the object needs a net force pulling it toward the center in order to change direction and move in a circle.
+    </div>
+</div>
+
+<div class="highlight-box bg-purple-50 border-purple-200">
+    <div class="lang-th font-semibold text-purple-900 mb-2">
+        🌀 ผู้สังเกตที่อยู่ในระบบหมุน
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-purple-300 text-purple-800">
+        🌀 Observer inside the rotating system
+    </div>
+
+    <div class="lang-th text-gray-800">
+        🇹🇭 จะรู้สึกเหมือนมีแรงผลักออกจากศูนย์กลาง จึงใช้แนวคิด “แรงหนีศูนย์กลาง” เพื่ออธิบายความรู้สึกนี้ในกรอบอ้างอิงที่กำลังหมุน
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-purple-300 text-purple-800">
+        🇬🇧 This observer feels as if a force pushes them away from the center. The idea of “centrifugal force” is used to explain this feeling in a rotating frame of reference.
+    </div>
+</div>
+
+<h3 class="topic-title">
+    5.5 ไม่ใช่แรงคู่กิริยา-ปฏิกิริยา
+    <span class="text-gray-500 font-normal">(Not an Action-Reaction Pair)</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 นักเรียนมักเข้าใจผิดว่าแรงสู่ศูนย์กลางและแรงหนีศูนย์กลางเป็นแรงคู่กิริยา-ปฏิกิริยาตามกฎข้อที่ 3 ของนิวตัน แต่จริง ๆ แล้วไม่ใช่ เพราะแรงคู่กิริยา-ปฏิกิริยาต้องกระทำบนวัตถุคนละชิ้น
+</div>
+<div class="lang-en">
+    🇬🇧 Students often misunderstand centripetal force and centrifugal force as an action-reaction pair from Newton’s third law. In fact, they are not, because an action-reaction pair must act on two different objects.
+</div>
+
+<div class="highlight-box bg-yellow-50 border-yellow-300">
+    <div class="lang-th font-semibold text-yellow-900">
+        ⚠️ สรุปสั้น ๆ: แรงสู่ศูนย์กลางเป็นแรงลัพธ์จริงที่ชี้เข้า ส่วนแรงหนีศูนย์กลางเป็นแรงเสมือนที่ใช้ในกรอบอ้างอิงที่หมุน
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-yellow-300 text-yellow-800">
+        ⚠️ Short summary: Centripetal force is a real net force directed inward, while centrifugal force is a pseudo force used in a rotating frame of reference.
+    </div>
+</div>
+
+<h3 class="topic-title">
+    5.6 จุดดักข้อสอบ
+    <span class="text-gray-500 font-normal">(Exam Traps)</span>
+</h3>
+
+<div class="highlight-box bg-red-50 border-red-200">
+    <div class="lang-th font-bold text-red-900 mb-2">
+        🚨 จุดดักที่ 1: $F_c$ ไม่ใช่แรงใหม่
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-red-300 text-red-800">
+        🚨 Trap 1: $F_c$ is not a new force.
+    </div>
+
+    <div class="lang-th text-gray-800">
+        🇹🇭 ให้หาแรงจริงที่ชี้เข้าศูนย์กลางก่อน แล้วตั้งแรงนั้นเท่ากับ $\frac{mv^2}{r}$ หรือ $m\omega^2r$
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-red-300 text-red-800">
+        🇬🇧 First identify the real force pointing toward the center, then set that force equal to $\frac{mv^2}{r}$ or $m\omega^2r$.
+    </div>
+</div>
+
+<div class="highlight-box bg-red-50 border-red-200">
+    <div class="lang-th font-bold text-red-900 mb-2">
+        🚨 จุดดักที่ 2: ถ้ารัศมีมากขึ้น แต่ความเร็วเท่าเดิม แรงสู่ศูนย์กลางจะลดลง
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-red-300 text-red-800">
+        🚨 Trap 2: If the radius increases while speed stays the same, centripetal force decreases.
+    </div>
+
+    <div class="math-box bg-white">
+        $$F_c = \frac{mv^2}{r}$$
+    </div>
+
+    <div class="lang-th text-gray-800">
+        🇹🇭 เมื่อ $m$ และ $v$ คงที่ จะได้ว่า $F_c$ แปรผกผันกับ $r$
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-red-300 text-red-800">
+        🇬🇧 When $m$ and $v$ are constant, $F_c$ is inversely proportional to $r$.
+    </div>
+</div>
+
+<div class="highlight-box bg-green-50 border-green-200">
+    <div class="lang-th font-semibold text-green-900">
+        💡 สะพานไปสู่ Part 6: หลังจากเข้าใจการเคลื่อนที่เป็นวงกลมแล้ว ต่อไปเราจะขยายแนวคิดไปสู่การหมุนของวัตถุแข็ง โดยใช้โมเมนต์ความเฉื่อย $I$ และแรงบิด $\tau$
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-green-300 text-green-800">
+        💡 Bridge to Part 6: After understanding circular motion, we will extend the idea to the rotation of rigid bodies using moment of inertia $I$ and torque $\tau$.
+    </div>
+</div>
+```html id="part6_detailed"
+<!-- Part 6 -->
+<h2 class="section-header">
+    Part 6: โมเมนต์ความเฉื่อยและแรงบิด
+    <span class="font-normal text-xl text-gray-500">(Moment of Inertia and Torque)</span>
+</h2>
+
+<div class="lang-th">
+    🇹🇭 หลังจากเข้าใจการเคลื่อนที่แบบวงกลมของอนุภาคแล้ว เราจะขยายแนวคิดไปสู่การหมุนของวัตถุแข็ง โดยใช้ปริมาณสำคัญ 2 ตัว คือ <strong>โมเมนต์ความเฉื่อย</strong> $I$ และ <strong>แรงบิด</strong> $\tau$
+</div>
+<div class="lang-en">
+    🇬🇧 After understanding circular motion of a particle, we extend the idea to the rotation of rigid bodies using two important quantities: <strong>moment of inertia</strong> $I$ and <strong>torque</strong> $\tau$.
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="image-card">
+        <div class="image-card-header">โมเมนต์ความเฉื่อย / Moment of inertia</div>
+        <div class="p-4 text-center">
+            <img src="https://i.ytimg.com/vi/_NAF9dYE5WU/sddefault.jpg" alt="Moment of inertia formulas">
+        </div>
+        <div class="px-4 pb-4 text-sm text-gray-700">
+            <div class="lang-th mb-1">
+                🇹🇭 รูปนี้ใช้สื่อว่าโมเมนต์ความเฉื่อย $I$ ขึ้นกับทั้งมวล รูปร่าง และการกระจายตัวของมวลรอบแกนหมุน
+            </div>
+            <div class="lang-en bg-transparent border-l-2 border-gray-300 text-gray-600 mb-0">
+                🇬🇧 This figure shows that moment of inertia $I$ depends on mass, shape, and how mass is distributed around the axis of rotation.
+            </div>
+        </div>
+    </div>
+
+    <div class="image-card">
+        <div class="image-card-header">แรงบิดจากประตู / Torque using a door</div>
+        <div class="p-4 text-center">
+            <img src="https://images.openai.com/static-rsc-4/KDUSCsuRcdrurA8ftgf-5LO0PKDL5632WQucbAcj-02lzNcCOb7wWmP4MblptYx6gFJUSA4QhWYtTllPEYqJ4NGnXHVP6p4EzJjUK7L-PNeiPAtcVVIIg9m8pgKA6XPzMn0r1cRpgrvSWo7HrmYQGwg6NOb9BAoZ_YWPRMMxDzj2MWtbKVpGS8944-vdx-mc?purpose=fullsize" alt="Door torque diagram">
+        </div>
+        <div class="px-4 pb-4 text-sm text-gray-700">
+            <div class="lang-th mb-1">
+                🇹🇭 รูปประตูช่วยให้เห็นว่า ถ้าออกแรงไกลจากบานพับมากขึ้น จะทำให้ประตูหมุนง่ายขึ้น เพราะแรงบิดมากขึ้น
+            </div>
+            <div class="lang-en bg-transparent border-l-2 border-gray-300 text-gray-600 mb-0">
+                🇬🇧 The door diagram shows that applying force farther from the hinge makes the door rotate more easily because the torque becomes larger.
+            </div>
+        </div>
+    </div>
+</div>
+
+<h3 class="topic-title">
+    6.1 โมเมนต์ความเฉื่อยคืออะไร
+    <span class="text-gray-500 font-normal">(What Is Moment of Inertia?)</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 โมเมนต์ความเฉื่อย $I$ คือปริมาณที่บอกว่าวัตถุ <strong>ต้านการเปลี่ยนสภาพการหมุน</strong> มากแค่ไหน ถ้า $I$ มาก วัตถุจะเริ่มหมุนยาก หยุดหมุนยาก หรือเปลี่ยนอัตราการหมุนได้ยาก
+</div>
+<div class="lang-en">
+    🇬🇧 Moment of inertia $I$ tells how much an object <strong>resists changes in rotational motion</strong>. If $I$ is large, the object is harder to start rotating, harder to stop rotating, and harder to change its rotational speed.
+</div>
+
+<div class="highlight-box bg-blue-50 border-blue-200">
+    <div class="lang-th font-semibold text-blue-900">
+        📌 คิดง่าย ๆ: มวล $m$ ต้านการเปลี่ยนการเคลื่อนที่แนวตรง ส่วนโมเมนต์ความเฉื่อย $I$ ต้านการเปลี่ยนการหมุน
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-blue-300 text-blue-800">
+        📌 Simple idea: Mass $m$ resists changes in linear motion, while moment of inertia $I$ resists changes in rotational motion.
+    </div>
+
+    <div class="math-box bg-white">
+        $$m \longleftrightarrow I$$
+    </div>
+</div>
+
+<h3 class="topic-title">
+    6.2 โมเมนต์ความเฉื่อยของมวลจุด
+    <span class="text-gray-500 font-normal">(Moment of Inertia of a Point Mass)</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 สำหรับมวลจุดที่มีมวล $m$ อยู่ห่างจากแกนหมุนเป็นระยะ $r$ โมเมนต์ความเฉื่อยหาได้จาก
+</div>
+<div class="lang-en">
+    🇬🇧 For a point mass with mass $m$ located at a distance $r$ from the axis of rotation, the moment of inertia is
+</div>
+
+<div class="math-box">
+    $$I = mr^2$$
+</div>
+
+<div class="lang-th">
+    🇹🇭 ถ้ามีมวลหลายก้อน ให้รวมผลของทุกก้อนเข้าด้วยกัน
+</div>
+<div class="lang-en">
+    🇬🇧 If there are several point masses, add the contribution from each mass.
+</div>
+
+<div class="math-box">
+    $$I = \sum mr^2$$
+</div>
+
+<div class="highlight-box bg-yellow-50 border-yellow-300">
+    <div class="lang-th font-semibold text-yellow-900">
+        ⚠️ จุดสำคัญ: ระยะ $r$ ยกกำลังสอง ดังนั้นมวลที่อยู่ไกลจากแกนหมุนจะทำให้ $I$ เพิ่มขึ้นมาก และทำให้หมุนยากขึ้นมาก
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-yellow-300 text-yellow-800">
+        ⚠️ Important point: The distance $r$ is squared. Therefore, mass located farther from the axis greatly increases $I$ and makes rotation much harder.
+    </div>
+</div>
+
+<h3 class="topic-title">
+    6.3 ทำไมวัตถุบางรูปทรงหมุนยากกว่า
+    <span class="text-gray-500 font-normal">(Why Some Shapes Are Harder to Rotate)</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 วัตถุที่มีมวลเท่ากันอาจมีโมเมนต์ความเฉื่อยไม่เท่ากัน เพราะการกระจายตัวของมวลรอบแกนหมุนต่างกัน ถ้ามวลกระจายอยู่ไกลจากแกนหมุนมาก วัตถุนั้นจะหมุนยากกว่า
+</div>
+<div class="lang-en">
+    🇬🇧 Objects with the same mass may have different moments of inertia because their mass is distributed differently around the axis of rotation. If more mass is distributed farther from the axis, the object is harder to rotate.
+</div>
+
+<div class="highlight-box bg-purple-50 border-purple-200">
+    <div class="lang-th font-semibold text-purple-900">
+        💡 ตัวอย่างแนวคิด: ห่วงวงกลมมักหมุนยากกว่าจานตันที่มีมวลและรัศมีเท่ากัน เพราะมวลของห่วงอยู่ไกลจากแกนหมุนมากกว่า
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-purple-300 text-purple-800">
+        💡 Example idea: A hoop is usually harder to rotate than a solid disk with the same mass and radius because the hoop’s mass is located farther from the axis.
+    </div>
+</div>
+
+<h3 class="topic-title">
+    6.4 แรงบิดคืออะไร
+    <span class="text-gray-500 font-normal">(What Is Torque?)</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 แรงบิด $\tau$ คือผลของแรงที่ทำให้วัตถุมีแนวโน้มหมุนรอบแกน แรงเดียวกันอาจทำให้หมุนง่ายหรือยากต่างกัน ขึ้นกับว่าออกแรงไกลจากแกนหมุนแค่ไหน และออกแรงทำมุมอย่างไร
+</div>
+<div class="lang-en">
+    🇬🇧 Torque $\tau$ is the turning effect of a force that tends to rotate an object around an axis. The same force may rotate an object more easily or less easily depending on how far from the axis the force is applied and the angle of the force.
+</div>
+
+<div class="math-box">
+    $$\tau = rF\sin\theta$$
+</div>
+
+<div class="highlight-box bg-orange-50 border-orange-200">
+    <div class="lang-th font-semibold text-orange-900">
+        📌 ความหมายของตัวแปร: $r$ คือระยะจากแกนหมุนถึงจุดที่ออกแรง, $F$ คือแรงที่กระทำ, และ $\theta$ คือมุมระหว่างแขนแรงกับแรง
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-orange-300 text-orange-800">
+        📌 Meaning of variables: $r$ is the distance from the axis to the point where the force is applied, $F$ is the applied force, and $\theta$ is the angle between the lever arm and the force.
+    </div>
+</div>
+
+<h3 class="topic-title">
+    6.5 กรณีแรงตั้งฉากกับแขนแรง
+    <span class="text-gray-500 font-normal">(Case: Force Perpendicular to the Lever Arm)</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 ถ้าแรงตั้งฉากกับแขนแรง จะได้ $\theta = 90^\circ$ และ $\sin 90^\circ = 1$ ดังนั้นสูตรแรงบิดจะกลายเป็น
+</div>
+<div class="lang-en">
+    🇬🇧 If the force is perpendicular to the lever arm, then $\theta = 90^\circ$ and $\sin 90^\circ = 1$. Therefore, the torque formula becomes
+</div>
+
+<div class="math-box">
+    $$\tau = rF\sin\theta$$
+    $$\tau = rF\sin 90^\circ$$
+    $$\tau = rF$$
+</div>
+
+<div class="highlight-box bg-green-50 border-green-200">
+    <div class="lang-th font-semibold text-green-900">
+        💡 ตัวอย่างประตู: ถ้าออกแรงที่ลูกบิดซึ่งอยู่ไกลจากบานพับ ประตูจะหมุนง่ายกว่าออกแรงใกล้บานพับ เพราะ $r$ มากกว่า ทำให้ $\tau$ มากกว่า
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-green-300 text-green-800">
+        💡 Door example: If you push at the doorknob far from the hinge, the door rotates more easily than when you push near the hinge because $r$ is larger, so $\tau$ is larger.
+    </div>
+</div>
+
+<h3 class="topic-title">
+    6.6 เครื่องหมายของแรงบิด
+    <span class="text-gray-500 font-normal">(Sign of Torque)</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 ในการทำโจทย์ มักกำหนดให้การหมุนทวนเข็มนาฬิกาเป็นบวก และการหมุนตามเข็มนาฬิกาเป็นลบ แต่ถ้าโจทย์กำหนดสัญลักษณ์เอง ให้ยึดตามโจทย์เป็นหลัก
+</div>
+<div class="lang-en">
+    🇬🇧 In problem solving, counterclockwise rotation is often defined as positive, and clockwise rotation as negative. However, if the problem defines its own sign convention, follow the problem statement.
+</div>
+
+<div class="math-box">
+    $$\text{counterclockwise} = +$$
+    $$\text{clockwise} = -$$
+</div>
+
+<h3 class="topic-title">
+    6.7 กฎข้อที่ 2 ของนิวตันสำหรับการหมุน
+    <span class="text-gray-500 font-normal">(Newton’s Second Law for Rotation)</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 ในแนวตรง แรงลัพธ์ทำให้วัตถุมีความเร่งเชิงเส้น ส่วนในการหมุน แรงบิดลัพธ์ทำให้วัตถุมีความเร่งเชิงมุม
+</div>
+<div class="lang-en">
+    🇬🇧 In linear motion, net force produces linear acceleration. In rotational motion, net torque produces angular acceleration.
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="highlight-box bg-blue-50 border-blue-200">
+        <div class="lang-th font-semibold text-blue-900">
+            การเคลื่อนที่แนวตรง
+        </div>
+        <div class="lang-en bg-transparent border-l-2 border-blue-300 text-blue-800">
+            Linear motion
+        </div>
+        <div class="math-box bg-white">
+            $$\sum F = ma$$
+        </div>
+    </div>
+
+    <div class="highlight-box bg-purple-50 border-purple-200">
+        <div class="lang-th font-semibold text-purple-900">
+            การเคลื่อนที่แบบหมุน
+        </div>
+        <div class="lang-en bg-transparent border-l-2 border-purple-300 text-purple-800">
+            Rotational motion
+        </div>
+        <div class="math-box bg-white">
+            $$\sum \tau = I\alpha$$
+        </div>
+    </div>
+</div>
+
+<div class="lang-th">
+    🇹🇭 จากสมการ $\sum \tau = I\alpha$ สามารถจัดรูปเพื่อดูว่าอะไรทำให้วัตถุหมุนง่ายหรือยากได้
+</div>
+<div class="lang-en">
+    🇬🇧 From the equation $\sum \tau = I\alpha$, we can rearrange it to see what makes an object easier or harder to rotate.
+</div>
+
+<div class="math-box">
+    $$\alpha = \frac{\sum \tau}{I}$$
+</div>
+
+<h3 class="topic-title">
+    6.8 คีย์สำคัญ: หมุนง่ายหรือหมุนยาก
+    <span class="text-gray-500 font-normal">(Key Idea: Easy or Hard to Rotate)</span>
+</h3>
+
+<div class="highlight-box bg-green-50 border-green-200">
+    <div class="lang-th font-semibold text-green-900 mb-2">
+        💡 คีย์สำคัญ: หมุนง่ายเมื่อแรงบิด $\tau$ มาก และโมเมนต์ความเฉื่อย $I$ น้อย
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-green-300 text-green-800">
+        💡 Key idea: Rotation is easier when torque $\tau$ is large and moment of inertia $I$ is small.
+    </div>
+
+    <div class="math-box bg-white">
+        $$\alpha = \frac{\sum \tau}{I}$$
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <div class="bg-white p-4 rounded-lg border border-green-100">
+            <div class="lang-th font-semibold text-green-900">
+                ถ้า $\sum \tau$ มาก
+            </div>
+            <div class="lang-en bg-transparent border-l-2 border-green-300 text-green-800">
+                If $\sum \tau$ is large
+            </div>
+            <div class="lang-th text-gray-800">
+                🇹🇭 ความเร่งเชิงมุม $\alpha$ มากขึ้น วัตถุหมุนง่ายขึ้น
+            </div>
+            <div class="lang-en bg-transparent border-none p-0 m-0 text-gray-600 text-sm">
+                🇬🇧 Angular acceleration $\alpha$ increases, so the object rotates more easily.
+            </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-lg border border-green-100">
+            <div class="lang-th font-semibold text-green-900">
+                ถ้า $I$ มาก
+            </div>
+            <div class="lang-en bg-transparent border-l-2 border-green-300 text-green-800">
+                If $I$ is large
+            </div>
+            <div class="lang-th text-gray-800">
+                🇹🇭 ความเร่งเชิงมุม $\alpha$ ลดลง วัตถุหมุนยากขึ้น
+            </div>
+            <div class="lang-en bg-transparent border-none p-0 m-0 text-gray-600 text-sm">
+                🇬🇧 Angular acceleration $\alpha$ decreases, so the object is harder to rotate.
+            </div>
+        </div>
+    </div>
+</div>
+
+<h3 class="topic-title">
+    6.9 สรุปสูตรสำคัญ
+    <span class="text-gray-500 font-normal">(Summary of Important Formulas)</span>
+</h3>
+
+<div class="highlight-box bg-indigo-50 border-indigo-200">
+    <div class="formula-grid">
+        <div class="math-box">$$I = mr^2$$</div>
+        <div class="math-box">$$I = \sum mr^2$$</div>
+        <div class="math-box">$$\tau = rF\sin\theta$$</div>
+        <div class="math-box">$$\tau = rF \quad (\theta = 90^\circ)$$</div>
+        <div class="math-box">$$\sum \tau = I\alpha$$</div>
+        <div class="math-box">$$\alpha = \frac{\sum \tau}{I}$$</div>
+    </div>
+</div>
+
+<h3 class="topic-title">
+    6.10 จุดดักข้อสอบ
+    <span class="text-gray-500 font-normal">(Exam Traps)</span>
+</h3>
+
+<div class="highlight-box bg-red-50 border-red-200">
+    <div class="lang-th font-bold text-red-900 mb-2">
+        🚨 จุดดักที่ 1: $I = mr^2$ ใช้กับมวลจุด ไม่ใช่ใช้กับวัตถุทุกชนิดแบบเหมารวม
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-red-300 text-red-800">
+        🚨 Trap 1: $I = mr^2$ is for a point mass, not for every object in general.
+    </div>
+
+    <div class="lang-th text-gray-800">
+        🇹🇭 ถ้าเป็นวัตถุแข็ง เช่น แท่ง จาน ห่วง หรือทรงกลม ต้องใช้สูตรโมเมนต์ความเฉื่อยตามรูปร่างและแกนหมุนของวัตถุนั้น
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-red-300 text-red-800">
+        🇬🇧 For rigid bodies such as rods, disks, hoops, or spheres, use the moment of inertia formula that matches the shape and axis of rotation.
+    </div>
+</div>
+
+<div class="highlight-box bg-red-50 border-red-200">
+    <div class="lang-th font-bold text-red-900 mb-2">
+        🚨 จุดดักที่ 2: แรงมากไม่ได้แปลว่าแรงบิดมากเสมอ
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-red-300 text-red-800">
+        🚨 Trap 2: A larger force does not always mean a larger torque.
+    </div>
+
+    <div class="math-box bg-white">
+        $$\tau = rF\sin\theta$$
+    </div>
+
+    <div class="lang-th text-gray-800">
+        🇹🇭 ต้องดูทั้งขนาดแรง $F$, ระยะจากแกนหมุน $r$, และมุม $\theta$ ระหว่างแรงกับแขนแรง
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-red-300 text-red-800">
+        🇬🇧 You must consider the force magnitude $F$, the distance from the axis $r$, and the angle $\theta$ between the force and the lever arm.
+    </div>
+</div>
+
+<div class="highlight-box bg-red-50 border-red-200">
+    <div class="lang-th font-bold text-red-900 mb-2">
+        🚨 จุดดักที่ 3: ออกแรงผ่านแกนหมุน จะไม่ทำให้เกิดแรงบิด
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-red-300 text-red-800">
+        🚨 Trap 3: A force applied through the axis of rotation produces no torque.
+    </div>
+
+    <div class="math-box bg-white">
+        $$r = 0 \quad \Rightarrow \quad \tau = 0$$
+    </div>
+
+    <div class="lang-th text-gray-800">
+        🇹🇭 เช่น ผลักประตูตรงบริเวณบานพับ ประตูแทบไม่หมุน เพราะระยะจากแกนหมุนมีค่าน้อยมาก
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-red-300 text-red-800">
+        🇬🇧 For example, pushing a door near the hinge barely rotates it because the distance from the axis is very small.
+    </div>
+</div>
+
+<div class="highlight-box bg-green-50 border-green-200">
+    <div class="lang-th font-semibold text-green-900">
+        💡 สะพานไปสู่ Part 7: ต่อไปเราจะสรุปปริมาณเชิงเส้นและเชิงมุมทั้งหมด เช่น $m$ คู่กับ $I$, $F$ คู่กับ $\tau$, และ $\sum F=ma$ คู่กับ $\sum\tau=I\alpha$
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-green-300 text-green-800">
+        💡 Bridge to Part 7: Next, we will summarize all linear and angular quantities, such as $m$ paired with $I$, $F$ paired with $\tau$, and $\sum F=ma$ paired with $\sum\tau=I\alpha$.
+    </div>
+</div>
+<!-- Part 7 -->
+<h2 class="section-header">
+    Part 7: สรุปใหญ่เชิงเส้นและเชิงมุม
+    <span class="font-normal text-xl text-gray-500">(Final Summary of Linear and Angular Quantities)</span>
+</h2>
+
+<div class="lang-th">
+    🇹🇭 ส่วนนี้ใช้สรุปปริมาณทั้งหมดในบท โดยเน้นการจับคู่ระหว่างปริมาณเชิงเส้นกับปริมาณเชิงมุม รวมถึงสูตรเชื่อมที่ใช้บ่อยในการทำโจทย์
+</div>
+<div class="lang-en">
+    🇬🇧 This section summarizes all important quantities in the lesson, focusing on the pairing between linear and angular quantities as well as the connection formulas commonly used in problem solving.
+</div>
+
+<h3 class="topic-title">
+    7.1 ตารางสรุปปริมาณเชิงเส้นและเชิงมุม
+    <span class="text-gray-500 font-normal">(Summary Table of Linear and Angular Quantities)</span>
+</h3>
+
+<div class="overflow-x-auto bg-white rounded-xl shadow border border-gray-200">
+    <table class="min-w-full text-sm text-left border-collapse">
+        <thead class="bg-indigo-50 text-indigo-900">
+            <tr>
+                <th class="p-3 border">เชิงเส้น<br><span class="text-xs text-gray-600">Linear</span></th>
+                <th class="p-3 border">ความหมาย<br><span class="text-xs text-gray-600">Meaning</span></th>
+                <th class="p-3 border">เชิงมุม<br><span class="text-xs text-gray-600">Angular</span></th>
+                <th class="p-3 border">ความหมาย<br><span class="text-xs text-gray-600">Meaning</span></th>
+                <th class="p-3 border">สูตรเชื่อม<br><span class="text-xs text-gray-600">Connection</span></th>
+            </tr>
+        </thead>
+
+        <tbody class="text-gray-800">
+            <tr>
+                <td class="p-3 border font-bold text-indigo-700">$s$</td>
+                <td class="p-3 border">
+                    ระยะทางตามแนวโค้ง หรือการกระจัดเชิงเส้น<br>
+                    <span class="text-xs text-gray-600">Arc length or linear displacement</span>
+                </td>
+                <td class="p-3 border font-bold text-purple-700">$\theta$</td>
+                <td class="p-3 border">
+                    มุมที่รัศมีกวาดได้ หรือการกระจัดเชิงมุม<br>
+                    <span class="text-xs text-gray-600">Swept angle or angular displacement</span>
+                </td>
+                <td class="p-3 border font-bold text-indigo-700">$s = r\theta$</td>
+            </tr>
+
+            <tr class="bg-gray-50">
+                <td class="p-3 border font-bold text-indigo-700">$v$</td>
+                <td class="p-3 border">
+                    ความเร็วตามแนวเส้นสัมผัส<br>
+                    <span class="text-xs text-gray-600">Tangential or linear velocity</span>
+                </td>
+                <td class="p-3 border font-bold text-purple-700">$\omega$</td>
+                <td class="p-3 border">
+                    ความเร็วเชิงมุม หรืออัตราการกวาดมุม<br>
+                    <span class="text-xs text-gray-600">Angular velocity or rate of sweeping angle</span>
+                </td>
+                <td class="p-3 border font-bold text-indigo-700">$v = r\omega$</td>
+            </tr>
+
+            <tr>
+                <td class="p-3 border font-bold text-indigo-700">$a$</td>
+                <td class="p-3 border">
+                    ความเร่งทั่วไป อาจประกอบด้วยหลายองค์ประกอบ<br>
+                    <span class="text-xs text-gray-600">General acceleration, which may contain multiple components</span>
+                </td>
+                <td class="p-3 border text-gray-500">-</td>
+                <td class="p-3 border">
+                    ขึ้นกับสถานการณ์ของการเคลื่อนที่<br>
+                    <span class="text-xs text-gray-600">Depends on the motion situation</span>
+                </td>
+                <td class="p-3 border text-gray-500">-</td>
+            </tr>
+
+            <tr class="bg-gray-50">
+                <td class="p-3 border font-bold text-indigo-700">$a_t$</td>
+                <td class="p-3 border">
+                    ความเร่งแนวเส้นสัมผัส เกิดจากการเปลี่ยนขนาดของความเร็ว<br>
+                    <span class="text-xs text-gray-600">Tangential acceleration caused by a change in speed</span>
+                </td>
+                <td class="p-3 border font-bold text-purple-700">$\alpha$</td>
+                <td class="p-3 border">
+                    ความเร่งเชิงมุม หรืออัตราการเปลี่ยนความเร็วเชิงมุม<br>
+                    <span class="text-xs text-gray-600">Angular acceleration or rate of change of angular velocity</span>
+                </td>
+                <td class="p-3 border font-bold text-indigo-700">$a_t = r\alpha$</td>
+            </tr>
+
+            <tr>
+                <td class="p-3 border font-bold text-indigo-700">$a_c$</td>
+                <td class="p-3 border">
+                    ความเร่งสู่ศูนย์กลาง เกิดจากการเปลี่ยนทิศทางของความเร็ว<br>
+                    <span class="text-xs text-gray-600">Centripetal acceleration caused by a change in the direction of velocity</span>
+                </td>
+                <td class="p-3 border text-gray-500">-</td>
+                <td class="p-3 border">
+                    ไม่มีคู่ตรง แต่เขียนในรูปของ $\omega$ ได้<br>
+                    <span class="text-xs text-gray-600">No direct pair, but it can be written in terms of $\omega$</span>
+                </td>
+                <td class="p-3 border font-bold text-indigo-700">$a_c = \frac{v^2}{r} = \omega^2r$</td>
+            </tr>
+
+            <tr class="bg-gray-50">
+                <td class="p-3 border font-bold text-indigo-700">$m$</td>
+                <td class="p-3 border">
+                    มวล ต้านการเปลี่ยนสภาพการเคลื่อนที่แนวตรง<br>
+                    <span class="text-xs text-gray-600">Mass, resistance to changes in linear motion</span>
+                </td>
+                <td class="p-3 border font-bold text-purple-700">$I$</td>
+                <td class="p-3 border">
+                    โมเมนต์ความเฉื่อย ต้านการเปลี่ยนสภาพการหมุน<br>
+                    <span class="text-xs text-gray-600">Moment of inertia, resistance to changes in rotational motion</span>
+                </td>
+                <td class="p-3 border font-bold text-indigo-700">$I = mr^2$ <span class="text-xs text-gray-500">(point mass)</span></td>
+            </tr>
+
+            <tr>
+                <td class="p-3 border font-bold text-indigo-700">$F$</td>
+                <td class="p-3 border">
+                    แรง ทำให้เกิดความเร่งเชิงเส้น<br>
+                    <span class="text-xs text-gray-600">Force, which produces linear acceleration</span>
+                </td>
+                <td class="p-3 border font-bold text-purple-700">$\tau$</td>
+                <td class="p-3 border">
+                    แรงบิด ทำให้เกิดความเร่งเชิงมุม<br>
+                    <span class="text-xs text-gray-600">Torque, which produces angular acceleration</span>
+                </td>
+                <td class="p-3 border font-bold text-indigo-700">$\sum F = ma \leftrightarrow \sum \tau = I\alpha$</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<h3 class="topic-title">
+    7.2 สูตรแปลงเชิงมุมเป็นเชิงเส้น
+    <span class="text-gray-500 font-normal">(Converting Angular Quantities to Linear Quantities)</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 ถ้ารู้ปริมาณเชิงมุมและรัศมี $r$ เราสามารถหาปริมาณเชิงเส้นที่ขอบวงกลมได้ โดยนำปริมาณเชิงมุมคูณด้วยรัศมี
+</div>
+<div class="lang-en">
+    🇬🇧 If the angular quantity and radius $r$ are known, the linear quantity at the edge of the circle can be found by multiplying the angular quantity by the radius.
+</div>
+
+<div class="highlight-box bg-blue-50 border-blue-200">
+    <div class="formula-grid">
+        <div class="math-box">$$s = r\theta$$</div>
+        <div class="math-box">$$v = r\omega$$</div>
+        <div class="math-box">$$a_t = r\alpha$$</div>
+    </div>
+</div>
+
+<h3 class="topic-title">
+    7.3 สูตรแปลงเชิงเส้นเป็นเชิงมุม
+    <span class="text-gray-500 font-normal">(Converting Linear Quantities to Angular Quantities)</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 ถ้ารู้ปริมาณเชิงเส้นและรัศมี $r$ เราสามารถหาปริมาณเชิงมุมได้ โดยนำปริมาณเชิงเส้นหารด้วยรัศมี
+</div>
+<div class="lang-en">
+    🇬🇧 If the linear quantity and radius $r$ are known, the angular quantity can be found by dividing the linear quantity by the radius.
+</div>
+
+<div class="highlight-box bg-purple-50 border-purple-200">
+    <div class="formula-grid">
+        <div class="math-box">$$\theta = \frac{s}{r}$$</div>
+        <div class="math-box">$$\omega = \frac{v}{r}$$</div>
+        <div class="math-box">$$\alpha = \frac{a_t}{r}$$</div>
+    </div>
+</div>
+
+<div class="highlight-box bg-yellow-50 border-yellow-300">
+    <div class="lang-th font-semibold text-yellow-900">
+        ⚠️ เงื่อนไขสำคัญ: มุม $\theta$ ต้องอยู่ในหน่วยเรเดียน เมื่อต้องใช้สูตรเชื่อมกับ $s = r\theta$
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-yellow-300 text-yellow-800">
+        ⚠️ Important condition: The angle $\theta$ must be measured in radians when using the connection formula $s = r\theta$.
+    </div>
+</div>
+
+<h3 class="topic-title">
+    7.4 สรุปความเร่ง 3 ตัวที่ต้องแยกให้ชัด
+    <span class="text-gray-500 font-normal">(Three Types of Acceleration to Clearly Separate)</span>
+</h3>
+
+<div class="overflow-x-auto bg-white rounded-xl shadow border border-gray-200">
+    <table class="min-w-full text-sm text-left border-collapse">
+        <thead class="bg-orange-50 text-orange-900">
+            <tr>
+                <th class="p-3 border">สัญลักษณ์<br><span class="text-xs text-gray-600">Symbol</span></th>
+                <th class="p-3 border">ชื่อ<br><span class="text-xs text-gray-600">Name</span></th>
+                <th class="p-3 border">เกิดจากอะไร<br><span class="text-xs text-gray-600">Cause</span></th>
+                <th class="p-3 border">ทิศทาง<br><span class="text-xs text-gray-600">Direction</span></th>
+                <th class="p-3 border">สูตรสำคัญ<br><span class="text-xs text-gray-600">Important formula</span></th>
+            </tr>
+        </thead>
+
+        <tbody class="text-gray-800">
+            <tr>
+                <td class="p-3 border font-bold text-orange-700">$a$</td>
+                <td class="p-3 border">
+                    ความเร่งทั่วไป<br>
+                    <span class="text-xs text-gray-600">General acceleration</span>
+                </td>
+                <td class="p-3 border">
+                    การเปลี่ยนความเร็วโดยรวม<br>
+                    <span class="text-xs text-gray-600">Overall change in velocity</span>
+                </td>
+                <td class="p-3 border">
+                    ขึ้นกับโจทย์<br>
+                    <span class="text-xs text-gray-600">Depends on the problem</span>
+                </td>
+                <td class="p-3 border text-gray-500">-</td>
+            </tr>
+
+            <tr class="bg-gray-50">
+                <td class="p-3 border font-bold text-orange-700">$a_t$</td>
+                <td class="p-3 border">
+                    ความเร่งแนวสัมผัส<br>
+                    <span class="text-xs text-gray-600">Tangential acceleration</span>
+                </td>
+                <td class="p-3 border">
+                    การเปลี่ยนขนาดของความเร็ว<br>
+                    <span class="text-xs text-gray-600">Change in speed</span>
+                </td>
+                <td class="p-3 border">
+                    ตามแนวเส้นสัมผัส<br>
+                    <span class="text-xs text-gray-600">Along the tangent</span>
+                </td>
+                <td class="p-3 border font-bold text-orange-700">$a_t = r\alpha$</td>
+            </tr>
+
+            <tr>
+                <td class="p-3 border font-bold text-orange-700">$a_c$</td>
+                <td class="p-3 border">
+                    ความเร่งสู่ศูนย์กลาง<br>
+                    <span class="text-xs text-gray-600">Centripetal acceleration</span>
+                </td>
+                <td class="p-3 border">
+                    การเปลี่ยนทิศทางของความเร็ว<br>
+                    <span class="text-xs text-gray-600">Change in the direction of velocity</span>
+                </td>
+                <td class="p-3 border">
+                    ชี้เข้าศูนย์กลาง<br>
+                    <span class="text-xs text-gray-600">Toward the center</span>
+                </td>
+                <td class="p-3 border font-bold text-orange-700">$a_c = \frac{v^2}{r} = \omega^2r$</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="highlight-box bg-orange-50 border-orange-200">
+    <div class="lang-th font-semibold text-orange-900">
+        📌 สรุปสุดท้ายเรื่องความเร่ง: $a_t$ ทำให้วัตถุเร็วขึ้นหรือช้าลงตามแนวสัมผัส ส่วน $a_c$ ทำให้ทิศทางของความเร็วเปลี่ยนเข้าสู่ศูนย์กลาง
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-orange-300 text-orange-800">
+        📌 Final acceleration summary: $a_t$ makes the object speed up or slow down along the tangent, while $a_c$ changes the direction of velocity toward the center.
+    </div>
+</div>
+
+<h3 class="topic-title">
+    7.5 สูตรการเคลื่อนที่แนวตรงและสูตรการหมุนที่มีรูปแบบคู่กัน
+    <span class="text-gray-500 font-normal">(Parallel Forms of Linear and Rotational Kinematics)</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 สูตรการเคลื่อนที่แนวตรงแบบความเร่งคงตัวจาก Part 0 สามารถเทียบกับสูตรการหมุนแบบความเร่งเชิงมุมคงตัวได้โดยเปลี่ยน $s \rightarrow \theta$, $u \rightarrow \omega_0$, $v \rightarrow \omega$, และ $a \rightarrow \alpha$
+</div>
+<div class="lang-en">
+    🇬🇧 The constant-acceleration linear motion equations from Part 0 can be compared with constant-angular-acceleration rotational equations by replacing $s \rightarrow \theta$, $u \rightarrow \omega_0$, $v \rightarrow \omega$, and $a \rightarrow \alpha$.
+</div>
+
+<div class="overflow-x-auto bg-white rounded-xl shadow border border-gray-200">
+    <table class="min-w-full text-sm text-left border-collapse">
+        <thead class="bg-green-50 text-green-900">
+            <tr>
+                <th class="p-3 border">แนวตรง<br><span class="text-xs text-gray-600">Linear motion</span></th>
+                <th class="p-3 border">การหมุน<br><span class="text-xs text-gray-600">Rotational motion</span></th>
+            </tr>
+        </thead>
+
+        <tbody class="text-gray-800">
+            <tr>
+                <td class="p-3 border font-bold">$v = u + at$</td>
+                <td class="p-3 border font-bold">$\omega = \omega_0 + \alpha t$</td>
+            </tr>
+
+            <tr class="bg-gray-50">
+                <td class="p-3 border font-bold">$s = \frac{u+v}{2}t$</td>
+                <td class="p-3 border font-bold">$\theta = \frac{\omega_0+\omega}{2}t$</td>
+            </tr>
+
+            <tr>
+                <td class="p-3 border font-bold">$s = ut + \frac{1}{2}at^2$</td>
+                <td class="p-3 border font-bold">$\theta = \omega_0t + \frac{1}{2}\alpha t^2$</td>
+            </tr>
+
+            <tr class="bg-gray-50">
+                <td class="p-3 border font-bold">$s = vt - \frac{1}{2}at^2$</td>
+                <td class="p-3 border font-bold">$\theta = \omega t - \frac{1}{2}\alpha t^2$</td>
+            </tr>
+
+            <tr>
+                <td class="p-3 border font-bold">$v^2 = u^2 + 2as$</td>
+                <td class="p-3 border font-bold">$\omega^2 = \omega_0^2 + 2\alpha\theta$</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<h3 class="topic-title">
+    7.6 สูตรแรงและการหมุนที่ต้องจำ
+    <span class="text-gray-500 font-normal">(Force and Rotation Formulas to Remember)</span>
+</h3>
+
+<div class="highlight-box bg-indigo-50 border-indigo-200">
+    <div class="formula-grid">
+        <div class="math-box">$$a_c = \frac{v^2}{r} = \omega^2r$$</div>
+        <div class="math-box">$$F_c = ma_c = \frac{mv^2}{r} = m\omega^2r$$</div>
+        <div class="math-box">$$I = mr^2$$</div>
+        <div class="math-box">$$\tau = rF\sin\theta$$</div>
+        <div class="math-box">$$\sum F = ma$$</div>
+        <div class="math-box">$$\sum \tau = I\alpha$$</div>
+    </div>
+</div>
+
+<h3 class="topic-title">
+    7.7 คีย์สุดท้ายของบท: หมุนง่ายหรือหมุนยาก
+    <span class="text-gray-500 font-normal">(Final Key Idea: Easy or Hard to Rotate)</span>
+</h3>
+
+<div class="highlight-box bg-green-50 border-green-200">
+    <div class="lang-th font-semibold text-green-900">
+        💡 การหมุนง่ายหรือยากดูได้จากสมการ $\alpha = \frac{\sum\tau}{I}$ ถ้าแรงบิดลัพธ์มาก วัตถุจะหมุนง่ายขึ้น แต่ถ้าโมเมนต์ความเฉื่อยมาก วัตถุจะหมุนยากขึ้น
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-green-300 text-green-800">
+        💡 The ease or difficulty of rotation can be seen from $\alpha = \frac{\sum\tau}{I}$. If the net torque is large, the object rotates more easily. If the moment of inertia is large, the object is harder to rotate.
+    </div>
+
+    <div class="math-box bg-white">
+        $$\alpha = \frac{\sum\tau}{I}$$
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <div class="bg-white p-4 rounded-lg border border-green-100">
+            <div class="lang-th font-semibold text-green-900">
+                $\sum\tau$ มาก → หมุนง่ายขึ้น
+            </div>
+            <div class="lang-en bg-transparent border-l-2 border-green-300 text-green-800">
+                Large $\sum\tau$ → easier to rotate
+            </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-lg border border-green-100">
+            <div class="lang-th font-semibold text-green-900">
+                $I$ มาก → หมุนยากขึ้น
+            </div>
+            <div class="lang-en bg-transparent border-l-2 border-green-300 text-green-800">
+                Large $I$ → harder to rotate
+            </div>
+        </div>
+    </div>
+</div>
+
+<h3 class="topic-title">
+    7.8 จุดดักข้อสอบรวม
+    <span class="text-gray-500 font-normal">(Final Exam Traps)</span>
+</h3>
+
+<div class="highlight-box bg-red-50 border-red-200">
+    <div class="lang-th font-bold text-red-900 mb-2">
+        🚨 จุดดักที่ 1: อย่าสับสนระหว่าง $a_t$ กับ $a_c$
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-red-300 text-red-800">
+        🚨 Trap 1: Do not confuse $a_t$ with $a_c$.
+    </div>
+
+    <div class="math-box bg-white">
+        $$a_t = r\alpha$$
+        $$a_c = \frac{v^2}{r} = \omega^2r$$
+    </div>
+</div>
+
+<div class="highlight-box bg-red-50 border-red-200">
+    <div class="lang-th font-bold text-red-900 mb-2">
+        🚨 จุดดักที่ 2: แรงสู่ศูนย์กลางไม่ใช่แรงชนิดใหม่
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-red-300 text-red-800">
+        🚨 Trap 2: Centripetal force is not a new type of force.
+    </div>
+
+    <div class="lang-th text-gray-800">
+        🇹🇭 ต้องหาแรงจริงที่ทำหน้าที่ดึงเข้าศูนย์กลาง เช่น แรงตึงเชือก แรงเสียดทาน หรือแรงโน้มถ่วง
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-red-300 text-red-800">
+        🇬🇧 You must identify the real force acting toward the center, such as tension, friction, or gravity.
+    </div>
+</div>
+
+<div class="highlight-box bg-red-50 border-red-200">
+    <div class="lang-th font-bold text-red-900 mb-2">
+        🚨 จุดดักที่ 3: มุมต้องเป็นเรเดียนเมื่อใช้สูตรเชื่อม
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-red-300 text-red-800">
+        🚨 Trap 3: The angle must be in radians when using connection formulas.
+    </div>
+
+    <div class="math-box bg-white">
+        $$s = r\theta$$
+    </div>
+</div>
+
+<div class="highlight-box bg-blue-50 border-blue-200">
+    <div class="lang-th font-bold text-blue-900 text-lg">
+        ✅ สรุปปิดบท
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-blue-300 text-blue-800">
+        ✅ Final lesson summary
+    </div>
+
+    <div class="lang-th text-gray-800 mt-2">
+        🇹🇭 การเคลื่อนที่แบบวงกลมและการหมุนสามารถเข้าใจได้ง่ายขึ้นเมื่อมองว่า ปริมาณเชิงเส้นมีคู่กับปริมาณเชิงมุม และสูตรหลายตัวมีโครงสร้างคล้ายกัน เพียงเปลี่ยนจากการเคลื่อนที่แนวตรงไปเป็นการหมุนรอบแกน
+    </div>
+    <div class="lang-en bg-transparent border-l-2 border-blue-300 text-blue-800">
+        🇬🇧 Circular and rotational motion become easier to understand when we see that linear quantities have angular counterparts and many formulas share similar structures, changing only from straight-line motion to rotation around an axis.
+    </div>
+</div>
+
+    </div>
 </body>
 </html>
