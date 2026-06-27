@@ -4,10 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>สมบัติทางกายภาพของสารประกอบอินทรีย์ (Physical Properties of Organic Compounds)</title>
+
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com/"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- SmilesDrawer for molecular structures -->
+    <script src="https://cdn.jsdelivr.net/npm/smiles-drawer@2.4.1/dist/smiles-drawer.min.js"></script>
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <!-- MathJax -->
     <script>
         MathJax = {
@@ -26,14 +32,17 @@
             color: #1f2937;
             line-height: 1.6;
         }
+
         .page-container {
             max-width: 900px;
             margin: 2rem auto;
             background-color: #ffffff;
             padding: 3.5rem 4.5rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 
+                        0 4px 6px -2px rgba(0, 0, 0, 0.05);
             border-radius: 16px;
         }
+
         .section-header {
             border-bottom: 3px solid #3b82f6;
             padding-bottom: 0.5rem;
@@ -43,6 +52,7 @@
             font-size: 1.75rem;
             font-weight: 700;
         }
+
         .topic-title {
             color: #111827;
             font-size: 1.25rem;
@@ -52,9 +62,11 @@
             border-left: 4px solid #f59e0b;
             padding-left: 0.75rem;
         }
+
         .lang-th {
             margin-bottom: 0.5rem;
         }
+
         .lang-en {
             color: #4b5563;
             font-size: 0.95em;
@@ -66,6 +78,7 @@
             padding-bottom: 0.5rem;
             border-radius: 0 8px 8px 0;
         }
+
         .highlight-box {
             background-color: #eff6ff;
             border: 1px solid #bfdbfe;
@@ -73,6 +86,7 @@
             margin: 1.5rem 0;
             border-radius: 12px;
         }
+
         .math-box {
             background-color: #ffffff;
             border: 1px solid #e2e8f0;
@@ -84,21 +98,95 @@
             box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.02);
             overflow-x: auto;
         }
+
         ul.custom-list {
             list-style-type: none;
             padding-left: 0;
         }
+
         ul.custom-list > li {
             margin-bottom: 1.5rem;
         }
+
         .rule-th::before {
             content: '📌';
             margin-right: 0.5rem;
         }
+
         .sub-bullet::before {
             content: '🔹';
             margin-right: 0.5rem;
         }
+
+        /* Molecular structure cards */
+        .structure-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .structure-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 1rem;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.04);
+        }
+
+        .structure-title {
+            font-weight: 700;
+            color: #1d4ed8;
+            margin-bottom: 0.25rem;
+        }
+
+        .structure-subtitle {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+
+        .structure-note {
+            font-size: 0.85rem;
+            color: #4b5563;
+            margin-top: 0.5rem;
+        }
+
+        .molecule-canvas {
+            width: 100%;
+            max-width: 260px;
+            height: 170px;
+            display: block;
+            margin: 0.5rem auto;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+        }
+
+        .image-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            margin: 1rem 0;
+        }
+
+        .image-card-header {
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-weight: 700;
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid #dbeafe;
+        }
+
+        code {
+            background: #f3f4f6;
+            padding: 0.1rem 0.35rem;
+            border-radius: 5px;
+            color: #7c2d12;
+        }
+
         @media (max-width: 768px) {
             .page-container {
                 margin: 0;
@@ -119,148 +207,646 @@
                 <span class="text-xl text-gray-500 font-normal">(Physical Properties of Organic Compounds: Boiling Point, Melting Point, and Aqueous Solubility)</span>
             </h1>
         </div>
+<!-- ========================================== -->
+<!-- ส่วนที่ 1: ปัจจัยหลักที่กำหนดสมบัติทางกายภาพ -->
+<!-- ========================================== -->
+<h2 class="section-header">1. ปัจจัยหลักที่กำหนดสมบัติทางกายภาพ <span class="font-normal text-xl text-gray-500">(The Core Factors)</span></h2>
 
-        <!-- ========================================== -->
-        <!-- ส่วนที่ 1: ปัจจัยหลักที่กำหนดสมบัติทางกายภาพ -->
-        <!-- ========================================== -->
-        <h2 class="section-header">1. ปัจจัยหลักที่กำหนดสมบัติทางกายภาพ <span class="font-normal text-xl text-gray-500">(The Core Factors)</span></h2>
-        
-        <div class="lang-th">
-            🇹🇭 <strong>ภาษาไทย:</strong> ไม่ว่าข้อสอบจะถามเรื่อง จุดเดือด (Boiling Point), จุดหลอมเหลว (Melting Point) หรือการละลาย (Solubility) ให้เริ่มต้นวิเคราะห์ผ่าน 3 ปัจจัยนี้ตามลำดับเสมอ:
+<div class="lang-th">
+    🇹🇭 <strong>ภาษาไทย:</strong> ไม่ว่าข้อสอบจะถามเรื่อง จุดเดือด (Boiling Point), จุดหลอมเหลว (Melting Point) หรือการละลาย (Solubility) ให้เริ่มต้นวิเคราะห์ผ่าน 3 ปัจจัยนี้ตามลำดับเสมอ:
+</div>
+<div class="lang-en">
+    🇬🇧 <strong>English:</strong> Regardless of whether the exam asks about boiling point, melting point, or solubility, always begin your analysis with these 3 factors in order:
+</div>
+
+<ul class="custom-list">
+
+    <!-- 1.1 IMF -->
+    <li>
+        <div class="lang-th rule-th font-semibold text-blue-700">
+            1.1 ชนิดของแรงยึดเหนี่ยวระหว่างโมเลกุล (Type of Intermolecular Forces: IMF)
         </div>
-        <div class="lang-en">
-            🇬🇧 <strong>English:</strong> Regardless of whether the exam asks about Boiling Point, Melting Point, or Solubility, always begin your analysis with these 3 factors in order:
+        <div class="lang-th ml-6 text-gray-700">
+            สมบัติทางกายภาพพื้นฐานถูกกำหนดโดยความแข็งแรงของแรงดึงดูดระหว่างโมเลกุล เรียงลำดับความแข็งแรงได้ดังนี้:
+            <strong>พันธะไฮโดรเจน &gt; แรงดึงดูดระหว่างขั้ว &gt; แรงลอนดอน</strong>
+        </div>
+        <div class="lang-en ml-6">
+            The fundamental physical properties are dictated by the strength of intermolecular forces:
+            <strong>Hydrogen bonding &gt; dipole-dipole interactions &gt; London dispersion forces.</strong>
         </div>
 
-        <ul class="custom-list">
-            <li>
-                <div class="lang-th rule-th font-semibold text-blue-700">1.1 ชนิดของแรงยึดเหนี่ยวระหว่างโมเลกุล (Type of Intermolecular Forces: IMF)</div>
-                <div class="lang-th ml-6 text-gray-700">
-                    สมบัติทางกายภาพพื้นฐานถูกกำหนดโดยความแข็งแรงของแรงดึงดูดระหว่างโมเลกุล เรียงลำดับความแข็งแรงได้ดังนี้: <strong>พันธะไฮโดรเจน > แรงดึงดูดระหว่างขั้ว > แรงลอนดอน</strong>
-                </div>
-                <div class="lang-en ml-6">
-                    The fundamental physical properties are dictated by the strength of intermolecular forces: <strong>Hydrogen Bonding > Permanent Dipole-Dipole interactions > London Dispersion Forces.</strong>
-                </div>
-            </li>
-            
-            <li>
-                <div class="lang-th rule-th font-semibold text-blue-700">1.2 ขนาดโมเลกุลและพื้นที่ผิว (Molecular Size and Surface Area)</div>
-                <div class="lang-th ml-6 text-gray-700">
-                    หากสารมีแรงยึดเหนี่ยวชนิดเดียวกัน ให้พิจารณาที่ขนาดโมเลกุล ยิ่งโมเลกุลมีสายคาร์บอนยาวขึ้น กลุ่มหมอกอิเล็กตรอนเคลื่อนที่ไปกองรวมกันด้านใดด้านหนึ่งได้ง่าย ทำให้เกิดขั้วชั่วคราวได้ดีขึ้น (Polarizability สูง) ส่งผลให้พื้นที่ผิวสัมผัสมากขึ้นและ <strong>แรงลอนดอนแข็งแรงขึ้น</strong>
-                </div>
-                <div class="lang-en ml-6">
-                    For molecules with the same type of IMF, consider their size. Larger molecules have larger, more easily distorted Electrons can easily shift and accumulate on one side of the molecule, resulting in a stronger temporary dipole (high Polarizability), thereby increasing the surface contact area and strengthening the London dispersion forces.
-                </div>
-            </li>
+        <div class="structure-grid ml-6">
 
-            <li>
-                <div class="lang-th rule-th font-semibold text-blue-700">1.3 รูปร่างของโมเลกุล (Molecular Shape / Branching)</div>
-                <div class="lang-th ml-6 text-gray-700">
-                    เมื่อเปรียบเทียบไอโซเมอร์ที่มีมวลเท่ากัน การแตกกิ่งก้าน (Branching) จะทำให้โมเลกุลมีรูปร่างคล้ายทรงกลม เป็นการ "ลด" พื้นที่ผิวสัมผัส แรงลอนดอนจึงอ่อนลง ส่งผลให้ <strong>จุดเดือดต่ำลง</strong>
-                </div>
-                <div class="lang-en ml-6">
-                    When comparing isomers with the same molecular mass, branching renders the molecule more spherical. This minimizes the surface contact area, causing London forces to weaken and leading to a lower boiling point.
-                </div>
-            </li>
-        </ul>
+            <div class="structure-card">
+                <div class="structure-title">Hexane</div>
+                <div class="structure-subtitle">ตัวอย่างสารไม่มีขั้ว / Non-polar example</div>
+                <canvas class="molecule-canvas" width="260" height="170" data-smiles="CCCCCC"></canvas>
+                <div class="text-xs text-gray-500 text-center">SMILES: <code>CCCCCC</code></div>
 
-        <!-- ========================================== -->
-        <!-- ส่วนที่ 2: หมู่ฟังก์ชันและลักษณะเฉพาะ -->
-        <!-- ========================================== -->
-        <h2 class="section-header mt-12">2. หมู่ฟังก์ชันและลักษณะเฉพาะ <span class="font-normal text-xl text-gray-500">(Functional Groups & Characteristics)</span></h2>
-        
-        <div class="highlight-box bg-yellow-50 border-yellow-200 mt-4 mb-6 py-4">
-            <div class="lang-th mb-0">
-                🇹🇭 ก่อนวิเคราะห์สมบัติเชิงลึก ต้องแยกประเภทและแรงยึดเหนี่ยวหลักของแต่ละหมู่ฟังก์ชันให้ได้ก่อน
+                <div class="structure-note">
+                    <strong>พันธะในโมเลกุล:</strong> \(C-C\), \(C-H\)<br>
+                    <strong>Bonds in molecule:</strong> \(C-C\), \(C-H\)
+                </div>
+                <div class="structure-note">
+                    <strong>IMF หลัก:</strong> แรงลอนดอน<br>
+                    <strong>Main IMF:</strong> London dispersion force
+                </div>
+                <div class="structure-note text-blue-700">
+                    จำสั้น: ไม่มี O/N/F และไม่มีขั้วเด่น → London เป็นหลัก
+                </div>
             </div>
-            <div class="lang-en border-none bg-transparent p-0 m-0 mt-2">
-                🇬🇧 Before analyzing physical properties in depth, you must first identify the type of functional group and its primary intermolecular forces.
+
+            <div class="structure-card">
+                <div class="structure-title">Acetone / Propanone</div>
+                <div class="structure-subtitle">ตัวอย่างสารมีขั้ว / Polar example</div>
+                <canvas class="molecule-canvas" width="260" height="170" data-smiles="CC(=O)C"></canvas>
+                <div class="text-xs text-gray-500 text-center">SMILES: <code>CC(=O)C</code></div>
+
+                <div class="structure-note">
+                    <strong>พันธะในโมเลกุล:</strong> \(C-C\), \(C-H\), \(C=O\)<br>
+                    <strong>Bonds in molecule:</strong> \(C-C\), \(C-H\), \(C=O\)
+                </div>
+                <div class="structure-note">
+                    <strong>IMF หลัก:</strong> แรงดึงดูดระหว่างขั้ว + แรงลอนดอน<br>
+                    <strong>Main IMF:</strong> Dipole-dipole + London
+                </div>
+                <div class="structure-note text-blue-700">
+                    จำสั้น: มี \(C=O\) → โมเลกุลมีขั้ว
+                </div>
             </div>
+
+            <div class="structure-card">
+                <div class="structure-title">Ethanol</div>
+                <div class="structure-subtitle">ตัวอย่างสารเกิด H-bond / Hydrogen-bonding example</div>
+                <canvas class="molecule-canvas" width="260" height="170" data-smiles="CCO"></canvas>
+                <div class="text-xs text-gray-500 text-center">SMILES: <code>CCO</code></div>
+
+                <div class="structure-note">
+                    <strong>พันธะในโมเลกุล:</strong> \(C-C\), \(C-H\), \(C-O\), \(O-H\)<br>
+                    <strong>Bonds in molecule:</strong> \(C-C\), \(C-H\), \(C-O\), \(O-H\)
+                </div>
+                <div class="structure-note">
+                    <strong>IMF หลัก:</strong> พันธะไฮโดรเจน + dipole-dipole + London<br>
+                    <strong>Main IMF:</strong> Hydrogen bonding + dipole-dipole + London
+                </div>
+                <div class="structure-note text-blue-700">
+                    จำสั้น: มี \(O-H\) → สร้างพันธะไฮโดรเจนได้
+                </div>
+            </div>
+
         </div>
 
-        <h3 class="topic-title border-l-4 border-blue-500 text-blue-800">2.1 กลุ่มสารประกอบไฮโดรคาร์บอน (ไม่มีขั้ว / แรงลอนดอนเป็นหลัก) <br><span class="text-base font-normal text-gray-500">(Hydrocarbons: Non-polar / Primarily London Dispersion Forces)</span></h3>
-        <ul class="custom-list ml-4">
-            <li>
-                <div class="lang-th font-semibold text-gray-900">แอลเคน (Alkane):</div>
-                <div class="lang-th ml-6 text-gray-700">พันธะเดี่ยว เช่น Ethane</div>
-                <div class="lang-en ml-6 mb-1 border-l-2 border-gray-300 bg-transparent p-0 pl-3">Single bonds only e.g., Ethane</div>
-                <div class="lang-th ml-6 text-sm text-gray-500 bg-gray-100 p-2 rounded inline-block"><strong>Daily Life:</strong> แก๊สหุงต้ม LPG (Propane/Butane) และ น้ำมันเชื้อเพลิง (Fuels)</div>
-            </li>
-            <li>
-                <div class="lang-th font-semibold text-gray-900">แอลคีน (Alkene):</div>
-                <div class="lang-th ml-6 text-gray-700">มีพันธะคู่ อย่างน้อย 1 ตำแหน่ง เช่น Ethene</div>
-                <div class="lang-en ml-6 mb-1 border-l-2 border-gray-300 bg-transparent p-0 pl-3">Contains at least one double bond, e.g., Ethene</div>
-                <div class="lang-th ml-6 text-sm text-gray-500 bg-gray-100 p-2 rounded inline-block"><strong>Daily Life:</strong> แก๊สบ่มผลไม้ให้สุก (Ethylene gas) และ ถุงพลาสติก (Polyethylene)</div>
-            </li>
-            <li>
-                <div class="lang-th font-semibold text-gray-900">แอลไคน์ (Alkyne):</div>
-                <div class="lang-th ml-6 text-gray-700">มีพันธะสาม อย่างน้อย 1 ตำแหน่ง เช่น Ethyne</div>
-                <div class="lang-en ml-6 mb-1 border-l-2 border-gray-300 bg-transparent p-0 pl-3">Contains at least one triple bond, e.g., Ethyne</div>
-                <div class="lang-th ml-6 text-sm text-gray-500 bg-gray-100 p-2 rounded inline-block"><strong>Daily Life:</strong> แก๊สเชื่อมโลหะที่ให้ความร้อนสูง (Oxy-acetylene welding torch)</div>
-            </li>
-            <li>
-                <div class="lang-th font-semibold text-gray-900">อะโรมาติก (Aromatic):</div>
-                <div class="lang-th ml-6 text-gray-700">มีโครงสร้างเป็นวงแหวนเบนซีน เช่น Benzene</div>
-                <div class="lang-en ml-6 mb-1 border-l-2 border-gray-300 bg-transparent p-0 pl-3">Features a Benzene ring structure, e.g., Benzene</div>
-                <div class="lang-th ml-6 text-sm text-gray-500 bg-gray-100 p-2 rounded inline-block"><strong>Daily Life:</strong> ลูกเหม็นไล่แมลง (Naphthalene) และ โฟมบรรจุอาหาร (Polystyrene)</div>
-            </li>
-        </ul>
+        <div class="math-box ml-6 bg-blue-50 border-blue-200">
+            $$\text{London only} < \text{Dipole-dipole} < \text{Hydrogen bonding}$$
+            <div class="text-sm text-blue-800 mt-2">
+                ถ้าขนาดโมเลกุลใกล้เคียงกัน แรงยึดเหนี่ยวที่แรงกว่ามักทำให้จุดเดือดสูงกว่า<br>
+                If molecular sizes are similar, stronger intermolecular forces usually give a higher boiling point.
+            </div>
+        </div>
+    </li>
 
-        <h3 class="topic-title border-l-4 border-green-500 text-green-800">2.2 กลุ่มสารประกอบที่มีธาตุ O เป็นองค์ประกอบ <br><span class="text-base font-normal text-gray-500">(Compounds Containing Oxygen)</span></h3>
-        <ul class="custom-list ml-4">
-            <li>
-                <div class="lang-th font-semibold text-gray-900">แอลกอฮอล์ (Alcohol):</div>
-                <div class="lang-th ml-6 text-gray-700">หมู่ไฮดรอกซิล (-OH) สร้าง พันธะไฮโดรเจน ได้ เช่น Ethanol</div>
-                <div class="lang-en ml-6 mb-1 border-l-2 border-gray-300 bg-transparent p-0 pl-3">Hydroxyl group (-OH), capable of forming Hydrogen Bonds, e.g., Ethanol</div>
-                <div class="lang-th ml-6 text-sm text-gray-500 bg-gray-100 p-2 rounded inline-block"><strong>Daily Life:</strong> แอลกอฮอล์ล้างแผล, เจลล้างมือ และ เครื่องดื่มมึนเมา (Rubbing alcohol & Alcoholic beverages)</div>
-            </li>
-            <li>
-                <div class="lang-th font-semibold text-gray-900">อีเทอร์ (Ether):</div>
-                <div class="lang-th ml-6 text-gray-700">หมู่แอลคอกซี (-O-) มีขั้วปานกลาง เกิด แรงดึงดูดระหว่างขั้ว เช่น Methoxymethane</div>
-                <div class="lang-en ml-6 mb-1 border-l-2 border-gray-300 bg-transparent p-0 pl-3">Alkoxy group (-O-), moderately polar, forms Dipole-dipole interactions, e.g., Methoxymethane</div>
-                <div class="lang-th ml-6 text-sm text-gray-500 bg-gray-100 p-2 rounded inline-block"><strong>Daily Life:</strong> ยาสลบในทางการแพทย์ยุคก่อน (Historical anesthetics) และ ตัวทำละลายในห้องแล็บ (Laboratory solvents)</div>
-            </li>
-            <li>
-                <div class="lang-th font-semibold text-gray-900">แอลดีไฮด์ (Aldehyde):</div>
-                <div class="lang-th ml-6 text-gray-700">หมู่คาร์บอกซาลดีไฮด์ (-CHO) มีขั้ว เกิด แรงดึงดูดระหว่างขั้ว เช่น Ethanal</div>
-                <div class="lang-en ml-6 mb-1 border-l-2 border-gray-300 bg-transparent p-0 pl-3">Carboxaldehyde group (-CHO), polar, forms Dipole-dipole interactions, e.g., Ethanal</div>
-                <div class="lang-th ml-6 text-sm text-gray-500 bg-gray-100 p-2 rounded inline-block"><strong>Daily Life:</strong> น้ำยาดองศพหรือฟอร์มาลิน (Formalin/Methanal) และ กลิ่นหอมสังเคราะห์เช่นกลิ่นวานิลลา (Artificial vanilla flavor)</div>
-            </li>
-            <li>
-                <div class="lang-th font-semibold text-gray-900">คีโตน (Ketone):</div>
-                <div class="lang-th ml-6 text-gray-700">หมู่คาร์บอนิล (-CO-) มีขั้ว เกิด แรงดึงดูดระหว่างขั้ว เช่น Propanone</div>
-                <div class="lang-en ml-6 mb-1 border-l-2 border-gray-300 bg-transparent p-0 pl-3">Carbonyl group (-CO-), polar, forms Dipole-dipole interactions, e.g., Propanone</div>
-                <div class="lang-th ml-6 text-sm text-gray-500 bg-gray-100 p-2 rounded inline-block"><strong>Daily Life:</strong> น้ำยาล้างเล็บ (Nail polish remover / Acetone) ที่ละลายสีได้ดีเยี่ยม</div>
-            </li>
-            <li>
-                <div class="lang-th font-semibold text-gray-900">กรดคาร์บอกซิลิก (Carboxylic Acid):</div>
-                <div class="lang-th ml-6 text-gray-700">หมู่คาร์บอกซิล (-COOH) สร้าง พันธะไฮโดรเจนได้ดีเยี่ยม (เกิด Dimer ได้) เช่น Ethanoic acid</div>
-                <div class="lang-en ml-6 mb-1 border-l-2 border-gray-300 bg-transparent p-0 pl-3">Carboxyl group (-COOH), forms exceptionally strong Hydrogen Bonds (can form Dimers), e.g., Ethanoic acid</div>
-                <div class="lang-th ml-6 text-sm text-gray-500 bg-gray-100 p-2 rounded inline-block"><strong>Daily Life:</strong> น้ำส้มสายชู (Vinegar/Acetic acid) และ กรดในเหล็กในมด (Ant venom/Formic acid)</div>
-            </li>
-            <li>
-                <div class="lang-th font-semibold text-gray-900">เอสเทอร์ (Ester):</div>
-                <div class="lang-th ml-6 text-gray-700">หมู่แอลคอกซีคาร์บอนิล (-COO-) มีขั้ว เกิด แรงดึงดูดระหว่างขั้ว เช่น Methyl ethanoate</div>
-                <div class="lang-en ml-6 mb-1 border-l-2 border-gray-300 bg-transparent p-0 pl-3">Alkoxycarbonyl group (-COO-), polar, forms Dipole-dipole interactions, e.g., Methyl ethanoate</div>
-                <div class="lang-th ml-6 text-sm text-gray-500 bg-gray-100 p-2 rounded inline-block"><strong>Daily Life:</strong> กลิ่นสังเคราะห์ผลไม้/ดอกไม้ในขนม (Fruity/floral artificial flavorings) และ ยาดมแก้ปวดเมื่อย (Wintergreen oil)</div>
-            </li>
-        </ul>
+    <!-- 1.2 Molecular size -->
+    <li>
+        <div class="lang-th rule-th font-semibold text-blue-700">
+            1.2 ขนาดโมเลกุลและพื้นที่ผิว (Molecular Size and Surface Area)
+        </div>
+        <div class="lang-th ml-6 text-gray-700">
+            หากสารมีแรงยึดเหนี่ยวชนิดเดียวกัน ให้พิจารณาที่ขนาดโมเลกุล ยิ่งโมเลกุลมีสายคาร์บอนยาวขึ้น กลุ่มหมอกอิเล็กตรอนเคลื่อนที่ไปกองรวมกันด้านใดด้านหนึ่งได้ง่าย ทำให้เกิดขั้วชั่วคราวได้ดีขึ้น ส่งผลให้ <strong>แรงลอนดอนแข็งแรงขึ้น</strong>
+        </div>
+        <div class="lang-en ml-6">
+            For molecules with the same type of intermolecular force, consider molecular size. Larger molecules have more easily distorted electron clouds, producing stronger temporary dipoles and therefore stronger London dispersion forces.
+        </div>
 
-        <h3 class="topic-title border-l-4 border-purple-500 text-purple-800">2.3 กลุ่มสารประกอบที่มีธาตุ N เป็นองค์ประกอบ <br><span class="text-base font-normal text-gray-500">(Compounds Containing Nitrogen)</span></h3>
-        <ul class="custom-list ml-4">
-            <li>
-                <div class="lang-th font-semibold text-gray-900">เอมีน (Amine):</div>
-                <div class="lang-th ml-6 text-gray-700">หมู่อะมิโน สร้าง พันธะไฮโดรเจน ได้ (แต่อ่อนกว่า O-H) เช่น Methanamine</div>
-                <div class="lang-en ml-6 mb-1 border-l-2 border-gray-300 bg-transparent p-0 pl-3">Amino group, capable of forming Hydrogen Bonds (but weaker than O-H), e.g., Methanamine</div>
-                <div class="lang-th ml-6 text-sm text-gray-500 bg-gray-100 p-2 rounded inline-block"><strong>Daily Life:</strong> กลิ่นคาวปลาเน่า (Fishy odor of decaying fish) และ เป็นองค์ประกอบหลักของยาหลายชนิด (Medications/Amphetamines)</div>
-            </li>
-            <li>
-                <div class="lang-th font-semibold text-gray-900">เอไมด์ (Amide):</div>
-                <div class="lang-th ml-6 text-gray-700">หมู่เอไมด์ สร้าง พันธะไฮโดรเจนแบบโครงข่าย แข็งแรงที่สุด เช่น Methanamide</div>
-                <div class="lang-en ml-6 mb-1 border-l-2 border-gray-300 bg-transparent p-0 pl-3">Amide group, forms an extensive, highly robust Hydrogen-bonded network, e.g., Methanamide</div>
-                <div class="lang-th ml-6 text-sm text-gray-500 bg-gray-100 p-2 rounded inline-block"><strong>Daily Life:</strong> เส้นใยไนลอน (Nylon fabrics), พันธะเปปไทด์ในโปรตีนร่างกาย (Peptide bonds in proteins) และ ยาพาราเซตามอล (Paracetamol)</div>
-            </li>
-        </ul>
+        <div class="structure-grid ml-6">
+
+            <div class="structure-card">
+                <div class="structure-title">Methane</div>
+                <div class="structure-subtitle">C1 / เล็กมาก</div>
+                <canvas class="molecule-canvas" width="260" height="170" data-smiles="C"></canvas>
+                <div class="text-xs text-gray-500 text-center">SMILES: <code>C</code></div>
+                <div class="structure-note">
+                    โมเลกุลเล็กมาก → electron cloud เล็ก → London อ่อน<br>
+                    Very small molecule → small electron cloud → weak London force
+                </div>
+            </div>
+
+            <div class="structure-card">
+                <div class="structure-title">Butane</div>
+                <div class="structure-subtitle">C4 / ใหญ่ขึ้น</div>
+                <canvas class="molecule-canvas" width="260" height="170" data-smiles="CCCC"></canvas>
+                <div class="text-xs text-gray-500 text-center">SMILES: <code>CCCC</code></div>
+                <div class="structure-note">
+                    สายคาร์บอนยาวขึ้น → พื้นที่ผิวมากขึ้น → London แรงขึ้น<br>
+                    Longer carbon chain → larger surface area → stronger London force
+                </div>
+            </div>
+
+            <div class="structure-card">
+                <div class="structure-title">Octane</div>
+                <div class="structure-subtitle">C8 / ใหญ่กว่า</div>
+                <canvas class="molecule-canvas" width="260" height="170" data-smiles="CCCCCCCC"></canvas>
+                <div class="text-xs text-gray-500 text-center">SMILES: <code>CCCCCCCC</code></div>
+                <div class="structure-note">
+                    โมเลกุลใหญ่กว่า → พื้นที่ผิวสัมผัสมาก → London แข็งแรงกว่า<br>
+                    Larger molecule → greater contact area → stronger London force
+                </div>
+            </div>
+
+        </div>
+
+        <div class="math-box ml-6 bg-green-50 border-green-200">
+            $$\text{Methane} < \text{Butane} < \text{Octane}$$
+            <div class="text-sm text-green-800 mt-2">
+                ตระกูลเดียวกัน ยิ่งจำนวน C มาก → โมเลกุลใหญ่ขึ้น → แรงลอนดอนมากขึ้น → จุดเดือดสูงขึ้น<br>
+                In the same family, more carbons → larger molecule → stronger London force → higher boiling point.
+            </div>
+        </div>
+    </li>
+
+    <!-- 1.3 Branching -->
+    <li>
+        <div class="lang-th rule-th font-semibold text-blue-700">
+            1.3 รูปร่างของโมเลกุล (Molecular Shape / Branching)
+        </div>
+        <div class="lang-th ml-6 text-gray-700">
+            เมื่อเปรียบเทียบไอโซเมอร์ที่มีมวลเท่ากัน การแตกกิ่งก้าน (Branching) จะทำให้โมเลกุลมีรูปร่างคล้ายทรงกลม เป็นการ “ลด” พื้นที่ผิวสัมผัส แรงลอนดอนจึงอ่อนลง ส่งผลให้ <strong>จุดเดือดต่ำลง</strong>
+        </div>
+        <div class="lang-en ml-6">
+            When comparing isomers with the same molecular mass, branching makes the molecule more compact and spherical. This reduces surface contact area, weakens London forces, and lowers the boiling point.
+        </div>
+
+        <div class="structure-grid ml-6">
+
+            <div class="structure-card">
+                <div class="structure-title">n-Pentane</div>
+                <div class="structure-subtitle">C5H12 / โซ่ตรง</div>
+                <canvas class="molecule-canvas" width="260" height="170" data-smiles="CCCCC"></canvas>
+                <div class="text-xs text-gray-500 text-center">SMILES: <code>CCCCC</code></div>
+                <div class="structure-note">
+                    โซ่ตรง → พื้นที่ผิวสัมผัสมากที่สุด → London แรงที่สุด<br>
+                    Straight chain → greatest contact area → strongest London force
+                </div>
+            </div>
+
+            <div class="structure-card">
+                <div class="structure-title">2-Methylbutane</div>
+                <div class="structure-subtitle">C5H12 / กิ่ง 1 จุด</div>
+                <canvas class="molecule-canvas" width="260" height="170" data-smiles="CC(C)CC"></canvas>
+                <div class="text-xs text-gray-500 text-center">SMILES: <code>CC(C)CC</code></div>
+                <div class="structure-note">
+                    แตกกิ่ง 1 จุด → พื้นที่ผิวลดลง → London อ่อนลง<br>
+                    One branch → smaller contact area → weaker London force
+                </div>
+            </div>
+
+            <div class="structure-card">
+                <div class="structure-title">Neopentane</div>
+                <div class="structure-subtitle">C5H12 / แตกกิ่งมาก</div>
+                <canvas class="molecule-canvas" width="260" height="170" data-smiles="CC(C)(C)C"></canvas>
+                <div class="text-xs text-gray-500 text-center">SMILES: <code>CC(C)(C)C</code></div>
+                <div class="structure-note">
+                    รูปร่างกะทัดรัดคล้ายทรงกลม → พื้นที่ผิวน้อยสุด → London อ่อนสุด<br>
+                    Compact, sphere-like shape → smallest contact area → weakest London force
+                </div>
+            </div>
+
+        </div>
+
+        <div class="math-box ml-6 bg-orange-50 border-orange-200">
+            $$\text{n-Pentane} > \text{2-Methylbutane} > \text{Neopentane}$$
+            <div class="text-sm text-orange-800 mt-2">
+                เมื่อจำนวน C เท่ากัน: โซ่ตรงมีจุดเดือดสูงกว่า ส่วนโซ่กิ่งมีจุดเดือดต่ำกว่า<br>
+                With the same number of carbons: straight-chain isomers have higher boiling points, while branched isomers have lower boiling points.
+            </div>
+        </div>
+    </li>
+
+</ul>
+<!-- ========================================== -->
+<!-- ส่วนที่ 2: หมู่ฟังก์ชันและลักษณะเฉพาะ -->
+<!-- ========================================== -->
+<h2 class="section-header mt-12">2. หมู่ฟังก์ชันและลักษณะเฉพาะ <span class="font-normal text-xl text-gray-500">(Functional Groups & Characteristics)</span></h2>
+
+<div class="highlight-box bg-yellow-50 border-yellow-200 mt-4 mb-6 py-4">
+    <div class="lang-th mb-0">
+        🇹🇭 ก่อนวิเคราะห์สมบัติเชิงลึก ให้ฝึกมอง “เอกลักษณ์ของโครงสร้าง” ก่อน ถ้าเห็นรูปแบบนี้ ให้ระบุหมู่ฟังก์ชันได้ทันที
+    </div>
+    <div class="lang-en border-none bg-transparent p-0 m-0 mt-2">
+        🇬🇧 Before analyzing physical properties, first recognize the “structural signature.” If you see a specific pattern, you should identify the functional group immediately.
+    </div>
+</div>
+
+<div class="math-box bg-blue-50 border-blue-200">
+    $$\text{ดูโครงสร้าง} \Rightarrow \text{ระบุหมู่ฟังก์ชัน} \Rightarrow \text{ทำนายแรงยึดเหนี่ยว} \Rightarrow \text{ทำนายสมบัติ}$$
+    <div class="text-sm text-blue-800 mt-2">
+        Structure → Functional group → Intermolecular force → Physical properties
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 2.1 Hydrocarbons -->
+<!-- ========================================== -->
+<h3 class="topic-title border-l-4 border-blue-500 text-blue-800">
+    2.1 กลุ่มสารประกอบไฮโดรคาร์บอน
+    <br><span class="text-base font-normal text-gray-500">(Hydrocarbons: mostly non-polar / London dispersion force)</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 ไฮโดรคาร์บอนมีแค่ C และ H เป็นหลัก จึงมักไม่มีขั้ว แรงยึดเหนี่ยวระหว่างโมเลกุลหลักคือแรงลอนดอน
+</div>
+<div class="lang-en">
+    🇬🇧 Hydrocarbons mainly contain only C and H atoms. They are mostly non-polar, so their main intermolecular force is London dispersion force.
+</div>
+
+<div class="structure-grid ml-4">
+
+    <!-- Alkane -->
+    <div class="structure-card">
+        <div class="structure-title">Alkane / แอลเคน</div>
+        <div class="structure-subtitle">Signature: พันธะเดี่ยวทั้งหมด / all single bonds</div>
+
+        <div class="math-box bg-white">
+            $$C-C$$
+        </div>
+
+        <canvas class="molecule-canvas" width="260" height="170" data-smiles="CC"></canvas>
+        <div class="text-xs text-gray-500 text-center">Example: Ethane | SMILES: <code>CC</code></div>
+
+        <div class="structure-note">
+            <strong>ถ้าเห็น:</strong> C-C เดี่ยวทั้งหมด → คิดถึงแอลเคน<br>
+            <strong>If you see:</strong> only single C-C bonds → alkane
+        </div>
+
+        <div class="structure-note">
+            <strong>IMF หลัก:</strong> London dispersion force<br>
+            <strong>Main IMF:</strong> London dispersion force
+        </div>
+
+        <div class="mt-3 text-sm bg-gray-100 p-2 rounded">
+            🔥 <strong>Daily Life:</strong> แก๊สหุงต้ม LPG, propane, butane, น้ำมันเชื้อเพลิง / cooking gas and fuels
+        </div>
+    </div>
+
+    <!-- Alkene -->
+    <div class="structure-card">
+        <div class="structure-title">Alkene / แอลคีน</div>
+        <div class="structure-subtitle">Signature: มีพันธะคู่ / has C=C</div>
+
+        <div class="math-box bg-white">
+            $$C=C$$
+        </div>
+
+        <canvas class="molecule-canvas" width="260" height="170" data-smiles="C=C"></canvas>
+        <div class="text-xs text-gray-500 text-center">Example: Ethene | SMILES: <code>C=C</code></div>
+
+        <div class="structure-note">
+            <strong>ถ้าเห็น:</strong> C=C อย่างน้อย 1 ตำแหน่ง → คิดถึงแอลคีน<br>
+            <strong>If you see:</strong> at least one C=C → alkene
+        </div>
+
+        <div class="structure-note">
+            <strong>IMF หลัก:</strong> London dispersion force<br>
+            <strong>Main IMF:</strong> London dispersion force
+        </div>
+
+        <div class="mt-3 text-sm bg-gray-100 p-2 rounded">
+            🍌 <strong>Daily Life:</strong> ethene ใช้เร่งการสุกของผลไม้, polyethylene ในถุงพลาสติก / fruit ripening and plastic bags
+        </div>
+    </div>
+
+    <!-- Alkyne -->
+    <div class="structure-card">
+        <div class="structure-title">Alkyne / แอลไคน์</div>
+        <div class="structure-subtitle">Signature: มีพันธะสาม / has C≡C</div>
+
+        <div class="math-box bg-white">
+            $$C \equiv C$$
+        </div>
+
+        <canvas class="molecule-canvas" width="260" height="170" data-smiles="C#C"></canvas>
+        <div class="text-xs text-gray-500 text-center">Example: Ethyne | SMILES: <code>C#C</code></div>
+
+        <div class="structure-note">
+            <strong>ถ้าเห็น:</strong> C≡C อย่างน้อย 1 ตำแหน่ง → คิดถึงแอลไคน์<br>
+            <strong>If you see:</strong> at least one C≡C → alkyne
+        </div>
+
+        <div class="structure-note">
+            <strong>IMF หลัก:</strong> London dispersion force<br>
+            <strong>Main IMF:</strong> London dispersion force
+        </div>
+
+        <div class="mt-3 text-sm bg-gray-100 p-2 rounded">
+            🧰 <strong>Daily Life:</strong> ethyne หรือ acetylene ใช้ในหัวเชื่อมโลหะ / oxy-acetylene welding
+        </div>
+    </div>
+
+    <!-- Aromatic -->
+    <div class="structure-card">
+        <div class="structure-title">Aromatic / อะโรมาติก</div>
+        <div class="structure-subtitle">Signature: วงเบนซีน / benzene ring</div>
+
+        <div class="math-box bg-white">
+            $$\text{benzene ring}$$
+        </div>
+
+        <canvas class="molecule-canvas" width="260" height="170" data-smiles="c1ccccc1"></canvas>
+        <div class="text-xs text-gray-500 text-center">Example: Benzene | SMILES: <code>c1ccccc1</code></div>
+
+        <div class="structure-note">
+            <strong>ถ้าเห็น:</strong> วงหกเหลี่ยมมีระบบ π ต่อเนื่อง → คิดถึง aromatic<br>
+            <strong>If you see:</strong> a benzene-like ring → aromatic
+        </div>
+
+        <div class="structure-note">
+            <strong>IMF หลัก:</strong> London + π interactions<br>
+            <strong>Main IMF:</strong> London + π interactions
+        </div>
+
+        <div class="mt-3 text-sm bg-gray-100 p-2 rounded">
+            🧊 <strong>Daily Life:</strong> naphthalene ในลูกเหม็น, polystyrene ในโฟม / mothballs and foam packaging
+        </div>
+    </div>
+</div>
+
+<div class="highlight-box bg-blue-50 border-blue-200">
+    <div class="lang-th font-semibold text-blue-900">
+        🧠 จำเร็ว: Hydrocarbon = มีแต่ C,H เป็นหลัก → ไม่มีขั้วเด่น → London เป็นหลัก
+    </div>
+    <div class="lang-en border-none bg-transparent p-0 m-0 mt-2 text-blue-800">
+        Quick memory: Hydrocarbon = mainly C and H → mostly non-polar → London force is dominant.
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 2.2 Oxygen-containing compounds -->
+<!-- ========================================== -->
+<h3 class="topic-title border-l-4 border-green-500 text-green-800">
+    2.2 กลุ่มสารประกอบที่มีธาตุ O เป็นองค์ประกอบ
+    <br><span class="text-base font-normal text-gray-500">(Compounds Containing Oxygen)</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 ถ้าโครงสร้างมี O ให้สังเกตว่า O อยู่ในรูปแบบใด เพราะ O ทำให้โมเลกุลมีขั้ว และบางหมู่สามารถสร้างพันธะไฮโดรเจนได้
+</div>
+<div class="lang-en">
+    🇬🇧 If the structure contains oxygen, observe how the oxygen atom appears. Oxygen often makes the molecule polar, and some oxygen-containing groups can form hydrogen bonds.
+</div>
+
+<div class="structure-grid ml-4">
+
+    <!-- Alcohol -->
+    <div class="structure-card">
+        <div class="structure-title">Alcohol / แอลกอฮอล์</div>
+        <div class="structure-subtitle">Group name: Hydroxyl group / หมู่ไฮดรอกซิล</div>
+
+        <div class="math-box bg-white">
+            $$R-OH$$
+        </div>
+
+        <canvas class="molecule-canvas" width="260" height="170" data-smiles="CCO"></canvas>
+        <div class="text-xs text-gray-500 text-center">Example: Ethanol | SMILES: <code>CCO</code></div>
+
+        <div class="structure-note">
+            <strong>ถ้าเห็น:</strong> -OH ต่อกับคาร์บอน → alcohol<br>
+            <strong>If you see:</strong> -OH attached to carbon → alcohol
+        </div>
+
+        <div class="structure-note">
+            <strong>IMF หลัก:</strong> Hydrogen bonding + dipole-dipole + London<br>
+            <strong>จุดจำ:</strong> มี O-H จึงให้และรับ H-bond ได้
+        </div>
+
+        <div class="mt-3 text-sm bg-gray-100 p-2 rounded">
+            🧴 <strong>Daily Life:</strong> แอลกอฮอล์ล้างแผล, เจลล้างมือ, ethanol / disinfectants and hand sanitizers
+        </div>
+    </div>
+
+    <!-- Ether -->
+    <div class="structure-card">
+        <div class="structure-title">Ether / อีเทอร์</div>
+        <div class="structure-subtitle">Group name: Ether linkage / Alkoxy group</div>
+
+        <div class="math-box bg-white">
+            $$R-O-R'$$
+        </div>
+
+        <canvas class="molecule-canvas" width="260" height="170" data-smiles="COC"></canvas>
+        <div class="text-xs text-gray-500 text-center">Example: Methoxymethane | SMILES: <code>COC</code></div>
+
+        <div class="structure-note">
+            <strong>ถ้าเห็น:</strong> O คั่นกลางระหว่าง C สองด้าน → ether<br>
+            <strong>If you see:</strong> oxygen between two carbon groups → ether
+        </div>
+
+        <div class="structure-note">
+            <strong>IMF หลัก:</strong> dipole-dipole + London<br>
+            <strong>จุดจำ:</strong> ไม่มี O-H จึงไม่ให้ H-bond ระหว่างโมเลกุลตัวเอง
+        </div>
+
+        <div class="mt-3 text-sm bg-gray-100 p-2 rounded">
+            🧪 <strong>Daily Life:</strong> ตัวทำละลายในห้องแล็บ, ยาสลบในอดีต / lab solvents and historical anesthetics
+        </div>
+    </div>
+
+    <!-- Aldehyde -->
+    <div class="structure-card">
+        <div class="structure-title">Aldehyde / แอลดีไฮด์</div>
+        <div class="structure-subtitle">Group name: Formyl group / Aldehyde group</div>
+
+        <div class="math-box bg-white">
+            $$R-CHO$$
+        </div>
+
+        <canvas class="molecule-canvas" width="260" height="170" data-smiles="CC=O"></canvas>
+        <div class="text-xs text-gray-500 text-center">Example: Ethanal | SMILES: <code>CC=O</code></div>
+
+        <div class="structure-note">
+            <strong>ถ้าเห็น:</strong> -CHO อยู่ปลายสาย → aldehyde<br>
+            <strong>If you see:</strong> -CHO at the end of a chain → aldehyde
+        </div>
+
+        <div class="structure-note">
+            <strong>IMF หลัก:</strong> dipole-dipole + London<br>
+            <strong>จุดจำ:</strong> มี C=O ที่ปลายสาย และมี H ติดกับ C=O
+        </div>
+
+        <div class="mt-3 text-sm bg-gray-100 p-2 rounded">
+            🧫 <strong>Daily Life:</strong> formalin, กลิ่นวานิลลาใน vanillin / formalin and artificial vanilla-like aroma
+        </div>
+    </div>
+
+    <!-- Ketone -->
+    <div class="structure-card">
+        <div class="structure-title">Ketone / คีโตน</div>
+        <div class="structure-subtitle">Group name: Carbonyl group / หมู่คาร์บอนิล</div>
+
+        <div class="math-box bg-white">
+            $$R-CO-R'$$
+        </div>
+
+        <canvas class="molecule-canvas" width="260" height="170" data-smiles="CC(=O)C"></canvas>
+        <div class="text-xs text-gray-500 text-center">Example: Propanone | SMILES: <code>CC(=O)C</code></div>
+
+        <div class="structure-note">
+            <strong>ถ้าเห็น:</strong> C=O อยู่กลางสาย มี C ทั้งสองข้าง → ketone<br>
+            <strong>If you see:</strong> C=O inside the chain with carbon groups on both sides → ketone
+        </div>
+
+        <div class="structure-note">
+            <strong>IMF หลัก:</strong> dipole-dipole + London<br>
+            <strong>จุดจำ:</strong> มี C=O แต่ไม่มี O-H
+        </div>
+
+        <div class="mt-3 text-sm bg-gray-100 p-2 rounded">
+            💅 <strong>Daily Life:</strong> acetone ในน้ำยาล้างเล็บ / nail polish remover
+        </div>
+    </div>
+
+    <!-- Carboxylic acid -->
+    <div class="structure-card">
+        <div class="structure-title">Carboxylic Acid / กรดคาร์บอกซิลิก</div>
+        <div class="structure-subtitle">Group name: Carboxyl group / หมู่คาร์บอกซิล</div>
+
+        <div class="math-box bg-white">
+            $$R-COOH$$
+        </div>
+
+        <canvas class="molecule-canvas" width="260" height="170" data-smiles="CC(=O)O"></canvas>
+        <div class="text-xs text-gray-500 text-center">Example: Ethanoic acid | SMILES: <code>CC(=O)O</code></div>
+
+        <div class="structure-note">
+            <strong>ถ้าเห็น:</strong> C=O และ OH อยู่บนคาร์บอนเดียวกัน → carboxylic acid<br>
+            <strong>If you see:</strong> C=O and OH on the same carbon → carboxylic acid
+        </div>
+
+        <div class="structure-note">
+            <strong>IMF หลัก:</strong> strong hydrogen bonding, often dimerization<br>
+            <strong>จุดจำ:</strong> -COOH สร้าง H-bond ได้แรงมาก
+        </div>
+
+        <div class="mt-3 text-sm bg-gray-100 p-2 rounded">
+            🍶 <strong>Daily Life:</strong> น้ำส้มสายชู, กรดฟอร์มิกในมด / vinegar and formic acid in ants
+        </div>
+    </div>
+
+    <!-- Ester -->
+    <div class="structure-card">
+        <div class="structure-title">Ester / เอสเทอร์</div>
+        <div class="structure-subtitle">Group name: Ester group / Alkoxycarbonyl group</div>
+
+        <div class="math-box bg-white">
+            $$R-COO-R'$$
+        </div>
+
+        <canvas class="molecule-canvas" width="260" height="170" data-smiles="CC(=O)OC"></canvas>
+        <div class="text-xs text-gray-500 text-center">Example: Methyl ethanoate | SMILES: <code>CC(=O)OC</code></div>
+
+        <div class="structure-note">
+            <strong>ถ้าเห็น:</strong> C=O ต่อกับ O แล้วต่อ C อีกฝั่ง → ester<br>
+            <strong>If you see:</strong> C=O connected to O connected to another carbon group → ester
+        </div>
+
+        <div class="structure-note">
+            <strong>IMF หลัก:</strong> dipole-dipole + London<br>
+            <strong>จุดจำ:</strong> มี -COO- แต่มักไม่มี O-H
+        </div>
+
+        <div class="mt-3 text-sm bg-gray-100 p-2 rounded">
+            🍓 <strong>Daily Life:</strong> กลิ่นผลไม้/ดอกไม้สังเคราะห์, wintergreen oil / fruity and floral flavorings
+        </div>
+    </div>
+</div>
+
+<div class="highlight-box bg-green-50 border-green-200">
+    <div class="lang-th font-semibold text-green-900">
+        🧠 จำเร็ว: มี O-H → มักสร้าง H-bond ได้ดี | มี C=O → โมเลกุลมีขั้ว | มี -COO- → มักเจอใน ester
+    </div>
+    <div class="lang-en border-none bg-transparent p-0 m-0 mt-2 text-green-800">
+        Quick memory: O-H → strong H-bonding | C=O → polar molecule | -COO- → commonly ester.
+    </div>
+</div>
+
+<!-- ========================================== -->
+<!-- 2.3 Nitrogen-containing compounds -->
+<!-- ========================================== -->
+<h3 class="topic-title border-l-4 border-purple-500 text-purple-800">
+    2.3 กลุ่มสารประกอบที่มีธาตุ N เป็นองค์ประกอบ
+    <br><span class="text-base font-normal text-gray-500">(Compounds Containing Nitrogen)</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 ถ้าเจอ N ให้ระวังว่าเป็นเอมีนหรือเอไมด์ เพราะสมบัติกรด-เบสต่างกันมาก โดยเอมีนมักเป็นเบสอ่อน แต่เอไมด์โดยทั่วไปเป็นกลาง
+</div>
+<div class="lang-en">
+    🇬🇧 If you see nitrogen, check whether it is an amine or an amide. Their acid-base properties differ greatly: amines are usually weak bases, while amides are generally neutral.
+</div>
+
+<div class="structure-grid ml-4">
+
+    <!-- Amine -->
+    <div class="structure-card">
+        <div class="structure-title">Amine / เอมีน</div>
+        <div class="structure-subtitle">Group name: Amino group / หมู่อะมิโน</div>
+
+        <div class="math-box bg-white">
+            $$R-NH_2$$
+        </div>
+
+        <canvas class="molecule-canvas" width="260" height="170" data-smiles="CN"></canvas>
+        <div class="text-xs text-gray-500 text-center">Example: Methanamine | SMILES: <code>CN</code></div>
+
+        <div class="structure-note">
+            <strong>ถ้าเห็น:</strong> N ต่อกับคาร์บอน แต่ไม่ได้ติดกับ C=O → amine<br>
+            <strong>If you see:</strong> N attached to carbon but not directly next to C=O → amine
+        </div>
+
+        <div class="structure-note">
+            <strong>IMF หลัก:</strong> hydrogen bonding + dipole-dipole + London<br>
+            <strong>จุดจำ:</strong> เป็นเบสอ่อน และมักมีกลิ่นคาว/ฉุน
+        </div>
+
+        <div class="mt-3 text-sm bg-gray-100 p-2 rounded">
+            🐟 <strong>Daily Life:</strong> กลิ่นคาวปลาเน่า, สารตั้งต้นในยาหลายชนิด / fishy odor and many medicines
+        </div>
+    </div>
+
+    <!-- Amide -->
+    <div class="structure-card">
+        <div class="structure-title">Amide / เอไมด์</div>
+        <div class="structure-subtitle">Group name: Amide group / หมู่เอไมด์</div>
+
+        <div class="math-box bg-white">
+            $$R-CONH_2$$
+        </div>
+
+        <canvas class="molecule-canvas" width="260" height="170" data-smiles="CC(=O)N"></canvas>
+        <div class="text-xs text-gray-500 text-center">Example: Ethanamide | SMILES: <code>CC(=O)N</code></div>
+
+        <div class="structure-note">
+            <strong>ถ้าเห็น:</strong> C=O ติดกับ N → amide<br>
+            <strong>If you see:</strong> C=O directly attached to N → amide
+        </div>
+
+        <div class="structure-note">
+            <strong>IMF หลัก:</strong> strong hydrogen-bonding network<br>
+            <strong>จุดจำ:</strong> คล้าย amine แต่ไม่เป็นเบสเด่น เพราะ N ถูกดึงอิเล็กตรอนด้วย C=O
+        </div>
+
+        <div class="mt-3 text-sm bg-gray-100 p-2 rounded">
+            🧵 <strong>Daily Life:</strong> nylon, protein peptide bonds, paracetamol / nylon, proteins, and paracetamol
+        </div>
+    </div>
+</div>
+
+<div class="highlight-box bg-purple-50 border-purple-200">
+    <div class="lang-th font-semibold text-purple-900">
+        🚨 จุดดัก: Amine = มี N และมักเป็นเบสอ่อน | Amide = มี C=O ติด N และมักเป็นกลาง
+    </div>
+    <div class="lang-en border-none bg-transparent p-0 m-0 mt-2 text-purple-800">
+        Trap: Amine = contains N and is usually a weak base | Amide = C=O attached to N and is usually neutral.
+    </div>
+</div>
 
         <!-- ========================================== -->
         <!-- ส่วนที่ 3: เรียงลำดับจุดเดือด -->
@@ -371,6 +957,68 @@
         </ul>
 
     </div>
+<script>
+    function drawSmilesStructures() {
+        const canvases = document.querySelectorAll('canvas[data-smiles]');
 
+        if (!canvases.length) {
+            console.warn('No SMILES canvas found.');
+            return;
+        }
+
+        if (typeof SmilesDrawer === 'undefined') {
+            canvases.forEach(canvas => {
+                const smiles = canvas.getAttribute('data-smiles');
+                const fallback = document.createElement('div');
+                fallback.className = 'math-box text-sm';
+                fallback.innerHTML = `
+                    SMILES: <code>${smiles}</code><br>
+                    <span class="text-red-600">SmilesDrawer library did not load.</span>
+                `;
+                canvas.replaceWith(fallback);
+            });
+            return;
+        }
+
+        canvases.forEach(canvas => {
+            const smiles = canvas.getAttribute('data-smiles');
+
+            try {
+                const drawer = new SmilesDrawer.Drawer({
+                    width: 260,
+                    height: 170,
+                    terminalCarbons: true,
+                    explicitHydrogens: false
+                });
+
+                SmilesDrawer.parse(
+                    smiles,
+                    function(tree) {
+                        drawer.draw(tree, canvas, 'light', false);
+                    },
+                    function(error) {
+                        const fallback = document.createElement('div');
+                        fallback.className = 'math-box text-sm';
+                        fallback.innerHTML = `
+                            SMILES: <code>${smiles}</code><br>
+                            <span class="text-red-600">Cannot draw this structure.</span>
+                        `;
+                        canvas.replaceWith(fallback);
+                    }
+                );
+            } catch (err) {
+                const fallback = document.createElement('div');
+                fallback.className = 'math-box text-sm';
+                fallback.innerHTML = `
+                    SMILES: <code>${smiles}</code><br>
+                    <span class="text-red-600">Drawing script error.</span>
+                `;
+                canvas.replaceWith(fallback);
+            }
+        });
+    }
+
+    window.addEventListener('load', drawSmilesStructures);
+</script>
 </body>
 </html>
