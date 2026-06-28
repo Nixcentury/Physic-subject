@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Written Exam Template | A4 Clean Pages</title>
+
+  <!-- MathJax: ใช้พิมพ์สมการ LaTeX เช่น $R=\frac{u^2\sin2\theta}{g}$ -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <!-- SmilesDrawer: ใช้วาดโครงสร้างโมเลกุลจาก SMILES เช่น <canvas data-smiles="CCO"></canvas> -->
+  <script src="https://cdn.jsdelivr.net/npm/smiles-drawer@2.3.0/dist/smiles-drawer.min.js"></script>
+
+  <!-- Google Sans + Thai fallback -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --paper-width: 210mm;
+      --paper-height: 297mm;
+      --page-pad-x: 12mm;
+      --page-pad-y: 12mm;
+      --ink: #111827;
+      --muted: #4b5563;
+      --line: #d1d5db;
+      --soft: #f3f4f6;
+      --accent: #1d4ed8;
+      --per-page: 2;
+      --question-gap: 6mm;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #e5e7eb;
+      color: var(--ink);
+      font-family: "Google Sans", "Noto Sans Thai", Arial, sans-serif;
+      line-height: 1.45;
+    }
+
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      background: #0f172a;
+      color: white;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.25);
+    }
+
+    .toolbar button {
+      border: 0;
+      border-radius: 999px;
+      padding: 9px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      background: #ffffff;
+      color: #0f172a;
+    }
+
+    .toolbar button.primary {
+      background: #38bdf8;
+      color: #082f49;
+    }
+
+    .toolbar button.danger {
+      background: #fde68a;
+      color: #78350f;
+    }
+
+    .toolbar .status {
+      flex-basis: 100%;
+      text-align: center;
+      font-size: 13px;
+      opacity: 0.88;
+    }
+
+    .screen-guide {
+      width: min(var(--paper-width), calc(100vw - 24px));
+      margin: 18px auto 0;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.11);
+      font-size: 14px;
+      color: #334155;
+    }
+
+    .screen-guide code {
+      background: #f1f5f9;
+      padding: 1px 5px;
+      border-radius: 6px;
+    }
+
+    /*
+      หลักสำคัญ:
+      - ไม่ใช้ @page margin จริง
+      - ให้ .sheet เป็น A4 เต็ม 210 x 297mm
+      - ใช้ padding ใน .sheet แทน margin กระดาษ
+      - จึงคุมขอบบน/ล่างได้เนียนกว่า
+    */
+    .sheet {
+      width: var(--paper-width);
+      height: var(--paper-height);
+      margin: 18px auto 36px;
+      padding: var(--page-pad-y) var(--page-pad-x);
+      background: white;
+      box-shadow: 0 16px 48px rgba(15, 23, 42, 0.22);
+      overflow: hidden;
+      page-break-after: always;
+      break-after: page;
+    }
+
+    .sheet:last-child {
+      page-break-after: auto;
+      break-after: auto;
+    }
+
+    .sheet-content {
+      height: 100%;
+      display: grid;
+      grid-template-rows: repeat(var(--per-page), minmax(0, 1fr));
+      gap: var(--question-gap);
+    }
+
+    .question {
+      position: relative;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 0 0 4mm;
+      border-bottom: 1px solid #e5e7eb;
+      overflow: hidden;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .question:last-child {
+      border-bottom: 0;
+    }
+
+    .question-head {
+      display: grid;
+      grid-template-columns: 30px 1fr;
+      gap: 7px;
+      align-items: start;
+    }
+
+    .q-number {
+      display: inline-flex;
+      width: 26px;
+      height: 26px;
+      border: 1.4px solid #111827;
+      border-radius: 999px;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 13px;
+      line-height: 1;
+      margin-top: 1px;
+      flex-shrink: 0;
+    }
+
+    .q-title {
+      font-size: 15px;
+      font-weight: 650;
+    }
+
+    .blank-space {
+      flex: 1 1 auto;
+      min-height: 20mm;
+    }
+
+    .answer-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: 37px;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .answer-line span {
+      display: inline-block;
+      flex: 1;
+      min-width: 70mm;
+      border-bottom: 1px dotted #111827;
+      height: 18px;
+    }
+
+    .optional-hint {
+      display: none;
+      margin: 8px 0 0 37px;
+      padding: 8px 10px;
+      border: 1px dashed #93c5fd;
+      background: #eff6ff;
+      color: #1e3a8a;
+      font-size: 13px;
+      border-radius: 8px;
+    }
+
+    .solution-box {
+      display: none;
+      margin: 9px 0 0 37px;
+      padding: 9px 11px;
+      border: 1px solid #bfdbfe;
+      border-left: 4px solid #2563eb;
+      background: #eff6ff;
+      font-size: 13.4px;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .mode-solution .solution-box {
+      display: block;
+    }
+
+    .mode-hint .optional-hint {
+      display: block;
+    }
+
+    .mode-solution .blank-space {
+      display: none;
+    }
+
+    .mode-solution .answer-line {
+      display: none;
+    }
+
+    .answer-key-sheet .sheet-content {
+      display: block;
+    }
+
+    .answer-key h2 {
+      font-size: 18px;
+      margin: 0 0 8px;
+      border-bottom: 2px solid #111827;
+      padding-bottom: 4px;
+    }
+
+    .answer-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      font-size: 14px;
+    }
+
+    .answer-cell {
+      border: 1px solid #111827;
+      padding: 6px;
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .diagram {
+      width: 100%;
+      max-width: 340px;
+      height: auto;
+      margin: 8px 0 4px 37px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .diagram line,
+    .diagram path,
+    .diagram circle {
+      stroke: #111827;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .diagram text {
+      font-size: 16px;
+      fill: #111827;
+      font-family: inherit;
+    }
+
+    canvas.molecule {
+      display: block;
+      max-width: 260px;
+      margin: 8px 0 4px 37px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: white;
+    }
+
+    .question-bank {
+      display: none;
+    }
+
+    .template-bank {
+      display: none;
+    }
+
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+
+    @media print {
+      :root {
+        --page-pad-x: 12mm;
+        --page-pad-y: 12mm;
+      }
+
+      html, body {
+        width: 210mm;
+        background: white !important;
+      }
+
+      body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        font-size: 12pt;
+      }
+
+      .toolbar,
+      .screen-guide,
+      .print-hide {
+        display: none !important;
+      }
+
+      .sheet {
+        width: 210mm;
+        height: 297mm;
+        margin: 0;
+        padding: var(--page-pad-y) var(--page-pad-x);
+        box-shadow: none;
+        overflow: hidden;
+      }
+
+      .q-title {
+        font-size: 11.2pt;
+      }
+
+      .solution-box {
+        font-size: 10.3pt;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+    }
+
+    @media screen and (max-width: 820px) {
+      .sheet,
+      .screen-guide {
+        width: calc(100vw - 20px);
+      }
+
+      .sheet {
+        height: auto;
+        min-height: 297mm;
+      }
+    }
+.exam-note {
+  margin: 0 0 7mm;
+  padding: 7px 10px;
+  border-left: 4px solid #111827;
+  background: #f9fafb;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.sheet {
+  display: flex;
+  flex-direction: column;
+}
+
+.sheet-content {
+  flex: 1;
+  height: auto;
+}
+  </style>
+</head>
+
+<body class="mode-exam">
+  <div class="toolbar print-hide">
+    <button class="primary" onclick="printExam()">🖨️ พิมพ์ข้อสอบ</button>
+    <button onclick="printWithKey()">✅ พิมพ์พร้อมเฉลยสั้น</button>
+    <button onclick="printSolution()">📘 พิมพ์เฉลยละเอียด</button>
+    <button onclick="toggleHints()">💡 เปิด/ปิดคำใบ้บนจอ</button>
+    <button class="danger" onclick="rebuildFromPrompt()">📄 จัดจำนวนข้อต่อหน้าใหม่</button>
+    <div class="status" id="statusText">โหมดปัจจุบัน: ข้อสอบเขียนแสดงวิธีทำ — 2 ข้อต่อหน้า</div>
+  </div>
+
+  <section class="screen-guide print-hide">
+    <b>วิธีใช้เร็ว:</b>
+    เพิ่มโจทย์โดยคัดลอก block <code>&lt;article class="question" data-answer="..."&gt;</code>
+    ไปวางใน <code>&lt;section id="questionBank"&gt;</code>
+    → ใส่สมการด้วย <code>$...$</code> หรือ <code>$$...$$</code>
+    → กดพิมพ์ แล้วระบบจะถามจำนวนข้อใน 1 หน้า A4<br>
+    <b>หมายเหตุ:</b> รุ่นนี้ไม่วัดความสูง A4 ด้วย JS แล้ว แต่สร้างหน้า A4 จริงและแบ่งตามจำนวนข้อที่กรอก จึงนิ่งกว่าตอนพิมพ์
+  </section>
+
+  <main id="printArea"></main>
+
+  <!--
+    =========================================================
+    QUESTION BANK
+    วางข้อสอบจริงตรงนี้ ระบบจะ copy ไปจัดหน้า A4 ให้อัตโนมัติ
+    =========================================================
+  -->
+
+  <section class="question-bank" id="questionBank">
+    <article class="question" data-answer="$R$">
+      <div class="question-head">
+        <span class="q-number">1</span>
+        <div class="q-title">
+          เตะลูกฟุตบอลจากพื้นด้วยความเร็วต้น $u$ ทำมุม $30^\circ$ กับแนวระดับ ปรากฏว่าตกไกล $R$
+          หากเปลี่ยนมุมเตะเป็น $60^\circ$ ด้วยความเร็วต้นเท่าเดิม ลูกฟุตบอลจะตกไกลจากจุดเตะเท่าใด
+        </div>
+      </div>
+
+      <div class="blank-space"></div>
+      <div class="answer-line">ตอบ <span></span></div>
+
+      <div class="optional-hint">
+        💡 <b>คำใบ้:</b> ใช้สูตรระยะทางในแนวราบ $R = \frac{u^2 \sin 2\theta}{g}$ และสังเกตมุมคู่ที่รวมกันได้ $90^\circ$
+      </div>
+
+      <div class="solution-box">
+        <b>เฉลย: $R$</b><br>
+        ใช้สูตร $R = \frac{u^2 \sin 2\theta}{g}$<br><br>
+        กรณีมุม $30^\circ$:
+        $$R = \frac{u^2 \sin 60^\circ}{g} = \frac{\sqrt{3}u^2}{2g}$$
+        กรณีมุม $60^\circ$:
+        $$R_2 = \frac{u^2 \sin 120^\circ}{g} = \frac{u^2 \sin 60^\circ}{g} = \frac{\sqrt{3}u^2}{2g}$$
+        ดังนั้น $R_2 = R$
+      </div>
+    </article>
+
+    <article class="question" data-answer="$3H$">
+      <div class="question-head">
+        <span class="q-number">2</span>
+        <div class="q-title">
+          ขว้างวัตถุทำมุม $30^\circ$ กับแนวระดับ วัตถุขึ้นไปได้สูงสุด $H$
+          ถ้าขว้างด้วยความเร็วต้นเท่าเดิมแต่เปลี่ยนมุมเป็น $60^\circ$ วัตถุจะขึ้นไปได้สูงสุดเท่าใด
+        </div>
+      </div>
+
+      <div class="blank-space"></div>
+      <div class="answer-line">ตอบ <span></span></div>
+
+      <div class="optional-hint">
+        💡 <b>คำใบ้:</b> ใช้สูตรความสูงสูงสุด $H = \frac{u^2 \sin^2\theta}{2g}$ แล้วเปรียบเทียบค่า $\sin^2 30^\circ$ กับ $\sin^2 60^\circ$
+      </div>
+
+      <div class="solution-box">
+        <b>เฉลย: $3H$</b><br>
+        ใช้สูตร
+        $$H = \frac{u^2 \sin^2\theta}{2g}$$
+        ที่มุม $30^\circ$:
+        $$H = \frac{u^2(1/2)^2}{2g} = \frac{u^2}{8g}$$
+        ที่มุม $60^\circ$:
+        $$H_2 = \frac{u^2(\sqrt{3}/2)^2}{2g} = \frac{3u^2}{8g} = 3H$$
+      </div>
+    </article>
+
+    <article class="question" data-answer="$2T$">
+      <div class="question-head">
+        <span class="q-number">3</span>
+        <div class="q-title">
+          ยิงจรวดน้ำทำมุม $30^\circ$ กับพื้นราบ จรวดอยู่ในอากาศนาน $T$ วินาที
+          ถ้ายิงด้วยความเร็วต้นเท่าเดิมแต่ยิงขึ้นในแนวดิ่ง ($90^\circ$) จรวดจะอยู่ในอากาศนานเท่าใด
+        </div>
+      </div>
+
+      <div class="blank-space"></div>
+      <div class="answer-line">ตอบ <span></span></div>
+
+      <div class="optional-hint">
+        💡 <b>คำใบ้:</b> ใช้สูตรเวลาที่อยู่ในอากาศทั้งหมด $T = \frac{2u \sin\theta}{g}$
+      </div>
+
+      <div class="solution-box">
+        <b>เฉลย: $2T$</b><br>
+        ที่มุม $30^\circ$:
+        $$T = \frac{2u\sin30^\circ}{g} = \frac{u}{g}$$
+        ที่มุม $90^\circ$:
+        $$T_2 = \frac{2u\sin90^\circ}{g} = \frac{2u}{g}$$
+        ดังนั้น $T_2 = 2T$
+      </div>
+    </article>
+
+    <article class="question" data-answer="$\frac{1}{4}R_{\max}$">
+      <div class="question-head">
+        <span class="q-number">4</span>
+        <div class="q-title">
+          นักกีฬาขว้างหอก ขว้างให้ได้ระยะทางไกลที่สุดเท่าที่จะทำได้ ให้ระยะนี้คือ $R_{\max}$
+          ในการขว้างครั้งนี้ หอกจะขึ้นไปได้สูงสุด $H$ เป็นเศษส่วนเท่าใดของ $R_{\max}$
+        </div>
+      </div>
+
+      <div class="blank-space"></div>
+      <div class="answer-line">ตอบ <span></span></div>
+
+      <div class="optional-hint">
+        💡 <b>คำใบ้:</b> ระยะไกลสุดเกิดเมื่อ $\theta = 45^\circ$ แล้วใช้ $R = \frac{u^2 \sin 2\theta}{g}$ และ $H = \frac{u^2 \sin^2\theta}{2g}$
+      </div>
+
+      <div class="solution-box">
+        <b>เฉลย: $\frac{1}{4}R_{\max}$</b><br>
+        ระยะไกลสุดเกิดเมื่อ $\theta = 45^\circ$
+        $$R_{\max} = \frac{u^2\sin90^\circ}{g} = \frac{u^2}{g}$$
+        ความสูงที่มุม $45^\circ$ คือ
+        $$H = \frac{u^2\sin^245^\circ}{2g}
+        = \frac{u^2(1/2)}{2g}
+        = \frac{u^2}{4g}
+        = \frac{1}{4}R_{\max}$$
+      </div>
+    </article>
+
+    <article class="question" data-answer="$4R$">
+      <div class="question-head">
+        <span class="q-number">5</span>
+        <div class="q-title">
+          ปืนใหญ่ยิงกระสุนด้วยความเร็วต้น $u$ ทำมุม $\theta$ ตกห่างออกไป $R$
+          ถ้ายิงด้วยมุมเดิมแต่เพิ่มความเร็วต้นเป็น 2 เท่า ($2u$) กระสุนจะตกห่างออกไปเท่าใด
+        </div>
+      </div>
+
+      <div class="blank-space"></div>
+      <div class="answer-line">ตอบ <span></span></div>
+
+      <div class="optional-hint">
+        💡 <b>คำใบ้:</b> ในสูตร $R = \frac{u^2\sin2\theta}{g}$ ความเร็วต้นอยู่ในรูปกำลังสอง
+      </div>
+
+      <div class="solution-box">
+        <b>เฉลย: $4R$</b><br>
+        เดิม
+        $$R = \frac{u^2\sin2\theta}{g}$$
+        เมื่อเปลี่ยนเป็น $2u$:
+        $$R_2 = \frac{(2u)^2\sin2\theta}{g}
+        = \frac{4u^2\sin2\theta}{g}
+        = 4R$$
+      </div>
+    </article>
+
+    <article class="question" data-answer="$\frac{gT^2}{8}$">
+      <div class="question-head">
+        <span class="q-number">6</span>
+        <div class="q-title">
+          วัตถุชิ้นหนึ่งถูกขว้างแบบโปรเจกไทล์จากพื้นและตกลงพื้นระดับเดิม
+          หากวัตถุอยู่ในอากาศนานทั้งหมด $T$ วินาที วัตถุนี้ขึ้นไปได้สูงสุดเท่าใด
+          ตอบในเทอมของ $T$ และ $g$
+        </div>
+      </div>
+
+      <div class="blank-space"></div>
+      <div class="answer-line">ตอบ <span></span></div>
+
+      <div class="optional-hint">
+        💡 <b>คำใบ้:</b> จาก $T = \frac{2u\sin\theta}{g}$ ให้หา $u\sin\theta$ แล้วนำไปแทนใน $H = \frac{(u\sin\theta)^2}{2g}$
+      </div>
+
+      <div class="solution-box">
+        <b>เฉลย: $\frac{gT^2}{8}$</b><br>
+        จากสูตรเวลา
+        $$T = \frac{2u\sin\theta}{g}$$
+        จึงได้
+        $$u\sin\theta = \frac{Tg}{2}$$
+        ความสูงสูงสุดคือ
+        $$H = \frac{(u\sin\theta)^2}{2g}
+        = \frac{\left(\frac{Tg}{2}\right)^2}{2g}
+        = \frac{gT^2}{8}$$
+      </div>
+    </article>
+
+    <!--
+      ==========================
+      TEMPLATE เพิ่มข้อเขียนใหม่
+      ==========================
+      คัดลอก block นี้ไปวางต่อใน <section id="questionBank">
+
+      <article class="question" data-answer="คำตอบ">
+        <div class="question-head">
+          <span class="q-number">0</span>
+          <div class="q-title">
+            พิมพ์โจทย์ใหม่ตรงนี้ ใส่สมการด้วย $...$ หรือ $$...$$ ได้
+          </div>
+        </div>
+
+        <div class="blank-space"></div>
+        <div class="answer-line">ตอบ <span></span></div>
+
+        <div class="optional-hint">
+          💡 <b>คำใบ้:</b> ...
+        </div>
+
+        <div class="solution-box">
+          <b>เฉลย:</b> ...
+        </div>
+      </article>
+
+      ตัวอย่างวาดโมเลกุลด้วย SmilesDrawer:
+      <canvas class="molecule" data-smiles="CCO" width="260" height="180"></canvas>
+
+      ตัวอย่าง SVG:
+      <svg class="diagram" viewBox="0 0 300 180">
+        <line x1="40" y1="140" x2="260" y2="140"></line>
+        <line x1="40" y1="140" x2="170" y2="40"></line>
+        <line x1="170" y1="40" x2="260" y2="140"></line>
+      </svg>
+    -->
+
+  </section>
+
+  <script>
+    const body = document.body;
+    let questionsPerPage = 2;
+    let currentMode = "exam";
+    let hintsVisible = false;
+
+    function setStatus(text) {
+      const el = document.getElementById("statusText");
+      if (el) el.textContent = text;
+    }
+
+    function askQuestionsPerPage(defaultValue = questionsPerPage) {
+      const input = prompt(
+        "ต้องการจัดกี่ข้อใน 1 หน้า A4?\\nใส่เลข 1, 2, 3 หรือ 4\\n\\nแนะนำ: ข้อเขียนยาวใช้ 1-2 ข้อต่อหน้า",
+        String(defaultValue)
+      );
+
+      if (input === null) return null;
+
+      let n = parseInt(input, 10);
+      if (!Number.isFinite(n)) n = defaultValue;
+      if (n < 1) n = 1;
+      if (n > 4) n = 4;
+      return n;
+    }
+
+    function getQuestionTemplates() {
+      return Array.from(document.querySelectorAll("#questionBank > article.question"));
+    }
+
+    function renumberQuestionNode(q, number) {
+      const num = q.querySelector(".q-number");
+      if (num) num.textContent = number;
+    }
+
+    function clearPrintArea() {
+      const printArea = document.getElementById("printArea");
+      printArea.innerHTML = "";
+      return printArea;
+    }
+
+    function setModeClass(mode) {
+      body.classList.remove("mode-exam", "mode-key", "mode-solution", "mode-hint");
+      body.classList.add("mode-" + mode);
+      if (hintsVisible && mode !== "key") body.classList.add("mode-hint");
+    }
+
+    function buildExamPages(perPage = questionsPerPage, mode = currentMode) {
+      questionsPerPage = perPage;
+      currentMode = mode;
+      setModeClass(mode);
+
+      document.documentElement.style.setProperty("--per-page", String(perPage));
+
+      const printArea = clearPrintArea();
+      const sourceQuestions = getQuestionTemplates();
+
+      let page = null;
+      let content = null;
+
+      sourceQuestions.forEach((source, index) => {
+        if (index % perPage === 0) {
+         page = document.createElement("section");
+page.className = "sheet";
+
+if (index === 0) {
+  const note = document.createElement("div");
+  note.className = "exam-note";
+  note.contentEditable = "true";
+  note.innerHTML = "คำชี้แจง: จงแสดงวิธีทำอย่างละเอียด พร้อมเขียนคำตอบสุดท้ายให้ชัดเจน";
+  page.appendChild(note);
+}
+
+content = document.createElement("section");
+content.className = "sheet-content";
+page.appendChild(content);
+printArea.appendChild(page);
+        }
+
+        const q = source.cloneNode(true);
+        renumberQuestionNode(q, index + 1);
+        content.appendChild(q);
+      });
+
+      if (mode === "key" || mode === "solution") {
+        buildAnswerKeyPage(printArea, sourceQuestions);
+      }
+
+      setStatus(
+        mode === "exam"
+          ? `โหมดปัจจุบัน: ข้อสอบเขียนแสดงวิธีทำ — ${perPage} ข้อต่อหน้า`
+          : mode === "key"
+            ? `โหมดปัจจุบัน: ข้อสอบพร้อมเฉลยสั้น — ${perPage} ข้อต่อหน้า`
+            : `โหมดปัจจุบัน: เฉลยละเอียด — ${perPage} ข้อต่อหน้า`
+      );
+
+      drawSmilesCanvases(printArea);
+      return typesetMath(printArea);
+    }
+
+    function buildAnswerKeyPage(printArea, sourceQuestions) {
+      const sheet = document.createElement("section");
+      sheet.className = "sheet answer-key-sheet";
+
+      const content = document.createElement("section");
+      content.className = "sheet-content answer-key";
+
+      const title = document.createElement("h2");
+      title.textContent = "เฉลยคำตอบสั้น / Answer Key";
+      content.appendChild(title);
+
+      const grid = document.createElement("div");
+      grid.className = "answer-grid";
+
+      sourceQuestions.forEach((q, index) => {
+        const cell = document.createElement("div");
+        cell.className = "answer-cell";
+        cell.innerHTML = `<b>${index + 1}.</b> ${q.dataset.answer || "-"}`;
+        grid.appendChild(cell);
+      });
+
+      content.appendChild(grid);
+      sheet.appendChild(content);
+      printArea.appendChild(sheet);
+    }
+
+    function rebuildFromPrompt() {
+      const n = askQuestionsPerPage(questionsPerPage);
+      if (n === null) return;
+      buildExamPages(n, currentMode);
+    }
+
+    async function preparePrint(mode) {
+      const n = askQuestionsPerPage(questionsPerPage);
+      if (n === null) return false;
+
+      await buildExamPages(n, mode);
+      await new Promise(resolve => setTimeout(resolve, 180));
+      return true;
+    }
+
+    async function printExam() {
+      const ok = await preparePrint("exam");
+      if (ok) window.print();
+    }
+
+    async function printWithKey() {
+      const ok = await preparePrint("key");
+      if (ok) window.print();
+    }
+
+    async function printSolution() {
+      const ok = await preparePrint("solution");
+      if (ok) window.print();
+    }
+
+    function toggleHints() {
+      hintsVisible = !hintsVisible;
+      if (hintsVisible) body.classList.add("mode-hint");
+      else body.classList.remove("mode-hint");
+      setStatus(hintsVisible ? "เปิดคำใบ้บนหน้าจอแล้ว" : "ปิดคำใบ้บนหน้าจอแล้ว");
+      buildExamPages(questionsPerPage, currentMode);
+    }
+
+    function typesetMath(root) {
+      if (window.MathJax && MathJax.typesetPromise) {
+        try {
+          if (MathJax.typesetClear) MathJax.typesetClear([root]);
+          return MathJax.typesetPromise([root]).catch(err => {
+            console.warn("MathJax error:", err);
+          });
+        } catch (err) {
+          console.warn("MathJax setup error:", err);
+          return Promise.resolve();
+        }
+      }
+      return Promise.resolve();
+    }
+
+    function drawSmilesCanvases(root = document) {
+      if (!window.SmilesDrawer) return;
+
+      root.querySelectorAll("canvas.molecule[data-smiles]").forEach(canvas => {
+        const smiles = canvas.dataset.smiles;
+        const drawer = new SmilesDrawer.Drawer({
+          width: canvas.width || 260,
+          height: canvas.height || 180
+        });
+
+        SmilesDrawer.parse(
+          smiles,
+          tree => drawer.draw(tree, canvas, "light", false),
+          err => console.warn("SmilesDrawer error:", err)
+        );
+      });
+    }
+
+    window.addEventListener("load", () => {
+      buildExamPages(questionsPerPage, "exam");
+    });
+
+    window.addEventListener("beforeprint", () => {
+      /*
+        ไม่คำนวณ height ก่อนพิมพ์แล้ว
+        เพราะหน้า A4 ถูกแบ่งด้วย .sheet อยู่แล้ว
+      */
+    });
+  </script>
+</body>
+</html>

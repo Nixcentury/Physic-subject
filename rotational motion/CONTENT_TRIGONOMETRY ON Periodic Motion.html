@@ -1,0 +1,708 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตรีโกณมิติสำหรับการเคลื่อนที่แบบคาบ | Trigonometry for Periodic Motion</title>
+
+    <!-- Google Fonts: K2D -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['$$', '$$']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+    <style>
+        :root {
+            --font-main: "K2D", "Google Sans", "Roboto", "Segoe UI", system-ui, sans-serif;
+            --blue-main: #1e3a8a;
+            --blue-soft: #eff6ff;
+            --blue-border: #bfdbfe;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: #f1f5f9;
+            color: var(--text-main);
+            line-height: 1.75;
+            letter-spacing: 0.01em;
+        }
+
+        .page-container {
+            max-width: 1100px;
+            margin: 2rem auto;
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 1.25rem;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+        }
+
+        .section-header {
+            font-family: var(--font-main);
+            font-size: 1.65rem;
+            font-weight: 800;
+            color: var(--blue-main);
+            border-bottom: 3px solid var(--blue-border);
+            padding-bottom: 0.5rem;
+            margin-top: 3rem;
+            margin-bottom: 1.25rem;
+            line-height: 1.35;
+        }
+
+        .topic-title {
+            font-family: var(--font-main);
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.45;
+        }
+
+        .lang-th {
+            font-family: var(--font-main);
+            background: var(--blue-soft);
+            border-left: 4px solid #2563eb;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            margin: 0.75rem 0;
+            font-weight: 400;
+        }
+
+        .lang-en {
+            font-family: var(--font-main);
+            background: #f9fafb;
+            border-left: 4px solid #9ca3af;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            margin: 0.75rem 0;
+            color: #4b5563;
+            font-size: 0.95rem;
+            font-weight: 400;
+        }
+
+        .math-box {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.9rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        .highlight-box {
+            border-radius: 1rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            border: 1px solid #e5e7eb;
+        }
+
+        .visual-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+            margin: 1.25rem 0;
+        }
+
+        .visual-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 1rem;
+            padding: 1rem;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+        }
+
+        .visual-title {
+            font-family: var(--font-main);
+            font-weight: 800;
+            color: #1d4ed8;
+            margin-bottom: 0.25rem;
+            line-height: 1.35;
+        }
+
+        .visual-subtitle {
+            font-family: var(--font-main);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .svg-card {
+            background: #f8fafc;
+            border: 1px solid #dbeafe;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+
+        .svg-stage {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 1rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        svg text {
+            font-family: var(--font-main);
+        }
+
+        .mini-badge {
+            display: inline-block;
+            padding: 0.15rem 0.55rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            background: #dbeafe;
+            color: #1e40af;
+            margin-top: 0.4rem;
+        }
+
+        .formula-chip {
+            display: inline-block;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 999px;
+            padding: 0.35rem 0.75rem;
+            margin: 0.15rem;
+            font-weight: 700;
+            color: #1e40af;
+        }
+
+        code {
+            font-family: "K2D", "Google Sans", monospace;
+            background: #f3f4f6;
+            padding: 0.1rem 0.35rem;
+            border-radius: 0.35rem;
+            color: #7c2d12;
+        }
+
+        @media (max-width: 768px) {
+            .page-container {
+                margin: 0;
+                border-radius: 0;
+                padding: 1.25rem;
+            }
+
+            .section-header {
+                font-size: 1.35rem;
+            }
+
+            .topic-title {
+                font-size: 1.05rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<main class="page-container">
+
+    <!-- Header -->
+    <div class="text-center mb-10">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-blue-900 mb-3">
+            🌊 ตรีโกณมิติสำหรับการเคลื่อนที่แบบคาบ
+        </h1>
+        <div class="text-xl md:text-2xl text-blue-600 font-semibold">
+            Trigonometry for Periodic Motion
+        </div>
+      </div>
+
+    <!-- Part 1 -->
+    <h2 class="section-header">
+        1. สามเหลี่ยมมุมฉากที่ด้านเอียงเท่ากับ 1
+        <span class="font-normal text-gray-500">(Right Triangle with Hypotenuse 1)</span>
+    </h2>
+
+    <div class="lang-th">
+        🇹🇭 เริ่มจากสามเหลี่ยมมุมฉากที่มีด้านตรงข้ามมุมฉาก หรือด้านเอียง ยาว \(1\) หน่วย แล้ววัดมุม \( \theta \) จากแกนนอน เราจะเห็นว่า \( \sin \) และ \( \cos \) คือความยาวของด้านในสามเหลี่ยมโดยตรง
+    </div>
+
+    <div class="lang-en">
+        🇬🇧 Start with a right triangle whose hypotenuse is \(1\). Measure the angle \( \theta \) from the horizontal axis. Then \( \sin \) and \( \cos \) become actual side lengths in the triangle.
+    </div>
+
+    <div class="svg-card">
+        <h3 class="topic-title text-blue-800">
+            สามเหลี่ยมฐานตรีโกณ / Basic Trigonometric Triangle
+        </h3>
+
+        <svg width="520" height="330" viewBox="0 0 520 330" class="svg-stage">
+            <!-- Axes -->
+            <line x1="60" y1="260" x2="460" y2="260" stroke="#94a3b8" stroke-width="2"/>
+            <text x="465" y="265" font-size="16" fill="#475569">x</text>
+
+            <!-- Triangle -->
+            <polygon points="110,260 410,260 410,110" fill="#dbeafe" stroke="#2563eb" stroke-width="4"/>
+
+            <!-- Hypotenuse -->
+            <line x1="110" y1="260" x2="410" y2="110" stroke="#dc2626" stroke-width="5"/>
+
+            <!-- Right angle marker -->
+            <path d="M 410 260 L 410 235 L 385 235" fill="none" stroke="#1e40af" stroke-width="3"/>
+
+            <!-- Angle arc theta -->
+            <path d="M 165 260 A 55 55 0 0 0 159 235" fill="none" stroke="#f97316" stroke-width="4"/>
+            <text x="170" y="242" font-size="18" font-weight="700" fill="#ea580c">θ</text>
+
+            <!-- Labels -->
+            <text x="245" y="285" font-size="18" font-weight="700" fill="#166534">cosθ</text>
+            <text x="420" y="190" font-size="18" font-weight="700" fill="#166534">sinθ</text>
+            <text x="250" y="172" font-size="18" font-weight="700" fill="#dc2626">1</text>
+
+            <!-- Vertices -->
+            <circle cx="110" cy="260" r="5" fill="#0f172a"/>
+            <circle cx="410" cy="260" r="5" fill="#0f172a"/>
+            <circle cx="410" cy="110" r="5" fill="#0f172a"/>
+
+            <!-- Explanatory labels -->
+            <text x="95" y="285" font-size="14" fill="#475569">start</text>
+            <text x="300" y="55" font-size="15" font-weight="700" fill="#1e3a8a">
+                Hypotenuse = 1
+            </text>
+            <text x="300" y="78" font-size="14" fill="#475569">
+                วัดมุมจากแกนนอน
+            </text>
+        </svg>
+    </div>
+
+    <div class="math-box bg-blue-50 border-blue-200">
+        $$\cos\theta=\frac{\text{ด้านประชิด}}{1}=\text{ด้านประชิด}$$
+        $$\sin\theta=\frac{\text{ด้านตรงข้าม}}{1}=\text{ด้านตรงข้าม}$$
+        $$\tan\theta=\frac{\text{ด้านตรงข้าม}}{\text{ด้านประชิด}}=\frac{\sin\theta}{\cos\theta}$$
+    </div>
+
+    <div class="highlight-box bg-yellow-50 border-yellow-200">
+        🧠 <strong>จำสั้น:</strong> ถ้าด้านเอียงยาว \(1\) → ด้านนอนคือ \( \cos\theta \), ด้านตั้งคือ \( \sin\theta \)
+        <br>
+        <span class="text-gray-600">
+            Quick memory: If the hypotenuse is \(1\), the horizontal side is \( \cos\theta \), and the vertical side is \( \sin\theta \).
+        </span>
+    </div>
+
+    <!-- Part 2 -->
+    <h2 class="section-header">
+        2. วงกลมหนึ่งหน่วยและเรเดียน
+        <span class="font-normal text-gray-500">(Unit Circle and Radian)</span>
+    </h2>
+
+    <div class="lang-th">
+        🇹🇭 ถ้าเรานำสามเหลี่ยมด้านเอียง \(1\) ไปแนบกับวงกลมที่มีรัศมี \(1\) จะได้วงกลมหนึ่งหน่วย จุดเริ่มต้นของการวัดมุมคือ \((1,0)\) และมุมบวกวัดทวนเข็มนาฬิกา
+    </div>
+
+    <div class="lang-en">
+        🇬🇧 If we place the hypotenuse-1 triangle inside a circle of radius \(1\), we get the unit circle. The starting point is \((1,0)\), and positive angles are measured counterclockwise.
+    </div>
+
+    <div class="math-box bg-green-50 border-green-200">
+        $$s=r\theta$$
+        $$\text{เมื่อ } r=1,\quad s=\theta$$
+    </div>
+
+    <div class="svg-card">
+        <h3 class="topic-title text-green-800">
+            เรเดียนจากความยาวโค้ง / Radian from Arc Length
+        </h3>
+
+        <svg width="480" height="420" viewBox="-220 -210 440 420" class="svg-stage">
+            <!-- Axes -->
+            <line x1="-180" y1="0" x2="180" y2="0" stroke="#94a3b8" stroke-width="2"/>
+            <line x1="0" y1="-180" x2="0" y2="180" stroke="#94a3b8" stroke-width="2"/>
+
+            <!-- Unit circle -->
+            <circle cx="0" cy="0" r="145" fill="none" stroke="#2563eb" stroke-width="3"/>
+
+            <!-- Starting point -->
+            <circle cx="145" cy="0" r="6" fill="#16a34a"/>
+            <text x="110" y="25" font-size="14" fill="#166534">(1,0)</text>
+
+            <!-- Radius to angle 60 deg -->
+            <line x1="0" y1="0" x2="72.5" y2="-125.6" stroke="#dc2626" stroke-width="4"/>
+            <line x1="0" y1="0" x2="145" y2="0" stroke="#16a34a" stroke-width="3"/>
+
+            <!-- Arc -->
+            <path d="M 145 0 A 145 145 0 0 0 72.5 -125.6" fill="none" stroke="#f97316" stroke-width="6"/>
+            <text x="110" y="-70" font-size="18" font-weight="700" fill="#ea580c">s</text>
+
+            <!-- Angle arc -->
+            <path d="M 60 0 A 60 60 0 0 0 30 -52" fill="none" stroke="#7c3aed" stroke-width="4"/>
+            <text x="42" y="-20" font-size="18" font-weight="700" fill="#7c3aed">θ</text>
+
+            <!-- Radius labels -->
+            <text x="55" y="20" font-size="16" fill="#166534">r = 1</text>
+            <text x="30" y="-72" font-size="16" fill="#dc2626">r = 1</text>
+
+            <!-- Center -->
+            <circle cx="0" cy="0" r="4" fill="#0f172a"/>
+            <text x="8" y="18" font-size="14" fill="#0f172a">O</text>
+
+            <text x="-170" y="-155" font-size="16" font-weight="700" fill="#334155">
+                Unit Circle
+            </text>
+        </svg>
+    </div>
+
+    <!-- Part 3 -->
+    <h2 class="section-header">
+        3. การแปลงมุมเรเดียน
+        <span class="font-normal text-gray-500">(Radian Conversion)</span>
+    </h2>
+
+    <div class="lang-th">
+        🇹🇭 การแปลงมุมเรเดียนให้จำจากความจริงที่ว่า \( \pi \) เรเดียนเท่ากับ \(180^\circ\) ดังนั้นมุมสำคัญต่าง ๆ จะเกิดจากการแบ่ง \( \pi \)
+    </div>
+
+    <div class="lang-en">
+        🇬🇧 Radian conversion is based on the fact that \( \pi \) radians equals \(180^\circ\). Important angles come from dividing \( \pi \).
+    </div>
+
+    <div class="visual-grid">
+        <div class="visual-card text-center">
+            <div class="visual-title">ครบ 1 รอบ</div>
+            <div class="math-box">$$360^\circ=2\pi$$</div>
+        </div>
+        <div class="visual-card text-center">
+            <div class="visual-title">ครึ่งรอบ</div>
+            <div class="math-box">$$180^\circ=\pi$$</div>
+        </div>
+        <div class="visual-card text-center">
+            <div class="visual-title">มุมฉาก</div>
+            <div class="math-box">$$90^\circ=\frac{\pi}{2}$$</div>
+        </div>
+        <div class="visual-card text-center">
+            <div class="visual-title">มุมพิเศษ</div>
+            <div class="math-box">
+                $$60^\circ=\frac{\pi}{3}$$
+                $$45^\circ=\frac{\pi}{4}$$
+                $$30^\circ=\frac{\pi}{6}$$
+            </div>
+        </div>
+    </div>
+
+    <div class="highlight-box bg-yellow-50 border-yellow-200">
+        📌 <strong>สูตรจำเร็ว:</strong> ถ้าจะแปลงองศาเป็นเรเดียน ให้คูณด้วย \( \frac{\pi}{180^\circ} \)
+        <div class="math-box bg-white border-yellow-200">
+            $$\theta_{\text{rad}}=\theta_{\text{deg}}\times\frac{\pi}{180^\circ}$$
+        </div>
+    </div>
+
+    <!-- Part 4 -->
+    <h2 class="section-header">
+        4. เทคนิควาดสามเหลี่ยมแนบวงกลมและหาค่าตรีโกณมิติ
+        <span class="font-normal text-gray-500">(Reference Triangle on the Unit Circle)</span>
+    </h2>
+
+    <div class="lang-th">
+        🇹🇭 เมื่อต้องหาค่า \( \sin \), \( \cos \), หรือ \( \tan \) ของมุมใด ๆ ให้วาดมุมนั้นบนวงกลมหนึ่งหน่วย แล้วลากเส้นตั้งฉากลงแกน \(x\) เพื่อสร้างสามเหลี่ยมมุมฉาก
+    </div>
+
+    <div class="lang-en">
+        🇬🇧 To find \( \sin \), \( \cos \), or \( \tan \) of an angle, draw the angle on the unit circle and drop a perpendicular line to the \(x\)-axis to create a right triangle.
+    </div>
+
+    <div class="math-box bg-blue-50 border-blue-200">
+        $$P(x,y)=P(\cos\theta,\sin\theta)$$
+    </div>
+
+    <div class="svg-card">
+        <h3 class="topic-title text-blue-800">
+            ตัวอย่าง: \( \theta=\frac{5\pi}{6} \)
+            <span class="text-gray-500 font-normal">(Example: \( \theta=\frac{5\pi}{6} \))</span>
+        </h3>
+
+        <svg width="480" height="440" viewBox="-220 -220 440 440" class="svg-stage">
+            <!-- Axes -->
+            <line x1="-180" y1="0" x2="180" y2="0" stroke="#94a3b8" stroke-width="2"/>
+            <line x1="0" y1="-180" x2="0" y2="180" stroke="#94a3b8" stroke-width="2"/>
+            <text x="185" y="6" font-size="14" fill="#475569">x</text>
+            <text x="6" y="-185" font-size="14" fill="#475569">y</text>
+
+            <!-- Unit circle -->
+            <circle cx="0" cy="0" r="150" fill="none" stroke="#2563eb" stroke-width="3"/>
+
+            <!-- Triangle fill -->
+            <polygon points="0,0 -129.9,0 -129.9,-75" fill="#22c55e" opacity="0.13"/>
+
+            <!-- Radius -->
+            <line x1="0" y1="0" x2="-129.9" y2="-75" stroke="#dc2626" stroke-width="4"/>
+
+            <!-- Triangle legs -->
+            <line x1="0" y1="0" x2="-129.9" y2="0" stroke="#16a34a" stroke-width="3"/>
+            <line x1="-129.9" y1="0" x2="-129.9" y2="-75" stroke="#16a34a" stroke-width="3" stroke-dasharray="6 5"/>
+
+            <!-- Right angle marker -->
+            <path d="M -129.9 0 L -129.9 -18 L -111.9 -18" fill="none" stroke="#166534" stroke-width="2"/>
+
+            <!-- Main angle arc -->
+            <path d="M 70 0 A 70 70 0 0 0 -60.6 -35" fill="none" stroke="#f97316" stroke-width="4"/>
+            <text x="-10" y="-82" font-size="17" font-weight="700" fill="#ea580c">θ = 5π/6</text>
+
+            <!-- Reference angle arc -->
+            <path d="M -55 0 A 55 55 0 0 0 -47.6 -27.5" fill="none" stroke="#7c3aed" stroke-width="4"/>
+            <text x="-96" y="-22" font-size="16" font-weight="700" fill="#7c3aed">π/6</text>
+
+            <!-- Point -->
+            <circle cx="-129.9" cy="-75" r="6" fill="#dc2626"/>
+            <text x="-205" y="-92" font-size="15" font-weight="700" fill="#dc2626">
+                P(-√3/2, 1/2)
+            </text>
+
+            <!-- Side labels -->
+            <text x="-88" y="22" font-size="15" fill="#166534">√3/2</text>
+            <text x="-160" y="-35" font-size="15" fill="#166534">1/2</text>
+            <text x="-70" y="-48" font-size="15" fill="#dc2626">r = 1</text>
+
+            <!-- Quadrant label -->
+            <text x="-165" y="-145" font-size="16" font-weight="700" fill="#334155">
+                Quadrant II
+            </text>
+
+            <!-- Origin -->
+            <circle cx="0" cy="0" r="4" fill="#0f172a"/>
+            <text x="8" y="18" font-size="14" fill="#0f172a">O</text>
+        </svg>
+
+        <div class="math-box bg-blue-50 border-blue-200">
+            $$\pi-\frac{5\pi}{6}=\frac{\pi}{6}$$
+            $$\cos\frac{5\pi}{6}=-\frac{\sqrt3}{2},\qquad \sin\frac{5\pi}{6}=\frac12$$
+        </div>
+    </div>
+
+    <h3 class="topic-title border-l-4 border-purple-500 pl-3 text-purple-800">
+        สรุปเครื่องหมายในจตุภาค
+        <span class="text-gray-500 font-normal">(Quadrant Signs)</span>
+    </h3>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="svg-card">
+            <svg width="360" height="360" viewBox="-180 -180 360 360" class="svg-stage">
+                <circle cx="0" cy="0" r="130" fill="none" stroke="#2563eb" stroke-width="3"/>
+                <line x1="-150" y1="0" x2="150" y2="0" stroke="#64748b" stroke-width="2"/>
+                <line x1="0" y1="-150" x2="0" y2="150" stroke="#64748b" stroke-width="2"/>
+
+                <text x="55" y="-80" font-size="20" font-weight="700" fill="#166534">QI</text>
+                <text x="-100" y="-80" font-size="20" font-weight="700" fill="#1d4ed8">QII</text>
+                <text x="-110" y="85" font-size="20" font-weight="700" fill="#9333ea">QIII</text>
+                <text x="55" y="85" font-size="20" font-weight="700" fill="#ea580c">QIV</text>
+
+                <text x="42" y="-48" font-size="15" fill="#166534">sin +</text>
+                <text x="42" y="-28" font-size="15" fill="#166534">cos +</text>
+
+                <text x="-120" y="-48" font-size="15" fill="#1d4ed8">sin +</text>
+                <text x="-120" y="-28" font-size="15" fill="#1d4ed8">cos -</text>
+
+                <text x="-120" y="48" font-size="15" fill="#9333ea">sin -</text>
+                <text x="-120" y="68" font-size="15" fill="#9333ea">cos -</text>
+
+                <text x="42" y="48" font-size="15" fill="#ea580c">sin -</text>
+                <text x="42" y="68" font-size="15" fill="#ea580c">cos +</text>
+            </svg>
+        </div>
+
+        <div class="visual-card">
+            <div class="visual-title">ตารางเครื่องหมาย</div>
+            <table class="w-full text-center border-collapse text-sm">
+                <thead>
+                    <tr class="bg-blue-50">
+                        <th class="border p-2">Quadrant</th>
+                        <th class="border p-2">sin</th>
+                        <th class="border p-2">cos</th>
+                        <th class="border p-2">tan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="border p-2">I</td><td class="border p-2">+</td><td class="border p-2">+</td><td class="border p-2">+</td></tr>
+                    <tr><td class="border p-2">II</td><td class="border p-2">+</td><td class="border p-2">-</td><td class="border p-2">-</td></tr>
+                    <tr><td class="border p-2">III</td><td class="border p-2">-</td><td class="border p-2">-</td><td class="border p-2">+</td></tr>
+                    <tr><td class="border p-2">IV</td><td class="border p-2">-</td><td class="border p-2">+</td><td class="border p-2">-</td></tr>
+                </tbody>
+            </table>
+
+            <div class="highlight-box bg-yellow-50 border-yellow-200 mt-4">
+                🧠 จำง่าย: \(x=\cos\theta\), \(y=\sin\theta\)
+                <br>
+                จุดอยู่ซ้าย → cos ลบ | จุดอยู่ล่าง → sin ลบ
+            </div>
+        </div>
+    </div>
+
+    <!-- Part 5 -->
+    <h2 class="section-header">
+        5. เทคนิคมุมเกิน 1 รอบ
+        <span class="font-normal text-gray-500">(Angles Greater Than One Revolution)</span>
+    </h2>
+
+    <div class="lang-th">
+        🇹🇭 มุมสามารถหมุนเกินหนึ่งรอบได้ แต่ค่าตรีโกณมิติจะขึ้นกับ “ตำแหน่งสุดท้าย” บนวงกลม หนึ่งรอบเท่ากับ \(2\pi\) ดังนั้นเราสามารถตัด \(2\pi\) ออกได้
+    </div>
+
+    <div class="lang-en">
+        🇬🇧 Angles can rotate more than one full revolution. Trigonometric values depend on the final position on the circle. Since one full revolution is \(2\pi\), we can remove full \(2\pi\) rotations.
+    </div>
+
+    <div class="math-box bg-orange-50 border-orange-200">
+        $$\frac{13\pi}{6}=2\pi+\frac{\pi}{6}$$
+        $$\sin\frac{13\pi}{6}=\sin\frac{\pi}{6}=\frac12$$
+        $$\cos\frac{13\pi}{6}=\cos\frac{\pi}{6}=\frac{\sqrt3}{2}$$
+    </div>
+
+    <div class="svg-card">
+        <h3 class="topic-title text-orange-800">
+            ภาพจำ: หมุนครบหนึ่งรอบ แล้วต่ออีก \( \frac{\pi}{6} \)
+        </h3>
+
+        <svg width="480" height="420" viewBox="-220 -210 440 420" class="svg-stage">
+            <!-- Axes -->
+            <line x1="-180" y1="0" x2="180" y2="0" stroke="#94a3b8" stroke-width="2"/>
+            <line x1="0" y1="-180" x2="0" y2="180" stroke="#94a3b8" stroke-width="2"/>
+
+            <!-- Circle -->
+            <circle cx="0" cy="0" r="145" fill="none" stroke="#2563eb" stroke-width="3"/>
+
+            <!-- Full rotation guide -->
+            <path d="M 145 0 A 145 145 0 1 0 144.9 -1" fill="none" stroke="#f97316" stroke-width="4" stroke-dasharray="8 6"/>
+
+            <!-- Extra pi/6 radius -->
+            <line x1="0" y1="0" x2="125.6" y2="-72.5" stroke="#dc2626" stroke-width="4"/>
+            <line x1="0" y1="0" x2="145" y2="0" stroke="#16a34a" stroke-width="3"/>
+
+            <!-- Extra angle arc -->
+            <path d="M 65 0 A 65 65 0 0 0 56.3 -32.5" fill="none" stroke="#7c3aed" stroke-width="4"/>
+            <text x="58" y="-18" font-size="16" font-weight="700" fill="#7c3aed">π/6</text>
+
+            <!-- Point -->
+            <circle cx="125.6" cy="-72.5" r="6" fill="#dc2626"/>
+            <text x="60" y="-92" font-size="15" font-weight="700" fill="#dc2626">
+                same as π/6
+            </text>
+
+            <!-- Labels -->
+            <text x="-170" y="-155" font-size="16" font-weight="700" fill="#ea580c">
+                2π full turn
+            </text>
+            <text x="-130" y="160" font-size="16" font-weight="700" fill="#334155">
+                13π/6 = 2π + π/6
+            </text>
+
+            <!-- Center -->
+            <circle cx="0" cy="0" r="4" fill="#0f172a"/>
+            <text x="8" y="18" font-size="14" fill="#0f172a">O</text>
+        </svg>
+    </div>
+
+    <div class="highlight-box bg-red-50 border-red-200">
+        📌 <strong>มุมติดลบแบบสั้น:</strong> มุมติดลบคือการหมุนตามเข็มนาฬิกา เช่น \( -\frac{\pi}{6} \) จะตกในจตุภาคที่ 4
+        <div class="math-box bg-white border-red-200">
+            $$\sin(-\theta)=-\sin\theta,\qquad \cos(-\theta)=\cos\theta$$
+        </div>
+    </div>
+
+    <!-- Part 6 -->
+    <h2 class="section-header">
+        6. เอกลักษณ์ตรีโกณมิติ
+        <span class="font-normal text-gray-500">(Trigonometric Identities)</span>
+    </h2>
+
+    <div class="lang-th">
+        🇹🇭 เอกลักษณ์ตรีโกณมิติพื้นฐานไม่ได้มาจากการท่องจำเท่านั้น แต่มาจากทฤษฎีบทพีทาโกรัสในสามเหลี่ยมที่มีด้านเอียงเท่ากับ \(1\)
+    </div>
+
+    <div class="lang-en">
+        🇬🇧 Basic trigonometric identities are not just formulas to memorize. They come from the Pythagorean theorem applied to a right triangle with hypotenuse \(1\).
+    </div>
+
+    <div class="svg-card">
+        <svg width="520" height="330" viewBox="0 0 520 330" class="svg-stage">
+            <!-- Triangle -->
+            <polygon points="110,260 410,260 410,110" fill="#ede9fe" stroke="#7c3aed" stroke-width="4"/>
+
+            <!-- Hypotenuse -->
+            <line x1="110" y1="260" x2="410" y2="110" stroke="#dc2626" stroke-width="5"/>
+
+            <!-- Right marker -->
+            <path d="M 410 260 L 410 235 L 385 235" fill="none" stroke="#6b21a8" stroke-width="3"/>
+
+            <!-- theta -->
+            <path d="M 165 260 A 55 55 0 0 0 159 235" fill="none" stroke="#f97316" stroke-width="4"/>
+            <text x="170" y="242" font-size="18" font-weight="700" fill="#ea580c">θ</text>
+
+            <!-- Labels -->
+            <text x="245" y="285" font-size="18" font-weight="700" fill="#166534">cosθ</text>
+            <text x="420" y="190" font-size="18" font-weight="700" fill="#166534">sinθ</text>
+            <text x="250" y="172" font-size="18" font-weight="700" fill="#dc2626">1</text>
+
+            <text x="145" y="70" font-size="17" font-weight="700" fill="#4c1d95">
+                Pythagoras:
+            </text>
+            <text x="145" y="100" font-size="16" fill="#4c1d95">
+                (cosθ)² + (sinθ)² = 1²
+            </text>
+        </svg>
+    </div>
+
+    <div class="math-box bg-purple-50 border-purple-200">
+        $$(\cos\theta)^2+(\sin\theta)^2=1^2$$
+        $$\cos^2\theta+\sin^2\theta=1$$
+        $$\tan\theta=\frac{\sin\theta}{\cos\theta}$$
+        $$1+\tan^2\theta=\sec^2\theta$$
+    </div>
+
+    <!-- Summary -->
+    <h2 class="section-header">
+        สรุปท้ายบท
+        <span class="font-normal text-gray-500">(Toolkit Before Periodic Motion)</span>
+    </h2>
+
+    <div class="highlight-box bg-blue-50 border-blue-200">
+        <div class="font-bold text-blue-900 text-lg mb-3">
+            🎯 หลังจบบทนี้ ควรพร้อมเรื่องต่อไปนี้
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-gray-700">
+            <div class="bg-white rounded-lg border p-3">✅ สามเหลี่ยมด้านเอียง \(1\)</div>
+            <div class="bg-white rounded-lg border p-3">✅ \( \sin\theta,\ \cos\theta,\ \tan\theta \)</div>
+            <div class="bg-white rounded-lg border p-3">✅ วงกลมหนึ่งหน่วย / Unit Circle</div>
+            <div class="bg-white rounded-lg border p-3">✅ \(s=r\theta\)</div>
+            <div class="bg-white rounded-lg border p-3">✅ \(P=(\cos\theta,\sin\theta)\)</div>
+            <div class="bg-white rounded-lg border p-3">✅ มุมอ้างอิง / Reference Angle</div>
+            <div class="bg-white rounded-lg border p-3">✅ จตุภาคและเครื่องหมาย</div>
+            <div class="bg-white rounded-lg border p-3">✅ มุมเกินรอบและมุมติดลบ</div>
+            <div class="bg-white rounded-lg border p-3">✅ \(\cos^2\theta+\sin^2\theta=1\)</div>
+            <div class="bg-white rounded-lg border p-3">✅ พร้อมเข้าสู่การเคลื่อนที่แบบคาบ</div>
+        </div>
+    </div>
+
+    <div class="highlight-box bg-yellow-50 border-yellow-300 text-center">
+        <div class="text-xl font-bold text-yellow-900">
+            🌊 เมื่อเข้าใจสามเหลี่ยมและวงกลมหนึ่งหน่วยแล้ว
+        </div>
+        <div class="text-gray-700 mt-2">
+            เราจะพร้อมอธิบายการเคลื่อนที่แบบคาบในบทถัดไป
+        </div>
+        <div class="text-gray-500 text-sm mt-1">
+            Once right triangles and the unit circle are clear, we are ready to study periodic motion in the next lesson.
+        </div>
+    </div>
+
+</main>
+</body>
+</html>

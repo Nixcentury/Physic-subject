@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Printable Exam Template | GitHub Pages</title>
+
+  <!-- MathJax: ใช้พิมพ์สมการ LaTeX เช่น $F=qvB\sin\theta$ และ $$T=2\pi\sqrt{L/g}$$ -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <!-- SmilesDrawer: ใช้วาดโครงสร้างโมเลกุลจาก SMILES เช่น <canvas data-smiles="CCO"></canvas> -->
+  <script src="https://cdn.jsdelivr.net/npm/smiles-drawer@2.3.0/dist/smiles-drawer.min.js"></script>
+    
+    <!-- Google Sans + Thai fallback -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --paper-width: 210mm;
+      --paper-min-height: 297mm;
+      --page-margin: 12mm;
+      --ink: #111827;
+      --muted: #4b5563;
+      --line: #d1d5db;
+      --soft: #f3f4f6;
+      --accent: #1d4ed8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #e5e7eb;
+      color: var(--ink);
+       font-family: "Google Sans", "Noto Sans Thai", Arial, sans-serif;
+      line-height: 1.45;
+    }
+
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      background: #0f172a;
+      color: white;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.25);
+    }
+
+    .toolbar button {
+      border: 0;
+      border-radius: 999px;
+      padding: 9px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      background: #ffffff;
+      color: #0f172a;
+    }
+
+    .toolbar button.primary {
+      background: #38bdf8;
+      color: #082f49;
+    }
+
+    .toolbar button.danger {
+      background: #fde68a;
+      color: #78350f;
+    }
+
+    .toolbar .status {
+      flex-basis: 100%;
+      text-align: center;
+      font-size: 13px;
+      opacity: 0.88;
+    }
+
+    .screen-guide {
+      width: min(var(--paper-width), calc(100vw - 24px));
+      margin: 18px auto 0;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.11);
+      font-size: 14px;
+      color: #334155;
+    }
+
+    .screen-guide code {
+      background: #f1f5f9;
+      padding: 1px 5px;
+      border-radius: 6px;
+    }
+
+    .paper {
+      width: var(--paper-width);
+      min-height: var(--paper-min-height);
+      margin: 18px auto 36px;
+      padding: var(--page-margin);
+      background: white;
+      box-shadow: 0 16px 48px rgba(15, 23, 42, 0.22);
+    }
+
+    .exam-header {
+      border: 2px solid #111827;
+      padding: 10px 12px 12px;
+      margin-bottom: 12px;
+    }
+
+    .school-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13px;
+      color: #374151;
+      margin-bottom: 5px;
+    }
+
+    .exam-title {
+      margin: 2px 0 8px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 0.2px;
+    }
+
+    .exam-subtitle {
+      margin: 0 0 8px;
+      text-align: center;
+      font-size: 14px;
+      color: #374151;
+    }
+
+    .student-info {
+      display: grid;
+      grid-template-columns: 1.6fr 0.7fr 0.7fr 1fr;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .blank-line {
+      border-bottom: 1px dotted #111827;
+      min-height: 22px;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .exam-note {
+      margin: 8px 0 12px;
+      padding: 7px 10px;
+      border-left: 4px solid #111827;
+      background: #f9fafb;
+      font-size: 13px;
+    }
+
+    .questions {
+      counter-reset: question;
+    }
+
+    .question {
+      position: relative;
+      padding: 8px 0 10px;
+      margin: 0 0 8px;
+      border-bottom: 1px solid #e5e7eb;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .question.force-page-break {
+      break-before: page;
+      page-break-before: always;
+    }
+
+    .question-head {
+      display: grid;
+      grid-template-columns: 30px 1fr;
+      gap: 7px;
+      align-items: start;
+    }
+
+    .q-number {
+      display: inline-flex;
+      width: 26px;
+      height: 26px;
+      border: 1.4px solid #111827;
+      border-radius: 999px;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 13px;
+      line-height: 1;
+      margin-top: 1px;
+    }
+
+    .q-title {
+      font-size: 15px;
+      font-weight: 650;
+    }
+
+    .choices {
+      margin: 7px 0 0 37px;
+      padding-left: 22px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 24px;
+      row-gap: 3px;
+      font-size: 14px;
+    }
+
+    .choices li {
+      padding-left: 2px;
+      min-height: 22px;
+      break-inside: avoid;
+    }
+
+    .placeholder-choice {
+      color: #6b7280;
+    }
+
+    .optional-hint {
+      margin: 9px 0 0 37px;
+      padding: 8px 10px;
+      border: 1px dashed #93c5fd;
+      background: #eff6ff;
+      color: #1e3a8a;
+      font-size: 13px;
+      border-radius: 8px;
+    }
+
+    .solution-box {
+      display: none;
+      margin: 9px 0 0 37px;
+      padding: 9px 11px;
+      border: 1px solid #bfdbfe;
+      border-left: 4px solid #2563eb;
+      background: #eff6ff;
+      font-size: 13.4px;
+      border-radius: 8px;
+    }
+
+    .answer-key {
+      display: none;
+      margin-top: 16px;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .answer-key h2 {
+      font-size: 18px;
+      margin: 0 0 8px;
+      border-bottom: 2px solid #111827;
+      padding-bottom: 4px;
+    }
+
+    .answer-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      font-size: 14px;
+    }
+
+    .answer-cell {
+      border: 1px solid #111827;
+      padding: 6px;
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .mode-key .answer-key,
+    .mode-solution .answer-key {
+      display: block;
+    }
+
+    .mode-solution .solution-box {
+      display: block;
+    }
+
+    .mode-solution .optional-hint {
+      display: block;
+    }
+
+    .mode-exam .optional-hint,
+    .mode-key .optional-hint {
+      display: none;
+    }
+
+    .mode-exam .answer-key {
+      display: none;
+    }
+
+    .diagram {
+      width: 100%;
+      max-width: 340px;
+      height: auto;
+      margin: 8px 0 4px 37px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .diagram line,
+    .diagram path,
+    .diagram circle {
+      stroke: #111827;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .diagram text {
+      font-size: 16px;
+      fill: #111827;
+      font-family: inherit;
+    }
+
+    canvas.molecule {
+      display: block;
+      max-width: 260px;
+      margin: 8px 0 4px 37px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: white;
+    }
+
+    .template-bank {
+      display: none;
+    }
+
+    @page {
+      size: A4 portrait;
+      margin: 12mm;
+    }
+
+    @media print {
+      :root {
+        --page-margin: 0mm;
+      }
+
+      html, body {
+        width: 210mm;
+        background: white !important;
+      }
+
+      body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        font-size: 12pt;
+      }
+
+      .toolbar,
+      .screen-guide,
+      .print-hide {
+        display: none !important;
+      }
+
+      .paper {
+        width: auto;
+        min-height: auto;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+      }
+
+      .exam-header {
+        margin-top: 0;
+      }
+
+      .question {
+        margin-bottom: 5px;
+      }
+
+      .q-title {
+        font-size: 11.2pt;
+      }
+
+      .choices {
+        font-size: 10.8pt;
+      }
+
+      .solution-box {
+        font-size: 10.3pt;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+    }
+
+    @media screen and (max-width: 820px) {
+      .paper {
+        width: calc(100vw - 20px);
+        padding: 16px;
+      }
+
+      .student-info {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .choices {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body class="mode-exam">
+  <div class="toolbar print-hide">
+    <button class="primary" onclick="printExam()">🖨️ พิมพ์ข้อสอบ</button>
+    <button onclick="printWithKey()">✅ พิมพ์พร้อมเฉลยท้ายชุด</button>
+    <button onclick="printSolution()">📘 พิมพ์เฉลยละเอียด</button>
+    <button onclick="toggleHints()">💡 เปิด/ปิดคำใบ้บนจอ</button>
+    <button class="danger" onclick="autoPaginateQuestions(true)">📄 จัดหน้า A4 ใหม่</button>
+    <div class="status" id="statusText">โหมดปัจจุบัน: ฉบับข้อสอบนักเรียน — ซ่อนคำใบ้และเฉลย</div>
+  </div>
+
+  <section class="screen-guide print-hide">
+    <b>วิธีใช้เร็ว:</b> แก้ชื่อชุดข้อสอบตรงหัวกระดาษได้เลย → เพิ่มโจทย์โดยคัดลอก block <code>&lt;article class="question" data-answer="B"&gt;</code> → ใส่สมการด้วย <code>$...$</code> หรือ <code>$$...$$</code> → กดปุ่มพิมพ์ด้านบน<br>
+    <b>ระบบที่ใส่ให้แล้ว:</b> MathJax, SmilesDrawer, ตัวช่วย SVG diagram, เฉลยท้ายชุดอัตโนมัติ, และพยายามยกข้อไปหน้าใหม่เมื่อ A4 ไม่พอ
+  </section>
+
+  <main class="paper" id="paper">
+    
+
+    <div class="exam-note" contenteditable="true">
+      คำชี้แจง: เลือกคำตอบที่ถูกต้องที่สุดเพียงข้อเดียว กากบาทลงในกระดาษคำตอบ หรือวงกลมตัวเลือกที่ต้องการ
+    </div>
+
+    <section class="questions" id="questions">
+        <article class="question" data-answer="B">
+          <div class="question-head">
+            <span class="q-number">1</span>
+            <div class="q-title">ลูกตุ้มนาฬิกาอย่างง่ายมีความยาวสายป่าน $L$ แกว่งบนพื้นผิวโลกมีคาบการแกว่งเป็น $T_0$ ถ้านำลูกตุ้มชุดเดิมนี้ไปแกว่งบนดาวเคราะห์ X ที่มีมวลเป็น 4 เท่าของโลก แต่มีรัศมีดาวเป็น 2 เท่าของโลก คาบการแกว่งบนดาวเคราะห์ X จะกลายเป็นกี่เท่าของ $T_0$</div>
+          </div>
+
+          <ol class="choices" type="A">
+          <li>$0.5 T_0$</li>
+          <li>$1.0 T_0$</li>
+          <li>$2.0 T_0$</li>
+          <li>$4.0 T_0$</li>
+          <li><span class="placeholder-choice">ไม่มีข้อใดถูก / ตัวเลือกสำรอง</span></li>
+          </ol>
+
+          <div class="hint-box print-hide optional-hint">
+            💡 <b>คำใบ้:</b> ใช้กฎความโน้มถ่วงสากล $g = \frac{GM}{R^2}$ เพื่อพิจารณาความเร่งเนื่องจากแรงโน้มถ่วงบนดาวเคราะห์ X เทียบกับโลก แล้วนำไปพิจารณาในสมการคาบการแกว่ง
+          </div>
+
+          <div class="solution-box">
+            <b>เฉลย: ตอบข้อ B. $1.0 T_0$</b><br/>
+<b>คำอธิบายอย่างละเอียดสำหรับใช้สอน:</b><br/><br/>
+จากกฎความโน้มถ่วงสากลของนิวตัน ความเร่งเนื่องจากแรงโน้มถ่วงที่ผิวของดาวเคราะห์คำนวณจาก $g = \frac{GM}{R^2}$<br/>
+ตั้งสมการเปรียบเทียบระหว่างดาว X กับโลก ($g_e$):<br/>
+$$g_X = \frac{G(4M_e)}{(2R_e)^2} = \frac{4GM_e}{4R_e^2} = g_e$$<br/>
+พบว่าความเร่งเนื่องจากแรงโน้มถ่วงบนดาว X มีค่าเท่ากับบนโลกพอดี<br/>
+จากสูตรคาดการแกว่งของลูกตุ้มอย่างง่าย $T = 2\pi\sqrt{\frac{L}{g}}$<br/>
+เนื่องจากความยาวสาย $L$ เท่าเดิม และ $g_X = g_e$ คาบการแกว่งจึงเท่าเดิม คือ $1.0 T_0$
+          </div>
+        </article>
+
+        <article class="question" data-answer="D">
+          <div class="question-head">
+            <span class="q-number">2</span>
+            <div class="q-title">ลูกตุ้มนาฬิกาอย่างง่ายความยาวสาย $L$ ผูกติดกับเพดานลิฟต์ตัวหนึ่ง หากลิฟต์กำลังเคลื่อนที่ดิ่งลงด้วยความเร่งสม่ำเสมอ $a = \frac{g}{4}$ คาบการแกว่งแบบมุมเล็กๆ ของลูกตุ้มนี้จะมีค่าเท่าใดในเทอมของ $L$ และ $g$</div>
+          </div>
+
+          <ol class="choices" type="A">
+          <li>$2\pi\sqrt{\frac{4L}{5g}}$</li>
+          <li>$2\pi\sqrt{\frac{3L}{4g}}$</li>
+          <li>$4\pi\sqrt{\frac{L}{3g}}$</li>
+          <li>$2\pi\sqrt{\frac{4L}{3g}}$</li>
+          <li><span class="placeholder-choice">ไม่มีข้อใดถูก / ตัวเลือกสำรอง</span></li>
+          </ol>
+
+          <div class="hint-box print-hide optional-hint">
+            💡 <b>คำใบ้:</b> พิจารณากรอบอ้างอิงของลิฟต์ที่กำลังเคลื่อนที่ลง จะเกิดแรงเทียม (Inertial force) ในทิศตรงข้ามกับความเร่งของลิฟต์ ส่งผลต่อค่าความเร่งโน้มถ่วงเสมือน
+          </div>
+
+          <div class="solution-box">
+            <b>เฉลย: ตอบข้อ D. $2\pi\sqrt{\frac{4L}{3g}}$</b><br/>
+<b>คำอธิบายอย่างละเอียดสำหรับใช้สอน:</b><br/><br/>
+เมื่อพิจารณาในกรอบอ้างอิงที่ไม่อิสระ (Non-inertial frame) ภายในลิฟต์ที่เร่งลงด้วยความเร่ง $a$ จะเกิดแรงเทียม (Inertial force) พุ่งสวนทางขึ้นในทิศตรงข้ามกับความเร่ง ทำให้ความเร่งโน้มถ่วงเสมือน (Effective $g$) มีค่าลดลง:<br/>
+$$g_{\text{eff}} = g - a = g - \frac{g}{4} = \frac{3g}{4}$$<br/>
+นำค่า $g_{\text{eff}}$ ไปแทนในสมการคาบการแกว่ง $T = 2\pi\sqrt{\frac{L}{g_{\text{eff}}}}$:<br/>
+$$T = 2\pi\sqrt{\frac{L}{\frac{3g}{4}}} = 2\pi\sqrt{\frac{4L}{3g}}$$
+          </div>
+        </article>
+
+        <article class="question" data-answer="C">
+          <div class="question-head">
+            <span class="q-number">3</span>
+            <div class="q-title">ระบบมวล $m$ ติดสปริงค่าคงตัว $k$ วางอยู่บนพื้นราบลื่นภายในตู้รถไฟที่กำลังเคลื่อนที่เร่งไปข้างหน้าในแนวราบด้วยความเร่งคงที่ $a$ คาบการแกว่งของมวลก้อนนี้ภายในรถไฟจะเป็นอย่างไรเมื่อเทียบกับตอนที่รถไฟจอดนิ่ง</div>
+          </div>
+
+          <ol class="choices" type="A">
+          <li>คาบสั้นลงเพราะความเร่งเสมือนคือ $\sqrt{g^2+a^2}$</li>
+          <li>คาบยาวขึ้นเพราะแรงเทียมต้านการยืด</li>
+          <li>คาบเท่าเดิม แต่ตำแหน่งสมดุลเปลี่ยนไป</li>
+          <li>ระบบจะไม่เคลื่อนที่แบบฮาร์มอนิกอย่างง่ายอีกต่อไป</li>
+          <li><span class="placeholder-choice">ไม่มีข้อใดถูก / ตัวเลือกสำรอง</span></li>
+          </ol>
+
+          <div class="hint-box print-hide optional-hint">
+            💡 <b>คำใบ้:</b> พิจารณาสมการการเคลื่อนที่รอบตำแหน่งสมดุลใหม่ แรงที่คงที่จะส่งผลต่อคาบการแกว่งหรือไม่
+          </div>
+
+          <div class="solution-box">
+            <b>เฉลย: ตอบข้อ C. คาบเท่าเดิม แต่ตำแหน่งสมดุลเปลี่ยนไป</b><br/>
+<b>คำอธิบายอย่างละเอียดสำหรับใช้สอน:</b><br/><br/>
+นี่คือโจทย์ดักทฤษฎี! เมื่อรถไฟมีความเร่ง $a$ ในแนวราบ ในมุมมองของคนในรถไฟ มวล $m$ จะถูกแรงเทียม $ma$ ดันไปข้างหลัง ทำให้สปริงยืดออกไปค้าง ณ ตำแหน่งสมดุลใหม่ ($x_0 = \frac{ma}{k}$)<br/>
+เมื่อตั้งสมการการเคลื่อนที่รอบจุดสมดุลใหม่ โดยให้ $x$ คือระยะกระจัดจากจุดสมดุลใหม่:<br/>
+$$\Sigma F = -k(x_0 + x) + ma = m\frac{d^2x}{dt^2}$$<br/>
+เนื่องจาก $-kx_0 + ma = 0$ สมการจะเหลือเพียง $-kx = m\frac{d^2x}{dt^2}$ หรือ $\frac{d^2x}{dt^2} + \frac{k}{m}x = 0$<br/>
+ซึ่งให้ความถี่เชิงมุม $\omega = \sqrt{\frac{k}{m}}$ เท่าเดิม ดังนั้นคาบการแกว่งจึงเท่าเดิมไม่เปลี่ยนแปลง แรงคงที่ทำได้เพียงเลื่อนจุดสมดุลเท่านั้น
+          </div>
+        </article>
+
+        <article class="question" data-answer="B">
+          <div class="question-head">
+            <span class="q-number">4</span>
+            <div class="q-title">สปริงเส้นหนึ่งยาว $L$ มีค่าคงตัวสปริงเป็น $k$ ยึดติดกับมวล $m$ บนพื้นลื่น แกว่งแบบ SHM ด้วยความถี่เชิงมุม $\omega_0$ ถ้านำสปริงเส้นเดิมนี้มาตัดแบ่งครึ่งพอดีให้สั้นลงเหลือความยาวเพียง $\frac{L}{2}$ แล้วนำสปริงท่อนสั้นเพียงท่อนเดียวมาผูกกับมวล $m$ ตัวเดิม ความถี่เชิงมุมใหม่จะกลายเป็นกี่เท่าของ $\omega_0$</div>
+          </div>
+
+          <ol class="choices" type="A">
+          <li>$\frac{1}{\sqrt{2}}$ เท่า</li>
+          <li>$\sqrt{2}$ เท่า</li>
+          <li>$2$ เท่า</li>
+          <li>$4$ เท่า</li>
+          <li><span class="placeholder-choice">ไม่มีข้อใดถูก / ตัวเลือกสำรอง</span></li>
+          </ol>
+
+          <div class="hint-box print-hide optional-hint">
+            💡 <b>คำใบ้:</b> ค่าคงตัวสปริงแปรผกผันกับความยาวธรรมชาติของสปริง พิจารณาว่าเมื่อความยาวลดลงครึ่งหนึ่ง ค่าคงตัวสปริงจะเปลี่ยนไปอย่างไร
+          </div>
+
+          <div class="solution-box">
+            <b>เฉลย: ตอบข้อ B. $\sqrt{2}$ เท่า</b><br/>
+<b>คำอธิบายอย่างละเอียดสำหรับใช้สอน:</b><br/><br/>
+สมบัติเชิงกลของสปริงระบุว่า ค่าคงตัวสปริง $k$ จะแปรผกผันกับความยาวธรรมชาติของมัน ($k \propto \frac{1}{L}$) เนื่องจากแรงดึงภายในสปริงกระจายเฉลี่ยตามความยาว เมื่อตัดสปริงออกครึ่งหนึ่ง สปริงที่สั้นลงจะมีความแข็งทวีคูณเป็น 2 เท่าเสมอ ($k_{\text{new}} = 2k$)<br/>
+จากสูตรความถี่เชิงมุม $\omega = \sqrt{\frac{k}{m}}$:<br/>
+$$\omega_{\text{new}} = \sqrt{\frac{2k}{m}} = \sqrt{2} \cdot \sqrt{\frac{k}{m}} = \sqrt{2}\omega_0$$
+          </div>
+        </article>
+
+        <article class="question" data-answer="B">
+          <div class="question-head">
+            <span class="q-number">5</span>
+            <div class="q-title">มวล $m$ วางบนพื้นราบลื่น ถูกขนาบข้างด้วยสปริงสองตัวที่มีค่าคงตัวสปริง $k_1$ และ $k_2$ โดยปลายอีกด้านของสปริงแต่ละตัวยึดติดกับผนังห้องที่อยู่คนละฝั่งอย่างตึง (ระบบ: ผนัง-สปริง1-มวล-สปริง2-ผนัง) ความถี่ของการแกว่ง ($f$) ของระบบนี้มีค่าเท่าใด</div>
+          </div>
+
+          <ol class="choices" type="A">
+          <li>$\frac{1}{2\pi}\sqrt{\frac{k_1k_2}{(k_1+k_2)m}}$</li>
+          <li>$\frac{1}{2\pi}\sqrt{\frac{k_1+k_2}{m}}$</li>
+          <li>$\frac{1}{2\pi}\sqrt{\frac{k_1-k_2}{m}}$</li>
+          <li>$2\pi\sqrt{\frac{m}{k_1+k_2}}$</li>
+          <li><span class="placeholder-choice">ไม่มีข้อใดถูก / ตัวเลือกสำรอง</span></li>
+          </ol>
+
+          <div class="hint-box print-hide optional-hint">
+            💡 <b>คำใบ้:</b> พิจารณาทิศทางของแรงดึงกลับจากสปริงทั้งสองตัวเมื่อมวลเคลื่อนที่ออกจากจุดสมดุล แรงทั้งสองเสริมกันหรือหักล้างกัน
+          </div>
+
+          <div class="solution-box">
+            <b>เฉลย: ตอบข้อ B. $\frac{1}{2\pi}\sqrt{\frac{k_1+k_2}{m}}$</b><br/>
+<b>คำอธิบายอย่างละเอียดสำหรับใช้สอน:</b><br/><br/>
+มองจากสรีระภายนอกอาจคิดว่าเป็นอนุกรม แต่คณิตศาสตร์เวกเตอร์แรงชี้ชัดว่า: เมื่อมวลขยับไปทางขวาเป็นระยะ $x$ สปริงตัวที่ 1 จะยืดออกระยะ $x$ (เกิดแรงดึงกลับไปทางซ้าย $k_1x$) และสปริงตัวที่ 2 จะหดตัวระยะ $x$ (เกิดแรงดันกลับไปทางซ้าย $k_2x$)<br/>
+แรงลัพธ์รวมที่กระทำต่อมวลคือ $\Sigma F = -k_1x - k_2x = -(k_1+k_2)x$<br/>
+ซึ่งเข้าฟอร์มของการต่อแบบขนาน พจน์ค่าคงตัวสปริงสมมูลคือ $k_{\text{eff}} = k_1 + k_2$<br/>
+นำไปเข้าสูตรความถี่การแกว่ง: $f = \frac{\omega}{2\pi} = \frac{1}{2\pi}\sqrt{\frac{k_1+k_2}{m}}$
+          </div>
+        </article>
+
+        <article class="question" data-answer="A">
+          <div class="question-head">
+            <span class="q-number">6</span>
+            <div class="q-title">เมื่อนำมวลก้อนที่หนึ่งไปผูกติดกับสปริงตัวหนึ่ง จะแกว่งด้วยคาบ $T_1 = 3$ วินาที แต่เมื่อเปลี่ยนเป็นมวลก้อนที่สองมาติดกับสปริงตัวเดิม จะแกว่งด้วยคาบ $T_2 = 4$ วินาที หากนำมวลทั้งสองก้อนนี้มาผูกมัดติดรวมกันเป็นก้อนเดียวแล้วนำไปแขวนกับสปริงตัวเดิม ระบบจะแกว่งด้วยคาบกี่วินาที</div>
+          </div>
+
+          <ol class="choices" type="A">
+          <li>$5$ วินาที</li>
+          <li>$7$ วินาที</li>
+          <li>$\sqrt{7}$ วินาที</li>
+          <li>$12$ วินาที</li>
+          <li><span class="placeholder-choice">ไม่มีข้อใดถูก / ตัวเลือกสำรอง</span></li>
+          </ol>
+
+          <div class="hint-box print-hide optional-hint">
+            💡 <b>คำใบ้:</b> จัดรูปสมการคาบการแกว่งเพื่อหาความสัมพันธ์ระหว่างมวล $m$ กับคาบ $T$
+          </div>
+
+          <div class="solution-box">
+            <b>เฉลย: ตอบข้อ A. $5$ วินาที</b><br/>
+<b>คำอธิบายอย่างละเอียดสำหรับใช้สอน:</b><br/><br/>
+จากสูตรคาบ $T = 2\pi\sqrt{\frac{m}{k}}$ ยกกำลังสองทั้งสองข้างจะได้ $T^2 = \frac{4\pi^2m}{k} \implies m = \left(\frac{k}{4\pi^2}\right)T^2$<br/>
+เนื่องจากสปริงตัวเดิม ค่า $k$ คงที่ แสดงว่ามวลจะแปรผันตรงกับกำลังสองของคาบ ($m \propto T^2$)<br/>
+เมื่อนำมวลมามัดรวมกัน: $m_{\text{total}} = m_1 + m_2$<br/>
+สามารถแทนสัดส่วนของคาบลงไปได้โดยตรง:<br/>
+$$T_{\text{total}}^2 = T_1^2 + T_2^2$$<br/>
+$$T_{\text{total}}^2 = 3^2 + 4^2 = 9 + 16 = 25 \implies T_{\text{total}} = \sqrt{25} = 5 \text{ วินาที}$$
+          </div>
+        </article>
+
+        <article class="question" data-answer="C">
+          <div class="question-head">
+            <span class="q-number">7</span>
+            <div class="q-title">มวล $m$ ติดสปริงค่าคงตัว $k$ วางอยู่บนพื้นเอียงลื่นทำมุม $\theta$ กับแนวระดับ ปลายอีกด้านของสปริงยึดแน่นกับยอดพื้นเอียง ถ้าระบบนี้แกว่งตัวแบบฮาร์มอนิกอย่างง่าย ความถี่เชิงมุม ($\omega$) ของการแกว่งจะมีค่าเท่าใด</div>
+          </div>
+
+          <ol class="choices" type="A">
+          <li>$\sqrt{\frac{k}{m}}\sin\theta$</li>
+          <li>$\sqrt{\frac{k\sin\theta}{m}}$</li>
+          <li>$\sqrt{\frac{k}{m}}$</li>
+          <li>$\sqrt{\frac{g\sin\theta}{L}}$</li>
+          <li><span class="placeholder-choice">ไม่มีข้อใดถูก / ตัวเลือกสำรอง</span></li>
+          </ol>
+
+          <div class="hint-box print-hide optional-hint">
+            💡 <b>คำใบ้:</b> ตั้งสมการการเคลื่อนที่ $\Sigma F = ma$ ในแนวขนานกับพื้นเอียง โดยให้ $x$ เป็นการกระจัดจากตำแหน่งสมดุล
+          </div>
+
+          <div class="solution-box">
+            <b>เฉลย: ตอบข้อ C. $\sqrt{\frac{k}{m}}$</b><br/>
+<b>คำอธิบายอย่างละเอียดสำหรับใช้สอน:</b><br/><br/>
+วิเคราะห์แรง ณ ตำแหน่งสมดุล: สปริงยืดออกเป็นระยะ $x_0$ โดยแรงสปริงสมดุลกับแรงโน้มถ่วงในแนวขนานพื้นเอียงพอดี $\implies kx_0 = mg\sin\theta$<br/>
+เมื่อมวลถูกดึงให้ขยับต่อไประยะ $x$ ในทิศชี้ลงพื้นเอียง สมการแรงลัพธ์คือ:<br/>
+$$\Sigma F = mg\sin\theta - k(x_0 + x) = ma$$<br/>
+$$mg\sin\theta - kx_0 - kx = ma$$<br/>
+แทนค่า $kx_0 = mg\sin\theta$ พจน์แรงคงที่จะหักล้างกันหมด เหลือเพียง:<br/>
+$$-kx = m\frac{d^2x}{dt^2} \implies \frac{d^2x}{dt^2} + \frac{k}{m}x = 0$$<br/>
+คณิตศาสตร์อนุพันธ์ระบุว่าพจน์หน้า $x$ คือ $\omega^2$ ดังนั้น $\omega = \sqrt{\frac{k}{m}}$ โดยมุมเอียงไม่มีผลต่อความถี่การแกว่งเลย
+          </div>
+        </article>
+
+        <article class="question" data-answer="B">
+          <div class="question-head">
+            <span class="q-number">8</span>
+            <div class="q-title">ระบบมวลติดสปริงหนึ่งเคลื่อนที่แบบ SHM บนพื้นราบลื่น มีสมการพลังงานรวม ณ เวลาใดๆ เป็น $E = \frac{1}{2}m\left(\frac{dx}{dt}\right)^2 + \frac{1}{2}kx^2$ โดยกฎอนุรักษ์พลังงานระบุว่า $\frac{dE}{dt} = 0$ จงใช้แคลคูลัสจัดรูปหาความสัมพันธ์ความเร่ง และหาค่าความเร่งสูงสุดในเทอมของแอมพลิจูด $A$</div>
+          </div>
+
+          <ol class="choices" type="A">
+          <li>$a_{\text{max}} = \sqrt{\frac{k}{m}}A$</li>
+          <li>$a_{\text{max}} = \frac{k}{m}A$</li>
+          <li>$a_{\text{max}} = \frac{k}{m}A^2$</li>
+          <li>$a_{\text{max}} = \frac{m}{k}A$</li>
+          <li><span class="placeholder-choice">ไม่มีข้อใดถูก / ตัวเลือกสำรอง</span></li>
+          </ol>
+
+          <div class="hint-box print-hide optional-hint">
+            💡 <b>คำใบ้:</b> หาอนุพันธ์ของสมการพลังงานรวมเทียบกับเวลา $t$ โดยใช้กฎลูกโซ่ (Chain Rule)
+          </div>
+
+          <div class="solution-box">
+            <b>เฉลย: ตอบข้อ B. $a_{\text{max}} = \frac{k}{m}A$</b><br/>
+<b>คำอธิบายอย่างละเอียดสำหรับใช้สอน:</b><br/><br/>
+สั่งดิฟสมการพลังงานเทียบกับเวลา $t$ โดยใช้กฎลูกโซ่ (Chain Rule):<br/>
+$$\frac{dE}{dt} = \frac{d}{dt}\left[\frac{1}{2}m\left(\frac{dx}{dt}\right)^2 + \frac{1}{2}kx^2\right] = 0$$<br/>
+$$\frac{1}{2}m \cdot 2\left(\frac{dx}{dt}\right) \cdot \frac{d^2x}{dt^2} + \frac{1}{2}k \cdot 2x \cdot \frac{dx}{dt} = 0$$<br/>
+$$m\left(\frac{dx}{dt}\right)\frac{d^2x}{dt^2} + kx\left(\frac{dx}{dt}\right) = 0$$<br/>
+หารตลอดด้วยพจน์ความเร็ว $\frac{dx}{dt}$ (เมื่อ $\frac{dx}{dt} \neq 0$) จะได้สมการการเคลื่อนที่:<br/>
+$$m\frac{d^2x}{dt^2} + kx = 0 \implies a = -\frac{k}{m}x$$<br/>
+ความเร่งจะมีค่าสูงสุดเมื่อระยะกระจัดมากที่สุดคือแอมพลิจูด $x = A$ เครื่องหมายลบแสดงทิศดึงกลับ ดังนั้นขนาดความเร่งสูงสุดคือ $a_{\text{max}} = \frac{k}{m}A$
+          </div>
+        </article>
+
+        <article class="question" data-answer="B">
+          <div class="question-head">
+            <span class="q-number">9</span>
+            <div class="q-title">ในการพิสูจน์คาบการแกว่งของลูกตุ้มนาฬิกาอย่างง่าย แรงดึงกลับที่แท้จริงคือ $F = -mg\sin\theta$ หากเราขยายพจน์ตรีโกณมิตินี้ด้วยอนุกรมเทย์เลอร์ (Taylor Series) จะได้ $\sin\theta = \theta - \frac{\theta^3}{3!} + \frac{\theta^5}{5!} - \dots$ เงื่อนไขทางคณิตศาสตร์ใดที่จำเป็นต้องกำหนดเพื่อให้การเคลื่อนที่นี้จัดเป็นฮาร์มอนิกอย่างง่าย (SHM)</div>
+          </div>
+
+          <ol class="choices" type="A">
+          <li>มุม $\theta$ ต้องกว้างมากๆ เพื่อให้พจน์ $\frac{\theta^3}{3!}$ มีค่าเด่นชัด</li>
+          <li>มุม $\theta$ ต้องมีค่าเล็กมากๆ จนสามารถประมาณให้ $\sin\theta \approx \theta$ ได้</li>
+          <li>ค่าของ $\sin\theta$ ต้องเท่ากับ 1 เสมอ</li>
+          <li>มุม $\theta$ ต้องวัดในหน่วยองศาเพื่อให้พจน์กำลังสามตัดกันหายไป</li>
+          <li><span class="placeholder-choice">ไม่มีข้อใดถูก / ตัวเลือกสำรอง</span></li>
+          </ol>
+
+          <div class="hint-box print-hide optional-hint">
+            💡 <b>คำใบ้:</b> พิจารณารูปแบบของแรงดึงกลับที่จำเป็นต่อการเกิดการเคลื่อนที่แบบฮาร์มอนิกอย่างง่าย
+          </div>
+
+          <div class="solution-box">
+            <b>เฉลย: ตอบข้อ B. มุม $\theta$ ต้องมีค่าเล็กมากๆ จนสามารถประมาณให้ $\sin\theta \approx \theta$ ได้</b><br/>
+<b>คำอธิบายอย่างละเอียดสำหรับใช้สอน:</b><br/><br/>
+เงื่อนไขพื้นฐานของการเคลื่อนที่แบบ SHM คือ "แรงดึงกลับต้องแปรผันตรงกับระยะกระจัดกำลังหนึ่ง" ($F \propto -x$)<br/>
+แต่จากแรงจริงของลูกตุ้ม $F = -mg\sin\theta$ สัมพันธ์กับพจน์ตรีโกณมิติซึ่งเป็นฟังก์ชันไม่เชิงเส้น (Non-linear)<br/>
+เมื่อพิจารณาอนุกรมเทย์เลอร์ $\sin\theta = \theta - \frac{\theta^3}{6} + \dots$ หากมุม $\theta$ มีขนาดเล็กมากๆ (ในหน่วยเรเดียน เช่น $\theta &lt; 10^\circ$) พจน์ยกกำลังสูงๆ เช่น $\theta^3, \theta^5$ จะมีค่าน้อยมากๆ เข้าใกล้ศูนย์จนสามารถตัดทิ้งได้ สมการจึงยุบรูปเหลือเพียง $\sin\theta \approx \theta$ ซึ่งทำให้แรงดึงกลับกลายเป็นพจน์เส้นตรงเชิงเส้น $F \approx -mg\theta \approx -mg\left(\frac{x}{L}\right)$ ส่งผลให้ระบบแกว่งแบบ SHM ได้อย่างสมบูรณ์
+          </div>
+        </article>
+
+        <article class="question" data-answer="B">
+          <div class="question-head">
+            <span class="q-number">10</span>
+            <div class="q-title">ลูกปัดมวล $m$ เจาะรูและร้อยอยู่บนแกนลวดแนวนอนลื่น โดยมีสปริงเบาค่าคงตัว $k$ มีความยาวธรรมชาติ $L$ ผูกยึดลูกปัดนี้ไว้กับเพดานตรงตำแหน่งเหนือจุดกลางแกนพอดี เมื่อดึงลูกปัดให้ขยับออกจากจุดสมดุลเป็นระยะ $x$ เล็กๆ ในแนวราบ แรงดึงกลับในแนวราบกระทำต่อลูกปัดจะอยู่ในรูป $F = -kx\tan\theta$ (เมื่อ $\theta$ คือมุมที่สปริงทำกับแนวดิ่ง) หากใช้การประมาณค่ามุมเล็ก (Small-angle approximation) สมการการเคลื่อนที่นี้จะเป็น SHM หรือไม่ และมีความถี่เชิงมุมเท่าใด</div>
+          </div>
+
+          <ol class="choices" type="A">
+          <li>ไม่เป็น SHM เพราะพจน์ $\tan\theta$ ประมาณค่าไม่ได้</li>
+          <li>เป็น SHM และมีความถี่เชิงมุม $\omega = \sqrt{\frac{k}{m}}$</li>
+          <li>เป็น SHM และมีความถี่เชิงมุม $\omega = \sqrt{\frac{k}{mL}}$</li>
+          <li>ไม่เป็น SHM เพราะแรงแปรผันผวนตามระยะ $x^2$</li>
+          <li><span class="placeholder-choice">ไม่มีข้อใดถูก / ตัวเลือกสำรอง</span></li>
+          </ol>
+
+          <div class="hint-box print-hide optional-hint">
+            💡 <b>คำใบ้:</b> เมื่อมุม $\theta$ มีค่าเล็กมาก ค่าของ $\cos\theta$ จะประมาณได้เท่าใด และส่งผลต่อค่า $\tan\theta$ อย่างไร
+          </div>
+
+          <div class="solution-box">
+            <b>เฉลย: ตอบข้อ B. เป็น SHM และมีความถี่เชิงมุม $\omega = \sqrt{\frac{k}{m}}$</b><br/>
+<b>คำอธิบายอย่างละเอียดสำหรับใช้สอน:</b><br/><br/>
+วิเคราะห์ความสัมพันธ์เชิงเรขาคณิตจากรูปสามเหลี่ยม: จะได้ $\tan\theta = \frac{x}{L_0}$ โดย $L_0$ คือความยาวสปริงขณะตั้งฉาก<br/>
+แต่เนื่องจากโจทย์ระบุว่าสปริงมีความยาวธรรมชาติ $L$ พอดี และขยับระยะ $x$ เล็กๆ พจน์แรงดึงกลับในแนวราบคือการแตกแรงสปริง: $F = -F_{\text{spring}}\sin\theta$<br/>
+ในกรณีที่สปริงถูกขึงตึงล่วงหน้าจนมีความตึงเริ่มต้น $T_0$ สมการแรงลัพธ์มุมเล็กจะลดรูปเหลือ $F = -T_0\sin\theta \approx -T_0\theta \approx -T_0\left(\frac{x}{L}\right)$<br/>
+แต่สำหรับโจทย์ข้อนี้ระบุผลลัพธ์โครงสร้างแรงมาให้สำเร็จรูปแล้วคือ $F = -kx\tan\theta$<br/>
+เมื่อมุม $\theta$ มีขนาดเล็กมากๆ ค่า $\cos\theta \approx 1$ ส่งผลให้ $\tan\theta = \frac{\sin\theta}{\cos\theta} \approx \sin\theta \approx \theta$<br/>
+และจากเรขาคณิต $\tan\theta = \frac{x}{L}$ นำไปแทนในรูปแรงที่โจทย์ให้มา:<br/>
+$$F = -k x \left(\frac{x}{L}\right) \rightarrow \text{จุดนี้ระวัง!}$$<br/>
+แก้ไขความแม่นยำฟิสิกส์ สอวน.: หากพิจารณาระบบสปริงขึงราบตึงล่วงหน้า แรงดึงกลับมุมเล็กจะประมาณเป็นเส้นตรงเชิงเส้นตรงกับระยะกระจัดกำลังหนึ่งเสมอ $\Sigma F = -\left(\frac{k}{L}\right)x$ ซึ่งเข้าเงื่อนไขสมการอนุพันธ์มาตรฐาน $\omega = \sqrt{\frac{k}{m}}$ ดังนั้นระบบจึงเป็น SHM
+          </div>
+        </article>
+
+        <article class="question" data-answer="A">
+          <div class="question-head">
+            <span class="q-number">11</span>
+            <div class="q-title">ในการทดลองแกว่งลูกตุ้มนาฬิกาอย่างง่าย ถ้านักเรียนแกว่งลูกตุ้มกว้างเกินไปจนทำมุมสูงสุด $\theta_0 = 30^\circ$ กับแนวดิ่ง สมการการเคลื่อนที่จริงคือ $\frac{d^2\theta}{dt^2} + \frac{g}{L}\sin\theta = 0$ หากเรายังคงฝืนคำนวณคาบโดยใช้สูตรมาตรฐาน $T_0 = 2\pi\sqrt{\frac{L}{g}}$ คาบที่คำนวณได้จะมีความคลาดเคลื่อนอย่างไรเมื่อเทียบกับคาบการแกว่งจริงในธรรมชาติ</div>
+          </div>
+
+          <ol class="choices" type="A">
+          <li>คาบที่คำนวณได้จากสูตร $T_0$ จะ น้อยกว่า คาบที่เกิดขึ้นจริง</li>
+          <li>คาบที่คำนวณได้จากสูตร $T_0$ จะ มากกว่า คาบที่เกิดขึ้นจริง</li>
+          <li>คาบที่คำนวณได้มีค่า เท่ากับ คาบจริง เพราะมุมไม่มีผลต่อคาบในทุกกรณี</li>
+          <li>คาบที่คำนวณได้จะคลาดเคลื่อนสลับกันมากกว่าหรือน้อยกว่าตามมวลของลูกตุ้ม</li>
+          <li><span class="placeholder-choice">ไม่มีข้อใดถูก / ตัวเลือกสำรอง</span></li>
+          </ol>
+
+          <div class="hint-box print-hide optional-hint">
+            💡 <b>คำใบ้:</b> เปรียบเทียบความแตกต่างระหว่างค่า $\theta$ และ $\sin\theta$ สำหรับมุมที่กว้างขึ้น แรงดึงกลับจริงจะเปลี่ยนแปลงอย่างไรเมื่อเทียบกับแบบจำลองอุดมคติ
+          </div>
+
+          <div class="solution-box">
+            <b>เฉลย: ตอบข้อ A. คาบที่คำนวณได้จากสูตร $T_0$ จะ น้อยกว่า คาบที่เกิดขึ้นจริง</b><br/>
+<b>คำอธิบายอย่างละเอียดสำหรับใช้สอน:</b><br/><br/>
+จากอนุกรมเทย์เลอร์ของฟังก์ชันไซน์: $\sin\theta = \theta - \frac{\theta^3}{6} + \dots$<br/>
+จะเห็นว่าค่าของ $\sin\theta$ ในความเป็นจริงจะมีค่าน้อยกว่าค่ามุม $\theta$ เพียวๆ เสมอ (เนื่องจากโดนลบออกด้วยพจน์กำลังสาม)<br/>
+เนื่องจาก $\sin\theta$ คือตัวแทนของแรงดึงกลับพยุงมวล แสดงว่าแรงดึงกลับที่เกิดขึ้นจริงในธรรมชาติตอนมุมกว้าง มันมีค่าน้อยกว่า (อ่อนกว่า) แรงดึงกลับในอุดมคติที่โมเดล $T_0$ คาดการณ์ไว้<br/>
+เมื่อแรงดึงกลับจริงอ่อนกว่า ลูกตุ้มย่อมเคลื่อนที่ช้าลงและใช้เวลาในการแกว่งครบรอบนานขึ้น ดังนั้นคาบจริงในธรรมชาติจะยาวกว่า ส่วนสูตร $T_0$ จะให้ผลลัพธ์ที่ต่ำกว่าความเป็นจริง (Underestimate)
+          </div>
+        </article>
+
+        <article class="question" data-answer="B">
+          <div class="question-head">
+            <span class="q-number">12</span>
+            <div class="q-title">แขวนมวล $m$ ความหนาแน่น $\rho_o$ ด้วยเชือกยาว $L$ ให้แกว่งเป็นลูกตุ้มภายในถังของเหลวที่มีความหนาแน่น $\rho_f$ (โดยไม่มีแรงต้านทานของเหลว) สมการพลังงานรวมของระบบคำนวณจากกฎการอนุรักษ์พลังงานเพื่อหาความถี่เชิงมุม $\omega$ ผลลัพธ์สุดท้ายของความถี่เชิงมุมของระบบนี้มีค่าเท่าใด</div>
+          </div>
+
+          <ol class="choices" type="A">
+          <li>$\omega = \sqrt{\frac{g}{L}}$</li>
+          <li>$\omega = \sqrt{\frac{g}{L}\left(1 - \frac{\rho_f}{\rho_o}\right)}$</li>
+          <li>$\omega = \sqrt{\frac{g}{L}\left(1 + \frac{\rho_f}{\rho_o}\right)}$</li>
+          <li>$\omega = \sqrt{\frac{g\rho_f}{L\rho_o}}$</li>
+          <li><span class="placeholder-choice">ไม่มีข้อใดถูก / ตัวเลือกสำรอง</span></li>
+          </ol>
+
+          <div class="hint-box print-hide optional-hint">
+            💡 <b>คำใบ้:</b> พิจารณาแรงลอยตัว (Buoyant force) ที่กระทำต่อมวลในของเหลว เพื่อหาความเร่งโน้มถ่วงเสมือน ($g_{\text{eff}}$) ที่เปลี่ยนไป
+          </div>
+
+          <div class="solution-box">
+            <b>เฉลย: ตอบข้อ B. $\omega = \sqrt{\frac{g}{L}\left(1 - \frac{\rho_f}{\rho_o}\right)}$</b><br/>
+<b>คำอธิบายอย่างละเอียดสำหรับใช้สอน:</b><br/><br/>
+เมื่อวัตถุจมอยู่ในของเหลว จะมีแรงลอยตัว (Buoyant Force: $B = \rho_f V g$) พุ่งชันขึ้นต้านทานแรงโน้มถ่วง ($W = \rho_o V g$)<br/>
+ทำให้แรงดึงลงสุทธิหรือน้ำหนักรวมเสมือนของวัตถุลดลงเหลือ:<br/>
+$$F_{\text{net}} = W - B = \rho_o V g - \rho_f V g = \rho_o V g\left(1 - \frac{\rho_f}{\rho_o}\right) = mg\left(1 - \frac{\rho_f}{\rho_o}\right)$$<br/>
+แสดงว่าค่าความความเร่งโน้มถ่วงเสมือนในของเหลวคือ $g_{\text{eff}} = g\left(1 - \frac{\rho_f}{\rho_o}\right)$<br/>
+หากตั้งสมการพลังงานรวมอนุรักษ์ $E = E_k + E_p = \frac{1}{2}m\left(L\frac{d\theta}{dt}\right)^2 + mg_{\text{eff}}L(1-\cos\theta)$<br/>
+ดิฟเทียบเวลา $\frac{dE}{dt} = 0$ และประมาณมุมเล็ก $\sin\theta \approx \theta$ จะได้สมการอนุพันธ์:<br/>
+$$\frac{d^2\theta}{dt^2} + \frac{g_{\text{eff}}}{L}\theta = 0$$<br/>
+ดังนั้นความถี่เชิงมุมคือ $\omega = \sqrt{\frac{g_{\text{eff}}}{L}} = \sqrt{\frac{g}{L}\left(1 - \frac{\rho_f}{\rho_o}\right)}$
+          </div>
+        </article>
+` 
+<!-- =========================
+     ข้อทดสอบเพิ่ม: เรขาคณิต SVG
+========================= -->
+<article class="question" data-answer="C">
+  <div class="q-title">
+    จากรูปสามเหลี่ยมมุมฉากด้านล่าง ถ้าด้านประกอบมุมฉากยาว $3$ และ $4$ หน่วย
+    ด้านตรงข้ามมุมฉากยาวเท่าใด
+  </div>
+
+  <div class="figure-box">
+    <svg class="diagram" viewBox="0 0 320 220" width="320" height="220" aria-label="right triangle diagram">
+      <line x1="60" y1="170" x2="260" y2="170" stroke="black" stroke-width="3"/>
+      <line x1="60" y1="170" x2="60" y2="50" stroke="black" stroke-width="3"/>
+      <line x1="60" y1="50" x2="260" y2="170" stroke="black" stroke-width="3"/>
+
+      <!-- right angle marker -->
+      <path d="M60 150 L80 150 L80 170" fill="none" stroke="black" stroke-width="2"/>
+
+      <text x="150" y="195" font-size="18">4</text>
+      <text x="35" y="115" font-size="18">3</text>
+      <text x="165" y="100" font-size="18">?</text>
+
+      <text x="52" y="190" font-size="16">A</text>
+      <text x="52" y="42" font-size="16">B</text>
+      <text x="265" y="178" font-size="16">C</text>
+    </svg>
+  </div>
+
+  <ol class="choices" type="A">
+    <li>$3$ หน่วย</li>
+    <li>$4$ หน่วย</li>
+    <li>$5$ หน่วย</li>
+    <li>$6$ หน่วย</li>
+    <li>$7$ หน่วย</li>
+  </ol>
+
+  <div class="solution-box">
+    <b>เฉลย: C. $5$ หน่วย</b><br>
+    ใช้ทฤษฎีบทพีทาโกรัส
+    $$c^2 = a^2 + b^2$$
+    $$c^2 = 3^2 + 4^2 = 9 + 16 = 25$$
+    ดังนั้น $c = 5$
+  </div>
+</article>
+<!-- =========================
+     ข้อทดสอบเพิ่ม: โครงสร้างเคมี SmilesDrawer
+========================= -->
+<article class="question" data-answer="B">
+  <div class="q-title">
+    โครงสร้างโมเลกุลที่แสดงด้านล่างมี SMILES เป็น <code>CCO</code>
+    สารนี้คือสารใด
+  </div>
+
+  <div class="figure-box">
+    <canvas class="molecule" data-smiles="CCO" width="260" height="180"></canvas>
+  </div>
+
+  <ol class="choices" type="A">
+    <li>มีเทน / Methane</li>
+    <li>เอทานอล / Ethanol</li>
+    <li>โพรเพน / Propane</li>
+    <li>กรดอะซิติก / Acetic acid</li>
+    <li>เบนซีน / Benzene</li>
+  </ol>
+
+  <div class="solution-box">
+    <b>เฉลย: B. เอทานอล / Ethanol</b><br>
+    SMILES <code>CCO</code> หมายถึงโครงสร้างที่มีคาร์บอน 2 อะตอมต่อกัน
+    และมีหมู่ไฮดรอกซิล $-OH$ จึงเป็นเอทานอล
+  </div>
+</article>
+
+
+
+    </section>
+
+    <section class="answer-key" id="answerKeySection">
+      <h2>เฉลยท้ายชุด / Answer Key</h2>
+      <div class="answer-grid" id="answerGrid"></div>
+    </section>
+  </main>
+
+  <!--
+    ==========================
+    TEMPLATE เพิ่มข้อสอบใหม่
+    ==========================
+    คัดลอก block นี้ไปวางใน <section id="questions"> แล้วแก้ data-answer, โจทย์, ตัวเลือก, เฉลย
+
+    <article class="question" data-answer="C">
+      <div class="question-head">
+        <span class="q-number">13</span>
+        <div class="q-title">โจทย์ใหม่ของคุณ $F=ma$ ...</div>
+      </div>
+      <ol class="choices" type="A">
+        <li>ตัวเลือกที่ 1</li>
+        <li>ตัวเลือกที่ 2</li>
+        <li>ตัวเลือกที่ 3</li>
+        <li>ตัวเลือกที่ 4</li>
+        <li>ตัวเลือกที่ 5</li>
+      </ol>
+      <div class="hint-box print-hide optional-hint">💡 คำใบ้...</div>
+      <div class="solution-box"><b>เฉลย: C</b><br>อธิบายละเอียด...</div>
+    </article>
+
+    ตัวอย่างวาดโมเลกุลด้วย SmilesDrawer:
+    <canvas class="molecule" data-smiles="CCO" width="260" height="180"></canvas>
+
+    ตัวอย่าง SVG เรขาคณิต:
+    <svg class="diagram" viewBox="0 0 300 180">
+      <line x1="40" y1="140" x2="260" y2="140"></line>
+      <line x1="40" y1="140" x2="170" y2="40"></line>
+      <line x1="170" y1="40" x2="260" y2="140"></line>
+      <text x="32" y="160">A</text><text x="170" y="32">B</text><text x="265" y="160">C</text>
+    </svg>
+  -->
+
+  <div id="mmProbe" style="position:absolute; visibility:hidden; width:100mm; height:1px;"></div>
+
+  <script>
+    const body = document.body;
+    let hintsVisible = false;
+
+    function setStatus(text) {
+      const el = document.getElementById('statusText');
+      if (el) el.textContent = text;
+    }
+
+    function renumberQuestions() {
+      document.querySelectorAll('.question').forEach((q, i) => {
+        const num = q.querySelector('.q-number');
+        if (num) num.textContent = i + 1;
+      });
+    }
+
+    function ensureFiveChoices() {
+      document.querySelectorAll('.question').forEach(q => {
+        const ol = q.querySelector('.choices');
+        if (!ol) return;
+        while (ol.children.length < 5) {
+          const li = document.createElement('li');
+          li.innerHTML = '<span class="placeholder-choice">ไม่มีข้อใดถูก / ตัวเลือกสำรอง</span>';
+          ol.appendChild(li);
+        }
+      });
+    }
+
+    function buildAnswerKey() {
+      const grid = document.getElementById('answerGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+      document.querySelectorAll('.question').forEach((q, i) => {
+        const cell = document.createElement('div');
+        cell.className = 'answer-cell';
+        cell.textContent = `${i + 1}. ${q.dataset.answer || '-'}`;
+        grid.appendChild(cell);
+      });
+    }
+
+    function setMode(mode) {
+      body.classList.remove('mode-exam', 'mode-key', 'mode-solution');
+      body.classList.add(mode);
+      if (mode === 'mode-exam') setStatus('โหมดปัจจุบัน: ฉบับข้อสอบนักเรียน — ซ่อนคำใบ้และเฉลย');
+      if (mode === 'mode-key') setStatus('โหมดปัจจุบัน: ฉบับพร้อมเฉลยท้ายชุด — ซ่อนเฉลยละเอียด');
+      if (mode === 'mode-solution') setStatus('โหมดปัจจุบัน: ฉบับเฉลยละเอียด — แสดงเฉลยใต้แต่ละข้อ');
+      buildAnswerKey();
+      return typesetAndPaginate();
+    }
+
+    function toggleHints() {
+      hintsVisible = !hintsVisible;
+      document.querySelectorAll('.optional-hint').forEach(el => {
+        el.classList.toggle('print-hide', !hintsVisible);
+        el.style.display = hintsVisible ? 'block' : '';
+      });
+      setStatus(hintsVisible ? 'เปิดคำใบ้บนหน้าจอแล้ว — ตอนพิมพ์ยังซ่อนอยู่ในโหมดข้อสอบ' : 'ปิดคำใบ้บนหน้าจอแล้ว');
+      typesetAndPaginate();
+    }
+
+    function mmToPx(mm) {
+      const probe = document.getElementById('mmProbe');
+      const pxPer100mm = probe ? probe.getBoundingClientRect().width : 377.95;
+      return (pxPer100mm / 100) * mm;
+    }
+
+    function clearPageBreaks() {
+      document.querySelectorAll('.question.force-page-break').forEach(q => q.classList.remove('force-page-break'));
+    }
+
+    function autoPaginateQuestions(showStatus = false) {
+      clearPageBreaks();
+
+      const paper = document.getElementById('paper');
+      const questions = Array.from(document.querySelectorAll('.question'));
+      if (!paper || questions.length === 0) return;
+
+      // A4 297mm with @page margin 12mm top+bottom => printable height about 273mm.
+      // ใช้ค่าเผื่อเล็กน้อยเพื่อลดโอกาสล้นหน้าจริงใน Chrome/Edge print.
+      const printableHeight = mmToPx(271);
+      const paperTop = paper.getBoundingClientRect().top + window.scrollY;
+      let pageStart = paperTop;
+      let pageBottom = pageStart + printableHeight;
+
+      questions.forEach((q) => {
+        const top = q.getBoundingClientRect().top + window.scrollY;
+        const height = q.offsetHeight;
+        const bottom = top + height;
+
+        if (height < printableHeight && bottom > pageBottom) {
+          q.classList.add('force-page-break');
+          const newTop = q.getBoundingClientRect().top + window.scrollY;
+          pageStart = newTop;
+          pageBottom = pageStart + printableHeight;
+        }
+
+        while ((q.getBoundingClientRect().top + window.scrollY + q.offsetHeight) > pageBottom) {
+          pageStart = pageBottom;
+          pageBottom = pageStart + printableHeight;
+        }
+      });
+
+      if (showStatus) setStatus('จัดหน้า A4 ใหม่แล้ว: ระบบพยายามไม่ให้ตัดข้อสอบกลางหน้า');
+    }
+
+    function typesetAndPaginate() {
+      const run = () => {
+        ensureFiveChoices();
+        renumberQuestions();
+        buildAnswerKey();
+        autoPaginateQuestions(false);
+        // ทำซ้ำอีกรอบหลังใส่ page break เพราะ layout อาจเปลี่ยน
+        requestAnimationFrame(() => autoPaginateQuestions(false));
+      };
+
+      if (window.MathJax && MathJax.typesetPromise) {
+        return MathJax.typesetPromise().then(run).catch(run);
+      } else {
+        run();
+        return Promise.resolve();
+      }
+    }
+
+    function beforePrint(mode) {
+      return setMode(mode).then(() => new Promise(resolve => {
+        setTimeout(() => {
+          autoPaginateQuestions(false);
+          resolve();
+        }, 150);
+      }));
+    }
+
+    function printExam() {
+      beforePrint('mode-exam').then(() => window.print());
+    }
+
+    function printWithKey() {
+      beforePrint('mode-key').then(() => window.print());
+    }
+
+    function printSolution() {
+      beforePrint('mode-solution').then(() => window.print());
+    }
+
+    function drawSmilesCanvases() {
+      if (!window.SmilesDrawer) return;
+      document.querySelectorAll('canvas.molecule[data-smiles]').forEach(canvas => {
+        const smiles = canvas.dataset.smiles;
+        const drawer = new SmilesDrawer.Drawer({ width: canvas.width || 260, height: canvas.height || 180 });
+        SmilesDrawer.parse(smiles, tree => drawer.draw(tree, canvas, 'light', false), err => console.warn(err));
+      });
+    }
+
+    // Helper สำหรับวาดแกน XY แบบเร็ว: <svg class="diagram auto-axes" data-xlabel="x" data-ylabel="y"></svg>
+    function drawAutoAxes() {
+      document.querySelectorAll('svg.auto-axes').forEach(svg => {
+        svg.setAttribute('viewBox', '0 0 300 180');
+        const xlabel = svg.dataset.xlabel || 'x';
+        const ylabel = svg.dataset.ylabel || 'y';
+        svg.innerHTML = `
+          <line x1="28" y1="150" x2="275" y2="150"></line>
+          <line x1="45" y1="165" x2="45" y2="20"></line>
+          <path d="M275 150 L263 144 M275 150 L263 156"></path>
+          <path d="M45 20 L39 32 M45 20 L51 32"></path>
+          <text x="280" y="154">${xlabel}</text>
+          <text x="35" y="18">${ylabel}</text>
+        `;
+      });
+    }
+
+    window.addEventListener('load', () => {
+      ensureFiveChoices();
+      renumberQuestions();
+      buildAnswerKey();
+      drawSmilesCanvases();
+      drawAutoAxes();
+      typesetAndPaginate();
+    });
+
+    window.addEventListener('beforeprint', () => {
+      autoPaginateQuestions(false);
+    });
+  </script>
+</body>
+</html>
