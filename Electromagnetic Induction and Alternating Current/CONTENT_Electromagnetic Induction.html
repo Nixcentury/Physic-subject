@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>การเหนี่ยวนำแม่เหล็กไฟฟ้าและไฟฟ้ากระแสสลับ (Electromagnetic Induction and Alternating Current)</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com/"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- MathJax -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+    <style>
+        body {
+            font-family: 'Google Sans', 'Product Sans', 'Prompt', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        .page-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            background-color: #ffffff;
+            padding: 3.5rem 4.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-radius: 16px;
+        }
+        .section-header {
+            border-bottom: 3px solid #3b82f6;
+            padding-bottom: 0.5rem;
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            color: #1d4ed8;
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+        .topic-title {
+            color: #111827;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        .lang-th {
+            margin-bottom: 0.5rem;
+        }
+        .lang-en {
+            color: #4b5563;
+            font-size: 0.95em;
+            border-left: 3px solid #cbd5e1;
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+            background-color: #f8fafc;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-radius: 0 8px 8px 0;
+        }
+        .highlight-box {
+            background-color: #eff6ff;
+            border: 1px solid #bfdbfe;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+        }
+        .warning-box {
+            background-color: #fffbeb;
+            border: 1px solid #fde68a;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+        }
+        .math-box {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            text-align: center;
+            font-size: 1.15rem;
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+            overflow-x: auto;
+        }
+        .figure-box {
+            margin: 1.5rem 0;
+            text-align: center;
+            background-color: #f8fafc;
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+        }
+        .figure-box img,
+        .figure-box svg {
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 100%;
+            border-radius: 10px;
+            background-color: #ffffff;
+        }
+        .figure-caption {
+            color: #94a3b8;
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+        }
+        ul.custom-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        ul.custom-list > li {
+            margin-bottom: 1.5rem;
+        }
+        .rule-th::before {
+            content: '📌';
+            margin-right: 0.5rem;
+        }
+        .sub-bullet::before {
+            content: '🔹';
+            margin-right: 0.5rem;
+        }
+        .mini-card {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+        }
+        .table-wrap {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+        table.lesson-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            font-size: 0.95rem;
+        }
+        .lesson-table th,
+        .lesson-table td {
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .lesson-table th {
+            background-color: #eff6ff;
+            color: #1d4ed8;
+            font-weight: 700;
+        }
+        .svg-label {
+            font-family: 'Google Sans', 'Product Sans', 'Prompt', sans-serif;
+            fill: #1f2937;
+            font-weight: 600;
+        }
+        .svg-small {
+            font-family: 'Google Sans', 'Product Sans', 'Prompt', sans-serif;
+            fill: #64748b;
+            font-size: 13px;
+        }
+        @media (max-width: 768px) {
+            .page-container {
+                margin: 0;
+                padding: 1.5rem;
+                border-radius: 0;
+            }
+            .section-header {
+                font-size: 1.45rem;
+            }
+            .lesson-table {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-container">
+
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <h1 class="text-3xl font-bold mb-3 text-gray-900">
+                🧲 การเหนี่ยวนำแม่เหล็กไฟฟ้าและไฟฟ้ากระแสสลับ<br>
+                <span class="text-2xl text-gray-500 font-medium">
+                    (Electromagnetic Induction and Alternating Current)
+                </span>
+            </h1>
+        </div>
+
+        <div class="highlight-box">
+            <div class="lang-th">
+                🇹🇭 <strong>ภาษาไทย:</strong> บทนี้อธิบายว่าไฟฟ้าสามารถเกิดจากการเปลี่ยนแปลงของฟลักซ์แม่เหล็กได้อย่างไร โดยเริ่มจากแม่เหล็กเคลื่อนเข้า-ออกขดลวด แล้วสรุปเป็นกฎของฟาราเดย์ และใช้กฎของเลนซ์เพื่อบอกทิศทางของกระแสเหนี่ยวนำ
+            </div>
+            <div class="lang-en mb-0 border-none bg-transparent p-0">
+                🇬🇧 <strong>English:</strong> This lesson explains how electricity can be produced from a changing magnetic flux. We begin with a magnet moving into and out of a coil, summarize the idea using Faraday’s law, and determine the direction of induced current using Lenz’s law.
+            </div>
+        </div>
+
+        <!-- Section 1 -->
+        <h2 class="section-header">1. จุดเริ่มต้น: แม่เหล็กเข้า-ออกขดลวด <span class="font-normal text-xl text-gray-500">(Magnet Moving Through a Coil)</span></h2>
+
+        <div class="lang-th">
+            🇹🇭 <strong>ภาษาไทย:</strong> ถ้าเรานำแท่งแม่เหล็กเข้าใกล้ขดลวดที่ต่อกับกัลวานอมิเตอร์ เข็มของกัลวานอมิเตอร์จะเบน แสดงว่ามีกระแสไฟฟ้าเกิดขึ้นในขดลวด แต่ถ้าแม่เหล็กหยุดนิ่ง เข็มจะไม่เบน
+        </div>
+        <div class="lang-en">
+            🇬🇧 <strong>English:</strong> When a bar magnet moves toward a coil connected to a galvanometer, the needle deflects, showing that an electric current is produced in the coil. However, when the magnet is stationary, the needle does not deflect.
+        </div>
+<div class="figure-box">
+    <img 
+        src="https://s3-us-west-2.amazonaws.com/courses-images-archive-read-only/wp-content/uploads/sites/222/2014/12/20110750/Figure_24_01_02.jpg"
+        alt="Faraday induction experiment: a magnet moving through a coil connected to a galvanometer"
+        class="mx-auto max-h-96 object-contain rounded-lg bg-white p-2"
+    >
+    <p class="figure-caption">
+        รูปที่ 1: แม่เหล็กเคลื่อนเข้า-ออกขดลวดทำให้เกิดกระแสเหนี่ยวนำ 
+        (A moving magnet induces current in a coil)
+    </p>
+</div>
+
+        <div class="warning-box">
+            <div class="lang-th mb-0">
+                🇹🇭 <strong>ข้อสังเกตสำคัญ:</strong> การมีแม่เหล็กอยู่เฉย ๆ ยังไม่พอที่จะทำให้เกิดกระแสไฟฟ้า สิ่งสำคัญคือ ต้องมี “การเปลี่ยนแปลงของฟลักซ์แม่เหล็ก” ที่ผ่านขดลวด
+            </div>
+        </div>
+
+        <!-- Section 2 -->
+        <h2 class="section-header">2. ฟลักซ์แม่เหล็ก <span class="font-normal text-xl text-gray-500">(Magnetic Flux)</span></h2>
+
+        <div class="lang-th">
+            🇹🇭 <strong>ภาษาไทย:</strong> ฟลักซ์แม่เหล็ก คือ ปริมาณสนามแม่เหล็กที่ทะลุผ่านพื้นที่ของวงลวดหรือขดลวด ถ้าจำนวนเส้นสนามแม่เหล็กที่ผ่านขดลวดเปลี่ยน เราจะบอกว่า “ฟลักซ์แม่เหล็กเปลี่ยน”
+        </div>
+        <div class="lang-en">
+            🇬🇧 <strong>English:</strong> Magnetic flux describes how much magnetic field passes through the area of a loop or coil. If the amount of magnetic field passing through the coil changes, the magnetic flux changes.
+        </div>
+
+        <div class="math-box">
+            $$\Phi_B = BA\cos\theta$$
+        </div>
+
+        <div class="figure-box">
+    <img 
+        src="https://s3-us-west-2.amazonaws.com/courses-images-archive-read-only/wp-content/uploads/sites/222/2014/12/20110754/Figure_24_01_04.jpg"
+        alt="Magnetic flux through a loop depends on the angle between the magnetic field and the area vector"
+        class="mx-auto max-h-[420px] object-contain rounded-lg bg-white p-2"
+    >
+    <p class="figure-caption">
+        รูปที่ 2: ฟลักซ์แม่เหล็กขึ้นกับสนามแม่เหล็ก พื้นที่ และมุม 
+        (Magnetic flux depends on $B$, $A$, and the angle)
+    </p>
+</div>
+
+<div class="highlight-box bg-yellow-50 border-yellow-200">
+    <div class="lang-th mb-2">
+        🇹🇭 <strong>หมายเหตุสำคัญ:</strong> สูตรฟลักซ์แม่เหล็กอาจพบได้ทั้งรูป 
+        <strong>$\Phi_B = BA\cos\theta$</strong> หรือ <strong>$\Phi_B = BA\sin\theta$</strong> 
+        ขึ้นอยู่กับว่าโจทย์นิยามมุม $\theta$ กับอะไร
+    </div>
+    <div class="lang-en">
+        🇬🇧 <strong>Important note:</strong> The magnetic flux formula may appear as 
+        <strong>$\Phi_B = BA\cos\theta$</strong> or <strong>$\Phi_B = BA\sin\theta$</strong>, 
+        depending on how the angle $\theta$ is defined.
+    </div>
+
+    <div class="lang-th ml-6 text-gray-700">
+        • ถ้า $\theta$ เป็นมุมระหว่าง <strong>สนามแม่เหล็กกับแนวตั้งฉากต่อพื้นที่ (normal)</strong> → ใช้ <strong>cos</strong><br>
+        • ถ้า $\theta$ เป็นมุมระหว่าง <strong>สนามแม่เหล็กกับระนาบของวงลวด</strong> → ใช้ <strong>sin</strong>
+    </div>
+    <div class="lang-en ml-6">
+        • If $\theta$ is the angle between the <strong>magnetic field and the area normal</strong> → use <strong>cos</strong><br>
+        • If $\theta$ is the angle between the <strong>magnetic field and the plane of the loop</strong> → use <strong>sin</strong>
+    </div>
+</div>
+        <ul class="custom-list">
+            <li>
+                <div class="lang-th rule-th font-semibold text-blue-700">$B$ = สนามแม่เหล็ก (Magnetic Field)</div>
+                <div class="lang-th ml-6 text-gray-700">ถ้าสนามแม่เหล็กแรงขึ้นหรืออ่อนลง ฟลักซ์แม่เหล็กจะเปลี่ยน</div>
+                <div class="lang-en ml-6">If the magnetic field becomes stronger or weaker, the magnetic flux changes.</div>
+            </li>
+            <li>
+                <div class="lang-th rule-th font-semibold text-blue-700">$A$ = พื้นที่ของวงลวด (Area)</div>
+                <div class="lang-th ml-6 text-gray-700">ถ้าพื้นที่ของวงลวดเพิ่มขึ้นหรือลดลง ฟลักซ์แม่เหล็กจะเปลี่ยน</div>
+                <div class="lang-en ml-6">If the area of the loop increases or decreases, the magnetic flux changes.</div>
+            </li>
+            <li>
+                <div class="lang-th rule-th font-semibold text-blue-700">$\theta$ = มุมระหว่างสนามแม่เหล็กกับแนวตั้งฉากของพื้นที่ (Angle with the Normal)</div>
+                <div class="lang-th ml-6 text-gray-700">ถ้าขดลวดหมุน มุม $\theta$ จะเปลี่ยน ทำให้ฟลักซ์แม่เหล็กเปลี่ยน</div>
+                <div class="lang-en ml-6">If the coil rotates, the angle $\theta$ changes, causing the magnetic flux to change.</div>
+            </li>
+        </ul>
+
+        <!-- Section 3 -->
+<h2 class="section-header">3. วิธีทำให้ฟลักซ์แม่เหล็กเปลี่ยน <span class="font-normal text-xl text-gray-500">(Ways to Change Magnetic Flux)</span></h2>
+
+<div class="lang-th">
+    🇹🇭 <strong>ภาษาไทย:</strong> จากสูตร $\Phi_B = BA\cos\theta$ เราสามารถทำให้ฟลักซ์แม่เหล็กเปลี่ยนได้ 3 วิธีหลัก คือ เปลี่ยนสนามแม่เหล็ก $B$ เปลี่ยนพื้นที่ $A$ และเปลี่ยนมุม $\theta$ ระหว่างสนามแม่เหล็กกับแนวตั้งฉากของพื้นที่
+</div>
+<div class="lang-en">
+    🇬🇧 <strong>English:</strong> From $\Phi_B = BA\cos\theta$, magnetic flux can be changed in three main ways: by changing the magnetic field $B$, changing the area $A$, or changing the angle $\theta$ between the magnetic field and the area normal.
+</div>
+
+<div class="figure-box">
+    <img 
+        src="https://i.sstatic.net/hU106.png"
+        alt="Three ways to change magnetic flux: changing magnetic field, changing area, and changing angle"
+        class="mx-auto rounded-lg bg-white p-2 max-w-full"
+    >
+    <p class="figure-caption">
+        รูปที่ 3: 3 วิธีหลักที่ทำให้ฟลักซ์แม่เหล็กเปลี่ยน ได้แก่ เปลี่ยนสนามแม่เหล็ก เปลี่ยนพื้นที่ และเปลี่ยนมุม
+        (Three main ways to change magnetic flux: changing the magnetic field, area, and angle)
+    </p>
+</div>
+
+<div class="grid md:grid-cols-3 gap-4 my-6">
+    <div class="mini-card">
+        <div class="font-semibold text-blue-700 mb-2">1) เปลี่ยนสนามแม่เหล็ก $B$</div>
+        <div class="text-sm text-gray-700">
+            สอดแม่เหล็กเข้า-ออกขดลวด, เลื่อนแม่เหล็กเข้าใกล้หรือออกห่าง, หรือเปิด-ปิดแม่เหล็กไฟฟ้า
+        </div>
+        <div class="text-xs text-gray-500 mt-2">
+            Change the magnetic field by moving a magnet or switching an electromagnet on/off.
+        </div>
+    </div>
+
+    <div class="mini-card">
+        <div class="font-semibold text-blue-700 mb-2">2) เปลี่ยนพื้นที่ $A$</div>
+        <div class="text-sm text-gray-700">
+            ดึงวงลวดให้กว้างขึ้น, บีบให้เล็กลง, หรือให้แท่งตัวนำเลื่อนบนรางจนพื้นที่วงจรเปลี่ยน
+        </div>
+        <div class="text-xs text-gray-500 mt-2">
+            Change the loop area by stretching/shrinking the loop or sliding a rod on rails.
+        </div>
+    </div>
+
+    <div class="mini-card">
+        <div class="font-semibold text-blue-700 mb-2">3) เปลี่ยนมุม $\theta$</div>
+        <div class="text-sm text-gray-700">
+            หมุนขดลวดในสนามแม่เหล็ก ทำให้มุมระหว่างสนามแม่เหล็กกับแนวตั้งฉากของพื้นที่เปลี่ยน
+        </div>
+        <div class="text-xs text-gray-500 mt-2">
+            Change the angle by rotating the coil in a magnetic field.
+        </div>
+    </div>
+</div>
+
+<ul class="custom-list">
+    <li>
+        <div class="lang-th rule-th font-semibold text-blue-700">1) เปลี่ยนสนามแม่เหล็ก $B$ (Changing $B$)</div>
+        <div class="lang-th ml-6 text-gray-700">
+            ตัวอย่างเช่น สอดแม่เหล็กเข้าใกล้ขดลวด ดึงแม่เหล็กออกจากขดลวด หรือเปิด-ปิดแม่เหล็กไฟฟ้า เมื่อจำนวนเส้นสนามแม่เหล็กที่ทะลุผ่านขดลวดเปลี่ยน ฟลักซ์แม่เหล็กก็จะเปลี่ยนตาม
+        </div>
+        <div class="lang-en ml-6">
+            Examples include moving a magnet toward a coil, pulling it away from the coil, or turning an electromagnet on and off. When the amount of magnetic field passing through the loop changes, the magnetic flux changes as well.
+        </div>
+    </li>
+
+    <li>
+        <div class="lang-th rule-th font-semibold text-blue-700">2) เปลี่ยนพื้นที่ $A$ (Changing $A$)</div>
+        <div class="lang-th ml-6 text-gray-700">
+            ตัวอย่างเช่น วงลวดถูกดึงให้มีพื้นที่มากขึ้นหรือถูกบีบให้พื้นที่ลดลง รวมถึงกรณีแท่งตัวนำเลื่อนบนรางในสนามแม่เหล็ก ทำให้พื้นที่ที่สนามแม่เหล็กทะลุผ่านเปลี่ยนไป
+        </div>
+        <div class="lang-en ml-6">
+            Examples include stretching or shrinking a loop, or sliding a conducting rod on rails in a magnetic field, which changes the area through which the magnetic field passes.
+        </div>
+    </li>
+
+    <li>
+        <div class="lang-th rule-th font-semibold text-blue-700">3) เปลี่ยนมุม $\theta$ (Changing $\theta$)</div>
+        <div class="lang-th ml-6 text-gray-700">
+            ตัวอย่างสำคัญคือ การหมุนขดลวดในสนามแม่เหล็ก ซึ่งทำให้มุมระหว่างสนามแม่เหล็กกับแนวตั้งฉากของพื้นที่เปลี่ยนตลอดเวลา หลักการนี้เป็นพื้นฐานของเครื่องกำเนิดไฟฟ้ากระแสสลับ
+        </div>
+        <div class="lang-en ml-6">
+            An important example is rotating a coil in a magnetic field. This continuously changes the angle between the magnetic field and the area normal. This principle is the basis of an AC generator.
+        </div>
+    </li>
+</ul>
+        <!-- Section 4 -->
+        <h2 class="section-header">4. กฎของฟาราเดย์ <span class="font-normal text-xl text-gray-500">(Faraday’s Law)</span></h2>
+
+        <div class="lang-th">
+            🇹🇭 <strong>ภาษาไทย:</strong> กฎของฟาราเดย์กล่าวว่า เมื่อฟลักซ์แม่เหล็กที่ผ่านขดลวดเปลี่ยน จะเกิดแรงเคลื่อนไฟฟ้าเหนี่ยวนำ โดยขนาดของแรงเคลื่อนไฟฟ้าเหนี่ยวนำขึ้นอยู่กับจำนวนรอบของขดลวดและอัตราการเปลี่ยนฟลักซ์แม่เหล็ก
+        </div>
+        <div class="lang-en">
+            🇬🇧 <strong>English:</strong> Faraday’s law states that when the magnetic flux through a coil changes, an induced electromotive force is produced. Its magnitude depends on the number of turns and the rate of change of magnetic flux.
+        </div>
+
+        <div class="math-box">
+            $$\mathcal{E} = -N\frac{\Delta \Phi_B}{\Delta t}$$
+        </div>
+
+        <ul class="custom-list">
+            <li>
+                <div class="lang-th rule-th font-semibold text-blue-700">ความหมายของตัวแปร (Variables)</div>
+                <div class="lang-th ml-6 text-gray-700">
+                    $\mathcal{E}$ = แรงเคลื่อนไฟฟ้าเหนี่ยวนำ, 
+                    $N$ = จำนวนรอบของขดลวด, 
+                    $\Delta \Phi_B$ = การเปลี่ยนแปลงของฟลักซ์แม่เหล็ก, 
+                    $\Delta t$ = ช่วงเวลา
+                </div>
+                <div class="lang-en ml-6">
+                    $\mathcal{E}$ = induced EMF, 
+                    $N$ = number of turns, 
+                    $\Delta \Phi_B$ = change in magnetic flux, 
+                    $\Delta t$ = time interval.
+                </div>
+            </li>
+        </ul>
+
+        <div class="highlight-box">
+            <div class="lang-th">
+                🇹🇭 <strong>อ่านสูตรแบบง่าย:</strong> ขดลวดมีจำนวนรอบมากขึ้น → เกิดแรงเคลื่อนไฟฟ้ามากขึ้น | ฟลักซ์เปลี่ยนเร็วขึ้น → เกิดแรงเคลื่อนไฟฟ้ามากขึ้น
+            </div>
+            <div class="lang-en mb-0 border-none bg-transparent p-0">
+                🇬🇧 <strong>Reading the formula:</strong> More turns produce a larger induced EMF. A faster change in magnetic flux also produces a larger induced EMF.
+            </div>
+        </div>
+
+        <!-- Section 5 -->
+        <h2 class="section-header">5. กฎของเลนซ์ <span class="font-normal text-xl text-gray-500">(Lenz’s Law)</span></h2>
+
+        <div class="lang-th">
+            🇹🇭 <strong>ภาษาไทย:</strong> กฎของเลนซ์ใช้บอกทิศทางของกระแสเหนี่ยวนำ โดยกระแสเหนี่ยวนำจะสร้างสนามแม่เหล็กของตัวเอง เพื่อ “ต้านการเปลี่ยนแปลงของฟลักซ์แม่เหล็ก” ที่เป็นสาเหตุให้มันเกิดขึ้น
+        </div>
+        <div class="lang-en">
+            🇬🇧 <strong>English:</strong> Lenz’s law determines the direction of the induced current. The induced current creates its own magnetic field to oppose the change in magnetic flux that produced it.
+        </div>
+
+        <div class="math-box">
+            $$\boxed{\text{Induced current opposes the change in magnetic flux}}$$
+            $$\boxed{\text{กระแสเหนี่ยวนำต้านการเปลี่ยนแปลงของฟลักซ์แม่เหล็ก}}$$
+        </div>
+
+        <div class="figure-box">
+            <img src="https://www.physicsclassroom.com/getcontentasset/6a2b626d-f7cb-435a-a68e-8f49879cf45b/a28a7e27-4593-40cf-8266-2ae4101723f5/xl/four-cases-magnet-loop-direction_xl.png" alt="Four cases of Lenz's law showing induced current direction" class="mx-auto max-h-96 object-contain rounded-lg bg-white p-2">
+            <p class="figure-caption">รูปที่ 3: ทิศทางกระแสเหนี่ยวนำใน 4 กรณีตามกฎของเลนซ์ (Four cases of induced current direction by Lenz’s law) | Source: The Physics Classroom</p>
+        </div>
+
+        <ul class="custom-list">
+            <li>
+                <div class="lang-th rule-th font-semibold text-blue-700">จำง่าย (Simple Memory)</div>
+                <div class="lang-th ml-6 text-gray-700">
+                    แม่เหล็กเข้าหาขดลวด → ขดลวดพยายามผลัก<br>
+                    แม่เหล็กออกห่างขดลวด → ขดลวดพยายามดูดกลับ
+                </div>
+                <div class="lang-en ml-6">
+                    Magnet moving toward the coil → the coil tries to repel it.<br>
+                    Magnet moving away from the coil → the coil tries to attract it back.
+                </div>
+            </li>
+            <li>
+                <div class="lang-th rule-th font-semibold text-blue-700">กฎมือขวาสำหรับขดลวด (Right-Hand Rule for a Coil)</div>
+                <div class="lang-th ml-6 text-gray-700">
+                    เมื่อมองจากด้านแม่เหล็ก ถ้ากระแสไหลทวนเข็มนาฬิกา หน้าขดลวดเป็นขั้วเหนือ $N$ แต่ถ้ากระแสไหลตามเข็มนาฬิกา หน้าขดลวดเป็นขั้วใต้ $S$
+                </div>
+                <div class="lang-en ml-6">
+                    Viewed from the magnet side, counterclockwise current makes the near face of the coil a north pole. Clockwise current makes it a south pole.
+                </div>
+            </li>
+        </ul>
+
+        <!-- Section 6 -->
+        <h2 class="section-header">6. สรุปทิศกระแสเหนี่ยวนำ 4 กรณี <span class="font-normal text-xl text-gray-500">(Four Main Cases)</span></h2>
+
+        <div class="table-wrap">
+<table class="lesson-table">
+    <thead>
+        <tr>
+            <th>กรณี<br><span class="text-xs font-normal text-slate-500">Case</span></th>
+            <th>สิ่งที่เกิดขึ้น<br><span class="text-xs font-normal text-slate-500">What happens</span></th>
+            <th>หน้าขดลวดต้องเป็น<br><span class="text-xs font-normal text-slate-500">The near face of the coil becomes</span></th>
+            <th>ทิศกระแสเมื่อมองจากด้านแม่เหล็ก<br><span class="text-xs font-normal text-slate-500">Current direction viewed from the magnet side</span></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                $N$ เข้าหา<br>
+                <span class="text-xs text-slate-500">N pole moves toward the coil</span>
+            </td>
+            <td>
+                ขดลวดต้องผลัก<br>
+                <span class="text-xs text-slate-500">The coil must repel the magnet</span>
+            </td>
+            <td>
+                $N$<br>
+                <span class="text-xs text-slate-500">North pole</span>
+            </td>
+            <td>
+                ทวนเข็มนาฬิกา<br>
+                <span class="text-xs text-slate-500">Counterclockwise</span>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                $N$ ออกห่าง<br>
+                <span class="text-xs text-slate-500">N pole moves away from the coil</span>
+            </td>
+            <td>
+                ขดลวดต้องดูดกลับ<br>
+                <span class="text-xs text-slate-500">The coil must attract the magnet back</span>
+            </td>
+            <td>
+                $S$<br>
+                <span class="text-xs text-slate-500">South pole</span>
+            </td>
+            <td>
+                ตามเข็มนาฬิกา<br>
+                <span class="text-xs text-slate-500">Clockwise</span>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                $S$ เข้าหา<br>
+                <span class="text-xs text-slate-500">S pole moves toward the coil</span>
+            </td>
+            <td>
+                ขดลวดต้องผลัก<br>
+                <span class="text-xs text-slate-500">The coil must repel the magnet</span>
+            </td>
+            <td>
+                $S$<br>
+                <span class="text-xs text-slate-500">South pole</span>
+            </td>
+            <td>
+                ตามเข็มนาฬิกา<br>
+                <span class="text-xs text-slate-500">Clockwise</span>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                $S$ ออกห่าง<br>
+                <span class="text-xs text-slate-500">S pole moves away from the coil</span>
+            </td>
+            <td>
+                ขดลวดต้องดูดกลับ<br>
+                <span class="text-xs text-slate-500">The coil must attract the magnet back</span>
+            </td>
+            <td>
+                $N$<br>
+                <span class="text-xs text-slate-500">North pole</span>
+            </td>
+            <td>
+                ทวนเข็มนาฬิกา<br>
+                <span class="text-xs text-slate-500">Counterclockwise</span>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+        </div>
+
+        <div class="warning-box">
+            <div class="lang-th mb-0">
+                🇹🇭 <strong>ระวัง:</strong> คำว่า “ทวนเข็ม” หรือ “ตามเข็ม” ต้องระบุเสมอว่ามองจากด้านใด ในบทนี้ให้มองจากด้านแม่เหล็กเข้าหาขดลวด
+            </div>
+        </div>
+
+        <!-- Section 7 -->
+        <h2 class="section-header">7. เชื่อมสู่ไฟฟ้ากระแสสลับ <span class="font-normal text-xl text-gray-500">(Connection to Alternating Current)</span></h2>
+
+        <div class="lang-th">
+            🇹🇭 <strong>ภาษาไทย:</strong> ในเครื่องกำเนิดไฟฟ้ากระแสสลับ ขดลวดจะหมุนอยู่ในสนามแม่เหล็ก ทำให้มุม $\theta$ เปลี่ยนตลอดเวลา เมื่อมุมเปลี่ยน ฟลักซ์แม่เหล็กก็เปลี่ยน จึงเกิดแรงเคลื่อนไฟฟ้าเหนี่ยวนำที่มีค่าเปลี่ยนไปเป็นคาบ
+        </div>
+        <div class="lang-en">
+            🇬🇧 <strong>English:</strong> In an AC generator, a coil rotates in a magnetic field. As the angle $\theta$ changes continuously, the magnetic flux changes, producing an induced EMF that varies periodically.
+        </div>
+
+        <div class="math-box">
+            $$\theta = \omega t$$
+            $$\Phi_B = BA\cos(\omega t)$$
+            $$\mathcal{E} = NBA\omega\sin(\omega t)$$
+        </div>
+<div class="figure-box">
+    <img 
+        src="https://i.sstatic.net/3cifG.png"
+        alt="Rotating coil in a magnetic field producing sinusoidal induced EMF"
+        class="mx-auto rounded-lg bg-white p-2 max-w-full"
+    >
+    <p class="figure-caption">
+        รูปที่ 4: เมื่อขดลวดหมุนครบหนึ่งรอบในสนามแม่เหล็ก แรงเคลื่อนไฟฟ้าเหนี่ยวนำจะเปลี่ยนเป็นคาบแบบไซน์
+        (When a coil completes one rotation in a magnetic field, the induced EMF varies sinusoidally.)
+    </p>
+</div>
+
+<div class="highlight-box bg-blue-50 border-blue-200">
+    <div class="lang-th">
+        🇹🇭 <strong>เล่าเรื่องจากรูป:</strong> รูปนี้แสดงขดลวดที่หมุนอยู่ในสนามแม่เหล็กระหว่างขั้ว \(N\) และ \(S\) เมื่อขดลวดหมุน มุม \(\theta\) เปลี่ยนตลอดเวลา ทำให้ฟลักซ์แม่เหล็กที่ผ่านขดลวดเปลี่ยนตามเวลา
+    </div>
+    <div class="lang-en">
+        🇬🇧 <strong>Story from the diagram:</strong> The diagram shows a coil rotating in a magnetic field between the \(N\) and \(S\) poles. As the coil rotates, the angle \(\theta\) changes continuously, so the magnetic flux through the coil also changes with time.
+    </div>
+
+    <div class="lang-th">
+        🇹🇭 ที่ตำแหน่ง \(0^\circ\) และ \(180^\circ\) ฟลักซ์มีค่ามากหรือน้อยสุด แต่กำลังเปลี่ยนช้าที่สุด จึงทำให้แรงเคลื่อนไฟฟ้าเหนี่ยวนำเป็นศูนย์
+    </div>
+    <div class="lang-en">
+        🇬🇧 At \(0^\circ\) and \(180^\circ\), the magnetic flux is at an extreme value, but it changes most slowly. Therefore, the induced EMF is zero.
+    </div>
+
+    <div class="lang-th">
+        🇹🇭 ที่ตำแหน่ง \(90^\circ\) และ \(270^\circ\) ฟลักซ์กำลังเปลี่ยนเร็วที่สุด จึงเกิดแรงเคลื่อนไฟฟ้าเหนี่ยวนำมากที่สุด แต่มีทิศตรงข้ามกัน ทำให้กราฟมีทั้งค่าบวกและค่าลบ
+    </div>
+    <div class="lang-en mb-0">
+        🇬🇧 At \(90^\circ\) and \(270^\circ\), the magnetic flux changes most rapidly, so the induced EMF has maximum magnitude. However, the directions are opposite, producing positive and negative values.
+    </div>
+</div>
+        <div class="highlight-box">
+            <div class="lang-th">
+                🇹🇭 <strong>สรุป:</strong> ฟาราเดย์บอกว่า “ฟลักซ์เปลี่ยนจึงเกิดแรงเคลื่อนไฟฟ้าเหนี่ยวนำ” ส่วนเลนซ์บอกว่า “กระแสเหนี่ยวนำจะไหลในทิศที่ต้านการเปลี่ยนแปลงของฟลักซ์” และเมื่อขดลวดหมุนอย่างต่อเนื่อง ฟลักซ์จึงเปลี่ยนเป็นคาบ เกิดไฟฟ้ากระแสสลับ
+            </div>
+            <div class="lang-en mb-0 border-none bg-transparent p-0">
+                🇬🇧 <strong>Summary:</strong> Faraday’s law explains that changing magnetic flux produces induced EMF, while Lenz’s law determines the direction of the induced current. When a coil rotates continuously, the flux changes periodically, producing alternating current.
+            </div>
+        </div>
+
+        <h2 class="section-header mt-12">📝 ความหมายของตัวแปรหลัก <span class="font-normal text-xl text-gray-500">(Variables)</span></h2>
+
+        <ul class="custom-list ml-4 text-gray-800">
+            <li>
+                <div class="lang-th mb-1"><strong>$\Phi_B$</strong> = ฟลักซ์แม่เหล็ก (Magnetic Flux)</div>
+                <div class="lang-en text-sm border-none p-0 m-0 bg-transparent text-gray-500">หน่วย (Unit): เวเบอร์ (Weber, Wb)</div>
+            </li>
+            <li>
+                <div class="lang-th mb-1"><strong>$B$</strong> = สนามแม่เหล็ก หรือ ความหนาแน่นฟลักซ์แม่เหล็ก (Magnetic Field / Magnetic Flux Density)</div>
+                <div class="lang-en text-sm border-none p-0 m-0 bg-transparent text-gray-500">หน่วย (Unit): เทสลา (Tesla, T)</div>
+            </li>
+            <li>
+                <div class="lang-th mb-1"><strong>$A$</strong> = พื้นที่ของวงลวด (Area of the Loop)</div>
+                <div class="lang-en text-sm border-none p-0 m-0 bg-transparent text-gray-500">หน่วย (Unit): ตารางเมตร (m²)</div>
+            </li>
+            <li>
+                <div class="lang-th mb-1"><strong>$\theta$</strong> = มุมระหว่างสนามแม่เหล็กกับแนวตั้งฉากของพื้นที่ (Angle between $B$ and the area normal)</div>
+                <div class="lang-en text-sm border-none p-0 m-0 bg-transparent text-gray-500">มุมนี้ไม่ใช่มุมกับระนาบขดลวดโดยตรง แต่เป็นมุมกับเส้นตั้งฉากของพื้นที่</div>
+            </li>
+            <li>
+                <div class="lang-th mb-1"><strong>$\mathcal{E}$</strong> = แรงเคลื่อนไฟฟ้าเหนี่ยวนำ (Induced Electromotive Force)</div>
+                <div class="lang-en text-sm border-none p-0 m-0 bg-transparent text-gray-500">หน่วย (Unit): โวลต์ (Volt, V)</div>
+            </li>
+            <li>
+                <div class="lang-th mb-1"><strong>$N$</strong> = จำนวนรอบของขดลวด (Number of Turns)</div>
+            </li>
+            <li>
+                <div class="lang-th mb-1"><strong>$\omega$</strong> = อัตราเร็วเชิงมุมของการหมุน (Angular Speed)</div>
+                <div class="lang-en text-sm border-none p-0 m-0 bg-transparent text-gray-500">หน่วย (Unit): rad/s</div>
+            </li>
+        </ul>
+
+    </div>
+
+</body>
+</html>
