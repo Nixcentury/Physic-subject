@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Printable Exam Template | GitHub Pages</title>
+
+  <!-- MathJax: ใช้พิมพ์สมการ LaTeX เช่น $F=qvB\sin\theta$ และ $$T=2\pi\sqrt{L/g}$$ -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <!-- SmilesDrawer: ใช้วาดโครงสร้างโมเลกุลจาก SMILES เช่น <canvas data-smiles="CCO"></canvas> -->
+  <script src="https://cdn.jsdelivr.net/npm/smiles-drawer@2.3.0/dist/smiles-drawer.min.js"></script>
+    
+    <!-- Google Sans + Thai fallback -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --paper-width: 210mm;
+      --paper-min-height: 297mm;
+      --page-margin: 12mm;
+      --ink: #111827;
+      --muted: #4b5563;
+      --line: #d1d5db;
+      --soft: #f3f4f6;
+      --accent: #1d4ed8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #e5e7eb;
+      color: var(--ink);
+       font-family: "Google Sans", "Noto Sans Thai", Arial, sans-serif;
+      line-height: 1.45;
+    }
+
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      background: #0f172a;
+      color: white;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.25);
+    }
+
+    .toolbar button {
+      border: 0;
+      border-radius: 999px;
+      padding: 9px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      background: #ffffff;
+      color: #0f172a;
+    }
+
+    .toolbar button.primary {
+      background: #38bdf8;
+      color: #082f49;
+    }
+
+    .toolbar button.danger {
+      background: #fde68a;
+      color: #78350f;
+    }
+
+    .toolbar .status {
+      flex-basis: 100%;
+      text-align: center;
+      font-size: 13px;
+      opacity: 0.88;
+    }
+
+    .screen-guide {
+      width: min(var(--paper-width), calc(100vw - 24px));
+      margin: 18px auto 0;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.11);
+      font-size: 14px;
+      color: #334155;
+    }
+
+    .screen-guide code {
+      background: #f1f5f9;
+      padding: 1px 5px;
+      border-radius: 6px;
+    }
+
+    .paper {
+      width: var(--paper-width);
+      min-height: var(--paper-min-height);
+      margin: 18px auto 36px;
+      padding: var(--page-margin);
+      background: white;
+      box-shadow: 0 16px 48px rgba(15, 23, 42, 0.22);
+    }
+
+    .exam-header {
+      border: 2px solid #111827;
+      padding: 10px 12px 12px;
+      margin-bottom: 12px;
+    }
+
+    .school-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13px;
+      color: #374151;
+      margin-bottom: 5px;
+    }
+
+    .exam-title {
+      margin: 2px 0 8px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 0.2px;
+    }
+
+    .exam-subtitle {
+      margin: 0 0 8px;
+      text-align: center;
+      font-size: 14px;
+      color: #374151;
+    }
+
+    .student-info {
+      display: grid;
+      grid-template-columns: 1.6fr 0.7fr 0.7fr 1fr;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .blank-line {
+      border-bottom: 1px dotted #111827;
+      min-height: 22px;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .exam-note {
+      margin: 8px 0 12px;
+      padding: 7px 10px;
+      border-left: 4px solid #111827;
+      background: #f9fafb;
+      font-size: 13px;
+    }
+
+    .questions {
+      counter-reset: question;
+    }
+
+    .question {
+      position: relative;
+      padding: 8px 0 10px;
+      margin: 0 0 8px;
+      border-bottom: 1px solid #e5e7eb;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .question.force-page-break {
+      break-before: page;
+      page-break-before: always;
+    }
+
+    .question-head {
+      display: grid;
+      grid-template-columns: 30px 1fr;
+      gap: 7px;
+      align-items: start;
+    }
+
+    .q-number {
+      display: inline-flex;
+      width: 26px;
+      height: 26px;
+      border: 1.4px solid #111827;
+      border-radius: 999px;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 13px;
+      line-height: 1;
+      margin-top: 1px;
+    }
+
+    .q-title {
+      font-size: 15px;
+      font-weight: 650;
+    }
+
+    .choices {
+      margin: 7px 0 0 37px;
+      padding-left: 22px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 24px;
+      row-gap: 3px;
+      font-size: 14px;
+    }
+
+    .choices li {
+      padding-left: 2px;
+      min-height: 22px;
+      break-inside: avoid;
+    }
+
+    .placeholder-choice {
+      color: #6b7280;
+    }
+
+    .optional-hint {
+      margin: 9px 0 0 37px;
+      padding: 8px 10px;
+      border: 1px dashed #93c5fd;
+      background: #eff6ff;
+      color: #1e3a8a;
+      font-size: 13px;
+      border-radius: 8px;
+    }
+
+    .solution-box {
+      display: none;
+      margin: 9px 0 0 37px;
+      padding: 9px 11px;
+      border: 1px solid #bfdbfe;
+      border-left: 4px solid #2563eb;
+      background: #eff6ff;
+      font-size: 13.4px;
+      border-radius: 8px;
+    }
+
+    .answer-key {
+      display: none;
+      margin-top: 16px;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .answer-key h2 {
+      font-size: 18px;
+      margin: 0 0 8px;
+      border-bottom: 2px solid #111827;
+      padding-bottom: 4px;
+    }
+
+    .answer-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      font-size: 14px;
+    }
+
+    .answer-cell {
+      border: 1px solid #111827;
+      padding: 6px;
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .mode-key .answer-key,
+    .mode-solution .answer-key {
+      display: block;
+    }
+
+    .mode-solution .solution-box {
+      display: block;
+    }
+
+    .mode-solution .optional-hint {
+      display: block;
+    }
+
+    .mode-exam .optional-hint,
+    .mode-key .optional-hint {
+      display: none;
+    }
+
+    .mode-exam .answer-key {
+      display: none;
+    }
+
+    .diagram {
+      width: 100%;
+      max-width: 340px;
+      height: auto;
+      margin: 8px 0 4px 37px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .diagram line,
+    .diagram path,
+    .diagram circle {
+      stroke: #111827;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .diagram text {
+      font-size: 16px;
+      fill: #111827;
+      font-family: inherit;
+    }
+
+    canvas.molecule {
+      display: block;
+      max-width: 260px;
+      margin: 8px 0 4px 37px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: white;
+    }
+
+    .template-bank {
+      display: none;
+    }
+
+    @page {
+      size: A4 portrait;
+      margin: 12mm;
+    }
+
+    @media print {
+      :root {
+        --page-margin: 0mm;
+      }
+
+      html, body {
+        width: 210mm;
+        background: white !important;
+      }
+
+      body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        font-size: 12pt;
+      }
+
+      .toolbar,
+      .screen-guide,
+      .print-hide {
+        display: none !important;
+      }
+
+      .paper {
+        width: auto;
+        min-height: auto;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+      }
+
+      .exam-header {
+        margin-top: 0;
+      }
+
+      .question {
+        margin-bottom: 5px;
+      }
+
+      .q-title {
+        font-size: 11.2pt;
+      }
+
+      .choices {
+        font-size: 10.8pt;
+      }
+
+      .solution-box {
+        font-size: 10.3pt;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+    }
+
+    @media screen and (max-width: 820px) {
+      .paper {
+        width: calc(100vw - 20px);
+        padding: 16px;
+      }
+
+      .student-info {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .choices {
+        grid-template-columns: 1fr;
+      }
+    }
+.part-f-summary {
+  font-family: "Google Sans", "Noto Sans Thai", Arial, sans-serif;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.part-f-summary .exam-title {
+  text-align: center;
+  font-weight: 900;
+  font-size: 15px;
+  margin: 0 0 2px;
+}
+
+.part-f-summary .exam-subtitle {
+  text-align: center;
+  font-size: 11.2px;
+  margin: 0 0 6px;
+  color: #374151;
+}
+
+.part-f-summary .instruction {
+  font-size: 10.5px;
+  line-height: 1.25;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 4px 6px;
+  margin-bottom: 6px;
+  background: #f9fafb;
+}
+
+@media print {
+  .part-f-summary .exam-title {
+    font-size: 14px;
+  }
+
+  .part-f-summary .instruction {
+    font-size: 10px;
+  }
+}
+  </style>
+</head>
+
+<body class="mode-exam">
+  <div class="toolbar print-hide">
+    <button class="primary" onclick="printExam()">🖨️ พิมพ์ข้อสอบ</button>
+    <button onclick="printWithKey()">✅ พิมพ์พร้อมเฉลยท้ายชุด</button>
+    <button onclick="printSolution()">📘 พิมพ์เฉลยละเอียด</button>
+    <button onclick="toggleHints()">💡 เปิด/ปิดคำใบ้บนจอ</button>
+    <button class="danger" onclick="autoPaginateQuestions(true)">📄 จัดหน้า A4 ใหม่</button>
+    <div class="status" id="statusText">โหมดปัจจุบัน: ฉบับข้อสอบนักเรียน — ซ่อนคำใบ้และเฉลย</div>
+  </div>
+
+  <section class="screen-guide print-hide">
+    <b>วิธีใช้เร็ว:</b> แก้ชื่อชุดข้อสอบตรงหัวกระดาษได้เลย → เพิ่มโจทย์โดยคัดลอก block <code>&lt;article class="question" data-answer="B"&gt;</code> → ใส่สมการด้วย <code>$...$</code> หรือ <code>$$...$$</code> → กดปุ่มพิมพ์ด้านบน<br>
+    <b>ระบบที่ใส่ให้แล้ว:</b> MathJax, SmilesDrawer, ตัวช่วย SVG diagram, เฉลยท้ายชุดอัตโนมัติ, และพยายามยกข้อไปหน้าใหม่เมื่อ A4 ไม่พอ
+  </section>
+
+  <main class="paper" id="paper">
+    
+
+    <section class="questions" id="questions">
+
+  <!-- ข้อ 1: วิเคราะห์อินทรีย์จากตาราง -->
+  <article class="question" data-answer="F">
+    <div class="question-head">
+      <span class="q-number">1</span>
+      <div class="q-title">
+        ใช้ข้อมูลในตารางต่อไปนี้ตอบคำถาม: สารใดน่าจะเป็นสารอินทรีย์มากที่สุด
+        <br>
+        Use the data in the table below: Which substances are most likely organic compounds?
+      </div>
+    </div>
+
+    <div style="margin:8px 0 8px 37px; overflow-x:auto;">
+      <table style="width:100%; border-collapse:collapse; font-size:12px; text-align:center;">
+        <thead>
+          <tr>
+            <th style="border:1px solid #111827; padding:4px;">สาร</th>
+            <th style="border:1px solid #111827; padding:4px;">การละลายน้ำ</th>
+            <th style="border:1px solid #111827; padding:4px;">การนำไฟฟ้าของสารละลาย</th>
+            <th style="border:1px solid #111827; padding:4px;">การเผาไหม้</th>
+            <th style="border:1px solid #111827; padding:4px;">การละลายในเฮกเซน</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="border:1px solid #111827; padding:4px;"><b>A</b></td>
+            <td style="border:1px solid #111827; padding:4px;">ละลาย</td>
+            <td style="border:1px solid #111827; padding:4px;">นำ</td>
+            <td style="border:1px solid #111827; padding:4px;">ไม่หลอมเหลว, ไม่ติดไฟ</td>
+            <td style="border:1px solid #111827; padding:4px;">ไม่ละลาย</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid #111827; padding:4px;"><b>B</b></td>
+            <td style="border:1px solid #111827; padding:4px;">ละลาย</td>
+            <td style="border:1px solid #111827; padding:4px;">นำ</td>
+            <td style="border:1px solid #111827; padding:4px;">หลอม, ไม่ติดไฟ</td>
+            <td style="border:1px solid #111827; padding:4px;">ละลายเล็กน้อย</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid #111827; padding:4px;"><b>C</b></td>
+            <td style="border:1px solid #111827; padding:4px;">ไม่ละลาย</td>
+            <td style="border:1px solid #111827; padding:4px;">ไม่นำ</td>
+            <td style="border:1px solid #111827; padding:4px;">หลอม, ติดไฟ, มีเขม่า</td>
+            <td style="border:1px solid #111827; padding:4px;">ละลายเล็กน้อย</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid #111827; padding:4px;"><b>D</b></td>
+            <td style="border:1px solid #111827; padding:4px;">ไม่ละลาย</td>
+            <td style="border:1px solid #111827; padding:4px;">ไม่นำ</td>
+            <td style="border:1px solid #111827; padding:4px;">หลอม, ติดไฟ, มีเขม่าเล็กน้อย</td>
+            <td style="border:1px solid #111827; padding:4px;">ละลาย</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ol class="choices" type="A">
+      <li>A เท่านั้น</li>
+      <li>B เท่านั้น</li>
+      <li>A และ B</li>
+      <li>A และ C</li>
+      <li>B และ C</li>
+      <li>C และ D</li>
+    </ol>
+
+    <div class="hint-box print-hide optional-hint">
+      💡 คำใบ้: สารอินทรีย์จำนวนมากมักไม่ละลายน้ำ ไม่นำไฟฟ้า ติดไฟได้ และละลายในตัวทำละลายอินทรีย์
+    </div>
+
+    <div class="solution-box">
+      <b>เฉลย: F. C และ D</b><br>
+      C และ D มีสมบัติคล้ายสารอินทรีย์ คือไม่ละลายน้ำ ไม่นำไฟฟ้า ติดไฟได้ และละลายในเฮกเซนได้ ส่วน A และ B ละลายน้ำและนำไฟฟ้า จึงมีแนวโน้มเป็นสารไอออนิกหรืออนินทรีย์มากกว่า
+    </div>
+  </article>
+
+
+  <!-- ข้อ 2: หมู่ฟังก์ชัน -->
+  <article class="question" data-answer="E">
+    <div class="question-head">
+      <span class="q-number">2</span>
+      <div class="q-title">
+        สารใดเป็นกรดคาร์บอกซิลิก / Which compound is a carboxylic acid?
+      </div>
+    </div>
+
+    <ol class="choices" type="A">
+      <li>CH₃CH₂OH</li>
+      <li>CH₃CHO</li>
+      <li>CH₃COCH₃</li>
+      <li>CH₃COOCH₃</li>
+      <li>CH₃COOH</li>
+      <li>CH₃OCH₃</li>
+    </ol>
+
+    <div class="hint-box print-hide optional-hint">
+      💡 คำใบ้: กรดคาร์บอกซิลิกมีหมู่ -COOH
+    </div>
+
+    <div class="solution-box">
+      <b>เฉลย: E. CH₃COOH</b><br>
+      หมู่ฟังก์ชันของกรดคาร์บอกซิลิกคือ -COOH ส่วน -OH คือ alcohol, -CHO คือ aldehyde, -CO- คือ ketone และ -COO- คือ ester
+    </div>
+  </article>
+
+
+  <!-- ข้อ 3: การละลายน้ำ -->
+  <article class="question" data-answer="A">
+    <div class="question-head">
+      <span class="q-number">3</span>
+      <div class="q-title">
+        สารใดคาดว่าจะละลายน้ำได้ดีที่สุด / Which substance is expected to dissolve best in water?
+      </div>
+    </div>
+
+    <ol class="choices" type="A">
+      <li>CH₃OH</li>
+      <li>C₆H₁₄</li>
+      <li>C₅H₁₂</li>
+      <li>C₆H₆</li>
+      <li>CH₃CH₂CH₂CH₂CH₃</li>
+      <li>CH₃CH₂CH₂CH₂CH₂CH₃</li>
+    </ol>
+
+    <div class="hint-box print-hide optional-hint">
+      💡 คำใบ้: น้ำชอบสารที่มีขั้วและเกิดพันธะไฮโดรเจนได้
+    </div>
+
+    <div class="solution-box">
+      <b>เฉลย: A. CH₃OH</b><br>
+      Methanol มีหมู่ -OH ขนาดเล็ก และเกิด hydrogen bonding กับน้ำได้ จึงละลายน้ำได้ดีที่สุด
+    </div>
+  </article>
+
+
+  <!-- ข้อ 4: จุดเดือด H-bond -->
+  <article class="question" data-answer="B">
+    <div class="question-head">
+      <span class="q-number">4</span>
+      <div class="q-title">
+        เอทานอลและไดเมทิลอีเทอร์มีสูตรโมเลกุลเหมือนกัน C₂H₆O ข้อใดถูกต้อง
+        <br>
+        Ethanol and dimethyl ether have the same molecular formula C₂H₆O. Which statement is correct?
+      </div>
+    </div>
+
+    <ol class="choices" type="A">
+      <li>Dimethyl ether has a higher boiling point because it has oxygen.</li>
+      <li>Ethanol has a higher boiling point because it can form hydrogen bonds.</li>
+      <li>Both have the same boiling point because they have the same molecular formula.</li>
+      <li>Dimethyl ether has a higher boiling point because it has no O-H bond.</li>
+      <li>Ethanol has a lower boiling point because it is more polar.</li>
+      <li>Both are nonpolar substances.</li>
+    </ol>
+
+    <div class="hint-box print-hide optional-hint">
+      💡 คำใบ้: ดูว่ามีพันธะ O-H หรือไม่
+    </div>
+
+    <div class="solution-box">
+      <b>เฉลย: B.</b><br>
+      Ethanol มีหมู่ O-H จึงเกิดพันธะไฮโดรเจนระหว่างโมเลกุลได้ ทำให้จุดเดือดสูงกว่า dimethyl ether
+    </div>
+  </article>
+
+
+  <!-- ข้อ 5: ไอโซเมอร์ -->
+  <article class="question" data-answer="B">
+    <div class="question-head">
+      <span class="q-number">5</span>
+      <div class="q-title">
+        สารในข้อใดเป็นไอโซเมอร์กับสารต่อไปนี้: CH₂=CH–(CH₂)₃OH
+        <br>
+        Which compound is an isomer of the following compound: CH₂=CH–(CH₂)₃OH?
+      </div>
+    </div>
+
+    <ol class="choices" type="A">
+      <li>CH₃(CH₂)₄OH</li>
+      <li>
+        วงแหวนอีเทอร์ C₅H₁₀O
+        <br>
+        <svg viewBox="0 0 120 80" width="95" height="58" aria-label="cyclic ether">
+          <line x1="60" y1="12" x2="95" y2="32" stroke="#111827" stroke-width="3"></line>
+          <line x1="95" y1="32" x2="95" y2="62" stroke="#111827" stroke-width="3"></line>
+          <line x1="95" y1="62" x2="60" y2="75" stroke="#111827" stroke-width="3"></line>
+          <line x1="60" y1="75" x2="25" y2="62" stroke="#111827" stroke-width="3"></line>
+          <line x1="25" y1="62" x2="25" y2="32" stroke="#111827" stroke-width="3"></line>
+          <line x1="25" y1="32" x2="60" y2="12" stroke="#111827" stroke-width="3"></line>
+          <text x="53" y="17" font-size="17" font-weight="900" fill="#111827">O</text>
+        </svg>
+      </li>
+      <li>CH₃CH₂CH=CHCHO</li>
+      <li>CH₃(CH₂)₂OCH₂CH₃</li>
+      <li>CH₃CH₂CH₂CH₂CHO</li>
+      <li>CH₃CH₂CH₂CH₂CH₃</li>
+    </ol>
+
+    <div class="hint-box print-hide optional-hint">
+      💡 คำใบ้: ไอโซเมอร์ต้องมีสูตรโมเลกุลเหมือนกัน แต่โครงสร้างต่างกัน
+    </div>
+
+    <div class="solution-box">
+      <b>เฉลย: B.</b><br>
+      สารตั้งต้น CH₂=CH–(CH₂)₃OH มีสูตรโมเลกุล C₅H₁₀O ส่วนข้อ B เป็นวงแหวนอีเทอร์ที่มีสูตรโมเลกุล C₅H₁₀O เช่นกัน แต่โครงสร้างต่างกัน จึงเป็นไอโซเมอร์
+    </div>
+  </article>
+
+
+  <!-- ข้อ 6: ตารางทดลอง -->
+  <article class="question" data-answer="B">
+    <div class="question-head">
+      <span class="q-number">6</span>
+      <div class="q-title">
+        ใช้ข้อมูลในตารางต่อไปนี้ตอบคำถามข้อ 6–8 สารใดควรมีสูตรเป็น C₆H₆
+        <br>
+        Use the table to answer Questions 6–8. Which substance is most likely C₆H₆?
+      </div>
+    </div>
+
+    <div style="margin:8px 0 8px 37px; overflow-x:auto;">
+      <table style="width:100%; border-collapse:collapse; font-size:11px; text-align:center;">
+        <thead>
+          <tr>
+            <th style="border:1px solid #111827; padding:3px;">สาร</th>
+            <th style="border:1px solid #111827; padding:3px;">ละลายน้ำ</th>
+            <th style="border:1px solid #111827; padding:3px;">เผาไหม้</th>
+            <th style="border:1px solid #111827; padding:3px;">Br₂ ในที่สว่าง</th>
+            <th style="border:1px solid #111827; padding:3px;">Br₂ ในที่มืด</th>
+            <th style="border:1px solid #111827; padding:3px;">KMnO₄</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="border:1px solid #111827; padding:3px;"><b>W</b></td>
+            <td style="border:1px solid #111827; padding:3px;">ไม่ละลาย</td>
+            <td style="border:1px solid #111827; padding:3px;">ติดไฟ ไม่มีเขม่า</td>
+            <td style="border:1px solid #111827; padding:3px;">เปลี่ยนเป็นไม่มีสี</td>
+            <td style="border:1px solid #111827; padding:3px;">ไม่เปลี่ยนสี</td>
+            <td style="border:1px solid #111827; padding:3px;">ไม่เปลี่ยนสี</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid #111827; padding:3px;"><b>X</b></td>
+            <td style="border:1px solid #111827; padding:3px;">ไม่ละลาย</td>
+            <td style="border:1px solid #111827; padding:3px;">ติดไฟ มีเขม่ามาก</td>
+            <td style="border:1px solid #111827; padding:3px;">ไม่เปลี่ยนสี</td>
+            <td style="border:1px solid #111827; padding:3px;">ไม่เปลี่ยนสี</td>
+            <td style="border:1px solid #111827; padding:3px;">ไม่เปลี่ยนสี</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid #111827; padding:3px;"><b>Y</b></td>
+            <td style="border:1px solid #111827; padding:3px;">ไม่ละลาย</td>
+            <td style="border:1px solid #111827; padding:3px;">ติดไฟ ไม่มีเขม่า</td>
+            <td style="border:1px solid #111827; padding:3px;">เปลี่ยนเป็นไม่มีสี</td>
+            <td style="border:1px solid #111827; padding:3px;">เปลี่ยนเป็นไม่มีสี</td>
+            <td style="border:1px solid #111827; padding:3px;">เปลี่ยนเป็นไม่มีสี</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid #111827; padding:3px;"><b>Z</b></td>
+            <td style="border:1px solid #111827; padding:3px;">ไม่ละลาย</td>
+            <td style="border:1px solid #111827; padding:3px;">ติดไฟ มีเขม่ามาก</td>
+            <td style="border:1px solid #111827; padding:3px;">เปลี่ยนเป็นไม่มีสี</td>
+            <td style="border:1px solid #111827; padding:3px;">เปลี่ยนเป็นไม่มีสี</td>
+            <td style="border:1px solid #111827; padding:3px;">เปลี่ยนเป็นไม่มีสี</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ol class="choices" type="A">
+      <li>W</li>
+      <li>X</li>
+      <li>Y</li>
+      <li>Z</li>
+      <li>W และ Y</li>
+      <li>X และ Z</li>
+    </ol>
+
+    <div class="hint-box print-hide optional-hint">
+      💡 คำใบ้: เบนซีนติดไฟมีเขม่ามาก แต่ไม่ฟอกสี Br₂ ในที่มืด และไม่ทำให้ KMnO₄ เปลี่ยนสีง่าย
+    </div>
+
+    <div class="solution-box">
+      <b>เฉลย: B. X</b><br>
+      X มีลักษณะของสารอะโรมาติก เช่น benzene คือไม่ละลายน้ำ ติดไฟมีเขม่ามาก ไม่ทำให้ Br₂ และ KMnO₄ เปลี่ยนสีภายใต้เงื่อนไขนี้
+    </div>
+  </article>
+
+
+  <!-- ข้อ 7: ตารางทดลอง -->
+  <article class="question" data-answer="A">
+    <div class="question-head">
+      <span class="q-number">7</span>
+      <div class="q-title">
+        จากตารางในข้อ 6 เมื่อนำสารไปทำปฏิกิริยากับ Br₂ ในที่สว่าง แล้วนำผลิตภัณฑ์ไปละลายน้ำ สารใดมีแนวโน้มทำให้ลิตมัสสีน้ำเงินเปลี่ยนเป็นสีแดง
+        <br>
+        Based on the table in Question 6, which substance is most likely to form an acidic product after reacting with Br₂ in light?
+      </div>
+    </div>
+
+    <ol class="choices" type="A">
+      <li>W</li>
+      <li>X</li>
+      <li>Y</li>
+      <li>Z</li>
+      <li>X และ Y</li>
+      <li>Y และ Z</li>
+    </ol>
+
+    <div class="hint-box print-hide optional-hint">
+      💡 คำใบ้: แอลเคนทำปฏิกิริยาแทนที่กับ Br₂ เมื่อมีแสง และเกิด HBr ซึ่งเป็นกรด
+    </div>
+
+    <div class="solution-box">
+      <b>เฉลย: A. W</b><br>
+      W มีลักษณะเหมือนแอลเคน คือไม่ทำปฏิกิริยากับ Br₂ ในที่มืด แต่ทำปฏิกิริยาเมื่อมีแสง ปฏิกิริยาแทนที่นี้เกิด HBr ซึ่งมีสมบัติเป็นกรดเมื่อละลายน้ำ
+    </div>
+  </article>
+
+
+  <!-- ข้อ 8: ตารางทดลอง -->
+  <article class="question" data-answer="A">
+    <div class="question-head">
+      <span class="q-number">8</span>
+      <div class="q-title">
+        จากตารางในข้อ 6 ข้อใดกล่าวได้ถูกต้องที่สุด
+        <br>
+        Based on the table in Question 6, which statement is the most correct?
+      </div>
+    </div>
+
+    <ol class="choices" type="A">
+      <li>W น่าจะเป็นแอลเคน เพราะทำปฏิกิริยากับ Br₂ เมื่อมีแสง แต่ไม่ทำปฏิกิริยากับ Br₂ ในที่มืดและ KMnO₄</li>
+      <li>X น่าจะเป็นแอลคีน เพราะทำให้ Br₂ ในที่มืดเปลี่ยนเป็นไม่มีสี</li>
+      <li>Y น่าจะเป็นแอลเคน เพราะทำให้ KMnO₄ เปลี่ยนเป็นไม่มีสี</li>
+      <li>Z น่าจะเป็นสารอิ่มตัว เพราะทำให้ Br₂ ในที่มืดเปลี่ยนเป็นไม่มีสี</li>
+      <li>X น่าจะเป็นสารไอออนิก เพราะไม่ละลายน้ำ</li>
+      <li>W และ X ต้องเป็นสารชนิดเดียวกัน เพราะไม่ละลายน้ำเหมือนกัน</li>
+    </ol>
+
+    <div class="hint-box print-hide optional-hint">
+      💡 คำใบ้: แอลเคนไม่ฟอกสี Br₂ ในที่มืด แต่เมื่อมีแสงจะเกิดปฏิกิริยาแทนที่
+    </div>
+
+    <div class="solution-box">
+      <b>เฉลย: A.</b><br>
+      W มีสมบัติตรงกับแอลเคน คือไม่ทำปฏิกิริยากับ Br₂ ในที่มืดหรือ KMnO₄ แต่ทำปฏิกิริยากับ Br₂ เมื่อมีแสง
+    </div>
+  </article>
+
+
+  <!-- ข้อ 9: stoichiometry -->
+  <article class="question" data-answer="D">
+    <div class="question-head">
+      <span class="q-number">9</span>
+      <div class="q-title">
+        จากสมการ C₃H₈ + 5O₂ → 3CO₂ + 4H₂O ถ้าใช้ C₃H₈ 0.20 mol จะได้ CO₂ กี่ mol
+        <br>
+        From the equation C₃H₈ + 5O₂ → 3CO₂ + 4H₂O, how many moles of CO₂ are produced from 0.20 mol of C₃H₈?
+      </div>
+    </div>
+
+    <ol class="choices" type="A">
+      <li>0.20 mol</li>
+      <li>0.30 mol</li>
+      <li>0.40 mol</li>
+      <li>0.60 mol</li>
+      <li>1.00 mol</li>
+      <li>3.00 mol</li>
+    </ol>
+
+    <div class="hint-box print-hide optional-hint">
+      💡 คำใบ้: อัตราส่วน mol C₃H₈ : CO₂ = 1 : 3
+    </div>
+
+    <div class="solution-box">
+      <b>เฉลย: D. 0.60 mol</b><br>
+      1 mol C₃H₈ ให้ CO₂ 3 mol ดังนั้น 0.20 mol C₃H₈ ให้ CO₂ = 0.20 × 3 = 0.60 mol
+    </div>
+  </article>
+
+
+  <!-- ข้อ 10: จุดเดือดจากข้อมูล -->
+  <article class="question" data-answer="B">
+    <div class="question-head">
+      <span class="q-number">10</span>
+      <div class="q-title">
+        พิจารณาจุดเดือดของสารต่อไปนี้ แม้ว่าโมเลกุลทั้งสามจะมีมวลโมเลกุลใกล้เคียงกัน แต่จุดเดือดต่างกันมาก เพราะเหตุใด
+        <br>
+        Consider the boiling points below. Although the molecules have similar masses, why are their boiling points very different?
+      </div>
+    </div>
+
+    <div style="margin:8px 0 8px 37px; overflow-x:auto;">
+      <table style="width:100%; border-collapse:collapse; font-size:12px; text-align:center;">
+        <thead>
+          <tr>
+            <th style="border:1px solid #111827; padding:4px;">สาร</th>
+            <th style="border:1px solid #111827; padding:4px;">สูตรโครงสร้าง</th>
+            <th style="border:1px solid #111827; padding:4px;">จุดเดือด</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="border:1px solid #111827; padding:4px;">propanol</td>
+            <td style="border:1px solid #111827; padding:4px;">CH₃CH₂CH₂OH</td>
+            <td style="border:1px solid #111827; padding:4px;">97 °C</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid #111827; padding:4px;">ethanethiol</td>
+            <td style="border:1px solid #111827; padding:4px;">CH₃CH₂SH</td>
+            <td style="border:1px solid #111827; padding:4px;">37 °C</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid #111827; padding:4px;">chloroethane</td>
+            <td style="border:1px solid #111827; padding:4px;">CH₃CH₂Cl</td>
+            <td style="border:1px solid #111827; padding:4px;">13 °C</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ol class="choices" type="A">
+      <li>จุดเดือดเรียงตามจำนวนคาร์บอนเท่านั้น</li>
+      <li>propanol เกิดพันธะไฮโดรเจนได้ แต่ ethanethiol และ chloroethane ไม่เกิดพันธะไฮโดรเจนเด่นชัด</li>
+      <li>chloroethane มีจุดเดือดต่ำที่สุดเพราะ Cl มีอิเล็กโทรเนกาติวิตีต่ำกว่า H</li>
+      <li>ethanethiol มีจุดเดือดสูงกว่า propanol เพราะ S เกิดพันธะไฮโดรเจนได้แรงกว่า O</li>
+      <li>ทั้งสามสารมีจุดเดือดควรเท่ากัน เพราะมีมวลโมเลกุลใกล้เคียงกัน</li>
+      <li>chloroethane มีจุดเดือดสูงสุด เพราะมีอะตอม Cl</li>
+    </ol>
+
+    <div class="hint-box print-hide optional-hint">
+      💡 คำใบ้: จุดเดือดไม่ได้ขึ้นกับมวลโมเลกุลอย่างเดียว ต้องดูแรงยึดเหนี่ยวระหว่างโมเลกุลด้วย
+    </div>
+
+    <div class="solution-box">
+      <b>เฉลย: B.</b><br>
+      propanol มีหมู่ O-H จึงเกิด hydrogen bonding ได้แรง ทำให้จุดเดือดสูงที่สุด ส่วน ethanethiol และ chloroethane ไม่มีพันธะไฮโดรเจนเด่นชัดเท่า O-H
+    </div>
+  </article>
+
+
+  <!-- ข้อ 11: เงื่อนไขปฏิกิริยา -->
+  <article class="question" data-answer="E">
+    <div class="question-head">
+      <span class="q-number">11</span>
+      <div class="q-title">
+        ข้อใดจับคู่ “ชนิดสาร + รีเอเจนต์/เงื่อนไข + ผลที่สังเกตได้” ถูกต้องที่สุด
+        <br>
+        Which matching of compound type, reagent/condition, and observation is the most correct?
+      </div>
+    </div>
+
+    <ol class="choices" type="A">
+      <li>Alkane + Br₂ in the dark → Br₂ decolorized immediately</li>
+      <li>Alkene + Br₂ in the dark → no reaction</li>
+      <li>Alkane + KMnO₄ → purple color fades rapidly</li>
+      <li>Benzene + Br₂ in the dark → addition occurs easily</li>
+      <li>Alkene + Br₂ in the dark → addition occurs and Br₂ is decolorized</li>
+      <li>Alkane + HBr → Markovnikov addition occurs</li>
+    </ol>
+
+    <div class="hint-box print-hide optional-hint">
+      💡 คำใบ้: แอลคีนมีพันธะคู่ จึงเกิด addition กับ Br₂ ได้ง่ายในที่มืด
+    </div>
+
+    <div class="solution-box">
+      <b>เฉลย: E.</b><br>
+      แอลคีนเกิดปฏิกิริยาเติมกับ Br₂ ได้ในที่มืด ทำให้สี Br₂ จางลง ส่วนแอลเคนต้องใช้ UV เมื่อต้องการทำปฏิกิริยากับ Br₂
+    </div>
+  </article>
+
+
+  <!-- ข้อ 12: KMnO4 -->
+  <article class="question" data-answer="B">
+    <div class="question-head">
+      <span class="q-number">12</span>
+      <div class="q-title">
+        เมื่อแอลคีนทำปฏิกิริยากับสารละลาย KMnO₄ เจือจาง ควรสังเกตเห็นอะไร
+        <br>
+        Which observation is expected when an alkene reacts with dilute KMnO₄ solution?
+      </div>
+    </div>
+
+    <ol class="choices" type="A">
+      <li>The purple color becomes darker and no precipitate forms.</li>
+      <li>The purple color fades and brown MnO₂ forms.</li>
+      <li>A white precipitate of AgBr forms immediately.</li>
+      <li>CO₂ gas is produced immediately.</li>
+      <li>The solution turns red because HBr is formed.</li>
+      <li>No reaction occurs because alkenes are saturated.</li>
+    </ol>
+
+    <div class="hint-box print-hide optional-hint">
+      💡 คำใบ้: KMnO₄ ใช้ทดสอบความไม่อิ่มตัวได้
+    </div>
+
+    <div class="solution-box">
+      <b>เฉลย: B.</b><br>
+      แอลคีนทำให้สีม่วงของ KMnO₄ จางลง และเกิดตะกอน MnO₂ สีน้ำตาล ส่วนแอลเคนโดยทั่วไปไม่ให้ผลนี้
+    </div>
+  </article>
+</section>
+</section>
+ <script>
+    const body = document.body;
+    let hintsVisible = false;
+
+    function setStatus(text) {
+      const el = document.getElementById('statusText');
+      if (el) el.textContent = text;
+    }
+
+    function renumberQuestions() {
+      document.querySelectorAll('.question').forEach((q, i) => {
+        const num = q.querySelector('.q-number');
+        if (num) num.textContent = i + 1;
+      });
+    }
+
+    function ensureFiveChoices() {
+      document.querySelectorAll('.question').forEach(q => {
+        const ol = q.querySelector('.choices');
+        if (!ol) return;
+        while (ol.children.length < 5) {
+          const li = document.createElement('li');
+          li.innerHTML = '<span class="placeholder-choice">ไม่มีข้อใดถูก / ตัวเลือกสำรอง</span>';
+          ol.appendChild(li);
+        }
+      });
+    }
+
+    function buildAnswerKey() {
+      const grid = document.getElementById('answerGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+      document.querySelectorAll('.question').forEach((q, i) => {
+        const cell = document.createElement('div');
+        cell.className = 'answer-cell';
+        cell.textContent = `${i + 1}. ${q.dataset.answer || '-'}`;
+        grid.appendChild(cell);
+      });
+    }
+
+    function setMode(mode) {
+      body.classList.remove('mode-exam', 'mode-key', 'mode-solution');
+      body.classList.add(mode);
+      if (mode === 'mode-exam') setStatus('โหมดปัจจุบัน: ฉบับข้อสอบนักเรียน — ซ่อนคำใบ้และเฉลย');
+      if (mode === 'mode-key') setStatus('โหมดปัจจุบัน: ฉบับพร้อมเฉลยท้ายชุด — ซ่อนเฉลยละเอียด');
+      if (mode === 'mode-solution') setStatus('โหมดปัจจุบัน: ฉบับเฉลยละเอียด — แสดงเฉลยใต้แต่ละข้อ');
+      buildAnswerKey();
+      return typesetAndPaginate();
+    }
+
+    function toggleHints() {
+      hintsVisible = !hintsVisible;
+      document.querySelectorAll('.optional-hint').forEach(el => {
+        el.classList.toggle('print-hide', !hintsVisible);
+        el.style.display = hintsVisible ? 'block' : '';
+      });
+      setStatus(hintsVisible ? 'เปิดคำใบ้บนหน้าจอแล้ว — ตอนพิมพ์ยังซ่อนอยู่ในโหมดข้อสอบ' : 'ปิดคำใบ้บนหน้าจอแล้ว');
+      typesetAndPaginate();
+    }
+
+    function mmToPx(mm) {
+      const probe = document.getElementById('mmProbe');
+      const pxPer100mm = probe ? probe.getBoundingClientRect().width : 377.95;
+      return (pxPer100mm / 100) * mm;
+    }
+
+    function clearPageBreaks() {
+      document.querySelectorAll('.question.force-page-break').forEach(q => q.classList.remove('force-page-break'));
+    }
+
+    function autoPaginateQuestions(showStatus = false) {
+      clearPageBreaks();
+
+      const paper = document.getElementById('paper');
+      const questions = Array.from(document.querySelectorAll('.question'));
+      if (!paper || questions.length === 0) return;
+
+      // A4 297mm with @page margin 12mm top+bottom => printable height about 273mm.
+      // ใช้ค่าเผื่อเล็กน้อยเพื่อลดโอกาสล้นหน้าจริงใน Chrome/Edge print.
+      const printableHeight = mmToPx(271);
+      const paperTop = paper.getBoundingClientRect().top + window.scrollY;
+      let pageStart = paperTop;
+      let pageBottom = pageStart + printableHeight;
+
+      questions.forEach((q) => {
+        const top = q.getBoundingClientRect().top + window.scrollY;
+        const height = q.offsetHeight;
+        const bottom = top + height;
+
+        if (height < printableHeight && bottom > pageBottom) {
+          q.classList.add('force-page-break');
+          const newTop = q.getBoundingClientRect().top + window.scrollY;
+          pageStart = newTop;
+          pageBottom = pageStart + printableHeight;
+        }
+
+        while ((q.getBoundingClientRect().top + window.scrollY + q.offsetHeight) > pageBottom) {
+          pageStart = pageBottom;
+          pageBottom = pageStart + printableHeight;
+        }
+      });
+
+      if (showStatus) setStatus('จัดหน้า A4 ใหม่แล้ว: ระบบพยายามไม่ให้ตัดข้อสอบกลางหน้า');
+    }
+
+    function typesetAndPaginate() {
+      const run = () => {
+        ensureFiveChoices();
+        renumberQuestions();
+        buildAnswerKey();
+        autoPaginateQuestions(false);
+        // ทำซ้ำอีกรอบหลังใส่ page break เพราะ layout อาจเปลี่ยน
+        requestAnimationFrame(() => autoPaginateQuestions(false));
+      };
+
+      if (window.MathJax && MathJax.typesetPromise) {
+        return MathJax.typesetPromise().then(run).catch(run);
+      } else {
+        run();
+        return Promise.resolve();
+      }
+    }
+
+    function beforePrint(mode) {
+      return setMode(mode).then(() => new Promise(resolve => {
+        setTimeout(() => {
+          autoPaginateQuestions(false);
+          resolve();
+        }, 150);
+      }));
+    }
+
+    function printExam() {
+      beforePrint('mode-exam').then(() => window.print());
+    }
+
+    function printWithKey() {
+      beforePrint('mode-key').then(() => window.print());
+    }
+
+    function printSolution() {
+      beforePrint('mode-solution').then(() => window.print());
+    }
+
+    function drawSmilesCanvases() {
+      if (!window.SmilesDrawer) return;
+      document.querySelectorAll('canvas.molecule[data-smiles]').forEach(canvas => {
+        const smiles = canvas.dataset.smiles;
+        const drawer = new SmilesDrawer.Drawer({ width: canvas.width || 260, height: canvas.height || 180 });
+        SmilesDrawer.parse(smiles, tree => drawer.draw(tree, canvas, 'light', false), err => console.warn(err));
+      });
+    }
+
+    // Helper สำหรับวาดแกน XY แบบเร็ว: <svg class="diagram auto-axes" data-xlabel="x" data-ylabel="y"></svg>
+    function drawAutoAxes() {
+      document.querySelectorAll('svg.auto-axes').forEach(svg => {
+        svg.setAttribute('viewBox', '0 0 300 180');
+        const xlabel = svg.dataset.xlabel || 'x';
+        const ylabel = svg.dataset.ylabel || 'y';
+        svg.innerHTML = `
+          <line x1="28" y1="150" x2="275" y2="150"></line>
+          <line x1="45" y1="165" x2="45" y2="20"></line>
+          <path d="M275 150 L263 144 M275 150 L263 156"></path>
+          <path d="M45 20 L39 32 M45 20 L51 32"></path>
+          <text x="280" y="154">${xlabel}</text>
+          <text x="35" y="18">${ylabel}</text>
+        `;
+      });
+    }
+
+    window.addEventListener('load', () => {
+      ensureFiveChoices();
+      renumberQuestions();
+      buildAnswerKey();
+      drawSmilesCanvases();
+      drawAutoAxes();
+      typesetAndPaginate();
+    });
+
+    window.addEventListener('beforeprint', () => {
+      autoPaginateQuestions(false);
+    });
+  </script>
+</body>
+</html>

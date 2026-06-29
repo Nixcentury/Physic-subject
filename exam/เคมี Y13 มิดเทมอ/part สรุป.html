@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Written Exam Template | A4 Clean Pages</title>
+
+  <!-- MathJax: ใช้พิมพ์สมการ LaTeX เช่น $R=\frac{u^2\sin2\theta}{g}$ -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <!-- SmilesDrawer: ใช้วาดโครงสร้างโมเลกุลจาก SMILES เช่น <canvas data-smiles="CCO"></canvas> -->
+  <script src="https://cdn.jsdelivr.net/npm/smiles-drawer@2.3.0/dist/smiles-drawer.min.js"></script>
+
+  <!-- Google Sans + Thai fallback -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+  .master-summary.question {
+    border-bottom: 0;
+    padding: 0;
+    overflow: visible;
+  }
+
+  .master-summary {
+    font-family: "Google Sans", "Noto Sans Thai", Arial, sans-serif;
+    color: #111827;
+    font-size: 11px;
+    line-height: 1.25;
+  }
+
+  .master-summary .exam-title {
+    text-align: center;
+    font-weight: 900;
+    font-size: 15px;
+    margin: 0 0 2px;
+  }
+
+  .master-summary .exam-subtitle {
+    text-align: center;
+    font-size: 11.2px;
+    margin: 0 0 5px;
+    color: #374151;
+  }
+
+  .master-summary .instruction {
+    font-size: 10.5px;
+    line-height: 1.25;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 4px 6px;
+    margin-bottom: 5px;
+    background: #f9fafb;
+  }
+
+  .master-summary .word-bank {
+    border: 1.3px solid #111827;
+    border-radius: 7px;
+    padding: 5px;
+    margin-bottom: 5px;
+  }
+
+  .master-summary .word-bank-title {
+    font-weight: 900;
+    font-size: 11px;
+    margin-bottom: 4px;
+  }
+
+  .master-summary .word-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+  }
+
+  .master-summary .word {
+    border: 1px solid #d1d5db;
+    border-radius: 5px;
+    padding: 2px 4px;
+    font-size: 9.6px;
+    line-height: 1.15;
+    background: #ffffff;
+  }
+
+  .master-summary .q-block {
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    padding: 4px 6px;
+    margin-bottom: 4px;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .master-summary .q-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+  }
+
+  .master-summary .q-title {
+    font-weight: 900;
+    font-size: 11px;
+  }
+
+  .master-summary .score {
+    font-weight: 800;
+    font-size: 10.2px;
+    white-space: nowrap;
+  }
+
+  .master-summary .en,
+  .master-summary .th {
+    font-size: 10.4px;
+    line-height: 1.27;
+    margin: 1px 0;
+  }
+
+  .master-summary .en {
+    color: #374151;
+  }
+
+  .master-summary .blank {
+    display: inline-block;
+    min-width: 23mm;
+    border-bottom: 1.2px dotted #111827;
+    height: 1em;
+    vertical-align: baseline;
+    margin: 0 1px;
+  }
+
+  .master-summary .blank-no {
+    font-size: 8.8px;
+    font-weight: 800;
+    color: #111827;
+    margin-right: 1px;
+  }
+
+  .master-summary .solution-box {
+    margin: 6px 0 0;
+    font-size: 10.5px;
+    line-height: 1.35;
+  }
+
+  .answer-cell.long-key {
+    grid-column: 1 / -1;
+    text-align: left;
+    line-height: 1.45;
+    font-weight: 600;
+  }
+
+  .answer-cell.long-key b {
+    font-weight: 900;
+  }
+
+  @media print {
+    .master-summary {
+      font-size: 10.8px;
+    }
+
+    .master-summary .q-block {
+      margin-bottom: 3.5px;
+    }
+  }
+:root {
+  --paper-width: 210mm;
+  --paper-height: 297mm;
+  --page-pad-x: 12mm;
+  --page-pad-y: 12mm;
+  --ink: #111827;
+  --per-page: 1;
+  --question-gap: 6mm;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #e5e7eb;
+  color: var(--ink);
+  font-family: "Google Sans", "Noto Sans Thai", Arial, sans-serif;
+  line-height: 1.45;
+}
+
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background: #0f172a;
+  color: white;
+}
+
+.toolbar button {
+  border: 0;
+  border-radius: 999px;
+  padding: 9px 14px;
+  font-weight: 700;
+  cursor: pointer;
+  background: #ffffff;
+  color: #0f172a;
+}
+
+.toolbar button.primary {
+  background: #38bdf8;
+  color: #082f49;
+}
+
+.toolbar button.danger {
+  background: #fde68a;
+  color: #78350f;
+}
+
+.toolbar .status {
+  flex-basis: 100%;
+  text-align: center;
+  font-size: 13px;
+  opacity: 0.88;
+}
+
+.sheet {
+  width: var(--paper-width);
+  height: var(--paper-height);
+  margin: 18px auto 36px;
+  padding: var(--page-pad-y) var(--page-pad-x);
+  background: white;
+  box-shadow: 0 16px 48px rgba(15, 23, 42, 0.22);
+  overflow: hidden;
+  page-break-after: always;
+  break-after: page;
+  display: flex;
+  flex-direction: column;
+}
+
+.sheet-content {
+  flex: 1;
+  height: auto;
+  display: grid;
+  grid-template-rows: repeat(var(--per-page), minmax(0, 1fr));
+  gap: var(--question-gap);
+}
+
+.question-bank {
+  display: none;
+}
+
+.solution-box {
+  display: none;
+}
+
+.mode-solution .solution-box {
+  display: block;
+}
+
+.answer-key-sheet .sheet-content {
+  display: block;
+}
+
+.answer-key h2 {
+  font-size: 18px;
+  margin: 0 0 8px;
+  border-bottom: 2px solid #111827;
+  padding-bottom: 4px;
+}
+
+.answer-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  font-size: 14px;
+}
+
+.answer-cell {
+  border: 1px solid #111827;
+  padding: 6px;
+  text-align: center;
+  font-weight: 800;
+}
+
+.exam-note {
+  margin: 0 0 5mm;
+  padding: 6px 9px;
+  border-left: 4px solid #111827;
+  background: #f9fafb;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+@page {
+  size: A4 portrait;
+  margin: 0;
+}
+
+@media print {
+  html, body {
+    width: 210mm;
+    background: white !important;
+  }
+
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .toolbar,
+  .print-hide {
+    display: none !important;
+  }
+
+  .sheet {
+    width: 210mm;
+    height: 297mm;
+    margin: 0;
+    box-shadow: none;
+    overflow: hidden;
+  }
+}
+.solution-box .ans-red {
+  color: #dc2626;
+  font-weight: 900;
+}
+
+.solution-box .solution-title {
+  font-weight: 900;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.solution-box .sol-section {
+  margin: 6px 0;
+  padding-bottom: 5px;
+  border-bottom: 1px dashed #cbd5e1;
+}
+
+.solution-box .sol-section:last-child {
+  border-bottom: 0;
+}
+
+.solution-box .sol-head {
+  font-weight: 900;
+  margin-bottom: 3px;
+}
+
+.solution-box .sol-en,
+.solution-box .sol-th {
+  margin: 2px 0;
+  line-height: 1.35;
+}
+/* ===============================
+   FIX: ให้เฉลยละเอียดไหลข้ามหน้าได้
+   ใช้เฉพาะโหมดพิมพ์เฉลยละเอียด
+================================ */
+
+body.mode-solution .sheet {
+  height: auto !important;
+  min-height: 297mm !important;
+  overflow: visible !important;
+}
+
+body.mode-solution .sheet-content {
+  display: block !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+body.mode-solution .question,
+body.mode-solution .master-summary,
+body.mode-solution .solution-box,
+body.mode-solution .sol-section {
+  overflow: visible !important;
+  break-inside: auto !important;
+  page-break-inside: auto !important;
+}
+
+/* ตอนพิมพ์เฉลยละเอียดของ Part A ให้ซ่อนโจทย์เติมคำ เหลือเฉลยบทความ */
+body.mode-solution .master-summary > .instruction,
+body.mode-solution .master-summary > .word-bank,
+body.mode-solution .master-summary > .q-block {
+  display: none !important;
+}
+
+body.mode-solution .master-summary .solution-box {
+  display: block !important;
+  margin-top: 0 !important;
+}
+
+/* ให้คำตอบสีแดงติดตอนพิมพ์ */
+.ans-red {
+  color: #dc2626 !important;
+  font-weight: 900;
+}
+
+@media print {
+  body.mode-solution .sheet {
+    height: auto !important;
+    min-height: 297mm !important;
+    overflow: visible !important;
+    page-break-after: auto !important;
+    break-after: auto !important;
+  }
+
+  body.mode-solution .sheet-content {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  body.mode-solution .question,
+  body.mode-solution .master-summary,
+  body.mode-solution .solution-box,
+  body.mode-solution .sol-section {
+    overflow: visible !important;
+    break-inside: auto !important;
+    page-break-inside: auto !important;
+  }
+}
+</style>
+</head>
+
+<body class="mode-exam">
+  <div class="toolbar print-hide">
+    <button class="primary" onclick="printExam()">🖨️ พิมพ์ข้อสอบ</button>
+    <button onclick="printWithKey()">✅ พิมพ์พร้อมเฉลยสั้น</button>
+    <button onclick="printSolution()">📘 พิมพ์เฉลยละเอียด</button>
+    <button onclick="toggleHints()">💡 เปิด/ปิดคำใบ้บนจอ</button>
+    <button class="danger" onclick="rebuildFromPrompt()">📄 จัดจำนวนข้อต่อหน้าใหม่</button>
+    <div class="status" id="statusText">โหมดปัจจุบัน: ข้อสอบเขียนแสดงวิธีทำ — 2 ข้อต่อหน้า</div>
+  </div>
+
+<main id="printArea"></main>
+
+<section class="question-bank" id="questionBank">
+
+  <article class="question master-summary"
+    data-answer="1. carbon / คาร์บอน | 2. C-H bonds / พันธะ C-H | 3. inorganic / อนินทรีย์ | 4. skeletal structure / สูตรเส้นและมุม | 5. four bonds / พันธะ 4 แขน | 6. functional group / หมู่ฟังก์ชัน | 7. IUPAC / ระบบไอยูแพก | 8. suffix / คำลงท้าย | 9. isomer / ไอโซเมอร์ | 10. intermolecular forces / แรงยึดเหนี่ยวระหว่างโมเลกุล | 11. hydrogen bonding / พันธะไฮโดรเจน | 12. branching / การแตกกิ่ง | 13. alkane / แอลเคน | 14. alkene / แอลคีน | 15. alkyne / แอลไคน์ | 16. substitution reaction / ปฏิกิริยาการแทนที่ | 17. addition reaction / ปฏิกิริยาการเติม | 18. resonance / รีโซแนนซ์">
+
+    <div class="exam-title">
+      Part A: Master Summary Fill-in / บทความสรุปเติมคำ
+    </div>
+
+    <div class="exam-subtitle">
+      Organic Chemistry Core Summary / สรุปแกนสำคัญเคมีอินทรีย์
+      <strong>(18 points / 18 คะแนน)</strong>
+    </div>
+
+    <div class="instruction">
+      <strong>Instructions / คำชี้แจง:</strong>
+      Choose the best words from the word bank to fill in the blanks. Use each word only once.
+      <br>
+      จงเลือกคำศัพท์จากคลังคำไปเติมในช่องว่างให้ถูกต้องที่สุด โดยใช้คำแต่ละคำเพียง 1 ครั้ง
+    </div>
+
+    <div class="word-bank">
+      <div class="word-bank-title">Word Bank / คลังคำศัพท์</div>
+
+      <div class="word-grid">
+        <div class="word">carbon / คาร์บอน</div>
+        <div class="word">C-H bonds / พันธะ C-H</div>
+        <div class="word">inorganic / อนินทรีย์</div>
+
+        <div class="word">skeletal structure / สูตรเส้นและมุม</div>
+        <div class="word">four bonds / พันธะ 4 แขน</div>
+        <div class="word">functional group / หมู่ฟังก์ชัน</div>
+
+        <div class="word">IUPAC / ระบบไอยูแพก</div>
+        <div class="word">suffix / คำลงท้าย</div>
+        <div class="word">isomer / ไอโซเมอร์</div>
+
+        <div class="word">intermolecular forces / แรงยึดเหนี่ยวระหว่างโมเลกุล</div>
+        <div class="word">hydrogen bonding / พันธะไฮโดรเจน</div>
+        <div class="word">branching / การแตกกิ่ง</div>
+
+        <div class="word">alkane / แอลเคน</div>
+        <div class="word">alkene / แอลคีน</div>
+        <div class="word">alkyne / แอลไคน์</div>
+
+        <div class="word">substitution reaction / ปฏิกิริยาการแทนที่</div>
+        <div class="word">addition reaction / ปฏิกิริยาการเติม</div>
+        <div class="word">resonance / รีโซแนนซ์</div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-head">
+        <div class="q-title">1. Organic vs Inorganic Compounds / สารอินทรีย์และสารอนินทรีย์</div>
+        <div class="score">(3 points / 3 คะแนน)</div>
+      </div>
+
+      <p class="en">
+        Most organic compounds contain <span class="blank-no">(1)</span><span class="blank"></span>
+        as the main element and usually contain
+        <span class="blank-no">(2)</span><span class="blank"></span>.
+        In contrast, some carbon-containing compounds such as CO₂, CO, and carbonate compounds are usually classified as
+        <span class="blank-no">(3)</span><span class="blank"></span> compounds.
+      </p>
+
+      <p class="th">
+        สารอินทรีย์ส่วนใหญ่มี <span class="blank-no">(1)</span><span class="blank"></span>
+        เป็นองค์ประกอบหลัก และมักมี
+        <span class="blank-no">(2)</span><span class="blank"></span>
+        ในทางตรงกันข้าม สารที่มีคาร์บอนบางชนิด เช่น CO₂, CO และสารกลุ่มคาร์บอเนต มักจัดเป็นสาร
+        <span class="blank-no">(3)</span><span class="blank"></span>
+      </p>
+    </div>
+
+    <div class="q-block">
+      <div class="q-head">
+        <div class="q-title">2. Structural Formulas / สูตรโครงสร้างของสารอินทรีย์</div>
+        <div class="score">(3 points / 3 คะแนน)</div>
+      </div>
+
+      <p class="en">
+        In a <span class="blank-no">(4)</span><span class="blank"></span>,
+        line ends and corners represent carbon atoms, while hydrogen atoms attached to carbon are usually not shown.
+        When reading any organic structure, each carbon atom should have
+        <span class="blank-no">(5)</span><span class="blank"></span>.
+        Organic compounds are also often classified by their
+        <span class="blank-no">(6)</span><span class="blank"></span>,
+        such as -OH, -CHO, -COOH, and -COO-.
+      </p>
+
+      <p class="th">
+        ใน <span class="blank-no">(4)</span><span class="blank"></span>
+        ปลายเส้นและมุมหักแทนอะตอมคาร์บอน ส่วนไฮโดรเจนที่เกาะกับคาร์บอนมักไม่เขียนให้เห็น
+        เมื่ออ่านโครงสร้างอินทรีย์ ต้องตรวจให้คาร์บอนแต่ละอะตอมมี
+        <span class="blank-no">(5)</span><span class="blank"></span>
+        สารอินทรีย์ยังมักจำแนกตาม
+        <span class="blank-no">(6)</span><span class="blank"></span>
+        เช่น -OH, -CHO, -COOH และ -COO-
+      </p>
+    </div>
+
+    <div class="q-block">
+      <div class="q-head">
+        <div class="q-title">3. Naming and Isomerism / การเรียกชื่อและไอโซเมอร์</div>
+        <div class="score">(3 points / 3 คะแนน)</div>
+      </div>
+
+      <p class="en">
+        Systematic organic naming follows the
+        <span class="blank-no">(7)</span><span class="blank"></span> system.
+        In a name, the root name shows the number of carbon atoms, while the
+        <span class="blank-no">(8)</span><span class="blank"></span>
+        shows the compound family or the main functional group.
+        Compounds with the same molecular formula but different structures are called
+        <span class="blank-no">(9)</span><span class="blank"></span>.
+      </p>
+
+      <p class="th">
+        การเรียกชื่อสารอินทรีย์อย่างเป็นระบบใช้ระบบ
+        <span class="blank-no">(7)</span><span class="blank"></span>
+        ในชื่อสาร ชื่อรากบอกจำนวนอะตอมคาร์บอน ส่วน
+        <span class="blank-no">(8)</span><span class="blank"></span>
+        บอกตระกูลของสารหรือหมู่ฟังก์ชันหลัก
+        สารที่มีสูตรโมเลกุลเหมือนกันแต่มีโครงสร้างต่างกันเรียกว่า
+        <span class="blank-no">(9)</span><span class="blank"></span>
+      </p>
+    </div>
+
+    <div class="q-block">
+      <div class="q-head">
+        <div class="q-title">4. Physical Properties / สมบัติทางกายภาพ</div>
+        <div class="score">(3 points / 3 คะแนน)</div>
+      </div>
+
+      <p class="en">
+        Boiling point, melting point, and solubility depend on molecular size, molecular shape, and
+        <span class="blank-no">(10)</span><span class="blank"></span>.
+        Molecules that can form
+        <span class="blank-no">(11)</span><span class="blank"></span>
+        usually have higher boiling points than molecules of similar size.
+        For isomers with the same molecular formula, more
+        <span class="blank-no">(12)</span><span class="blank"></span>
+        usually lowers the boiling point because the surface area becomes smaller.
+      </p>
+
+      <p class="th">
+        จุดเดือด จุดหลอมเหลว และการละลายน้ำ ขึ้นอยู่กับขนาดโมเลกุล รูปร่างโมเลกุล และ
+        <span class="blank-no">(10)</span><span class="blank"></span>
+        สารที่เกิด
+        <span class="blank-no">(11)</span><span class="blank"></span>
+        ได้ มักมีจุดเดือดสูงกว่าสารที่มีขนาดใกล้เคียงกัน
+        สำหรับไอโซเมอร์ที่มีสูตรโมเลกุลเหมือนกัน เมื่อมี
+        <span class="blank-no">(12)</span><span class="blank"></span>
+        มากขึ้น จุดเดือดมักลดลง เพราะพื้นที่ผิวสัมผัสลดลง
+      </p>
+    </div>
+
+    <div class="q-block">
+      <div class="q-head">
+        <div class="q-title">5. Hydrocarbon Types / ประเภทของไฮโดรคาร์บอน</div>
+        <div class="score">(3 points / 3 คะแนน)</div>
+      </div>
+
+      <p class="en">
+        An <span class="blank-no">(13)</span><span class="blank"></span>
+        is a saturated hydrocarbon with only single bonds between carbon atoms.
+        An <span class="blank-no">(14)</span><span class="blank"></span>
+        is an unsaturated hydrocarbon with at least one carbon-carbon double bond.
+        An <span class="blank-no">(15)</span><span class="blank"></span>
+        is an unsaturated hydrocarbon with at least one carbon-carbon triple bond.
+      </p>
+
+      <p class="th">
+        <span class="blank-no">(13)</span><span class="blank"></span>
+        เป็นไฮโดรคาร์บอนอิ่มตัวที่มีเฉพาะพันธะเดี่ยวระหว่างคาร์บอน
+        <span class="blank-no">(14)</span><span class="blank"></span>
+        เป็นไฮโดรคาร์บอนไม่อิ่มตัวที่มีพันธะคู่ระหว่างคาร์บอนอย่างน้อย 1 ตำแหน่ง
+        ส่วน <span class="blank-no">(15)</span><span class="blank"></span>
+        เป็นไฮโดรคาร์บอนไม่อิ่มตัวที่มีพันธะสามระหว่างคาร์บอนอย่างน้อย 1 ตำแหน่ง
+      </p>
+    </div>
+
+    <div class="q-block">
+      <div class="q-head">
+        <div class="q-title">6. Hydrocarbon Reactions / ปฏิกิริยาของไฮโดรคาร์บอน</div>
+        <div class="score">(3 points / 3 คะแนน)</div>
+      </div>
+
+      <p class="en">
+        Alkanes mainly undergo
+        <span class="blank-no">(16)</span><span class="blank"></span>
+        and usually require UV light when reacting with bromine.
+        Alkenes and alkynes mainly undergo
+        <span class="blank-no">(17)</span><span class="blank"></span>
+        with bromine, so the bromine solution is decolorized.
+        Benzene is more stable because of
+        <span class="blank-no">(18)</span><span class="blank"></span>,
+        so it does not easily undergo addition under normal conditions.
+      </p>
+
+      <p class="th">
+        แอลเคนมักเกิด
+        <span class="blank-no">(16)</span><span class="blank"></span>
+        และโดยทั่วไปต้องใช้แสง UV เมื่อต้องการให้ทำปฏิกิริยากับโบรมีน
+        แอลคีนและแอลไคน์มักเกิด
+        <span class="blank-no">(17)</span><span class="blank"></span>
+        กับโบรมีน ทำให้สารละลายโบรมีนฟอกสี
+        ส่วนเบนซีนมีความเสถียรมากขึ้นเนื่องจาก
+        <span class="blank-no">(18)</span><span class="blank"></span>
+        จึงไม่เกิดปฏิกิริยาเติมได้ง่ายภายใต้สภาวะปกติ
+      </p>
+    </div>
+
+  <div class="solution-box">
+  <div class="solution-title">Answer Version / เฉลยแบบเติมในบทความ</div>
+
+  <div class="sol-section">
+    <div class="sol-head">1. Organic vs Inorganic Compounds / สารอินทรีย์และสารอนินทรีย์</div>
+    <p class="sol-en">
+      Most organic compounds contain <span class="ans-red">carbon / คาร์บอน</span>
+      as the main element and usually contain
+      <span class="ans-red">C-H bonds / พันธะ C-H</span>.
+      In contrast, some carbon-containing compounds such as CO₂, CO, and carbonate compounds are usually classified as
+      <span class="ans-red">inorganic / อนินทรีย์</span> compounds.
+    </p>
+    <p class="sol-th">
+      สารอินทรีย์ส่วนใหญ่มี <span class="ans-red">carbon / คาร์บอน</span>
+      เป็นองค์ประกอบหลัก และมักมี
+      <span class="ans-red">C-H bonds / พันธะ C-H</span>
+      ในทางตรงกันข้าม สารที่มีคาร์บอนบางชนิด เช่น CO₂, CO และสารกลุ่มคาร์บอเนต มักจัดเป็นสาร
+      <span class="ans-red">inorganic / อนินทรีย์</span>
+    </p>
+  </div>
+
+  <div class="sol-section">
+    <div class="sol-head">2. Structural Formulas / สูตรโครงสร้างของสารอินทรีย์</div>
+    <p class="sol-en">
+      In a <span class="ans-red">skeletal structure / สูตรเส้นและมุม</span>,
+      line ends and corners represent carbon atoms, while hydrogen atoms attached to carbon are usually not shown.
+      When reading any organic structure, each carbon atom should have
+      <span class="ans-red">four bonds / พันธะ 4 แขน</span>.
+      Organic compounds are also often classified by their
+      <span class="ans-red">functional group / หมู่ฟังก์ชัน</span>,
+      such as -OH, -CHO, -COOH, and -COO-.
+    </p>
+    <p class="sol-th">
+      ใน <span class="ans-red">skeletal structure / สูตรเส้นและมุม</span>
+      ปลายเส้นและมุมหักแทนอะตอมคาร์บอน ส่วนไฮโดรเจนที่เกาะกับคาร์บอนมักไม่เขียนให้เห็น
+      เมื่ออ่านโครงสร้างอินทรีย์ ต้องตรวจให้คาร์บอนแต่ละอะตอมมี
+      <span class="ans-red">four bonds / พันธะ 4 แขน</span>
+      สารอินทรีย์ยังมักจำแนกตาม
+      <span class="ans-red">functional group / หมู่ฟังก์ชัน</span>
+      เช่น -OH, -CHO, -COOH และ -COO-
+    </p>
+  </div>
+
+  <div class="sol-section">
+    <div class="sol-head">3. Naming and Isomerism / การเรียกชื่อและไอโซเมอร์</div>
+    <p class="sol-en">
+      Systematic organic naming follows the
+      <span class="ans-red">IUPAC / ระบบไอยูแพก</span> system.
+      In a name, the root name shows the number of carbon atoms, while the
+      <span class="ans-red">suffix / คำลงท้าย</span>
+      shows the compound family or the main functional group.
+      Compounds with the same molecular formula but different structures are called
+      <span class="ans-red">isomer / ไอโซเมอร์</span>.
+    </p>
+    <p class="sol-th">
+      การเรียกชื่อสารอินทรีย์อย่างเป็นระบบใช้ระบบ
+      <span class="ans-red">IUPAC / ระบบไอยูแพก</span>
+      ในชื่อสาร ชื่อรากบอกจำนวนอะตอมคาร์บอน ส่วน
+      <span class="ans-red">suffix / คำลงท้าย</span>
+      บอกตระกูลของสารหรือหมู่ฟังก์ชันหลัก
+      สารที่มีสูตรโมเลกุลเหมือนกันแต่มีโครงสร้างต่างกันเรียกว่า
+      <span class="ans-red">isomer / ไอโซเมอร์</span>
+    </p>
+  </div>
+
+  <div class="sol-section">
+    <div class="sol-head">4. Physical Properties / สมบัติทางกายภาพ</div>
+    <p class="sol-en">
+      Boiling point, melting point, and solubility depend on molecular size, molecular shape, and
+      <span class="ans-red">intermolecular forces / แรงยึดเหนี่ยวระหว่างโมเลกุล</span>.
+      Molecules that can form
+      <span class="ans-red">hydrogen bonding / พันธะไฮโดรเจน</span>
+      usually have higher boiling points than molecules of similar size.
+      For isomers with the same molecular formula, more
+      <span class="ans-red">branching / การแตกกิ่ง</span>
+      usually lowers the boiling point because the surface area becomes smaller.
+    </p>
+    <p class="sol-th">
+      จุดเดือด จุดหลอมเหลว และการละลายน้ำ ขึ้นอยู่กับขนาดโมเลกุล รูปร่างโมเลกุล และ
+      <span class="ans-red">intermolecular forces / แรงยึดเหนี่ยวระหว่างโมเลกุล</span>
+      สารที่เกิด
+      <span class="ans-red">hydrogen bonding / พันธะไฮโดรเจน</span>
+      ได้ มักมีจุดเดือดสูงกว่าสารที่มีขนาดใกล้เคียงกัน
+      สำหรับไอโซเมอร์ที่มีสูตรโมเลกุลเหมือนกัน เมื่อมี
+      <span class="ans-red">branching / การแตกกิ่ง</span>
+      มากขึ้น จุดเดือดมักลดลง เพราะพื้นที่ผิวสัมผัสลดลง
+    </p>
+  </div>
+
+  <div class="sol-section">
+    <div class="sol-head">5. Hydrocarbon Types / ประเภทของไฮโดรคาร์บอน</div>
+    <p class="sol-en">
+      An <span class="ans-red">alkane / แอลเคน</span>
+      is a saturated hydrocarbon with only single bonds between carbon atoms.
+      An <span class="ans-red">alkene / แอลคีน</span>
+      is an unsaturated hydrocarbon with at least one carbon-carbon double bond.
+      An <span class="ans-red">alkyne / แอลไคน์</span>
+      is an unsaturated hydrocarbon with at least one carbon-carbon triple bond.
+    </p>
+    <p class="sol-th">
+      <span class="ans-red">alkane / แอลเคน</span>
+      เป็นไฮโดรคาร์บอนอิ่มตัวที่มีเฉพาะพันธะเดี่ยวระหว่างคาร์บอน
+      <span class="ans-red">alkene / แอลคีน</span>
+      เป็นไฮโดรคาร์บอนไม่อิ่มตัวที่มีพันธะคู่ระหว่างคาร์บอนอย่างน้อย 1 ตำแหน่ง
+      ส่วน <span class="ans-red">alkyne / แอลไคน์</span>
+      เป็นไฮโดรคาร์บอนไม่อิ่มตัวที่มีพันธะสามระหว่างคาร์บอนอย่างน้อย 1 ตำแหน่ง
+    </p>
+  </div>
+
+  <div class="sol-section">
+    <div class="sol-head">6. Hydrocarbon Reactions / ปฏิกิริยาของไฮโดรคาร์บอน</div>
+    <p class="sol-en">
+      Alkanes mainly undergo
+      <span class="ans-red">substitution reaction / ปฏิกิริยาการแทนที่</span>
+      and usually require UV light when reacting with bromine.
+      Alkenes and alkynes mainly undergo
+      <span class="ans-red">addition reaction / ปฏิกิริยาการเติม</span>
+      with bromine, so the bromine solution is decolorized.
+      Benzene is more stable because of
+      <span class="ans-red">resonance / รีโซแนนซ์</span>,
+      so it does not easily undergo addition under normal conditions.
+    </p>
+    <p class="sol-th">
+      แอลเคนมักเกิด
+      <span class="ans-red">substitution reaction / ปฏิกิริยาการแทนที่</span>
+      และโดยทั่วไปต้องใช้แสง UV เมื่อต้องการให้ทำปฏิกิริยากับโบรมีน
+      แอลคีนและแอลไคน์มักเกิด
+      <span class="ans-red">addition reaction / ปฏิกิริยาการเติม</span>
+      กับโบรมีน ทำให้สารละลายโบรมีนฟอกสี
+      ส่วนเบนซีนมีความเสถียรมากขึ้นเนื่องจาก
+      <span class="ans-red">resonance / รีโซแนนซ์</span>
+      จึงไม่เกิดปฏิกิริยาเติมได้ง่ายภายใต้สภาวะปกติ
+    </p>
+  </div>
+</div>
+  </article>
+
+</section>  <script>
+    const body = document.body;
+    let questionsPerPage = 2;
+    let currentMode = "exam";
+    let hintsVisible = false;
+
+    function setStatus(text) {
+      const el = document.getElementById("statusText");
+      if (el) el.textContent = text;
+    }
+
+    function askQuestionsPerPage(defaultValue = questionsPerPage) {
+      const input = prompt(
+        "ต้องการจัดกี่ข้อใน 1 หน้า A4?\\nใส่เลข 1, 2, 3 หรือ 4\\n\\nแนะนำ: ข้อเขียนยาวใช้ 1-2 ข้อต่อหน้า",
+        String(defaultValue)
+      );
+
+      if (input === null) return null;
+
+      let n = parseInt(input, 10);
+      if (!Number.isFinite(n)) n = defaultValue;
+      if (n < 1) n = 1;
+      if (n > 4) n = 4;
+      return n;
+    }
+
+    function getQuestionTemplates() {
+      return Array.from(document.querySelectorAll("#questionBank > article.question"));
+    }
+
+    function renumberQuestionNode(q, number) {
+      const num = q.querySelector(".q-number");
+      if (num) num.textContent = number;
+    }
+
+    function clearPrintArea() {
+      const printArea = document.getElementById("printArea");
+      printArea.innerHTML = "";
+      return printArea;
+    }
+
+    function setModeClass(mode) {
+      body.classList.remove("mode-exam", "mode-key", "mode-solution", "mode-hint");
+      body.classList.add("mode-" + mode);
+      if (hintsVisible && mode !== "key") body.classList.add("mode-hint");
+    }
+
+    function buildExamPages(perPage = questionsPerPage, mode = currentMode) {
+      questionsPerPage = perPage;
+      currentMode = mode;
+      setModeClass(mode);
+
+      document.documentElement.style.setProperty("--per-page", String(perPage));
+
+      const printArea = clearPrintArea();
+      const sourceQuestions = getQuestionTemplates();
+
+      let page = null;
+      let content = null;
+
+      sourceQuestions.forEach((source, index) => {
+        if (index % perPage === 0) {
+         page = document.createElement("section");
+page.className = "sheet";
+
+if (index === 0) {
+  const note = document.createElement("div");
+  note.className = "exam-note";
+  note.contentEditable = "true";
+  note.innerHTML = "คำชี้แจง: จงแสดงวิธีทำอย่างละเอียด พร้อมเขียนคำตอบสุดท้ายให้ชัดเจน";
+  page.appendChild(note);
+}
+
+content = document.createElement("section");
+content.className = "sheet-content";
+page.appendChild(content);
+printArea.appendChild(page);
+        }
+
+        const q = source.cloneNode(true);
+        renumberQuestionNode(q, index + 1);
+        content.appendChild(q);
+      });
+
+      if (mode === "key" || mode === "solution") {
+        buildAnswerKeyPage(printArea, sourceQuestions);
+      }
+
+      setStatus(
+        mode === "exam"
+          ? `โหมดปัจจุบัน: ข้อสอบเขียนแสดงวิธีทำ — ${perPage} ข้อต่อหน้า`
+          : mode === "key"
+            ? `โหมดปัจจุบัน: ข้อสอบพร้อมเฉลยสั้น — ${perPage} ข้อต่อหน้า`
+            : `โหมดปัจจุบัน: เฉลยละเอียด — ${perPage} ข้อต่อหน้า`
+      );
+
+      drawSmilesCanvases(printArea);
+      return typesetMath(printArea);
+    }
+
+    function buildAnswerKeyPage(printArea, sourceQuestions) {
+      const sheet = document.createElement("section");
+      sheet.className = "sheet answer-key-sheet";
+
+      const content = document.createElement("section");
+      content.className = "sheet-content answer-key";
+
+      const title = document.createElement("h2");
+      title.textContent = "เฉลยคำตอบสั้น / Answer Key";
+      content.appendChild(title);
+
+      const grid = document.createElement("div");
+      grid.className = "answer-grid";
+
+      sourceQuestions.forEach((q, index) => {
+        const cell = document.createElement("div");
+        cell.className = "answer-cell";
+        cell.innerHTML = `<b>${index + 1}.</b> ${q.dataset.answer || "-"}`;
+        grid.appendChild(cell);
+      });
+
+      content.appendChild(grid);
+      sheet.appendChild(content);
+      printArea.appendChild(sheet);
+    }
+
+    function rebuildFromPrompt() {
+      const n = askQuestionsPerPage(questionsPerPage);
+      if (n === null) return;
+      buildExamPages(n, currentMode);
+    }
+
+    async function preparePrint(mode) {
+      const n = askQuestionsPerPage(questionsPerPage);
+      if (n === null) return false;
+
+      await buildExamPages(n, mode);
+      await new Promise(resolve => setTimeout(resolve, 180));
+      return true;
+    }
+
+    async function printExam() {
+      const ok = await preparePrint("exam");
+      if (ok) window.print();
+    }
+
+    async function printWithKey() {
+      const ok = await preparePrint("key");
+      if (ok) window.print();
+    }
+
+    async function printSolution() {
+      const ok = await preparePrint("solution");
+      if (ok) window.print();
+    }
+
+    function toggleHints() {
+      hintsVisible = !hintsVisible;
+      if (hintsVisible) body.classList.add("mode-hint");
+      else body.classList.remove("mode-hint");
+      setStatus(hintsVisible ? "เปิดคำใบ้บนหน้าจอแล้ว" : "ปิดคำใบ้บนหน้าจอแล้ว");
+      buildExamPages(questionsPerPage, currentMode);
+    }
+
+    function typesetMath(root) {
+      if (window.MathJax && MathJax.typesetPromise) {
+        try {
+          if (MathJax.typesetClear) MathJax.typesetClear([root]);
+          return MathJax.typesetPromise([root]).catch(err => {
+            console.warn("MathJax error:", err);
+          });
+        } catch (err) {
+          console.warn("MathJax setup error:", err);
+          return Promise.resolve();
+        }
+      }
+      return Promise.resolve();
+    }
+
+    function drawSmilesCanvases(root = document) {
+      if (!window.SmilesDrawer) return;
+
+      root.querySelectorAll("canvas.molecule[data-smiles]").forEach(canvas => {
+        const smiles = canvas.dataset.smiles;
+        const drawer = new SmilesDrawer.Drawer({
+          width: canvas.width || 260,
+          height: canvas.height || 180
+        });
+
+        SmilesDrawer.parse(
+          smiles,
+          tree => drawer.draw(tree, canvas, "light", false),
+          err => console.warn("SmilesDrawer error:", err)
+        );
+      });
+    }
+
+    window.addEventListener("load", () => {
+      buildExamPages(questionsPerPage, "exam");
+    });
+
+    window.addEventListener("beforeprint", () => {
+      /*
+        ไม่คำนวณ height ก่อนพิมพ์แล้ว
+        เพราะหน้า A4 ถูกแบ่งด้วย .sheet อยู่แล้ว
+      */
+    });
+  </script>
+</body>
+</html>
