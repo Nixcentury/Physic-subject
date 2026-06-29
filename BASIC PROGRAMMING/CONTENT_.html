@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ล็อกเป้าสารอาหารด้วยตรรกะ Loop</title>
+
+ 
+<script src="https://cdn.tailwindcss.com/"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<script>
+    window.MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
+            processEscapes: true
+        },
+        chtml: {
+            scale: 1.05,
+            matchFontHeight: false
+        },
+        options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+    };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+<style>
+    body {
+        font-family: 'K2D', 'Prompt', 'Google Sans', 'Product Sans', system-ui, sans-serif;
+        background-color: #f3f4f6;
+        color: #1f2937;
+        line-height: 1.7;
+    }
+
+    .page-container {
+        max-width: 980px;
+        margin: 2rem auto;
+        background-color: #ffffff;
+        padding: 3.5rem 4.5rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.10), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        border-radius: 16px;
+    }
+
+    .section-header {
+        border-bottom: 3px solid #10b981;
+        padding-bottom: 0.5rem;
+        margin-top: 3rem;
+        margin-bottom: 1.5rem;
+        color: #047857;
+        font-size: 1.75rem;
+        font-weight: 800;
+    }
+
+    .topic-title {
+        color: #111827;
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .lang-th {
+        margin-bottom: 0.5rem;
+    }
+
+    .lang-en {
+        color: #4b5563;
+        font-size: 0.95em;
+        border-left: 3px solid #cbd5e1;
+        padding-left: 1rem;
+        margin-bottom: 1.5rem;
+        background-color: #f8fafc;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        border-radius: 0 8px 8px 0;
+    }
+
+    .highlight-box {
+        background-color: #ecfdf5;
+        border: 1px solid #a7f3d0;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        border-radius: 12px;
+    }
+
+    .warning-box {
+        background-color: #fffbeb;
+        border: 1px solid #fcd34d;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        border-radius: 12px;
+    }
+
+    .science-box {
+        background-color: #eff6ff;
+        border: 1px solid #bfdbfe;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        border-radius: 12px;
+    }
+
+    .python-box {
+        background-color: #f5f3ff;
+        border: 1px solid #ddd6fe;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        border-radius: 12px;
+    }
+
+    .math-box {
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+        text-align: center;
+        font-size: 1.12rem;
+        box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+        overflow-x: auto;
+    }
+
+    .figure-box {
+        margin: 1.5rem 0;
+        text-align: center;
+        background-color: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 1rem;
+        box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
+    }
+
+    .figure-caption {
+        font-size: 0.8rem;
+        color: #64748b;
+        margin-top: 0.75rem;
+    }
+
+    .mini-card {
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1rem;
+        box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
+    }
+
+    .lesson-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        margin: 1.25rem 0;
+        font-size: 0.95rem;
+    }
+
+    .lesson-table th {
+        background-color: #ecfdf5;
+        color: #047857;
+        font-weight: 800;
+        border: 1px solid #d1fae5;
+        padding: 0.75rem;
+        text-align: center;
+    }
+
+    .lesson-table td {
+        border: 1px solid #e5e7eb;
+        padding: 0.75rem;
+        vertical-align: top;
+    }
+
+    .code-card {
+        background: #0f172a;
+        color: #e5e7eb;
+        border-radius: 14px;
+        overflow: hidden;
+        margin: 1.25rem 0;
+        box-shadow: 0 10px 20px rgba(15, 23, 42, 0.18);
+        border: 1px solid #1e293b;
+    }
+
+    .code-header {
+        background: #111827;
+        color: #d1d5db;
+        padding: 0.75rem 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.9rem;
+        border-bottom: 1px solid #334155;
+    }
+
+    .copy-btn {
+        background: #10b981;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.35rem 0.7rem;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .copy-btn:hover {
+        background: #059669;
+        transform: translateY(-1px);
+    }
+
+    pre {
+        margin: 0;
+        padding: 1.25rem;
+        overflow-x: auto;
+        font-size: 0.95rem;
+        line-height: 1.65;
+    }
+
+    code {
+        font-family: Consolas, Monaco, 'Courier New', monospace;
+    }
+
+    .code-comment {
+        color: #94a3b8;
+    }
+
+    .output-box {
+        background: #f8fafc;
+        border: 1px dashed #94a3b8;
+        border-radius: 12px;
+        padding: 1rem;
+        margin: 1rem 0;
+        font-family: Consolas, Monaco, 'Courier New', monospace;
+        color: #334155;
+        white-space: pre-wrap;
+    }
+
+    .pill {
+        display: inline-block;
+        padding: 0.25rem 0.7rem;
+        border-radius: 999px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin: 0.15rem;
+    }
+
+    .pill-green {
+        background: #d1fae5;
+        color: #047857;
+    }
+
+    .pill-blue {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .pill-purple {
+        background: #ede9fe;
+        color: #6d28d9;
+    }
+
+    .pill-orange {
+        background: #ffedd5;
+        color: #c2410c;
+    }
+
+    .pill-red {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    .flow-step {
+        background: #ffffff;
+        border: 1px solid #d1fae5;
+        border-radius: 14px;
+        padding: 1rem;
+        text-align: center;
+        box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
+    }
+
+    .svg-stage {
+        width: 100%;
+        max-width: 820px;
+        margin: 0 auto;
+        display: block;
+        background:
+            radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.08), transparent 30%),
+            linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+        border-radius: 18px;
+    }
+
+    .physics-svg {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    svg text {
+        font-family: 'K2D', 'Prompt', sans-serif;
+    }
+
+    .svg-title {
+        fill: #0f172a;
+        font-size: 22px;
+        font-weight: 800;
+    }
+
+    .svg-label {
+        fill: #111827;
+        font-weight: 700;
+    }
+
+    .svg-small {
+        fill: #475569;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .svg-muted {
+        fill: #64748b;
+        font-size: 13px;
+    }
+
+    .svg-arrow {
+        stroke-width: 5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .svg-soft-green {
+        fill: #ecfdf5;
+        stroke: #a7f3d0;
+    }
+
+    .svg-soft-blue {
+        fill: #eff6ff;
+        stroke: #bfdbfe;
+    }
+
+    .svg-soft-purple {
+        fill: #f5f3ff;
+        stroke: #ddd6fe;
+    }
+
+    .svg-soft-yellow {
+        fill: #fffbeb;
+        stroke: #fde68a;
+    }
+
+    .svg-soft-red {
+        fill: #fef2f2;
+        stroke: #fecaca;
+    }
+
+    @media (max-width: 768px) {
+        .page-container {
+            margin: 0;
+            padding: 1.5rem;
+            border-radius: 0;
+        }
+
+        .section-header {
+            font-size: 1.45rem;
+        }
+
+        .lesson-table {
+            font-size: 0.85rem;
+        }
+
+        pre {
+            font-size: 0.82rem;
+        }
+    }
+</style>
+ 
+
+</head>
+
+<body>
+    <div class="page-container">
+
+ 
+    <div class="text-center mb-10">
+        <div class="inline-block px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 font-bold mb-4">
+            วิทยาศาสตร์บูรณาการวิทยาการคำนวณ
+            <span class="text-slate-500 font-medium">(Integrated Science & Computing Science)</span>
+        </div>
+
+        <h1 class="text-3xl md:text-4xl font-extrabold mb-3 text-gray-900">
+            🔬 ล็อกเป้าสารอาหารด้วยตรรกะ Loop
+            <br>
+            <span class="text-2xl md:text-3xl text-gray-500 font-semibold">
+                Nutrient Detection with Loop Logic
+            </span>
+        </h1>
+
+        <p class="text-slate-600 max-w-3xl mx-auto">
+            เรียนรู้การทดสอบสารอาหาร พร้อมเชื่อมโยงกับแนวคิดการวนซ้ำในภาษา Python
+            <br>
+            Learn nutrient testing and connect it with loop logic in Python.
+        </p>
+    </div>
+
+    <div class="highlight-box">
+        <div class="lang-th">
+            🇹🇭 <strong>แนวคิดหลัก:</strong> ในห้องแล็บ เรามักต้องทำงานซ้ำ ๆ เช่น ทดสอบหลายหลอด หยดสารหลายครั้ง หรือต้มจนกว่าสีจะเปลี่ยน งานแบบนี้เชื่อมกับแนวคิด <strong>Loop</strong> ในภาษา Python ได้อย่างดี
+        </div>
+        <div class="lang-en mb-0 border-none bg-transparent p-0">
+            🇬🇧 <strong>Main idea:</strong> In a laboratory, we often repeat tasks such as testing many samples, adding reagents repeatedly, or heating until a color changes. These tasks connect naturally with <strong>loops</strong> in Python.
+        </div>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-4 my-8">
+        <div class="mini-card">
+            <div class="text-3xl mb-2">🔬</div>
+            <div class="font-bold text-emerald-700">Science Concept</div>
+            <div class="text-sm text-slate-600 mt-2">
+                การทดสอบสารอาหาร<br>
+                Nutrient testing
+            </div>
+        </div>
+
+        <div class="mini-card">
+            <div class="text-3xl mb-2">🔁</div>
+            <div class="font-bold text-purple-700">Loop Logic</div>
+            <div class="text-sm text-slate-600 mt-2">
+                for loop และ while loop<br>
+                for loop and while loop
+            </div>
+        </div>
+
+        <div class="mini-card">
+            <div class="text-3xl mb-2">🤖</div>
+            <div class="font-bold text-blue-700">Mini Project</div>
+            <div class="text-sm text-slate-600 mt-2">
+                ระบบผู้ช่วยแล็บอัจฉริยะ<br>
+                Smart Lab Assistant
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Part 1 -->
+    <h2 class="section-header">
+        PART 1: อาหารและสารอาหาร
+        <span class="font-normal text-xl text-gray-500">(Food and Nutrients)</span>
+    </h2>
+
+    <div class="lang-th">
+        🇹🇭 <strong>ภาษาไทย:</strong> ก่อนจะทดสอบสารอาหาร เราต้องแยกให้ออกก่อนว่า <strong>อาหาร</strong> กับ <strong>สารอาหาร</strong> ไม่ใช่คำเดียวกัน
+    </div>
+    <div class="lang-en">
+        🇬🇧 <strong>English:</strong> Before testing nutrients, we must understand that <strong>food</strong> and <strong>nutrients</strong> are not exactly the same thing.
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-4 my-6">
+        <div class="mini-card border-blue-200">
+            <div class="text-2xl font-bold text-blue-700 mb-2">
+                🍱 อาหาร
+                <span class="text-base text-slate-500 font-normal">(Food)</span>
+            </div>
+            <div class="lang-th">
+                สิ่งที่เรากินเข้าไปแล้วปลอดภัย มีประโยชน์ และให้พลังงานหรือสารที่ร่างกายต้องการ
+            </div>
+            <div class="lang-en">
+                Something we eat that is safe, useful, and provides energy or substances needed by the body.
+            </div>
+            <div class="text-sm text-slate-700">
+                ตัวอย่าง / Examples:
+                <span class="pill pill-blue">ข้าว / rice</span>
+                <span class="pill pill-blue">นม / milk</span>
+                <span class="pill pill-blue">ไข่ / egg</span>
+                <span class="pill pill-blue">หมูปิ้ง / grilled pork</span>
+            </div>
+        </div>
+
+        <div class="mini-card border-emerald-200">
+            <div class="text-2xl font-bold text-emerald-700 mb-2">
+                🧬 สารอาหาร
+                <span class="text-base text-slate-500 font-normal">(Nutrients)</span>
+            </div>
+            <div class="lang-th">
+                องค์ประกอบทางเคมีในอาหารที่ร่างกายนำไปใช้จริง เช่น ใช้สร้างพลังงาน ซ่อมแซมร่างกาย และควบคุมการทำงานของระบบต่าง ๆ
+            </div>
+            <div class="lang-en">
+                Chemical substances in food that the body actually uses, such as for energy, growth, repair, and regulation.
+            </div>
+            <div class="text-sm text-slate-700">
+                6 หมู่ / 6 groups:
+                <span class="pill pill-green">carbohydrate</span>
+                <span class="pill pill-green">protein</span>
+                <span class="pill pill-green">lipid</span>
+                <span class="pill pill-green">vitamin</span>
+                <span class="pill pill-green">mineral</span>
+                <span class="pill pill-green">water</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="figure-box">
+        <svg class="physics-svg svg-stage" viewBox="0 0 820 300" role="img" aria-label="Food contains nutrients">
+            <defs>
+                <marker id="arrowFoodNutrient" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#10b981"></path>
+                </marker>
+            </defs>
+
+            <rect x="60" y="60" width="230" height="170" rx="22" class="svg-soft-blue"></rect>
+            <text x="175" y="105" text-anchor="middle" class="svg-title">Food</text>
+            <text x="175" y="145" text-anchor="middle" class="svg-label" font-size="30">🍚 🥛 🍳</text>
+            <text x="175" y="190" text-anchor="middle" class="svg-small">สิ่งที่เรากิน</text>
+            <text x="175" y="215" text-anchor="middle" class="svg-small">Things we eat</text>
+
+            <line x1="310" y1="145" x2="500" y2="145" stroke="#10b981" stroke-width="6" stroke-linecap="round" marker-end="url(#arrowFoodNutrient)"></line>
+            <text x="405" y="115" text-anchor="middle" class="svg-label" font-size="18" fill="#047857">contains</text>
+            <text x="405" y="182" text-anchor="middle" class="svg-small">ประกอบด้วย</text>
+
+            <rect x="530" y="45" width="230" height="200" rx="22" class="svg-soft-green"></rect>
+            <text x="645" y="88" text-anchor="middle" class="svg-title">Nutrients</text>
+            <text x="645" y="128" text-anchor="middle" class="svg-small">carbohydrate • protein</text>
+            <text x="645" y="155" text-anchor="middle" class="svg-small">lipid • vitamin</text>
+            <text x="645" y="182" text-anchor="middle" class="svg-small">mineral • water</text>
+            <text x="645" y="220" text-anchor="middle" class="svg-small">สารที่ร่างกายนำไปใช้จริง</text>
+        </svg>
+
+        <p class="figure-caption">
+            รูปที่ 1: อาหารคือสิ่งที่เรากิน ส่วนสารอาหารคือองค์ประกอบที่ร่างกายนำไปใช้จริง
+            (Food is what we eat, while nutrients are the substances the body uses.)
+        </p>
+    </div>
+
+
+    <!-- Part 2 -->
+    <h2 class="section-header">
+        PART 2: การทดสอบสารอาหารยอดฮิต
+        <span class="font-normal text-xl text-gray-500">(The 4 Classic Nutrient Tests)</span>
+    </h2>
+
+    <div class="lang-th">
+        🇹🇭 <strong>ภาษาไทย:</strong> การทดสอบสารอาหารใช้หลักการสังเกตการเปลี่ยนสีหรือการเปลี่ยนแปลงของตัวอย่างอาหาร เมื่อเติมสารทดสอบหรือทำตามวิธีที่กำหนด
+    </div>
+    <div class="lang-en">
+        🇬🇧 <strong>English:</strong> Nutrient tests are based on observing color changes or visible changes in food samples after adding test reagents or following a specific method.
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="lesson-table">
+            <thead>
+                <tr>
+                    <th>สารอาหาร<br><span class="text-xs font-normal text-slate-500">Nutrient</span></th>
+                    <th>วิธีทดสอบ<br><span class="text-xs font-normal text-slate-500">Test method</span></th>
+                    <th>ผลบวก<br><span class="text-xs font-normal text-slate-500">Positive result</span></th>
+                    <th>ความหมาย<br><span class="text-xs font-normal text-slate-500">Meaning</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        แป้ง<br>
+                        <span class="text-sm text-slate-500">Starch</span>
+                    </td>
+                    <td>
+                        หยดสารละลายไอโอดีน<br>
+                        <span class="text-sm text-slate-500">Add iodine solution</span>
+                    </td>
+                    <td>
+                        สีม่วงดำ / น้ำเงินดำ<br>
+                        <span class="text-sm text-slate-500">Blue-black color</span>
+                    </td>
+                    <td>
+                        มีแป้ง<br>
+                        <span class="text-sm text-slate-500">Starch is present</span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        น้ำตาลรีดิวซ์<br>
+                        <span class="text-sm text-slate-500">Reducing sugar</span>
+                    </td>
+                    <td>
+                        เติมเบเนดิกต์แล้วต้ม<br>
+                        <span class="text-sm text-slate-500">Add Benedict's solution and heat</span>
+                    </td>
+                    <td>
+                        ตะกอนสีแดงอิฐ<br>
+                        <span class="text-sm text-slate-500">Brick-red precipitate</span>
+                    </td>
+                    <td>
+                        มีน้ำตาลรีดิวซ์<br>
+                        <span class="text-sm text-slate-500">Reducing sugar is present</span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        โปรตีน<br>
+                        <span class="text-sm text-slate-500">Protein</span>
+                    </td>
+                    <td>
+                        เติมสารละลายไบยูเรต<br>
+                        <span class="text-sm text-slate-500">Add Biuret reagent</span>
+                    </td>
+                    <td>
+                        สีม่วง / ชมพูม่วง<br>
+                        <span class="text-sm text-slate-500">Purple or violet color</span>
+                    </td>
+                    <td>
+                        มีโปรตีน<br>
+                        <span class="text-sm text-slate-500">Protein is present</span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        ไขมัน<br>
+                        <span class="text-sm text-slate-500">Lipid / Fat</span>
+                    </td>
+                    <td>
+                        ถูกับกระดาษขาว<br>
+                        <span class="text-sm text-slate-500">Rub on white paper</span>
+                    </td>
+                    <td>
+                        กระดาษโปร่งแสง<br>
+                        <span class="text-sm text-slate-500">Translucent spot</span>
+                    </td>
+                    <td>
+                        มีไขมัน<br>
+                        <span class="text-sm text-slate-500">Lipid is present</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="grid md:grid-cols-4 gap-4 my-6">
+        <div class="mini-card text-center">
+            <div class="text-4xl mb-2">🟣</div>
+            <div class="font-bold text-purple-700">Iodine Test</div>
+            <div class="text-sm text-slate-600">ม่วงดำ → Starch</div>
+        </div>
+
+        <div class="mini-card text-center">
+            <div class="text-4xl mb-2">🧱</div>
+            <div class="font-bold text-red-700">Benedict's Test</div>
+            <div class="text-sm text-slate-600">แดงอิฐ → Sugar</div>
+        </div>
+
+        <div class="mini-card text-center">
+            <div class="text-4xl mb-2">💜</div>
+            <div class="font-bold text-violet-700">Biuret Test</div>
+            <div class="text-sm text-slate-600">ม่วง → Protein</div>
+        </div>
+
+        <div class="mini-card text-center">
+            <div class="text-4xl mb-2">📄</div>
+            <div class="font-bold text-orange-700">Paper Test</div>
+            <div class="text-sm text-slate-600">โปร่งแสง → Lipid</div>
+        </div>
+    </div>
+
+
+    <!-- Part 3 -->
+    <h2 class="section-header">
+        PART 3: Loop คืออะไร?
+        <span class="font-normal text-xl text-gray-500">(What Is a Loop?)</span>
+    </h2>
+
+    <div class="lang-th">
+        🇹🇭 <strong>ภาษาไทย:</strong> Loop คือคำสั่งที่ทำให้คอมพิวเตอร์ทำงานเดิมซ้ำ ๆ หลายรอบ โดยที่เราไม่ต้องเขียนคำสั่งซ้ำเองทุกบรรทัด
+    </div>
+    <div class="lang-en">
+        🇬🇧 <strong>English:</strong> A loop is a command that allows a computer to repeat the same task many times without writing the same instruction again and again.
+    </div>
+
+    <div class="figure-box">
+        <svg class="physics-svg svg-stage" viewBox="0 0 820 330" role="img" aria-label="Loop logic in science laboratory">
+            <defs>
+                <marker id="arrowLoop" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#7c3aed"></path>
+                </marker>
+            </defs>
+
+            <rect x="60" y="55" width="180" height="110" rx="18" class="svg-soft-blue"></rect>
+            <text x="150" y="95" text-anchor="middle" class="svg-label" font-size="18">Sample 1</text>
+            <text x="150" y="128" text-anchor="middle" class="svg-small">หยดสารทดสอบ</text>
+            <text x="150" y="150" text-anchor="middle" class="svg-small">Add reagent</text>
+
+            <rect x="320" y="55" width="180" height="110" rx="18" class="svg-soft-blue"></rect>
+            <text x="410" y="95" text-anchor="middle" class="svg-label" font-size="18">Sample 2</text>
+            <text x="410" y="128" text-anchor="middle" class="svg-small">หยดสารทดสอบ</text>
+            <text x="410" y="150" text-anchor="middle" class="svg-small">Add reagent</text>
+
+            <rect x="580" y="55" width="180" height="110" rx="18" class="svg-soft-blue"></rect>
+            <text x="670" y="95" text-anchor="middle" class="svg-label" font-size="18">Sample 3</text>
+            <text x="670" y="128" text-anchor="middle" class="svg-small">หยดสารทดสอบ</text>
+            <text x="670" y="150" text-anchor="middle" class="svg-small">Add reagent</text>
+
+            <line x1="250" y1="110" x2="305" y2="110" stroke="#7c3aed" stroke-width="5" stroke-linecap="round" marker-end="url(#arrowLoop)"></line>
+            <line x1="510" y1="110" x2="565" y2="110" stroke="#7c3aed" stroke-width="5" stroke-linecap="round" marker-end="url(#arrowLoop)"></line>
+
+            <rect x="135" y="220" width="550" height="70" rx="18" class="svg-soft-purple"></rect>
+            <text x="410" y="250" text-anchor="middle" class="svg-title">Loop = Repeat the same task</text>
+            <text x="410" y="275" text-anchor="middle" class="svg-small">วนซ้ำงานเดิม เช่น ทดสอบตัวอย่างอาหารหลายหลอด</text>
+        </svg>
+
+        <p class="figure-caption">
+            รูปที่ 2: Loop ช่วยให้คอมพิวเตอร์ทำงานซ้ำ ๆ เช่น ทดสอบตัวอย่างอาหารหลายหลอด
+            (A loop helps a computer repeat tasks such as testing many food samples.)
+        </p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-4 my-6">
+        <div class="python-box">
+            <div class="text-xl font-bold text-purple-700 mb-2">
+                1. for loop
+                <span class="text-base text-slate-500 font-normal">(known number of rounds)</span>
+            </div>
+            <div class="lang-th">
+                ใช้เมื่อเรารู้จำนวนรอบชัดเจน เช่น ทดสอบ 5 หลอด หรือพิมพ์สูตรคูณ 12 บรรทัด
+            </div>
+            <div class="lang-en mb-0">
+                Use when we know exactly how many times to repeat, such as testing 5 tubes or printing 12 multiplication lines.
+            </div>
+        </div>
+
+        <div class="python-box">
+            <div class="text-xl font-bold text-purple-700 mb-2">
+                2. while loop
+                <span class="text-base text-slate-500 font-normal">(repeat until condition changes)</span>
+            </div>
+            <div class="lang-th">
+                ใช้เมื่อยังไม่รู้จำนวนรอบ แต่รู้เงื่อนไขหยุด เช่น ต้มไปเรื่อย ๆ จนกว่าสีจะเปลี่ยน
+            </div>
+            <div class="lang-en mb-0">
+                Use when we do not know the number of repetitions, but we know the stopping condition, such as heating until the color changes.
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Part 4 -->
+    <h2 class="section-header">
+        PART 4: for loop — สายทำตามสั่งเป๊ะ ๆ
+        <span class="font-normal text-xl text-gray-500">(Repeating a Known Number of Times)</span>
+    </h2>
+
+    <div class="lang-th">
+        🇹🇭 <strong>ภาษาไทย:</strong> for loop เหมาะกับงานที่รู้จำนวนรอบแน่นอน เช่น มีหลอดทดลอง 5 หลอด ก็วนทำงาน 5 รอบ
+    </div>
+    <div class="lang-en">
+        🇬🇧 <strong>English:</strong> A for loop is suitable when the number of repetitions is known. For example, if there are 5 test tubes, repeat the task 5 times.
+    </div>
+
+    <div class="code-card">
+        <div class="code-header">
+            <span>Python Example: Drop iodine into 5 test tubes</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code>for i in range(1, 6):
+print("หยดสารละลายไอโอดีนลงในหลอดที่", i)</code></pre>
+    </div>
+
+    <div class="output-box">ผลลัพธ์ที่คาดหวัง / Expected output:
+ 
+
+หยดสารละลายไอโอดีนลงในหลอดที่ 1
+หยดสารละลายไอโอดีนลงในหลอดที่ 2
+หยดสารละลายไอโอดีนลงในหลอดที่ 3
+หยดสารละลายไอโอดีนลงในหลอดที่ 4
+หยดสารละลายไอโอดีนลงในหลอดที่ 5</div>
+
+ 
+    <div class="science-box">
+        <div class="lang-th">
+            🔬 <strong>เชื่อมกับวิทยาศาสตร์:</strong> ถ้าเราต้องทดสอบแป้งในตัวอย่างอาหาร 5 หลอด เราสามารถให้หุ่นยนต์หรือโปรแกรมจำลองทำงานซ้ำด้วย for loop ได้
+        </div>
+        <div class="lang-en mb-0 border-none bg-transparent p-0">
+            🔬 <strong>Science connection:</strong> If we need to test starch in 5 food samples, a robot or simulation program can repeat the same task using a for loop.
+        </div>
+    </div>
+
+    <div class="warning-box">
+        <div class="lang-th">
+            ⚠️ <strong>จุดที่ต้องจำ:</strong> ใน Python คำสั่ง <code>range(1, 6)</code> จะให้ค่า \(1,2,3,4,5\) แต่จะหยุดก่อนถึง 6
+        </div>
+        <div class="lang-en mb-0 border-none bg-transparent p-0">
+            ⚠️ <strong>Remember:</strong> In Python, <code>range(1, 6)</code> gives \(1,2,3,4,5\), but stops before 6.
+        </div>
+    </div>
+
+
+    <!-- Part 5 -->
+    <h2 class="section-header">
+        PART 5: while loop — ทำจนกว่าจะบรรลุเป้า
+        <span class="font-normal text-xl text-gray-500">(Repeat Until a Condition Is Met)</span>
+    </h2>
+
+    <div class="lang-th">
+        🇹🇭 <strong>ภาษาไทย:</strong> while loop เหมาะกับสถานการณ์ที่เราไม่รู้จำนวนรอบล่วงหน้า แต่รู้ว่าเมื่อใดควรหยุด เช่น ต้มสารละลายเบเนดิกต์จนกว่าจะเห็นตะกอนสีแดงอิฐ
+    </div>
+    <div class="lang-en">
+        🇬🇧 <strong>English:</strong> A while loop is useful when we do not know the number of repetitions in advance, but we know when to stop, such as heating Benedict's solution until a brick-red precipitate appears.
+    </div>
+
+    <div class="code-card">
+        <div class="code-header">
+            <span>Python Example: Heat until brick-red color appears</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code>color = "สีฟ้า"
+ 
+
+while color != "แดงอิฐ":
+print("กำลังต้มสารละลายเบเนดิกต์ต่อไป...")
+color = input("ตอนนี้สีอะไร? : ")
+
+print("พบตะกอนสีแดงอิฐ → มีน้ำตาลรีดิวซ์")</code></pre> </div>
+
+ 
+    <div class="output-box">ตัวอย่างการทำงาน / Example run:
+ 
+
+กำลังต้มสารละลายเบเนดิกต์ต่อไป...
+ตอนนี้สีอะไร? : สีฟ้า
+กำลังต้มสารละลายเบเนดิกต์ต่อไป...
+ตอนนี้สีอะไร? : เขียว
+กำลังต้มสารละลายเบเนดิกต์ต่อไป...
+ตอนนี้สีอะไร? : แดงอิฐ
+พบตะกอนสีแดงอิฐ → มีน้ำตาลรีดิวซ์</div>
+
+ 
+    <div class="warning-box">
+        <div class="lang-th">
+            ⚠️ <strong>ระวัง Infinite Loop:</strong> ถ้าใน while loop ไม่มีคำสั่งที่ทำให้เงื่อนไขเปลี่ยน โปรแกรมอาจวนซ้ำไม่หยุด ดังนั้นในตัวอย่างนี้จึงต้องมี <code>color = input(...)</code> อยู่ใน loop เพื่อให้ผู้ใช้กรอกสีใหม่
+        </div>
+        <div class="lang-en mb-0 border-none bg-transparent p-0">
+            ⚠️ <strong>Beware of an infinite loop:</strong> If nothing inside the while loop changes the condition, the program may run forever. That is why this example includes <code>color = input(...)</code> inside the loop.
+        </div>
+    </div>
+
+
+    <!-- Part 6 -->
+    <h2 class="section-header">
+        PART 6: Mini Project 1 — บอทสูตรคูณสั่งได้
+        <span class="font-normal text-xl text-gray-500">(The Multiplication Master)</span>
+    </h2>
+
+    <div class="lang-th">
+        🇹🇭 <strong>โจทย์:</strong> รับค่าแม่สูตรคูณจากผู้ใช้ แล้วให้บอทคำนวณสูตรคูณตั้งแต่ \(1\) ถึง \(12\)
+    </div>
+    <div class="lang-en">
+        🇬🇧 <strong>Task:</strong> Get a multiplication table number from the user and print the table from \(1\) to \(12\).
+    </div>
+
+    <div class="code-card">
+        <div class="code-header">
+            <span>Mini Project 1: Multiplication Master</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code># รับค่าแม่สูตรคูณจากผู้ใช้
+ 
+
+n = int(input("อยากได้สูตรคูณแม่ไหน? : "))
+
+print("--- สูตรคูณแม่", n, "---")
+
+# for loop วนรอบที่ 1 ถึง 12
+
+for i in range(1, 13):
+result = n * i
+print(n, "x", i, "=", result)</code></pre> </div>
+
+ 
+    <div class="python-box">
+        <div class="font-bold text-purple-700 mb-2">
+            สิ่งที่ได้เรียน / What students learn
+        </div>
+        <ul class="list-disc pl-6 text-slate-700">
+            <li><code>input()</code> รับข้อมูลจากผู้ใช้ / receives input from the user</li>
+            <li><code>int()</code> แปลงข้อความเป็นจำนวนเต็ม / converts text into an integer</li>
+            <li><code>range(1, 13)</code> ทำให้ loop วนตั้งแต่ 1 ถึง 12 / loops from 1 to 12</li>
+            <li><code>for loop</code> ใช้เมื่อต้องการจำนวนรอบแน่นอน / used for a known number of repetitions</li>
+        </ul>
+    </div>
+
+
+    <!-- Part 7 -->
+    <h2 class="section-header">
+        PART 7: Mini Project 2 — ระบบผู้ช่วยแล็บอัจฉริยะ
+        <span class="font-normal text-xl text-gray-500">(Smart Lab Assistant)</span>
+    </h2>
+
+    <div class="lang-th">
+        🇹🇭 <strong>โจทย์:</strong> ให้โปรแกรมวนทดสอบอาหารหลายชนิด แล้วรับผลที่สังเกตได้ เช่น ม่วงดำ แดงอิฐ ม่วง หรือโปร่งแสง จากนั้นให้โปรแกรมวิเคราะห์ว่าสารอาหารคืออะไร
+    </div>
+    <div class="lang-en">
+        🇬🇧 <strong>Task:</strong> Let the program test several food samples. It receives the observed result, such as blue-black, brick-red, purple, or translucent, and then identifies the nutrient.
+    </div>
+
+    <div class="figure-box">
+        <svg class="physics-svg svg-stage" viewBox="0 0 820 360" role="img" aria-label="Smart Lab Assistant logic">
+            <defs>
+                <marker id="arrowSmartLab" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#10b981"></path>
+                </marker>
+            </defs>
+
+            <rect x="55" y="55" width="160" height="90" rx="18" class="svg-soft-blue"></rect>
+            <text x="135" y="92" text-anchor="middle" class="svg-label" font-size="17">Food list</text>
+            <text x="135" y="122" text-anchor="middle" class="svg-small">รายการอาหาร</text>
+
+            <line x1="225" y1="100" x2="300" y2="100" stroke="#10b981" stroke-width="5" stroke-linecap="round" marker-end="url(#arrowSmartLab)"></line>
+
+            <rect x="315" y="55" width="190" height="90" rx="18" class="svg-soft-green"></rect>
+            <text x="410" y="92" text-anchor="middle" class="svg-label" font-size="17">for loop</text>
+            <text x="410" y="122" text-anchor="middle" class="svg-small">วนทีละอาหาร</text>
+
+            <line x1="515" y1="100" x2="590" y2="100" stroke="#10b981" stroke-width="5" stroke-linecap="round" marker-end="url(#arrowSmartLab)"></line>
+
+            <rect x="605" y="55" width="160" height="90" rx="18" class="svg-soft-purple"></rect>
+            <text x="685" y="92" text-anchor="middle" class="svg-label" font-size="17">Input result</text>
+            <text x="685" y="122" text-anchor="middle" class="svg-small">รับผลสี</text>
+
+            <line x1="685" y1="155" x2="685" y2="210" stroke="#10b981" stroke-width="5" stroke-linecap="round" marker-end="url(#arrowSmartLab)"></line>
+
+            <rect x="500" y="225" width="370" height="90" rx="18" transform="translate(-95 0)" class="svg-soft-yellow"></rect>
+            <text x="590" y="262" text-anchor="middle" class="svg-label" font-size="17">if - elif - else</text>
+            <text x="590" y="292" text-anchor="middle" class="svg-small">ตัดสินใจว่าสารอาหารคืออะไร</text>
+
+            <line x1="390" y1="270" x2="290" y2="270" stroke="#10b981" stroke-width="5" stroke-linecap="round" marker-end="url(#arrowSmartLab)"></line>
+
+            <rect x="75" y="225" width="190" height="90" rx="18" class="svg-soft-red"></rect>
+            <text x="170" y="262" text-anchor="middle" class="svg-label" font-size="17">Answer</text>
+            <text x="170" y="292" text-anchor="middle" class="svg-small">รายงานผลวิเคราะห์</text>
+        </svg>
+
+        <p class="figure-caption">
+            รูปที่ 3: โครงสร้างตรรกะของระบบผู้ช่วยแล็บอัจฉริยะ
+            (Logic structure of the Smart Lab Assistant.)
+        </p>
+    </div>
+
+    <div class="code-card">
+        <div class="code-header">
+            <span>Mini Project 2: Smart Lab Assistant</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code>foods = ["ขนมปัง", "น้ำหวาน", "น้ำมันพืช", "เนื้อไก่"]
+ 
+
+for food in foods:
+print("\n--- ทดสอบสารอาหารใน:", food, "---")
+result = input("ใส่ผลที่สังเกตได้ (ม่วงดำ/แดงอิฐ/ม่วง/โปร่งแสง): ")
+
+ 
+if result == "ม่วงดำ":
+    print("ผลวิเคราะห์: มีแป้ง (Starch)")
+elif result == "แดงอิฐ":
+    print("ผลวิเคราะห์: มีน้ำตาลรีดิวซ์ (Reducing sugar)")
+elif result == "ม่วง":
+    print("ผลวิเคราะห์: มีโปรตีน (Protein)")
+elif result == "โปร่งแสง":
+    print("ผลวิเคราะห์: มีไขมัน (Lipid)")
+else:
+    print("ผลวิเคราะห์: ไม่พบผลทดสอบที่รู้จัก")
+ 
+
+print("\n--- เสร็จสิ้นการทดสอบทุกรายการ ---")</code></pre> </div>
+
+ 
+    <div class="output-box">ตัวอย่างการทำงาน / Example run:
+ 
+
+--- ทดสอบสารอาหารใน: ขนมปัง ---
+ใส่ผลที่สังเกตได้ (ม่วงดำ/แดงอิฐ/ม่วง/โปร่งแสง): ม่วงดำ
+ผลวิเคราะห์: มีแป้ง (Starch)
+
+--- ทดสอบสารอาหารใน: น้ำหวาน ---
+ใส่ผลที่สังเกตได้ (ม่วงดำ/แดงอิฐ/ม่วง/โปร่งแสง): แดงอิฐ
+ผลวิเคราะห์: มีน้ำตาลรีดิวซ์ (Reducing sugar)
+
+--- ทดสอบสารอาหารใน: น้ำมันพืช ---
+ใส่ผลที่สังเกตได้ (ม่วงดำ/แดงอิฐ/ม่วง/โปร่งแสง): โปร่งแสง
+ผลวิเคราะห์: มีไขมัน (Lipid)
+
+--- เสร็จสิ้นการทดสอบทุกรายการ ---</div>
+
+ 
+    <div class="python-box">
+        <div class="font-bold text-purple-700 mb-2">
+            สิ่งที่ได้เรียน / What students learn
+        </div>
+        <ul class="list-disc pl-6 text-slate-700">
+            <li><code>list</code> ใช้เก็บรายการอาหารหลายชนิด / stores several food samples</li>
+            <li><code>for food in foods</code> วนทดสอบอาหารทีละชนิด / tests each food one by one</li>
+            <li><code>input()</code> รับผลที่นักเรียนสังเกตได้ / receives the observed result</li>
+            <li><code>if-elif-else</code> ใช้ตัดสินใจจากเงื่อนไข / makes decisions based on conditions</li>
+        </ul>
+    </div>
+
+
+    <!-- Part 8 -->
+    <h2 class="section-header">
+        PART 8: สรุปจุดเชื่อมโยง
+        <span class="font-normal text-xl text-gray-500">(Science + Python Wrap-up)</span>
+    </h2>
+
+    <div class="overflow-x-auto">
+        <table class="lesson-table">
+            <thead>
+                <tr>
+                    <th>สถานการณ์ในแล็บ<br><span class="text-xs font-normal text-slate-500">Lab situation</span></th>
+                    <th>ตรรกะ Python ที่ใช้<br><span class="text-xs font-normal text-slate-500">Python logic</span></th>
+                    <th>เหตุผล<br><span class="text-xs font-normal text-slate-500">Reason</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        ทดสอบอาหาร 10 ชนิด<br>
+                        <span class="text-sm text-slate-500">Test 10 food samples</span>
+                    </td>
+                    <td>
+                        <code>for loop</code>
+                    </td>
+                    <td>
+                        รู้จำนวนรอบแน่นอน<br>
+                        <span class="text-sm text-slate-500">The number of repetitions is known</span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        ต้มสารละลายจนกว่าสีจะเปลี่ยน<br>
+                        <span class="text-sm text-slate-500">Heat until the color changes</span>
+                    </td>
+                    <td>
+                        <code>while loop</code>
+                    </td>
+                    <td>
+                        ยังไม่รู้ว่าต้องใช้กี่รอบ แต่รู้เงื่อนไขหยุด<br>
+                        <span class="text-sm text-slate-500">The number of repetitions is unknown, but the stopping condition is known</span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        สีเปลี่ยนเป็นม่วงดำ แดงอิฐ ม่วง หรือโปร่งแสง<br>
+                        <span class="text-sm text-slate-500">The result becomes blue-black, brick-red, purple, or translucent</span>
+                    </td>
+                    <td>
+                        <code>if-elif-else</code>
+                    </td>
+                    <td>
+                        ใช้เลือกคำตอบตามผลที่สังเกตได้<br>
+                        <span class="text-sm text-slate-500">Used to choose an answer based on the observed result</span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        มีรายการอาหารหลายชนิด<br>
+                        <span class="text-sm text-slate-500">There are many food samples</span>
+                    </td>
+                    <td>
+                        <code>list</code>
+                    </td>
+                    <td>
+                        ใช้เก็บข้อมูลหลายรายการในตัวแปรเดียว<br>
+                        <span class="text-sm text-slate-500">Stores multiple items in one variable</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="highlight-box">
+        <div class="lang-th">
+            🇹🇭 <strong>สรุปจำสั้น:</strong> ถ้ารู้จำนวนรอบ ใช้ <code>for loop</code> แต่ถ้าต้องทำไปเรื่อย ๆ จนกว่าเงื่อนไขจะสำเร็จ ใช้ <code>while loop</code> และถ้าต้องตัดสินใจจากผลที่สังเกตได้ ใช้ <code>if-elif-else</code>
+        </div>
+        <div class="lang-en mb-0 border-none bg-transparent p-0">
+            🇬🇧 <strong>Short summary:</strong> Use a <code>for loop</code> when the number of repetitions is known. Use a <code>while loop</code> when the task must continue until a condition is met. Use <code>if-elif-else</code> to make decisions based on observed results.
+        </div>
+    </div>
+
+    <div class="science-box">
+        <div class="lang-th">
+            🔬 <strong>ข้อความปิดบท:</strong> Coding ไม่ใช่เรื่องไกลตัว แต่เป็นเครื่องมือที่ช่วยจำลอง วิเคราะห์ และจัดการข้อมูลทางวิทยาศาสตร์ได้จริง
+        </div>
+        <div class="lang-en mb-0 border-none bg-transparent p-0">
+            🔬 <strong>Closing idea:</strong> Coding is not far from everyday science. It is a tool that helps us simulate, analyze, and manage scientific data.
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function copyCode(button) {
+        const codeCard = button.closest('.code-card');
+        const code = codeCard.querySelector('code').innerText;
+
+        navigator.clipboard.writeText(code).then(() => {
+            const oldText = button.innerText;
+            button.innerText = 'Copied!';
+            button.style.background = '#2563eb';
+
+            setTimeout(() => {
+                button.innerText = oldText;
+                button.style.background = '#10b981';
+            }, 1200);
+        });
+    }
+</script>
+ 
+
+</body>
+</html>
