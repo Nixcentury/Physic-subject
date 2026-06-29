@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ปริมาณทางฟิสิกส์และการจัดการเวกเตอร์</title>
+
+<script src="https://cdn.tailwindcss.com/"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<script>
+    window.MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
+            processEscapes: true
+        },
+        chtml: {
+            scale: 1.05,
+            matchFontHeight: false
+        },
+        options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+    };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+<style>
+    body {
+        font-family: 'K2D', 'Prompt', 'Google Sans', 'Product Sans', system-ui, sans-serif;
+        background-color: #f3f4f6;
+        color: #1f2937;
+        line-height: 1.7;
+    }
+
+    .page-container {
+        max-width: 920px;
+        margin: 2rem auto;
+        background-color: #ffffff;
+        padding: 3.5rem 4.5rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.10), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        border-radius: 16px;
+    }
+
+    .section-header {
+        border-bottom: 3px solid #3b82f6;
+        padding-bottom: 0.5rem;
+        margin-top: 3rem;
+        margin-bottom: 1.5rem;
+        color: #1d4ed8;
+        font-size: 1.75rem;
+        font-weight: 700;
+    }
+
+    .topic-title {
+        color: #111827;
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .lang-th {
+        margin-bottom: 0.5rem;
+    }
+
+    .lang-en {
+        color: #4b5563;
+        font-size: 0.95em;
+        border-left: 3px solid #cbd5e1;
+        padding-left: 1rem;
+        margin-bottom: 1.5rem;
+        background-color: #f8fafc;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        border-radius: 0 8px 8px 0;
+    }
+
+    .highlight-box {
+        background-color: #eff6ff;
+        border: 1px solid #bfdbfe;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        border-radius: 12px;
+    }
+
+    .warning-box {
+        background-color: #fffbeb;
+        border: 1px solid #fcd34d;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        border-radius: 12px;
+    }
+
+    .math-box {
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+        text-align: center;
+        font-size: 1.12rem;
+        box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+        overflow-x: auto;
+    }
+
+    .figure-box {
+        margin: 1.5rem 0;
+        text-align: center;
+        background-color: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 1rem;
+        box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
+    }
+
+    .figure-caption {
+        font-size: 0.8rem;
+        color: #64748b;
+        margin-top: 0.75rem;
+    }
+
+    .mini-card {
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1rem;
+        box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
+    }
+
+    .lesson-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        margin: 1.25rem 0;
+        font-size: 0.95rem;
+    }
+
+    .lesson-table th {
+        background-color: #eff6ff;
+        color: #1e40af;
+        font-weight: 700;
+        border: 1px solid #dbeafe;
+        padding: 0.75rem;
+        text-align: center;
+    }
+
+    .lesson-table td {
+        border: 1px solid #e5e7eb;
+        padding: 0.75rem;
+        vertical-align: top;
+    }
+
+    ul.custom-list {
+        list-style-type: none;
+        padding-left: 0;
+    }
+
+    ul.custom-list > li {
+        margin-bottom: 1.5rem;
+    }
+
+    .rule-th::before {
+        content: '📌';
+        margin-right: 0.5rem;
+    }
+
+    /* =========================
+       SVG Global Styling
+    ========================= */
+
+    .svg-stage {
+        width: 100%;
+        max-width: 760px;
+        margin: 0 auto;
+        display: block;
+        background:
+            radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.08), transparent 30%),
+            linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+        border-radius: 18px;
+    }
+
+    .physics-svg {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    svg text {
+        font-family: 'K2D', 'Prompt', sans-serif;
+    }
+
+    .svg-title {
+        font-family: 'K2D', 'Prompt', sans-serif;
+        fill: #0f172a;
+        font-size: 22px;
+        font-weight: 800;
+    }
+
+    .svg-label {
+        font-family: 'K2D', 'Prompt', sans-serif;
+        fill: #111827;
+        font-weight: 700;
+    }
+
+    .svg-small {
+        font-family: 'K2D', 'Prompt', sans-serif;
+        fill: #475569;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .svg-muted {
+        fill: #64748b;
+        font-size: 13px;
+    }
+
+    .svg-axis {
+        stroke: #94a3b8;
+        stroke-width: 3;
+        stroke-linecap: round;
+    }
+
+    .svg-grid {
+        stroke: #e2e8f0;
+        stroke-width: 1.5;
+        stroke-dasharray: 5 7;
+    }
+
+    .svg-vector-main {
+        stroke: #dc2626;
+        stroke-width: 6;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .svg-vector-x {
+        stroke: #2563eb;
+        stroke-width: 5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .svg-vector-y {
+        stroke: #16a34a;
+        stroke-width: 5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .svg-vector-result {
+        stroke: #7c3aed;
+        stroke-width: 6;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .svg-angle {
+        fill: none;
+        stroke: #f59e0b;
+        stroke-width: 4;
+        stroke-linecap: round;
+    }
+
+    .svg-chip {
+        fill: #ffffff;
+        stroke: #cbd5e1;
+        stroke-width: 1.5;
+        filter: drop-shadow(0 3px 6px rgba(15, 23, 42, 0.12));
+    }
+
+    .svg-soft-blue {
+        fill: #eff6ff;
+        stroke: #bfdbfe;
+    }
+
+    .svg-soft-red {
+        fill: #fef2f2;
+        stroke: #fecaca;
+    }
+
+    .svg-soft-green {
+        fill: #f0fdf4;
+        stroke: #bbf7d0;
+    }
+
+    .svg-soft-yellow {
+        fill: #fffbeb;
+        stroke: #fde68a;
+    }
+
+    .svg-formula-text {
+        fill: #1e293b;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    @media (max-width: 768px) {
+        .page-container {
+            margin: 0;
+            padding: 1.5rem;
+            border-radius: 0;
+        }
+
+        .section-header {
+            font-size: 1.45rem;
+        }
+
+        .lesson-table {
+            font-size: 0.85rem;
+        }
+
+        .math-box {
+            font-size: 1rem;
+        }
+    }
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="page-container">
+
+    <div class="text-center mb-10">
+        <h1 class="text-3xl font-bold mb-3 text-gray-900">
+            📐 ปริมาณทางฟิสิกส์และการจัดการเวกเตอร์
+            <br>
+            <span class="text-2xl text-gray-500 font-medium">
+                (Physical Quantities and Vector Resolution)
+            </span>
+        </h1>
+    </div>
+
+    <div class="highlight-box">
+        <div class="lang-th">
+            🇹🇭 <strong>ภาษาไทย:</strong> บทนี้เป็นพื้นฐานสำคัญของฟิสิกส์ เพราะหลายปริมาณในฟิสิกส์ไม่ได้มีแค่ขนาด แต่ต้องมีทิศทางด้วย เราจะเริ่มจากการแยกสเกลาร์กับเวกเตอร์ แล้วต่อด้วยการแตกเวกเตอร์เข้าแกน \(x\) และ \(y\)
+        </div>
+        <div class="lang-en mb-0 border-none bg-transparent p-0">
+            🇬🇧 <strong>English:</strong> This lesson introduces an important foundation in physics. Many physical quantities are not described by magnitude alone; they also require direction. We begin by distinguishing scalars and vectors, then learn how to resolve vectors into \(x\)- and \(y\)-components.
+        </div>
+    </div>
+
+
+    <!-- Section 1 -->
+    <h2 class="section-header">
+        1. ปริมาณสเกลาร์และปริมาณเวกเตอร์
+        <span class="font-normal text-xl text-gray-500">(Scalars vs Vectors)</span>
+    </h2>
+
+    <div class="lang-th">
+        🇹🇭 <strong>ภาษาไทย:</strong> ก่อนเริ่มคำนวณ เราต้องแยกก่อนว่าปริมาณที่โจทย์ให้มาเป็นปริมาณสเกลาร์หรือปริมาณเวกเตอร์ เพราะวิธีคิดและวิธีรวมค่าจะแตกต่างกัน
+    </div>
+    <div class="lang-en">
+        🇬🇧 <strong>English:</strong> Before doing calculations, we must identify whether a quantity is a scalar or a vector because the way we handle and combine them is different.
+    </div>
+
+<div class="figure-box">
+    <img 
+        src="https://www.shalom-education.com/wp-content/uploads/2024/04/Scalar-and-Vector-Quantities.png"
+        alt="Scalar and vector quantities comparison table"
+        class="mx-auto max-h-[520px] object-contain rounded-lg bg-white p-2"
+    >
+    <p class="figure-caption">
+        รูปที่ 1: ตัวอย่างปริมาณสเกลาร์และปริมาณเวกเตอร์ 
+        (Examples of scalar and vector quantities)
+    </p>
+</div>
+
+<div class="warning-box">
+    <div class="lang-th mb-2">
+        🇹🇭 <strong>หมายเหตุ:</strong> ในบางรูปจากอินเทอร์เน็ตอาจจัดหมวดหมู่คลาดเคลื่อน เช่น <strong>pressure / ความดัน</strong> มักถูกเข้าใจผิดว่าเป็นเวกเตอร์ แต่ในฟิสิกส์พื้นฐาน <strong>pressure เป็นปริมาณสเกลาร์</strong> เพราะมีขนาดอย่างเดียว ไม่มีทิศทางเฉพาะตัว
+    </div>
+    <div class="lang-en mb-0 border-none bg-transparent p-0">
+        🇬🇧 <strong>Note:</strong> Some online diagrams may contain classification errors. For example, <strong>pressure</strong> is sometimes mistaken as a vector, but in basic physics, <strong>pressure is a scalar quantity</strong> because it has magnitude only and no specific direction.
+    </div>
+</div>
+
+<div class="overflow-x-auto my-6">
+    <table class="lesson-table">
+        <thead>
+            <tr>
+                <th>
+                    ปริมาณสเกลาร์<br>
+                    <span class="text-xs font-normal text-slate-500">Scalar Quantities</span>
+                </th>
+                <th>
+                    ปริมาณเวกเตอร์<br>
+                    <span class="text-xs font-normal text-slate-500">Vector Quantities</span>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="bg-blue-50">
+                    <strong>มีขนาด แต่ไม่มีทิศทาง</strong><br>
+                    <span class="text-sm text-slate-600">Have magnitude but no direction</span>
+                </td>
+                <td class="bg-red-50">
+                    <strong>มีทั้งขนาดและทิศทาง</strong><br>
+                    <span class="text-sm text-slate-600">Have both magnitude and direction</span>
+                </td>
+            </tr>
+
+ 
+        <tr>
+            <td>
+                ระยะทาง<br>
+                <span class="text-sm text-slate-500">Distance</span>
+            </td>
+            <td>
+                การกระจัด<br>
+                <span class="text-sm text-slate-500">Displacement</span>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                อัตราเร็ว<br>
+                <span class="text-sm text-slate-500">Speed</span>
+            </td>
+            <td>
+                ความเร็ว<br>
+                <span class="text-sm text-slate-500">Velocity</span>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                มวล<br>
+                <span class="text-sm text-slate-500">Mass</span>
+            </td>
+            <td>
+                ความเร่ง<br>
+                <span class="text-sm text-slate-500">Acceleration</span>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                เวลา<br>
+                <span class="text-sm text-slate-500">Time</span>
+            </td>
+            <td>
+                แรง<br>
+                <span class="text-sm text-slate-500">Force</span>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                พลังงาน<br>
+                <span class="text-sm text-slate-500">Energy</span>
+            </td>
+            <td>
+                น้ำหนัก<br>
+                <span class="text-sm text-slate-500">Weight</span>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                งาน<br>
+                <span class="text-sm text-slate-500">Work</span>
+            </td>
+            <td>
+                โมเมนตัม<br>
+                <span class="text-sm text-slate-500">Momentum</span>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                กำลัง<br>
+                <span class="text-sm text-slate-500">Power</span>
+            </td>
+            <td>
+                อิมพัลส์<br>
+                <span class="text-sm text-slate-500">Impulse</span>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                ความหนาแน่น<br>
+                <span class="text-sm text-slate-500">Density</span>
+            </td>
+            <td>
+                แรงต้านอากาศ<br>
+                <span class="text-sm text-slate-500">Drag force</span>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                ความดัน<br>
+                <span class="text-sm text-slate-500">Pressure</span>
+            </td>
+            <td>
+                สนามโน้มถ่วง<br>
+                <span class="text-sm text-slate-500">Gravitational field</span>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                อุณหภูมิ<br>
+                <span class="text-sm text-slate-500">Temperature</span>
+            </td>
+            <td>
+                สนามไฟฟ้า<br>
+                <span class="text-sm text-slate-500">Electric field</span>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                ความยาว พื้นที่ ปริมาตร<br>
+                <span class="text-sm text-slate-500">Length, area, volume</span>
+            </td>
+            <td>
+                สนามแม่เหล็ก<br>
+                <span class="text-sm text-slate-500">Magnetic field</span>
+            </td>
+        </tr>
+    </tbody>
+</table>
+ 
+
+</div>
+
+<div class="highlight-box">
+    <div class="lang-th">
+        🇹🇭 <strong>จำง่าย:</strong> ถ้าบอกแค่ตัวเลขกับหน่วยแล้วเข้าใจครบ เช่น \(5\,kg\), \(10\,s\), \(30^\circ C\) มักเป็นสเกลาร์ แต่ถ้าต้องบอกทิศ เช่น \(10\,N\) ไปทางขวา หรือ \(5\,m/s\) ไปทางเหนือ จะเป็นเวกเตอร์
+    </div>
+    <div class="lang-en mb-0 border-none bg-transparent p-0">
+        🇬🇧 <strong>Easy memory:</strong> If a value is complete with only a number and a unit, such as \(5\,kg\), \(10\,s\), or \(30^\circ C\), it is usually a scalar. If it needs direction, such as \(10\,N\) to the right or \(5\,m/s\) north, it is a vector.
+    </div>
+</div>
+
+
+
+   <!-- Section 2 -->
+
+<h2 class="section-header">
+    2. ทบทวนตรีโกณมิติ: เริ่มจากด้านตรงข้ามมุมฉาก = 1
+    <span class="font-normal text-xl text-gray-500">(Trigonometry Review: Hypotenuse = 1)</span>
+</h2>
+
+<div class="lang-th">
+    🇹🇭 <strong>ภาษาไทย:</strong> การแตกเวกเตอร์เข้าแกน \(x\) และ \(y\) ไม่ได้มาจากการท่องสูตรอย่างเดียว แต่เกิดจากสามเหลี่ยมมุมฉาก ถ้าเราเริ่มจากสามเหลี่ยมที่ด้านตรงข้ามมุมฉากยาว \(1\) หน่วย จะเห็นทันทีว่าด้านประชิดมุมคือ \(\cos\theta\) และด้านตรงข้ามมุมคือ \(\sin\theta\)
+</div>
+<div class="lang-en">
+    🇬🇧 <strong>English:</strong> Resolving a vector into \(x\)- and \(y\)-components is not just memorizing formulas. It comes from right-triangle trigonometry. If the hypotenuse is \(1\), the adjacent side becomes \(\cos\theta\), and the opposite side becomes \(\sin\theta\).
+</div>
+
+<div class="math-box">
+    $$\cos\theta=\frac{\text{adjacent}}{\text{hypotenuse}}$$
+    $$\sin\theta=\frac{\text{opposite}}{\text{hypotenuse}}$$
+</div>
+
+<!-- 2.1 Unit triangle -->
+
+<h3 class="topic-title">
+    2.1 สามเหลี่ยม 1 หน่วย
+    <span class="font-normal text-gray-500">(Unit Right Triangle)</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 ถ้าด้านตรงข้ามมุมฉากยาว \(1\) หน่วย จะได้ว่า
+</div>
+<div class="lang-en">
+    🇬🇧 If the hypotenuse is \(1\), then:
+</div>
+
+<div class="math-box">
+    $$\cos\theta=\frac{\text{adjacent}}{1}=\text{adjacent}$$
+    $$\sin\theta=\frac{\text{opposite}}{1}=\text{opposite}$$
+</div>
+
+<div class="figure-box">
+    <svg class="physics-svg svg-stage" viewBox="0 0 760 330" role="img" aria-label="Unit right triangle with hypotenuse 1, adjacent cos theta, and opposite sin theta">
+        <defs>
+            <marker id="sec2ArrowUnit" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L0,6 L9,3 z" fill="#dc2626"></path>
+            </marker>
+        </defs>
+
+ 
+    <rect x="60" y="35" width="640" height="250" rx="20" class="svg-soft-blue"></rect>
+
+    <!-- triangle -->
+    <line x1="170" y1="245" x2="575" y2="245" stroke="#2563eb" stroke-width="6" stroke-linecap="round"></line>
+    <line x1="575" y1="245" x2="575" y2="95" stroke="#16a34a" stroke-width="6" stroke-linecap="round"></line>
+    <line x1="170" y1="245" x2="575" y2="95" stroke="#dc2626" stroke-width="7" stroke-linecap="round" marker-end="url(#sec2ArrowUnit)"></line>
+
+    <!-- right angle -->
+    <rect x="548" y="218" width="27" height="27" fill="none" stroke="#64748b" stroke-width="3"></rect>
+
+    <!-- angle theta -->
+    <path d="M220 245 A50 50 0 0 1 252 226" class="svg-angle"></path>
+    <text x="258" y="227" class="svg-label" font-size="24">θ</text>
+
+    <!-- labels -->
+    <text x="372" y="280" text-anchor="middle" class="svg-label" font-size="24" fill="#2563eb">cosθ</text>
+    <text x="620" y="174" text-anchor="middle" class="svg-label" font-size="24" fill="#16a34a">sinθ</text>
+    <text x="395" y="144" text-anchor="middle" class="svg-label" font-size="26" fill="#dc2626">1</text>
+
+    <text x="380" y="68" text-anchor="middle" class="svg-title">
+        Hypotenuse = 1
+    </text>
+    <text x="380" y="305" text-anchor="middle" class="svg-small">
+        ด้านประชิดมุม = cosθ, ด้านตรงข้ามมุม = sinθ
+    </text>
+</svg>
+
+<p class="figure-caption">
+    รูปที่ 2: เมื่อด้านตรงข้ามมุมฉากยาว 1 หน่วย ด้านประชิดมุมคือ \(\cos\theta\) และด้านตรงข้ามมุมคือ \(\sin\theta\)
+    (When the hypotenuse is 1, the adjacent side is \(\cos\theta\), and the opposite side is \(\sin\theta\).)
+</p>
+ 
+
+</div>
+
+<div class="highlight-box">
+    <div class="lang-th">
+        🇹🇭 <strong>จำภาพนี้ก่อน:</strong> ถ้ามุม \(\theta\) วัดจากแกนแนวนอน ด้านที่นอนราบชิดมุมคือ \(\cos\theta\) และด้านที่ตั้งขึ้นคือ \(\sin\theta\)
+    </div>
+    <div class="lang-en mb-0 border-none bg-transparent p-0">
+        🇬🇧 <strong>Remember this picture first:</strong> If \(\theta\) is measured from the horizontal axis, the horizontal adjacent side is \(\cos\theta\), and the vertical opposite side is \(\sin\theta\).
+    </div>
+</div>
+
+<!-- 2.2 Special angles -->
+
+<h3 class="topic-title">
+    2.2 มุมที่ใช้บ่อยในฟิสิกส์
+    <span class="font-normal text-gray-500">(Common Angles in Physics)</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 ในโจทย์ฟิสิกส์ มุมที่เจอบ่อยคือ \(30^\circ, 37^\circ, 45^\circ, 53^\circ, 60^\circ\) โดยเฉพาะ \(37^\circ\) และ \(53^\circ\) มักมาจากสามเหลี่ยม \(3-4-5\)
+</div>
+<div class="lang-en">
+    🇬🇧 Common angles in physics problems are \(30^\circ, 37^\circ, 45^\circ, 53^\circ,\) and \(60^\circ\). The angles \(37^\circ\) and \(53^\circ\) often come from a \(3-4-5\) triangle.
+</div>
+
+<div class="overflow-x-auto my-6">
+    <table class="lesson-table">
+        <thead>
+            <tr>
+                <th>
+                    มุม<br>
+                    <span class="text-xs font-normal text-slate-500">Angle</span>
+                </th>
+                <th>
+                    \(\sin\theta\)<br>
+                    <span class="text-xs font-normal text-slate-500">Opposite / Hypotenuse</span>
+                </th>
+                <th>
+                    \(\cos\theta\)<br>
+                    <span class="text-xs font-normal text-slate-500">Adjacent / Hypotenuse</span>
+                </th>
+                <th>
+                    จำง่าย<br>
+                    <span class="text-xs font-normal text-slate-500">Memory cue</span>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>\(30^\circ\)</td>
+                <td>\(\frac{1}{2}\)</td>
+                <td>\(\frac{\sqrt{3}}{2}\)</td>
+                <td>
+                    มุมเล็ก → sin เล็ก<br>
+                    <span class="text-sm text-slate-500">Small angle → small sine</span>
+                </td>
+            </tr>
+            <tr>
+                <td>\(37^\circ\)</td>
+                <td>\(\frac{3}{5}\)</td>
+                <td>\(\frac{4}{5}\)</td>
+                <td>
+                    สามเหลี่ยม \(3-4-5\)<br>
+                    <span class="text-sm text-slate-500">3-4-5 triangle</span>
+                </td>
+            </tr>
+            <tr>
+                <td>\(45^\circ\)</td>
+                <td>\(\frac{\sqrt{2}}{2}\)</td>
+                <td>\(\frac{\sqrt{2}}{2}\)</td>
+                <td>
+                    sin = cos<br>
+                    <span class="text-sm text-slate-500">Same value</span>
+                </td>
+            </tr>
+            <tr>
+                <td>\(53^\circ\)</td>
+                <td>\(\frac{4}{5}\)</td>
+                <td>\(\frac{3}{5}\)</td>
+                <td>
+                    คู่กับ \(37^\circ\)<br>
+                    <span class="text-sm text-slate-500">Complement of \(37^\circ\)</span>
+                </td>
+            </tr>
+            <tr>
+                <td>\(60^\circ\)</td>
+                <td>\(\frac{\sqrt{3}}{2}\)</td>
+                <td>\(\frac{1}{2}\)</td>
+                <td>
+                    มุมใหญ่ → sin ใหญ่<br>
+                    <span class="text-sm text-slate-500">Large angle → large sine</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="figure-box">
+    <svg class="physics-svg svg-stage" viewBox="0 0 760 310" role="img" aria-label="3 4 5 triangle showing sine and cosine for 37 and 53 degrees">
+        <defs>
+            <marker id="sec2Arrow345" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L0,6 L9,3 z" fill="#7c3aed"></path>
+            </marker>
+        </defs>
+
+ 
+    <rect x="60" y="35" width="640" height="235" rx="20" class="svg-soft-yellow"></rect>
+
+    <!-- 3-4-5 triangle -->
+    <line x1="180" y1="230" x2="560" y2="230" stroke="#2563eb" stroke-width="6" stroke-linecap="round"></line>
+    <line x1="560" y1="230" x2="560" y2="90" stroke="#16a34a" stroke-width="6" stroke-linecap="round"></line>
+    <line x1="180" y1="230" x2="560" y2="90" stroke="#7c3aed" stroke-width="7" stroke-linecap="round" marker-end="url(#sec2Arrow345)"></line>
+
+    <rect x="533" y="203" width="27" height="27" fill="none" stroke="#64748b" stroke-width="3"></rect>
+
+    <!-- angle 37 -->
+    <path d="M235 230 A55 55 0 0 1 272 210" class="svg-angle"></path>
+    <text x="275" y="212" class="svg-label" font-size="23">37°</text>
+
+    <!-- angle 53 -->
+    <path d="M560 148 A72 72 0 0 1 518 107" fill="none" stroke="#f97316" stroke-width="4" stroke-linecap="round"></path>
+    <text x="510" y="120" class="svg-label" font-size="23" fill="#f97316">53°</text>
+
+    <!-- side labels -->
+    <text x="370" y="260" text-anchor="middle" class="svg-label" font-size="23" fill="#2563eb">4</text>
+    <text x="592" y="165" text-anchor="middle" class="svg-label" font-size="23" fill="#16a34a">3</text>
+    <text x="370" y="134" text-anchor="middle" class="svg-label" font-size="23" fill="#7c3aed">5</text>
+
+    <text x="380" y="65" text-anchor="middle" class="svg-title">3-4-5 Triangle</text>
+    <text x="380" y="292" text-anchor="middle" class="svg-small">
+        สำหรับมุม 37°: sin37° = 3/5 และ cos37° = 4/5
+    </text>
+</svg>
+
+<p class="figure-caption">
+    รูปที่ 3: สามเหลี่ยม \(3-4-5\) ใช้จำค่า \(\sin37^\circ,\cos37^\circ,\sin53^\circ,\cos53^\circ\)
+    (A \(3-4-5\) triangle is useful for remembering the trigonometric values of \(37^\circ\) and \(53^\circ\).)
+</p>
+ 
+
+</div>
+
+<!-- 2.3 Scale from 1 to F -->
+
+<h3 class="topic-title">
+    2.3 ขยายจาก 1 เป็น \(F\)
+    <span class="font-normal text-gray-500">(Scaling from 1 to \(F\))</span>
+</h3>
+
+<div class="lang-th">
+    🇹🇭 เมื่อเราเข้าใจสามเหลี่ยมที่ด้านตรงข้ามมุมฉากยาว \(1\) แล้ว ถ้าเวกเตอร์จริงมีขนาด \(F\) ก็เหมือนนำสามเหลี่ยมเดิมไปขยายทุกด้านด้วย \(F\)
+</div>
+<div class="lang-en">
+    🇬🇧 Once we understand the unit triangle with hypotenuse \(1\), a real vector with magnitude \(F\) is just the same triangle scaled up by a factor of \(F\).
+</div>
+
+<div class="math-box">
+    $$1 \longrightarrow F$$
+    $$\cos\theta \longrightarrow F\cos\theta$$
+    $$\sin\theta \longrightarrow F\sin\theta$$
+</div>
+
+<div class="figure-box">
+    <svg class="physics-svg svg-stage" viewBox="0 0 760 360" role="img" aria-label="Scaling a unit triangle to a vector with magnitude F">
+        <defs>
+            <marker id="sec2ArrowScaleRed" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L0,6 L9,3 z" fill="#dc2626"></path>
+            </marker>
+            <marker id="sec2ArrowScalePurple" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L0,6 L9,3 z" fill="#7c3aed"></path>
+            </marker>
+        </defs>
+
+ 
+    <!-- left unit triangle -->
+    <rect x="45" y="45" width="300" height="250" rx="20" class="svg-soft-blue"></rect>
+    <text x="195" y="76" text-anchor="middle" class="svg-title">Unit triangle</text>
+
+    <line x1="95" y1="245" x2="285" y2="245" stroke="#2563eb" stroke-width="5" stroke-linecap="round"></line>
+    <line x1="285" y1="245" x2="285" y2="165" stroke="#16a34a" stroke-width="5" stroke-linecap="round"></line>
+    <line x1="95" y1="245" x2="285" y2="165" stroke="#dc2626" stroke-width="6" stroke-linecap="round" marker-end="url(#sec2ArrowScaleRed)"></line>
+
+    <path d="M128 245 A32 32 0 0 1 150 232" class="svg-angle"></path>
+    <text x="154" y="233" class="svg-label" font-size="18">θ</text>
+
+    <text x="190" y="272" text-anchor="middle" class="svg-label" font-size="19" fill="#2563eb">cosθ</text>
+    <text x="316" y="210" text-anchor="middle" class="svg-label" font-size="19" fill="#16a34a">sinθ</text>
+    <text x="198" y="186" text-anchor="middle" class="svg-label" font-size="21" fill="#dc2626">1</text>
+
+    <!-- scaling arrow -->
+    <line x1="365" y1="170" x2="415" y2="170" stroke="#7c3aed" stroke-width="6" stroke-linecap="round" marker-end="url(#sec2ArrowScalePurple)"></line>
+    <text x="390" y="145" text-anchor="middle" class="svg-label" font-size="20" fill="#7c3aed">× F</text>
+
+    <!-- right vector triangle -->
+    <rect x="435" y="45" width="300" height="250" rx="20" class="svg-soft-red"></rect>
+    <text x="585" y="76" text-anchor="middle" class="svg-title">Vector triangle</text>
+
+    <line x1="485" y1="245" x2="675" y2="245" stroke="#2563eb" stroke-width="5" stroke-linecap="round"></line>
+    <line x1="675" y1="245" x2="675" y2="165" stroke="#16a34a" stroke-width="5" stroke-linecap="round"></line>
+    <line x1="485" y1="245" x2="675" y2="165" stroke="#dc2626" stroke-width="6" stroke-linecap="round" marker-end="url(#sec2ArrowScaleRed)"></line>
+
+    <path d="M518 245 A32 32 0 0 1 540 232" class="svg-angle"></path>
+    <text x="544" y="233" class="svg-label" font-size="18">θ</text>
+
+    <text x="580" y="272" text-anchor="middle" class="svg-label" font-size="19" fill="#2563eb">Fcosθ</text>
+    <text x="708" y="210" text-anchor="middle" class="svg-label" font-size="19" fill="#16a34a">Fsinθ</text>
+    <text x="590" y="186" text-anchor="middle" class="svg-label" font-size="23" fill="#dc2626">F</text>
+
+    <text x="380" y="330" text-anchor="middle" class="svg-small">
+        ขยายทุกด้านด้วย F → ได้สูตรแตกเวกเตอร์
+    </text>
+</svg>
+
+<p class="figure-caption">
+    รูปที่ 4: การขยายสามเหลี่ยมจากด้านตรงข้ามมุมฉาก \(1\) เป็น \(F\) ทำให้ได้ \(F\cos\theta\) และ \(F\sin\theta\)
+    (Scaling the unit triangle from hypotenuse \(1\) to \(F\) gives \(F\cos\theta\) and \(F\sin\theta\).)
+</p>
+ 
+
+</div>
+
+<div class="math-box">
+    $$F_x=F\cos\theta$$
+    $$F_y=F\sin\theta$$
+</div>
+
+<!-- 2.4 Angle warning -->
+
+<h3 class="topic-title">
+    2.4 ระวังว่ามุมวัดจากแกนไหน
+    <span class="font-normal text-gray-500">(Be Careful Where the Angle Is Measured From)</span>
+</h3>
+
+<div class="warning-box">
+    <div class="lang-th">
+        🇹🇭 <strong>ข้อควรระวัง:</strong> สูตร \(F_x=F\cos\theta\) และ \(F_y=F\sin\theta\) ใช้เมื่อมุม \(\theta\) วัดจากแกน \(x\) เท่านั้น ถ้ามุมวัดจากแกน \(y\) สูตรจะสลับกัน
+    </div>
+    <div class="lang-en mb-0 border-none bg-transparent p-0">
+        🇬🇧 <strong>Warning:</strong> The formulas \(F_x=F\cos\theta\) and \(F_y=F\sin\theta\) apply when \(\theta\) is measured from the \(x\)-axis. If the angle is measured from the \(y\)-axis, the roles of sine and cosine are switched.
+    </div>
+</div>
+
+<div class="grid md:grid-cols-2 gap-4 my-6">
+    <div class="mini-card">
+        <div class="font-bold text-blue-700 mb-2">
+            มุมวัดจากแกน \(x\)
+            <br>
+            <span class="text-sm text-slate-500 font-normal">Angle measured from the \(x\)-axis</span>
+        </div>
+        <div class="math-box">
+            $$F_x=F\cos\theta$$
+            $$F_y=F\sin\theta$$
+        </div>
+        <div class="text-sm text-gray-700">
+            ด้านแกน \(x\) ชิดมุม จึงใช้ cos
+            <br>
+            The \(x\)-component is adjacent to the angle, so use cosine.
+        </div>
+    </div>
+
+ 
+<div class="mini-card">
+    <div class="font-bold text-red-700 mb-2">
+        มุมวัดจากแกน \(y\)
+        <br>
+        <span class="text-sm text-slate-500 font-normal">Angle measured from the \(y\)-axis</span>
+    </div>
+    <div class="math-box">
+        $$F_y=F\cos\theta$$
+        $$F_x=F\sin\theta$$
+    </div>
+    <div class="text-sm text-gray-700">
+        ด้านแกน \(y\) ชิดมุม จึงใช้ cos
+        <br>
+        The \(y\)-component is adjacent to the angle, so use cosine.
+    </div>
+</div>
+ 
+
+</div>
+
+<div class="highlight-box">
+    <div class="lang-th">
+        🇹🇭 <strong>สรุปจำสั้น:</strong> อย่าจำว่า \(x\) ต้องเป็น cos เสมอ ให้จำว่า <strong>ด้านที่ชิดมุมใช้ cos</strong> และ <strong>ด้านที่ตรงข้ามมุมใช้ sin</strong>
+    </div>
+    <div class="lang-en mb-0 border-none bg-transparent p-0">
+        🇬🇧 <strong>Short summary:</strong> Do not memorize that \(x\) is always cosine. Remember instead: <strong>the side adjacent to the angle uses cosine</strong>, and <strong>the side opposite the angle uses sine</strong>.
+    </div>
+</div>
+
+
+    <!-- Section 3 -->
+    <h2 class="section-header">
+        3. จากสามเหลี่ยม 1 หน่วย สู่การแตกเวกเตอร์
+        <span class="font-normal text-xl text-gray-500">(From Unit Triangle to Vector Components)</span>
+    </h2>
+
+    <div class="lang-th">
+        🇹🇭 <strong>ภาษาไทย:</strong> ถ้าเวกเตอร์มีขนาด \(F\) และทำมุม \(\theta\) กับแกน \(x\) เราสามารถแตกเวกเตอร์ออกเป็นสองส่วน คือ ส่วนในแกน \(x\) และส่วนในแกน \(y\)
+    </div>
+    <div class="lang-en">
+        🇬🇧 <strong>English:</strong> If a vector has magnitude \(F\) and makes an angle \(\theta\) with the \(x\)-axis, it can be resolved into an \(x\)-component and a \(y\)-component.
+    </div>
+
+    <div class="math-box">
+        $$F_x=F\cos\theta$$
+        $$F_y=F\sin\theta$$
+    </div>
+
+    <div class="figure-box">
+        <svg viewBox="0 0 760 340" role="img" aria-label="Resolving a vector into x and y components">
+            <defs>
+                <marker id="arrowCompBlue" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#2563eb"></path>
+                </marker>
+                <marker id="arrowCompRed" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#dc2626"></path>
+                </marker>
+                <marker id="arrowCompGreen" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#16a34a"></path>
+                </marker>
+            </defs>
+
+            <line x1="120" y1="270" x2="660" y2="270" stroke="#94a3b8" stroke-width="3" marker-end="url(#arrowCompBlue)"></line>
+            <line x1="120" y1="270" x2="120" y2="45" stroke="#94a3b8" stroke-width="3" marker-end="url(#arrowCompBlue)"></line>
+            <text x="675" y="275" class="svg-small">x</text>
+            <text x="112" y="35" class="svg-small">y</text>
+
+            <line x1="120" y1="270" x2="500" y2="110" stroke="#dc2626" stroke-width="6" marker-end="url(#arrowCompRed)"></line>
+            <line x1="120" y1="270" x2="500" y2="270" stroke="#2563eb" stroke-width="5" marker-end="url(#arrowCompBlue)"></line>
+            <line x1="500" y1="270" x2="500" y2="110" stroke="#16a34a" stroke-width="5" marker-end="url(#arrowCompGreen)"></line>
+
+            <line x1="500" y1="110" x2="500" y2="270" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="6 6"></line>
+            <line x1="120" y1="110" x2="500" y2="110" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="6 6"></line>
+
+            <path d="M175 270 A55 55 0 0 1 213 250" fill="none" stroke="#f59e0b" stroke-width="4"></path>
+            <text x="214" y="252" class="svg-label" font-size="22">θ</text>
+
+            <text x="320" y="98" text-anchor="middle" class="svg-label" font-size="24" fill="#dc2626">F</text>
+            <text x="310" y="300" text-anchor="middle" class="svg-label" font-size="22" fill="#2563eb">Fₓ = Fcosθ</text>
+            <text x="545" y="195" text-anchor="middle" class="svg-label" font-size="22" fill="#16a34a">Fᵧ = Fsinθ</text>
+        </svg>
+        <p class="figure-caption">
+            รูปที่ 3: การแตกเวกเตอร์ \(F\) เป็นองค์ประกอบในแกน \(x\) และแกน \(y\)
+            (Resolving vector \(F\) into \(x\)- and \(y\)-components.)
+        </p>
+    </div>
+
+    <div class="warning-box">
+        <div class="lang-th">
+            🇹🇭 <strong>ระวัง:</strong> สูตร \(F_x=F\cos\theta\) และ \(F_y=F\sin\theta\) ใช้เมื่อมุม \(\theta\) วัดจากแกน \(x\)
+        </div>
+        <div class="lang-en mb-0 border-none bg-transparent p-0">
+            🇬🇧 <strong>Warning:</strong> The formulas \(F_x=F\cos\theta\) and \(F_y=F\sin\theta\) apply when \(\theta\) is measured from the \(x\)-axis.
+        </div>
+    </div>
+
+
+    <!-- Section 4 -->
+    <h2 class="section-header">
+        4. การรวมเวกเตอร์เบื้องต้น
+        <span class="font-normal text-xl text-gray-500">(Basic Vector Addition)</span>
+    </h2>
+
+    <div class="lang-th">
+        🇹🇭 <strong>ภาษาไทย:</strong> การรวมเวกเตอร์ต้องคำนึงถึงทิศทางเสมอ ถ้าเวกเตอร์อยู่ในทิศเดียวกัน สวนทางกัน หรือตั้งฉากกัน จะมีวิธีคิดต่างกัน
+    </div>
+    <div class="lang-en">
+        🇬🇧 <strong>English:</strong> Vector addition always depends on direction. Vectors in the same direction, opposite directions, and perpendicular directions are handled differently.
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="lesson-table">
+            <thead>
+                <tr>
+                    <th>กรณี<br><span class="text-xs font-normal text-slate-500">Case</span></th>
+                    <th>แนวคิด<br><span class="text-xs font-normal text-slate-500">Idea</span></th>
+                    <th>สูตร<br><span class="text-xs font-normal text-slate-500">Formula</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>ทิศเดียวกัน<br><span class="text-xs text-slate-500">Same direction</span></td>
+                    <td>นำขนาดมาบวกกัน<br><span class="text-xs text-slate-500">Add the magnitudes</span></td>
+                    <td>$$R=A+B$$</td>
+                </tr>
+                <tr>
+                    <td>สวนทางกัน<br><span class="text-xs text-slate-500">Opposite directions</span></td>
+                    <td>นำขนาดมาลบกัน ทิศไปทางเวกเตอร์ที่มากกว่า<br><span class="text-xs text-slate-500">Subtract the magnitudes; direction follows the larger vector</span></td>
+                    <td>$$R=|A-B|$$</td>
+                </tr>
+                <tr>
+                    <td>ตั้งฉากกัน<br><span class="text-xs text-slate-500">Perpendicular</span></td>
+                    <td>ใช้ทฤษฎีบทพีทาโกรัส<br><span class="text-xs text-slate-500">Use Pythagoras' theorem</span></td>
+                    <td>$$R=\sqrt{A^2+B^2}$$</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="figure-box">
+        <svg viewBox="0 0 760 280" role="img" aria-label="Three basic cases of vector addition">
+            <defs>
+                <marker id="arrowAdd" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#2563eb"></path>
+                </marker>
+                <marker id="arrowAddRed" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#dc2626"></path>
+                </marker>
+            </defs>
+
+            <text x="145" y="35" text-anchor="middle" class="svg-label" font-size="18">ทิศเดียวกัน</text>
+            <line x1="55" y1="75" x2="150" y2="75" stroke="#2563eb" stroke-width="5" marker-end="url(#arrowAdd)"></line>
+            <line x1="155" y1="75" x2="245" y2="75" stroke="#2563eb" stroke-width="5" marker-end="url(#arrowAdd)"></line>
+            <text x="150" y="115" text-anchor="middle" class="svg-small">R = A + B</text>
+
+            <text x="385" y="35" text-anchor="middle" class="svg-label" font-size="18">สวนทางกัน</text>
+            <line x1="305" y1="75" x2="410" y2="75" stroke="#2563eb" stroke-width="5" marker-end="url(#arrowAdd)"></line>
+            <line x1="455" y1="75" x2="360" y2="75" stroke="#dc2626" stroke-width="5" marker-end="url(#arrowAddRed)"></line>
+            <text x="385" y="115" text-anchor="middle" class="svg-small">R = |A - B|</text>
+
+            <text x="625" y="35" text-anchor="middle" class="svg-label" font-size="18">ตั้งฉากกัน</text>
+            <line x1="565" y1="150" x2="670" y2="150" stroke="#2563eb" stroke-width="5" marker-end="url(#arrowAdd)"></line>
+            <line x1="565" y1="150" x2="565" y2="70" stroke="#dc2626" stroke-width="5" marker-end="url(#arrowAddRed)"></line>
+            <line x1="565" y1="150" x2="670" y2="70" stroke="#16a34a" stroke-width="5" marker-end="url(#arrowAdd)"></line>
+            <text x="625" y="205" text-anchor="middle" class="svg-small">R = √(A² + B²)</text>
+        </svg>
+        <p class="figure-caption">
+            รูปที่ 4: การรวมเวกเตอร์พื้นฐาน 3 กรณี
+            (Three basic cases of vector addition.)
+        </p>
+    </div>
+
+
+    <!-- Section 5 -->
+    <h2 class="section-header">
+        5. ท่าไม้ตาย: รวมเวกเตอร์หลายแรงด้วยการแตกเข้าแกน X-Y
+        <span class="font-normal text-xl text-gray-500">(Resolving Multiple Vectors into Components)</span>
+    </h2>
+
+    <div class="lang-th">
+        🇹🇭 <strong>ภาษาไทย:</strong> ถ้าโจทย์มีเวกเตอร์หลายตัวที่ชี้คนละทิศ ไม่จำเป็นต้องวาดต่อหางกันยาว ๆ เราสามารถแตกทุกเวกเตอร์เข้าแกน \(x\) และ \(y\) แล้วรวมทีละแกนได้
+    </div>
+    <div class="lang-en">
+        🇬🇧 <strong>English:</strong> When several vectors point in different directions, we do not need to draw a long head-to-tail diagram. We can resolve every vector into \(x\)- and \(y\)-components, then add the components axis by axis.
+    </div>
+
+    <div class="grid md:grid-cols-4 gap-4 my-6">
+        <div class="mini-card">
+            <div class="font-bold text-blue-700 mb-2">Step 1</div>
+            <div class="text-sm text-gray-700">แตกทุกเวกเตอร์เข้าแกน \(x,y\)</div>
+            <div class="text-xs text-gray-500 mt-2">Resolve each vector</div>
+        </div>
+
+        <div class="mini-card">
+            <div class="font-bold text-blue-700 mb-2">Step 2</div>
+            <div class="text-sm text-gray-700">รวมแกน \(x\) และแกน \(y\) แยกกัน</div>
+            <div class="text-xs text-gray-500 mt-2">Add components separately</div>
+        </div>
+
+        <div class="mini-card">
+            <div class="font-bold text-blue-700 mb-2">Step 3</div>
+            <div class="text-sm text-gray-700">ประกอบกลับด้วยพีทาโกรัส</div>
+            <div class="text-xs text-gray-500 mt-2">Find the resultant magnitude</div>
+        </div>
+
+        <div class="mini-card">
+            <div class="font-bold text-blue-700 mb-2">Step 4</div>
+            <div class="text-sm text-gray-700">หามุมด้วย \(\tan^{-1}\)</div>
+            <div class="text-xs text-gray-500 mt-2">Find the direction</div>
+        </div>
+    </div>
+
+    <div class="math-box">
+        $$\sum F_x = F_{x,\text{right}} - F_{x,\text{left}}$$
+        $$\sum F_y = F_{y,\text{up}} - F_{y,\text{down}}$$
+        $$R=\sqrt{(\sum F_x)^2+(\sum F_y)^2}$$
+        $$\tan\alpha=\frac{\sum F_y}{\sum F_x}$$
+    </div>
+
+    <div class="warning-box">
+        <div class="lang-th">
+            🇹🇭 <strong>จำเครื่องหมาย:</strong> ขวาเป็น \(+\), ซ้ายเป็น \(-\), ขึ้นเป็น \(+\), ลงเป็น \(-\)
+        </div>
+        <div class="lang-en mb-0 border-none bg-transparent p-0">
+            🇬🇧 <strong>Sign convention:</strong> Right is \(+\), left is \(-\), upward is \(+\), and downward is \(-\).
+        </div>
+    </div>
+
+
+    <!-- Section 6 -->
+    <h2 class="section-header">
+        6. ตัวอย่างโจทย์: แตกแรงแล้วรวมกลับ
+        <span class="font-normal text-xl text-gray-500">(Example: Resolve and Recombine)</span>
+    </h2>
+
+    <div class="lang-th">
+        🇹🇭 <strong>โจทย์:</strong> มีแรง \(50\,N\) ทำมุม \(37^\circ\) เหนือแกน \(x\), แรง \(20\,N\) ไปทางขวา และแรง \(10\,N\) ลงล่าง จงหาแรงลัพธ์
+    </div>
+    <div class="lang-en">
+        🇬🇧 <strong>Problem:</strong> A \(50\,N\) force acts at \(37^\circ\) above the \(x\)-axis, a \(20\,N\) force acts to the right, and a \(10\,N\) force acts downward. Find the resultant force.
+    </div>
+
+    <div class="figure-box">
+        <svg viewBox="0 0 760 350" role="img" aria-label="Example of multiple force vectors">
+            <defs>
+                <marker id="arrowExBlue" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#2563eb"></path>
+                </marker>
+                <marker id="arrowExRed" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#dc2626"></path>
+                </marker>
+                <marker id="arrowExGreen" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#16a34a"></path>
+                </marker>
+            </defs>
+
+            <line x1="100" y1="260" x2="670" y2="260" stroke="#cbd5e1" stroke-width="3" marker-end="url(#arrowExBlue)"></line>
+            <line x1="380" y1="310" x2="380" y2="45" stroke="#cbd5e1" stroke-width="3" marker-end="url(#arrowExBlue)"></line>
+            <text x="685" y="265" class="svg-small">x</text>
+            <text x="372" y="35" class="svg-small">y</text>
+
+            <circle cx="380" cy="260" r="7" fill="#111827"></circle>
+
+            <line x1="380" y1="260" x2="560" y2="185" stroke="#dc2626" stroke-width="6" marker-end="url(#arrowExRed)"></line>
+            <text x="535" y="165" class="svg-label" font-size="20" fill="#dc2626">50 N</text>
+
+            <line x1="380" y1="260" x2="510" y2="260" stroke="#2563eb" stroke-width="6" marker-end="url(#arrowExBlue)"></line>
+            <text x="460" y="288" class="svg-label" font-size="18" fill="#2563eb">20 N</text>
+
+            <line x1="380" y1="260" x2="380" y2="330" stroke="#16a34a" stroke-width="6" marker-end="url(#arrowExGreen)"></line>
+            <text x="410" y="315" class="svg-label" font-size="18" fill="#16a34a">10 N</text>
+
+            <path d="M430 260 A50 50 0 0 1 460 245" fill="none" stroke="#f59e0b" stroke-width="4"></path>
+            <text x="462" y="245" class="svg-label" font-size="20">37°</text>
+        </svg>
+        <p class="figure-caption">
+            รูปที่ 5: ตัวอย่างแรงหลายตัวที่ต้องแตกเข้าแกน \(x\) และ \(y\)
+            (An example of multiple forces resolved into \(x\)- and \(y\)-components.)
+        </p>
+    </div>
+
+    <div class="topic-title">เฉลย / Solution</div>
+
+    <div class="lang-th">
+        แรง \(50\,N\) ทำมุมกับแกน \(x\) จึงแตกเป็น
+    </div>
+    <div class="math-box">
+        $$F_x=50\cos37^\circ \approx 50(0.8)=40\,N$$
+        $$F_y=50\sin37^\circ \approx 50(0.6)=30\,N$$
+    </div>
+
+    <div class="lang-th">
+        รวมแรงในแกน \(x\)
+    </div>
+    <div class="math-box">
+        $$\sum F_x = 40 + 20 = 60\,N$$
+    </div>
+
+    <div class="lang-th">
+        รวมแรงในแกน \(y\)
+    </div>
+    <div class="math-box">
+        $$\sum F_y = 30 - 10 = 20\,N$$
+    </div>
+
+    <div class="lang-th">
+        หาแรงลัพธ์
+    </div>
+    <div class="math-box">
+        $$R=\sqrt{60^2+20^2}$$
+        $$R=\sqrt{4000}$$
+        $$R\approx 63.2\,N$$
+    </div>
+
+    <div class="lang-th">
+        หาทิศทางของแรงลัพธ์จากแกน \(x\)
+    </div>
+    <div class="math-box">
+        $$\tan\alpha=\frac{\sum F_y}{\sum F_x}=\frac{20}{60}$$
+        $$\alpha=\tan^{-1}\left(\frac{1}{3}\right)$$
+        $$\alpha\approx 18.4^\circ$$
+    </div>
+
+    <div class="highlight-box">
+        <div class="lang-th">
+            🇹🇭 <strong>ตอบ:</strong> แรงลัพธ์มีขนาดประมาณ \(63.2\,N\) ทำมุม \(18.4^\circ\) เหนือแกน \(x\)
+        </div>
+        <div class="lang-en mb-0 border-none bg-transparent p-0">
+            🇬🇧 <strong>Answer:</strong> The resultant force is approximately \(63.2\,N\), directed \(18.4^\circ\) above the \(x\)-axis.
+        </div>
+    </div>
+
+
+    <!-- Section 7 -->
+    <h2 class="section-header">
+        7. สรุปสูตรสำคัญ
+        <span class="font-normal text-xl text-gray-500">(Key Formula Summary)</span>
+    </h2>
+
+    <div class="overflow-x-auto">
+        <table class="lesson-table">
+            <thead>
+                <tr>
+                    <th>สถานการณ์<br><span class="text-xs font-normal text-slate-500">Situation</span></th>
+                    <th>สูตร<br><span class="text-xs font-normal text-slate-500">Formula</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>ทิศเดียวกัน<br><span class="text-xs text-slate-500">Same direction</span></td>
+                    <td>$$R=A+B$$</td>
+                </tr>
+                <tr>
+                    <td>สวนทางกัน<br><span class="text-xs text-slate-500">Opposite directions</span></td>
+                    <td>$$R=|A-B|$$</td>
+                </tr>
+                <tr>
+                    <td>ตั้งฉากกัน<br><span class="text-xs text-slate-500">Perpendicular vectors</span></td>
+                    <td>$$R=\sqrt{A^2+B^2}$$</td>
+                </tr>
+                <tr>
+                    <td>แตกแกน \(x\)<br><span class="text-xs text-slate-500">x-component</span></td>
+                    <td>$$F_x=F\cos\theta$$</td>
+                </tr>
+                <tr>
+                    <td>แตกแกน \(y\)<br><span class="text-xs text-slate-500">y-component</span></td>
+                    <td>$$F_y=F\sin\theta$$</td>
+                </tr>
+                <tr>
+                    <td>รวมกลับเป็นเวกเตอร์ลัพธ์<br><span class="text-xs text-slate-500">Resultant magnitude</span></td>
+                    <td>$$R=\sqrt{(\sum F_x)^2+(\sum F_y)^2}$$</td>
+                </tr>
+                <tr>
+                    <td>หามุมจากแกน \(x\)<br><span class="text-xs text-slate-500">Direction from x-axis</span></td>
+                    <td>$$\tan\alpha=\frac{\sum F_y}{\sum F_x}$$</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="highlight-box">
+        <div class="lang-th">
+            🇹🇭 <strong>สรุปจำสั้น:</strong> เวกเตอร์เฉียงทุกตัวสามารถแตกเป็น \(x\) และ \(y\) ได้ จากนั้นรวมทีละแกน แล้วประกอบกลับด้วยพีทาโกรัส
+        </div>
+        <div class="lang-en mb-0 border-none bg-transparent p-0">
+            🇬🇧 <strong>Short summary:</strong> Any tilted vector can be resolved into \(x\)- and \(y\)-components. Add the components separately, then recombine them using Pythagoras' theorem.
+        </div>
+    </div>
+
+</div>
+
+
+</body>
+</html>
