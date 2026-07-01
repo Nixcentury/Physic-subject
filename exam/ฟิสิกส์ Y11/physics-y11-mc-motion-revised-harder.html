@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Physics Y11 MC Part C Revised</title>
+<script>
+window.MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],processEscapes:true}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700;800;900&family=Noto+Sans+Thai:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:#e5e7eb;color:#111827;font-family:"Google Sans","Noto Sans Thai",Arial,sans-serif;line-height:1.36}
+.toolbar{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;padding:12px;background:#0f172a;color:#fff;box-shadow:0 10px 30px rgba(15,23,42,.22)}
+.toolbar button{border:0;border-radius:999px;padding:9px 14px;font-weight:800;cursor:pointer;background:#fff;color:#0f172a;font-family:inherit}
+.toolbar .primary{background:#38bdf8;color:#082f49}.toolbar .danger{background:#fde68a;color:#78350f}.status{flex-basis:100%;text-align:center;font-size:13px;opacity:.9}
+.paper{width:210mm;min-height:297mm;margin:18px auto 36px;padding:11.5mm;background:#fff;box-shadow:0 16px 48px rgba(15,23,42,.22)}
+.exam-header{border:2px solid #111827;padding:9px 10px;margin-bottom:10px}.exam-title{text-align:center;font-size:17px;font-weight:900;line-height:1.25}.exam-subtitle{text-align:center;color:#374151;font-size:12px;margin-top:2px}
+.student-row{display:grid;grid-template-columns:1.3fr .8fr .8fr;gap:8px;margin-top:6px;font-size:11.5px}.blank-line{display:inline-block;border-bottom:1px dotted #111827;min-height:15px;width:100%;vertical-align:baseline}
+.instruction-box{border:1px solid #111827;background:#f9fafb;border-radius:8px;padding:7px 9px;font-size:11.4px;margin:8px 0 10px}
+.formula-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin:7px 0 4px;font-size:10.1px}.formula-strip div{border:1px solid #d1d5db;background:#fff;border-radius:6px;padding:4px;text-align:center;font-weight:800}
+.situation{border-left:5px solid #111827;background:#f3f4f6;border-radius:8px;padding:7px 9px;margin:12px 0 7px;break-inside:avoid;page-break-inside:avoid}.situation-title{font-size:13.4px;font-weight:900;margin-bottom:3px}.situation-text{font-size:11.15px}
+.question{border:1px solid #d1d5db;border-radius:9px;padding:7px 8px;margin:7px 0;break-inside:avoid;page-break-inside:avoid}.question-head{display:grid;grid-template-columns:28px 1fr auto;gap:6px;align-items:start;margin-bottom:4px}
+.q-number{display:inline-flex;width:24px;height:24px;border:1.4px solid #111827;border-radius:999px;align-items:center;justify-content:center;font-weight:900;font-size:12px}.q-title{font-size:11.75px;font-weight:800;line-height:1.35}
+.score-badge{white-space:nowrap;border:1px solid #111827;border-radius:999px;padding:2px 7px;font-size:10.2px;font-weight:900;background:#f3f4f6}
+.choices{margin:4px 0 0 24px;padding-left:14px;font-size:11.1px;columns:2;column-gap:16px}.choices li{margin:0 0 3px;break-inside:avoid;padding-left:2px}
+.figure-card{border:1px solid #d1d5db;border-radius:8px;background:#fff;padding:6px;margin:5px 0}.figure-title{font-size:11px;font-weight:900;margin-bottom:3px}.figure-svg{width:100%;height:auto;display:block;border:1px solid #e5e7eb;border-radius:6px;background:#fff}
+.solution-box{display:none;margin-top:7px;padding:7px 8px;border:1px solid #bfdbfe;border-left:4px solid #2563eb;background:#eff6ff;border-radius:8px;font-size:10.7px;line-height:1.38}.solution-title{font-weight:900;font-size:12px;margin-bottom:2px}.ans-red{color:#dc2626;font-weight:900}
+.answer-key{display:none;margin-top:18px;border-top:2px solid #111827;padding-top:10px;break-before:page;page-break-before:always}.answer-key h2{margin:0 0 8px;font-size:18px}.key-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;font-size:13px}.key-cell{border:1px solid #111827;padding:6px;text-align:center;font-weight:900}
+.mode-solution .solution-box{display:block}.mode-key .answer-key,.mode-solution .answer-key{display:block}
+@page{size:A4 portrait;margin:0}
+@media print{html,body{width:210mm;background:#fff!important}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}.toolbar{display:none!important}.paper{width:210mm;margin:0;padding:11mm;box-shadow:none}.exam-title{font-size:15pt}.q-title{font-size:9.65pt}.choices{font-size:9.05pt}.situation-text,.instruction-box{font-size:9pt}.solution-box{font-size:8.4pt}}
+@media screen and (max-width:820px){.paper{width:calc(100vw - 20px)}.student-row{grid-template-columns:1fr}.formula-strip{grid-template-columns:1fr}.choices{columns:1}.key-grid{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body class="mode-exam">
+<div class="toolbar">
+<button class="primary" onclick="printExam()">🖨️ พิมพ์ข้อสอบ</button>
+<button onclick="printKey()">✅ พิมพ์พร้อมเฉลยสั้น</button>
+<button onclick="printSolution()">📘 พิมพ์เฉลยละเอียด</button>
+<button class="danger" onclick="toggleSolution()">💡 เปิด/ปิดเฉลยบนจอ</button>
+<div class="status" id="statusText">โหมดปัจจุบัน: Part C ปรับยากขึ้น — ใช้สถานการณ์และคำตอบต่อเนื่อง</div>
+</div>
+
+<main class="paper">
+<section class="exam-header">
+<div class="exam-title">Physics Y11 Multiple Choice Exam — Part C<br>ข้อกาเชิงวิเคราะห์ ฟิสิกส์ ม.4 — ส่วนที่ C</div>
+<div class="exam-subtitle">Motion in One Dimension / การเคลื่อนที่แนวตรง <b>(15 questions × 2 points = 30 points / 30 คะแนน)</b></div>
+<div class="student-row">
+<div>ชื่อ-สกุล / Name: <span class="blank-line"></span></div>
+<div>ชั้น / Class: <span class="blank-line"></span></div>
+<div>เลขที่ / No.: <span class="blank-line"></span></div>
+</div>
+</section>
+
+<section class="instruction-box">
+<b>คำชี้แจง / Instructions:</b> เลือกคำตอบที่ถูกต้องที่สุดเพียงข้อเดียวในแต่ละข้อ บางข้อใช้ข้อมูลจากสถานการณ์เดียวกัน และบางข้อใช้คำตอบจากข้อก่อนหน้า<br>
+Choose the best answer. Some questions use a shared situation, and some build on answers from previous questions.
+<div class="formula-strip">
+<div>\(v=u+at\)</div><div>\(s=ut+\frac12at^2\)</div><div>\(s=vt-\frac12at^2\)</div><div>\(v^2=u^2+2as\)</div><div>\(s=\frac{u+v}{2}t\)</div>
+</div>
+</section>
+
+<section class="situation">
+<div class="situation-title">สถานการณ์ A: รถทดลองบนราง / Situation A: A cart on a track</div>
+<div class="situation-text">รถทดลองเคลื่อนที่ไปทางขวาด้วยความเร็วต้น \(2.0\,m/s\) แล้วเร่งด้วยความเร่งคงที่ \(1.5\,m/s^2\) เป็นเวลา \(6.0\,s\)<br>
+A cart moves to the right with initial velocity \(2.0\,m/s\), then accelerates at \(1.5\,m/s^2\) for \(6.0\,s\).</div>
+<div class="figure-card"><div class="figure-title">Motion diagram / แผนภาพการเคลื่อนที่</div>
+<svg class="figure-svg" viewBox="0 0 540 150" aria-label="cart accelerates">
+<defs><marker id="arrowA" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#2563eb"/></marker></defs>
+<line x1="35" y1="115" x2="505" y2="115" stroke="#111827" stroke-width="3"/>
+<rect x="65" y="80" width="70" height="32" rx="5" fill="#e5e7eb" stroke="#111827" stroke-width="2"/><circle cx="80" cy="115" r="7" fill="#111827"/><circle cx="120" cy="115" r="7" fill="#111827"/>
+<line x1="145" y1="95" x2="335" y2="95" stroke="#2563eb" stroke-width="4" marker-end="url(#arrowA)"/>
+<text x="155" y="78" font-size="14" font-weight="900" fill="#2563eb">a = 1.5 m/s²</text><text x="54" y="140" font-size="13" font-weight="900">u = 2.0 m/s</text><text x="345" y="100" font-size="13" font-weight="900">t = 6.0 s</text>
+</svg></div>
+</section>
+
+<article class="question" data-answer="B"><div class="question-head"><span class="q-number">1</span><div class="q-title">ความเร็วปลายของรถทดลองเป็นเท่าใด / What is the final velocity of the cart?</div><span class="score-badge">2 pts</span></div>
+<ol class="choices" type="A"><li>8.0 m/s</li><li>11 m/s</li><li>12 m/s</li><li>14 m/s</li><li>18 m/s</li><li>21 m/s</li></ol>
+<div class="solution-box"><div class="solution-title">Solution</div>\(v=u+at=2.0+1.5(6.0)=11\,m/s\). Answer: <span class="ans-red">B</span></div></article>
+
+<article class="question" data-answer="E"><div class="question-head"><span class="q-number">2</span><div class="q-title">ใช้คำตอบข้อ 1 เพื่อหาการกระจัดของรถ / Use your answer from Question 1 to find the displacement.</div><span class="score-badge">2 pts</span></div>
+<ol class="choices" type="A"><li>18 m</li><li>27 m</li><li>33 m</li><li>36 m</li><li>39 m</li><li>66 m</li></ol>
+<div class="solution-box"><div class="solution-title">Solution</div>\(s=\frac{u+v}{2}t=\frac{2.0+11}{2}(6.0)=39\,m\). Answer: <span class="ans-red">E</span></div></article>
+
+<article class="question" data-answer="D"><div class="question-head"><span class="q-number">3</span><div class="q-title">จากข้อ 1–2 ความเร็วเฉลี่ยในช่วง \(6.0s\) เป็นเท่าใด / From Q1–Q2, what is the average velocity?</div><span class="score-badge">2 pts</span></div>
+<ol class="choices" type="A"><li>3.0 m/s</li><li>4.5 m/s</li><li>5.5 m/s</li><li>6.5 m/s</li><li>9.0 m/s</li><li>13 m/s</li></ol>
+<div class="solution-box"><div class="solution-title">Solution</div>\(v_{avg}=s/t=39/6.0=6.5\,m/s\) หรือ \(\frac{u+v}{2}=6.5\,m/s\). Answer: <span class="ans-red">D</span></div></article>
+
+<article class="question" data-answer="C"><div class="question-head"><span class="q-number">4</span><div class="q-title">ถ้ารถทดลองวิ่งนานกว่าเดิม แต่ความเร่งเท่าเดิม กราฟ \(v-t\) จะเปลี่ยนอย่างไร / If time is longer but acceleration is the same, how does the \(v-t\) graph change?</div><span class="score-badge">2 pts</span></div>
+<ol class="choices" type="A"><li>ความชันลดลง / slope decreases</li><li>ความชันเพิ่มขึ้น / slope increases</li><li>ความชันเท่าเดิม แต่เส้นยาวขึ้น / same slope, longer line</li><li>กราฟกลายเป็นเส้นโค้ง / becomes curved</li><li>กราฟกลายเป็นเส้นแนวนอน / becomes horizontal</li><li>กราฟต้องตัดแกนเวลา / must cross the time axis</li></ol>
+<div class="solution-box"><div class="solution-title">Solution</div>ความชันของกราฟ \(v-t\) คือความเร่ง เมื่อ \(a\) เท่าเดิม ความชันเท่าเดิม แต่ช่วงเวลายาวขึ้น. Answer: <span class="ans-red">C</span></div></article>
+
+<section class="situation">
+<div class="situation-title">สถานการณ์ B: ระยะหยุดรถจริง / Situation B: Real stopping distance</div>
+<div class="situation-text">รถยนต์วิ่งด้วยความเร็ว \(18\,m/s\). คนขับใช้เวลาตอบสนอง \(0.75\,s\) ก่อนเริ่มเบรก จากนั้นรถเบรกด้วยความเร่ง \(-6.0\,m/s^2\) จนหยุด<br>
+A car travels at \(18\,m/s\). The driver's reaction time is \(0.75\,s\); then the car brakes at \(-6.0\,m/s^2\) until it stops.</div>
+<div class="figure-card"><div class="figure-title">Reaction + braking timeline / เส้นเวลา: ตอบสนอง + เบรก</div>
+<svg class="figure-svg" viewBox="0 0 540 135" aria-label="reaction braking timeline">
+<defs><marker id="arrowB" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#111827"/></marker></defs>
+<line x1="60" y1="70" x2="480" y2="70" stroke="#111827" stroke-width="3" marker-end="url(#arrowB)"/>
+<circle cx="60" cy="70" r="5" fill="#2563eb"/><circle cx="190" cy="70" r="5" fill="#f59e0b"/><circle cx="430" cy="70" r="5" fill="#dc2626"/>
+<line x1="60" y1="92" x2="190" y2="92" stroke="#f59e0b" stroke-width="5"/><line x1="190" y1="92" x2="430" y2="92" stroke="#dc2626" stroke-width="5"/>
+<text x="40" y="45" font-size="13" font-weight="900" fill="#2563eb">see hazard</text><text x="144" y="45" font-size="13" font-weight="900" fill="#b45309">brake starts</text><text x="414" y="45" font-size="13" font-weight="900" fill="#dc2626">stop</text>
+<text x="84" y="116" font-size="13" font-weight="900">reaction: 0.75 s</text><text x="250" y="116" font-size="13" font-weight="900">braking: a = -6.0 m/s²</text>
+</svg></div>
+</section>
+
+<article class="question" data-answer="C"><div class="question-head"><span class="q-number">5</span><div class="q-title">ระยะที่รถเคลื่อนที่ระหว่างเวลาตอบสนองเป็นเท่าใด / What distance is travelled during reaction time?</div><span class="score-badge">2 pts</span></div>
+<ol class="choices" type="A"><li>7.5 m</li><li>9.0 m</li><li>13.5 m</li><li>18 m</li><li>24 m</li><li>27 m</li></ol>
+<div class="solution-box"><div class="solution-title">Solution</div>ช่วงตอบสนองยังไม่เบรก ความเร็วคงที่ \(s=vt=18(0.75)=13.5\,m\). Answer: <span class="ans-red">C</span></div></article>
+
+<article class="question" data-answer="B"><div class="question-head"><span class="q-number">6</span><div class="q-title">เมื่อเริ่มเบรกแล้ว รถใช้เวลากี่วินาทีจึงหยุด / Once braking begins, how long does it take to stop?</div><span class="score-badge">2 pts</span></div>
+<ol class="choices" type="A"><li>2.0 s</li><li>3.0 s</li><li>4.0 s</li><li>5.0 s</li><li>6.0 s</li><li>7.5 s</li></ol>
+<div class="solution-box"><div class="solution-title">Solution</div>\(0=18-6t\Rightarrow t=3.0s\). Answer: <span class="ans-red">B</span></div></article>
+
+<article class="question" data-answer="D"><div class="question-head"><span class="q-number">7</span><div class="q-title">ระยะเบรกหลังจากเริ่มเบรกเป็นเท่าใด / What is the braking distance after braking begins?</div><span class="score-badge">2 pts</span></div>
+<ol class="choices" type="A"><li>13.5 m</li><li>18 m</li><li>24 m</li><li>27 m</li><li>40.5 m</li><li>54 m</li></ol>
+<div class="solution-box"><div class="solution-title">Solution</div>\(0^2=18^2+2(-6)s\Rightarrow s=27m\). Answer: <span class="ans-red">D</span></div></article>
+
+<article class="question" data-answer="E"><div class="question-head"><span class="q-number">8</span><div class="q-title">ใช้คำตอบข้อ 5 และ 7 เพื่อหาระยะหยุดรวม / Use Q5 and Q7 to find total stopping distance.</div><span class="score-badge">2 pts</span></div>
+<ol class="choices" type="A"><li>27 m</li><li>30 m</li><li>36.5 m</li><li>39.0 m</li><li>40.5 m</li><li>54.0 m</li></ol>
+<div class="solution-box"><div class="solution-title">Solution</div>ระยะหยุดรวม = \(13.5+27=40.5m\). Answer: <span class="ans-red">E</span></div></article>
+
+<section class="situation">
+<div class="situation-title">สถานการณ์ C: อ่านกราฟความเร็ว-เวลา / Situation C: Reading a velocity-time graph</div>
+<div class="situation-text">กราฟแสดงความเร็วของวัตถุในช่วง 0–11 s โดยหลัง \(t=9s\) ความเร็วเป็นลบ แปลว่าวัตถุเคลื่อนที่ย้อนกลับ<br>
+The graph shows velocity from 0–11 s. After \(t=9s\), velocity is negative, so the object moves backward.</div>
+<div class="figure-card"><div class="figure-title">Velocity-time graph / กราฟ \(v-t\)</div>
+<svg class="figure-svg" viewBox="0 0 540 295" aria-label="velocity-time graph">
+<defs><marker id="arrowC" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#111827"/></marker></defs>
+<line x1="65" y1="205" x2="490" y2="205" stroke="#111827" stroke-width="3" marker-end="url(#arrowC)"/><line x1="65" y1="250" x2="65" y2="35" stroke="#111827" stroke-width="3" marker-end="url(#arrowC)"/>
+<text x="496" y="210" font-size="13" font-weight="900">t (s)</text><text x="25" y="32" font-size="13" font-weight="900">v (m/s)</text>
+<g stroke="#d1d5db" stroke-width="1"><line x1="65" y1="145" x2="470" y2="145"/><line x1="65" y1="85" x2="470" y2="85"/><line x1="65" y1="205" x2="470" y2="205"/><line x1="65" y1="245" x2="470" y2="245"/><line x1="170" y1="45" x2="170" y2="245"/><line x1="275" y1="45" x2="275" y2="245"/><line x1="380" y1="45" x2="380" y2="245"/><line x1="450" y1="45" x2="450" y2="245"/></g>
+<text x="58" y="222" font-size="12">0</text><text x="164" y="222" font-size="12">3</text><text x="269" y="222" font-size="12">6</text><text x="374" y="222" font-size="12">9</text><text x="441" y="222" font-size="12">11</text>
+<text x="38" y="209" font-size="12">0</text><text x="38" y="149" font-size="12">4</text><text x="32" y="89" font-size="12">10</text><text x="32" y="249" font-size="12">-4</text>
+<polyline points="65,145 170,85 275,85 380,205 450,245" fill="none" stroke="#2563eb" stroke-width="4"/>
+<circle cx="65" cy="145" r="4" fill="#2563eb"/><circle cx="170" cy="85" r="4" fill="#2563eb"/><circle cx="275" cy="85" r="4" fill="#2563eb"/><circle cx="380" cy="205" r="4" fill="#2563eb"/><circle cx="450" cy="245" r="4" fill="#2563eb"/>
+</svg></div></section>
+
+<article class="question" data-answer="B"><div class="question-head"><span class="q-number">9</span><div class="q-title">ความเร่งในช่วง 0–3 s เป็นเท่าใด / What is the acceleration from 0–3 s?</div><span class="score-badge">2 pts</span></div>
+<ol class="choices" type="A"><li>\(+1\,m/s^2\)</li><li>\(+2\,m/s^2\)</li><li>\(+3\,m/s^2\)</li><li>\(0\,m/s^2\)</li><li>\(-2\,m/s^2\)</li><li>\(-4\,m/s^2\)</li></ol>
+<div class="solution-box"><div class="solution-title">Solution</div>\(a=\frac{10-4}{3-0}=+2\,m/s^2\). Answer: <span class="ans-red">B</span></div></article>
+
+<article class="question" data-answer="D"><div class="question-head"><span class="q-number">10</span><div class="q-title">การกระจัดในช่วง 0–6 s เป็นเท่าใด / What is the displacement from 0–6 s?</div><span class="score-badge">2 pts</span></div>
+<ol class="choices" type="A"><li>21 m</li><li>30 m</li><li>42 m</li><li>51 m</li><li>60 m</li><li>66 m</li></ol>
+<div class="solution-box"><div class="solution-title">Solution</div>พื้นที่ 0–3 s = \(\frac{4+10}{2}(3)=21m\). พื้นที่ 3–6 s = \(10(3)=30m\). รวม \(51m\). Answer: <span class="ans-red">D</span></div></article>
+
+<article class="question" data-answer="E"><div class="question-head"><span class="q-number">11</span><div class="q-title">การกระจัดรวมตลอด 0–11 s เป็นเท่าใด / What is the total displacement from 0–11 s?</div><span class="score-badge">2 pts</span></div>
+<ol class="choices" type="A"><li>51 m</li><li>55 m</li><li>58 m</li><li>60 m</li><li>62 m</li><li>66 m</li></ol>
+<div class="solution-box"><div class="solution-title">Solution</div>รวมพื้นที่มีเครื่องหมาย: \(21+30+\frac12(3)(10)-\frac12(2)(4)=62m\). Answer: <span class="ans-red">E</span></div></article>
+
+<article class="question" data-answer="C"><div class="question-head"><span class="q-number">12</span><div class="q-title">ข้อใดอธิบายช่วง 9–11 s ได้ถูกต้องที่สุด / Which statement best describes 9–11 s?</div><span class="score-badge">2 pts</span></div>
+<ol class="choices" type="A"><li>วัตถุหยุดนิ่งตลอดช่วง / at rest throughout</li><li>วัตถุยังเคลื่อนที่ไปข้างหน้า / continues forward</li><li>วัตถุเคลื่อนที่ย้อนกลับ และเร็วขึ้นในทิศย้อนกลับ / moves backward and speeds up backward</li><li>วัตถุเคลื่อนที่ย้อนกลับ แต่ช้าลง / moves backward but slows down</li><li>ความเร่งเป็นศูนย์ / acceleration is zero</li><li>สรุปทิศทางไม่ได้ / cannot determine direction</li></ol>
+<div class="solution-box"><div class="solution-title">Solution</div>ช่วง 9–11 s \(v\) เป็นลบและขนาดเพิ่มจาก 0 เป็น 4 m/s จึงเคลื่อนที่ย้อนกลับเร็วขึ้น. Answer: <span class="ans-red">C</span></div></article>
+
+<section class="situation">
+<div class="situation-title">สถานการณ์ D: รถสองคันออกตัวพร้อมกัน / Situation D: Two vehicles start together</div>
+<div class="situation-text">รถ A เคลื่อนที่ด้วยความเร็วคงที่ \(10\,m/s\). รถ B เริ่มจากหยุดนิ่งที่ตำแหน่งเดียวกัน และเร่งด้วย \(1.0\,m/s^2\). ทั้งสองเริ่มพร้อมกันที่ \(t=0\)<br>
+Car A moves at constant velocity \(10\,m/s\). Car B starts from rest at the same position and accelerates at \(1.0\,m/s^2\).</div>
+</section>
+
+<article class="question" data-answer="D"><div class="question-head"><span class="q-number">13</span><div class="q-title">หลัง \(8.0s\) รถ A และ B อยู่ห่างจากจุดเริ่มต้นเท่าใดตามลำดับ / After \(8.0s\), how far are A and B?</div><span class="score-badge">2 pts</span></div>
+<ol class="choices" type="A"><li>A=40 m, B=80 m</li><li>A=64 m, B=80 m</li><li>A=80 m, B=16 m</li><li>A=80 m, B=32 m</li><li>A=100 m, B=50 m</li><li>A=160 m, B=32 m</li></ol>
+<div class="solution-box"><div class="solution-title">Solution</div>A: \(s=vt=10(8)=80m\). B: \(s=\frac12at^2=\frac12(1)(8^2)=32m\). Answer: <span class="ans-red">D</span></div></article>
+
+<article class="question" data-answer="E"><div class="question-head"><span class="q-number">14</span><div class="q-title">รถ B จะตามรถ A ทันเมื่อเวลาเท่าใด / At what time will B catch A?</div><span class="score-badge">2 pts</span></div>
+<ol class="choices" type="A"><li>5 s</li><li>8 s</li><li>10 s</li><li>15 s</li><li>20 s</li><li>25 s</li></ol>
+<div class="solution-box"><div class="solution-title">Solution</div>ตั้งระยะเท่ากัน: \(10t=\frac12(1)t^2\). เมื่อ \(t\ne0\), \(10=0.5t\Rightarrow t=20s\). Answer: <span class="ans-red">E</span></div></article>
+
+<article class="question" data-answer="C"><div class="question-head"><span class="q-number">15</span><div class="q-title">ใช้คำตอบข้อ 14 ความเร็วของรถ B ขณะตามทันเป็นเท่าใด / Using Q14, what is B's velocity when it catches A?</div><span class="score-badge">2 pts</span></div>
+<ol class="choices" type="A"><li>10 m/s</li><li>15 m/s</li><li>20 m/s</li><li>25 m/s</li><li>30 m/s</li><li>40 m/s</li></ol>
+<div class="solution-box"><div class="solution-title">Solution</div>\(v=u+at=0+1(20)=20m/s\). Answer: <span class="ans-red">C</span></div></article>
+
+<section class="answer-key" id="answerKey">
+<h2>Answer Key / เฉลยข้อกา</h2>
+<div class="key-grid">
+<div class="key-cell">1. B</div><div class="key-cell">2. E</div><div class="key-cell">3. D</div><div class="key-cell">4. C</div><div class="key-cell">5. C</div>
+<div class="key-cell">6. B</div><div class="key-cell">7. D</div><div class="key-cell">8. E</div><div class="key-cell">9. B</div><div class="key-cell">10. D</div>
+<div class="key-cell">11. E</div><div class="key-cell">12. C</div><div class="key-cell">13. D</div><div class="key-cell">14. E</div><div class="key-cell">15. C</div>
+</div>
+</section>
+</main>
+
+<script>
+const statusText=document.getElementById("statusText");
+function render(mode){document.body.classList.remove("mode-exam","mode-key","mode-solution");document.body.classList.add(mode);if(window.MathJax&&window.MathJax.typesetPromise){window.MathJax.typesetPromise();}}
+function printExam(){render("mode-exam");statusText.textContent="โหมดปัจจุบัน: พิมพ์ข้อสอบ — ซ่อนเฉลย";setTimeout(()=>window.print(),250);}
+function printKey(){render("mode-key");statusText.textContent="โหมดปัจจุบัน: พิมพ์พร้อมเฉลยสั้น";setTimeout(()=>window.print(),250);}
+function printSolution(){render("mode-solution");statusText.textContent="โหมดปัจจุบัน: พิมพ์เฉลยละเอียด";setTimeout(()=>window.print(),250);}
+function toggleSolution(){if(document.body.classList.contains("mode-solution")){render("mode-exam");statusText.textContent="ปิดเฉลยบนจอแล้ว";}else{render("mode-solution");statusText.textContent="เปิดเฉลยบนจอแล้ว";}}
+render("mode-exam");
+</script>
+</body>
+</html>
