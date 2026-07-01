@@ -1,0 +1,942 @@
+<div class="lab-container" style="padding: 15px; font-family: 'Prompt', sans-serif; background: #ffffff;">
+    <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 2px solid #e2e8f0; margin-bottom: 15px;">
+        <h3 style="margin: 0 0 10px 0; color: #1e3a8a; font-size: 18px; font-weight: 800;">
+            🐍 ปฏิบัติการจำลอง: <span id="lab-title-name">ไพธอนโค้ดเดอร์ (Python Code Builder)</span>
+        </h3>
+        <div style="background: #e2e8f0; border-radius: 99px; height: 12px; overflow: hidden; margin-bottom: 5px;">
+            <div id="lab-progress-bar" style="width: 0%; height: 100%; background: #10b981; transition: width 0.4s ease;"></div>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 12px; color: #64748b; font-weight: bold;">
+            <span id="lab-progress-text">ความคืบหน้า: ด่านที่ 0/40</span>
+            <span id="lab-percent-text">0%</span>
+        </div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+        
+        <div style="flex: 1.5; min-width: 320px; background: #0f172a; border: 4px solid #334155; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);">
+            <div style="background: #1e293b; padding: 10px 15px; border-bottom: 2px solid #334155; display: flex; justify-content: space-between; align-items: center;">
+                <div style="color: #cbd5e1; font-family: monospace; font-weight: bold;">📝 main.py</div>
+                <button id="btn-export-code" onclick="exportCode()" style="display: none; background: #10b981; color: white; border: none; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 0 #047857;">
+                    📋 คัดลอกโค้ด
+                </button>
+            </div>
+            <div style="padding: 20px; color: #f8fafc; font-family: 'Courier New', Courier, monospace; font-size: 16px; line-height: 1.8; overflow-x: auto; flex-grow: 1;">
+                <div id="py-scenario-desc" style="color: #60a5fa; font-family: 'Prompt', sans-serif; font-size: 14px; margin-bottom: 15px; font-weight: bold;">// โหลดโจทย์...</div>
+                <div id="py-code-display"></div>
+            </div>
+        </div>
+
+        <div style="flex: 1; min-width: 280px; display: flex; flex-direction: column; gap: 12px;">
+            
+            <div style="background: #fff0f2; padding: 12px; border: 2px solid #fda4af; border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: 800; color: #be123c; font-size: 14px;">❤️ พลังชีวิต:</span>
+                <span id="py-hearts-display" style="font-size: 18px; letter-spacing: 2px;">❤️❤️❤️❤️❤️</span>
+            </div>
+
+            <div style="background: #f1f5f9; padding: 15px; border: 2px solid #94a3b8; border-radius: 10px; flex-grow: 1;">
+                <div style="font-weight: 800; color: #334155; font-size: 14px; margin-bottom: 10px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px;">
+                    🧩 เลือกคำสั่งเติมในช่องว่าง:
+                </div>
+                <div id="py-inputs-container" style="display: flex; flex-direction: column; gap: 12px;"></div>
+            </div>
+
+            <button id="btn-py-check" onclick="checkPythonCode()" style="padding: 15px; background: #3b82f6; color: white; border: 3px solid #1e3a8a; border-radius: 10px; font-weight: 900; font-size: 16px; cursor: pointer; box-shadow: 4px 4px 0 #1e3a8a; transition: 0.1s;">
+                ✅ รันโค้ด (Run Code)
+            </button>
+            <button id="btn-py-next" onclick="nextPythonChallenge()" style="display: none; padding: 15px; background: #f59e0b; color: white; border: 3px solid #b45309; border-radius: 10px; font-weight: 900; font-size: 16px; cursor: pointer; box-shadow: 4px 4px 0 #b45309;">
+                ⏩ ลุยข้อต่อไป!
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+// 🛡️ 1. ฐานข้อมูลโจทย์ (กัปตันเอาโจทย์ทั้ง 32 ข้อมาวางแทรกตรงนี้ได้เลย)
+if (typeof pythonDB === 'undefined') { var pythonDB = []; }
+pythonDB = [
+    
+{
+    id: "LOOP_001",
+    title: "รวมราคาข้าวกลางวัน 5 วัน",
+    desc: "ใช้ for loop รับราคาอาหารกลางวัน 5 วัน แล้วรวมค่าใช้จ่ายทั้งหมด",
+    codeTemplate: `total = 0\nfor day in [__1__](1, [__2__]):\n    price = [__3__](input("ราคาอาหารกลางวัน: "))\n    total [__4__] price\nprint(f"รวมค่าอาหาร {total} บาท")`,
+    blanks: [
+        { id: 1, correct: "range", distractors: ["input", "print", "int", "Range", "loop", "repeat"] },
+        { id: 2, correct: "6", distractors: ["5", "4", "7", "day", "total", "range"] },
+        { id: 3, correct: "float", distractors: ["int", "str", "Float", "input", "number", "print"] },
+        { id: 4, correct: "+=", distractors: ["=+", "+", "==", "-=", "*=", "="] }
+    ]
+},
+{
+    id: "LOOP_002",
+    title: "ดื่มน้ำให้ครบ 8 แก้ว",
+    desc: "ใช้ while loop เพิ่มจำนวนแก้วน้ำทีละ 1 จนถึงเป้าหมาย 8 แก้ว",
+    codeTemplate: `glass = 0\nwhile glass [__1__] 8[__2__]\n    glass = glass [__3__] 1\n    print(f"ดื่มน้ำแล้ว {glass} แก้ว")\nprint("[__4__]")`,
+    blanks: [
+        { id: 1, correct: "<", distractors: ["<=", ">", ">=", "==", "=", "!="] },
+        { id: 2, correct: ":", distractors: [";", "::", "", " then", "{", "do"] },
+        { id: 3, correct: "+", distractors: ["-", "*", "/", "++", "+=", "="] },
+        { id: 4, correct: "ดื่มน้ำครบเป้าหมายแล้ว", distractors: ["glass", "{glass}", "ยังไม่ครบ", "ครบ 7 แก้ว", "หยุดวนลูป", "while จบแล้ว"] }
+    ]
+},
+{
+    id: "LOOP_003",
+    title: "สูตรคูณแม่ที่เลือก",
+    desc: "รับแม่สูตรคูณจากผู้ใช้ แล้วใช้ for loop แสดงผลตั้งแต่ 1 ถึง 12",
+    codeTemplate: `m = int(input("ต้องการสูตรคูณแม่: "))\nfor i in range(1, [__1__]):\n    ans = m [__2__] i\n    print(f"{m} x {i} = [__3__]")`,
+    blanks: [
+        { id: 1, correct: "13", distractors: ["12", "11", "10", "m", "i", "range"] },
+        { id: 2, correct: "*", distractors: ["x", "+", "-", "/", "**", "%"] },
+        { id: 3, correct: "{ans}", distractors: ["ans", "{m*i}", "m*i", "{i}", "{m}", "f{ans}"] }
+    ]
+},
+{
+    id: "LOOP_004",
+    title: "นับเมนูที่ราคาไม่เกินงบ",
+    desc: "รับราคาอาหาร 6 เมนู แล้วนับว่ามีกี่เมนูที่ราคาไม่เกิน 50 บาท",
+    codeTemplate: `count = 0\nfor i in range([__1__]):\n    price = int(input("ราคาเมนู: "))\n    if price [__2__] 50[__3__]\n        count = count [__4__] 1\nprint(f"มีเมนูที่ซื้อได้ {count} เมนู")`,
+    blanks: [
+        { id: 1, correct: "6", distractors: ["5", "7", "50", "count", "price", "range(6)"] },
+        { id: 2, correct: "<=", distractors: ["<", ">=", ">", "==", "=", "=>"] },
+        { id: 3, correct: ":", distractors: [";", "::", "", " then", "{", "end"] },
+        { id: 4, correct: "+", distractors: ["-", "*", "/", "+=", "++", "="] }
+    ]
+},
+{
+    id: "LOOP_005",
+    title: "ถามรหัสผ่านจนกว่าจะถูก",
+    desc: "ใช้ while loop ถามรหัสผ่านซ้ำจนกว่าผู้ใช้จะกรอกถูกต้อง",
+    codeTemplate: `password = input("รหัสผ่าน: ")\nwhile password [__1__] "1234":\n    print("[__2__]")\n    password = [__3__]("รหัสผ่านอีกครั้ง: ")\nprint("เข้าสู่ระบบสำเร็จ")`,
+    blanks: [
+        { id: 1, correct: "!=", distractors: ["==", "=", ">", "<", "not", "is"] },
+        { id: 2, correct: "รหัสผิด ลองใหม่", distractors: ["รหัสถูก", "1234", "password", "{password}", "while", "หยุดโปรแกรม"] },
+        { id: 3, correct: "input", distractors: ["print", "int", "float", "Input", "scan", "str"] }
+    ]
+},
+{
+    id: "LOOP_006",
+    title: "รวมแคลอรีอาหาร 4 จาน",
+    desc: "ใช้ for loop รับค่าพลังงานอาหาร 4 จาน แล้วรวมแคลอรีทั้งหมด",
+    codeTemplate: `total_cal = 0\nfor food in range([__1__]):\n    cal = float(input("พลังงานอาหาร (kcal): "))\n    total_cal = total_cal [__2__] cal\nprint(f"พลังงานรวม [__3__] kcal")`,
+    blanks: [
+        { id: 1, correct: "4", distractors: ["3", "5", "total_cal", "food", "cal", "range"] },
+        { id: 2, correct: "+", distractors: ["-", "*", "/", "=", "+=", "=="] },
+        { id: 3, correct: "{total_cal}", distractors: ["total_cal", "{cal}", "{food}", "f{total_cal}", "{total_cal:.}", "{Total_cal}"] }
+    ]
+},
+{
+    id: "LOOP_007",
+    title: "เก็บเงินซื้อขนม",
+    desc: "ใช้ while loop สะสมเงินทีละวัน จนกว่าจะมีเงินอย่างน้อย 100 บาท",
+    codeTemplate: `money = 0\nday = 0\nwhile money [__1__] 100:\n    save = int(input("วันนี้เก็บเงินได้: "))\n    money = money + [__2__]\n    day [__3__] 1\nprint(f"ใช้เวลา {day} วัน เก็บเงินได้ {money} บาท")`,
+    blanks: [
+        { id: 1, correct: "<", distractors: ["<=", ">", ">=", "==", "!=", "="] },
+        { id: 2, correct: "save", distractors: ["money", "day", "100", "{save}", "input", "total"] },
+        { id: 3, correct: "+=", distractors: ["=+", "+", "++", "-=", "==", "="] }
+    ]
+},
+{
+    id: "LOOP_008",
+    title: "นับเลขคู่จาก 1 ถึง n",
+    desc: "รับค่า n แล้วใช้ for loop กับ if เพื่อนับจำนวนเลขคู่ตั้งแต่ 1 ถึง n",
+    codeTemplate: `n = int(input("นับถึงเลข: "))\neven_count = 0\nfor num in range(1, n [__1__] 1):\n    if num [__2__] 2 == 0:\n        even_count = even_count + 1\nprint(f"มีเลขคู่ [__3__] ตัว")`,
+    blanks: [
+        { id: 1, correct: "+", distractors: ["-", "*", "/", "++", "+=", ""] },
+        { id: 2, correct: "%", distractors: ["//", "/", "*", "**", "mod", "=="] },
+        { id: 3, correct: "{even_count}", distractors: ["even_count", "{num}", "{n}", "num", "{even}", "f{even_count}"] }
+    ]
+},
+{
+    id: "LOOP_009",
+    title: "อ่านหนังสือครบ 60 นาที",
+    desc: "ใช้ while loop รวมเวลาการอ่านหนังสือหลายรอบ จนถึงอย่างน้อย 60 นาที",
+    codeTemplate: `total_min = 0\nwhile total_min [__1__] 60[__2__]\n    minute = int(input("อ่านเพิ่มกี่นาที: "))\n    total_min [__3__] minute\nprint(f"อ่านครบแล้ว รวม {total_min} นาที")`,
+    blanks: [
+        { id: 1, correct: "<", distractors: ["<=", ">", ">=", "==", "!=", "="] },
+        { id: 2, correct: ":", distractors: [";", "::", "", " then", "{", "do"] },
+        { id: 3, correct: "+=", distractors: ["=+", "+", "-=", "==", "++", "="] }
+    ]
+},
+{
+    id: "LOOP_010",
+    title: "เกมทายเลขแบบง่าย",
+    desc: "ใช้ while loop ให้ผู้ใช้ทายเลขซ้ำจนกว่าจะถูก",
+    codeTemplate: `secret = 7\nguess = int(input("ทายเลข 1-10: "))\nwhile guess [__1__] secret:\n    if guess < secret:\n        print("[__2__]")\n    else:\n        print("[__3__]")\n    guess = int([__4__]("ทายอีกครั้ง: "))\nprint("ทายถูกแล้ว!")`,
+    blanks: [
+        { id: 1, correct: "!=", distractors: ["==", "=", "<", ">", "is", "not"] },
+        { id: 2, correct: "น้อยเกินไป", distractors: ["มากเกินไป", "ถูกแล้ว", "guess", "secret", "เลขคู่", "ลองใหม่"] },
+        { id: 3, correct: "มากเกินไป", distractors: ["น้อยเกินไป", "ถูกแล้ว", "secret", "{guess}", "เลขคี่", "หยุดเกม"] },
+        { id: 4, correct: "input", distractors: ["print", "int", "float", "Input", "scan", "str"] }
+    ]
+},
+{
+    id: "LOOP_001",
+    title: "รวมราคาข้าวกลางวัน 5 วัน",
+    desc: "ใช้ for loop รับราคาอาหารกลางวัน 5 วัน แล้วรวมค่าใช้จ่ายทั้งหมด",
+    codeTemplate: `total = 0\nfor day in [__1__](1, [__2__]):\n    price = [__3__](input("ราคาอาหารกลางวัน: "))\n    total [__4__] price\nprint(f"รวมค่าอาหาร {total} บาท")`,
+    blanks: [
+        { id: 1, correct: "range", distractors: ["input", "print", "int", "Range", "loop", "repeat"] },
+        { id: 2, correct: "6", distractors: ["5", "4", "7", "day", "total", "range"] },
+        { id: 3, correct: "float", distractors: ["int", "str", "Float", "input", "number", "print"] },
+        { id: 4, correct: "+=", distractors: ["=+", "+", "==", "-=", "*=", "="] }
+    ]
+},
+{
+    id: "LOOP_002",
+    title: "ดื่มน้ำให้ครบ 8 แก้ว",
+    desc: "ใช้ while loop เพิ่มจำนวนแก้วน้ำทีละ 1 จนถึงเป้าหมาย 8 แก้ว",
+    codeTemplate: `glass = 0\nwhile glass [__1__] 8[__2__]\n    glass = glass [__3__] 1\n    print(f"ดื่มน้ำแล้ว {glass} แก้ว")\nprint("[__4__]")`,
+    blanks: [
+        { id: 1, correct: "<", distractors: ["<=", ">", ">=", "==", "=", "!="] },
+        { id: 2, correct: ":", distractors: [";", "::", "", " then", "{", "do"] },
+        { id: 3, correct: "+", distractors: ["-", "*", "/", "++", "+=", "="] },
+        { id: 4, correct: "ดื่มน้ำครบเป้าหมายแล้ว", distractors: ["glass", "{glass}", "ยังไม่ครบ", "ครบ 7 แก้ว", "หยุดวนลูป", "while จบแล้ว"] }
+    ]
+},
+{
+    id: "LOOP_003",
+    title: "สูตรคูณแม่ที่เลือก",
+    desc: "รับแม่สูตรคูณจากผู้ใช้ แล้วใช้ for loop แสดงผลตั้งแต่ 1 ถึง 12",
+    codeTemplate: `m = int(input("ต้องการสูตรคูณแม่: "))\nfor i in range(1, [__1__]):\n    ans = m [__2__] i\n    print(f"{m} x {i} = [__3__]")`,
+    blanks: [
+        { id: 1, correct: "13", distractors: ["12", "11", "10", "m", "i", "range"] },
+        { id: 2, correct: "*", distractors: ["x", "+", "-", "/", "**", "%"] },
+        { id: 3, correct: "{ans}", distractors: ["ans", "{m*i}", "m*i", "{i}", "{m}", "f{ans}"] }
+    ]
+},
+{
+    id: "LOOP_004",
+    title: "นับเมนูที่ราคาไม่เกินงบ",
+    desc: "รับราคาอาหาร 6 เมนู แล้วนับว่ามีกี่เมนูที่ราคาไม่เกิน 50 บาท",
+    codeTemplate: `count = 0\nfor i in range([__1__]):\n    price = int(input("ราคาเมนู: "))\n    if price [__2__] 50[__3__]\n        count = count [__4__] 1\nprint(f"มีเมนูที่ซื้อได้ {count} เมนู")`,
+    blanks: [
+        { id: 1, correct: "6", distractors: ["5", "7", "50", "count", "price", "range(6)"] },
+        { id: 2, correct: "<=", distractors: ["<", ">=", ">", "==", "=", "=>"] },
+        { id: 3, correct: ":", distractors: [";", "::", "", " then", "{", "end"] },
+        { id: 4, correct: "+", distractors: ["-", "*", "/", "+=", "++", "="] }
+    ]
+},
+{
+    id: "LOOP_005",
+    title: "ถามรหัสผ่านจนกว่าจะถูก",
+    desc: "ใช้ while loop ถามรหัสผ่านซ้ำจนกว่าผู้ใช้จะกรอกถูกต้อง",
+    codeTemplate: `password = input("รหัสผ่าน: ")\nwhile password [__1__] "1234":\n    print("[__2__]")\n    password = [__3__]("รหัสผ่านอีกครั้ง: ")\nprint("เข้าสู่ระบบสำเร็จ")`,
+    blanks: [
+        { id: 1, correct: "!=", distractors: ["==", "=", ">", "<", "not", "is"] },
+        { id: 2, correct: "รหัสผิด ลองใหม่", distractors: ["รหัสถูก", "1234", "password", "{password}", "while", "หยุดโปรแกรม"] },
+        { id: 3, correct: "input", distractors: ["print", "int", "float", "Input", "scan", "str"] }
+    ]
+},
+{
+    id: "LOOP_006",
+    title: "รวมแคลอรีอาหาร 4 จาน",
+    desc: "ใช้ for loop รับค่าพลังงานอาหาร 4 จาน แล้วรวมแคลอรีทั้งหมด",
+    codeTemplate: `total_cal = 0\nfor food in range([__1__]):\n    cal = float(input("พลังงานอาหาร (kcal): "))\n    total_cal = total_cal [__2__] cal\nprint(f"พลังงานรวม [__3__] kcal")`,
+    blanks: [
+        { id: 1, correct: "4", distractors: ["3", "5", "total_cal", "food", "cal", "range"] },
+        { id: 2, correct: "+", distractors: ["-", "*", "/", "=", "+=", "=="] },
+        { id: 3, correct: "{total_cal}", distractors: ["total_cal", "{cal}", "{food}", "f{total_cal}", "{total_cal:.}", "{Total_cal}"] }
+    ]
+},
+{
+    id: "LOOP_007",
+    title: "เก็บเงินซื้อขนม",
+    desc: "ใช้ while loop สะสมเงินทีละวัน จนกว่าจะมีเงินอย่างน้อย 100 บาท",
+    codeTemplate: `money = 0\nday = 0\nwhile money [__1__] 100:\n    save = int(input("วันนี้เก็บเงินได้: "))\n    money = money + [__2__]\n    day [__3__] 1\nprint(f"ใช้เวลา {day} วัน เก็บเงินได้ {money} บาท")`,
+    blanks: [
+        { id: 1, correct: "<", distractors: ["<=", ">", ">=", "==", "!=", "="] },
+        { id: 2, correct: "save", distractors: ["money", "day", "100", "{save}", "input", "total"] },
+        { id: 3, correct: "+=", distractors: ["=+", "+", "++", "-=", "==", "="] }
+    ]
+},
+{
+    id: "LOOP_008",
+    title: "นับเลขคู่จาก 1 ถึง n",
+    desc: "รับค่า n แล้วใช้ for loop กับ if เพื่อนับจำนวนเลขคู่ตั้งแต่ 1 ถึง n",
+    codeTemplate: `n = int(input("นับถึงเลข: "))\neven_count = 0\nfor num in range(1, n [__1__] 1):\n    if num [__2__] 2 == 0:\n        even_count = even_count + 1\nprint(f"มีเลขคู่ [__3__] ตัว")`,
+    blanks: [
+        { id: 1, correct: "+", distractors: ["-", "*", "/", "++", "+=", ""] },
+        { id: 2, correct: "%", distractors: ["//", "/", "*", "**", "mod", "=="] },
+        { id: 3, correct: "{even_count}", distractors: ["even_count", "{num}", "{n}", "num", "{even}", "f{even_count}"] }
+    ]
+},
+{
+    id: "LOOP_009",
+    title: "อ่านหนังสือครบ 60 นาที",
+    desc: "ใช้ while loop รวมเวลาการอ่านหนังสือหลายรอบ จนถึงอย่างน้อย 60 นาที",
+    codeTemplate: `total_min = 0\nwhile total_min [__1__] 60[__2__]\n    minute = int(input("อ่านเพิ่มกี่นาที: "))\n    total_min [__3__] minute\nprint(f"อ่านครบแล้ว รวม {total_min} นาที")`,
+    blanks: [
+        { id: 1, correct: "<", distractors: ["<=", ">", ">=", "==", "!=", "="] },
+        { id: 2, correct: ":", distractors: [";", "::", "", " then", "{", "do"] },
+        { id: 3, correct: "+=", distractors: ["=+", "+", "-=", "==", "++", "="] }
+    ]
+},
+{
+    id: "LOOP_010",
+    title: "เกมทายเลขแบบง่าย",
+    desc: "ใช้ while loop ให้ผู้ใช้ทายเลขซ้ำจนกว่าจะถูก",
+    codeTemplate: `secret = 7\nguess = int(input("ทายเลข 1-10: "))\nwhile guess [__1__] secret:\n    if guess < secret:\n        print("[__2__]")\n    else:\n        print("[__3__]")\n    guess = int([__4__]("ทายอีกครั้ง: "))\nprint("ทายถูกแล้ว!")`,
+    blanks: [
+        { id: 1, correct: "!=", distractors: ["==", "=", "<", ">", "is", "not"] },
+        { id: 2, correct: "น้อยเกินไป", distractors: ["มากเกินไป", "ถูกแล้ว", "guess", "secret", "เลขคู่", "ลองใหม่"] },
+        { id: 3, correct: "มากเกินไป", distractors: ["น้อยเกินไป", "ถูกแล้ว", "secret", "{guess}", "เลขคี่", "หยุดเกม"] },
+        { id: 4, correct: "input", distractors: ["print", "int", "float", "Input", "scan", "str"] }
+    ]
+},
+{
+    id: "LOOP_011",
+    title: "นับวันที่ออกกำลังกายครบเป้า",
+    desc: "รับเวลาการออกกำลังกาย 7 วัน แล้วนับว่ามีกี่วันที่ทำได้อย่างน้อย 30 นาที",
+    codeTemplate: `good_days = 0\nfor day in range([__1__]):\n    minute = int(input("ออกกำลังกายกี่นาที: "))\n    if minute [__2__] 30[__3__]\n        good_days [__4__] 1\nprint(f"ทำครบเป้า {good_days} วัน")`,
+    blanks: [
+        { id: 1, correct: "7", distractors: ["6", "8", "30", "day", "minute", "range"] },
+        { id: 2, correct: ">=", distractors: [">", "<=", "<", "==", "=", "=>"] },
+        { id: 3, correct: ":", distractors: [";", "::", "", " then", "{", "end"] },
+        { id: 4, correct: "+=", distractors: ["=+", "+", "++", "-=", "==", "="] }
+    ]
+},
+{
+    id: "LOOP_012",
+    title: "ซื้อขนมจนเงินไม่พอ",
+    desc: "มีเงินตั้งต้นและขนมชิ้นละ 15 บาท ใช้ while loop ซื้อซ้ำจนเงินไม่พอ",
+    codeTemplate: `money = int(input("มีเงินกี่บาท: "))\nprice = 15\ncount = 0\nwhile money [__1__] price:\n    money = money [__2__] price\n    count = count + 1\nprint(f"ซื้อขนมได้ {count} ชิ้น เหลือเงิน [__3__] บาท")`,
+    blanks: [
+        { id: 1, correct: ">=", distractors: [">", "<=", "<", "==", "=", "=>"] },
+        { id: 2, correct: "-", distractors: ["+", "*", "/", "%", "-=", "="] },
+        { id: 3, correct: "{money}", distractors: ["money", "{price}", "{count}", "count", "f{money}", "{Money}"] }
+    ]
+},
+{
+    id: "LOOP_013",
+    title: "นับนักเรียนที่สอบผ่าน",
+    desc: "รับคะแนนนักเรียน 5 คน แล้วนับว่ามีกี่คนที่ได้คะแนนตั้งแต่ 50 ขึ้นไป",
+    codeTemplate: `passed = 0\nfor i in [__1__](5):\n    score = int(input("คะแนน: "))\n    if score [__2__] 50:\n        passed = passed [__3__] 1\n[__4__](f"ผ่านทั้งหมด {passed} คน")`,
+    blanks: [
+        { id: 1, correct: "range", distractors: ["input", "print", "int", "Range", "loop", "repeat"] },
+        { id: 2, correct: ">=", distractors: [">", "<=", "<", "==", "=", "=>"] },
+        { id: 3, correct: "+", distractors: ["-", "*", "/", "+=", "++", "="] },
+        { id: 4, correct: "print", distractors: ["input", "Print", "show", "display", "echo", "return"] }
+    ]
+},
+{
+    id: "LOOP_014",
+    title: "นับขยะรีไซเคิล",
+    desc: "รับชนิดขยะ 10 ชิ้น ถ้าเป็น plastic ให้นับเป็นขยะรีไซเคิล",
+    codeTemplate: `recycle = 0\nfor item in range([__1__]):\n    kind = input("ชนิดขยะ (plastic/food): ")\n    if kind [__2__] "plastic":\n        recycle [__3__] 1\nprint(f"ขยะรีไซเคิล {recycle} ชิ้น")`,
+    blanks: [
+        { id: 1, correct: "10", distractors: ["9", "11", "plastic", "item", "recycle", "range(10)"] },
+        { id: 2, correct: "==", distractors: ["=", "!=", "===", "is", ">", "<"] },
+        { id: 3, correct: "+=", distractors: ["=+", "+", "++", "-=", "==", "="] }
+    ]
+},
+{
+    id: "LOOP_015",
+    title: "เติมน้ำในถังจนเต็ม",
+    desc: "ใช้ while loop รับปริมาณน้ำที่เติมซ้ำ ๆ จนมีน้ำอย่างน้อย 20 ลิตร",
+    codeTemplate: `water = 0\nwhile water [__1__] 20:\n    add = float(input("เติมน้ำกี่ลิตร: "))\n    water = water [__2__] add\nprint(f"น้ำในถัง {water} ลิตร")`,
+    blanks: [
+        { id: 1, correct: "<", distractors: ["<=", ">", ">=", "==", "!=", "="] },
+        { id: 2, correct: "+", distractors: ["-", "*", "/", "+=", "++", "="] }
+    ]
+},
+{
+    id: "LOOP_016",
+    title: "ตรวจอุณหภูมิ 7 วัน",
+    desc: "รับอุณหภูมิร่างกาย 7 วัน แล้วนับวันที่อุณหภูมิตั้งแต่ 37.5°C ขึ้นไป",
+    codeTemplate: `fever_days = 0\nfor day in range(1, [__1__]):\n    temp = float(input("อุณหภูมิร่างกาย: "))\n    if temp [__2__] 37.5:\n        fever_days += 1\n[__3__](f"มีวันที่อุณหภูมิสูง {fever_days} วัน")`,
+    blanks: [
+        { id: 1, correct: "8", distractors: ["7", "6", "37.5", "day", "temp", "range"] },
+        { id: 2, correct: ">=", distractors: [">", "<=", "<", "==", "=", "=>"] },
+        { id: 3, correct: "print", distractors: ["input", "Print", "show", "display", "echo", "return"] }
+    ]
+},
+{
+    id: "LOOP_017",
+    title: "นับเลขที่หาร 3 ลงตัว",
+    desc: "รับค่า n แล้วนับจำนวนตัวเลขตั้งแต่ 1 ถึง n ที่หาร 3 ลงตัว",
+    codeTemplate: `n = int(input("ตรวจถึงเลข: "))\ncount = 0\nfor num in range(1, n + 1):\n    if num [__1__] 3 [__2__] 0:\n        count += 1\nprint(f"มีเลขที่หาร 3 ลงตัว [__3__] ตัว")`,
+    blanks: [
+        { id: 1, correct: "%", distractors: ["//", "/", "*", "**", "mod", "=="] },
+        { id: 2, correct: "==", distractors: ["=", "!=", "===", "<=", ">=", "is"] },
+        { id: 3, correct: "{count}", distractors: ["count", "{num}", "{n}", "num", "{count:.2f}", "f{count}"] }
+    ]
+},
+{
+    id: "LOOP_018",
+    title: "สะสมแต้มร้านอาหารให้ครบ",
+    desc: "ใช้ while loop รับแต้มที่ได้เพิ่ม จนสะสมครบ 10 แต้มเพื่อแลกของรางวัล",
+    codeTemplate: `points = 0\nwhile points [__1__] 10:\n    add = int(input("ได้แต้มเพิ่ม: "))\n    points [__2__] add\nprint("[__3__]")`,
+    blanks: [
+        { id: 1, correct: "<", distractors: ["<=", ">", ">=", "==", "!=", "="] },
+        { id: 2, correct: "+=", distractors: ["=+", "+", "++", "-=", "==", "="] },
+        { id: 3, correct: "สะสมแต้มครบแล้ว", distractors: ["points", "{points}", "ยังไม่ครบ", "ได้แต้มเพิ่ม", "while จบ", "ครบ 9 แต้ม"] }
+    ]
+},
+{
+    id: "LOOP_019",
+    title: "ราคาอาหารเฉลี่ย 4 มื้อ",
+    desc: "รับราคาอาหาร 4 มื้อ แล้วคำนวณราคาเฉลี่ยต่อมื้อ",
+    codeTemplate: `total = 0\nfor meal in range([__1__]):\n    price = float(input("ราคาอาหาร: "))\n    total += [__2__]\navg = total [__3__] 4\nprint(f"ราคาเฉลี่ย {avg:.2f} บาท")`,
+    blanks: [
+        { id: 1, correct: "4", distractors: ["3", "5", "meal", "price", "total", "range"] },
+        { id: 2, correct: "price", distractors: ["total", "meal", "avg", "4", "{price}", "input"] },
+        { id: 3, correct: "/", distractors: ["//", "%", "*", "+", "-", "**"] }
+    ]
+},
+{
+    id: "LOOP_020",
+    title: "ทำแบบฝึกหัดถูก 3 ข้อติด",
+    desc: "ใช้ while loop นับจำนวนคำตอบถูกต่อเนื่อง ถ้าตอบผิดให้เริ่มนับใหม่",
+    codeTemplate: `streak = 0\nwhile streak [__1__] 3:\n    answer = input("ตอบถูกไหม (yes/no): ")\n    if answer [__2__] "yes":\n        streak = streak + 1\n    else:\n        streak = [__3__]\nprint(f"ถูกต่อเนื่องครบ {streak} ข้อ")`,
+    blanks: [
+        { id: 1, correct: "<", distractors: ["<=", ">", ">=", "==", "!=", "="] },
+        { id: 2, correct: "==", distractors: ["=", "!=", "===", "is", ">", "<"] },
+        { id: 3, correct: "0", distractors: ["1", "3", "streak", "answer", "-1", "None"] }
+    ]
+},
+{
+    id: "LOOP_021",
+    title: "นับเมนูพลังงานต่ำ",
+    desc: "รับแคลอรีอาหาร 6 เมนู แล้วนับว่ามีกี่เมนูที่มีพลังงานไม่เกิน 150 kcal",
+    codeTemplate: `low_cal = 0\nfor menu in range([__1__]):\n    cal = float(input("พลังงานอาหาร (kcal): "))\n    if cal [__2__] 150:\n        low_cal [__3__] 1\nprint(f"เมนูพลังงานต่ำ {low_cal} เมนู")`,
+    blanks: [
+        { id: 1, correct: "6", distractors: ["5", "7", "150", "menu", "cal", "range(6)"] },
+        { id: 2, correct: "<=", distractors: ["<", ">=", ">", "==", "=", "=>"] },
+        { id: 3, correct: "+=", distractors: ["=+", "+", "++", "-=", "==", "="] }
+    ]
+},
+{
+    id: "LOOP_022",
+    title: "นับถอยหลังก่อนเริ่มเรียน",
+    desc: "ใช้ while loop แสดงเลขถอยหลังจากเวลาที่กำหนดจนถึง 0",
+    codeTemplate: `time_left = int(input("เริ่มนับถอยหลังกี่วินาที: "))\nwhile time_left [__1__] 0:\n    print(time_left)\n    time_left = time_left [__2__] 1\nprint("[__3__]")`,
+    blanks: [
+        { id: 1, correct: ">", distractors: [">=", "<", "<=", "==", "!=", "="] },
+        { id: 2, correct: "-", distractors: ["+", "*", "/", "--", "-=", "="] },
+        { id: 3, correct: "เริ่มเรียนได้", distractors: ["time_left", "{time_left}", "ยังไม่หมดเวลา", "หยุดลูป", "0", "while"] }
+    ]
+},
+{
+    id: "LOOP_023",
+    title: "ผลรวม 1 ถึง n",
+    desc: "รับค่า n แล้วใช้ for loop หาผลรวมของจำนวนเต็มตั้งแต่ 1 ถึง n",
+    codeTemplate: `n = int(input("ต้องการบวกถึงเลข: "))\ntotal = 0\nfor num in range(1, n [__1__] 1):\n    total = total [__2__] num\nprint(f"ผลรวมคือ [__3__]")`,
+    blanks: [
+        { id: 1, correct: "+", distractors: ["-", "*", "/", "++", "+=", ""] },
+        { id: 2, correct: "+", distractors: ["-", "*", "/", "=", "+=", "=="] },
+        { id: 3, correct: "{total}", distractors: ["total", "{num}", "{n}", "num", "f{total}", "{Total}"] }
+    ]
+},
+{
+    id: "LOOP_024",
+    title: "ระยะทางเดินสะสม 5 วัน",
+    desc: "รับระยะทางเดินในแต่ละวัน 5 วัน แล้วรวมระยะทางทั้งหมด",
+    codeTemplate: `distance = 0\nfor day in range(1, [__1__]):\n    km = float(input("เดินได้กี่กิโลเมตร: "))\n    distance [__2__] km\nprint(f"เดินรวม [__3__] km")`,
+    blanks: [
+        { id: 1, correct: "6", distractors: ["5", "4", "7", "day", "km", "range"] },
+        { id: 2, correct: "+=", distractors: ["=+", "+", "-=", "==", "++", "="] },
+        { id: 3, correct: "{distance}", distractors: ["distance", "{km}", "{day}", "km", "f{distance}", "{Distance}"] }
+    ]
+},
+{
+    id: "LOOP_025",
+    title: "รับชื่ออาหารจนกว่าจะพิมพ์ stop",
+    desc: "ใช้ while loop รับชื่ออาหารไปเรื่อย ๆ จนกว่าผู้ใช้จะพิมพ์ stop",
+    codeTemplate: `food = input("ชื่ออาหาร: ")\ncount = 0\nwhile food [__1__] "stop":\n    count = count + 1\n    food = [__2__]("ชื่ออาหารต่อไป: ")\nprint(f"บันทึกอาหารทั้งหมด [__3__] รายการ")`,
+    blanks: [
+        { id: 1, correct: "!=", distractors: ["==", "=", ">", "<", "is", "not"] },
+        { id: 2, correct: "input", distractors: ["print", "int", "float", "Input", "scan", "str"] },
+        { id: 3, correct: "{count}", distractors: ["count", "{food}", "food", "{stop}", "f{count}", "{Count}"] }
+    ]
+},
+{
+    id: "LOOP_026",
+    title: "คิดเงินร้านข้าวตามจำนวนรายการ",
+    desc: "รับจำนวนรายการอาหาร จากนั้นใช้ for loop รับราคาแต่ละรายการแล้วรวมเงิน",
+    codeTemplate: `items = int(input("ซื้ออาหารกี่รายการ: "))\ntotal = 0\nfor i in range([__1__]):\n    price = float(input("ราคาอาหาร: "))\n    total = total + [__2__]\nprint(f"ต้องจ่ายทั้งหมด {total[__3__]} บาท")`,
+    blanks: [
+        { id: 1, correct: "items", distractors: ["price", "total", "i", "range", "input", "item"] },
+        { id: 2, correct: "price", distractors: ["total", "items", "i", "0", "{price}", "input"] },
+        { id: 3, correct: ":.2f", distractors: [":.2", "f", "", ":2f", ".2f", "{:.2f}"] }
+    ]
+},
+{
+    id: "LOOP_027",
+    title: "หาราคาอาหารที่แพงที่สุด",
+    desc: "รับราคาอาหาร 5 รายการ แล้วใช้ if เปรียบเทียบเพื่อหาราคาที่มากที่สุด",
+    codeTemplate: `max_price = 0\nfor i in range([__1__]):\n    price = float(input("ราคาอาหาร: "))\n    if price [__2__] max_price:\n        max_price = [__3__]\nprint(f"ราคาแพงที่สุดคือ {max_price} บาท")`,
+    blanks: [
+        { id: 1, correct: "5", distractors: ["4", "6", "price", "max_price", "i", "range"] },
+        { id: 2, correct: ">", distractors: [">=", "<", "<=", "==", "=", "=>"] },
+        { id: 3, correct: "price", distractors: ["max_price", "i", "5", "{price}", "input", "total"] }
+    ]
+},
+{
+    id: "LOOP_028",
+    title: "เตือนน้ำตาลสะสมเกินเป้า",
+    desc: "ใช้ while loop รับปริมาณน้ำตาลจากขนมแต่ละชิ้น จนกว่าน้ำตาลรวมจะถึง 25 กรัม",
+    codeTemplate: `sugar = 0\nwhile sugar [__1__] 25:\n    add = [__2__](input("น้ำตาลจากขนม (g): "))\n    sugar [__3__] add\nprint(f"น้ำตาลรวม [__4__] g ควรพักก่อน")`,
+    blanks: [
+        { id: 1, correct: "<", distractors: ["<=", ">", ">=", "==", "!=", "="] },
+        { id: 2, correct: "float", distractors: ["int", "str", "Float", "input", "number", "print"] },
+        { id: 3, correct: "+=", distractors: ["=+", "+", "++", "-=", "==", "="] },
+        { id: 4, correct: "{sugar}", distractors: ["sugar", "{add}", "{25}", "add", "f{sugar}", "{Sugar}"] }
+    ]
+},
+{
+    id: "LOOP_029",
+    title: "นับเลขคี่ในช่วง 1 ถึง n",
+    desc: "รับค่า n แล้วใช้ for loop กับ if เพื่อนับจำนวนเลขคี่ตั้งแต่ 1 ถึง n",
+    codeTemplate: `n = int(input("นับถึงเลข: "))\nodd_count = 0\nfor num in range(1, n + 1):\n    if num % 2 [__1__] 1:\n        odd_count = odd_count [__2__] 1\nprint(f"มีเลขคี่ [__3__] ตัว")`,
+    blanks: [
+        { id: 1, correct: "==", distractors: ["=", "!=", "===", "<=", ">=", "is"] },
+        { id: 2, correct: "+", distractors: ["-", "*", "/", "+=", "++", "="] },
+        { id: 3, correct: "{odd_count}", distractors: ["odd_count", "{num}", "{n}", "num", "{odd}", "f{odd_count}"] }
+    ]
+},
+{
+    id: "LOOP_030",
+    title: "ทดลองต้มน้ำจนเดือด",
+    desc: "ใช้ while loop รับอุณหภูมิซ้ำจนกว่าอุณหภูมิจะถึงจุดเดือด 100°C",
+    codeTemplate: `temp = float(input("อุณหภูมิน้ำ: "))\nminute = 0\nwhile temp [__1__] 100:\n    minute += 1\n    temp = [__2__](input("อุณหภูมิหลังผ่านไป 1 นาที: "))\nprint(f"น้ำเดือดหลังผ่านไป [__3__] นาที")`,
+    blanks: [
+        { id: 1, correct: "<", distractors: ["<=", ">", ">=", "==", "!=", "="] },
+        { id: 2, correct: "float", distractors: ["int", "str", "Float", "input", "number", "print"] },
+        { id: 3, correct: "{minute}", distractors: ["minute", "{temp}", "{100}", "temp", "f{minute}", "{Minute}"] }
+    ]
+},
+{
+    id: "LOOP_031",
+    title: "นับจำนวนวันที่ดื่มนม",
+    desc: "รับคำตอบ 7 วันว่าได้ดื่มนมหรือไม่ ถ้าตอบ yes ให้นับเพิ่ม",
+    codeTemplate: `milk_days = 0\nfor day in range([__1__]):\n    ans = input("วันนี้ดื่มนมหรือไม่ (yes/no): ")\n    if ans [__2__] "yes":\n        milk_days [__3__] 1\nprint(f"ดื่มนมทั้งหมด {milk_days} วัน")`,
+    blanks: [
+        { id: 1, correct: "7", distractors: ["6", "8", "yes", "day", "milk_days", "range"] },
+        { id: 2, correct: "==", distractors: ["=", "!=", "===", "is", ">", "<"] },
+        { id: 3, correct: "+=", distractors: ["=+", "+", "++", "-=", "==", "="] }
+    ]
+},
+{
+    id: "LOOP_032",
+    title: "สะสมจำนวนก้าวให้ถึง 6000",
+    desc: "ใช้ while loop รับจำนวนก้าวที่เดินเพิ่ม จนสะสมได้อย่างน้อย 6000 ก้าว",
+    codeTemplate: `steps = 0\nwhile steps [__1__] 6000:\n    add = int(input("เดินเพิ่มกี่ก้าว: "))\n    steps = steps [__2__] add\nprint(f"เดินครบเป้าหมายแล้ว รวม [__3__] ก้าว")`,
+    blanks: [
+        { id: 1, correct: "<", distractors: ["<=", ">", ">=", "==", "!=", "="] },
+        { id: 2, correct: "+", distractors: ["-", "*", "/", "+=", "++", "="] },
+        { id: 3, correct: "{steps}", distractors: ["steps", "{add}", "{6000}", "add", "f{steps}", "{Steps}"] }
+    ]
+},
+{
+    id: "LOOP_033",
+    title: "รวมคะแนนสะสมจากแบบฝึกหัด",
+    desc: "รับคะแนนแบบฝึกหัด 8 ครั้ง แล้วรวมคะแนนทั้งหมด",
+    codeTemplate: `score_sum = 0\nfor quiz in [__1__](8):\n    score = int(input("คะแนนครั้งนี้: "))\n    score_sum [__2__] score\n[__3__](f"คะแนนรวม {score_sum} คะแนน")`,
+    blanks: [
+        { id: 1, correct: "range", distractors: ["input", "print", "int", "Range", "loop", "repeat"] },
+        { id: 2, correct: "+=", distractors: ["=+", "+", "++", "-=", "==", "="] },
+        { id: 3, correct: "print", distractors: ["input", "Print", "show", "display", "echo", "return"] }
+    ]
+},
+{
+    id: "LOOP_034",
+    title: "ลดจำนวนจานที่ต้องล้าง",
+    desc: "ใช้ while loop ล้างจานทีละใบจนกว่าจานสกปรกจะหมด",
+    codeTemplate: `plates = int(input("มีจานต้องล้างกี่ใบ: "))\nwhile plates [__1__] 0:\n    print("ล้างจาน 1 ใบ")\n    plates [__2__] 1\nprint("[__3__]")`,
+    blanks: [
+        { id: 1, correct: ">", distractors: [">=", "<", "<=", "==", "!=", "="] },
+        { id: 2, correct: "-=", distractors: ["=-", "-", "--", "+=", "==", "="] },
+        { id: 3, correct: "ล้างจานหมดแล้ว", distractors: ["plates", "{plates}", "ยังมีจาน", "หยุดลูป", "จาน 1 ใบ", "while"] }
+    ]
+},
+{
+    id: "LOOP_035",
+    title: "หาจำนวนที่หาร 5 ลงตัว",
+    desc: "รับค่า n แล้วนับจำนวนตัวเลขตั้งแต่ 1 ถึง n ที่หาร 5 ลงตัว",
+    codeTemplate: `n = int(input("ตรวจถึงเลข: "))\ncount = 0\nfor num in range(1, n + 1):\n    if num [__1__] 5 [__2__] 0:\n        count += 1\nprint(f"มีจำนวนที่หาร 5 ลงตัว [__3__] จำนวน")`,
+    blanks: [
+        { id: 1, correct: "%", distractors: ["//", "/", "*", "**", "mod", "=="] },
+        { id: 2, correct: "==", distractors: ["=", "!=", "===", "<=", ">=", "is"] },
+        { id: 3, correct: "{count}", distractors: ["count", "{num}", "{n}", "num", "{count:.2f}", "f{count}"] }
+    ]
+},
+{
+    id: "LOOP_036",
+    title: "คิดส่วนลดอาหารตามจำนวนเมนู",
+    desc: "รับราคาอาหาร 5 เมนู ถ้าเมนูใดราคาเกิน 100 บาท ให้ลด 10 บาทก่อนรวมราคา",
+    codeTemplate: `total = 0\nfor i in range([__1__]):\n    price = float(input("ราคาอาหาร: "))\n    if price [__2__] 100:\n        price = price [__3__] 10\n    total += price\nprint(f"ราคาหลังส่วนลดรวม {total} บาท")`,
+    blanks: [
+        { id: 1, correct: "5", distractors: ["4", "6", "100", "price", "total", "range"] },
+        { id: 2, correct: ">", distractors: [">=", "<", "<=", "==", "=", "=>"] },
+        { id: 3, correct: "-", distractors: ["+", "*", "/", "-=", "=", "%"] }
+    ]
+},
+{
+    id: "LOOP_037",
+    title: "เติมพลังงานอาหารให้ถึงเป้าหมาย",
+    desc: "ใช้ while loop รับพลังงานอาหารที่กินเพิ่ม จนได้พลังงานอย่างน้อย 500 kcal",
+    codeTemplate: `energy = 0\nwhile energy [__1__] 500:\n    kcal = float(input("พลังงานที่กินเพิ่ม: "))\n    energy [__2__] kcal\nprint(f"พลังงานรวม {energy[__3__]} kcal")`,
+    blanks: [
+        { id: 1, correct: "<", distractors: ["<=", ">", ">=", "==", "!=", "="] },
+        { id: 2, correct: "+=", distractors: ["=+", "+", "++", "-=", "==", "="] },
+        { id: 3, correct: ":.1f", distractors: [":.1", ":.2f", "f", "", ".1f", "{:.1f}"] }
+    ]
+},
+{
+    id: "LOOP_038",
+    title: "ตรวจความสูงต้นไม้ 6 สัปดาห์",
+    desc: "รับความสูงของต้นไม้ 6 สัปดาห์ แล้วนับว่าสัปดาห์ใดสูงตั้งแต่ 20 cm ขึ้นไป",
+    codeTemplate: `tall_weeks = 0\nfor week in range(1, [__1__]):\n    height = float(input("ความสูงต้นไม้ (cm): "))\n    if height [__2__] 20:\n        tall_weeks = tall_weeks + 1\nprint(f"สูงถึงเกณฑ์ [__3__] สัปดาห์")`,
+    blanks: [
+        { id: 1, correct: "7", distractors: ["6", "5", "20", "week", "height", "range"] },
+        { id: 2, correct: ">=", distractors: [">", "<=", "<", "==", "=", "=>"] },
+        { id: 3, correct: "{tall_weeks}", distractors: ["tall_weeks", "{height}", "{week}", "height", "f{tall_weeks}", "{Tall_weeks}"] }
+    ]
+},
+{
+    id: "LOOP_039",
+    title: "รับคะแนนจนกว่าจะพิมพ์ -1",
+    desc: "ใช้ while loop รับคะแนนหลายครั้ง โดยหยุดเมื่อผู้ใช้ป้อน -1 แล้วแสดงผลรวมคะแนน",
+    codeTemplate: `total = 0\nscore = int(input("คะแนน (-1 เพื่อหยุด): "))\nwhile score [__1__] -1:\n    total = total + [__2__]\n    score = int(input("คะแนนถัดไป: "))\nprint(f"ผลรวมคะแนนคือ [__3__]")`,
+    blanks: [
+        { id: 1, correct: "!=", distractors: ["==", "=", ">", "<", "is", "not"] },
+        { id: 2, correct: "score", distractors: ["total", "-1", "input", "คะแนน", "{score}", "count"] },
+        { id: 3, correct: "{total}", distractors: ["total", "{score}", "{-1}", "score", "f{total}", "{Total}"] }
+    ]
+},
+{
+    id: "LOOP_040",
+    title: "คำนวณเงินค่ารถทั้งสัปดาห์",
+    desc: "รับค่าเดินทาง 7 วัน แล้วรวมค่าเดินทางทั้งหมดในสัปดาห์",
+    codeTemplate: `fare_sum = 0\nfor day in range([__1__]):\n    fare = float(input("ค่าเดินทางวันนี้: "))\n    fare_sum = fare_sum [__2__] fare\nprint(f"ค่าเดินทางรวม {fare_sum[__3__]} บาท")`,
+    blanks: [
+        { id: 1, correct: "7", distractors: ["6", "8", "day", "fare", "fare_sum", "range"] },
+        { id: 2, correct: "+", distractors: ["-", "*", "/", "+=", "==", "="] },
+        { id: 3, correct: ":.2f", distractors: [":.2", "f", "", ":2f", ".2f", "{:.2f}"] }
+    ]
+},
+{
+    id: "LOOP_041",
+    title: "นับวันที่นอนครบ 8 ชั่วโมง",
+    desc: "รับจำนวนชั่วโมงนอน 7 วัน แล้วนับว่ามีกี่วันที่นอนได้อย่างน้อย 8 ชั่วโมง",
+    codeTemplate: `good_sleep = 0\nfor day in range([__1__]):\n    hours = float(input("นอนกี่ชั่วโมง: "))\n    if hours [__2__] 8:\n        good_sleep [__3__] 1\nprint(f"นอนครบเป้า {good_sleep} วัน")`,
+    blanks: [
+        { id: 1, correct: "7", distractors: ["6", "8", "day", "hours", "good_sleep", "range"] },
+        { id: 2, correct: ">=", distractors: [">", "<=", "<", "==", "=", "=>"] },
+        { id: 3, correct: "+=", distractors: ["=+", "+", "++", "-=", "==", "="] }
+    ]
+},
+{
+    id: "LOOP_042",
+    title: "สะสมเงินค่าข้าวให้ครบ 200 บาท",
+    desc: "ใช้ while loop รับเงินที่เก็บเพิ่ม จนกว่าจะมีเงินอย่างน้อย 200 บาท",
+    codeTemplate: `money = 0\nwhile money [__1__] 200:\n    add = int(input("เก็บเงินเพิ่ม: "))\n    money [__2__] add\nprint(f"เก็บเงินครบแล้ว มีเงิน [__3__] บาท")`,
+    blanks: [
+        { id: 1, correct: "<", distractors: ["<=", ">", ">=", "==", "!=", "="] },
+        { id: 2, correct: "+=", distractors: ["=+", "+", "++", "-=", "==", "="] },
+        { id: 3, correct: "{money}", distractors: ["money", "{add}", "{200}", "add", "f{money}", "{Money}"] }
+    ]
+},
+{
+    id: "LOOP_043",
+    title: "รวมจำนวนผลไม้ในตะกร้า",
+    desc: "รับจำนวนผลไม้ 5 ชนิด แล้วรวมจำนวนผลไม้ทั้งหมด",
+    codeTemplate: `total_fruit = 0\nfor kind in range([__1__]):\n    amount = int(input("จำนวนผลไม้ชนิดนี้: "))\n    total_fruit = total_fruit [__2__] amount\n[__3__](f"มีผลไม้ทั้งหมด {total_fruit} ลูก")`,
+    blanks: [
+        { id: 1, correct: "5", distractors: ["4", "6", "kind", "amount", "total_fruit", "range"] },
+        { id: 2, correct: "+", distractors: ["-", "*", "/", "+=", "==", "="] },
+        { id: 3, correct: "print", distractors: ["input", "Print", "show", "display", "echo", "return"] }
+    ]
+},
+{
+    id: "LOOP_044",
+    title: "ตรวจเมนูเค็มเกินไป",
+    desc: "รับปริมาณโซเดียมของอาหาร 6 เมนู แล้วนับเมนูที่มีโซเดียมเกิน 600 mg",
+    codeTemplate: `salty = 0\nfor menu in range([__1__]):\n    sodium = float(input("โซเดียม (mg): "))\n    if sodium [__2__] 600:\n        salty = salty [__3__] 1\nprint(f"เมนูโซเดียมสูง {salty} เมนู")`,
+    blanks: [
+        { id: 1, correct: "6", distractors: ["5", "7", "600", "menu", "sodium", "range"] },
+        { id: 2, correct: ">", distractors: [">=", "<", "<=", "==", "=", "=>"] },
+        { id: 3, correct: "+", distractors: ["-", "*", "/", "+=", "++", "="] }
+    ]
+},
+{
+    id: "LOOP_045",
+    title: "รับน้ำหนักกระเป๋าจนไม่เกินเกณฑ์",
+    desc: "ใช้ while loop ให้ลดน้ำหนักกระเป๋าซ้ำจนกว่าน้ำหนักจะไม่เกิน 7 kg",
+    codeTemplate: `weight = float(input("น้ำหนักกระเป๋า (kg): "))\nwhile weight [__1__] 7:\n    remove = float(input("เอาของออกกี่ kg: "))\n    weight = weight [__2__] remove\nprint(f"น้ำหนักผ่านเกณฑ์แล้ว เหลือ {weight[__3__]} kg")`,
+    blanks: [
+        { id: 1, correct: ">", distractors: [">=", "<", "<=", "==", "!=", "="] },
+        { id: 2, correct: "-", distractors: ["+", "*", "/", "-=", "==", "="] },
+        { id: 3, correct: ":.1f", distractors: [":.1", ":.2f", "f", "", ".1f", "{:.1f}"] }
+    ]
+},
+{
+    id: "LOOP_046",
+    title: "หาค่าเฉลี่ยอุณหภูมิ 5 วัน",
+    desc: "รับอุณหภูมิ 5 วัน แล้วหาค่าเฉลี่ยอุณหภูมิ",
+    codeTemplate: `total_temp = 0\nfor day in range([__1__]):\n    temp = float(input("อุณหภูมิวันนี้: "))\n    total_temp += [__2__]\navg = total_temp [__3__] 5\nprint(f"อุณหภูมิเฉลี่ย {avg:.1f} °C")`,
+    blanks: [
+        { id: 1, correct: "5", distractors: ["4", "6", "day", "temp", "total_temp", "range"] },
+        { id: 2, correct: "temp", distractors: ["total_temp", "avg", "day", "5", "{temp}", "input"] },
+        { id: 3, correct: "/", distractors: ["//", "%", "*", "+", "-", "**"] }
+    ]
+},
+{
+    id: "LOOP_047",
+    title: "เกมตอบคำถามจนกว่าจะผ่าน",
+    desc: "ใช้ while loop ให้ตอบคำถามซ้ำจนกว่าจะได้คะแนนอย่างน้อย 3 คะแนน",
+    codeTemplate: `score = 0\nwhile score [__1__] 3:\n    ans = input("ตอบถูกไหม (yes/no): ")\n    if ans [__2__] "yes":\n        score += 1\n    else:\n        print("[__3__]")\nprint(f"ผ่านแล้ว ได้ {score} คะแนน")`,
+    blanks: [
+        { id: 1, correct: "<", distractors: ["<=", ">", ">=", "==", "!=", "="] },
+        { id: 2, correct: "==", distractors: ["=", "!=", "===", "is", ">", "<"] },
+        { id: 3, correct: "ยังไม่ผ่าน ลองต่อ", distractors: ["ผ่านแล้ว", "score", "{score}", "yes", "หยุดลูป", "ตอบถูก"] }
+    ]
+},
+{
+    id: "LOOP_048",
+    title: "คูณเลขตั้งแต่ 1 ถึง n",
+    desc: "รับค่า n แล้วใช้ for loop หาผลคูณของจำนวนเต็มตั้งแต่ 1 ถึง n",
+    codeTemplate: `n = int(input("ต้องการคูณถึงเลข: "))\nproduct = 1\nfor num in range(1, n [__1__] 1):\n    product = product [__2__] num\nprint(f"ผลคูณคือ [__3__]")`,
+    blanks: [
+        { id: 1, correct: "+", distractors: ["-", "*", "/", "++", "+=", ""] },
+        { id: 2, correct: "*", distractors: ["+", "-", "/", "**", "%", "="] },
+        { id: 3, correct: "{product}", distractors: ["product", "{num}", "{n}", "num", "f{product}", "{Product}"] }
+    ]
+},
+{
+    id: "LOOP_049",
+    title: "นับเมนูที่เป็นผัก",
+    desc: "รับประเภทอาหาร 8 รายการ ถ้าผู้ใช้พิมพ์ vegetable ให้นับเป็นเมนูผัก",
+    codeTemplate: `veg_count = 0\nfor food in range([__1__]):\n    kind = input("ประเภทอาหาร: ")\n    if kind [__2__] "vegetable":\n        veg_count [__3__] 1\nprint(f"มีเมนูผัก {veg_count} รายการ")`,
+    blanks: [
+        { id: 1, correct: "8", distractors: ["7", "9", "food", "kind", "veg_count", "range"] },
+        { id: 2, correct: "==", distractors: ["=", "!=", "===", "is", ">", "<"] },
+        { id: 3, correct: "+=", distractors: ["=+", "+", "++", "-=", "==", "="] }
+    ]
+},
+{
+    id: "LOOP_050",
+    title: "เครื่องคิดเงินจนกว่าจะพิมพ์ 0",
+    desc: "ใช้ while loop รับราคาสินค้าซ้ำไปเรื่อย ๆ และหยุดเมื่อป้อนราคา 0",
+    codeTemplate: `total = 0\nprice = float(input("ราคาสินค้า (0 เพื่อหยุด): "))\nwhile price [__1__] 0:\n    total [__2__] price\n    price = float([__3__]("ราคาสินค้าถัดไป: "))\nprint(f"ยอดรวมทั้งหมด {total:.2f} บาท")`,
+    blanks: [
+        { id: 1, correct: "!=", distractors: ["==", "=", ">", "<", "is", "not"] },
+        { id: 2, correct: "+=", distractors: ["=+", "+", "++", "-=", "==", "="] },
+        { id: 3, correct: "input", distractors: ["print", "int", "float", "Input", "scan", "str"] }
+    ]
+},
+
+
+];
+
+// 🔀 2. ฟังก์ชันสับไพ่ (Fisher-Yates) สุ่มแม่นยำ 100%
+function shuffleArray(array) {
+    let curId = array.length;
+    while (0 !== curId) {
+        let randId = Math.floor(Math.random() * curId);
+        curId -= 1;
+        let tmp = array[curId];
+        array[curId] = array[randId];
+        array[randId] = tmp;
+    }
+    return array;
+}
+
+// 🛡️ 3. รีเซ็ตและสร้าง Object หลัก (ชื่อต้องเป๊ะตามระบบของกัปตัน)
+if (typeof window.ExamateLab !== 'undefined') { window.ExamateLab = null; }
+
+window.ExamateLab = {
+    config: { totalSteps: 40, currentStep: 0, wrongAttempts: 0 },
+    sessionQuestions: [], 
+    currentQ: null,
+    hearts: 5,
+
+    init: function() {
+        // สร้างคิวข้อสอบชุดแรก
+this.sessionQuestions = shuffleArray([...pythonDB]).slice(0, this.config.totalSteps);
+        
+        // 🌟 อัปเดต UI ทันทีที่โหลดเซฟ เพื่อให้ % เด้งกลับมา
+        this.updateProgressUI();
+
+        // โหลดข้อสอบขึ้นจอ
+        this.loadNextQuestion();
+    },
+
+    loadNextQuestion: function() {
+        // 🌟 โหมดทะลุขีดจำกัด (Endless): ถ้าคิวข้อสอบหมด ให้สุ่มมาต่อท้ายเรื่อยๆ
+        if (this.config.currentStep >= this.sessionQuestions.length) {
+            let moreQuestions = shuffleArray([...pythonDB]);
+            this.sessionQuestions = this.sessionQuestions.concat(moreQuestions);
+        }
+
+        this.currentQ = this.sessionQuestions[this.config.currentStep];
+        this.hearts = 5;
+        this.updateHeartsUI();
+
+        // 📝 วาดโจทย์
+        document.getElementById('py-scenario-desc').innerText = `# ข้อที่ ${this.config.currentStep + 1} | ${this.currentQ.title} : ${this.currentQ.desc}`;
+        
+        let displayCode = this.currentQ.codeTemplate;
+        this.currentQ.blanks.forEach(b => {
+            displayCode = displayCode.replace(`[__${b.id}__]`, `<span id="code-blank-${b.id}" style="display:inline-block; min-width:60px; border-bottom:2px dashed #fbbf24; color:#fbbf24; text-align:center; padding:0 5px;">[ช่องที่ ${b.id}]</span>`);
+        });
+        document.getElementById('py-code-display').innerHTML = displayCode.replace(/\n/g, '<br>').replace(/ /g, '&nbsp;');
+
+        // 🎛️ วาด Dropdown
+        let inputsHTML = '';
+        this.currentQ.blanks.forEach(b => {
+            let options = shuffleArray([b.correct, ...b.distractors]); 
+            let optHTML = `<option value="">-- เลือกโค้ด --</option>`;
+            options.forEach(opt => { optHTML += `<option value="${opt.replace(/"/g, '&quot;')}">${opt}</option>`; });
+
+            inputsHTML += `
+                <div style="background: #ffffff; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px;">
+                    <label style="font-weight: bold; color: #0f172a; font-size: 13px; display: block; margin-bottom: 5px;">[ช่องที่ ${b.id}]:</label>
+                    <select id="sel-blank-${b.id}" onchange="updateCodePreview(${b.id}, this.value)" style="width: 100%; padding: 8px; font-family: monospace; font-size: 14px; border-radius: 6px; border: 2px solid #3b82f6; cursor: pointer;">
+                        ${optHTML}
+                    </select>
+                </div>
+            `;
+        });
+        document.getElementById('py-inputs-container').innerHTML = inputsHTML;
+
+        // Reset ปุ่ม
+        document.getElementById('btn-py-check').style.display = 'block';
+        document.getElementById('btn-py-check').disabled = false;
+        document.getElementById('btn-py-check').innerText = '✅ รันโค้ด (Run Code)';
+        document.getElementById('btn-py-check').style.background = '#3b82f6';
+        document.getElementById('btn-py-next').style.display = 'none';
+        document.getElementById('btn-export-code').style.display = 'none';
+        
+        this.updateProgressUI();
+    },
+
+    updateHeartsUI: function() {
+        let heartStr = "";
+        for(let i=0; i<5; i++) { heartStr += (i < this.hearts) ? "❤️" : "🖤"; }
+        document.getElementById('py-hearts-display').innerText = heartStr;
+
+        if (this.hearts <= 0) {
+            document.getElementById('btn-py-check').disabled = true;
+            document.getElementById('btn-py-check').innerText = '💔 พลังชีวิตหมด (เปลี่ยนข้อ)';
+            document.getElementById('btn-py-check').style.background = '#94a3b8';
+            document.getElementById('btn-py-next').style.display = 'block';
+            alert("💔 พลังชีวิตของข้อนี้หมดแล้ว! ให้ข้ามไปทำข้ออื่นเพื่อเคลียร์สมองก่อนนะ");
+        }
+    },
+
+    updateProgressUI: function() {
+        let tot = this.config.totalSteps; // 15
+        let cur = this.config.currentStep;
+        let percent = tot > 0 ? Math.round((cur / tot) * 100) : 0;
+        
+        let pb = document.getElementById('lab-progress-bar');
+        let pt = document.getElementById('lab-progress-text');
+        let pct = document.getElementById('lab-percent-text');
+
+        // หลอดเขียวตันแค่ 100% แต่ตัวเลขเปอร์เซ็นต์ทะลุ 100% ได้
+        if(pb) pb.style.width = Math.min(percent, 100) + "%";
+        if(pt) pt.innerText = `ความคืบหน้า: ด่านที่ ${cur}/${tot}`;
+        if(pct) pct.innerText = percent + "%";
+
+        // 🌟 ปลดล็อกปุ่ม Submit เมื่อครบกำหนด และเปลี่ยนสีหลอดโชว์ว่าทะลุเป้า
+        if (cur >= tot) {
+            var btnSubmit = document.getElementById('btn-lab-submit');
+            if (btnSubmit) { 
+                btnSubmit.style.opacity = '1'; 
+                btnSubmit.style.pointerEvents = 'auto'; 
+                btnSubmit.style.animation = 'pulse 2s infinite'; 
+            }
+            if(pb) pb.style.background = "#3b82f6"; // เปลี่ยนเป็นหลอดสีฟ้า!
+        }
+    }
+};
+
+// --- ฟังก์ชันช่วยเหลือ (Helper Functions) ---
+
+function updateCodePreview(id, val) {
+    let span = document.getElementById(`code-blank-${id}`);
+    if(!span) return;
+    if(val === "") {
+        span.innerHTML = `[ช่องที่ ${id}]`;
+        span.style.color = "#fbbf24"; span.style.borderBottom = "2px dashed #fbbf24";
+    } else {
+        span.innerHTML = val;
+        span.style.color = "#10b981"; span.style.borderBottom = "2px solid #10b981";
+    }
+}
+
+function checkPythonCode() {
+    let lab = window.ExamateLab;
+    let allCorrect = true;
+    let isAnyEmpty = false;
+
+    lab.currentQ.blanks.forEach(b => {
+        let el = document.getElementById(`sel-blank-${b.id}`);
+        if (!el.value) isAnyEmpty = true;
+        if (el.value !== b.correct) {
+            allCorrect = false;
+            el.style.borderColor = "#ef4444"; el.style.backgroundColor = "#fee2e2";
+        } else {
+            el.style.borderColor = "#10b981"; el.style.backgroundColor = "#dcfce7";
+        }
+    });
+
+    if (isAnyEmpty) { alert("⚠️ กรุณาเติมโค้ดให้ครบทุกช่องก่อนสั่งรันครับ"); return; }
+
+    if (!allCorrect) {
+        lab.hearts--;
+        lab.config.wrongAttempts++;
+        lab.updateHeartsUI();
+        if(lab.hearts > 0) alert("❌ บั๊กกินโค้ดแล้ว! มีบางบรรทัดพิมพ์ผิดหลักไวยากรณ์ ลองตรวจสอบดีๆ นะ");
+    } else {
+        document.getElementById('btn-py-check').style.display = 'none';
+        document.getElementById('btn-py-next').style.display = 'block';
+        document.getElementById('btn-export-code').style.display = 'block'; 
+        
+        let finalCode = lab.currentQ.codeTemplate;
+        lab.currentQ.blanks.forEach(b => { finalCode = finalCode.replace(`[__${b.id}__]`, b.correct); });
+        lab.currentQ.finalCompiledCode = finalCode; 
+        
+        document.getElementById('py-code-display').innerHTML = finalCode.replace(/\n/g, '<br>').replace(/ /g, '&nbsp;');
+        document.getElementById('py-code-display').style.color = "#a7f3d0";
+        
+        // แจ้งเตือนเมื่อทำครบ 15 ข้อพอดี
+        if (lab.config.currentStep + 1 === lab.config.totalSteps) {
+            alert("🎉 ครบเป้าหมาย 15 ข้อแล้ว! ปุ่ม 'ส่งงาน' ปลดล็อกแล้ว หรือจะกดลุยข้อต่อไปเพื่ออัปเลเวลก็จัดไปครับ!");
+        } else {
+            alert("✅ คอมไพล์ผ่าน! โค้ดทำงานได้สมบูรณ์แบบ ไร้บั๊ก 100%");
+        }
+    }
+}
+
+function exportCode() {
+    let code = window.ExamateLab.currentQ.finalCompiledCode;
+    navigator.clipboard.writeText(code).then(() => {
+        let btn = document.getElementById('btn-export-code');
+        btn.innerText = "✅ คัดลอกสำเร็จ!";
+        setTimeout(() => { btn.innerText = "📋 คัดลอกโค้ด"; }, 2000);
+    }).catch(err => {
+        alert("ไม่สามารถคัดลอกได้ครับ กรุณาลากคลุมแล้วก๊อปปี้เองนะครับ");
+    });
+}
+
+function nextPythonChallenge() {
+    window.ExamateLab.config.currentStep++;
+    window.ExamateLab.loadNextQuestion();
+}
+
+// 🚀 4. ระบบเช็คการโหลดเซฟตอนเปิดหน้า (ผ่าตัดแก้บั๊กแล้ว!)
+setTimeout(() => {
+    if (window.pendingLabSave) {
+        // โหลดเปอร์เซ็นต์เก่ากลับมาแบบไม่ต้องเช็คจุกจิก
+        window.ExamateLab.config.currentStep = parseInt(window.pendingLabSave.currentStep) || 0;
+        window.ExamateLab.config.wrongAttempts = parseInt(window.pendingLabSave.wrongAttempts) || 0;
+        window.pendingLabSave = null;
+    }
+    
+    window.ExamateLab.init();
+}, 500); // ดีเลย์ 0.5 วิ ให้ HTML Render หน้าจอเสร็จก่อนโหลดเปอร์เซ็นต์
+</script>
