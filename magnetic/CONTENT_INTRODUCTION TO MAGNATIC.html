@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Y13 Physics Summary Sheet 1 | Magnetic Field Fundamentals</title>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --ink: #111827;
+      --muted: #475569;
+      --line: #d1d5db;
+      --soft: #f8fafc;
+      --blue: #2563eb;
+      --blue-dark: #1d4ed8;
+      --sky: #eff6ff;
+      --red: #dc2626;
+      --green: #047857;
+      --orange: #ea580c;
+      --purple: #7c3aed;
+      --paper: 210mm;
+      --page-h: 297mm;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+
+    body {
+      background: #e5e7eb;
+      color: var(--ink);
+      font-family: "Google Sans", "Noto Sans Thai", "Prompt", Arial, sans-serif;
+      line-height: 1.48;
+    }
+
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      background: #0f172a;
+      color: #fff;
+      box-shadow: 0 8px 24px rgba(15,23,42,.22);
+    }
+
+    .toolbar button {
+      border: 0;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-family: inherit;
+      font-weight: 900;
+      cursor: pointer;
+      background: #fff;
+      color: #0f172a;
+    }
+
+    .toolbar .primary { background: #bfdbfe; color: #1e3a8a; }
+    .toolbar .gold { background: #fde68a; color: #78350f; }
+    .toolbar .status { flex-basis: 100%; text-align: center; font-size: 12.5px; opacity: .9; }
+
+    .page-container {
+      max-width: 930px;
+      margin: 22px auto 38px;
+      background: #fff;
+      padding: 42px 56px;
+      border-radius: 18px;
+      box-shadow: 0 16px 48px rgba(15,23,42,.18);
+    }
+
+    .cover {
+      text-align: center;
+      margin-bottom: 24px;
+      border-bottom: 4px solid var(--blue);
+      padding-bottom: 18px;
+    }
+
+    .cover .tag {
+      display: inline-block;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-weight: 900;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.15;
+      letter-spacing: -.02em;
+    }
+
+    h1 span {
+      display: block;
+      margin-top: 8px;
+      color: #64748b;
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .intro {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-left: 6px solid var(--blue);
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin: 18px 0 24px;
+    }
+
+    .lang-th { margin-bottom: 7px; }
+    .lang-en {
+      color: #4b5563;
+      font-size: .96em;
+      border-left: 3px solid #cbd5e1;
+      padding-left: 14px;
+      margin: 8px 0 16px;
+      background: #f8fafc;
+      padding-top: 8px;
+      padding-bottom: 8px;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .section-header {
+      margin: 36px 0 16px;
+      padding-bottom: 7px;
+      border-bottom: 3px solid var(--blue);
+      color: var(--blue-dark);
+      font-size: 26px;
+      line-height: 1.25;
+      font-weight: 900;
+    }
+
+    .section-header span {
+      color: #64748b;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .topic-title {
+      margin: 22px 0 10px;
+      font-size: 20px;
+      font-weight: 900;
+      color: #0f172a;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .card {
+      border: 1px solid #dbeafe;
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 14px 15px;
+    }
+
+    .card-blue { background: #eff6ff; border-color: #bfdbfe; }
+    .card-red { background: #fef2f2; border-color: #fecaca; }
+    .card-green { background: #ecfdf5; border-color: #bbf7d0; }
+    .card-purple { background: #faf5ff; border-color: #ddd6fe; }
+    .card-orange { background: #fff7ed; border-color: #fed7aa; }
+
+    .rule-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-left: 6px solid #111827;
+      border-radius: 12px;
+      padding: 13px 15px;
+      margin: 14px 0;
+      font-weight: 700;
+    }
+
+    .warning-box {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-left: 6px solid #f59e0b;
+      border-radius: 12px;
+      padding: 13px 15px;
+      margin: 14px 0;
+      font-weight: 700;
+    }
+
+    .bridge-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-left: 6px solid #16a34a;
+      border-radius: 12px;
+      padding: 15px 17px;
+      margin-top: 22px;
+    }
+
+    .math-box {
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin: 12px 0;
+      text-align: center;
+      font-size: 1.12rem;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,.03);
+      overflow-x: auto;
+    }
+
+    .diagram {
+      border: 1px solid #dbeafe;
+      background: #fff;
+      border-radius: 14px;
+      padding: 12px;
+      margin: 13px 0;
+      text-align: center;
+    }
+
+    .diagram svg {
+      width: 100%;
+      max-width: 660px;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .caption {
+      color: #64748b;
+      font-size: 12px;
+      line-height: 1.35;
+      margin-top: 7px;
+      font-weight: 700;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 14px;
+    }
+
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 9px 10px;
+      vertical-align: top;
+    }
+
+    th {
+      background: #eff6ff;
+      color: #1e3a8a;
+      font-weight: 900;
+      text-align: left;
+    }
+
+    .check-list {
+      margin: 12px 0;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    .check-list li {
+      margin: 8px 0;
+      padding-left: 27px;
+      position: relative;
+    }
+
+    .check-list li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: #2563eb;
+      font-weight: 900;
+    }
+
+    .mini-formula {
+      font-family: "Google Sans", "Noto Sans Thai", sans-serif;
+      display: inline-block;
+      background: #eef2ff;
+      border: 1px solid #c7d2fe;
+      color: #3730a3;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .page-break {
+      page-break-before: always;
+      break-before: page;
+    }
+
+
+    .image-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 14px 0;
+    }
+
+    .image-card {
+      border: 1px solid #dbeafe;
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .image-card img {
+      width: 100%;
+      max-height: 235px;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      background: #f8fafc;
+      padding: 6px;
+    }
+
+    .source-note {
+      color: #64748b;
+      font-size: 11px;
+      line-height: 1.3;
+      margin-top: 6px;
+      font-weight: 700;
+    }
+
+    @page { size: A4 portrait; margin: 10mm; }
+
+    @media print {
+      body {
+        background: #fff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .toolbar { display: none !important; }
+
+      .page-container {
+        max-width: none;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+        border-radius: 0;
+      }
+
+      h1 { font-size: 28px; }
+      h1 span { font-size: 20px; }
+      .section-header { font-size: 21px; margin-top: 24px; }
+      .section-header span { font-size: 16px; }
+      .topic-title { font-size: 17px; }
+      body { font-size: 12px; }
+      table { font-size: 11px; }
+      .card, .rule-box, .warning-box, .bridge-box, .intro { padding: 10px 12px; }
+      .diagram { padding: 8px; }
+      .grid-2, .grid-3 { gap: 8px; }
+    }
+
+    @media (max-width: 760px) {
+      .page-container {
+        margin: 0;
+        padding: 22px 18px;
+        border-radius: 0;
+      }
+      .grid-2, .grid-3, .image-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 27px; }
+      h1 span { font-size: 20px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="toolbar">
+    <button class="primary" onclick="window.print()">🖨️ พิมพ์ / Save PDF</button>
+    <button onclick="document.body.classList.toggle('compact')">📄 Compact view</button>
+    <div class="status">Y13 Physics Summary Sheet 1 — Magnetic Field Fundamentals</div>
+  </div>
+
+  <main class="page-container">
+    <section class="cover">
+      <div class="tag">Y13 Physics Summary Sheet 1</div>
+      <h1>🧲 พื้นฐานสนามแม่เหล็ก<br><span>Magnetic Field Fundamentals</span></h1>
+    </section>
+
+    <section class="intro">
+      <div class="lang-th">
+        🇹🇭 <strong>ภาพรวม:</strong> ชีทนี้ปูพื้นฐานก่อนเข้าสู่ “สนามแม่เหล็กจากกระแสไฟฟ้า” และ “แรงแม่เหล็ก” โดยเริ่มจากแม่เหล็ก ขั้วแม่เหล็ก เส้นสนาม สนามแม่เหล็กโลก จุดสะเทิน และฟลักซ์แม่เหล็ก
+      </div>
+      <div class="lang-en mb-0 border-none bg-transparent p-0">
+        🇬🇧 <strong>Overview:</strong> This sheet builds the foundation before studying magnetic fields from currents and magnetic forces. It covers magnets, poles, field lines, Earth’s magnetic field, neutral points, and magnetic flux.
+      </div>
+    </section>
+
+
+    <div class="rule-box">
+      <strong>Image note / หมายเหตุรูปภาพ:</strong>
+      Some reference images are linked from Wikimedia Commons using direct file paths. The neutral-point diagrams remain custom SVG diagrams drawn inside this HTML so that the concept stays clear and printable.
+      <br>
+      รูปอ้างอิงบางส่วนใช้ลิงก์ตรงจาก Wikimedia Commons ส่วนภาพจุดสะเทินยังคงเป็น SVG ที่วาดเองในไฟล์ เพื่อให้อ่านง่ายและพิมพ์ชัด
+    </div>
+
+    <h2 class="section-header">1. แม่เหล็กคืออะไร <span>(What is a Magnet?)</span></h2>
+
+    <div class="grid-2">
+      <div class="card card-blue">
+        <div class="lang-th">
+          <strong>แม่เหล็ก</strong> คือ วัตถุหรือสารที่สามารถสร้างสนามแม่เหล็กรอบตัว และสามารถดูดหรือผลักกับแม่เหล็กอื่น รวมถึงสามารถดูดสารแม่เหล็กบางชนิดได้
+        </div>
+        <div class="lang-en mb-0">
+          A <strong>magnet</strong> is an object that produces a magnetic field. It can attract or repel other magnets and attract some magnetic materials.
+        </div>
+      </div>
+
+      <div class="card">
+        <strong>Key idea / แนวคิดสำคัญ</strong>
+        <ul class="check-list">
+          <li>แม่เหล็กออกแรงได้โดยไม่ต้องสัมผัส / Magnetic force can act at a distance.</li>
+          <li>บริเวณรอบแม่เหล็กมีสนามแม่เหล็ก / A magnet has a magnetic field around it.</li>
+          <li>สนามแม่เหล็กใช้เข็มทิศทดสอบทิศทางได้ / A compass can show field direction.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2 class="section-header">2. ชนิดของแม่เหล็กและสารแม่เหล็ก <span>(Types of Magnets and Magnetic Materials)</span></h2>
+
+    <div class="grid-2">
+      <div class="card card-blue">
+        <h3 class="topic-title" style="margin-top:0">แม่เหล็กธรรมชาติ / Natural magnet</h3>
+        <p>เกิดเองตามธรรมชาติ เช่น แร่แมกนีไทต์ \(Fe_3O_4\)</p>
+        <p class="lang-en mb-0">A naturally occurring magnetic mineral, such as magnetite \(Fe_3O_4\).</p>
+      </div>
+
+      <div class="card card-green">
+        <h3 class="topic-title" style="margin-top:0">แม่เหล็กที่มนุษย์สร้าง / Artificial magnet</h3>
+        <p>สร้างขึ้นด้วยวิธีทางวิทยาศาสตร์ เช่น แม่เหล็กถาวรและแม่เหล็กชั่วคราว</p>
+        <p class="lang-en mb-0">A magnet made by humans, such as a permanent magnet or a temporary magnet.</p>
+      </div>
+    </div>
+
+    <table>
+      <tr>
+        <th>ชนิดของสาร / Material type</th>
+        <th>พฤติกรรมต่อแม่เหล็ก / Behaviour</th>
+        <th>ตัวอย่าง / Examples</th>
+      </tr>
+      <tr>
+        <td><strong>Ferromagnetic</strong><br>สารเฟอโรแมกเนติก</td>
+        <td>ถูกแม่เหล็กดูดแรงมาก / Strongly attracted</td>
+        <td>เหล็ก, โคบอลต์, นิกเกิล / Iron, cobalt, nickel</td>
+      </tr>
+      <tr>
+        <td><strong>Paramagnetic</strong><br>สารพาราแมกเนติก</td>
+        <td>ถูกแม่เหล็กดูดเล็กน้อย / Weakly attracted</td>
+        <td>อะลูมิเนียม, โครเมียม, แมงกานีส / Aluminium, chromium, manganese</td>
+      </tr>
+      <tr>
+        <td><strong>Diamagnetic</strong><br>สารไดอะแมกเนติก</td>
+        <td>ถูกแม่เหล็กผลักเล็กน้อย / Weakly repelled</td>
+        <td>ทอง, ทองแดง, เงิน, สังกะสี / Gold, copper, silver, zinc</td>
+      </tr>
+    </table>
+
+    <h2 class="section-header page-break">3. ขั้วแม่เหล็ก <span>(Magnetic Poles)</span></h2>
+
+    <div class="diagram">
+      <svg viewBox="0 0 720 260" role="img" aria-label="Magnetic poles">
+        <defs>
+          <marker id="arrowBlue" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+            <polygon points="0 0,10 4,0 8" fill="#2563eb"/>
+          </marker>
+        </defs>
+        <rect x="230" y="105" width="260" height="55" rx="8" fill="#e5e7eb" stroke="#111827" stroke-width="3"/>
+        <rect x="230" y="105" width="130" height="55" rx="8" fill="#dc2626"/>
+        <rect x="360" y="105" width="130" height="55" rx="8" fill="#2563eb"/>
+        <text x="288" y="140" fill="#fff" font-weight="900" font-size="24">N</text>
+        <text x="420" y="140" fill="#fff" font-weight="900" font-size="24">S</text>
+        <path d="M245 98 C250 40, 470 40, 480 98" fill="none" stroke="#2563eb" stroke-width="4" marker-end="url(#arrowBlue)"/>
+        <path d="M245 168 C250 225, 470 225, 480 168" fill="none" stroke="#2563eb" stroke-width="4" marker-end="url(#arrowBlue)"/>
+        <path d="M208 120 C120 120, 120 145, 210 145" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrowBlue)"/>
+        <path d="M510 120 C600 120, 600 145, 512 145" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrowBlue)"/>
+        <text x="205" y="86" font-size="15" fill="#334155" font-weight="900">Outside magnet: field lines go from N to S</text>
+        <text x="210" y="235" font-size="15" fill="#334155" font-weight="900">ภายนอกแม่เหล็ก: เส้นสนามพุ่งออกจาก N เข้าหา S</text>
+      </svg>
+      <div class="caption">ขั้วแม่เหล็กเป็นบริเวณที่อำนาจแม่เหล็กเข้มที่สุด / Magnetic poles are the strongest regions of a magnet.</div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card card-red">
+        <h3 class="topic-title" style="margin-top:0">ขั้วเหมือนกัน / Like poles</h3>
+        <p><strong>N กับ N</strong> หรือ <strong>S กับ S</strong> → <span style="color:#dc2626;font-weight:900">ผลักกัน / repel</span></p>
+      </div>
+      <div class="card card-green">
+        <h3 class="topic-title" style="margin-top:0">ขั้วต่างกัน / Unlike poles</h3>
+        <p><strong>N กับ S</strong> → <span style="color:#047857;font-weight:900">ดูดกัน / attract</span></p>
+      </div>
+    </div>
+
+
+    <div class="image-grid">
+      <div class="image-card">
+        <img
+          src="https://commons.wikimedia.org/wiki/Special:FilePath/Magnetic_field_of_bar_magnets_repelling.png"
+          alt="Magnetic field of repelling bar magnets"
+          referrerpolicy="no-referrer"
+          onerror="this.outerHTML='<div class=&quot;fallback&quot;>Magnetic field of bar magnets repelling.png</div>'"
+        >
+        <div class="caption">ขั้วเหมือนกันหันเข้าหากัน → ผลักกัน / Like poles facing each other → repulsion</div>
+        <div class="source-note">Source image: Wikimedia Commons — Magnetic_field_of_bar_magnets_repelling.png</div>
+      </div>
+      <div class="image-card">
+        <img
+          src="https://commons.wikimedia.org/wiki/Special:FilePath/VFPt_cylindrical_magnets_attracting.svg"
+          alt="Magnetic field of attracting magnets"
+          referrerpolicy="no-referrer"
+          onerror="this.outerHTML='<div class=&quot;fallback&quot;>VFPt cylindrical magnets attracting.svg</div>'"
+        >
+        <div class="caption">ขั้วต่างกันหันเข้าหากัน → ดูดกัน / Unlike poles facing each other → attraction</div>
+        <div class="source-note">Source image: Wikimedia Commons — VFPt_cylindrical_magnets_attracting.svg</div>
+      </div>
+    </div>
+
+    <div class="warning-box">
+      <strong>ข้อควรรู้ / Important:</strong> ถ้าหักแท่งแม่เหล็กออกเป็นหลายท่อน จะเกิดขั้วเหนือและขั้วใต้ขึ้นใหม่ทุกท่อนเสมอ จึงไม่สามารถแยกขั้ว N เดี่ยวหรือ S เดี่ยวออกมาได้ง่าย ๆ<br>
+      If a bar magnet is broken into pieces, each piece becomes a smaller magnet with both N and S poles.
+    </div>
+
+    <h2 class="section-header">4. สนามแม่เหล็กและเส้นสนามแม่เหล็ก <span>(Magnetic Field and Field Lines)</span></h2>
+
+    <div class="rule-box">
+      <div class="lang-th">
+        <strong>สนามแม่เหล็ก</strong> คือ บริเวณที่มีอำนาจแม่เหล็ก ถ้านำสารแม่เหล็กหรือเข็มทิศมาวางในบริเวณนี้ จะเกิดแรงหรือเกิดการเบี่ยงเบน
+      </div>
+      <div class="lang-en mb-0 border-none bg-transparent p-0">
+        A <strong>magnetic field</strong> is a region where magnetic effects can be detected. A compass placed in this region will align with the field direction.
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3 class="topic-title" style="margin-top:0">ทิศของสนามแม่เหล็ก / Direction of \(B\)</h3>
+        <p>กำหนดโดยทิศที่เข็มทิศชี้ ณ ตำแหน่งนั้น</p>
+        <p class="lang-en mb-0">The direction of the magnetic field is the direction in which a compass needle points.</p>
+      </div>
+      <div class="card">
+        <h3 class="topic-title" style="margin-top:0">สัญลักษณ์สนามเข้า/ออกกระดาษ</h3>
+        <p><span class="mini-formula">×</span> = พุ่งเข้าไปในกระดาษ / into the page</p>
+        <p><span class="mini-formula">•</span> = พุ่งออกมาจากกระดาษ / out of the page</p>
+      </div>
+    </div>
+
+
+    <div class="image-grid">
+      <div class="image-card">
+        <img
+          src="https://commons.wikimedia.org/wiki/Special:FilePath/Field%20lines%20of%20bar%20magnet.svg"
+          alt="Field lines of a bar magnet"
+          referrerpolicy="no-referrer"
+          onerror="this.outerHTML='<div class=&quot;fallback&quot;>Field lines of bar magnet</div>'"
+        >
+        <div class="caption">เส้นสนามรอบแท่งแม่เหล็ก / Magnetic field lines around a bar magnet</div>
+        <div class="source-note">Source image: Wikimedia Commons — Field lines of bar magnet.svg</div>
+      </div>
+      <div class="image-card">
+        <img
+          src="https://commons.wikimedia.org/wiki/Special:FilePath/Iron%20filings%20around%20a%20bar%20magnet.jpg"
+          alt="Iron filings around a bar magnet"
+          referrerpolicy="no-referrer"
+          onerror="this.outerHTML='<div class=&quot;fallback&quot;>Iron filings around a bar magnet</div>'"
+        >
+        <div class="caption">ผงตะไบเหล็กแสดงรูปแบบสนาม / Iron filings show the field pattern</div>
+        <div class="source-note">Source image: Wikimedia Commons — Iron filings around a bar magnet.jpg</div>
+      </div>
+    </div>
+
+    <h3 class="topic-title">สมบัติของเส้นสนามแม่เหล็ก / Properties of Magnetic Field Lines</h3>
+    <ul class="check-list">
+      <li>เส้นสนามแสดงทิศทางของสนามแม่เหล็ก ณ ตำแหน่งนั้น / Field lines show field direction.</li>
+      <li>ภายนอกแท่งแม่เหล็ก เส้นสนามมีทิศจาก N ไป S / Outside a magnet, field lines go from N to S.</li>
+      <li>เส้นสนามไม่ตัดกัน / Field lines never cross.</li>
+      <li>เส้นสนามถี่ → สนามแรง, เส้นสนามห่าง → สนามอ่อน / Closely spaced lines mean a stronger field.</li>
+      <li>ผงตะไบเหล็กใช้ดูรูปแบบการเรียงตัวได้ แต่ถ้าต้องการทิศทางให้ใช้เข็มทิศ / Iron filings show the pattern, but a compass shows direction.</li>
+    </ul>
+
+    <h2 class="section-header page-break">5. สนามแม่เหล็กโลก <span>(Earth’s Magnetic Field)</span></h2>
+
+    <div class="grid-2">
+      <div class="card card-blue">
+        <div class="lang-th">
+          โลกมีสนามแม่เหล็กคล้ายแท่งแม่เหล็กขนาดใหญ่ เข็มทิศจึงวางตัวในแนวเหนือ–ใต้ และใช้บอกทิศทางได้
+        </div>
+        <div class="lang-en mb-0">
+          Earth has a magnetic field similar to a giant bar magnet, so a compass aligns roughly north–south.
+        </div>
+      </div>
+      <div class="card card-purple">
+        <strong>ผลสำคัญ / Important effect</strong>
+        <p>สนามแม่เหล็กโลกช่วยเบี่ยงเบนอนุภาคมีประจุจากลมสุริยะ และเกี่ยวข้องกับแสงเหนือ–แสงใต้</p>
+        <p class="lang-en mb-0">Earth’s magnetic field deflects charged particles from the solar wind and is related to auroras.</p>
+      </div>
+    </div>
+
+
+    <div class="image-grid">
+      <div class="image-card">
+        <img
+          src="https://commons.wikimedia.org/wiki/Special:FilePath/Earth%27s_magnetic_field%2C_schematic.png"
+          alt="Earth's magnetic field schematic"
+          referrerpolicy="no-referrer"
+          onerror="this.outerHTML='<div class=&quot;fallback&quot;>Earth magnetic field schematic</div>'"
+        >
+        <div class="caption">สนามแม่เหล็กโลกแบบ schematic / Schematic of Earth’s magnetic field</div>
+        <div class="source-note">Source image: Wikimedia Commons — Earth's magnetic field, schematic.png</div>
+      </div>
+      <div class="image-card">
+        <img
+          src="https://commons.wikimedia.org/wiki/Special:FilePath/Aurora_as_seen_by_IMAGE.PNG"
+          alt="Aurora as seen by IMAGE"
+          referrerpolicy="no-referrer"
+          onerror="this.outerHTML='<div class=&quot;fallback&quot;>Aurora as seen by IMAGE.PNG</div>'"
+        >
+        <div class="caption">แสงเหนือ–แสงใต้เกี่ยวข้องกับอนุภาคมีประจุและสนามแม่เหล็กโลก / Auroras are linked to charged particles and Earth’s magnetic field</div>
+        <div class="source-note">Source image: Wikimedia Commons — Aurora_as_seen_by_IMAGE.PNG</div>
+      </div>
+    </div>
+
+    <div class="diagram">
+      <svg viewBox="0 0 720 310" role="img" aria-label="Earth magnetic field">
+        <defs>
+          <marker id="earthArrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+            <polygon points="0 0,10 4,0 8" fill="#2563eb"/>
+          </marker>
+        </defs>
+        <circle cx="360" cy="155" r="70" fill="#dbeafe" stroke="#1d4ed8" stroke-width="4"/>
+        <text x="333" y="162" font-size="20" font-weight="900" fill="#1e3a8a">Earth</text>
+        <path d="M360 78 C230 55, 120 115, 120 155 C120 210, 240 255, 360 232" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#earthArrow)"/>
+        <path d="M360 78 C490 55, 600 115, 600 155 C600 210, 480 255, 360 232" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#earthArrow)"/>
+        <path d="M360 92 C275 90, 210 120, 210 155 C210 190, 275 220, 360 218" fill="none" stroke="#60a5fa" stroke-width="3" marker-end="url(#earthArrow)"/>
+        <path d="M360 92 C445 90, 510 120, 510 155 C510 190, 445 220, 360 218" fill="none" stroke="#60a5fa" stroke-width="3" marker-end="url(#earthArrow)"/>
+        <text x="320" y="40" font-size="15" font-weight="900">near geographic North</text>
+        <text x="310" y="288" font-size="15" font-weight="900">near geographic South</text>
+      </svg>
+      <div class="caption">ในระดับพื้นฐาน ให้จำว่าเข็มทิศชี้ไปทางทิศเหนือ และใช้เข็มทิศกำหนดทิศของสนามแม่เหล็ก ณ ตำแหน่งนั้น</div>
+    </div>
+
+    <h2 class="section-header">6. จุดสะเทิน <span>(Neutral Point)</span></h2>
+
+    <div class="rule-box">
+      <div class="lang-th">
+        <strong>จุดสะเทิน</strong> คือ จุดที่อยู่ในบริเวณที่มีสนามแม่เหล็กหลายแหล่ง แต่สนามแม่เหล็กที่ตำแหน่งนั้นหักล้างกันจนได้สนามลัพธ์เป็นศูนย์
+      </div>
+      <div class="lang-en mb-0 border-none bg-transparent p-0">
+        A <strong>neutral point</strong> is a point where magnetic fields from different sources cancel each other, so the resultant magnetic field is zero.
+      </div>
+    </div>
+
+    <div class="diagram">
+      <svg viewBox="0 0 720 300" role="img" aria-label="neutral point">
+        <defs>
+          <marker id="nArrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+            <polygon points="0 0,10 4,0 8" fill="#2563eb"/>
+          </marker>
+        </defs>
+
+        <text x="50" y="35" font-size="18" font-weight="900" fill="#111827">A) Like poles facing each other / ขั้วเหมือนกันหันเข้าหากัน</text>
+        <rect x="110" y="70" width="150" height="45" rx="7" fill="#e5e7eb" stroke="#111827" stroke-width="3"/>
+        <rect x="110" y="70" width="75" height="45" rx="7" fill="#dc2626"/>
+        <rect x="185" y="70" width="75" height="45" rx="7" fill="#2563eb"/>
+        <text x="137" y="99" fill="#fff" font-size="20" font-weight="900">N</text>
+        <text x="212" y="99" fill="#fff" font-size="20" font-weight="900">S</text>
+
+        <rect x="460" y="70" width="150" height="45" rx="7" fill="#e5e7eb" stroke="#111827" stroke-width="3"/>
+        <rect x="460" y="70" width="75" height="45" rx="7" fill="#2563eb"/>
+        <rect x="535" y="70" width="75" height="45" rx="7" fill="#dc2626"/>
+        <text x="487" y="99" fill="#fff" font-size="20" font-weight="900">S</text>
+        <text x="562" y="99" fill="#fff" font-size="20" font-weight="900">N</text>
+
+        <circle cx="360" cy="93" r="18" fill="#fef3c7" stroke="#f59e0b" stroke-width="4"/>
+        <text x="349" y="100" font-size="20" font-weight="900">0</text>
+        <line x1="310" y1="94" x2="378" y2="94" stroke="#2563eb" stroke-width="3" marker-end="url(#nArrow)"/>
+        <line x1="410" y1="92" x2="342" y2="92" stroke="#dc2626" stroke-width="3" marker-end="url(#nArrow)"/>
+        <text x="285" y="137" font-size="13" font-weight="900" fill="#475569">Fields cancel / สนามหักล้างกัน</text>
+
+        <text x="50" y="195" font-size="18" font-weight="900" fill="#111827">B) Bar magnet in Earth’s field / แท่งแม่เหล็กในสนามแม่เหล็กโลก</text>
+        <line x1="80" y1="245" x2="640" y2="245" stroke="#94a3b8" stroke-width="3" marker-end="url(#nArrow)"/>
+        <text x="575" y="233" font-size="13" font-weight="900" fill="#475569">Earth field</text>
+        <rect x="285" y="220" width="150" height="45" rx="7" fill="#e5e7eb" stroke="#111827" stroke-width="3"/>
+        <rect x="285" y="220" width="75" height="45" rx="7" fill="#dc2626"/>
+        <rect x="360" y="220" width="75" height="45" rx="7" fill="#2563eb"/>
+        <text x="312" y="249" fill="#fff" font-size="20" font-weight="900">N</text>
+        <text x="387" y="249" fill="#fff" font-size="20" font-weight="900">S</text>
+        <circle cx="225" cy="243" r="15" fill="#fef3c7" stroke="#f59e0b" stroke-width="4"/>
+        <circle cx="495" cy="243" r="15" fill="#fef3c7" stroke="#f59e0b" stroke-width="4"/>
+        <text x="217" y="249" font-size="17" font-weight="900">0</text>
+        <text x="487" y="249" font-size="17" font-weight="900">0</text>
+      </svg>
+      <div class="caption">จุดสะเทินคือจุดที่สนามแม่เหล็กสองแหล่งมีขนาดเท่ากันแต่ทิศตรงข้าม จึงหักล้างกัน / Neutral points occur where equal and opposite magnetic fields cancel.</div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card card-orange">
+        <strong>สังเกตด้วยเข็มทิศ / Compass observation</strong>
+        <p>ถ้าวางเข็มทิศเล็ก ๆ ที่จุดสะเทิน เข็มทิศจะไม่มีทิศบังคับชัดเจน เพราะสนามลัพธ์เป็นศูนย์</p>
+      </div>
+      <div class="card card-orange">
+        <strong>สังเกตด้วยผงตะไบเหล็ก / Iron filings observation</strong>
+        <p>บริเวณจุดสะเทิน ผงตะไบเหล็กจะไม่เรียงตัวเป็นแนวชัด เพราะไม่มีสนามลัพธ์กำหนดทิศ</p>
+      </div>
+    </div>
+
+    <h2 class="section-header page-break">7. ฟลักซ์แม่เหล็กและความเข้มสนามแม่เหล็ก <span>(Magnetic Flux and Magnetic Flux Density)</span></h2>
+
+    <div class="grid-2">
+      <div class="card card-blue">
+        <h3 class="topic-title" style="margin-top:0">ฟลักซ์แม่เหล็ก \(\Phi\)</h3>
+        <p>คือ ปริมาณสนามแม่เหล็กที่พุ่งผ่านพื้นที่หนึ่ง</p>
+        <p class="lang-en mb-0">Magnetic flux is the amount of magnetic field passing through a surface.</p>
+      </div>
+
+      <div class="card card-green">
+        <h3 class="topic-title" style="margin-top:0">ความเข้มสนามแม่เหล็ก \(B\)</h3>
+        <p>คือ จำนวนฟลักซ์แม่เหล็กต่อพื้นที่ตั้งฉากหนึ่งหน่วย</p>
+        <p class="lang-en mb-0">Magnetic flux density is magnetic flux per unit perpendicular area.</p>
+      </div>
+    </div>
+
+    <div class="math-box">
+      $$\Phi = BA\cos\theta$$
+    </div>
+
+    <div class="warning-box">
+      <strong>ข้อควรระวังเรื่องมุม / Angle warning:</strong> ในสูตร \(\Phi = BA\cos\theta\), \(\theta\) คือมุมระหว่างสนามแม่เหล็ก \(B\) กับเส้นตั้งฉากต่อพื้นที่ หรือ <strong>normal line</strong> ไม่ใช่มุมกับระนาบโดยตรง
+    </div>
+
+
+    <div class="image-grid">
+      <div class="image-card">
+        <img
+          src="https://commons.wikimedia.org/wiki/Special:FilePath/Magnetic_flux_diagram.svg"
+          alt="Magnetic flux diagram"
+          referrerpolicy="no-referrer"
+          onerror="this.outerHTML='<div class=&quot;fallback&quot;>Magnetic flux diagram.svg</div>'"
+        >
+        <div class="caption">ฟลักซ์แม่เหล็กผ่านพื้นที่ / Magnetic flux through an area</div>
+        <div class="source-note">Source image: Wikimedia Commons — Magnetic_flux_diagram.svg</div>
+      </div>
+      <div class="image-card">
+        <img
+          src="https://commons.wikimedia.org/wiki/Special:FilePath/General_flux_diagram.svg"
+          alt="General flux diagram"
+          referrerpolicy="no-referrer"
+          onerror="this.outerHTML='<div class=&quot;fallback&quot;>General flux diagram.svg</div>'"
+        >
+        <div class="caption">มุมระหว่างสนามกับเส้น normal / Angle between field and normal</div>
+        <div class="source-note">Source image: Wikimedia Commons — General_flux_diagram.svg</div>
+      </div>
+    </div>
+
+    <div class="diagram">
+      <svg viewBox="0 0 720 300" role="img" aria-label="magnetic flux">
+        <defs>
+          <marker id="fluxArrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+            <polygon points="0 0,10 4,0 8" fill="#2563eb"/>
+          </marker>
+        </defs>
+        <g stroke="#2563eb" stroke-width="4" marker-end="url(#fluxArrow)">
+          <line x1="70" y1="80" x2="640" y2="80"/>
+          <line x1="70" y1="115" x2="640" y2="115"/>
+          <line x1="70" y1="150" x2="640" y2="150"/>
+          <line x1="70" y1="185" x2="640" y2="185"/>
+        </g>
+        <polygon points="330,50 430,95 430,230 330,185" fill="#eff6ff" stroke="#111827" stroke-width="4"/>
+        <line x1="380" y1="140" x2="380" y2="32" stroke="#dc2626" stroke-width="4" marker-end="url(#fluxArrow)"/>
+        <text x="394" y="45" font-size="14" font-weight="900" fill="#dc2626">normal</text>
+        <text x="600" y="70" font-size="16" font-weight="900" fill="#2563eb">B</text>
+        <text x="350" y="255" font-size="15" font-weight="900">Area A</text>
+        <path d="M380 62 A65 65 0 0 1 438 92" fill="none" stroke="#f59e0b" stroke-width="4"/>
+        <text x="427" y="78" font-size="18" font-weight="900" fill="#f59e0b">θ</text>
+      </svg>
+      <div class="caption">ถ้า \(B\) ตั้งฉากกับพื้นที่ ฟลักซ์มากสุด; ถ้า \(B\) ขนานกับพื้นที่ ฟลักซ์เป็นศูนย์ / Flux is maximum when \(B\) is perpendicular to the surface, and zero when \(B\) is parallel to the surface.</div>
+    </div>
+
+    <table>
+      <tr>
+        <th>กรณี / Case</th>
+        <th>มุมกับ normal / Angle with normal</th>
+        <th>ฟลักซ์ / Flux</th>
+      </tr>
+      <tr>
+        <td>\(B\) ตั้งฉากกับพื้นที่ / \(B\) perpendicular to area</td>
+        <td>\(\theta = 0^\circ\)</td>
+        <td>\(\Phi = BA\) มากสุด / maximum</td>
+      </tr>
+      <tr>
+        <td>\(B\) ทำมุมกับพื้นที่ / \(B\) at an angle</td>
+        <td>\(0^\circ < \theta < 90^\circ\)</td>
+        <td>\(\Phi = BA\cos\theta\)</td>
+      </tr>
+      <tr>
+        <td>\(B\) ขนานกับพื้นที่ / \(B\) parallel to area</td>
+        <td>\(\theta = 90^\circ\)</td>
+        <td>\(\Phi = 0\)</td>
+      </tr>
+    </table>
+
+    <h2 class="section-header">8. ปริมาณและหน่วยที่เกี่ยวข้อง <span>(Quantities and Units)</span></h2>
+
+    <table>
+      <tr>
+        <th>Quantity / ปริมาณ</th>
+        <th>Symbol / สัญลักษณ์</th>
+        <th>Unit / หน่วย</th>
+        <th>Meaning / ความหมาย</th>
+      </tr>
+      <tr>
+        <td>Magnetic field / Magnetic flux density<br>สนามแม่เหล็ก / ความหนาแน่นฟลักซ์แม่เหล็ก</td>
+        <td>\(B\)</td>
+        <td>tesla (T) หรือ \(Wb/m^2\)</td>
+        <td>ความเข้มของสนามแม่เหล็ก</td>
+      </tr>
+      <tr>
+        <td>Magnetic flux<br>ฟลักซ์แม่เหล็ก</td>
+        <td>\(\Phi\)</td>
+        <td>weber (Wb)</td>
+        <td>ปริมาณสนามแม่เหล็กที่ผ่านพื้นที่</td>
+      </tr>
+      <tr>
+        <td>Area<br>พื้นที่</td>
+        <td>\(A\)</td>
+        <td>\(m^2\)</td>
+        <td>พื้นที่ที่สนามแม่เหล็กผ่าน</td>
+      </tr>
+      <tr>
+        <td>Current<br>กระแสไฟฟ้า</td>
+        <td>\(I\)</td>
+        <td>ampere (A)</td>
+        <td>ปริมาณประจุที่ไหลต่อเวลา</td>
+      </tr>
+      <tr>
+        <td>Permeability of free space<br>ค่าคงที่แม่เหล็กของสุญญากาศ</td>
+        <td>\(\mu_0\)</td>
+        <td>\(T \cdot m/A\)</td>
+        <td>\(\mu_0 = 4\pi \times 10^{-7}\,T \cdot m/A\)</td>
+      </tr>
+      <tr>
+        <td>Angle<br>มุม</td>
+        <td>\(\theta\)</td>
+        <td>degree / radian</td>
+        <td>มุมระหว่าง \(B\) กับเส้นตั้งฉากต่อพื้นที่</td>
+      </tr>
+    </table>
+
+    <section class="bridge-box">
+      <h2 style="margin-top:0;color:#166534">Bridge to the Next Sheets / เชื่อมไปชีทถัดไป</h2>
+      <div class="lang-th">
+        เมื่อเข้าใจว่าแม่เหล็กสร้างสนามแม่เหล็ก \(B\) แล้ว ขั้นต่อไปคือศึกษาว่า \(B\) เกิดจากกระแสไฟฟ้าได้อย่างไร และ \(B\) ออกแรงต่อประจุ ลวด และขดลวดได้อย่างไร
+      </div>
+      <div class="lang-en mb-0 border-none bg-transparent p-0">
+        After understanding magnetic field \(B\), the next step is to study how electric currents create magnetic fields and how magnetic fields exert forces on charges, wires, and coils.
+      </div>
+      <ul class="check-list">
+        <li>Sheet 2: Magnetic Fields from Electric Currents / สนามแม่เหล็กที่เกิดจากกระแสไฟฟ้า</li>
+        <li>Sheet 3: Magnetic Force and Torque / แรงแม่เหล็กและโมเมนต์ของแรงคู่ควบ</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

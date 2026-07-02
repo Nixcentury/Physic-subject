@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Y13 Physics Written Exam Part B | Magnetic Fields from Electric Currents</title>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --ink: #111827;
+      --muted: #475569;
+      --line: #d1d5db;
+      --soft: #f8fafc;
+      --blue: #2563eb;
+      --red: #dc2626;
+      --green: #047857;
+      --orange: #ea580c;
+      --purple: #7c3aed;
+      --paper: 210mm;
+      --page-h: 297mm;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+
+    body {
+      background: #e5e7eb;
+      color: var(--ink);
+      font-family: "Google Sans", "Noto Sans Thai", Arial, sans-serif;
+      line-height: 1.32;
+    }
+
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      background: #0f172a;
+      color: #fff;
+      box-shadow: 0 8px 24px rgba(15,23,42,.22);
+    }
+
+    .toolbar button {
+      border: 0;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-family: inherit;
+      font-weight: 900;
+      cursor: pointer;
+      background: #fff;
+      color: #0f172a;
+    }
+
+    .toolbar .primary { background: #bfdbfe; color: #1e3a8a; }
+    .toolbar .gold { background: #fde68a; color: #78350f; }
+    .toolbar .status { flex-basis: 100%; text-align: center; font-size: 12.5px; opacity: .9; }
+
+    .sheet {
+      width: var(--paper);
+      min-height: var(--page-h);
+      margin: 18px auto 36px;
+      padding: 10.5mm 12mm;
+      background: #fff;
+      box-shadow: 0 16px 48px rgba(15,23,42,.22);
+      page-break-after: always;
+      break-after: page;
+      overflow: hidden;
+    }
+
+    .page-header {
+      border: 0;
+      padding: 0;
+      margin-bottom: 7px;
+      background: transparent;
+    }
+
+    .phys-note {
+      border-left: 4px solid #111827;
+      background: #f8fafc;
+      padding: 5px 8px;
+      margin-bottom: 6px;
+      font-size: 10.2px;
+      font-weight: 800;
+      line-height: 1.22;
+      color: #111827;
+    }
+
+    .page-title {
+      text-align: center;
+      font-weight: 900;
+      font-size: 15px;
+      line-height: 1.18;
+      margin: 0;
+    }
+
+    .page-subtitle {
+      text-align: center;
+      font-size: 10.4px;
+      color: #374151;
+      margin-top: 2px;
+      line-height: 1.18;
+    }
+
+    .instruction-strip {
+      border: 1px solid #d1d5db;
+      border-radius: 7px;
+      background: #f9fafb;
+      padding: 4px 6px;
+      margin-top: 5px;
+      margin-bottom: 6px;
+      font-size: 9.45px;
+      line-height: 1.22;
+      font-weight: 700;
+    }
+
+    .formula-strip {
+      border: 1px solid #cbd5e1;
+      border-radius: 9px;
+      background: #f8fafc;
+      padding: 5px 6px;
+      margin: 5px 0 7px;
+    }
+
+    .formula-title {
+      font-size: 9.1px;
+      font-weight: 900;
+      color: #374151;
+      margin-bottom: 3px;
+      text-align: center;
+    }
+
+    .formula-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .formula-row span {
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      border-radius: 999px;
+      padding: 2px 6px;
+      font-size: 9.6px;
+      font-weight: 900;
+      white-space: nowrap;
+      line-height: 1.55;
+    }
+
+    .question {
+      border: 1.4px solid #111827;
+      border-radius: 10px;
+      padding: 7px 8px;
+      background: #fff;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    .qhead {
+      display: grid;
+      grid-template-columns: 30px 1fr auto;
+      gap: 7px;
+      align-items: start;
+      margin-bottom: 6px;
+    }
+
+    .num {
+      display: inline-flex;
+      width: 26px;
+      height: 26px;
+      border: 1.4px solid #111827;
+      border-radius: 999px;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 13px;
+      line-height: 1;
+    }
+
+    .qtitle {
+      font-size: 13.2px;
+      font-weight: 900;
+      line-height: 1.25;
+    }
+
+    .score {
+      white-space: nowrap;
+      border: 1px solid #111827;
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 10.4px;
+      font-weight: 900;
+      background: #f3f4f6;
+    }
+
+    .scenario {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-left: 4px solid #111827;
+      border-radius: 8px;
+      padding: 5px 7px;
+      margin: 5px 0;
+      font-size: 10.35px;
+      line-height: 1.27;
+    }
+
+    .model-row {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 7px;
+      margin: 6px 0;
+      align-items: start;
+    }
+
+    .model-card,
+    .data-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 5px 6px;
+      align-self: start;
+    }
+
+    .model-title,
+    .data-title {
+      font-size: 10px;
+      font-weight: 900;
+      margin-bottom: 4px;
+      color: #374151;
+      line-height: 1.2;
+    }
+
+    .model-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      background: #fff;
+    }
+
+    .caption {
+      font-size: 8.65px;
+      color: #64748b;
+      margin-top: 3px;
+      line-height: 1.18;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: 9.35px;
+      line-height: 1.12;
+      margin: 2px 0 0;
+    }
+
+    .data-table th,
+    .data-table td {
+      border: 1px solid #111827;
+      padding: 3px 4px;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .data-table th {
+      background: #eff6ff;
+      font-weight: 900;
+    }
+
+    .subq {
+      margin: 6px 0 0;
+      padding-left: 18px;
+      font-size: 10.25px;
+      line-height: 1.22;
+    }
+
+    .subq li {
+      margin-bottom: 4.5px;
+      padding-left: 2px;
+    }
+
+    .pts {
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .ans {
+      display: block;
+      min-height: 12.6mm;
+      margin: 3px 0 4px;
+      border: 1px dashed #9ca3af;
+      border-radius: 6px;
+      background: repeating-linear-gradient(to bottom, transparent 0, transparent 6.0mm, rgba(156,163,175,.45) 6.1mm, transparent 6.3mm);
+    }
+
+    .ans.small { min-height: 7.8mm; }
+    .ans.tall { min-height: 16mm; }
+
+    .solution {
+      display: none;
+      margin-top: 7px;
+      padding: 8px 9px;
+      border: 1px solid #bfdbfe;
+      border-left: 4px solid #2563eb;
+      background: #eff6ff;
+      font-size: 9.9px;
+      line-height: 1.33;
+      border-radius: 8px;
+    }
+
+    .solution-title {
+      font-weight: 900;
+      font-size: 11.8px;
+      margin-bottom: 4px;
+    }
+
+    .sol-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+    }
+
+    .sol-card {
+      background: #fff;
+      border: 1px solid #bfdbfe;
+      border-radius: 6px;
+      padding: 4px 5px;
+    }
+
+    .red { color: #dc2626; font-weight: 900; }
+    .blue { color: #2563eb; font-weight: 900; }
+    .green { color: #047857; font-weight: 900; }
+
+    .mini-note {
+      border: 1px solid #e5e7eb;
+      background: #f8fafc;
+      border-radius: 6px;
+      padding: 4px 5px;
+      font-size: 9.0px;
+      line-height: 1.2;
+      font-weight: 800;
+      color: #374151;
+      margin-top: 4px;
+    }
+
+    .key-page { display: none; }
+    body.mode-key .key-page,
+    body.mode-solution .key-page { display: block; }
+
+    body.mode-solution .solution { display: block; }
+    body.mode-solution .ans { display: none; }
+
+    .key h2 {
+      margin: 0 0 6px;
+      font-size: 15px;
+      border-bottom: 2px solid #111827;
+      padding-bottom: 4px;
+    }
+
+    .key-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 5px;
+      font-size: 10.2px;
+    }
+
+    .key-item {
+      border: 1px solid #111827;
+      border-radius: 6px;
+      padding: 5px 7px;
+      line-height: 1.35;
+    }
+
+    @page { size: A4 portrait; margin: 0; }
+
+    @media print {
+      html, body { width: 210mm; background: white !important; }
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .toolbar { display: none !important; }
+
+      .sheet {
+        width: 210mm !important;
+        min-height: 297mm !important;
+        margin: 0 !important;
+        padding: 10.5mm 12mm !important;
+        box-shadow: none !important;
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+
+      .phys-note {
+        font-size: 9.2px !important;
+        padding: 4px 7px !important;
+        margin-bottom: 5px !important;
+      }
+
+      .page-title { font-size: 13.5px !important; }
+      .page-subtitle { font-size: 9.4px !important; }
+
+      .instruction-strip,
+      .formula-title {
+        font-size: 8.5px !important;
+      }
+
+      .formula-row span {
+        font-size: 8.7px !important;
+        padding: 1px 5px !important;
+      }
+
+      .scenario,
+      .subq {
+        font-size: 8.45pt !important;
+      }
+
+      .data-table {
+        font-size: 7.75pt !important;
+      }
+
+      .question {
+        padding: 6px 7px !important;
+      }
+
+      .ans.small { min-height: 7.8mm !important; }
+      .ans { min-height: 12.3mm !important; }
+      .ans.tall { min-height: 15.5mm !important; }
+    }
+
+    @media screen and (max-width: 860px) {
+      .sheet { width: calc(100vw - 18px); min-height: auto; }
+      .model-row, .sol-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body class="mode-exam">
+  <div class="toolbar">
+    <button class="primary" onclick="setMode('mode-exam'); setTimeout(()=>print(),200)">🖨️ พิมพ์ข้อสอบ</button>
+    <button onclick="setMode('mode-key'); setTimeout(()=>print(),200)">✅ พิมพ์พร้อมเฉลยสั้น</button>
+    <button class="gold" onclick="setMode('mode-solution'); setTimeout(()=>print(),200)">📘 พิมพ์เฉลยละเอียด</button>
+    <button onclick="toggleSolution()">👀 เปิด/ปิดเฉลยบนจอ</button>
+    <div class="status" id="statusText">Y13 Physics Part B — Magnetic Fields from Electric Currents</div>
+  </div>
+
+  <!-- PAGE TEMPLATE HEADER -->
+  <template id="formula-template">
+    <div class="formula-strip">
+      <div class="formula-title">Given relationships / ความสัมพันธ์ที่กำหนด</div>
+      <div class="formula-row">
+        <span>\(\mu_0 = 4\pi \times 10^{-7}\;T\,m/A\)</span>
+        <span>\(B=\frac{\mu_0 I}{2\pi d}\)</span>
+        <span>\(B=\frac{\mu_0 I N}{2R}\)</span>
+        <span>\(B=\frac{\mu_0 N I}{L}\)</span>
+        <span>\(B=\mu_0 n I\)</span>
+        <span>\(B=\frac{\mu_0 I N}{2\pi r}\)</span>
+      </div>
+    </div>
+  </template>
+
+  <!-- PAGE 1 -->
+  <main class="sheet">
+    <section class="page-header">
+      <div class="phys-note">Part B: Magnetic fields from electric currents. / สนามแม่เหล็กที่เกิดจากกระแสไฟฟ้า</div>
+      <div class="page-title">Part B: Magnetic Fields from Electric Currents / สนามแม่เหล็กที่เกิดจากกระแสไฟฟ้า</div>
+      <div class="page-subtitle">Page 1: Long straight conductor / หน้า 1: ลวดตัวนำตรงยาว <b>(35 points / 35 คะแนน)</b></div>
+      <div class="instruction-strip"><b>Instructions / คำชี้แจง:</b> Study the model, choose an appropriate relationship from the strip, show calculations, and explain the physical meaning. / ศึกษารูปจำลอง เลือกความสัมพันธ์ที่เหมาะสมจากแถบสูตร แสดงวิธีคำนวณ และอธิบายความหมายทางฟิสิกส์</div>
+      <div class="formula-strip">
+        <div class="formula-title">Given relationships / ความสัมพันธ์ที่กำหนด</div>
+        <div class="formula-row">
+          <span>\(\mu_0 = 4\pi \times 10^{-7}\;T\,m/A\)</span>
+          <span>\(B=\frac{\mu_0 I}{2\pi d}\)</span>
+          <span>\(B=\frac{\mu_0 I N}{2R}\)</span>
+          <span>\(B=\frac{\mu_0 N I}{L}\)</span>
+          <span>\(B=\mu_0 n I\)</span>
+          <span>\(B=\frac{\mu_0 I N}{2\pi r}\)</span>
+        </div>
+      </div>
+    </section>
+
+    <article class="question">
+      <div class="qhead">
+        <span class="num">1</span>
+        <div class="qtitle">จุดตรวจสนามแม่เหล็กใกล้ลวดตัวนำตรง / Field checkpoint near a straight wire</div>
+        <div class="score">7 pts</div>
+      </div>
+
+      <div class="scenario">
+        ลวดตัวนำตรงยาวมีกระแสไฟฟ้าไหลขึ้นด้านบน จุด \(P\) อยู่ทางขวาของลวด และอยู่ห่างจากลวด \(0.040\,m\). นักเรียนต้องหาทิศและขนาดของสนามแม่เหล็กที่จุด \(P\)
+        <br>
+        A long straight wire carries current upward. Point \(P\) is to the right of the wire at a distance of \(0.040\,m\). Find the direction and magnitude of the magnetic field at \(P\).
+      </div>
+
+      <div class="model-row">
+        <div class="model-card">
+          <div class="model-title">Model / รูปจำลอง</div>
+          <svg class="model-svg" viewBox="0 0 430 270">
+            <defs>
+              <marker id="arrRed1" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#dc2626"/></marker>
+            </defs>
+            <line x1="160" y1="228" x2="160" y2="42" stroke="#94a3b8" stroke-width="18" stroke-linecap="round"/>
+            <line x1="160" y1="205" x2="160" y2="72" stroke="#dc2626" stroke-width="6" marker-end="url(#arrRed1)"/>
+            <text x="182" y="77" font-size="15" font-weight="900" fill="#dc2626">I = 8.0 A</text>
+            <ellipse cx="160" cy="135" rx="86" ry="28" fill="none" stroke="#2563eb" stroke-width="4" stroke-dasharray="8 6"/>
+            <ellipse cx="160" cy="135" rx="130" ry="45" fill="none" stroke="#93c5fd" stroke-width="3" stroke-dasharray="8 6"/>
+            <line x1="160" y1="135" x2="290" y2="135" stroke="#111827" stroke-width="3" stroke-dasharray="6 5"/>
+            <circle cx="290" cy="135" r="16" fill="#fef3c7" stroke="#111827" stroke-width="3"/>
+            <text x="284" y="141" font-size="16" font-weight="900">P</text>
+            <text x="205" y="126" font-size="12" font-weight="900">d = 0.040 m</text>
+            <text x="242" y="198" font-size="13" font-weight="900" fill="#2563eb">Use right-hand rule</text>
+            <text x="66" y="32" font-size="13" font-weight="900">magnetic field forms circles around the wire</text>
+          </svg>
+          <div class="caption">ใช้กฎมือขวา: นิ้วหัวแม่มือชี้ตามกระแส นิ้วที่โค้งรอบลวดคือทิศของสนาม / Right-hand rule: thumb follows current, curled fingers show field direction.</div>
+        </div>
+
+        <div class="data-card">
+          <div class="data-title">Given data / ข้อมูลกำหนด</div>
+          <table class="data-table">
+            <tr><th>Quantity / ปริมาณ</th><th>Value / ค่า</th></tr>
+            <tr><td>\(I\)</td><td>\(8.0\,A\)</td></tr>
+            <tr><td>\(d\)</td><td>\(0.040\,m\)</td></tr>
+            <tr><td>\(\mu_0\)</td><td>\(4\pi \times 10^{-7}\,T\,m/A\)</td></tr>
+            <tr><td>Point \(P\)</td><td>right side of wire / ด้านขวาของลวด</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <ol class="subq" type="ก">
+        <li>จากภาพและกฎมือขวา สนามแม่เหล็กที่จุด \(P\) มีทิศเข้า หรือออกจากกระดาษ<br>From the model and right-hand rule, is the magnetic field at \(P\) into or out of the page? <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+        <li>เลือกความสัมพันธ์จากแถบสูตรและแทนค่าเพื่อคำนวณ \(B\) ที่จุด \(P\)<br>Choose a relationship from the formula strip and substitute values to calculate \(B\) at \(P\). <span class="pts">(3 pts / 3 คะแนน)</span><span class="ans tall"></span></li>
+        <li>ถ้ากระแสเพิ่มเป็น \(16.0\,A\) แต่ \(d\) เท่าเดิม ค่า \(B\) จะเปลี่ยนอย่างไร<br>If the current becomes \(16.0\,A\) while \(d\) stays the same, how does \(B\) change? <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+        <li>ถ้าจุด \(P\) อยู่ไกลจากลวดมากขึ้น สนามแม่เหล็กควรเพิ่มหรือลด อธิบายจากความสัมพันธ์<br>If point \(P\) is farther from the wire, should the magnetic field increase or decrease? Explain using the relationship. <span class="pts">(2 pts / 2 คะแนน)</span><span class="ans"></span></li>
+      </ol>
+
+      <div class="solution">
+        <div class="solution-title">เฉลย / Solution</div>
+        <div class="sol-grid">
+          <div class="sol-card">ที่ด้านขวาของลวด เมื่อกระแสไหลขึ้น \(B\) ชี้ <span class="red">เข้ากระดาษ</span> หรือ \(\otimes\)</div>
+          <div class="sol-card">\(B=\frac{\mu_0I}{2\pi d}=\frac{(4\pi\times10^{-7})(8.0)}{2\pi(0.040)}=\)<span class="red">\(4.0\times10^{-5}\,T\)</span></div>
+          <div class="sol-card">ถ้า \(I\) เพิ่มเป็น 2 เท่า \(B\) เพิ่มเป็น 2 เท่า → \(8.0\times10^{-5}\,T\)</div>
+          <div class="sol-card">ถ้า \(d\) เพิ่ม \(B\) ลดลง เพราะ \(B\) แปรผกผันกับ \(d\)</div>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <!-- PAGE 2 -->
+  <main class="sheet">
+    <section class="page-header">
+      <div class="phys-note">Part B: Magnetic fields from electric currents. / สนามแม่เหล็กที่เกิดจากกระแสไฟฟ้า</div>
+      <div class="page-title">Part B: Magnetic Fields from Electric Currents / สนามแม่เหล็กที่เกิดจากกระแสไฟฟ้า</div>
+      <div class="page-subtitle">Page 2: Circular coil / หน้า 2: ขดลวดวงกลม <b>(35 points / 35 คะแนน)</b></div>
+      <div class="instruction-strip"><b>Instructions / คำชี้แจง:</b> Use the formula strip. Do not write only the final answer; show substitution and reasoning. / ใช้แถบสูตรที่กำหนด ไม่ตอบเฉพาะคำตอบสุดท้าย ต้องแสดงการแทนค่าและเหตุผล</div>
+      <div class="formula-strip">
+        <div class="formula-title">Given relationships / ความสัมพันธ์ที่กำหนด</div>
+        <div class="formula-row">
+          <span>\(\mu_0 = 4\pi \times 10^{-7}\;T\,m/A\)</span>
+          <span>\(B=\frac{\mu_0 I}{2\pi d}\)</span>
+          <span>\(B=\frac{\mu_0 I N}{2R}\)</span>
+          <span>\(B=\frac{\mu_0 N I}{L}\)</span>
+          <span>\(B=\mu_0 n I\)</span>
+          <span>\(B=\frac{\mu_0 I N}{2\pi r}\)</span>
+        </div>
+      </div>
+    </section>
+
+    <article class="question">
+      <div class="qhead">
+        <span class="num">2</span>
+        <div class="qtitle">สนามที่จุดศูนย์กลางของขดลวด / Field at the center of a coil</div>
+        <div class="score">7 pts</div>
+      </div>
+
+      <div class="scenario">
+        ขดลวดวงกลมมีจำนวนรอบ \(25\) รอบ มีกระแสไฟฟ้า \(2.0\,A\) ไหลทวนเข็มนาฬิกาเมื่อมองจากด้านหน้า และมีรัศมี \(0.10\,m\)
+        <br>
+        A circular coil has \(25\) turns, carries a current of \(2.0\,A\), and has radius \(0.10\,m\). Viewed from the front, the current is counterclockwise.
+      </div>
+
+      <div class="model-row">
+        <div class="model-card">
+          <div class="model-title">Model / รูปจำลอง</div>
+          <svg class="model-svg" viewBox="0 0 430 270">
+            <defs>
+              <marker id="arrRed2" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#dc2626"/></marker>
+            </defs>
+            <ellipse cx="205" cy="135" rx="120" ry="62" fill="none" stroke="#94a3b8" stroke-width="9"/>
+            <ellipse cx="205" cy="135" rx="103" ry="52" fill="none" stroke="#cbd5e1" stroke-width="4"/>
+            <path d="M145 82 C93 112, 94 164, 145 188" fill="none" stroke="#dc2626" stroke-width="5" marker-end="url(#arrRed2)"/>
+            <path d="M265 188 C318 160, 318 110, 266 82" fill="none" stroke="#dc2626" stroke-width="5" marker-end="url(#arrRed2)"/>
+            <circle cx="205" cy="135" r="23" fill="#eff6ff" stroke="#111827" stroke-width="3"/>
+            <text x="197" y="142" font-size="18" font-weight="900" fill="#2563eb">⊙</text>
+            <text x="180" y="170" font-size="12" font-weight="900">center</text>
+            <line x1="205" y1="135" x2="310" y2="135" stroke="#111827" stroke-width="3" stroke-dasharray="6 5"/>
+            <text x="245" y="126" font-size="12" font-weight="900">R = 0.10 m</text>
+            <text x="52" y="235" font-size="13" font-weight="900">Viewed from front: current is counterclockwise</text>
+          </svg>
+          <div class="caption">เมื่อกระแสทวนเข็มนาฬิกาเมื่อมองจากด้านหน้า ทิศ \(B\) ที่ศูนย์กลางจะออกจากกระดาษ / Counterclockwise current gives \(B\) out of the page at the center.</div>
+        </div>
+
+        <div class="data-card">
+          <div class="data-title">Given data / ข้อมูลกำหนด</div>
+          <table class="data-table">
+            <tr><th>Quantity / ปริมาณ</th><th>Value / ค่า</th></tr>
+            <tr><td>\(I\)</td><td>\(2.0\,A\)</td></tr>
+            <tr><td>\(N\)</td><td>\(25\)</td></tr>
+            <tr><td>\(R\)</td><td>\(0.10\,m\)</td></tr>
+            <tr><td>current direction</td><td>counterclockwise / ทวนเข็มนาฬิกา</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <ol class="subq" type="ก">
+        <li>ระบุทิศของสนามแม่เหล็กที่จุดศูนย์กลางของขดลวด<br>State the direction of the magnetic field at the center of the coil. <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+        <li>เลือกความสัมพันธ์จากแถบสูตรและคำนวณ \(B\) ที่จุดศูนย์กลาง<br>Choose a relationship from the formula strip and calculate \(B\) at the center. <span class="pts">(3 pts / 3 คะแนน)</span><span class="ans tall"></span></li>
+        <li>ถ้าเพิ่มจำนวนรอบเป็น \(50\) รอบ โดย \(I\) และ \(R\) เท่าเดิม ค่า \(B\) จะเปลี่ยนอย่างไร<br>If the number of turns becomes \(50\), while \(I\) and \(R\) are unchanged, how does \(B\) change? <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+        <li>อธิบายว่าเหตุใดการเพิ่มจำนวนรอบของขดลวดจึงทำให้สนามแม่เหล็กมากขึ้น<br>Explain why increasing the number of turns increases the magnetic field. <span class="pts">(2 pts / 2 คะแนน)</span><span class="ans"></span></li>
+      </ol>
+
+      <div class="solution">
+        <div class="solution-title">เฉลย / Solution</div>
+        <div class="sol-grid">
+          <div class="sol-card">ทิศของ \(B\) ที่ศูนย์กลางคือ <span class="blue">ออกจากกระดาษ</span> หรือ \(\odot\)</div>
+          <div class="sol-card">\(B=\frac{\mu_0IN}{2R}=\frac{(4\pi\times10^{-7})(2.0)(25)}{2(0.10)}=\)<span class="red">\(3.14\times10^{-4}\,T\)</span></div>
+          <div class="sol-card">ถ้า \(N\) เพิ่มเป็น 2 เท่า \(B\) เพิ่มเป็น 2 เท่า → \(6.28\times10^{-4}\,T\)</div>
+          <div class="sol-card">สนามจากแต่ละรอบรวมกันที่ศูนย์กลาง ยิ่งมีรอบมาก สนามลัพธ์ยิ่งมาก</div>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <!-- PAGE 3 -->
+  <main class="sheet">
+    <section class="page-header">
+      <div class="phys-note">Part B: Magnetic fields from electric currents. / สนามแม่เหล็กที่เกิดจากกระแสไฟฟ้า</div>
+      <div class="page-title">Part B: Magnetic Fields from Electric Currents / สนามแม่เหล็กที่เกิดจากกระแสไฟฟ้า</div>
+      <div class="page-subtitle">Page 3: Solenoid / หน้า 3: โซลินอยด์ <b>(35 points / 35 คะแนน)</b></div>
+      <div class="instruction-strip"><b>Instructions / คำชี้แจง:</b> Use the given relationships and the model. / ใช้ความสัมพันธ์ที่กำหนดและรูปจำลองประกอบการตอบ</div>
+      <div class="formula-strip">
+        <div class="formula-title">Given relationships / ความสัมพันธ์ที่กำหนด</div>
+        <div class="formula-row">
+          <span>\(\mu_0 = 4\pi \times 10^{-7}\;T\,m/A\)</span>
+          <span>\(B=\frac{\mu_0 I}{2\pi d}\)</span>
+          <span>\(B=\frac{\mu_0 I N}{2R}\)</span>
+          <span>\(B=\frac{\mu_0 N I}{L}\)</span>
+          <span>\(B=\mu_0 n I\)</span>
+          <span>\(B=\frac{\mu_0 I N}{2\pi r}\)</span>
+        </div>
+      </div>
+    </section>
+
+    <article class="question">
+      <div class="qhead">
+        <span class="num">3</span>
+        <div class="qtitle">สนามแม่เหล็กภายในขดลวดยาว / Field inside a long coil</div>
+        <div class="score">7 pts</div>
+      </div>
+
+      <div class="scenario">
+        ขดลวดยาวมีจำนวนรอบ \(500\) รอบ ความยาว \(0.25\,m\) และมีกระแสไฟฟ้า \(1.5\,A\). เมื่อมองจากปลายซ้าย กระแสไหลทวนเข็มนาฬิกา
+        <br>
+        A long coil has \(500\) turns, length \(0.25\,m\), and current \(1.5\,A\). Viewed from the left end, the current is counterclockwise.
+      </div>
+
+      <div class="model-row">
+        <div class="model-card">
+          <div class="model-title">Model / รูปจำลอง</div>
+          <svg class="model-svg" viewBox="0 0 430 270">
+            <defs>
+              <marker id="arrBlue3" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#2563eb"/></marker>
+              <marker id="arrRed3" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#dc2626"/></marker>
+            </defs>
+            <rect x="85" y="82" width="260" height="110" rx="55" fill="#f8fafc" stroke="#111827" stroke-width="3"/>
+            <g fill="none" stroke="#94a3b8" stroke-width="5">
+              <ellipse cx="105" cy="137" rx="20" ry="55"/>
+              <ellipse cx="135" cy="137" rx="20" ry="55"/>
+              <ellipse cx="165" cy="137" rx="20" ry="55"/>
+              <ellipse cx="195" cy="137" rx="20" ry="55"/>
+              <ellipse cx="225" cy="137" rx="20" ry="55"/>
+              <ellipse cx="255" cy="137" rx="20" ry="55"/>
+              <ellipse cx="285" cy="137" rx="20" ry="55"/>
+              <ellipse cx="315" cy="137" rx="20" ry="55"/>
+            </g>
+            <line x1="120" y1="137" x2="310" y2="137" stroke="#2563eb" stroke-width="7" marker-end="url(#arrBlue3)"/>
+            <text x="182" y="124" font-size="13" font-weight="900" fill="#2563eb">B inside</text>
+            <path d="M92 52 C125 28, 155 29, 185 52" fill="none" stroke="#dc2626" stroke-width="4" marker-end="url(#arrRed3)"/>
+            <text x="88" y="43" font-size="12" font-weight="900" fill="#dc2626">viewed from left: CCW</text>
+            <text x="94" y="219" font-size="13" font-weight="900">N = 500 turns, L = 0.25 m, I = 1.5 A</text>
+            <text x="92" y="72" font-size="15" font-weight="900" fill="#047857">left end = N</text>
+          </svg>
+          <div class="caption">ถ้ามองจากปลายหนึ่งแล้วกระแสทวนเข็มนาฬิกา ปลายนั้นเป็นขั้วเหนือ / If the current is counterclockwise when viewed from an end, that end is North.</div>
+        </div>
+
+        <div class="data-card">
+          <div class="data-title">Given data / ข้อมูลกำหนด</div>
+          <table class="data-table">
+            <tr><th>Quantity / ปริมาณ</th><th>Value / ค่า</th></tr>
+            <tr><td>\(N\)</td><td>\(500\)</td></tr>
+            <tr><td>\(L\)</td><td>\(0.25\,m\)</td></tr>
+            <tr><td>\(I\)</td><td>\(1.5\,A\)</td></tr>
+            <tr><td>\(n\)</td><td>?</td></tr>
+          </table>
+          <div class="mini-note">Here \(n\) means number of turns per metre / \(n\) คือจำนวนรอบต่อเมตร</div>
+        </div>
+      </div>
+
+      <ol class="subq" type="ก">
+        <li>เมื่อมองจากปลายซ้าย กระแสทวนเข็มนาฬิกา ปลายซ้ายเป็นขั้วใด<br>Viewed from the left end, the current is counterclockwise. Which pole is the left end? <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+        <li>คำนวณจำนวนรอบต่อหน่วยความยาว \(n\)<br>Calculate the number of turns per unit length, \(n\). <span class="pts">(2 pts / 2 คะแนน)</span><span class="ans"></span></li>
+        <li>เลือกความสัมพันธ์จากแถบสูตรและคำนวณ \(B\) ภายในขดลวด<br>Choose a relationship from the formula strip and calculate \(B\) inside the coil. <span class="pts">(3 pts / 3 คะแนน)</span><span class="ans tall"></span></li>
+        <li>อธิบายสั้น ๆ ว่าเหตุใดสนามภายในขดลวดยาวจึงค่อนข้างสม่ำเสมอ<br>Briefly explain why the field inside a long coil is relatively uniform. <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+      </ol>
+
+      <div class="solution">
+        <div class="solution-title">เฉลย / Solution</div>
+        <div class="sol-grid">
+          <div class="sol-card">ปลายซ้ายเป็น <span class="green">ขั้วเหนือ \(N\)</span></div>
+          <div class="sol-card">\(n=\frac{N}{L}=\frac{500}{0.25}=\)<span class="red">\(2000\,turns/m\)</span></div>
+          <div class="sol-card">\(B=\mu_0nI=(4\pi\times10^{-7})(2000)(1.5)=\)<span class="red">\(3.77\times10^{-3}\,T\)</span></div>
+          <div class="sol-card">สนามจากแต่ละรอบเสริมกันตามแนวแกน ทำให้ภายในขดลวดมีสนามเรียงตัวและค่อนข้างสม่ำเสมอ</div>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <!-- PAGE 4 -->
+  <main class="sheet">
+    <section class="page-header">
+      <div class="phys-note">Part B: Magnetic fields from electric currents. / สนามแม่เหล็กที่เกิดจากกระแสไฟฟ้า</div>
+      <div class="page-title">Part B: Magnetic Fields from Electric Currents / สนามแม่เหล็กที่เกิดจากกระแสไฟฟ้า</div>
+      <div class="page-subtitle">Page 4: Toroid / หน้า 4: ทอรอยด์ <b>(35 points / 35 คะแนน)</b></div>
+      <div class="instruction-strip"><b>Instructions / คำชี้แจง:</b> Read the model carefully. Use \(r\) as the average radius of the circular core. / อ่านรูปจำลองให้รอบคอบ ใช้ \(r\) เป็นรัศมีเฉลี่ยของแกนวงแหวน</div>
+      <div class="formula-strip">
+        <div class="formula-title">Given relationships / ความสัมพันธ์ที่กำหนด</div>
+        <div class="formula-row">
+          <span>\(\mu_0 = 4\pi \times 10^{-7}\;T\,m/A\)</span>
+          <span>\(B=\frac{\mu_0 I}{2\pi d}\)</span>
+          <span>\(B=\frac{\mu_0 I N}{2R}\)</span>
+          <span>\(B=\frac{\mu_0 N I}{L}\)</span>
+          <span>\(B=\mu_0 n I\)</span>
+          <span>\(B=\frac{\mu_0 I N}{2\pi r}\)</span>
+        </div>
+      </div>
+    </section>
+
+    <article class="question">
+      <div class="qhead">
+        <span class="num">4</span>
+        <div class="qtitle">สนามแม่เหล็กภายในแกนวงแหวน / Field inside a ring-shaped core</div>
+        <div class="score">7 pts</div>
+      </div>
+
+      <div class="scenario">
+        ขดลวดถูกพันรอบแกนรูปวงแหวน มีจำนวนรอบ \(300\) รอบ กระแสไฟฟ้า \(2.0\,A\) และรัศมีเฉลี่ยของแกน \(0.12\,m\)
+        <br>
+        A coil is wound around a ring-shaped core. It has \(300\) turns, current \(2.0\,A\), and average core radius \(0.12\,m\).
+      </div>
+
+      <div class="model-row">
+        <div class="model-card">
+          <div class="model-title">Model / รูปจำลอง</div>
+          <svg class="model-svg" viewBox="0 0 430 270">
+            <defs>
+              <marker id="arrBlue4" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#2563eb"/></marker>
+              <marker id="arrRed4" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#dc2626"/></marker>
+            </defs>
+            <circle cx="210" cy="135" r="88" fill="#e0f2fe" stroke="#111827" stroke-width="4"/>
+            <circle cx="210" cy="135" r="45" fill="#ffffff" stroke="#111827" stroke-width="4"/>
+            <g stroke="#64748b" stroke-width="5" fill="none">
+              <path d="M142 80 Q166 55 190 52"/>
+              <path d="M180 49 Q210 42 240 49"/>
+              <path d="M250 53 Q281 67 295 96"/>
+              <path d="M302 110 Q311 140 298 166"/>
+              <path d="M285 185 Q260 214 225 221"/>
+              <path d="M198 222 Q164 216 143 190"/>
+              <path d="M128 170 Q111 135 124 104"/>
+            </g>
+            <path d="M155 95 A72 72 0 0 1 266 85" fill="none" stroke="#2563eb" stroke-width="6" marker-end="url(#arrBlue4)"/>
+            <path d="M270 185 A72 72 0 0 1 150 178" fill="none" stroke="#2563eb" stroke-width="6" marker-end="url(#arrBlue4)"/>
+            <line x1="210" y1="135" x2="298" y2="135" stroke="#111827" stroke-width="3" stroke-dasharray="6 5"/>
+            <text x="246" y="125" font-size="12" font-weight="900">r = 0.12 m</text>
+            <text x="112" y="245" font-size="13" font-weight="900">N = 300 turns, I = 2.0 A</text>
+          </svg>
+          <div class="caption">สนามส่วนใหญ่ถูกกักอยู่ในแกนวงแหวน / Most field lines are confined inside the ring-shaped core.</div>
+        </div>
+
+        <div class="data-card">
+          <div class="data-title">Given data / ข้อมูลกำหนด</div>
+          <table class="data-table">
+            <tr><th>Quantity / ปริมาณ</th><th>Value / ค่า</th></tr>
+            <tr><td>\(N\)</td><td>\(300\)</td></tr>
+            <tr><td>\(I\)</td><td>\(2.0\,A\)</td></tr>
+            <tr><td>\(r\)</td><td>\(0.12\,m\)</td></tr>
+            <tr><td>\(\mu_0\)</td><td>\(4\pi \times 10^{-7}\,T\,m/A\)</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <ol class="subq" type="ก">
+        <li>จากภาพ สนามแม่เหล็กหลักอยู่บริเวณใดของระบบ<br>From the model, where is the main magnetic field located? <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+        <li>เลือกความสัมพันธ์จากแถบสูตรและคำนวณ \(B\) ภายในแกนวงแหวน<br>Choose a relationship from the formula strip and calculate \(B\) inside the ring-shaped core. <span class="pts">(3 pts / 3 คะแนน)</span><span class="ans tall"></span></li>
+        <li>ถ้าเพิ่ม \(r\) เป็น \(0.24\,m\) โดย \(N\) และ \(I\) เท่าเดิม ค่า \(B\) จะเปลี่ยนอย่างไร<br>If \(r\) becomes \(0.24\,m\) while \(N\) and \(I\) stay the same, how does \(B\) change? <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+        <li>อธิบายว่าเหตุใดสนามภายนอกแกนวงแหวนจึงค่อนข้างอ่อนเมื่อเทียบกับภายใน<br>Explain why the magnetic field outside the ring-shaped core is relatively weak compared with inside. <span class="pts">(2 pts / 2 คะแนน)</span><span class="ans"></span></li>
+      </ol>
+
+      <div class="solution">
+        <div class="solution-title">เฉลย / Solution</div>
+        <div class="sol-grid">
+          <div class="sol-card">สนามแม่เหล็กหลักอยู่ใน <span class="green">แกนวงแหวน</span></div>
+          <div class="sol-card">\(B=\frac{\mu_0IN}{2\pi r}=\frac{(4\pi\times10^{-7})(2.0)(300)}{2\pi(0.12)}=\)<span class="red">\(1.0\times10^{-3}\,T\)</span></div>
+          <div class="sol-card">ถ้า \(r\) เพิ่มเป็น 2 เท่า \(B\) ลดลงครึ่งหนึ่ง → \(5.0\times10^{-4}\,T\)</div>
+          <div class="sol-card">เส้นสนามวนอยู่ภายในแกนเป็นวงปิด จึงมีการรั่วไหลออกด้านนอกน้อย</div>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <!-- PAGE 5 -->
+  <main class="sheet">
+    <section class="page-header">
+      <div class="phys-note">Part B: Magnetic fields from electric currents. / สนามแม่เหล็กที่เกิดจากกระแสไฟฟ้า</div>
+      <div class="page-title">Part B: Magnetic Fields from Electric Currents / สนามแม่เหล็กที่เกิดจากกระแสไฟฟ้า</div>
+      <div class="page-subtitle">Page 5: Integrated station analysis / หน้า 5: วิเคราะห์สถานีทดลองรวม <b>(35 points / 35 คะแนน)</b></div>
+      <div class="instruction-strip"><b>Instructions / คำชี้แจง:</b> Select relationships from the strip by reading the apparatus, not by formula names. / เลือกความสัมพันธ์จากแถบสูตรโดยอ่านลักษณะอุปกรณ์ ไม่ใช้ชื่อสูตรเป็นตัวช่วย</div>
+      <div class="formula-strip">
+        <div class="formula-title">Given relationships / ความสัมพันธ์ที่กำหนด</div>
+        <div class="formula-row">
+          <span>\(\mu_0 = 4\pi \times 10^{-7}\;T\,m/A\)</span>
+          <span>\(B=\frac{\mu_0 I}{2\pi d}\)</span>
+          <span>\(B=\frac{\mu_0 I N}{2R}\)</span>
+          <span>\(B=\frac{\mu_0 N I}{L}\)</span>
+          <span>\(B=\mu_0 n I\)</span>
+          <span>\(B=\frac{\mu_0 I N}{2\pi r}\)</span>
+        </div>
+      </div>
+    </section>
+
+    <article class="question">
+      <div class="qhead">
+        <span class="num">5</span>
+        <div class="qtitle">เลือกความสัมพันธ์จากรูปจำลอง / Choosing relationships from models</div>
+        <div class="score">7 pts</div>
+      </div>
+
+      <div class="scenario">
+        นักเรียนทดลองกับระบบตัวนำหลายรูปแบบในห้องปฏิบัติการ ให้พิจารณาภาพและข้อมูลของแต่ละสถานี แล้วเลือกความสัมพันธ์ที่เหมาะสมจากแถบสูตรด้านบน
+        <br>
+        A student studies several conductor systems in the lab. Use the model and data for each station to select the suitable relationship from the formula strip above.
+      </div>
+
+      <div class="model-row">
+        <div class="model-card">
+          <div class="model-title">Stations / สถานีทดลอง</div>
+          <svg class="model-svg" viewBox="0 0 430 270">
+            <defs>
+              <marker id="arrSmall5" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#dc2626"/></marker>
+            </defs>
+            <rect x="16" y="20" width="190" height="105" rx="10" fill="#eff6ff" stroke="#111827" stroke-width="2"/>
+            <text x="25" y="40" font-size="12" font-weight="900">Station A</text>
+            <line x1="70" y1="110" x2="70" y2="50" stroke="#94a3b8" stroke-width="10" stroke-linecap="round"/>
+            <line x1="70" y1="100" x2="70" y2="58" stroke="#dc2626" stroke-width="4" marker-end="url(#arrSmall5)"/>
+            <circle cx="145" cy="80" r="12" fill="#fef3c7" stroke="#111827" stroke-width="2"/>
+            <text x="140" y="85" font-size="12" font-weight="900">P</text>
+            <text x="95" y="111" font-size="10" font-weight="900">I=6.0A, d=0.060m</text>
+
+            <rect x="224" y="20" width="190" height="105" rx="10" fill="#f0fdf4" stroke="#111827" stroke-width="2"/>
+            <text x="233" y="40" font-size="12" font-weight="900">Station B</text>
+            <ellipse cx="320" cy="75" rx="50" ry="27" fill="none" stroke="#94a3b8" stroke-width="6"/>
+            <circle cx="320" cy="75" r="13" fill="#eff6ff" stroke="#111827" stroke-width="2"/>
+            <text x="312" y="80" font-size="13" font-weight="900">⊙</text>
+            <text x="238" y="111" font-size="10" font-weight="900">I=1.5A, N=20, R=0.10m</text>
+
+            <rect x="16" y="145" width="190" height="105" rx="10" fill="#fff7ed" stroke="#111827" stroke-width="2"/>
+            <text x="25" y="165" font-size="12" font-weight="900">Station C</text>
+            <rect x="52" y="180" width="110" height="36" rx="18" fill="#f8fafc" stroke="#111827" stroke-width="2"/>
+            <g fill="none" stroke="#94a3b8" stroke-width="3">
+              <ellipse cx="62" cy="198" rx="8" ry="22"/><ellipse cx="82" cy="198" rx="8" ry="22"/><ellipse cx="102" cy="198" rx="8" ry="22"/><ellipse cx="122" cy="198" rx="8" ry="22"/><ellipse cx="142" cy="198" rx="8" ry="22"/>
+            </g>
+            <text x="30" y="235" font-size="10" font-weight="900">I=0.50A, N=400, L=0.20m</text>
+
+            <rect x="224" y="145" width="190" height="105" rx="10" fill="#faf5ff" stroke="#111827" stroke-width="2"/>
+            <text x="233" y="165" font-size="12" font-weight="900">Station D</text>
+            <circle cx="320" cy="197" r="35" fill="#e9d5ff" stroke="#111827" stroke-width="2"/>
+            <circle cx="320" cy="197" r="16" fill="#fff" stroke="#111827" stroke-width="2"/>
+            <text x="238" y="235" font-size="10" font-weight="900">I=1.5A, N=200, r=0.15m</text>
+          </svg>
+          <div class="caption">แต่ละสถานีมีรูปร่างตัวนำต่างกัน จึงต้องเลือกความสัมพันธ์ให้ตรงกับภาพ / Each station has a different conductor shape, so the relationship must match the model.</div>
+        </div>
+
+        <div class="data-card">
+          <div class="data-title">Station data / ข้อมูลสถานี</div>
+          <table class="data-table">
+            <tr><th>Station</th><th>Data</th></tr>
+            <tr><td>A</td><td>\(I=6.0A,\ d=0.060m\)</td></tr>
+            <tr><td>B</td><td>\(I=1.5A,\ N=20,\ R=0.10m\)</td></tr>
+            <tr><td>C</td><td>\(I=0.50A,\ N=400,\ L=0.20m\)</td></tr>
+            <tr><td>D</td><td>\(I=1.5A,\ N=200,\ r=0.15m\)</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <ol class="subq" type="ก">
+        <li>จากรูป เขียนความสัมพันธ์ที่ควรใช้กับสถานี A, B, C และ D โดยเลือกจากแถบสูตรด้านบน<br>From the models, write the relationship that should be used for stations A, B, C, and D by selecting from the formula strip. <span class="pts">(2 pts / 2 คะแนน)</span><span class="ans"></span></li>
+        <li>คำนวณ \(B\) สำหรับสถานี A<br>Calculate \(B\) for Station A. <span class="pts">(2 pts / 2 คะแนน)</span><span class="ans"></span></li>
+        <li>คำนวณ \(B\) สำหรับสถานี C<br>Calculate \(B\) for Station C. <span class="pts">(2 pts / 2 คะแนน)</span><span class="ans"></span></li>
+        <li>จากภาพและแนวคิดทางฟิสิกส์ สถานีใดน่าจะให้สนามภายในที่ค่อนข้างสม่ำเสมอที่สุด อธิบายสั้น ๆ<br>From the models and physics idea, which station is most likely to produce a relatively uniform internal field? Briefly explain. <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+      </ol>
+
+      <div class="solution">
+        <div class="solution-title">เฉลย / Solution</div>
+        <div class="sol-grid">
+          <div class="sol-card">A: \(B=\frac{\mu_0I}{2\pi d}\), B: \(B=\frac{\mu_0IN}{2R}\), C: \(B=\frac{\mu_0NI}{L}\), D: \(B=\frac{\mu_0IN}{2\pi r}\)</div>
+          <div class="sol-card">A: \(B=\frac{(4\pi\times10^{-7})(6.0)}{2\pi(0.060)}=\)<span class="red">\(2.0\times10^{-5}\,T\)</span></div>
+          <div class="sol-card">C: \(B=\frac{(4\pi\times10^{-7})(400)(0.50)}{0.20}=\)<span class="red">\(1.26\times10^{-3}\,T\)</span></div>
+          <div class="sol-card">สถานี C เพราะขดลวดยาวทำให้สนามภายในตามแนวแกนค่อนข้างสม่ำเสมอ</div>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <!-- ANSWER KEY -->
+  <main class="sheet key-page">
+    <section class="page-header">
+      <div class="phys-note">Part B: Short answer key. / เฉลยสั้นส่วนที่ B</div>
+      <div class="page-title">Answer Key: Magnetic Fields from Electric Currents / เฉลย: สนามแม่เหล็กที่เกิดจากกระแสไฟฟ้า</div>
+      <div class="page-subtitle">Use this page for teacher checking / ใช้หน้านี้สำหรับตรวจคำตอบ</div>
+      <div class="formula-strip">
+        <div class="formula-title">Given relationships / ความสัมพันธ์ที่กำหนด</div>
+        <div class="formula-row">
+          <span>\(\mu_0 = 4\pi \times 10^{-7}\;T\,m/A\)</span>
+          <span>\(B=\frac{\mu_0 I}{2\pi d}\)</span>
+          <span>\(B=\frac{\mu_0 I N}{2R}\)</span>
+          <span>\(B=\frac{\mu_0 N I}{L}\)</span>
+          <span>\(B=\mu_0 n I\)</span>
+          <span>\(B=\frac{\mu_0 I N}{2\pi r}\)</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="key">
+      <h2>Short Answer Key / เฉลยสั้น</h2>
+      <div class="key-grid">
+        <div class="key-item"><b>Q1:</b> \(B\) at \(P\) is into the page. \(B=\frac{(4\pi\times10^{-7})(8.0)}{2\pi(0.040)}=4.0\times10^{-5}\,T\). Doubling \(I\) doubles \(B\). Increasing \(d\) decreases \(B\).</div>
+        <div class="key-item"><b>Q2:</b> \(B\) at center is out of the page. \(B=\frac{(4\pi\times10^{-7})(2.0)(25)}{2(0.10)}=3.14\times10^{-4}\,T\). Doubling \(N\) doubles \(B\).</div>
+        <div class="key-item"><b>Q3:</b> Left end is \(N\). \(n=500/0.25=2000\,turns/m\). \(B=(4\pi\times10^{-7})(2000)(1.5)=3.77\times10^{-3}\,T\).</div>
+        <div class="key-item"><b>Q4:</b> Field is mainly inside the ring-shaped core. \(B=\frac{(4\pi\times10^{-7})(2.0)(300)}{2\pi(0.12)}=1.0\times10^{-3}\,T\). Doubling \(r\) halves \(B\).</div>
+        <div class="key-item"><b>Q5:</b> A: \(\frac{\mu_0I}{2\pi d}\), B: \(\frac{\mu_0IN}{2R}\), C: \(\frac{\mu_0NI}{L}\), D: \(\frac{\mu_0IN}{2\pi r}\). \(B_A=2.0\times10^{-5}\,T\). \(B_C=1.26\times10^{-3}\,T\). Station C gives a relatively uniform internal field.</div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function setMode(mode) {
+      document.body.classList.remove('mode-exam', 'mode-key', 'mode-solution');
+      document.body.classList.add(mode);
+      document.getElementById('statusText').textContent =
+        mode === 'mode-solution' ? 'Y13 Physics Part B — Solution mode' :
+        mode === 'mode-key' ? 'Y13 Physics Part B — Short key mode' :
+        'Y13 Physics Part B — Exam mode';
+      if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise();
+    }
+
+    function toggleSolution() {
+      if (document.body.classList.contains('mode-solution')) setMode('mode-exam');
+      else setMode('mode-solution');
+    }
+
+    window.addEventListener('load', () => {
+      if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise();
+    });
+  </script>
+</body>
+</html>

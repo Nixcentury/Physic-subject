@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Y13 Physics Written Exam Part C | Magnetic Force and Torque</title>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --ink: #111827;
+      --muted: #475569;
+      --line: #d1d5db;
+      --soft: #f8fafc;
+      --blue: #2563eb;
+      --red: #dc2626;
+      --green: #047857;
+      --orange: #ea580c;
+      --purple: #7c3aed;
+      --paper: 210mm;
+      --page-h: 297mm;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+
+    body {
+      background: #e5e7eb;
+      color: var(--ink);
+      font-family: "Google Sans", "Noto Sans Thai", Arial, sans-serif;
+      line-height: 1.32;
+    }
+
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      background: #0f172a;
+      color: #fff;
+      box-shadow: 0 8px 24px rgba(15,23,42,.22);
+    }
+
+    .toolbar button {
+      border: 0;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-family: inherit;
+      font-weight: 900;
+      cursor: pointer;
+      background: #fff;
+      color: #0f172a;
+    }
+
+    .toolbar .primary { background: #bfdbfe; color: #1e3a8a; }
+    .toolbar .gold { background: #fde68a; color: #78350f; }
+    .toolbar .status { flex-basis: 100%; text-align: center; font-size: 12.5px; opacity: .9; }
+
+    .sheet {
+      width: var(--paper);
+      min-height: var(--page-h);
+      margin: 18px auto 36px;
+      padding: 10.5mm 12mm;
+      background: #fff;
+      box-shadow: 0 16px 48px rgba(15,23,42,.22);
+      page-break-after: always;
+      break-after: page;
+      overflow: hidden;
+    }
+
+    .page-header {
+      border: 0;
+      padding: 0;
+      margin-bottom: 7px;
+      background: transparent;
+    }
+
+    .phys-note {
+      border-left: 4px solid #111827;
+      background: #f8fafc;
+      padding: 5px 8px;
+      margin-bottom: 6px;
+      font-size: 10.2px;
+      font-weight: 800;
+      line-height: 1.22;
+      color: #111827;
+    }
+
+    .page-title {
+      text-align: center;
+      font-weight: 900;
+      font-size: 15px;
+      line-height: 1.18;
+      margin: 0;
+    }
+
+    .page-subtitle {
+      text-align: center;
+      font-size: 10.4px;
+      color: #374151;
+      margin-top: 2px;
+      line-height: 1.18;
+    }
+
+    .instruction-strip {
+      border: 1px solid #d1d5db;
+      border-radius: 7px;
+      background: #f9fafb;
+      padding: 4px 6px;
+      margin-top: 5px;
+      margin-bottom: 5px;
+      font-size: 9.45px;
+      line-height: 1.22;
+      font-weight: 700;
+    }
+
+    .formula-strip {
+      border: 1px solid #cbd5e1;
+      border-radius: 9px;
+      background: #f8fafc;
+      padding: 5px 6px;
+      margin: 5px 0 6px;
+    }
+
+    .formula-title {
+      font-size: 9.1px;
+      font-weight: 900;
+      color: #374151;
+      margin-bottom: 3px;
+      text-align: center;
+    }
+
+    .formula-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .formula-row span {
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      border-radius: 999px;
+      padding: 2px 6px;
+      font-size: 9.6px;
+      font-weight: 900;
+      white-space: nowrap;
+      line-height: 1.55;
+    }
+
+    .symbol-strip {
+      display: flex;
+      gap: 5px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 4px;
+      font-size: 8.8px;
+      font-weight: 900;
+      color: #374151;
+    }
+
+    .symbol-strip span {
+      border: 1px solid #e5e7eb;
+      background: #fff;
+      border-radius: 999px;
+      padding: 2px 7px;
+      white-space: nowrap;
+    }
+
+    .question {
+      border: 1.4px solid #111827;
+      border-radius: 10px;
+      padding: 7px 8px;
+      background: #fff;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    .qhead {
+      display: grid;
+      grid-template-columns: 30px 1fr auto;
+      gap: 7px;
+      align-items: start;
+      margin-bottom: 6px;
+    }
+
+    .num {
+      display: inline-flex;
+      width: 26px;
+      height: 26px;
+      border: 1.4px solid #111827;
+      border-radius: 999px;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 13px;
+      line-height: 1;
+    }
+
+    .qtitle {
+      font-size: 13.2px;
+      font-weight: 900;
+      line-height: 1.25;
+    }
+
+    .score {
+      white-space: nowrap;
+      border: 1px solid #111827;
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 10.4px;
+      font-weight: 900;
+      background: #f3f4f6;
+    }
+
+    .scenario {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-left: 4px solid #111827;
+      border-radius: 8px;
+      padding: 5px 7px;
+      margin: 5px 0;
+      font-size: 10.35px;
+      line-height: 1.27;
+    }
+
+    .model-row {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 7px;
+      margin: 6px 0;
+      align-items: start;
+    }
+
+    .model-card,
+    .data-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 5px 6px;
+      align-self: start;
+    }
+
+    .model-title,
+    .data-title {
+      font-size: 10px;
+      font-weight: 900;
+      margin-bottom: 4px;
+      color: #374151;
+      line-height: 1.2;
+    }
+
+    .model-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      background: #fff;
+    }
+
+    .caption {
+      font-size: 8.65px;
+      color: #64748b;
+      margin-top: 3px;
+      line-height: 1.18;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: 9.35px;
+      line-height: 1.12;
+      margin: 2px 0 0;
+    }
+
+    .data-table th,
+    .data-table td {
+      border: 1px solid #111827;
+      padding: 3px 4px;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .data-table th {
+      background: #eff6ff;
+      font-weight: 900;
+    }
+
+    .subq {
+      margin: 6px 0 0;
+      padding-left: 18px;
+      font-size: 10.25px;
+      line-height: 1.22;
+    }
+
+    .subq li {
+      margin-bottom: 4.5px;
+      padding-left: 2px;
+    }
+
+    .pts {
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .ans {
+      display: block;
+      min-height: 12.6mm;
+      margin: 3px 0 4px;
+      border: 1px dashed #9ca3af;
+      border-radius: 6px;
+      background: repeating-linear-gradient(to bottom, transparent 0, transparent 6.0mm, rgba(156,163,175,.45) 6.1mm, transparent 6.3mm);
+    }
+
+    .ans.small { min-height: 7.8mm; }
+    .ans.tall { min-height: 16mm; }
+
+    .solution {
+      display: none;
+      margin-top: 7px;
+      padding: 8px 9px;
+      border: 1px solid #bfdbfe;
+      border-left: 4px solid #2563eb;
+      background: #eff6ff;
+      font-size: 9.9px;
+      line-height: 1.33;
+      border-radius: 8px;
+    }
+
+    .solution-title {
+      font-weight: 900;
+      font-size: 11.8px;
+      margin-bottom: 4px;
+    }
+
+    .sol-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+    }
+
+    .sol-card {
+      background: #fff;
+      border: 1px solid #bfdbfe;
+      border-radius: 6px;
+      padding: 4px 5px;
+    }
+
+    .red { color: #dc2626; font-weight: 900; }
+    .blue { color: #2563eb; font-weight: 900; }
+    .green { color: #047857; font-weight: 900; }
+
+    .mini-note {
+      border: 1px solid #e5e7eb;
+      background: #f8fafc;
+      border-radius: 6px;
+      padding: 4px 5px;
+      font-size: 9.0px;
+      line-height: 1.2;
+      font-weight: 800;
+      color: #374151;
+      margin-top: 4px;
+    }
+
+    .key-page { display: none; }
+    body.mode-key .key-page,
+    body.mode-solution .key-page { display: block; }
+
+    body.mode-solution .solution { display: block; }
+    body.mode-solution .ans { display: none; }
+
+    .key h2 {
+      margin: 0 0 6px;
+      font-size: 15px;
+      border-bottom: 2px solid #111827;
+      padding-bottom: 4px;
+    }
+
+    .key-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 5px;
+      font-size: 10.2px;
+    }
+
+    .key-item {
+      border: 1px solid #111827;
+      border-radius: 6px;
+      padding: 5px 7px;
+      line-height: 1.35;
+    }
+
+    @page { size: A4 portrait; margin: 0; }
+
+    @media print {
+      html, body { width: 210mm; background: white !important; }
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .toolbar { display: none !important; }
+
+      .sheet {
+        width: 210mm !important;
+        min-height: 297mm !important;
+        margin: 0 !important;
+        padding: 10.5mm 12mm !important;
+        box-shadow: none !important;
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+
+      .phys-note {
+        font-size: 9.2px !important;
+        padding: 4px 7px !important;
+        margin-bottom: 5px !important;
+      }
+
+      .page-title { font-size: 13.5px !important; }
+      .page-subtitle { font-size: 9.4px !important; }
+
+      .instruction-strip,
+      .formula-title {
+        font-size: 8.5px !important;
+      }
+
+      .formula-row span {
+        font-size: 8.7px !important;
+        padding: 1px 5px !important;
+      }
+
+      .symbol-strip { font-size: 7.8px !important; }
+
+      .scenario,
+      .subq {
+        font-size: 8.45pt !important;
+      }
+
+      .data-table {
+        font-size: 7.75pt !important;
+      }
+
+      .question {
+        padding: 6px 7px !important;
+      }
+
+      .ans.small { min-height: 7.8mm !important; }
+      .ans { min-height: 12.3mm !important; }
+      .ans.tall { min-height: 15.5mm !important; }
+    }
+
+    @media screen and (max-width: 860px) {
+      .sheet { width: calc(100vw - 18px); min-height: auto; }
+      .model-row, .sol-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body class="mode-exam">
+  <div class="toolbar">
+    <button class="primary" onclick="setMode('mode-exam'); setTimeout(()=>print(),200)">🖨️ พิมพ์ข้อสอบ</button>
+    <button onclick="setMode('mode-key'); setTimeout(()=>print(),200)">✅ พิมพ์พร้อมเฉลยสั้น</button>
+    <button class="gold" onclick="setMode('mode-solution'); setTimeout(()=>print(),200)">📘 พิมพ์เฉลยละเอียด</button>
+    <button onclick="toggleSolution()">👀 เปิด/ปิดเฉลยบนจอ</button>
+    <div class="status" id="statusText">Y13 Physics Part C — Magnetic Force and Torque</div>
+  </div>
+
+  <!-- PAGE 1 -->
+  <main class="sheet">
+    <section class="page-header">
+      <div class="phys-note">Part C: Magnetic force and torque. / แรงแม่เหล็กและโมเมนต์ของแรงคู่ควบ</div>
+      <div class="page-title">Part C: Magnetic Force and Torque / แรงแม่เหล็กและโมเมนต์ของแรงคู่ควบ</div>
+      <div class="page-subtitle">Page 1: Moving charged particle / หน้า 1: อนุภาคมีประจุที่กำลังเคลื่อนที่ <b>(35 points / 35 คะแนน)</b></div>
+      <div class="instruction-strip"><b>Instructions / คำชี้แจง:</b> Study the model, choose an appropriate relationship from the strip, show calculations, and determine directions carefully. / ศึกษารูปจำลอง เลือกความสัมพันธ์ที่เหมาะสมจากแถบสูตร แสดงวิธีคำนวณ และพิจารณาทิศทางอย่างรอบคอบ</div>
+      <div class="formula-strip">
+        <div class="formula-title">Given relationships / ความสัมพันธ์ที่กำหนด</div>
+        <div class="formula-row">
+          <span>\(\mu_0 = 4\pi \times 10^{-7}\;T\,m/A\)</span>
+          <span>\(F=qvB\sin\theta\)</span>
+          <span>\(r=\frac{mv}{|q|B}\)</span>
+          <span>\(F=ILB\sin\theta\)</span>
+          <span>\(\frac{F}{L}=\frac{\mu_0 I_1I_2}{2\pi d}\)</span>
+          <span>\(M=NIAB\cos\theta\)</span>
+        </div>
+        <div class="symbol-strip">
+          <span>\(\otimes\) = into page / เข้ากระดาษ</span>
+          <span>\(\odot\) = out of page / ออกจากกระดาษ</span>
+          <span>negative charge reverses force direction / ประจุลบแรงกลับทิศ</span>
+        </div>
+      </div>
+    </section>
+
+    <article class="question">
+      <div class="qhead">
+        <span class="num">1</span>
+        <div class="qtitle">ลำอนุภาคในห้องสนามแม่เหล็ก / Particle beam in a magnetic chamber</div>
+        <div class="score">7 pts</div>
+      </div>
+
+      <div class="scenario">
+        อนุภาคประจุบวก \(+2.0\,\mu C\) เคลื่อนที่ไปทางขวาด้วยอัตราเร็ว \(3.0\times10^5\,m/s\) ผ่านบริเวณที่มีสนามแม่เหล็กสม่ำเสมอ \(0.40\,T\) พุ่งเข้าไปในกระดาษ
+        <br>
+        A positive particle with charge \(+2.0\,\mu C\) moves to the right at \(3.0\times10^5\,m/s\) through a uniform magnetic field of \(0.40\,T\) directed into the page.
+      </div>
+
+      <div class="model-row">
+        <div class="model-card">
+          <div class="model-title">Model / รูปจำลอง</div>
+          <svg class="model-svg" viewBox="0 0 430 270">
+            <defs>
+              <marker id="arrGreen1" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#047857"/></marker>
+              <marker id="arrRed1" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#dc2626"/></marker>
+            </defs>
+            <rect x="35" y="35" width="360" height="190" rx="14" fill="#f8fafc" stroke="#111827" stroke-width="3"/>
+            <g fill="#111827" font-size="20" font-weight="900">
+              <text x="70" y="75">×</text><text x="130" y="75">×</text><text x="190" y="75">×</text><text x="250" y="75">×</text><text x="310" y="75">×</text>
+              <text x="70" y="125">×</text><text x="130" y="125">×</text><text x="190" y="125">×</text><text x="250" y="125">×</text><text x="310" y="125">×</text>
+              <text x="70" y="175">×</text><text x="130" y="175">×</text><text x="190" y="175">×</text><text x="250" y="175">×</text><text x="310" y="175">×</text>
+            </g>
+            <circle cx="105" cy="135" r="15" fill="#fee2e2" stroke="#111827" stroke-width="3"/>
+            <text x="98" y="141" font-size="16" font-weight="900" fill="#dc2626">+</text>
+            <line x1="126" y1="135" x2="250" y2="135" stroke="#047857" stroke-width="5" marker-end="url(#arrGreen1)"/>
+            <text x="165" y="125" font-size="13" font-weight="900" fill="#047857">v</text>
+            <line x1="105" y1="135" x2="105" y2="70" stroke="#dc2626" stroke-width="5" marker-end="url(#arrRed1)"/>
+            <text x="116" y="93" font-size="13" font-weight="900" fill="#dc2626">F ?</text>
+            <text x="250" y="215" font-size="13" font-weight="900">B = 0.40 T into page</text>
+          </svg>
+          <div class="caption">ใช้ทิศของความเร็วและสนามแม่เหล็กเพื่อหาทิศแรง / Use velocity direction and magnetic-field direction to determine the force direction.</div>
+        </div>
+
+        <div class="data-card">
+          <div class="data-title">Given data / ข้อมูลกำหนด</div>
+          <table class="data-table">
+            <tr><th>Quantity / ปริมาณ</th><th>Value / ค่า</th></tr>
+            <tr><td>\(q\)</td><td>\(+2.0\times10^{-6}\,C\)</td></tr>
+            <tr><td>\(v\)</td><td>\(3.0\times10^5\,m/s\)</td></tr>
+            <tr><td>\(B\)</td><td>\(0.40\,T\)</td></tr>
+            <tr><td>\(\theta\)</td><td>\(90^\circ\)</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <ol class="subq" type="ก">
+        <li>จากรูป ทิศของแรงแม่เหล็กที่กระทำต่ออนุภาคเป็นทิศใด<br>From the model, what is the direction of the magnetic force on the particle? <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+        <li>เลือกความสัมพันธ์จากแถบสูตรและคำนวณขนาดของแรงแม่เหล็ก<br>Choose a relationship from the formula strip and calculate the magnitude of the magnetic force. <span class="pts">(3 pts / 3 คะแนน)</span><span class="ans tall"></span></li>
+        <li>ถ้าเปลี่ยนเป็นประจุลบที่มีขนาดประจุเท่ากัน ขนาดและทิศของแรงเปลี่ยนอย่างไร<br>If the particle becomes a negative charge with the same charge magnitude, how do the magnitude and direction of the force change? <span class="pts">(2 pts / 2 คะแนน)</span><span class="ans"></span></li>
+        <li>ถ้าอัตราเร็วลดลงครึ่งหนึ่ง แต่ค่าอื่นคงเดิม ขนาดแรงจะเปลี่ยนอย่างไร<br>If the speed is halved while other values stay the same, how does the force magnitude change? <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+      </ol>
+
+      <div class="solution">
+        <div class="solution-title">เฉลย / Solution</div>
+        <div class="sol-grid">
+          <div class="sol-card">ประจุบวกเคลื่อนที่ไปขวา และ \(B\) เข้ากระดาษ → แรงชี้ <span class="red">ขึ้น</span></div>
+          <div class="sol-card">\(F=qvB\sin90^\circ=(2.0\times10^{-6})(3.0\times10^5)(0.40)=\)<span class="red">\(0.24\,N\)</span></div>
+          <div class="sol-card">ประจุลบ: ขนาดแรงเท่าเดิม \(0.24\,N\) แต่ทิศกลับเป็น <span class="blue">ลง</span></div>
+          <div class="sol-card">ถ้า \(v\) ลดครึ่งหนึ่ง \(F\) ลดครึ่งหนึ่ง → \(0.12\,N\)</div>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <!-- PAGE 2 -->
+  <main class="sheet">
+    <section class="page-header">
+      <div class="phys-note">Part C: Magnetic force and torque. / แรงแม่เหล็กและโมเมนต์ของแรงคู่ควบ</div>
+      <div class="page-title">Part C: Magnetic Force and Torque / แรงแม่เหล็กและโมเมนต์ของแรงคู่ควบ</div>
+      <div class="page-subtitle">Page 2: Curved path of a charged particle / หน้า 2: วิถีโค้งของอนุภาคมีประจุ <b>(35 points / 35 คะแนน)</b></div>
+      <div class="instruction-strip"><b>Instructions / คำชี้แจง:</b> Use the given relationships and the model. / ใช้ความสัมพันธ์ที่กำหนดและรูปจำลองประกอบการตอบ</div>
+      <div class="formula-strip">
+        <div class="formula-title">Given relationships / ความสัมพันธ์ที่กำหนด</div>
+        <div class="formula-row">
+          <span>\(\mu_0 = 4\pi \times 10^{-7}\;T\,m/A\)</span>
+          <span>\(F=qvB\sin\theta\)</span>
+          <span>\(r=\frac{mv}{|q|B}\)</span>
+          <span>\(F=ILB\sin\theta\)</span>
+          <span>\(\frac{F}{L}=\frac{\mu_0 I_1I_2}{2\pi d}\)</span>
+          <span>\(M=NIAB\cos\theta\)</span>
+        </div>
+        <div class="symbol-strip">
+          <span>\(\otimes\) = into page / เข้ากระดาษ</span>
+          <span>\(\odot\) = out of page / ออกจากกระดาษ</span>
+          <span>\(|q|\) means charge magnitude / ขนาดประจุ</span>
+        </div>
+      </div>
+    </section>
+
+    <article class="question">
+      <div class="qhead">
+        <span class="num">2</span>
+        <div class="qtitle">รัศมีของวิถีโค้ง / Radius of a curved path</div>
+        <div class="score">7 pts</div>
+      </div>
+
+      <div class="scenario">
+        อนุภาคมีประจุบวกเคลื่อนที่ตั้งฉากกับสนามแม่เหล็กสม่ำเสมอ จึงถูกบังคับให้เคลื่อนที่เป็นส่วนโค้งของวงกลม
+        กำหนดให้ \(m=6.4\times10^{-27}\,kg\), \(|q|=3.2\times10^{-19}\,C\), \(v=2.0\times10^6\,m/s\), และ \(B=0.50\,T\)
+        <br>
+        A positive charged particle enters a uniform magnetic field perpendicularly, so it follows a circular arc.
+      </div>
+
+      <div class="model-row">
+        <div class="model-card">
+          <div class="model-title">Model / รูปจำลอง</div>
+          <svg class="model-svg" viewBox="0 0 430 270">
+            <defs>
+              <marker id="arrGreen2" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#047857"/></marker>
+              <marker id="arrBlue2" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#2563eb"/></marker>
+            </defs>
+            <rect x="35" y="35" width="360" height="190" rx="14" fill="#f8fafc" stroke="#111827" stroke-width="3"/>
+            <g fill="#111827" font-size="18" font-weight="900">
+              <text x="70" y="75">×</text><text x="130" y="75">×</text><text x="190" y="75">×</text><text x="250" y="75">×</text><text x="310" y="75">×</text>
+              <text x="70" y="125">×</text><text x="130" y="125">×</text><text x="190" y="125">×</text><text x="250" y="125">×</text><text x="310" y="125">×</text>
+              <text x="70" y="175">×</text><text x="130" y="175">×</text><text x="190" y="175">×</text><text x="250" y="175">×</text><text x="310" y="175">×</text>
+            </g>
+            <path d="M90 175 C145 110, 225 75, 320 86" fill="none" stroke="#2563eb" stroke-width="5"/>
+            <circle cx="90" cy="175" r="12" fill="#fee2e2" stroke="#111827" stroke-width="3"/>
+            <text x="84" y="181" font-size="14" font-weight="900" fill="#dc2626">+</text>
+            <line x1="92" y1="175" x2="168" y2="140" stroke="#047857" stroke-width="5" marker-end="url(#arrGreen2)"/>
+            <text x="134" y="132" font-size="13" font-weight="900" fill="#047857">v</text>
+            <line x1="198" y1="236" x2="198" y2="108" stroke="#111827" stroke-width="3" stroke-dasharray="6 5"/>
+            <text x="210" y="178" font-size="13" font-weight="900">r ?</text>
+            <text x="260" y="214" font-size="13" font-weight="900">B = 0.50 T</text>
+          </svg>
+          <div class="caption">แรงแม่เหล็กตั้งฉากกับความเร็ว ทำหน้าที่เปลี่ยนทิศของการเคลื่อนที่ / Magnetic force is perpendicular to velocity and changes the direction of motion.</div>
+        </div>
+
+        <div class="data-card">
+          <div class="data-title">Given data / ข้อมูลกำหนด</div>
+          <table class="data-table">
+            <tr><th>Quantity / ปริมาณ</th><th>Value / ค่า</th></tr>
+            <tr><td>\(m\)</td><td>\(6.4\times10^{-27}\,kg\)</td></tr>
+            <tr><td>\(|q|\)</td><td>\(3.2\times10^{-19}\,C\)</td></tr>
+            <tr><td>\(v\)</td><td>\(2.0\times10^6\,m/s\)</td></tr>
+            <tr><td>\(B\)</td><td>\(0.50\,T\)</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <ol class="subq" type="ก">
+        <li>จากภาพ อนุภาคเคลื่อนที่เป็นเส้นตรงหรือเส้นโค้ง เพราะเหตุใด<br>From the model, does the particle move in a straight or curved path? Why? <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+        <li>คำนวณขนาดแรงแม่เหล็กที่กระทำต่ออนุภาค<br>Calculate the magnitude of the magnetic force on the particle. <span class="pts">(2 pts / 2 คะแนน)</span><span class="ans"></span></li>
+        <li>เลือกความสัมพันธ์จากแถบสูตรและคำนวณรัศมีของวิถีโค้ง<br>Choose a relationship from the formula strip and calculate the radius of the curved path. <span class="pts">(3 pts / 3 คะแนน)</span><span class="ans tall"></span></li>
+        <li>ถ้า \(B\) เพิ่มเป็นสองเท่า โดย \(m, v, |q|\) เท่าเดิม รัศมีจะเปลี่ยนอย่างไร<br>If \(B\) doubles while \(m, v, |q|\) stay the same, how does the radius change? <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+      </ol>
+
+      <div class="solution">
+        <div class="solution-title">เฉลย / Solution</div>
+        <div class="sol-grid">
+          <div class="sol-card">เคลื่อนที่เป็นเส้นโค้ง เพราะแรงแม่เหล็กตั้งฉากกับความเร็วและเปลี่ยนทิศการเคลื่อนที่</div>
+          <div class="sol-card">\(F=|q|vB=(3.2\times10^{-19})(2.0\times10^6)(0.50)=\)<span class="red">\(3.2\times10^{-13}\,N\)</span></div>
+          <div class="sol-card">\(r=\frac{mv}{|q|B}=\frac{(6.4\times10^{-27})(2.0\times10^6)}{(3.2\times10^{-19})(0.50)}=\)<span class="red">\(0.080\,m\)</span></div>
+          <div class="sol-card">ถ้า \(B\) เพิ่ม 2 เท่า \(r\) ลดลงครึ่งหนึ่ง → \(0.040\,m\)</div>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <!-- PAGE 3 -->
+  <main class="sheet">
+    <section class="page-header">
+      <div class="phys-note">Part C: Magnetic force and torque. / แรงแม่เหล็กและโมเมนต์ของแรงคู่ควบ</div>
+      <div class="page-title">Part C: Magnetic Force and Torque / แรงแม่เหล็กและโมเมนต์ของแรงคู่ควบ</div>
+      <div class="page-subtitle">Page 3: Current-carrying wire / หน้า 3: ลวดตัวนำที่มีกระแสไฟฟ้า <b>(35 points / 35 คะแนน)</b></div>
+      <div class="instruction-strip"><b>Instructions / คำชี้แจง:</b> Determine both magnitude and direction. / หาทั้งขนาดและทิศทาง</div>
+      <div class="formula-strip">
+        <div class="formula-title">Given relationships / ความสัมพันธ์ที่กำหนด</div>
+        <div class="formula-row">
+          <span>\(\mu_0 = 4\pi \times 10^{-7}\;T\,m/A\)</span>
+          <span>\(F=qvB\sin\theta\)</span>
+          <span>\(r=\frac{mv}{|q|B}\)</span>
+          <span>\(F=ILB\sin\theta\)</span>
+          <span>\(\frac{F}{L}=\frac{\mu_0 I_1I_2}{2\pi d}\)</span>
+          <span>\(M=NIAB\cos\theta\)</span>
+        </div>
+        <div class="symbol-strip">
+          <span>\(\otimes\) = into page / เข้ากระดาษ</span>
+          <span>\(\odot\) = out of page / ออกจากกระดาษ</span>
+          <span>reverse current → reverse force / กลับทิศกระแส → แรงกลับทิศ</span>
+        </div>
+      </div>
+    </section>
+
+    <article class="question">
+      <div class="qhead">
+        <span class="num">3</span>
+        <div class="qtitle">ลวดตัวนำในสนามแม่เหล็ก / Wire inside a magnetic field</div>
+        <div class="score">7 pts</div>
+      </div>
+
+      <div class="scenario">
+        ลวดตัวนำยาว \(0.30\,m\) มีกระแสไฟฟ้า \(4.0\,A\) ไหลไปทางขวา วางตั้งฉากกับสนามแม่เหล็กสม่ำเสมอ \(0.50\,T\) ที่พุ่งเข้าไปในกระดาษ
+        <br>
+        A \(0.30\,m\) wire carries a current of \(4.0\,A\) to the right and is perpendicular to a uniform magnetic field of \(0.50\,T\) directed into the page.
+      </div>
+
+      <div class="model-row">
+        <div class="model-card">
+          <div class="model-title">Model / รูปจำลอง</div>
+          <svg class="model-svg" viewBox="0 0 430 270">
+            <defs>
+              <marker id="arrRed3" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#dc2626"/></marker>
+              <marker id="arrGreen3" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#047857"/></marker>
+            </defs>
+            <rect x="35" y="35" width="360" height="190" rx="14" fill="#f8fafc" stroke="#111827" stroke-width="3"/>
+            <g fill="#111827" font-size="20" font-weight="900">
+              <text x="70" y="75">×</text><text x="130" y="75">×</text><text x="190" y="75">×</text><text x="250" y="75">×</text><text x="310" y="75">×</text>
+              <text x="70" y="125">×</text><text x="130" y="125">×</text><text x="190" y="125">×</text><text x="250" y="125">×</text><text x="310" y="125">×</text>
+              <text x="70" y="175">×</text><text x="130" y="175">×</text><text x="190" y="175">×</text><text x="250" y="175">×</text><text x="310" y="175">×</text>
+            </g>
+            <line x1="95" y1="135" x2="315" y2="135" stroke="#94a3b8" stroke-width="13" stroke-linecap="round"/>
+            <line x1="115" y1="135" x2="275" y2="135" stroke="#dc2626" stroke-width="6" marker-end="url(#arrRed3)"/>
+            <text x="180" y="122" font-size="13" font-weight="900" fill="#dc2626">I = 4.0 A</text>
+            <line x1="205" y1="135" x2="205" y2="70" stroke="#047857" stroke-width="5" marker-end="url(#arrGreen3)"/>
+            <text x="216" y="95" font-size="13" font-weight="900" fill="#047857">F ?</text>
+            <text x="255" y="214" font-size="13" font-weight="900">B = 0.50 T into page</text>
+          </svg>
+          <div class="caption">ทิศแรงตั้งฉากกับทั้งทิศกระแสและทิศสนาม / The force is perpendicular to both the current direction and magnetic-field direction.</div>
+        </div>
+
+        <div class="data-card">
+          <div class="data-title">Given data / ข้อมูลกำหนด</div>
+          <table class="data-table">
+            <tr><th>Quantity / ปริมาณ</th><th>Value / ค่า</th></tr>
+            <tr><td>\(I\)</td><td>\(4.0\,A\)</td></tr>
+            <tr><td>\(L\)</td><td>\(0.30\,m\)</td></tr>
+            <tr><td>\(B\)</td><td>\(0.50\,T\)</td></tr>
+            <tr><td>\(\theta\)</td><td>\(90^\circ\)</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <ol class="subq" type="ก">
+        <li>จากภาพ ทิศของแรงแม่เหล็กบนลวดเป็นทิศใด<br>From the model, what is the direction of the magnetic force on the wire? <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+        <li>เลือกความสัมพันธ์จากแถบสูตรและคำนวณขนาดแรงแม่เหล็กบนลวด<br>Choose a relationship from the formula strip and calculate the magnetic force on the wire. <span class="pts">(3 pts / 3 คะแนน)</span><span class="ans tall"></span></li>
+        <li>ถ้ากลับทิศกระแสไฟฟ้า แต่ค่า \(I, L, B\) เท่าเดิม ทิศและขนาดแรงเปลี่ยนอย่างไร<br>If the current direction is reversed but \(I, L, B\) remain the same, how do the direction and magnitude change? <span class="pts">(2 pts / 2 คะแนน)</span><span class="ans"></span></li>
+        <li>ถ้าลวดวางขนานกับสนามแม่เหล็ก แรงแม่เหล็กเป็นเท่าใด<br>If the wire is placed parallel to the magnetic field, what is the magnetic force? <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+      </ol>
+
+      <div class="solution">
+        <div class="solution-title">เฉลย / Solution</div>
+        <div class="sol-grid">
+          <div class="sol-card">กระแสไปขวา และ \(B\) เข้ากระดาษ → แรงชี้ <span class="red">ขึ้น</span></div>
+          <div class="sol-card">\(F=ILB\sin90^\circ=(4.0)(0.30)(0.50)=\)<span class="red">\(0.60\,N\)</span></div>
+          <div class="sol-card">กลับทิศกระแส → แรงกลับเป็น <span class="blue">ลง</span> แต่ขนาดยัง \(0.60\,N\)</div>
+          <div class="sol-card">ถ้าขนานกับสนาม \(\theta=0^\circ\), \(F=0\,N\)</div>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <!-- PAGE 4 -->
+  <main class="sheet">
+    <section class="page-header">
+      <div class="phys-note">Part C: Magnetic force and torque. / แรงแม่เหล็กและโมเมนต์ของแรงคู่ควบ</div>
+      <div class="page-title">Part C: Magnetic Force and Torque / แรงแม่เหล็กและโมเมนต์ของแรงคู่ควบ</div>
+      <div class="page-subtitle">Page 4: Parallel current-carrying wires / หน้า 4: ลวดขนานสองเส้นที่มีกระแสไฟฟ้า <b>(35 points / 35 คะแนน)</b></div>
+      <div class="instruction-strip"><b>Instructions / คำชี้แจง:</b> Read current directions first, then calculate. / อ่านทิศกระแสก่อน แล้วจึงคำนวณ</div>
+      <div class="formula-strip">
+        <div class="formula-title">Given relationships / ความสัมพันธ์ที่กำหนด</div>
+        <div class="formula-row">
+          <span>\(\mu_0 = 4\pi \times 10^{-7}\;T\,m/A\)</span>
+          <span>\(F=qvB\sin\theta\)</span>
+          <span>\(r=\frac{mv}{|q|B}\)</span>
+          <span>\(F=ILB\sin\theta\)</span>
+          <span>\(\frac{F}{L}=\frac{\mu_0 I_1I_2}{2\pi d}\)</span>
+          <span>\(M=NIAB\cos\theta\)</span>
+        </div>
+        <div class="symbol-strip">
+          <span>same current direction → attraction / กระแสทิศเดียวกัน → ดูดกัน</span>
+          <span>opposite current directions → repulsion / กระแสสวนทางกัน → ผลักกัน</span>
+        </div>
+      </div>
+    </section>
+
+    <article class="question">
+      <div class="qhead">
+        <span class="num">4</span>
+        <div class="qtitle">แรงระหว่างลวดตัวนำสองเส้น / Force between two parallel wires</div>
+        <div class="score">7 pts</div>
+      </div>
+
+      <div class="scenario">
+        ลวดตัวนำตรงยาวสองเส้นวางขนานกัน ห่างกัน \(0.030\,m\). ลวดทั้งสองมีกระแสไฟฟ้าไหลขึ้นด้านบน โดย \(I_1=6.0\,A\) และ \(I_2=4.0\,A\). พิจารณาช่วงความยาวลวด \(0.50\,m\)
+        <br>
+        Two long straight wires are parallel and separated by \(0.030\,m\). Both currents flow upward, with \(I_1=6.0\,A\) and \(I_2=4.0\,A\). Consider a wire length of \(0.50\,m\).
+      </div>
+
+      <div class="model-row">
+        <div class="model-card">
+          <div class="model-title">Model / รูปจำลอง</div>
+          <svg class="model-svg" viewBox="0 0 430 270">
+            <defs>
+              <marker id="arrRed4" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#dc2626"/></marker>
+              <marker id="arrGreen4" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#047857"/></marker>
+            </defs>
+            <line x1="145" y1="220" x2="145" y2="50" stroke="#94a3b8" stroke-width="13" stroke-linecap="round"/>
+            <line x1="285" y1="220" x2="285" y2="50" stroke="#94a3b8" stroke-width="13" stroke-linecap="round"/>
+            <line x1="145" y1="200" x2="145" y2="75" stroke="#dc2626" stroke-width="5" marker-end="url(#arrRed4)"/>
+            <line x1="285" y1="200" x2="285" y2="75" stroke="#dc2626" stroke-width="5" marker-end="url(#arrRed4)"/>
+            <text x="102" y="73" font-size="13" font-weight="900" fill="#dc2626">I₁=6.0A</text>
+            <text x="300" y="73" font-size="13" font-weight="900" fill="#dc2626">I₂=4.0A</text>
+            <line x1="145" y1="135" x2="285" y2="135" stroke="#111827" stroke-width="3" stroke-dasharray="6 5"/>
+            <text x="185" y="126" font-size="13" font-weight="900">d=0.030m</text>
+            <line x1="160" y1="165" x2="215" y2="165" stroke="#047857" stroke-width="4" marker-end="url(#arrGreen4)"/>
+            <line x1="270" y1="165" x2="215" y2="165" stroke="#047857" stroke-width="4" marker-end="url(#arrGreen4)"/>
+            <text x="182" y="188" font-size="13" font-weight="900" fill="#047857">attraction?</text>
+          </svg>
+          <div class="caption">กระแสทิศเดียวกันทำให้ลวดดูดกัน / Currents in the same direction cause attraction.</div>
+        </div>
+
+        <div class="data-card">
+          <div class="data-title">Given data / ข้อมูลกำหนด</div>
+          <table class="data-table">
+            <tr><th>Quantity / ปริมาณ</th><th>Value / ค่า</th></tr>
+            <tr><td>\(I_1\)</td><td>\(6.0\,A\)</td></tr>
+            <tr><td>\(I_2\)</td><td>\(4.0\,A\)</td></tr>
+            <tr><td>\(d\)</td><td>\(0.030\,m\)</td></tr>
+            <tr><td>\(L\)</td><td>\(0.50\,m\)</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <ol class="subq" type="ก">
+        <li>ลวดทั้งสองดูดกันหรือผลักกัน เพราะเหตุใด<br>Do the two wires attract or repel each other? Why? <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+        <li>เลือกความสัมพันธ์จากแถบสูตรและคำนวณแรงต่อหนึ่งหน่วยความยาว \(\frac{F}{L}\)<br>Choose a relationship from the formula strip and calculate force per unit length \(\frac{F}{L}\). <span class="pts">(3 pts / 3 คะแนน)</span><span class="ans tall"></span></li>
+        <li>คำนวณแรงที่กระทำต่อช่วงลวดยาว \(0.50\,m\)<br>Calculate the force acting on a \(0.50\,m\) length of wire. <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+        <li>ถ้ากลับทิศกระแสในลวดเส้นที่ 2 อย่างเดียว ผลของแรงระหว่างลวดจะเปลี่ยนอย่างไร<br>If only the current in wire 2 is reversed, how does the force between the wires change? <span class="pts">(2 pts / 2 คะแนน)</span><span class="ans"></span></li>
+      </ol>
+
+      <div class="solution">
+        <div class="solution-title">เฉลย / Solution</div>
+        <div class="sol-grid">
+          <div class="sol-card">กระแสไหลทิศเดียวกัน → <span class="green">ดูดกัน</span></div>
+          <div class="sol-card">\(\frac{F}{L}=\frac{\mu_0I_1I_2}{2\pi d}=\frac{(4\pi\times10^{-7})(6.0)(4.0)}{2\pi(0.030)}=\)<span class="red">\(1.6\times10^{-4}\,N/m\)</span></div>
+          <div class="sol-card">\(F=(1.6\times10^{-4})(0.50)=\)<span class="red">\(8.0\times10^{-5}\,N\)</span></div>
+          <div class="sol-card">ถ้ากลับทิศกระแสในลวด 2 กระแสสวนทางกัน → เปลี่ยนเป็น <span class="blue">ผลักกัน</span></div>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <!-- PAGE 5 -->
+  <main class="sheet">
+    <section class="page-header">
+      <div class="phys-note">Part C: Magnetic force and torque. / แรงแม่เหล็กและโมเมนต์ของแรงคู่ควบ</div>
+      <div class="page-title">Part C: Magnetic Force and Torque / แรงแม่เหล็กและโมเมนต์ของแรงคู่ควบ</div>
+      <div class="page-subtitle">Page 5: Rectangular coil / หน้า 5: ขดลวดสี่เหลี่ยมในสนามแม่เหล็ก <b>(35 points / 35 คะแนน)</b></div>
+      <div class="instruction-strip"><b>Instructions / คำชี้แจง:</b> In this question, \(\theta\) is the angle between the plane of the coil and the magnetic field. / ในข้อนี้ \(\theta\) คือมุมระหว่างระนาบขดลวดกับสนามแม่เหล็ก</div>
+      <div class="formula-strip">
+        <div class="formula-title">Given relationships / ความสัมพันธ์ที่กำหนด</div>
+        <div class="formula-row">
+          <span>\(\mu_0 = 4\pi \times 10^{-7}\;T\,m/A\)</span>
+          <span>\(F=qvB\sin\theta\)</span>
+          <span>\(r=\frac{mv}{|q|B}\)</span>
+          <span>\(F=ILB\sin\theta\)</span>
+          <span>\(\frac{F}{L}=\frac{\mu_0 I_1I_2}{2\pi d}\)</span>
+          <span>\(M=NIAB\cos\theta\)</span>
+        </div>
+      </div>
+    </section>
+
+    <article class="question">
+      <div class="qhead">
+        <span class="num">5</span>
+        <div class="qtitle">ขดลวดในสนามแม่เหล็ก / Coil in a magnetic field</div>
+        <div class="score">7 pts</div>
+      </div>
+
+      <div class="scenario">
+        ขดลวดสี่เหลี่ยมมีจำนวนรอบ \(50\) รอบ มีกระแสไฟฟ้า \(2.0\,A\) พื้นที่หน้าตัด \(0.020\,m^2\) และวางอยู่ในสนามแม่เหล็กสม่ำเสมอ \(0.40\,T\). ระนาบของขดลวดทำมุม \(60^\circ\) กับสนามแม่เหล็ก
+        <br>
+        A rectangular coil has \(50\) turns, current \(2.0\,A\), area \(0.020\,m^2\), and is placed in a uniform magnetic field of \(0.40\,T\). The plane of the coil makes an angle of \(60^\circ\) with the magnetic field.
+      </div>
+
+      <div class="model-row">
+        <div class="model-card">
+          <div class="model-title">Model / รูปจำลอง</div>
+          <svg class="model-svg" viewBox="0 0 430 270">
+            <defs>
+              <marker id="arrBlue5" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#2563eb"/></marker>
+              <marker id="arrRed5" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#dc2626"/></marker>
+            </defs>
+            <g stroke="#2563eb" stroke-width="4" marker-end="url(#arrBlue5)">
+              <line x1="48" y1="70" x2="380" y2="70"/>
+              <line x1="48" y1="118" x2="380" y2="118"/>
+              <line x1="48" y1="166" x2="380" y2="166"/>
+              <line x1="48" y1="214" x2="380" y2="214"/>
+            </g>
+            <polygon points="170,80 285,115 260,205 145,170" fill="#fff7ed" stroke="#111827" stroke-width="5"/>
+            <polygon points="183,102 263,126 246,183 166,159" fill="#ffffff" stroke="#111827" stroke-width="3"/>
+            <path d="M170 80 L285 115" stroke="#dc2626" stroke-width="5" marker-end="url(#arrRed5)"/>
+            <path d="M260 205 L145 170" stroke="#dc2626" stroke-width="5" marker-end="url(#arrRed5)"/>
+            <text x="315" y="60" font-size="15" font-weight="900" fill="#2563eb">B</text>
+            <path d="M210 205 A65 65 0 0 0 285 166" fill="none" stroke="#f59e0b" stroke-width="4"/>
+            <text x="250" y="197" font-size="14" font-weight="900" fill="#f59e0b">60°</text>
+            <text x="128" y="238" font-size="13" font-weight="900">plane of coil makes angle θ with B</text>
+          </svg>
+          <div class="caption">แรงบนด้านตรงข้ามของขดลวดทำให้เกิดการบิดหมุน / Forces on opposite sides of the coil produce a turning effect.</div>
+        </div>
+
+        <div class="data-card">
+          <div class="data-title">Given data / ข้อมูลกำหนด</div>
+          <table class="data-table">
+            <tr><th>Quantity / ปริมาณ</th><th>Value / ค่า</th></tr>
+            <tr><td>\(N\)</td><td>\(50\)</td></tr>
+            <tr><td>\(I\)</td><td>\(2.0\,A\)</td></tr>
+            <tr><td>\(A\)</td><td>\(0.020\,m^2\)</td></tr>
+            <tr><td>\(B\)</td><td>\(0.40\,T\)</td></tr>
+            <tr><td>\(\theta\)</td><td>\(60^\circ\)</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <ol class="subq" type="ก">
+        <li>จากภาพ แรงบนด้านตรงข้ามของขดลวดทำให้เกิดผลทางการเคลื่อนที่แบบใด<br>From the model, what type of motion effect is produced by forces on opposite sides of the coil? <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+        <li>เลือกความสัมพันธ์จากแถบสูตรและคำนวณค่า \(M\)<br>Choose a relationship from the formula strip and calculate \(M\). <span class="pts">(3 pts / 3 คะแนน)</span><span class="ans tall"></span></li>
+        <li>เมื่อระนาบขดลวดขนานกับสนามแม่เหล็ก ค่า \(M\) เป็นเท่าใด<br>When the plane of the coil is parallel to the magnetic field, what is \(M\)? <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+        <li>เมื่อระนาบขดลวดตั้งฉากกับสนามแม่เหล็ก ค่า \(M\) เป็นเท่าใด และถ้าเพิ่มจำนวนรอบเป็นสองเท่าจะเกิดผลอย่างไร<br>When the plane of the coil is perpendicular to the magnetic field, what is \(M\)? If the number of turns doubles, what happens? <span class="pts">(2 pts / 2 คะแนน)</span><span class="ans"></span></li>
+      </ol>
+
+      <div class="solution">
+        <div class="solution-title">เฉลย / Solution</div>
+        <div class="sol-grid">
+          <div class="sol-card">เกิดผลให้ขดลวด <span class="green">บิดหมุน</span> หรือเกิดโมเมนต์ของแรงคู่ควบ</div>
+          <div class="sol-card">\(M=NIAB\cos60^\circ=(50)(2.0)(0.020)(0.40)(0.50)=\)<span class="red">\(0.40\,N\,m\)</span></div>
+          <div class="sol-card">ถ้าระนาบขนานกับสนาม \(\theta=0^\circ\), \(M=NIAB=\)<span class="red">\(0.80\,N\,m\)</span></div>
+          <div class="sol-card">ถ้าระนาบตั้งฉากกับสนาม \(\theta=90^\circ\), \(M=0\). ถ้า \(N\) เพิ่ม 2 เท่า \(M\) เพิ่ม 2 เท่า</div>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <!-- ANSWER KEY -->
+  <main class="sheet key-page">
+    <section class="page-header">
+      <div class="phys-note">Part C: Short answer key. / เฉลยสั้นส่วนที่ C</div>
+      <div class="page-title">Answer Key: Magnetic Force and Torque / เฉลย: แรงแม่เหล็กและโมเมนต์ของแรงคู่ควบ</div>
+      <div class="page-subtitle">Use this page for teacher checking / ใช้หน้านี้สำหรับตรวจคำตอบ</div>
+      <div class="formula-strip">
+        <div class="formula-title">Given relationships / ความสัมพันธ์ที่กำหนด</div>
+        <div class="formula-row">
+          <span>\(\mu_0 = 4\pi \times 10^{-7}\;T\,m/A\)</span>
+          <span>\(F=qvB\sin\theta\)</span>
+          <span>\(r=\frac{mv}{|q|B}\)</span>
+          <span>\(F=ILB\sin\theta\)</span>
+          <span>\(\frac{F}{L}=\frac{\mu_0 I_1I_2}{2\pi d}\)</span>
+          <span>\(M=NIAB\cos\theta\)</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="key">
+      <h2>Short Answer Key / เฉลยสั้น</h2>
+      <div class="key-grid">
+        <div class="key-item"><b>Q1:</b> Force is upward. \(F=(2.0\times10^{-6})(3.0\times10^5)(0.40)=0.24\,N\). Negative charge: same magnitude, opposite direction. Halving speed halves force.</div>
+        <div class="key-item"><b>Q2:</b> Curved path because magnetic force is perpendicular to velocity. \(F=3.2\times10^{-13}\,N\). \(r=\frac{(6.4\times10^{-27})(2.0\times10^6)}{(3.2\times10^{-19})(0.50)}=0.080\,m\). Doubling \(B\) halves \(r\).</div>
+        <div class="key-item"><b>Q3:</b> Force on wire is upward. \(F=(4.0)(0.30)(0.50)=0.60\,N\). Reversing current reverses force direction, magnitude unchanged. Parallel to \(B\): \(F=0\).</div>
+        <div class="key-item"><b>Q4:</b> Same current direction → attraction. \(\frac{F}{L}=1.6\times10^{-4}\,N/m\). \(F=8.0\times10^{-5}\,N\). Reversing current in wire 2 → repulsion.</div>
+        <div class="key-item"><b>Q5:</b> Coil experiences turning effect/torque. \(M=(50)(2.0)(0.020)(0.40)\cos60^\circ=0.40\,N\,m\). Parallel plane: \(M=0.80\,N\,m\). Perpendicular plane: \(M=0\). Doubling \(N\) doubles \(M\).</div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function setMode(mode) {
+      document.body.classList.remove('mode-exam', 'mode-key', 'mode-solution');
+      document.body.classList.add(mode);
+      document.getElementById('statusText').textContent =
+        mode === 'mode-solution' ? 'Y13 Physics Part C — Solution mode' :
+        mode === 'mode-key' ? 'Y13 Physics Part C — Short key mode' :
+        'Y13 Physics Part C — Exam mode';
+      if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise();
+    }
+
+    function toggleSolution() {
+      if (document.body.classList.contains('mode-solution')) setMode('mode-exam');
+      else setMode('mode-solution');
+    }
+
+    window.addEventListener('load', () => {
+      if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise();
+    });
+  </script>
+</body>
+</html>
