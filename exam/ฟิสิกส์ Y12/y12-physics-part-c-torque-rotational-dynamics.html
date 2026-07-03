@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Y12 Physics Written Exam Part C | Torque and Rotational Dynamics</title>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --ink: #111827;
+      --muted: #475569;
+      --line: #d1d5db;
+      --soft: #f8fafc;
+      --paper: 210mm;
+      --page-h: 297mm;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      background: #e5e7eb;
+      color: var(--ink);
+      font-family: "Google Sans", "Noto Sans Thai", Arial, sans-serif;
+      line-height: 1.32;
+    }
+    .toolbar {
+      position: sticky; top: 0; z-index: 50;
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center;
+      padding: 10px; background: #0f172a; color: #fff; box-shadow: 0 8px 24px rgba(15,23,42,.22);
+    }
+    .toolbar button {
+      border: 0; border-radius: 999px; padding: 8px 14px; font-family: inherit; font-weight: 900;
+      cursor: pointer; background: #fff; color: #0f172a;
+    }
+    .toolbar .primary { background: #bfdbfe; color: #1e3a8a; }
+    .toolbar .gold { background: #fde68a; color: #78350f; }
+    .toolbar .status { flex-basis: 100%; text-align: center; font-size: 12.5px; opacity: .9; }
+
+    .sheet {
+      width: var(--paper); min-height: var(--page-h); margin: 18px auto 36px;
+      padding: 10.5mm 12mm; background: #fff; box-shadow: 0 16px 48px rgba(15,23,42,.22);
+      page-break-after: always; break-after: page; overflow: hidden;
+    }
+    .page-header { margin-bottom: 7px; }
+    .phys-note {
+      border-left: 4px solid #111827; background: #f8fafc; padding: 5px 8px; margin-bottom: 6px;
+      font-size: 10.2px; font-weight: 800; line-height: 1.22; color: #111827;
+    }
+    .page-title {
+      text-align: center; font-weight: 900; font-size: 15px; line-height: 1.18; margin: 0;
+    }
+    .page-subtitle {
+      text-align: center; font-size: 10.4px; color: #374151; margin-top: 2px; line-height: 1.18;
+    }
+    .instruction-strip {
+      border: 1px solid #d1d5db; border-radius: 7px; background: #f9fafb; padding: 4px 6px;
+      margin-top: 5px; margin-bottom: 5px; font-size: 9.45px; line-height: 1.22; font-weight: 700;
+    }
+    .formula-strip {
+      border: 1px solid #cbd5e1; border-radius: 9px; background: #f8fafc; padding: 5px 6px; margin: 5px 0 6px;
+    }
+    .formula-title {
+      font-size: 9.1px; font-weight: 900; color: #374151; margin-bottom: 3px; text-align: center;
+    }
+    .formula-row {
+      display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; align-items: center;
+    }
+    .formula-row span {
+      border: 1px solid #cbd5e1; background: #fff; border-radius: 999px; padding: 2px 6px;
+      font-size: 9.6px; font-weight: 900; white-space: nowrap; line-height: 1.55;
+    }
+    .question {
+      border: 1.4px solid #111827; border-radius: 10px; padding: 7px 8px; background: #fff;
+      page-break-inside: avoid; break-inside: avoid;
+    }
+    .qhead {
+      display: grid; grid-template-columns: 30px 1fr auto; gap: 7px; align-items: start; margin-bottom: 6px;
+    }
+    .num {
+      display: inline-flex; width: 26px; height: 26px; border: 1.4px solid #111827; border-radius: 999px;
+      align-items: center; justify-content: center; font-weight: 900; font-size: 13px; line-height: 1;
+    }
+    .qtitle { font-size: 13.2px; font-weight: 900; line-height: 1.25; }
+    .score {
+      border: 1.3px solid #111827; border-radius: 999px; padding: 2px 8px; font-size: 10px; font-weight: 900; white-space: nowrap;
+    }
+    .scenario {
+      border-left: 4px solid #111827; background: #f8fafc; padding: 5px 7px; font-size: 10.2px; line-height: 1.35; margin-bottom: 6px;
+    }
+    .model-row { display: grid; grid-template-columns: 1.45fr .95fr; gap: 8px; align-items: start; margin-bottom: 6px; }
+    .model-card, .data-card {
+      border: 1px solid #d1d5db; border-radius: 9px; padding: 6px; background: #fff;
+    }
+    .model-title, .data-title {
+      font-size: 10px; font-weight: 900; margin-bottom: 4px; color: #374151;
+    }
+    .model-svg { width: 100%; height: auto; display: block; }
+    .caption { font-size: 9px; color: #475569; line-height: 1.28; margin-top: 4px; }
+    .data-table { width: 100%; border-collapse: collapse; font-size: 9.55px; }
+    .data-table th, .data-table td {
+      border: 1px solid #111827; padding: 4px 5px; vertical-align: top;
+    }
+    .data-table th { background: #f8fafc; font-weight: 900; }
+    .subq { margin: 2px 0 0 18px; padding-left: 14px; font-size: 10.3px; }
+    .subq li { margin: 5px 0; }
+    .pts { font-weight: 900; font-size: 9.4px; }
+    .ans {
+      display: block; border-bottom: 1.3px dashed #111827; min-height: 28px; margin-top: 4px;
+    }
+    .ans.small { min-height: 18px; }
+    .ans.tall { min-height: 52px; }
+    .solution {
+      display: none; margin-top: 7px; border-top: 1px dashed #cbd5e1; padding-top: 6px;
+    }
+    .solution-title { font-size: 10.8px; font-weight: 900; margin-bottom: 4px; }
+    .sol-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .sol-card {
+      border: 1px solid #d1d5db; border-radius: 8px; padding: 5px 6px; font-size: 9.7px; line-height: 1.35; background: #fff;
+    }
+    .red { color: #b91c1c; font-weight: 900; }
+    .key { font-size: 11px; }
+    .key h2 { font-size: 16px; margin: 0 0 8px; }
+    .key-grid { display: grid; grid-template-columns: 1fr; gap: 7px; }
+    .key-item { border: 1px solid #111827; border-radius: 8px; padding: 7px 8px; }
+
+    body.mode-solution .solution { display: block; }
+    body.mode-key .exam-page { display: none; }
+    body.mode-key .key-page { display: block; }
+    body.mode-exam .key-page, body.mode-solution .key-page { display: none; }
+    body.mode-solution .key-page { display: none; }
+
+    @page { size: A4 portrait; margin: 0; }
+    @media print {
+      html, body { width: 210mm; background: white !important; }
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .toolbar { display: none !important; }
+      .sheet { width: 210mm; min-height: 297mm; margin: 0; box-shadow: none; }
+    }
+  </style>
+</head>
+<body class="mode-exam">
+  <div class="toolbar print-hide">
+    <button onclick="window.print()">Print / พิมพ์</button>
+    <button class="primary" onclick="setMode('mode-exam')">Exam / ข้อสอบ</button>
+    <button onclick="setMode('mode-key')">Key / เฉลยสั้น</button>
+    <button class="gold" onclick="toggleSolution()">Solutions / เฉลยละเอียด</button>
+    <div class="status" id="statusText">Y12 Physics Part C — Exam mode</div>
+  </div>
+
+  <!-- PAGE 1 -->
+  <main class="sheet exam-page">
+    <section class="page-header">
+      <div class="phys-note">Part C: Torque, turning effect, rotational equilibrium, and rotational dynamics. / ส่วน C: แรงบิด ผลการหมุน สมดุลการหมุน และพลศาสตร์การหมุน</div>
+      <div class="page-title">Y12 Physics Written Exam Part C: Torque and Rotational Dynamics / ฟิสิกส์ Y12 ข้อเขียนส่วน C: แรงบิดและพลศาสตร์การหมุน</div>
+      <div class="page-subtitle">Page 1: Wrench and turning effect / หน้า 1: ประแจและผลการหมุน <b>(35 points / 35 คะแนน)</b></div>
+      <div class="instruction-strip"><b>Instructions / คำชี้แจง:</b> Study each SVG model, use the given relationships, show calculation steps, and answer with suitable units. / ศึกษารูปจำลอง SVG ใช้ความสัมพันธ์ที่กำหนด แสดงวิธีทำ และตอบพร้อมหน่วยที่เหมาะสม</div>
+      <div class="formula-strip">
+        <div class="formula-title">Given relationships / ความสัมพันธ์ที่กำหนด</div>
+        <div class="formula-row">
+          <span>\(\tau=rF\sin\theta\)</span>
+          <span>perpendicular force: \(\tau=rF\)</span>
+          <span>CW = clockwise / ตามเข็ม</span>
+          <span>CCW = counterclockwise / ทวนเข็ม</span>
+          <span>larger \(r\) → larger torque</span>
+        </div>
+      </div>
+    </section>
+    <article class="question" data-answer="Q1: A=12 N m CCW, B=6 N m CCW, C=8.66 N m CCW, A gives the largest torque, zero torque if the line of action passes through the pivot.">
+      <div class="qhead">
+        <span class="num">1</span>
+        <div class="qtitle">ประแจขันน็อต / Using a wrench on a bolt</div>
+        <div class="score">7 pts</div>
+      </div>
+      <div class="scenario">
+        ช่างกำลังใช้ประแจหมุนน็อต โดยจุดหมุนอยู่ที่ศูนย์กลางน็อต ให้ถือว่าทุกแรงกระทำในระนาบเดียวกัน และพิจารณาเฉพาะขนาดและทิศของแรงบิด
+        <br>
+        A mechanic uses a wrench to rotate a bolt. The pivot is at the center of the bolt. Assume all forces act in the same plane and consider only the magnitude and direction of torque.
+      </div>
+      <div class="model-row">
+        <div class="model-card">
+          <div class="model-title">SVG model / รูปจำลอง</div>
+          <svg class="model-svg" viewBox="0 0 430 260" aria-label="wrench torque cases">
+            <defs>
+              <marker id="arrC1" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><polygon points="0 0,10 4,0 8" fill="#111827"/></marker>
+            </defs>
+            <rect x="12" y="12" width="406" height="236" rx="12" fill="#fff" stroke="#111827" stroke-width="3"/>
+            <g>
+              <rect x="42" y="56" width="110" height="16" rx="8" fill="#fff" stroke="#111827" stroke-width="3"/>
+              <circle cx="42" cy="64" r="10" fill="#fff" stroke="#111827" stroke-width="3"/>
+              <line x1="152" y1="64" x2="152" y2="24" stroke="#111827" stroke-width="4" marker-end="url(#arrC1)"/>
+              <text x="160" y="30" class="svg-label" font-size="13">Case A: 40 N</text>
+              <text x="68" y="92" class="svg-small" font-size="11">r = 0.30 m</text>
+            </g>
+            <g>
+              <rect x="42" y="138" width="82" height="16" rx="8" fill="#fff" stroke="#111827" stroke-width="3"/>
+              <circle cx="42" cy="146" r="10" fill="#fff" stroke="#111827" stroke-width="3"/>
+              <line x1="124" y1="146" x2="124" y2="116" stroke="#111827" stroke-width="4" marker-end="url(#arrC1)"/>
+              <text x="132" y="122" class="svg-label" font-size="13">Case B: 30 N</text>
+              <text x="66" y="174" class="svg-small" font-size="11">r = 0.20 m</text>
+            </g>
+            <g>
+              <rect x="246" y="98" width="110" height="16" rx="8" fill="#fff" stroke="#111827" stroke-width="3"/>
+              <circle cx="246" cy="106" r="10" fill="#fff" stroke="#111827" stroke-width="3"/>
+              <line x1="356" y1="106" x2="390" y2="72" stroke="#111827" stroke-width="4" marker-end="url(#arrC1)"/>
+              <path d="M366 106 A16 16 0 0 0 378 95" fill="none" stroke="#111827" stroke-width="2"/>
+              <text x="383" y="99" class="svg-small" font-size="11">60°</text>
+              <text x="332" y="137" class="svg-label" font-size="13">20 N</text>
+              <text x="272" y="82" class="svg-small" font-size="11">Case C, r = 0.50 m</text>
+            </g>
+            <text x="214" y="228" text-anchor="middle" class="svg-small" font-size="12">Take CCW as positive. / ให้ทวนเข็มเป็นบวก</text>
+          </svg>
+          <div class="caption">ในแต่ละกรณี จุดหมุนคือศูนย์กลางน็อตที่ปลายประแจด้านซ้าย / In each case, the pivot is the bolt center at the left end of the wrench.</div>
+        </div>
+        <div class="data-card">
+          <div class="data-title">Given data / ข้อมูลกำหนด</div>
+          <table class="data-table">
+            <tr><th>Case / กรณี</th><th>Data / ข้อมูล</th></tr>
+            <tr><td>A</td><td>\(r=0.30\,m\), \(F=40\,N\), perpendicular</td></tr>
+            <tr><td>B</td><td>\(r=0.20\,m\), \(F=30\,N\), perpendicular</td></tr>
+            <tr><td>C</td><td>\(r=0.50\,m\), \(F=20\,N\), \(\theta=60^\circ\)</td></tr>
+          </table>
+        </div>
+      </div>
+      <ol class="subq" type="ก">
+        <li>หาแรงบิดของกรณี A พร้อมทิศ / Find the torque for Case A with direction. <span class="pts">(2 pts / 2 คะแนน)</span><span class="ans small"></span></li>
+        <li>หาแรงบิดของกรณี B พร้อมทิศ / Find the torque for Case B with direction. <span class="pts">(1.5 pts / 1.5 คะแนน)</span><span class="ans small"></span></li>
+        <li>หาแรงบิดของกรณี C พร้อมทิศ / Find the torque for Case C with direction. <span class="pts">(2 pts / 2 คะแนน)</span><span class="ans small"></span></li>
+        <li>กรณีใดให้แรงบิดมากที่สุด และเพราะเหตุใด / Which case gives the largest torque, and why? <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+        <li>ถ้าแรงพาดผ่านจุดหมุนพอดี แรงบิดจะเป็นเท่าใด / If the line of action passes through the pivot, what is the torque? <span class="pts">(0.5 pt / 0.5 คะแนน)</span><span class="ans small"></span></li>
+      </ol>
+      <div class="solution"><div class="solution-title">เฉลย / Solution</div><div class="sol-grid">
+        <div class="sol-card">Case A: \(\tau=rF=(0.30)(40)=\)<span class="red">\(12\,N\cdot m\)</span>, direction <span class="red">CCW</span>.</div>
+        <div class="sol-card">Case B: \(\tau=rF=(0.20)(30)=\)<span class="red">\(6\,N\cdot m\)</span>, direction <span class="red">CCW</span>.</div>
+        <div class="sol-card">Case C: \(\tau=rF\sin\theta=(0.50)(20)\sin60^\circ=10(0.866)=\)<span class="red">\(8.66\,N\cdot m\)</span>, direction <span class="red">CCW</span>.</div>
+        <div class="sol-card">Largest torque is <span class="red">Case A</span> because it has the greatest effective product \(rF\sin\theta\).</div>
+        <div class="sol-card">If the line of action passes through the pivot, the lever arm is zero, so torque is <span class="red">0</span>.</div>
+      </div></div>
+    </article>
+  </main>
+
+  <!-- PAGE 2 -->
+  <main class="sheet exam-page">
+    <section class="page-header">
+      <div class="phys-note">Part C: Torque, turning effect, rotational equilibrium, and rotational dynamics. / ส่วน C: แรงบิด ผลการหมุน สมดุลการหมุน และพลศาสตร์การหมุน</div>
+      <div class="page-title">Y12 Physics Written Exam Part C: Torque and Rotational Dynamics / ฟิสิกส์ Y12 ข้อเขียนส่วน C: แรงบิดและพลศาสตร์การหมุน</div>
+      <div class="page-subtitle">Page 2: Rotational equilibrium on a seesaw / หน้า 2: สมดุลการหมุนบนไม้กระดก <b>(35 points / 35 คะแนน)</b></div>
+      <div class="instruction-strip"><b>Instructions / คำชี้แจง:</b> Use clockwise and counterclockwise torques carefully. / ระวังทิศของแรงบิดตามเข็มและทวนเข็ม</div>
+      <div class="formula-strip"><div class="formula-title">Given relationships / ความสัมพันธ์ที่กำหนด</div><div class="formula-row"><span>\(\tau=rF\)</span><span>equilibrium: \(\Sigma \tau = 0\)</span><span>clockwise torque = counterclockwise torque</span></div></div>
+    </section>
+    <article class="question" data-answer="Q2: child's torque=300 N m CCW, x=0.75 m for balance, if x=0.60 m net torque=60 N m CCW, board turns toward child side.">
+      <div class="qhead"><span class="num">2</span><div class="qtitle">ไม้กระดกสมดุลหรือไม่ / Is the seesaw balanced?</div><div class="score">7 pts</div></div>
+      <div class="scenario">
+        เด็กคนหนึ่งนั่งทางซ้ายของจุดหมุน ส่วนผู้ใหญ่นั่งทางขวา ให้ละเลยน้ำหนักของแผ่นไม้ แล้วพิจารณาเฉพาะแรงน้ำหนักของคนทั้งสอง
+        <br>
+        A child sits on the left of the pivot and an adult sits on the right. Neglect the weight of the board and consider only the weights of the two people.
+      </div>
+      <div class="model-row">
+        <div class="model-card"><div class="model-title">SVG model / รูปจำลอง</div>
+          <svg class="model-svg" viewBox="0 0 430 250" aria-label="seesaw torque">
+            <rect x="14" y="14" width="402" height="222" rx="12" fill="#fff" stroke="#111827" stroke-width="3"/>
+            <line x1="42" y1="154" x2="388" y2="154" stroke="#111827" stroke-width="6"/>
+            <polygon points="210,154 240,154 225,192" fill="#fff" stroke="#111827" stroke-width="3"/>
+            <circle cx="125" cy="120" r="18" fill="#fff" stroke="#111827" stroke-width="3"/>
+            <line x1="125" y1="138" x2="125" y2="172" stroke="#111827" stroke-width="3"/>
+            <line x1="112" y1="150" x2="138" y2="150" stroke="#111827" stroke-width="3"/>
+            <line x1="125" y1="172" x2="114" y2="194" stroke="#111827" stroke-width="3"/>
+            <line x1="125" y1="172" x2="136" y2="194" stroke="#111827" stroke-width="3"/>
+            <line x1="125" y1="98" x2="125" y2="126" stroke="#111827" stroke-width="4"/>
+            <text x="82" y="92" class="svg-label" font-size="13">250 N</text>
+            <text x="91" y="213" class="svg-small" font-size="11">1.20 m</text>
+            <circle cx="310" cy="112" r="20" fill="#fff" stroke="#111827" stroke-width="3"/>
+            <line x1="310" y1="132" x2="310" y2="172" stroke="#111827" stroke-width="3"/>
+            <line x1="294" y1="148" x2="326" y2="148" stroke="#111827" stroke-width="3"/>
+            <line x1="310" y1="172" x2="296" y2="194" stroke="#111827" stroke-width="3"/>
+            <line x1="310" y1="172" x2="324" y2="194" stroke="#111827" stroke-width="3"/>
+            <line x1="310" y1="90" x2="310" y2="118" stroke="#111827" stroke-width="4"/>
+            <text x="272" y="84" class="svg-label" font-size="13">400 N</text>
+            <text x="292" y="213" class="svg-small" font-size="11">x</text>
+            <text x="206" y="214" class="svg-small" font-size="11">pivot</text>
+          </svg>
+          <div class="caption">แรงน้ำหนักทั้งสองกระทำลงในแนวดิ่ง / Both weights act vertically downward.</div>
+        </div>
+        <div class="data-card"><div class="data-title">Given data / ข้อมูลกำหนด</div>
+          <table class="data-table">
+            <tr><th>Person / คน</th><th>Weight / น้ำหนัก</th><th>Distance from pivot / ระยะจากจุดหมุน</th></tr>
+            <tr><td>Child / เด็ก</td><td>\(250\,N\)</td><td>\(1.20\,m\) to the left</td></tr>
+            <tr><td>Adult / ผู้ใหญ่</td><td>\(400\,N\)</td><td>\(x\) to the right</td></tr>
+          </table>
+        </div>
+      </div>
+      <ol class="subq" type="ก">
+        <li>หาแรงบิดของเด็กเกี่ยวกับจุดหมุน / Find the child's torque about the pivot. <span class="pts">(1.5 pts / 1.5 คะแนน)</span><span class="ans small"></span></li>
+        <li>ถ้าไม้กระดกสมดุล จงหา \(x\) / If the seesaw is balanced, find \(x\). <span class="pts">(2.5 pts / 2.5 คะแนน)</span><span class="ans small"></span></li>
+        <li>ถ้าผู้ใหญ่นั่งห่างจุดหมุนเพียง \(0.60\,m\) จงหาแรงบิดลัพธ์ / If the adult sits only \(0.60\,m\) from the pivot, find the net torque. <span class="pts">(2 pts / 2 คะแนน)</span><span class="ans small"></span></li>
+        <li>ไม้กระดกจะหมุนไปทางด้านใด / Which side will move downward? <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+      </ol>
+      <div class="solution"><div class="solution-title">เฉลย / Solution</div><div class="sol-grid">
+        <div class="sol-card">Child's torque: \(\tau=(1.20)(250)=\)<span class="red">\(300\,N\cdot m\)</span>, direction <span class="red">CCW</span>.</div>
+        <div class="sol-card">Balance: \((250)(1.20)=(400)x\Rightarrow 300=400x\Rightarrow x=\)<span class="red">\(0.75\,m\)</span>.</div>
+        <div class="sol-card">If adult sits at \(0.60\,m\): adult torque \(=(400)(0.60)=240\,N\cdot m\) clockwise. Net torque \(=300-240=\)<span class="red">\(60\,N\cdot m\)</span> <span class="red">CCW</span>.</div>
+        <div class="sol-card">The board turns so that the <span class="red">child's side goes downward</span>.</div>
+      </div></div>
+    </article>
+  </main>
+
+  <!-- PAGE 3 -->
+  <main class="sheet exam-page">
+    <section class="page-header">
+      <div class="phys-note">Part C: Torque, turning effect, rotational equilibrium, and rotational dynamics. / ส่วน C: แรงบิด ผลการหมุน สมดุลการหมุน และพลศาสตร์การหมุน</div>
+      <div class="page-title">Y12 Physics Written Exam Part C: Torque and Rotational Dynamics / ฟิสิกส์ Y12 ข้อเขียนส่วน C: แรงบิดและพลศาสตร์การหมุน</div>
+      <div class="page-subtitle">Page 3: Net torque on a wheel / หน้า 3: แรงบิดลัพธ์บนล้อ <b>(35 points / 35 คะแนน)</b></div>
+      <div class="instruction-strip"><b>Instructions / คำชี้แจง:</b> A tangential force speeds up the wheel while a friction torque opposes the motion. / มีแรงดึงแนวสัมผัสทำให้ล้อเร่งขึ้น ขณะที่แรงบิดเสียดทานต้านการหมุน</div>
+      <div class="formula-strip"><div class="formula-title">Given relationships / ความสัมพันธ์ที่กำหนด</div><div class="formula-row"><span>\(\tau=rF\)</span><span>\(\Sigma\tau=I\alpha\)</span><span>\(\omega=\omega_0+\alpha t\)</span><span>\(a_t=\alpha r\)</span></div></div>
+    </section>
+    <article class="question" data-answer="Q3: applied torque=3.0 N m, net torque=2.2 N m, alpha=3.67 rad/s2, omega after 4 s=14.7 rad/s, tangential acceleration=0.73 m/s2.">
+      <div class="qhead"><span class="num">3</span><div class="qtitle">ล้อทดลองถูกดึงให้หมุน / A test wheel is driven by a tangential force</div><div class="score">7 pts</div></div>
+      <div class="scenario">
+        ในห้องทดลอง มีการดึงขอบล้อด้วยแรงแนวสัมผัสคงที่ ขณะเดียวกันมีแรงบิดเสียดทานต้านการหมุน ให้ถือว่าล้อเริ่มจากหยุดนิ่ง
+        <br>
+        In a lab, a wheel is pulled by a constant tangential force at the rim while friction provides an opposing torque. Assume the wheel starts from rest.
+      </div>
+      <div class="model-row">
+        <div class="model-card"><div class="model-title">SVG model / รูปจำลอง</div>
+          <svg class="model-svg" viewBox="0 0 430 260" aria-label="wheel torque dynamics">
+            <defs><marker id="arrC3" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><polygon points="0 0,10 4,0 8" fill="#111827"/></marker></defs>
+            <rect x="12" y="12" width="406" height="236" rx="12" fill="#fff" stroke="#111827" stroke-width="3"/>
+            <circle cx="162" cy="129" r="68" fill="#fff" stroke="#111827" stroke-width="4"/>
+            <circle cx="162" cy="129" r="5" fill="#111827"/>
+            <line x1="162" y1="129" x2="230" y2="129" stroke="#111827" stroke-width="3"/>
+            <text x="188" y="118" class="svg-small" font-size="11">R</text>
+            <line x1="230" y1="129" x2="230" y2="74" stroke="#111827" stroke-width="4" marker-end="url(#arrC3)"/>
+            <text x="238" y="84" class="svg-label" font-size="13">15 N</text>
+            <path d="M246 90 A94 94 0 0 1 248 174" fill="none" stroke="#111827" stroke-width="4" marker-end="url(#arrC3)"/>
+            <text x="257" y="133" class="svg-small" font-size="11">rotation</text>
+            <path d="M79 168 A58 58 0 0 1 88 84" fill="none" stroke="#111827" stroke-width="3" marker-end="url(#arrC3)"/>
+            <text x="48" y="80" class="svg-small" font-size="11">friction torque</text>
+            <rect x="288" y="72" width="102" height="116" rx="10" fill="#fff" stroke="#111827" stroke-width="3"/>
+            <text x="339" y="98" text-anchor="middle" class="svg-label" font-size="13">R = 0.20 m</text>
+            <text x="339" y="124" text-anchor="middle" class="svg-label" font-size="13">I = 0.60</text>
+            <text x="339" y="142" text-anchor="middle" class="svg-small" font-size="11">kg·m²</text>
+            <text x="339" y="167" text-anchor="middle" class="svg-label" font-size="13">friction = 0.8 N·m</text>
+          </svg>
+          <div class="caption">แรง 15 N ดึงในแนวสัมผัสที่ขอบล้อ / A 15 N force pulls tangentially at the rim.</div>
+        </div>
+        <div class="data-card"><div class="data-title">Given data / ข้อมูลกำหนด</div>
+          <table class="data-table">
+            <tr><th>Quantity / ปริมาณ</th><th>Value / ค่า</th></tr>
+            <tr><td>Force \(F\)</td><td>\(15\,N\)</td></tr>
+            <tr><td>Radius \(R\)</td><td>\(0.20\,m\)</td></tr>
+            <tr><td>Moment of inertia \(I\)</td><td>\(0.60\,kg\cdot m^2\)</td></tr>
+            <tr><td>Opposing torque</td><td>\(0.8\,N\cdot m\)</td></tr>
+            <tr><td>Initial \(\omega_0\)</td><td>\(0\,rad/s\)</td></tr>
+            <tr><td>Time</td><td>\(4.0\,s\)</td></tr>
+          </table>
+        </div>
+      </div>
+      <ol class="subq" type="ก">
+        <li>หาแรงบิดจากแรงดึงที่ขอบล้อ / Find the torque due to the pulling force. <span class="pts">(1.5 pts / 1.5 คะแนน)</span><span class="ans small"></span></li>
+        <li>หาแรงบิดลัพธ์ / Find the net torque. <span class="pts">(1.5 pts / 1.5 คะแนน)</span><span class="ans small"></span></li>
+        <li>หาความเร่งเชิงมุม \(\alpha\) / Find the angular acceleration \(\alpha\). <span class="pts">(1.5 pts / 1.5 คะแนน)</span><span class="ans small"></span></li>
+        <li>หา \(\omega\) หลัง \(4.0\,s\) / Find \(\omega\) after \(4.0\,s\). <span class="pts">(1.5 pts / 1.5 คะแนน)</span><span class="ans small"></span></li>
+        <li>หาความเร่งสัมผัสที่ขอบล้อ / Find the tangential acceleration at the rim. <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+      </ol>
+      <div class="solution"><div class="solution-title">เฉลย / Solution</div><div class="sol-grid">
+        <div class="sol-card">Applied torque: \(\tau=rF=(0.20)(15)=\)<span class="red">\(3.0\,N\cdot m\)</span>.</div>
+        <div class="sol-card">Net torque: \(\tau_{net}=3.0-0.8=\)<span class="red">\(2.2\,N\cdot m\)</span>.</div>
+        <div class="sol-card">\(\alpha=\tau_{net}/I=2.2/0.60=\)<span class="red">\(3.67\,rad/s^2\)</span>.</div>
+        <div class="sol-card">\(\omega=\omega_0+\alpha t=0+(3.67)(4.0)=\)<span class="red">\(14.7\,rad/s\)</span>.</div>
+        <div class="sol-card">\(a_t=\alpha R=(3.67)(0.20)=\)<span class="red">\(0.73\,m/s^2\)</span>.</div>
+      </div></div>
+    </article>
+  </main>
+
+  <!-- PAGE 4 -->
+  <main class="sheet exam-page">
+    <section class="page-header">
+      <div class="phys-note">Part C: Torque, turning effect, rotational equilibrium, and rotational dynamics. / ส่วน C: แรงบิด ผลการหมุน สมดุลการหมุน และพลศาสตร์การหมุน</div>
+      <div class="page-title">Y12 Physics Written Exam Part C: Torque and Rotational Dynamics / ฟิสิกส์ Y12 ข้อเขียนส่วน C: แรงบิดและพลศาสตร์การหมุน</div>
+      <div class="page-subtitle">Page 4: Drum and rope / หน้า 4: ดรัมและเชือก <b>(35 points / 35 คะแนน)</b></div>
+      <div class="instruction-strip"><b>Instructions / คำชี้แจง:</b> Assume there is no slipping between the drum and the rope. / ให้ถือว่าเชือกไม่ลื่นบนดรัม</div>
+      <div class="formula-strip"><div class="formula-title">Given relationships / ความสัมพันธ์ที่กำหนด</div><div class="formula-row"><span>\(\Sigma\tau=I\alpha\)</span><span>\(\tau=TR\)</span><span>\(a=\alpha R\)</span><span>no slip / ไม่ลื่น</span></div></div>
+    </section>
+    <article class="question" data-answer="Q4: a=0.80 m/s2 downward, net torque=0.40 N m, T=4.0 N, length unwound in 3s=3.6 m.">
+      <div class="qhead"><span class="num">4</span><div class="qtitle">เชือกคลายจากดรัม / Rope unwinds from a drum</div><div class="score">7 pts</div></div>
+      <div class="scenario">
+        ดรัมหมุนได้อย่างอิสระและมีเชือกพันอยู่โดยรอบ เมื่อดรัมมีความเร่งเชิงมุมคงที่ เชือกจึงเคลื่อนที่ลงโดยไม่ลื่น
+        <br>
+        A freely rotating drum has a rope wound around it. When the drum has constant angular acceleration, the rope moves downward without slipping.
+      </div>
+      <div class="model-row">
+        <div class="model-card"><div class="model-title">SVG model / รูปจำลอง</div>
+          <svg class="model-svg" viewBox="0 0 430 260" aria-label="drum rope rotational dynamics">
+            <defs><marker id="arrC4" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><polygon points="0 0,10 4,0 8" fill="#111827"/></marker></defs>
+            <rect x="12" y="12" width="406" height="236" rx="12" fill="#fff" stroke="#111827" stroke-width="3"/>
+            <circle cx="156" cy="120" r="56" fill="#fff" stroke="#111827" stroke-width="4"/>
+            <circle cx="156" cy="120" r="5" fill="#111827"/>
+            <path d="M226 86 A86 86 0 0 1 228 157" fill="none" stroke="#111827" stroke-width="4" marker-end="url(#arrC4)"/>
+            <text x="237" y="122" class="svg-label" font-size="13">rotation</text>
+            <path d="M212 120 L212 196" fill="none" stroke="#111827" stroke-width="4"/>
+            <rect x="193" y="196" width="38" height="28" fill="#fff" stroke="#111827" stroke-width="3"/>
+            <line x1="212" y1="224" x2="212" y2="245" stroke="#111827" stroke-width="4" marker-end="url(#arrC4)"/>
+            <text x="221" y="240" class="svg-label" font-size="13">rope motion</text>
+            <line x1="156" y1="120" x2="212" y2="120" stroke="#111827" stroke-width="3"/>
+            <text x="177" y="110" class="svg-small" font-size="11">R</text>
+            <rect x="287" y="72" width="105" height="120" rx="10" fill="#fff" stroke="#111827" stroke-width="3"/>
+            <text x="339" y="98" text-anchor="middle" class="svg-label" font-size="13">R = 0.10 m</text>
+            <text x="339" y="124" text-anchor="middle" class="svg-label" font-size="13">I = 0.050</text>
+            <text x="339" y="142" text-anchor="middle" class="svg-small" font-size="11">kg·m²</text>
+            <text x="339" y="166" text-anchor="middle" class="svg-label" font-size="13">α = 8.0 rad/s²</text>
+          </svg>
+          <div class="caption">เชือกเคลื่อนที่ลงด้วยอัตราเร่งเชิงเส้นที่สอดคล้องกับ \(\alpha\) / The rope moves downward with linear acceleration related to \(\alpha\).</div>
+        </div>
+        <div class="data-card"><div class="data-title">Given data / ข้อมูลกำหนด</div>
+          <table class="data-table">
+            <tr><th>Quantity / ปริมาณ</th><th>Value / ค่า</th></tr>
+            <tr><td>Radius \(R\)</td><td>\(0.10\,m\)</td></tr>
+            <tr><td>Moment of inertia \(I\)</td><td>\(0.050\,kg\cdot m^2\)</td></tr>
+            <tr><td>Angular acceleration \(\alpha\)</td><td>\(8.0\,rad/s^2\)</td></tr>
+            <tr><td>Initial \(\omega_0\)</td><td>\(0\,rad/s\)</td></tr>
+            <tr><td>Time</td><td>\(3.0\,s\)</td></tr>
+          </table>
+        </div>
+      </div>
+      <ol class="subq" type="ก">
+        <li>หาอัตราเร่งเชิงเส้นของเชือก / Find the linear acceleration of the rope. <span class="pts">(1.5 pts / 1.5 คะแนน)</span><span class="ans small"></span></li>
+        <li>หาแรงบิดลัพธ์บนดรัม / Find the net torque on the drum. <span class="pts">(1.5 pts / 1.5 คะแนน)</span><span class="ans small"></span></li>
+        <li>หาแรงตึงเชือก \(T\) / Find the tension \(T\) in the rope. <span class="pts">(2 pts / 2 คะแนน)</span><span class="ans small"></span></li>
+        <li>ในเวลา \(3.0\,s\) เชือกคลายออกยาวเท่าใด / In \(3.0\,s\), how much rope is unwound? <span class="pts">(2 pts / 2 คะแนน)</span><span class="ans small"></span></li>
+      </ol>
+      <div class="solution"><div class="solution-title">เฉลย / Solution</div><div class="sol-grid">
+        <div class="sol-card">\(a=\alpha R=(8.0)(0.10)=\)<span class="red">\(0.80\,m/s^2\)</span> downward.</div>
+        <div class="sol-card">\(\tau_{net}=I\alpha=(0.050)(8.0)=\)<span class="red">\(0.40\,N\cdot m\)</span>.</div>
+        <div class="sol-card">\(\tau=TR\Rightarrow T=\tau/R=0.40/0.10=\)<span class="red">\(4.0\,N\)</span>.</div>
+        <div class="sol-card">\(\theta=\tfrac12\alpha t^2=\tfrac12(8.0)(3.0)^2=36\,rad\). Thus \(s=R\theta=(0.10)(36)=\)<span class="red">\(3.6\,m\)</span>.</div>
+      </div></div>
+    </article>
+  </main>
+
+  <!-- PAGE 5 -->
+  <main class="sheet exam-page">
+    <section class="page-header">
+      <div class="phys-note">Part C: Torque, turning effect, rotational equilibrium, and rotational dynamics. / ส่วน C: แรงบิด ผลการหมุน สมดุลการหมุน และพลศาสตร์การหมุน</div>
+      <div class="page-title">Y12 Physics Written Exam Part C: Torque and Rotational Dynamics / ฟิสิกส์ Y12 ข้อเขียนส่วน C: แรงบิดและพลศาสตร์การหมุน</div>
+      <div class="page-subtitle">Page 5: Braking a rotating platform / หน้า 5: การเบรกแท่นหมุน <b>(35 points / 35 คะแนน)</b></div>
+      <div class="instruction-strip"><b>Instructions / คำชี้แจง:</b> The braking torque is constant and opposite the rotation. / แรงบิดจากเบรกมีค่าคงที่และมีทิศตรงข้ามกับการหมุน</div>
+      <div class="formula-strip"><div class="formula-title">Given relationships / ความสัมพันธ์ที่กำหนด</div><div class="formula-row"><span>\(\Sigma\tau=I\alpha\)</span><span>\(\omega=\omega_0+\alpha t\)</span><span>\(\theta=\omega_0t+\frac12\alpha t^2\)</span><span>\(s=R\theta\)</span></div></div>
+    </section>
+    <article class="question" data-answer="Q5: alpha=-0.75 rad/s2, stop time=8.0 s, angular displacement=24 rad, distance at rim=12 m, average angular speed=3.0 rad/s.">
+      <div class="qhead"><span class="num">5</span><div class="qtitle">แท่นหมุนกำลังชะลอ / A rotating platform is slowing down</div><div class="score">7 pts</div></div>
+      <div class="scenario">
+        แท่นหมุนในห้องทดลองกำลังหมุนด้วยความเร็วมุมเริ่มต้น แล้วถูกเบรกด้วยแรงบิดคงที่จนหยุด ให้พิจารณาว่าการชะลอเป็นแบบสม่ำเสมอ
+        <br>
+        A rotating platform in the lab has an initial angular speed and is then braked by a constant torque until it stops. Assume the slowing down is uniform.
+      </div>
+      <div class="model-row">
+        <div class="model-card"><div class="model-title">SVG model / รูปจำลอง</div>
+          <svg class="model-svg" viewBox="0 0 430 260" aria-label="rotating platform braking">
+            <defs><marker id="arrC5" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><polygon points="0 0,10 4,0 8" fill="#111827"/></marker></defs>
+            <rect x="12" y="12" width="406" height="236" rx="12" fill="#fff" stroke="#111827" stroke-width="3"/>
+            <ellipse cx="156" cy="146" rx="94" ry="36" fill="#fff" stroke="#111827" stroke-width="4"/>
+            <ellipse cx="156" cy="146" rx="18" ry="7" fill="#fff" stroke="#111827" stroke-width="3"/>
+            <path d="M255 96 A110 110 0 0 1 257 188" fill="none" stroke="#111827" stroke-width="4" marker-end="url(#arrC5)"/>
+            <text x="267" y="146" class="svg-label" font-size="13">rotation</text>
+            <line x1="156" y1="146" x2="250" y2="146" stroke="#111827" stroke-width="3"/>
+            <text x="195" y="137" class="svg-small" font-size="11">R</text>
+            <path d="M72 100 A90 90 0 0 0 68 194" fill="none" stroke="#111827" stroke-width="3" marker-end="url(#arrC5)"/>
+            <text x="28" y="98" class="svg-small" font-size="11">brake torque</text>
+            <rect x="292" y="72" width="100" height="126" rx="10" fill="#fff" stroke="#111827" stroke-width="3"/>
+            <text x="342" y="98" text-anchor="middle" class="svg-label" font-size="13">I = 12</text>
+            <text x="342" y="116" text-anchor="middle" class="svg-small" font-size="11">kg·m²</text>
+            <text x="342" y="141" text-anchor="middle" class="svg-label" font-size="13">ω₀ = 6.0 rad/s</text>
+            <text x="342" y="166" text-anchor="middle" class="svg-label" font-size="13">τ = 9.0 N·m</text>
+            <text x="342" y="190" text-anchor="middle" class="svg-label" font-size="13">R = 0.50 m</text>
+          </svg>
+          <div class="caption">แรงบิดจากเบรกมีทิศตรงข้ามกับการหมุนเดิม / The brake torque acts opposite to the original rotation.</div>
+        </div>
+        <div class="data-card"><div class="data-title">Given data / ข้อมูลกำหนด</div>
+          <table class="data-table">
+            <tr><th>Quantity / ปริมาณ</th><th>Value / ค่า</th></tr>
+            <tr><td>Moment of inertia \(I\)</td><td>\(12\,kg\cdot m^2\)</td></tr>
+            <tr><td>Initial \(\omega_0\)</td><td>\(6.0\,rad/s\)</td></tr>
+            <tr><td>Brake torque</td><td>\(9.0\,N\cdot m\)</td></tr>
+            <tr><td>Radius \(R\)</td><td>\(0.50\,m\)</td></tr>
+            <tr><td>Final \(\omega\)</td><td>\(0\,rad/s\)</td></tr>
+          </table>
+        </div>
+      </div>
+      <ol class="subq" type="ก">
+        <li>หาความเร่งเชิงมุม \(\alpha\) / Find the angular acceleration \(\alpha\). <span class="pts">(1.5 pts / 1.5 คะแนน)</span><span class="ans small"></span></li>
+        <li>หาเวลาที่แท่นหมุนหยุด / Find the time taken to stop. <span class="pts">(1.5 pts / 1.5 คะแนน)</span><span class="ans small"></span></li>
+        <li>หาระยะเชิงมุมทั้งหมดก่อนหยุด / Find the total angular displacement before stopping. <span class="pts">(2 pts / 2 คะแนน)</span><span class="ans small"></span></li>
+        <li>จุดที่ขอบแท่นหมุนเคลื่อนที่เป็นระยะกี่เมตร / How far does a point on the rim move? <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+        <li>หาอัตราเร็วเชิงมุมเฉลี่ยระหว่างการชะลอ / Find the average angular speed during the slowing down. <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+      </ol>
+      <div class="solution"><div class="solution-title">เฉลย / Solution</div><div class="sol-grid">
+        <div class="sol-card">\(\alpha=\Sigma\tau/I=-9.0/12=\)<span class="red">\(-0.75\,rad/s^2\)</span>.</div>
+        <div class="sol-card">\(0=6.0+(-0.75)t\Rightarrow t=\)<span class="red">\(8.0\,s\)</span>.</div>
+        <div class="sol-card">\(\theta=\omega_0t+\tfrac12\alpha t^2=(6.0)(8.0)+\tfrac12(-0.75)(8.0)^2=48-24=\)<span class="red">\(24\,rad\)</span>.</div>
+        <div class="sol-card">\(s=R\theta=(0.50)(24)=\)<span class="red">\(12\,m\)</span>.</div>
+        <div class="sol-card">Average angular speed \(=(\omega_0+\omega)/2=(6.0+0)/2=\)<span class="red">\(3.0\,rad/s\)</span>.</div>
+      </div></div>
+    </article>
+  </main>
+
+  <!-- ANSWER KEY -->
+  <main class="sheet key-page">
+    <section class="page-header">
+      <div class="phys-note">Part C: Short answer key. / เฉลยสั้นส่วนที่ C</div>
+      <div class="page-title">Answer Key: Y12 Physics Part C — Torque and Rotational Dynamics / เฉลย: แรงบิดและพลศาสตร์การหมุน</div>
+      <div class="page-subtitle">Use this page for teacher checking / ใช้หน้านี้สำหรับตรวจคำตอบ</div>
+    </section>
+    <div class="key">
+      <h2>Short Answer Key / เฉลยสั้น</h2>
+      <div class="key-grid">
+        <div class="key-item"><b>Q1:</b> A = \(12\,N\cdot m\) CCW, B = \(6\,N\cdot m\) CCW, C = \(8.66\,N\cdot m\) CCW; largest torque = Case A; if the force passes through the pivot, torque = 0.</div>
+        <div class="key-item"><b>Q2:</b> Child torque = \(300\,N\cdot m\) CCW; for balance, \(x=0.75\,m\); if adult sits at \(0.60\,m\), net torque = \(60\,N\cdot m\) CCW and the child's side moves down.</div>
+        <div class="key-item"><b>Q3:</b> Applied torque = \(3.0\,N\cdot m\); net torque = \(2.2\,N\cdot m\); \(\alpha=3.67\,rad/s^2\); \(\omega=14.7\,rad/s\) after \(4.0\,s\); \(a_t=0.73\,m/s^2\).</div>
+        <div class="key-item"><b>Q4:</b> \(a=0.80\,m/s^2\) downward; net torque = \(0.40\,N\cdot m\); \(T=4.0\,N\); length unwound in \(3.0\,s\) = \(3.6\,m\).</div>
+        <div class="key-item"><b>Q5:</b> \(\alpha=-0.75\,rad/s^2\); stopping time = \(8.0\,s\); angular displacement = \(24\,rad\); rim distance = \(12\,m\); average angular speed = \(3.0\,rad/s\).</div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function setMode(mode) {
+      document.body.classList.remove('mode-exam', 'mode-key', 'mode-solution');
+      document.body.classList.add(mode);
+      document.getElementById('statusText').textContent =
+        mode === 'mode-solution' ? 'Y12 Physics Part C — Solution mode' :
+        mode === 'mode-key' ? 'Y12 Physics Part C — Short key mode' :
+        'Y12 Physics Part C — Exam mode';
+      if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise();
+    }
+    function toggleSolution() {
+      if (document.body.classList.contains('mode-solution')) setMode('mode-exam');
+      else setMode('mode-solution');
+    }
+    window.addEventListener('load', () => {
+      if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise();
+    });
+  </script>
+</body>
+</html>

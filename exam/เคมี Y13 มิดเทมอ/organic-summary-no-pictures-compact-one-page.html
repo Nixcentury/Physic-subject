@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Organic Chemistry in Daily Life | Fill-in Exam | No Pictures Compact</title>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --paper-w:210mm;
+      --paper-h:297mm;
+      --pad-x:10.5mm;
+      --pad-y:8.5mm;
+      --ink:#111827;
+      --line:#cbd5e1;
+      --soft:#f8fafc;
+      --muted:#475569;
+      --red:#dc2626;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      background:#e5e7eb;
+      color:var(--ink);
+      font-family:"Google Sans","Noto Sans Thai",Arial,sans-serif;
+      line-height:1.18;
+    }
+    .toolbar{
+      position:sticky;top:0;z-index:20;
+      display:flex;flex-wrap:wrap;gap:8px;
+      justify-content:center;align-items:center;
+      padding:10px;background:#0f172a;color:#fff;
+    }
+    .toolbar button{
+      border:0;border-radius:999px;padding:8px 14px;
+      font-family:inherit;font-weight:800;cursor:pointer;
+      background:#fff;color:#0f172a;
+    }
+    .toolbar .primary{background:#bae6fd;color:#082f49}
+    .toolbar .gold{background:#fde68a;color:#78350f}
+    .toolbar .status{flex-basis:100%;font-size:12px;text-align:center;opacity:.9}
+
+    .sheet{
+      width:var(--paper-w);
+      min-height:var(--paper-h);
+      margin:16px auto 28px;
+      padding:var(--pad-y) var(--pad-x);
+      background:#fff;
+      box-shadow:0 16px 48px rgba(15,23,42,.22);
+      page-break-after:always;
+      break-after:page;
+      overflow:hidden;
+    }
+
+    .top-note{
+      border-left:4px solid #111827;background:#f8fafc;
+      padding:4px 7px;margin-bottom:4px;
+      font-size:9.3px;line-height:1.16;
+    }
+    .exam-title{text-align:center;font-weight:900;font-size:14px;line-height:1.12;margin:0}
+    .exam-subtitle{text-align:center;font-size:9.6px;color:#374151;margin:1px 0 4px}
+    .instruction{
+      border:1px solid var(--line);border-radius:7px;background:#f9fafb;
+      padding:3px 6px;margin:3px 0 4px;
+      font-size:8.9px;line-height:1.12;
+    }
+
+    .word-bank{
+      border:1.3px solid #111827;border-radius:8px;
+      padding:4px;margin-bottom:5px;
+    }
+    .word-bank-title{font-weight:900;font-size:9.4px;margin-bottom:2px}
+    .word-grid{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:2px;
+    }
+    .word{
+      border:1px solid var(--line);border-radius:5px;
+      padding:1px 3px;background:#fff;
+      font-size:7.65px;line-height:1.04;
+      min-height:12px;
+    }
+
+    .q-block{
+      border:1px solid var(--line);border-radius:8px;
+      padding:4px 6px;margin-bottom:4px;
+      break-inside:avoid;page-break-inside:avoid;
+    }
+    .q-head{
+      display:flex;justify-content:space-between;align-items:baseline;
+      gap:8px;margin-bottom:2px;
+    }
+    .q-title{font-size:10px;font-weight:900;line-height:1.12}
+    .score{font-size:8.5px;font-weight:900;white-space:nowrap}
+
+    p{margin:1px 0}
+    .en,.th{font-size:8.15px;line-height:1.13}
+    .en{color:#334155}
+    .blank-no{font-size:7.2px;font-weight:900;margin-right:1px}
+    .blank{
+      display:inline-block;
+      min-width:14.5mm;
+      height:.78em;
+      border-bottom:1.05px dotted #111827;
+      vertical-align:baseline;
+      margin:0 1px;
+    }
+
+    .answer-key,.solution-sheet{display:none}
+    .answer-key h2,.solution-sheet h2{font-size:13px;margin:0 0 5px;border-bottom:2px solid #111827;padding-bottom:3px}
+    .key-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+    .key-item{
+      border:1px solid var(--line);border-radius:6px;padding:4px;
+      font-size:9.2px;line-height:1.28;background:#fff;
+    }
+    .solution-card{
+      border:1px solid var(--line);border-radius:7px;padding:6px;margin-bottom:5px;
+      font-size:9.6px;line-height:1.32;background:#fff;
+    }
+    .sol-title{font-size:11px;font-weight:900;margin-bottom:3px}
+    .ans-red{color:var(--red);font-weight:900}
+
+    body.mode-key .key-page{display:block}
+    body.mode-exam .key-page, body.mode-solution .key-page{display:none}
+    body.mode-solution .exam-page{display:none}
+    body.mode-solution .solution-sheet{display:block}
+
+    @page{size:A4 portrait;margin:0}
+    @media print{
+      html,body{width:210mm;background:white!important}
+      body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .toolbar{display:none!important}
+      .sheet{
+        width:210mm;
+        min-height:297mm;
+        margin:0;
+        box-shadow:none;
+        page-break-after:always;
+        break-after:page;
+      }
+      .exam-page{overflow:hidden}
+      .q-block{break-inside:avoid;page-break-inside:avoid}
+      .top-note{font-size:8.8px}
+      .exam-title{font-size:13.2px}
+      .exam-subtitle{font-size:9.2px}
+      .instruction{font-size:8.5px}
+      .word{font-size:7.25px}
+      .q-title{font-size:9.6px}
+      .score{font-size:8.3px}
+      .en,.th{font-size:7.85px}
+    }
+
+    @media screen and (max-width:840px){
+      .sheet{width:calc(100vw - 16px);min-height:auto}
+      .key-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+
+<body class="mode-exam">
+  <div class="toolbar">
+    <button class="primary" onclick="printExam()">🖨️ พิมพ์ข้อสอบ</button>
+    <button onclick="printWithKey()">✅ พิมพ์พร้อมเฉลยสั้น</button>
+    <button class="gold" onclick="printSolution()">📘 พิมพ์เฉลยละเอียด</button>
+    <button onclick="toggleKey()">👀 เปิด/ปิดเฉลยสั้นบนจอ</button>
+    <div class="status" id="statusText">Organic Chemistry in Daily Life — No Pictures Compact 1-page layout</div>
+  </div>
+
+  <section class="sheet exam-page">
+    <div class="top-note">คำชี้แจง: จงเลือกคำศัพท์จากคลังคำไปเติมในช่องว่างให้ถูกต้องที่สุด โดยใช้คำแต่ละคำเพียง 1 ครั้ง</div>
+    <h1 class="exam-title">Part A: Organic Chemistry in Daily Life / เคมีอินทรีย์ในชีวิตประจำวัน</h1>
+    <div class="exam-subtitle">Master Summary Fill-in without Pictures / บทความสรุปเติมคำแบบไม่มีรูปประกอบ <b>(18 points / 18 คะแนน)</b></div>
+
+    <div class="instruction">
+      <b>Instructions / คำชี้แจง:</b> Choose the best words from the word bank to fill in the blanks. Use each word only once.
+    </div>
+
+    <div class="word-bank">
+      <div class="word-bank-title">Word Bank / คลังคำศัพท์</div>
+      <div class="word-grid">
+        <div class="word">covalent compounds / สารประกอบโคเวเลนต์</div>
+        <div class="word">C-H bonds / พันธะ C-H</div>
+        <div class="word">ionic compounds / สารประกอบไอออนิก</div>
+        <div class="word">skeletal structure / สูตรเส้นและมุม</div>
+        <div class="word">tetravalent / มีเวเลนซ์ 4</div>
+        <div class="word">functional group / หมู่ฟังก์ชัน</div>
+        <div class="word">parent chain / โซ่หลัก</div>
+        <div class="word">suffix / คำลงท้าย</div>
+        <div class="word">structural isomers / ไอโซเมอร์โครงสร้าง</div>
+        <div class="word">intermolecular forces / แรงยึดเหนี่ยวระหว่างโมเลกุล</div>
+        <div class="word">hydrogen bonding / พันธะไฮโดรเจน</div>
+        <div class="word">ester / เอสเทอร์</div>
+        <div class="word">saturated hydrocarbons / ไฮโดรคาร์บอนอิ่มตัว</div>
+        <div class="word">double bond / พันธะคู่</div>
+        <div class="word">triple bond / พันธะสาม</div>
+        <div class="word">substitution reaction / ปฏิกิริยาการแทนที่</div>
+        <div class="word">addition reaction / ปฏิกิริยาการเติม</div>
+        <div class="word">resonance / รีโซแนนซ์</div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-head">
+        <div class="q-title">1. Sugar vs Salt / น้ำตาลกับเกลือ</div>
+        <div class="score">(3 points / 3 คะแนน)</div>
+      </div>
+      <p class="en">
+        Sugar and salt are both white crystalline substances used in daily life, but they are chemically different.
+        Sugar, such as sucrose, is an organic substance. Most organic substances are usually molecular substances or
+        <span class="blank-no">(1)</span><span class="blank"></span>
+        and often contain
+        <span class="blank-no">(2)</span><span class="blank"></span>.
+        In contrast, table salt, sodium chloride, is an inorganic substance made of positive and negative ions, so it is classified as
+        <span class="blank-no">(3)</span><span class="blank"></span>.
+      </p>
+      <p class="th">
+        น้ำตาลและเกลือเป็นของแข็งผลึกสีขาวที่พบได้ในชีวิตประจำวัน แต่มีสมบัติทางเคมีแตกต่างกัน
+        น้ำตาล เช่น ซูโครส จัดเป็นสารอินทรีย์ สารอินทรีย์ส่วนใหญ่มักเป็นสารโมเลกุลหรือ
+        <span class="blank-no">(1)</span><span class="blank"></span>
+        และมักมี <span class="blank-no">(2)</span><span class="blank"></span>
+        ส่วนเกลือแกงเป็นสารอนินทรีย์ที่ประกอบด้วยไอออนบวกและไอออนลบ จึงจัดเป็น
+        <span class="blank-no">(3)</span><span class="blank"></span>
+      </p>
+    </div>
+
+    <div class="q-block">
+      <div class="q-head">
+        <div class="q-title">2. Hand Sanitizer vs Vinegar / แอลกอฮอล์ล้างมือกับน้ำส้มสายชู</div>
+        <div class="score">(3 points / 3 คะแนน)</div>
+      </div>
+      <p class="en">
+        Hand sanitizer usually contains ethanol, while vinegar contains acetic acid. Both are organic compounds, but their properties are different because they have different functional groups.
+        Organic molecules can be represented by a <span class="blank-no">(4)</span><span class="blank"></span>,
+        where line ends and corners represent carbon atoms. Carbon is <span class="blank-no">(5)</span><span class="blank"></span>,
+        so each carbon atom should form four bonds. A part of a molecule such as -OH or -COOH that strongly affects chemical properties is called a
+        <span class="blank-no">(6)</span><span class="blank"></span>.
+      </p>
+      <p class="th">
+        แอลกอฮอล์ล้างมือมักมีเอทานอลเป็นองค์ประกอบ ส่วนน้ำส้มสายชูมีกรดอะซิติกเป็นองค์ประกอบ
+        โมเลกุลอินทรีย์สามารถเขียนแทนด้วย <span class="blank-no">(4)</span><span class="blank"></span>
+        คาร์บอนเป็นธาตุที่ <span class="blank-no">(5)</span><span class="blank"></span>
+        จึงต้องสร้างพันธะรวม 4 พันธะ ส่วนของโมเลกุล เช่น -OH หรือ -COOH ที่ส่งผลต่อสมบัติทางเคมีเรียกว่า
+        <span class="blank-no">(6)</span><span class="blank"></span>
+      </p>
+    </div>
+
+    <div class="q-block">
+      <div class="q-head">
+        <div class="q-title">3. Gas Can and Isomers / กระป๋องแก๊สกับไอโซเมอร์</div>
+        <div class="score">(3 points / 3 คะแนน)</div>
+      </div>
+      <p class="en">
+        Gas used in portable gas cans or lighters often contains compounds such as butane or isobutane.
+        In systematic naming, the longest continuous carbon chain is called the
+        <span class="blank-no">(7)</span><span class="blank"></span>,
+        while the ending of the name is called the
+        <span class="blank-no">(8)</span><span class="blank"></span>.
+        Butane and isobutane have the same molecular formula, \(C_4H_{10}\), but different structures, so they are
+        <span class="blank-no">(9)</span><span class="blank"></span>.
+      </p>
+      <p class="th">
+        แก๊สที่ใช้ในกระป๋องแก๊สพกพาหรือไฟแช็กมักมีบิวเทนหรือไอโซบิวเทน
+        โซ่คาร์บอนต่อเนื่องที่ยาวที่สุดเรียกว่า
+        <span class="blank-no">(7)</span><span class="blank"></span>
+        ส่วนท้ายของชื่อเรียกว่า
+        <span class="blank-no">(8)</span><span class="blank"></span>
+        บิวเทนและไอโซบิวเทนมีสูตรโมเลกุลเหมือนกันคือ \(C_4H_{10}\) แต่มีโครงสร้างต่างกัน จึงเป็น
+        <span class="blank-no">(9)</span><span class="blank"></span>
+      </p>
+    </div>
+
+    <div class="q-block">
+      <div class="q-head">
+        <div class="q-title">4. Oil, Alcohol, and Perfume / น้ำมัน แอลกอฮอล์ และน้ำหอม</div>
+        <div class="score">(3 points / 3 คะแนน)</div>
+      </div>
+      <p class="en">
+        The separation of oil and water, the mixing of alcohol with water, and the smell of perfume are related to physical properties of organic compounds.
+        These properties depend on molecular size, polarity, and
+        <span class="blank-no">(10)</span><span class="blank"></span>.
+        Alcohol can mix with water because the -OH group can form
+        <span class="blank-no">(11)</span><span class="blank"></span>
+        with water molecules. Many pleasant smells in fruits and perfumes come from organic compounds in the
+        <span class="blank-no">(12)</span><span class="blank"></span> family.
+      </p>
+      <p class="th">
+        การแยกชั้นของน้ำมันกับน้ำ การผสมกันของแอลกอฮอล์กับน้ำ และกลิ่นของน้ำหอมเกี่ยวข้องกับสมบัติทางกายภาพของสารอินทรีย์
+        สมบัติเหล่านี้ขึ้นอยู่กับขนาดโมเลกุล ความมีขั้ว และ
+        <span class="blank-no">(10)</span><span class="blank"></span>
+        แอลกอฮอล์ผสมกับน้ำได้ เพราะหมู่ -OH เกิด
+        <span class="blank-no">(11)</span><span class="blank"></span>
+        กับน้ำ กลิ่นหอมหลายชนิดในผลไม้และน้ำหอมมาจากสารตระกูล
+        <span class="blank-no">(12)</span><span class="blank"></span>
+      </p>
+    </div>
+
+    <div class="q-block">
+      <div class="q-head">
+        <div class="q-title">5. Hydrocarbon Types in Daily Life / ประเภทของไฮโดรคาร์บอนในชีวิตประจำวัน</div>
+        <div class="score">(3 points / 3 คะแนน)</div>
+      </div>
+      <p class="en">
+        Hydrocarbons are found in many materials used in daily life. Liquefied petroleum gas (LPG), used as cooking fuel, contains propane and butane, which are examples of
+        <span class="blank-no">(13)</span><span class="blank"></span>.
+        Ethene, a substance related to fruit ripening, is different because it contains a carbon-carbon
+        <span class="blank-no">(14)</span><span class="blank"></span>.
+        Acetylene, which is used in welding, contains a carbon-carbon
+        <span class="blank-no">(15)</span><span class="blank"></span>.
+      </p>
+      <p class="th">
+        ไฮโดรคาร์บอนพบได้ในวัสดุหลายชนิดในชีวิตประจำวัน LPG มีโพรเพนและบิวเทนเป็นองค์ประกอบ ซึ่งเป็นตัวอย่างของ
+        <span class="blank-no">(13)</span><span class="blank"></span>
+        เอทีนเกี่ยวข้องกับการสุกของผลไม้และมีพันธะคาร์บอน-คาร์บอนแบบ
+        <span class="blank-no">(14)</span><span class="blank"></span>
+        อะเซทิลีนใช้ในงานเชื่อมโลหะและมีพันธะคาร์บอน-คาร์บอนแบบ
+        <span class="blank-no">(15)</span><span class="blank"></span>
+      </p>
+    </div>
+
+    <div class="q-block">
+      <div class="q-head">
+        <div class="q-title">6. Bromine Test and Benzene / การทดสอบด้วยโบรมีนและเบนซีน</div>
+        <div class="score">(3 points / 3 คะแนน)</div>
+      </div>
+      <p class="en">
+        Bromine solution is often used to distinguish different types of hydrocarbons.
+        Alkanes such as propane and butane do not react rapidly with bromine in the dark, but they can react by
+        <span class="blank-no">(16)</span><span class="blank"></span>
+        under UV light. Alkenes and alkynes react more easily with bromine by
+        <span class="blank-no">(17)</span><span class="blank"></span>,
+        so the orange-brown bromine color becomes decolorized. Benzene is stabilized by
+        <span class="blank-no">(18)</span><span class="blank"></span>.
+      </p>
+      <p class="th">
+        สารละลายโบรมีนใช้ทดสอบเพื่อแยกประเภทของไฮโดรคาร์บอน
+        แอลเคนไม่ทำปฏิกิริยากับโบรมีนอย่างรวดเร็วในที่มืด แต่เกิด
+        <span class="blank-no">(16)</span><span class="blank"></span>
+        ได้เมื่อมีแสง UV แอลคีนและแอลไคน์ทำปฏิกิริยากับโบรมีนโดยเกิด
+        <span class="blank-no">(17)</span><span class="blank"></span>
+        ทำให้สีโบรมีนจางลง ส่วนเบนซีนมีความเสถียรจาก
+        <span class="blank-no">(18)</span><span class="blank"></span>
+      </p>
+    </div>
+  </section>
+
+  <section class="sheet key-page">
+    <h1 class="exam-title">Answer Key / เฉลยสั้น</h1>
+    <div class="exam-subtitle">Organic Chemistry in Daily Life / เคมีอินทรีย์ในชีวิตประจำวัน</div>
+    <div class="key-grid">
+      <div class="key-item"><b>1.</b> covalent compounds / สารประกอบโคเวเลนต์</div>
+      <div class="key-item"><b>2.</b> C-H bonds / พันธะ C-H</div>
+      <div class="key-item"><b>3.</b> ionic compounds / สารประกอบไอออนิก</div>
+      <div class="key-item"><b>4.</b> skeletal structure / สูตรเส้นและมุม</div>
+      <div class="key-item"><b>5.</b> tetravalent / มีเวเลนซ์ 4</div>
+      <div class="key-item"><b>6.</b> functional group / หมู่ฟังก์ชัน</div>
+      <div class="key-item"><b>7.</b> parent chain / โซ่หลัก</div>
+      <div class="key-item"><b>8.</b> suffix / คำลงท้าย</div>
+      <div class="key-item"><b>9.</b> structural isomers / ไอโซเมอร์โครงสร้าง</div>
+      <div class="key-item"><b>10.</b> intermolecular forces / แรงยึดเหนี่ยวระหว่างโมเลกุล</div>
+      <div class="key-item"><b>11.</b> hydrogen bonding / พันธะไฮโดรเจน</div>
+      <div class="key-item"><b>12.</b> ester / เอสเทอร์</div>
+      <div class="key-item"><b>13.</b> saturated hydrocarbons / ไฮโดรคาร์บอนอิ่มตัว</div>
+      <div class="key-item"><b>14.</b> double bond / พันธะคู่</div>
+      <div class="key-item"><b>15.</b> triple bond / พันธะสาม</div>
+      <div class="key-item"><b>16.</b> substitution reaction / ปฏิกิริยาการแทนที่</div>
+      <div class="key-item"><b>17.</b> addition reaction / ปฏิกิริยาการเติม</div>
+      <div class="key-item"><b>18.</b> resonance / รีโซแนนซ์</div>
+    </div>
+  </section>
+
+  <section class="sheet solution-sheet">
+    <h2>Answer Version / เฉลยแบบเติมในบทความ</h2>
+    <div class="solution-card"><div class="sol-title">1. Sugar vs Salt</div>1 = <span class="ans-red">covalent compounds</span>, 2 = <span class="ans-red">C-H bonds</span>, 3 = <span class="ans-red">ionic compounds</span></div>
+    <div class="solution-card"><div class="sol-title">2. Hand Sanitizer vs Vinegar</div>4 = <span class="ans-red">skeletal structure</span>, 5 = <span class="ans-red">tetravalent</span>, 6 = <span class="ans-red">functional group</span></div>
+    <div class="solution-card"><div class="sol-title">3. Gas Can and Isomers</div>7 = <span class="ans-red">parent chain</span>, 8 = <span class="ans-red">suffix</span>, 9 = <span class="ans-red">structural isomers</span></div>
+    <div class="solution-card"><div class="sol-title">4. Oil, Alcohol, and Perfume</div>10 = <span class="ans-red">intermolecular forces</span>, 11 = <span class="ans-red">hydrogen bonding</span>, 12 = <span class="ans-red">ester</span></div>
+    <div class="solution-card"><div class="sol-title">5. Hydrocarbon Types</div>13 = <span class="ans-red">saturated hydrocarbons</span>, 14 = <span class="ans-red">double bond</span>, 15 = <span class="ans-red">triple bond</span></div>
+    <div class="solution-card"><div class="sol-title">6. Bromine Test and Benzene</div>16 = <span class="ans-red">substitution reaction</span>, 17 = <span class="ans-red">addition reaction</span>, 18 = <span class="ans-red">resonance</span></div>
+  </section>
+
+  <script>
+    function setMode(mode){
+      document.body.classList.remove('mode-exam','mode-key','mode-solution');
+      document.body.classList.add(mode);
+      const status = document.getElementById('statusText');
+      if(status){
+        status.textContent =
+          mode === 'mode-solution' ? 'Organic Chemistry — เฉลยละเอียด' :
+          mode === 'mode-key' ? 'Organic Chemistry — ข้อสอบพร้อมเฉลยสั้น' :
+          'Organic Chemistry — ข้อสอบ';
+      }
+      if(window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise();
+    }
+    function printExam(){ setMode('mode-exam'); setTimeout(()=>window.print(),250); }
+    function printWithKey(){ setMode('mode-key'); setTimeout(()=>window.print(),250); }
+    function printSolution(){ setMode('mode-solution'); setTimeout(()=>window.print(),250); }
+    function toggleKey(){ 
+      if(document.body.classList.contains('mode-key')) setMode('mode-exam'); 
+      else setMode('mode-key'); 
+    }
+    window.addEventListener('load',()=>{ if(window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise(); });
+  </script>
+</body>
+</html>
