@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Organic Chemistry Review | Multiple Choice Exam</title>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\(', '\)']],
+        displayMath: [['$$', '$$'], ['\[', '\]']],
+        processEscapes: true
+      },
+      options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/smiles-drawer@2.3.0/dist/smiles-drawer.min.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --paper-width: 210mm;
+      --paper-min-height: 297mm;
+      --page-margin: 12mm;
+      --ink: #111827;
+      --muted: #4b5563;
+      --line: #d1d5db;
+      --soft: #f3f4f6;
+      --accent: #1d4ed8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #e5e7eb;
+      color: var(--ink);
+       font-family: "Google Sans", "Noto Sans Thai", Arial, sans-serif;
+      line-height: 1.45;
+    }
+
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      background: #0f172a;
+      color: white;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.25);
+    }
+
+    .toolbar button {
+      border: 0;
+      border-radius: 999px;
+      padding: 9px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      background: #ffffff;
+      color: #0f172a;
+    }
+
+    .toolbar button.primary {
+      background: #38bdf8;
+      color: #082f49;
+    }
+
+    .toolbar button.danger {
+      background: #fde68a;
+      color: #78350f;
+    }
+
+    .toolbar .status {
+      flex-basis: 100%;
+      text-align: center;
+      font-size: 13px;
+      opacity: 0.88;
+    }
+
+    .screen-guide {
+      width: min(var(--paper-width), calc(100vw - 24px));
+      margin: 18px auto 0;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.11);
+      font-size: 14px;
+      color: #334155;
+    }
+
+    .screen-guide code {
+      background: #f1f5f9;
+      padding: 1px 5px;
+      border-radius: 6px;
+    }
+
+    .paper {
+      width: var(--paper-width);
+      min-height: var(--paper-min-height);
+      margin: 18px auto 36px;
+      padding: var(--page-margin);
+      background: white;
+      box-shadow: 0 16px 48px rgba(15, 23, 42, 0.22);
+    }
+
+    .exam-header {
+      border: 2px solid #111827;
+      padding: 10px 12px 12px;
+      margin-bottom: 12px;
+    }
+
+    .school-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13px;
+      color: #374151;
+      margin-bottom: 5px;
+    }
+
+    .exam-title {
+      margin: 2px 0 8px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 0.2px;
+    }
+
+    .exam-subtitle {
+      margin: 0 0 8px;
+      text-align: center;
+      font-size: 14px;
+      color: #374151;
+    }
+
+    .student-info {
+      display: grid;
+      grid-template-columns: 1.6fr 0.7fr 0.7fr 1fr;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .blank-line {
+      border-bottom: 1px dotted #111827;
+      min-height: 22px;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .exam-note {
+      margin: 8px 0 12px;
+      padding: 7px 10px;
+      border-left: 4px solid #111827;
+      background: #f9fafb;
+      font-size: 13px;
+    }
+
+    .questions {
+      counter-reset: question;
+    }
+
+    .question {
+      position: relative;
+      padding: 8px 0 10px;
+      margin: 0 0 8px;
+      border-bottom: 1px solid #e5e7eb;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .question.force-page-break {
+      break-before: page;
+      page-break-before: always;
+    }
+
+    .question-head {
+      display: grid;
+      grid-template-columns: 30px 1fr;
+      gap: 7px;
+      align-items: start;
+    }
+
+    .q-number {
+      display: inline-flex;
+      width: 26px;
+      height: 26px;
+      border: 1.4px solid #111827;
+      border-radius: 999px;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 13px;
+      line-height: 1;
+      margin-top: 1px;
+    }
+
+    .q-title {
+      font-size: 15px;
+      font-weight: 650;
+    }
+
+    .choices {
+      margin: 7px 0 0 37px;
+      padding-left: 22px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 24px;
+      row-gap: 3px;
+      font-size: 14px;
+    }
+
+    .choices li {
+      padding-left: 2px;
+      min-height: 22px;
+      break-inside: avoid;
+    }
+
+    .placeholder-choice {
+      color: #6b7280;
+    }
+
+    .optional-hint {
+      margin: 9px 0 0 37px;
+      padding: 8px 10px;
+      border: 1px dashed #93c5fd;
+      background: #eff6ff;
+      color: #1e3a8a;
+      font-size: 13px;
+      border-radius: 8px;
+    }
+
+    .solution-box {
+      display: none;
+      margin: 9px 0 0 37px;
+      padding: 9px 11px;
+      border: 1px solid #bfdbfe;
+      border-left: 4px solid #2563eb;
+      background: #eff6ff;
+      font-size: 13.4px;
+      border-radius: 8px;
+    }
+
+    .answer-key {
+      display: none;
+      margin-top: 16px;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .answer-key h2 {
+      font-size: 18px;
+      margin: 0 0 8px;
+      border-bottom: 2px solid #111827;
+      padding-bottom: 4px;
+    }
+
+    .answer-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      font-size: 14px;
+    }
+
+    .answer-cell {
+      border: 1px solid #111827;
+      padding: 6px;
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .mode-key .answer-key,
+    .mode-solution .answer-key {
+      display: block;
+    }
+
+    .mode-solution .solution-box {
+      display: block;
+    }
+
+    .mode-solution .optional-hint {
+      display: block;
+    }
+
+    .mode-exam .optional-hint,
+    .mode-key .optional-hint {
+      display: none;
+    }
+
+    .mode-exam .answer-key {
+      display: none;
+    }
+
+    .diagram {
+      width: 100%;
+      max-width: 340px;
+      height: auto;
+      margin: 8px 0 4px 37px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .diagram line,
+    .diagram path,
+    .diagram circle {
+      stroke: #111827;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .diagram text {
+      font-size: 16px;
+      fill: #111827;
+      font-family: inherit;
+    }
+
+    canvas.molecule {
+      display: block;
+      max-width: 260px;
+      margin: 8px 0 4px 37px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: white;
+    }
+
+    .template-bank {
+      display: none;
+    }
+
+    @page {
+      size: A4 portrait;
+      margin: 12mm;
+    }
+
+    @media print {
+      :root {
+        --page-margin: 0mm;
+      }
+
+      html, body {
+        width: 210mm;
+        background: white !important;
+      }
+
+      body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        font-size: 12pt;
+      }
+
+      .toolbar,
+      .screen-guide,
+      .print-hide {
+        display: none !important;
+      }
+
+      .paper {
+        width: auto;
+        min-height: auto;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+      }
+
+      .exam-header {
+        margin-top: 0;
+      }
+
+      .question {
+        margin-bottom: 5px;
+      }
+
+      .q-title {
+        font-size: 11.2pt;
+      }
+
+      .choices {
+        font-size: 10.8pt;
+      }
+
+      .solution-box {
+        font-size: 10.3pt;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+    }
+
+    @media screen and (max-width: 820px) {
+      .paper {
+        width: calc(100vw - 20px);
+        padding: 16px;
+      }
+
+      .student-info {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .choices {
+        grid-template-columns: 1fr;
+      }
+    }
+.part-f-summary {
+  font-family: "Google Sans", "Noto Sans Thai", Arial, sans-serif;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.part-f-summary .exam-title {
+  text-align: center;
+  font-weight: 900;
+  font-size: 15px;
+  margin: 0 0 2px;
+}
+
+.part-f-summary .exam-subtitle {
+  text-align: center;
+  font-size: 11.2px;
+  margin: 0 0 6px;
+  color: #374151;
+}
+
+.part-f-summary .instruction {
+  font-size: 10.5px;
+  line-height: 1.25;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 4px 6px;
+  margin-bottom: 6px;
+  background: #f9fafb;
+}
+
+@media print {
+  .part-f-summary .exam-title {
+    font-size: 14px;
+  }
+
+  .part-f-summary .instruction {
+    font-size: 10px;
+  }
+}
+.part-f-header {
+  margin: 0 0 14px;
+  padding: 0;
+  text-align: center;
+  color: #111827;
+}
+
+.part-f-header .part-label {
+  text-align: left;
+  border-left: 5px solid #1f2937;
+  background: #f3f4f6;
+  padding: 7px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.part-f-header h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.part-f-header .subtitle {
+  margin-top: 4px;
+  font-size: 13px;
+  line-height: 1.35;
+  color: #374151;
+}
+
+.part-f-header .instruction-box {
+  margin-top: 10px;
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #f9fafb;
+  text-align: left;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+@media print {
+  .part-f-header {
+    margin-bottom: 10px;
+  }
+
+  .part-f-header .part-label {
+    font-size: 12px;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+  }
+
+  .part-f-header h1 {
+    font-size: 18px;
+  }
+
+  .part-f-header .subtitle {
+    font-size: 12px;
+  }
+
+  .part-f-header .instruction-box {
+    font-size: 11px;
+    padding: 6px 8px;
+  }
+}
+  
+/* Standard visual cards for molecule/SVG choices */
+.visual-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin:8px 0 10px 37px;
+}
+.visual-grid.three{grid-template-columns:repeat(3,1fr)}
+.card{
+  border:1px solid #d1d5db;
+  border-radius:10px;
+  padding:7px;
+  text-align:center;
+  background:#fff;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+.card canvas.molecule,
+.card .mol{
+  display:block;
+  width:100%;
+  max-width:240px;
+  height:110px;
+  margin:4px auto;
+  border:0;
+  background:#fff;
+}
+.label{
+  font-size:12px;
+  font-weight:900;
+  line-height:1.15;
+  color:#111827;
+}
+.sub-label{
+  font-size:10.2px;
+  line-height:1.2;
+  color:#475569;
+}
+.ans-red{
+  color:#dc2626;
+  font-weight:900;
+}
+
+@media print{
+  .visual-grid{gap:5px;margin-top:5px;margin-bottom:6px}
+  .card{padding:4px;border-radius:7px}
+  .label{font-size:9.4pt}
+  .sub-label{font-size:8.2pt}
+  .card canvas.molecule,.card .mol{height:24mm;max-width:100%}
+}
+
+@media screen and (max-width:820px){
+  .visual-grid,.visual-grid.three{grid-template-columns:1fr}
+}
+
+  </style>
+</head>
+
+<body class="mode-exam">
+  <div class="toolbar print-hide">
+    <button class="primary" onclick="printExam()">🖨️ พิมพ์ข้อสอบ</button>
+    <button onclick="printWithKey()">✅ พิมพ์พร้อมเฉลยท้ายชุด</button>
+    <button onclick="printSolution()">📘 พิมพ์เฉลยละเอียด</button>
+    <button onclick="toggleHints()">💡 เปิด/ปิดคำใบ้บนจอ</button>
+    <button class="danger" onclick="autoPaginateQuestions(true)">📄 จัดหน้า A4 ใหม่</button>
+    <div class="status" id="statusText">โหมดปัจจุบัน: ฉบับข้อสอบนักเรียน — ซ่อนคำใบ้และเฉลย</div>
+  </div>
+
+  <section class="screen-guide print-hide">
+    <b>วิธีใช้เร็ว:</b> แก้ชื่อชุดข้อสอบตรงหัวกระดาษได้เลย → เพิ่มโจทย์โดยคัดลอก block <code>&lt;article class="question" data-answer="B"&gt;</code> → ใส่สมการด้วย <code>$...$</code> หรือ <code>$$...$$</code> → กดปุ่มพิมพ์ด้านบน<br>
+    <b>ระบบที่ใส่ให้แล้ว:</b> MathJax, SmilesDrawer, ตัวช่วย SVG diagram, เฉลยท้ายชุดอัตโนมัติ, และพยายามยกข้อไปหน้าใหม่เมื่อ A4 ไม่พอ
+  </section>
+
+  <main class="paper" id="paper">
+    
+
+    <section class="part-f-header">
+  <div class="part-label">
+    Part E: Multiple Choice / ข้อสอบปรนัยเลือกตอบ
+  </div>
+
+  <h1>
+    Organic Chemistry Review / ทบทวนเคมีอินทรีย์
+  </h1>
+
+  <div class="subtitle">
+    Physical Properties, Isomerism, Reactions, and Stoichiometry /
+    สมบัติทางกายภาพ ไอโซเมอร์ ปฏิกิริยา และปริมาณสารสัมพันธ์
+    <b>(24 points / 24 คะแนน)</b>
+  </div>
+
+  <div class="instruction-box">
+    <b>Instructions / คำชี้แจง:</b>
+    Choose the best answer. Each question has 6 choices.
+    <br>
+    จงเลือกคำตอบที่ถูกต้องที่สุดเพียงข้อเดียว แต่ละข้อมี 6 ตัวเลือก
+    <br>
+    <b>Scoring / คะแนน:</b>
+    12 questions × 2 points = 24 points
+    <br>
+    12 ข้อ × 2 คะแนน = 24 คะแนน
+  </div>
+</section>
+
+ <!-- ข้อ 1: วิเคราะห์อินทรีย์จากตาราง -->
+<article class="question" data-answer="F">
+  <div class="question-head">
+    <span class="q-number">1</span>
+    <div class="q-title">
+      ใช้ข้อมูลในตารางต่อไปนี้ตอบคำถาม: สารใดน่าจะเป็นสารอินทรีย์มากที่สุด
+      <br>
+      Use the data in the table below: Which substances are most likely organic compounds?
+    </div>
+  </div>
+
+  <div style="margin:8px 0 8px 37px; overflow-x:auto;">
+    <table style="width:100%; border-collapse:collapse; font-size:11.6px; text-align:center;">
+      <thead>
+        <tr>
+          <th style="border:1px solid #111827; padding:4px;">
+            สาร<br>Substance
+          </th>
+          <th style="border:1px solid #111827; padding:4px;">
+            การละลายน้ำ<br>Solubility in water
+          </th>
+          <th style="border:1px solid #111827; padding:4px;">
+            การนำไฟฟ้าของสารละลาย<br>Electrical conductivity of solution
+          </th>
+          <th style="border:1px solid #111827; padding:4px;">
+            การเผาไหม้<br>Combustion
+          </th>
+          <th style="border:1px solid #111827; padding:4px;">
+            การละลายในเฮกเซน<br>Solubility in hexane
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td style="border:1px solid #111827; padding:4px;"><b>A</b></td>
+          <td style="border:1px solid #111827; padding:4px;">ละลาย<br>soluble</td>
+          <td style="border:1px solid #111827; padding:4px;">นำไฟฟ้า<br>conducts electricity</td>
+          <td style="border:1px solid #111827; padding:4px;">ไม่หลอมเหลว, ไม่ติดไฟ<br>does not melt, not flammable</td>
+          <td style="border:1px solid #111827; padding:4px;">ไม่ละลาย<br>insoluble</td>
+        </tr>
+
+        <tr>
+          <td style="border:1px solid #111827; padding:4px;"><b>B</b></td>
+          <td style="border:1px solid #111827; padding:4px;">ละลาย<br>soluble</td>
+          <td style="border:1px solid #111827; padding:4px;">นำไฟฟ้า<br>conducts electricity</td>
+          <td style="border:1px solid #111827; padding:4px;">หลอมเหลว, ไม่ติดไฟ<br>melts, not flammable</td>
+          <td style="border:1px solid #111827; padding:4px;">ละลายเล็กน้อย<br>slightly soluble</td>
+        </tr>
+
+        <tr>
+          <td style="border:1px solid #111827; padding:4px;"><b>C</b></td>
+          <td style="border:1px solid #111827; padding:4px;">ไม่ละลาย<br>insoluble</td>
+          <td style="border:1px solid #111827; padding:4px;">ไม่นำไฟฟ้า<br>does not conduct electricity</td>
+          <td style="border:1px solid #111827; padding:4px;">หลอมเหลว, ติดไฟ, มีเขม่า<br>melts, flammable, sooty flame</td>
+          <td style="border:1px solid #111827; padding:4px;">ละลายเล็กน้อย<br>slightly soluble</td>
+        </tr>
+
+        <tr>
+          <td style="border:1px solid #111827; padding:4px;"><b>D</b></td>
+          <td style="border:1px solid #111827; padding:4px;">ไม่ละลาย<br>insoluble</td>
+          <td style="border:1px solid #111827; padding:4px;">ไม่นำไฟฟ้า<br>does not conduct electricity</td>
+          <td style="border:1px solid #111827; padding:4px;">หลอมเหลว, ติดไฟ, มีเขม่าเล็กน้อย<br>melts, flammable, slightly sooty flame</td>
+          <td style="border:1px solid #111827; padding:4px;">ละลาย<br>soluble</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ol class="choices" type="A">
+    <li>A only / A เท่านั้น</li>
+    <li>B only / B เท่านั้น</li>
+    <li>A and B / A และ B</li>
+    <li>A and C / A และ C</li>
+    <li>B and C / B และ C</li>
+    <li>C and D / C และ D</li>
+  </ol>
+
+  <div class="hint-box print-hide optional-hint">
+    💡 คำใบ้ / Hint:
+    สารอินทรีย์จำนวนมากมักไม่ละลายน้ำ ไม่นำไฟฟ้า ติดไฟได้ และละลายในตัวทำละลายอินทรีย์ เช่น เฮกเซน
+    <br>
+    Many organic compounds are often insoluble in water, non-conductive, flammable, and soluble in organic solvents such as hexane.
+  </div>
+
+  <div class="solution-box">
+    <b>เฉลย / Solution: F. C and D / C และ D</b><br>
+    C และ D มีสมบัติคล้ายสารอินทรีย์ คือไม่ละลายน้ำ ไม่นำไฟฟ้า ติดไฟได้ และละลายในเฮกเซนได้
+    <br>
+    <i>C and D show typical organic-like properties: insoluble in water, non-conductive, flammable, and soluble in hexane.</i>
+  </div>
+</article>
+
+<!-- ข้อ 2: วิเคราะห์สารโคเวเลนต์ไม่มีขั้วจากตารางข้อ 1 -->
+<article class="question" data-answer="D">
+  <div class="question-head">
+    <span class="q-number">2</span>
+    <div class="q-title">
+      จากตารางในข้อ 1 สารใดน่าจะเป็นสารโคเวเลนต์ไม่มีขั้วมากที่สุด
+      <br>
+      Based on the table in Question 1, which substance is most likely a nonpolar covalent compound?
+    </div>
+  </div>
+
+  <ol class="choices" type="A">
+    <li>A</li>
+    <li>B</li>
+    <li>C</li>
+    <li>D</li>
+    <li>C และ D / C and D</li>
+    <li>A และ B / A and B</li>
+  </ol>
+
+  <div class="hint-box print-hide optional-hint">
+    💡 คำใบ้ / Hint:
+    สารโคเวเลนต์ไม่มีขั้วมักไม่ละลายน้ำ ไม่นำไฟฟ้า แต่ละลายในตัวทำละลายไม่มีขั้ว เช่น เฮกเซน
+    <br>
+    Nonpolar covalent compounds are usually insoluble in water, non-conductive, and soluble in nonpolar solvents such as hexane.
+  </div>
+
+  <div class="solution-box">
+    <b>เฉลย / Solution: D. D</b><br>
+    สาร D ไม่ละลายน้ำ ไม่นำไฟฟ้า ติดไฟได้ และละลายในเฮกเซนได้ดี จึงน่าจะเป็นสารโคเวเลนต์ไม่มีขั้วมากที่สุด
+    <br>
+    <i>Substance D is insoluble in water, does not conduct electricity, is flammable, and dissolves well in hexane. Therefore, it is most likely a nonpolar covalent compound.</i>
+    <br><br>
+    ตัวหลอกสำคัญคือ C และ D ต่างก็ดูเป็นสารอินทรีย์ แต่ D ละลายในเฮกเซนได้ชัดเจนกว่า จึงเหมาะกับคำว่า “ไม่มีขั้วมากที่สุด”
+    <br>
+    <i>The main distractor is C and D. Both look organic, but D dissolves better in hexane, making it the better answer for “most nonpolar.”</i>
+  </div>
+</article>
+
+<!-- ข้อ 3: สูตรโมเลกุล + หมู่ฟังก์ชัน + SmilesDrawer -->
+<article class="question" data-answer="B">
+  <div class="question-head">
+    <span class="q-number">3</span>
+    <div class="q-title">
+      สารใดมีสูตรโมเลกุล \(C_6H_{11}NO_2\) เป็นสารประกอบแอลกอฮอล์ และไม่เป็นสารประเภทเอมีน /
+      Which substance has the molecular formula \(C_6H_{11}NO_2\), is an alcohol, and is not an amine?
+    </div>
+  </div>
+
+  <div class="visual-grid three">
+    <div class="card">
+      <div class="label">สาร A / Compound A</div>
+      <canvas class="molecule mol" data-smiles="OCC(C)(C)CC(=O)N" width="240" height="110"></canvas>
+      <div class="sub-label">HOCH₂–C(CH₃)₂–CH₂–CONH₂</div>
+    </div>
+
+    <div class="card">
+      <div class="label">สาร B / Compound B</div>
+      <canvas class="molecule mol" data-smiles="O=C1NCC(C)C(O)C1" width="240" height="110"></canvas>
+      <div class="sub-label">cyclic amide + -OH</div>
+    </div>
+
+    <div class="card">
+      <div class="label">สาร C / Compound C</div>
+      <canvas class="molecule mol" data-smiles="O=C1CCCN1CCC" width="240" height="110"></canvas>
+      <div class="sub-label">N-substituted cyclic amide</div>
+    </div>
+  </div>
+
+  <ol class="choices" type="A">
+    <li>สาร A เท่านั้น / A only</li>
+    <li>สาร B เท่านั้น / B only</li>
+    <li>สาร C เท่านั้น / C only</li>
+    <li>สาร A และ B เท่านั้น / A and B only</li>
+    <li>สาร B และ C เท่านั้น / B and C only</li>
+    <li>สาร A, B และ C / A, B and C</li>
+  </ol>
+
+  <div class="hint-box print-hide optional-hint">
+    💡 คำใบ้: อย่าดูแค่มี N หรือมี -OH ให้ตรวจทั้ง “สูตรโมเลกุล” และแยกให้ออกว่า N อยู่ใน amine หรือ amide
+  </div>
+
+  <div class="solution-box">
+    <b>เฉลย: B. สาร B เท่านั้น / B only</b><br>
+    ต้องผ่านครบ 3 เงื่อนไข: สูตรเป็น \(C_6H_{11}NO_2\), มีหมู่ -OH จึงจัดเป็นแอลกอฮอล์, และ N ต้องไม่เป็น amine<br><br>
+
+    <b>สาร A:</b> มีหมู่ -OH และมีหมู่ amide \(-CONH_2\) จึงไม่ใช่ amine แต่เมื่อนับสูตรจะได้ \(C_6H_{13}NO_2\) ไม่ใช่ \(C_6H_{11}NO_2\) จึงผิด<br>
+
+    <b>สาร B:</b> มีสูตร \(C_6H_{11}NO_2\), มีหมู่ -OH จึงเป็นแอลกอฮอล์ และ N อยู่ใน amide/lactam จึงไม่ใช่ amine จึงถูก<br>
+
+    <b>สาร C:</b> เป็น amide/lactam ไม่ใช่ amine แต่ไม่มีหมู่ -OH และมี O เพียง 1 อะตอม จึงไม่ตรงเงื่อนไข จึงผิด
+  </div>
+</article>
+
+  <!-- ข้อ 4: จุดเดือด H-bond -->
+<article class="question" data-answer="B">
+  <div class="question-head">
+    <span class="q-number">4</span>
+    <div class="q-title">
+      เอทานอลและไดเมทิลอีเทอร์มีสูตรโมเลกุลเหมือนกัน C₂H₆O ข้อใดถูกต้อง
+      <br>
+      Ethanol and dimethyl ether have the same molecular formula, C₂H₆O. Which statement is correct?
+    </div>
+  </div>
+
+  <ol class="choices" type="A">
+    <li>
+      Dimethyl ether has a higher boiling point because it has oxygen.
+      <br>
+      ไดเมทิลอีเทอร์มีจุดเดือดสูงกว่า เพราะมีอะตอมออกซิเจน
+    </li>
+
+    <li>
+      Ethanol has a higher boiling point because it can form hydrogen bonds.
+      <br>
+      เอทานอลมีจุดเดือดสูงกว่า เพราะสามารถเกิดพันธะไฮโดรเจนได้
+    </li>
+
+    <li>
+      Both have the same boiling point because they have the same molecular formula.
+      <br>
+      ทั้งสองมีจุดเดือดเท่ากัน เพราะมีสูตรโมเลกุลเหมือนกัน
+    </li>
+
+    <li>
+      Dimethyl ether has a higher boiling point because it has no O-H bond.
+      <br>
+      ไดเมทิลอีเทอร์มีจุดเดือดสูงกว่า เพราะไม่มีพันธะ O-H
+    </li>
+
+    <li>
+      Ethanol has a lower boiling point because it is more polar.
+      <br>
+      เอทานอลมีจุดเดือดต่ำกว่า เพราะมีขั้วมากกว่า
+    </li>
+
+    <li>
+      Both are nonpolar substances.
+      <br>
+      ทั้งสองเป็นสารไม่มีขั้ว
+    </li>
+  </ol>
+
+  <div class="hint-box print-hide optional-hint">
+    💡 คำใบ้ / Hint:
+    ดูว่าสารใดมีพันธะ O-H ซึ่งทำให้เกิดพันธะไฮโดรเจนระหว่างโมเลกุลได้
+    <br>
+    Check which molecule has an O-H bond that allows intermolecular hydrogen bonding.
+  </div>
+
+  <div class="solution-box">
+    <b>เฉลย / Solution: B.</b><br>
+    เอทานอลมีหมู่ O-H จึงสามารถเกิดพันธะไฮโดรเจนระหว่างโมเลกุลได้ ทำให้แรงยึดเหนี่ยวระหว่างโมเลกุลมากขึ้น และมีจุดเดือดสูงกว่าไดเมทิลอีเทอร์
+    <br>
+    <i>Ethanol has an O-H group, so it can form intermolecular hydrogen bonds. This increases the intermolecular forces and gives ethanol a higher boiling point than dimethyl ether.</i>
+    <br><br>
+    ไดเมทิลอีเทอร์มีอะตอม O จริง แต่ไม่มีพันธะ O-H จึงไม่สามารถเกิดพันธะไฮโดรเจนระหว่างโมเลกุลของตัวเองได้เด่นชัด
+    <br>
+    <i>Dimethyl ether contains an oxygen atom, but it has no O-H bond, so it cannot strongly form hydrogen bonds between its own molecules.</i>
+  </div>
+</article>
+
+  <!-- ข้อ 5: ไอโซเมอร์แบบเส้นและมุม -->
+<article class="question" data-answer="B">
+  <div class="question-head">
+    <span class="q-number">5</span>
+    <div class="q-title">
+      สารในข้อใดเป็นไอโซเมอร์กับสารต่อไปนี้
+      <br>
+      Which of the following compounds is an isomer of the compound shown below?
+    </div>
+  </div>
+
+  <div style="margin: 8px 0 10px 37px; text-align:center;">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 90" width="230" height="74" aria-label="given skeletal structure C5H10O" style="display:block; margin:auto;">
+      <text x="10" y="50" font-size="18" font-weight="900" fill="#111827">HO</text>
+
+      <!-- HO-CH2-CH2-CH2-CH=CH2 : C5H10O -->
+      <line x1="38" y1="45" x2="70" y2="45" stroke="#111827" stroke-width="3"></line>
+      <line x1="70" y1="45" x2="102" y2="25" stroke="#111827" stroke-width="3"></line>
+      <line x1="102" y1="25" x2="134" y2="45" stroke="#111827" stroke-width="3"></line>
+      <line x1="134" y1="45" x2="166" y2="25" stroke="#111827" stroke-width="3"></line>
+      <line x1="166" y1="25" x2="210" y2="45" stroke="#111827" stroke-width="3"></line>
+      <line x1="166" y1="31" x2="210" y2="51" stroke="#111827" stroke-width="3"></line>
+    </svg>
+  </div>
+
+  <ol class="choices" type="A">
+    <li>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 70" width="135" height="55" aria-label="option A pentan-1-ol" style="display:block; margin:auto;">
+        <text x="8" y="39" font-size="16" font-weight="900" fill="#111827">HO</text>
+        <line x1="34" y1="34" x2="62" y2="34" stroke="#111827" stroke-width="3"></line>
+        <line x1="62" y1="34" x2="88" y2="18" stroke="#111827" stroke-width="3"></line>
+        <line x1="88" y1="18" x2="114" y2="34" stroke="#111827" stroke-width="3"></line>
+        <line x1="114" y1="34" x2="140" y2="18" stroke="#111827" stroke-width="3"></line>
+        <line x1="140" y1="18" x2="166" y2="34" stroke="#111827" stroke-width="3"></line>
+      </svg>
+    </li>
+
+    <li>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80" width="95" height="58" aria-label="option B cyclic ether C5H10O" style="display:block; margin:auto;">
+        <line x1="60" y1="12" x2="95" y2="32" stroke="#111827" stroke-width="3"></line>
+        <line x1="95" y1="32" x2="95" y2="62" stroke="#111827" stroke-width="3"></line>
+        <line x1="95" y1="62" x2="60" y2="75" stroke="#111827" stroke-width="3"></line>
+        <line x1="60" y1="75" x2="25" y2="62" stroke="#111827" stroke-width="3"></line>
+        <line x1="25" y1="62" x2="25" y2="32" stroke="#111827" stroke-width="3"></line>
+        <line x1="25" y1="32" x2="60" y2="12" stroke="#111827" stroke-width="3"></line>
+        <text x="53" y="18" font-size="17" font-weight="900" fill="#111827">O</text>
+      </svg>
+    </li>
+
+    <li>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 170 80" width="125" height="58" aria-label="option C ester" style="display:block; margin:auto;">
+        <line x1="15" y1="45" x2="45" y2="45" stroke="#111827" stroke-width="3"></line>
+        <line x1="45" y1="45" x2="75" y2="27" stroke="#111827" stroke-width="3"></line>
+        <line x1="75" y1="27" x2="105" y2="45" stroke="#111827" stroke-width="3"></line>
+
+        <line x1="105" y1="45" x2="105" y2="18" stroke="#111827" stroke-width="3"></line>
+        <line x1="111" y1="45" x2="111" y2="18" stroke="#111827" stroke-width="3"></line>
+        <text x="99" y="14" font-size="15" font-weight="900" fill="#111827">O</text>
+
+        <line x1="105" y1="45" x2="132" y2="45" stroke="#111827" stroke-width="3"></line>
+        <text x="135" y="50" font-size="15" font-weight="900" fill="#111827">O</text>
+        <line x1="147" y1="45" x2="162" y2="30" stroke="#111827" stroke-width="3"></line>
+      </svg>
+    </li>
+
+    <li>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 170 80" width="125" height="58" aria-label="option D ether C5H12O" style="display:block; margin:auto;">
+        <line x1="10" y1="45" x2="40" y2="45" stroke="#111827" stroke-width="3"></line>
+        <line x1="40" y1="45" x2="66" y2="28" stroke="#111827" stroke-width="3"></line>
+        <text x="72" y="33" font-size="16" font-weight="900" fill="#111827">O</text>
+        <line x1="86" y1="28" x2="112" y2="45" stroke="#111827" stroke-width="3"></line>
+        <line x1="112" y1="45" x2="140" y2="28" stroke="#111827" stroke-width="3"></line>
+      </svg>
+    </li>
+
+    <li>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 170 80" width="125" height="58" aria-label="option E alkyne" style="display:block; margin:auto;">
+        <line x1="10" y1="45" x2="45" y2="45" stroke="#111827" stroke-width="3"></line>
+        <line x1="45" y1="39" x2="85" y2="39" stroke="#111827" stroke-width="3"></line>
+        <line x1="45" y1="45" x2="85" y2="45" stroke="#111827" stroke-width="3"></line>
+        <line x1="45" y1="51" x2="85" y2="51" stroke="#111827" stroke-width="3"></line>
+        <line x1="85" y1="45" x2="115" y2="28" stroke="#111827" stroke-width="3"></line>
+        <line x1="115" y1="28" x2="145" y2="45" stroke="#111827" stroke-width="3"></line>
+      </svg>
+    </li>
+
+    <li>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80" width="95" height="58" aria-label="option F cyclohexane" style="display:block; margin:auto;">
+        <line x1="60" y1="12" x2="95" y2="32" stroke="#111827" stroke-width="3"></line>
+        <line x1="95" y1="32" x2="95" y2="62" stroke="#111827" stroke-width="3"></line>
+        <line x1="95" y1="62" x2="60" y2="75" stroke="#111827" stroke-width="3"></line>
+        <line x1="60" y1="75" x2="25" y2="62" stroke="#111827" stroke-width="3"></line>
+        <line x1="25" y1="62" x2="25" y2="32" stroke="#111827" stroke-width="3"></line>
+        <line x1="25" y1="32" x2="60" y2="12" stroke="#111827" stroke-width="3"></line>
+      </svg>
+    </li>
+  </ol>
+
+  <div class="hint-box print-hide optional-hint">
+    💡 คำใบ้ / Hint:
+    ไอโซเมอร์ต้องมีสูตรโมเลกุลเหมือนกัน แต่มีโครงสร้างต่างกัน
+    <br>
+    Isomers must have the same molecular formula but different structures.
+  </div>
+
+  <div class="solution-box">
+    <b>เฉลย / Solution: B.</b><br>
+    โครงสร้างที่โจทย์กำหนดมีสูตรโมเลกุลเป็น <span class="ans-red">C₅H₁₀O</span>
+    <br>
+    <i>The given structure has the molecular formula <span class="ans-red">C₅H₁₀O</span>.</i>
+    <br><br>
+    ข้อ <span class="ans-red">B</span> เป็นวงแหวนอีเทอร์ที่มีออกซิเจน 1 อะตอม และมีคาร์บอน 5 อะตอม
+    จึงมีสูตรโมเลกุลเป็น <span class="ans-red">C₅H₁₀O</span> เช่นกัน แต่โครงสร้างต่างจากสารตั้งต้น
+    จึงเป็นไอโซเมอร์
+    <br>
+    <i>Choice <span class="ans-red">B</span> is a cyclic ether with one oxygen atom and five carbon atoms, so it also has the molecular formula <span class="ans-red">C₅H₁₀O</span>. Since its structure is different from the given compound, it is an isomer.</i>
+  </div>
+</article>
+
+
+ <!-- ข้อ 6: ตารางทดลอง / Experimental data table -->
+<article class="question" data-answer="B">
+  <div class="question-head">
+    <span class="q-number">6</span>
+    <div class="q-title">
+      ใช้ข้อมูลในตารางต่อไปนี้ตอบคำถามข้อ 6–8 สารใดควรมีสูตรเป็น C₆H₆
+      <br>
+      Use the following table to answer Questions 6–8. Which substance is most likely C₆H₆?
+    </div>
+  </div>
+
+  <div style="margin:8px 0 8px 37px; overflow-x:auto;">
+    <table style="width:100%; border-collapse:collapse; font-size:10.5px; text-align:center;">
+      <thead>
+        <tr>
+          <th style="border:1px solid #111827; padding:3px;">สาร<br>Substance</th>
+          <th style="border:1px solid #111827; padding:3px;">ละลายน้ำ<br>Water solubility</th>
+          <th style="border:1px solid #111827; padding:3px;">เผาไหม้<br>Combustion</th>
+          <th style="border:1px solid #111827; padding:3px;">Br₂ ในที่สว่าง<br>Br₂ in light</th>
+          <th style="border:1px solid #111827; padding:3px;">Br₂ ในที่มืด<br>Br₂ in dark</th>
+          <th style="border:1px solid #111827; padding:3px;">KMnO₄<br>KMnO₄ test</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td style="border:1px solid #111827; padding:3px;"><b>W</b></td>
+          <td style="border:1px solid #111827; padding:3px;">ไม่ละลาย<br>insoluble</td>
+          <td style="border:1px solid #111827; padding:3px;">ติดไฟ ไม่มีเขม่า<br>burns, no soot</td>
+          <td style="border:1px solid #111827; padding:3px;">เปลี่ยนเป็นไม่มีสี<br>decolorized</td>
+          <td style="border:1px solid #111827; padding:3px;">ไม่เปลี่ยนสี<br>no change</td>
+          <td style="border:1px solid #111827; padding:3px;">ไม่เปลี่ยนสี<br>no change</td>
+        </tr>
+
+        <tr>
+          <td style="border:1px solid #111827; padding:3px;"><b>X</b></td>
+          <td style="border:1px solid #111827; padding:3px;">ไม่ละลาย<br>insoluble</td>
+          <td style="border:1px solid #111827; padding:3px;">ติดไฟ มีเขม่ามาก<br>burns, very sooty</td>
+          <td style="border:1px solid #111827; padding:3px;">ไม่เปลี่ยนสี<br>no change</td>
+          <td style="border:1px solid #111827; padding:3px;">ไม่เปลี่ยนสี<br>no change</td>
+          <td style="border:1px solid #111827; padding:3px;">ไม่เปลี่ยนสี<br>no change</td>
+        </tr>
+
+        <tr>
+          <td style="border:1px solid #111827; padding:3px;"><b>Y</b></td>
+          <td style="border:1px solid #111827; padding:3px;">ไม่ละลาย<br>insoluble</td>
+          <td style="border:1px solid #111827; padding:3px;">ติดไฟ ไม่มีเขม่า<br>burns, no soot</td>
+          <td style="border:1px solid #111827; padding:3px;">เปลี่ยนเป็นไม่มีสี<br>decolorized</td>
+          <td style="border:1px solid #111827; padding:3px;">เปลี่ยนเป็นไม่มีสี<br>decolorized</td>
+          <td style="border:1px solid #111827; padding:3px;">เปลี่ยนเป็นไม่มีสี<br>decolorized</td>
+        </tr>
+
+        <tr>
+          <td style="border:1px solid #111827; padding:3px;"><b>Z</b></td>
+          <td style="border:1px solid #111827; padding:3px;">ไม่ละลาย<br>insoluble</td>
+          <td style="border:1px solid #111827; padding:3px;">ติดไฟ มีเขม่ามาก<br>burns, very sooty</td>
+          <td style="border:1px solid #111827; padding:3px;">เปลี่ยนเป็นไม่มีสี<br>decolorized</td>
+          <td style="border:1px solid #111827; padding:3px;">เปลี่ยนเป็นไม่มีสี<br>decolorized</td>
+          <td style="border:1px solid #111827; padding:3px;">เปลี่ยนเป็นไม่มีสี<br>decolorized</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ol class="choices" type="A">
+    <li>W</li>
+    <li>X</li>
+    <li>Y</li>
+    <li>Z</li>
+    <li>W and Y / W และ Y</li>
+    <li>X and Z / X และ Z</li>
+  </ol>
+
+  <div class="hint-box print-hide optional-hint">
+    💡 คำใบ้ / Hint:
+    เบนซีนเป็นสารอะโรมาติก มักติดไฟมีเขม่ามาก แต่ไม่ฟอกสี Br₂ ในที่มืด และไม่ทำให้ KMnO₄ เปลี่ยนสีง่าย
+    <br>
+    Benzene is an aromatic compound. It usually burns with a sooty flame, but does not easily decolorize Br₂ in the dark or KMnO₄.
+  </div>
+
+  <div class="solution-box">
+    <b>เฉลย / Solution: B. X</b><br>
+    X ไม่ละลายน้ำ ติดไฟมีเขม่ามาก และไม่ทำให้ Br₂ หรือ KMnO₄ เปลี่ยนสีภายใต้เงื่อนไขนี้ จึงสอดคล้องกับเบนซีน C₆H₆ มากที่สุด
+    <br>
+    <i>X is insoluble in water, burns with a very sooty flame, and does not decolorize Br₂ or KMnO₄ under these conditions. Therefore, it best matches benzene, C₆H₆.</i>
+  </div>
+</article>
+
+
+<!-- ข้อ 7: ตารางทดลอง / Experimental data table -->
+<article class="question" data-answer="A">
+  <div class="question-head">
+    <span class="q-number">7</span>
+    <div class="q-title">
+      จากตารางในข้อ 6 เมื่อนำสารไปทำปฏิกิริยากับ Br₂ ในที่สว่าง แล้วนำผลิตภัณฑ์ไปละลายน้ำ สารใดมีแนวโน้มทำให้ลิตมัสสีน้ำเงินเปลี่ยนเป็นสีแดง
+      <br>
+      Based on the table in Question 6, after reacting with Br₂ in light and dissolving the product in water, which substance is most likely to turn blue litmus paper red?
+    </div>
+  </div>
+
+  <ol class="choices" type="A">
+    <li>W</li>
+    <li>X</li>
+    <li>Y</li>
+    <li>Z</li>
+    <li>X and Y / X และ Y</li>
+    <li>Y and Z / Y และ Z</li>
+  </ol>
+
+  <div class="hint-box print-hide optional-hint">
+    💡 คำใบ้ / Hint:
+    แอลเคนทำปฏิกิริยาแทนที่กับ Br₂ เมื่อมีแสง และเกิด HBr ซึ่งเป็นกรด
+    <br>
+    Alkanes undergo substitution with Br₂ in light and produce HBr, which is acidic.
+  </div>
+
+  <div class="solution-box">
+    <b>เฉลย / Solution: A. W</b><br>
+    W มีลักษณะเหมือนแอลเคน คือไม่ทำปฏิกิริยากับ Br₂ ในที่มืด แต่ทำปฏิกิริยาเมื่อมีแสง ปฏิกิริยาแทนที่นี้เกิด HBr ซึ่งเมื่อละลายน้ำจะมีสมบัติเป็นกรด
+    <br>
+    <i>W behaves like an alkane: it does not react with Br₂ in the dark, but reacts in light. This substitution reaction produces HBr, which becomes acidic in water.</i>
+  </div>
+</article>
+
+
+<!-- ข้อ 8: ตารางทดลอง / Experimental data table -->
+<article class="question" data-answer="A">
+  <div class="question-head">
+    <span class="q-number">8</span>
+    <div class="q-title">
+      จากตารางในข้อ 6 ข้อใดกล่าวได้ถูกต้องที่สุด
+      <br>
+      Based on the table in Question 6, which statement is the most correct?
+    </div>
+  </div>
+
+  <ol class="choices" type="A">
+    <li>
+      W น่าจะเป็นแอลเคน เพราะทำปฏิกิริยากับ Br₂ เมื่อมีแสง แต่ไม่ทำปฏิกิริยากับ Br₂ ในที่มืดและ KMnO₄
+      <br>
+      W is likely an alkane because it reacts with Br₂ in light, but not with Br₂ in the dark or KMnO₄.
+    </li>
+
+    <li>
+      X น่าจะเป็นแอลคีน เพราะทำให้ Br₂ ในที่มืดเปลี่ยนเป็นไม่มีสี
+      <br>
+      X is likely an alkene because it decolorizes Br₂ in the dark.
+    </li>
+
+    <li>
+      Y น่าจะเป็นแอลเคน เพราะทำให้ KMnO₄ เปลี่ยนเป็นไม่มีสี
+      <br>
+      Y is likely an alkane because it decolorizes KMnO₄.
+    </li>
+
+    <li>
+      Z น่าจะเป็นสารอิ่มตัว เพราะทำให้ Br₂ ในที่มืดเปลี่ยนเป็นไม่มีสี
+      <br>
+      Z is likely saturated because it decolorizes Br₂ in the dark.
+    </li>
+
+    <li>
+      X น่าจะเป็นสารไอออนิก เพราะไม่ละลายน้ำ
+      <br>
+      X is likely ionic because it is insoluble in water.
+    </li>
+
+    <li>
+      W และ X ต้องเป็นสารชนิดเดียวกัน เพราะไม่ละลายน้ำเหมือนกัน
+      <br>
+      W and X must be the same type of substance because both are insoluble in water.
+    </li>
+  </ol>
+
+  <div class="hint-box print-hide optional-hint">
+    💡 คำใบ้ / Hint:
+    แอลเคนไม่ฟอกสี Br₂ ในที่มืด แต่เมื่อมีแสงจะเกิดปฏิกิริยาแทนที่
+    <br>
+    Alkanes do not decolorize Br₂ in the dark, but they can undergo substitution in light.
+  </div>
+
+  <div class="solution-box">
+    <b>เฉลย / Solution: A.</b><br>
+    W มีสมบัติตรงกับแอลเคน คือไม่ทำปฏิกิริยากับ Br₂ ในที่มืดหรือ KMnO₄ แต่ทำปฏิกิริยากับ Br₂ เมื่อมีแสง
+    <br>
+    <i>W matches the behavior of an alkane: it does not react with Br₂ in the dark or KMnO₄, but reacts with Br₂ in light.</i>
+  </div>
+</article>
+
+  <!-- ข้อ 9: stoichiometry -->
+  <article class="question" data-answer="D">
+    <div class="question-head">
+      <span class="q-number">9</span>
+      <div class="q-title">
+        จากสมการ C₃H₈ + 5O₂ → 3CO₂ + 4H₂O ถ้าใช้ C₃H₈ 0.20 mol จะได้ CO₂ กี่ mol
+        <br>
+        From the equation C₃H₈ + 5O₂ → 3CO₂ + 4H₂O, how many moles of CO₂ are produced from 0.20 mol of C₃H₈?
+      </div>
+    </div>
+
+    <ol class="choices" type="A">
+      <li>0.20 mol</li>
+      <li>0.30 mol</li>
+      <li>0.40 mol</li>
+      <li>0.60 mol</li>
+      <li>1.00 mol</li>
+      <li>3.00 mol</li>
+    </ol>
+
+    <div class="hint-box print-hide optional-hint">
+      💡 คำใบ้: อัตราส่วน mol C₃H₈ : CO₂ = 1 : 3
+    </div>
+
+    <div class="solution-box">
+      <b>เฉลย: D. 0.60 mol</b><br>
+      1 mol C₃H₈ ให้ CO₂ 3 mol ดังนั้น 0.20 mol C₃H₈ ให้ CO₂ = 0.20 × 3 = 0.60 mol
+    </div>
+  </article>
+
+
+  <!-- ข้อ 10: จุดเดือดจากข้อมูล / Boiling point from data -->
+<article class="question" data-answer="B">
+  <div class="question-head">
+    <span class="q-number">10</span>
+    <div class="q-title">
+      พิจารณาจุดเดือดของสารต่อไปนี้ แม้ว่าโมเลกุลทั้งสามจะมีมวลโมเลกุลใกล้เคียงกัน แต่จุดเดือดต่างกันมาก เพราะเหตุใด
+      <br>
+      Consider the boiling points below. Although the three molecules have similar molecular masses, why are their boiling points very different?
+    </div>
+  </div>
+
+  <div style="margin:8px 0 8px 37px; overflow-x:auto;">
+    <table style="width:100%; border-collapse:collapse; font-size:11.5px; text-align:center;">
+      <thead>
+        <tr>
+          <th style="border:1px solid #111827; padding:4px;">
+            สาร<br>Substance
+          </th>
+          <th style="border:1px solid #111827; padding:4px;">
+            สูตรโครงสร้าง<br>Structural formula
+          </th>
+          <th style="border:1px solid #111827; padding:4px;">
+            จุดเดือด<br>Boiling point
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td style="border:1px solid #111827; padding:4px;">
+            โพรพานอล<br>propanol
+          </td>
+          <td style="border:1px solid #111827; padding:4px;">CH₃CH₂CH₂OH</td>
+          <td style="border:1px solid #111827; padding:4px;">97 °C</td>
+        </tr>
+
+        <tr>
+          <td style="border:1px solid #111827; padding:4px;">
+            อีเทนไทออล<br>ethanethiol
+          </td>
+          <td style="border:1px solid #111827; padding:4px;">CH₃CH₂SH</td>
+          <td style="border:1px solid #111827; padding:4px;">37 °C</td>
+        </tr>
+
+        <tr>
+          <td style="border:1px solid #111827; padding:4px;">
+            คลอโรอีเทน<br>chloroethane
+          </td>
+          <td style="border:1px solid #111827; padding:4px;">CH₃CH₂Cl</td>
+          <td style="border:1px solid #111827; padding:4px;">13 °C</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ol class="choices" type="A">
+    <li>
+      The boiling point depends only on the number of carbon atoms.
+      <br>
+      จุดเดือดขึ้นกับจำนวนอะตอมคาร์บอนเท่านั้น
+    </li>
+
+    <li>
+      Propanol can form strong hydrogen bonds, while ethanethiol and chloroethane do not form strong hydrogen bonds.
+      <br>
+      โพรพานอลเกิดพันธะไฮโดรเจนได้แรง แต่เอทานไทออลและคลอโรอีเทนไม่เกิดพันธะไฮโดรเจนที่แรงเด่นชัด
+    </li>
+
+    <li>
+      Chloroethane has the lowest boiling point because chlorine is less electronegative than hydrogen.
+      <br>
+      คลอโรอีเทนมีจุดเดือดต่ำที่สุด เพราะคลอรีนมีอิเล็กโทรเนกาติวิตีน้อยกว่าไฮโดรเจน
+    </li>
+
+    <li>
+      Ethanethiol has a higher boiling point than propanol because sulfur forms stronger hydrogen bonds than oxygen.
+      <br>
+      อีเทนไทออลมีจุดเดือดสูงกว่าโพรพานอล เพราะซัลเฟอร์เกิดพันธะไฮโดรเจนได้แรงกว่าออกซิเจน
+    </li>
+
+    <li>
+      All three substances should have the same boiling point because their molecular masses are similar.
+      <br>
+      สารทั้งสามควรมีจุดเดือดเท่ากัน เพราะมีมวลโมเลกุลใกล้เคียงกัน
+    </li>
+
+    <li>
+      Chloroethane has the highest boiling point because it contains a chlorine atom.
+      <br>
+      คลอโรอีเทนมีจุดเดือดสูงที่สุด เพราะมีอะตอมคลอรีน
+    </li>
+  </ol>
+
+  <div class="hint-box print-hide optional-hint">
+    💡 คำใบ้ / Hint:
+    จุดเดือดไม่ได้ขึ้นกับมวลโมเลกุลอย่างเดียว ต้องพิจารณาแรงยึดเหนี่ยวระหว่างโมเลกุลด้วย โดยเฉพาะพันธะไฮโดรเจน
+    <br>
+    Boiling point does not depend only on molecular mass. Intermolecular forces, especially hydrogen bonding, must also be considered.
+  </div>
+
+  <div class="solution-box">
+    <b>เฉลย / Solution: B.</b><br>
+    โพรพานอลมีหมู่ O-H จึงเกิดพันธะไฮโดรเจนระหว่างโมเลกุลได้แรง ทำให้แรงยึดเหนี่ยวระหว่างโมเลกุลสูงและมีจุดเดือดสูงที่สุด
+    <br>
+    <i>Propanol has an O-H group, so it can form strong intermolecular hydrogen bonds. This gives it stronger intermolecular forces and the highest boiling point.</i>
+    <br><br>
+    อีเทนไทออลมีหมู่ S-H ซึ่งเกิดพันธะไฮโดรเจนได้ไม่เด่นชัดเท่า O-H ส่วนคลอโรอีเทนไม่มีหมู่ O-H หรือ N-H จึงไม่เกิดพันธะไฮโดรเจนที่แรง
+    <br>
+    <i>Ethanethiol has an S-H group, which does not form hydrogen bonds as strongly as O-H. Chloroethane has no O-H or N-H group, so it does not form strong hydrogen bonds.</i>
+  </div>
+</article>
+
+
+  <!-- ข้อ 11: เงื่อนไขปฏิกิริยา -->
+  <article class="question" data-answer="E">
+    <div class="question-head">
+      <span class="q-number">11</span>
+      <div class="q-title">
+        ข้อใดจับคู่ “ชนิดสาร + รีเอเจนต์/เงื่อนไข + ผลที่สังเกตได้” ถูกต้องที่สุด
+        <br>
+        Which matching of compound type, reagent/condition, and observation is the most correct?
+      </div>
+    </div>
+
+    <ol class="choices" type="A">
+      <li>Alkane + Br₂ in the dark → Br₂ decolorized immediately</li>
+      <li>Alkene + Br₂ in the dark → no reaction</li>
+      <li>Alkane + KMnO₄ → purple color fades rapidly</li>
+      <li>Benzene + Br₂ in the dark → addition occurs easily</li>
+      <li>Alkene + Br₂ in the dark → addition occurs and Br₂ is decolorized</li>
+      <li>Alkane + HBr → Markovnikov addition occurs</li>
+    </ol>
+
+    <div class="hint-box print-hide optional-hint">
+      💡 คำใบ้: แอลคีนมีพันธะคู่ จึงเกิด addition กับ Br₂ ได้ง่ายในที่มืด
+    </div>
+
+    <div class="solution-box">
+      <b>เฉลย: E.</b><br>
+      แอลคีนเกิดปฏิกิริยาเติมกับ Br₂ ได้ในที่มืด ทำให้สี Br₂ จางลง ส่วนแอลเคนต้องใช้ UV เมื่อต้องการทำปฏิกิริยากับ Br₂
+    </div>
+  </article>
+
+
+  <!-- ข้อ 12: KMnO4 / KMnO4 test -->
+<article class="question" data-answer="B">
+  <div class="question-head">
+    <span class="q-number">12</span>
+    <div class="q-title">
+      เมื่อแอลคีนทำปฏิกิริยากับสารละลาย KMnO₄ เจือจาง ควรสังเกตเห็นอะไร
+      <br>
+      Which observation is expected when an alkene reacts with dilute KMnO₄ solution?
+    </div>
+  </div>
+
+  <ol class="choices" type="A">
+    <li>
+      The purple color becomes darker and no precipitate forms.
+      <br>
+      สีม่วงเข้มขึ้น และไม่เกิดตะกอน
+    </li>
+
+    <li>
+      The purple color fades and brown MnO₂ forms.
+      <br>
+      สีม่วงจางลง และเกิดตะกอน MnO₂ สีน้ำตาล
+    </li>
+
+    <li>
+      A white precipitate of AgBr forms immediately.
+      <br>
+      เกิดตะกอนสีขาวของ AgBr ทันที
+    </li>
+
+    <li>
+      CO₂ gas is produced immediately.
+      <br>
+      เกิดแก๊ส CO₂ ทันที
+    </li>
+
+    <li>
+      The solution turns red because HBr is formed.
+      <br>
+      สารละลายเปลี่ยนเป็นสีแดง เพราะเกิด HBr
+    </li>
+
+    <li>
+      No reaction occurs because alkenes are saturated hydrocarbons.
+      <br>
+      ไม่เกิดปฏิกิริยา เพราะแอลคีนเป็นไฮโดรคาร์บอนอิ่มตัว
+    </li>
+  </ol>
+
+  <div class="hint-box print-hide optional-hint">
+    💡 คำใบ้ / Hint:
+    KMnO₄ ใช้ทดสอบความไม่อิ่มตัวของสาร เช่น สารที่มีพันธะคู่ C=C
+    <br>
+    KMnO₄ can be used to test unsaturation, such as compounds containing a C=C double bond.
+  </div>
+
+  <div class="solution-box">
+    <b>เฉลย / Solution: B.</b><br>
+    แอลคีนมีพันธะคู่ C=C จึงทำปฏิกิริยากับสารละลาย KMnO₄ เจือจางได้ ทำให้สีม่วงของ KMnO₄ จางลง และเกิดตะกอน MnO₂ สีน้ำตาล
+    <br>
+    <i>Alkenes contain a C=C double bond, so they react with dilute KMnO₄ solution. The purple color of KMnO₄ fades, and brown MnO₂ precipitate forms.</i>
+    <br><br>
+    ส่วนแอลเคนเป็นไฮโดรคาร์บอนอิ่มตัว โดยทั่วไปไม่ทำให้ KMnO₄ เปลี่ยนสีภายใต้เงื่อนไขนี้
+    <br>
+    <i>Alkanes are saturated hydrocarbons and generally do not decolorize KMnO₄ under these conditions.</i>
+  </div>
+</article>
+</section>
+</section>
+ <script>
+    const body = document.body;
+    let hintsVisible = false;
+
+    function setStatus(text) {
+      const el = document.getElementById('statusText');
+      if (el) el.textContent = text;
+    }
+
+    function renumberQuestions() {
+      document.querySelectorAll('.question').forEach((q, i) => {
+        const num = q.querySelector('.q-number');
+        if (num) num.textContent = i + 1;
+      });
+    }
+
+    function ensureFiveChoices() {
+      document.querySelectorAll('.question').forEach(q => {
+        const ol = q.querySelector('.choices');
+        if (!ol) return;
+        while (ol.children.length < 5) {
+          const li = document.createElement('li');
+          li.innerHTML = '<span class="placeholder-choice">ไม่มีข้อใดถูก / ตัวเลือกสำรอง</span>';
+          ol.appendChild(li);
+        }
+      });
+    }
+
+    function buildAnswerKey() {
+      const grid = document.getElementById('answerGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+      document.querySelectorAll('.question').forEach((q, i) => {
+        const cell = document.createElement('div');
+        cell.className = 'answer-cell';
+        cell.textContent = `${i + 1}. ${q.dataset.answer || '-'}`;
+        grid.appendChild(cell);
+      });
+    }
+
+    function setMode(mode) {
+      body.classList.remove('mode-exam', 'mode-key', 'mode-solution');
+      body.classList.add(mode);
+      if (mode === 'mode-exam') setStatus('โหมดปัจจุบัน: ฉบับข้อสอบนักเรียน — ซ่อนคำใบ้และเฉลย');
+      if (mode === 'mode-key') setStatus('โหมดปัจจุบัน: ฉบับพร้อมเฉลยท้ายชุด — ซ่อนเฉลยละเอียด');
+      if (mode === 'mode-solution') setStatus('โหมดปัจจุบัน: ฉบับเฉลยละเอียด — แสดงเฉลยใต้แต่ละข้อ');
+      buildAnswerKey();
+      return typesetAndPaginate();
+    }
+
+    function toggleHints() {
+      hintsVisible = !hintsVisible;
+      document.querySelectorAll('.optional-hint').forEach(el => {
+        el.classList.toggle('print-hide', !hintsVisible);
+        el.style.display = hintsVisible ? 'block' : '';
+      });
+      setStatus(hintsVisible ? 'เปิดคำใบ้บนหน้าจอแล้ว — ตอนพิมพ์ยังซ่อนอยู่ในโหมดข้อสอบ' : 'ปิดคำใบ้บนหน้าจอแล้ว');
+      typesetAndPaginate();
+    }
+
+    function mmToPx(mm) {
+      const probe = document.getElementById('mmProbe');
+      const pxPer100mm = probe ? probe.getBoundingClientRect().width : 377.95;
+      return (pxPer100mm / 100) * mm;
+    }
+
+    function clearPageBreaks() {
+      document.querySelectorAll('.question.force-page-break').forEach(q => q.classList.remove('force-page-break'));
+    }
+
+    function autoPaginateQuestions(showStatus = false) {
+      clearPageBreaks();
+
+      const paper = document.getElementById('paper');
+      const questions = Array.from(document.querySelectorAll('.question'));
+      if (!paper || questions.length === 0) return;
+
+      // A4 297mm with @page margin 12mm top+bottom => printable height about 273mm.
+      // ใช้ค่าเผื่อเล็กน้อยเพื่อลดโอกาสล้นหน้าจริงใน Chrome/Edge print.
+      const printableHeight = mmToPx(271);
+      const paperTop = paper.getBoundingClientRect().top + window.scrollY;
+      let pageStart = paperTop;
+      let pageBottom = pageStart + printableHeight;
+
+      questions.forEach((q) => {
+        const top = q.getBoundingClientRect().top + window.scrollY;
+        const height = q.offsetHeight;
+        const bottom = top + height;
+
+        if (height < printableHeight && bottom > pageBottom) {
+          q.classList.add('force-page-break');
+          const newTop = q.getBoundingClientRect().top + window.scrollY;
+          pageStart = newTop;
+          pageBottom = pageStart + printableHeight;
+        }
+
+        while ((q.getBoundingClientRect().top + window.scrollY + q.offsetHeight) > pageBottom) {
+          pageStart = pageBottom;
+          pageBottom = pageStart + printableHeight;
+        }
+      });
+
+      if (showStatus) setStatus('จัดหน้า A4 ใหม่แล้ว: ระบบพยายามไม่ให้ตัดข้อสอบกลางหน้า');
+    }
+
+    function typesetAndPaginate() {
+      const run = () => {
+        ensureFiveChoices();
+        renumberQuestions();
+        buildAnswerKey();
+        autoPaginateQuestions(false);
+        // ทำซ้ำอีกรอบหลังใส่ page break เพราะ layout อาจเปลี่ยน
+        requestAnimationFrame(() => autoPaginateQuestions(false));
+      };
+
+      if (window.MathJax && MathJax.typesetPromise) {
+        return MathJax.typesetPromise().then(run).catch(run);
+      } else {
+        run();
+        return Promise.resolve();
+      }
+    }
+
+    function beforePrint(mode) {
+      return setMode(mode).then(() => new Promise(resolve => {
+        setTimeout(() => {
+          autoPaginateQuestions(false);
+          resolve();
+        }, 150);
+      }));
+    }
+
+    function printExam() {
+      beforePrint('mode-exam').then(() => window.print());
+    }
+
+    function printWithKey() {
+      beforePrint('mode-key').then(() => window.print());
+    }
+
+    function printSolution() {
+      beforePrint('mode-solution').then(() => window.print());
+    }
+
+    function drawSmilesCanvases() {
+      if (!window.SmilesDrawer) return;
+      document.querySelectorAll('canvas.molecule[data-smiles]').forEach(canvas => {
+        const smiles = canvas.dataset.smiles;
+        const drawer = new SmilesDrawer.Drawer({ width: canvas.width || 260, height: canvas.height || 180 });
+        SmilesDrawer.parse(smiles, tree => drawer.draw(tree, canvas, 'light', false), err => console.warn(err));
+      });
+    }
+
+    // Helper สำหรับวาดแกน XY แบบเร็ว: <svg class="diagram auto-axes" data-xlabel="x" data-ylabel="y"></svg>
+    function drawAutoAxes() {
+      document.querySelectorAll('svg.auto-axes').forEach(svg => {
+        svg.setAttribute('viewBox', '0 0 300 180');
+        const xlabel = svg.dataset.xlabel || 'x';
+        const ylabel = svg.dataset.ylabel || 'y';
+        svg.innerHTML = `
+          <line x1="28" y1="150" x2="275" y2="150"></line>
+          <line x1="45" y1="165" x2="45" y2="20"></line>
+          <path d="M275 150 L263 144 M275 150 L263 156"></path>
+          <path d="M45 20 L39 32 M45 20 L51 32"></path>
+          <text x="280" y="154">${xlabel}</text>
+          <text x="35" y="18">${ylabel}</text>
+        `;
+      });
+    }
+
+    window.addEventListener('load', () => {
+      ensureFiveChoices();
+      renumberQuestions();
+      buildAnswerKey();
+      drawSmilesCanvases();
+      drawAutoAxes();
+      typesetAndPaginate();
+    });
+
+    window.addEventListener('beforeprint', () => {
+      autoPaginateQuestions(false);
+    });
+  </script>
+</body>
+</html>

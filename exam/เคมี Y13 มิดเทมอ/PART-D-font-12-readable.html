@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+
+<html lang="th">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PART D | Lab Visual Reactions | Font 12 Readable</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&amp;family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<style>
+    :root{
+      --paper-width:210mm;
+      --ink:#111827;
+      --muted:#4b5563;
+      --line:#d1d5db;
+      --soft:#f8fafc;
+      --red:#dc2626;
+      --blue:#2563eb;
+      --green:#047857;
+      --orange:#f97316;
+      --purple:#a855f7;
+      --brown:#92400e;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      background:#e5e7eb;
+      color:var(--ink);
+      font-family:"Google Sans","Noto Sans Thai",Arial,sans-serif;
+      line-height:1.35;
+    }
+    .toolbar{
+      position:sticky; top:0; z-index:50;
+      display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center;
+      padding:12px; background:#0f172a; color:#fff;
+      box-shadow:0 8px 24px rgba(15,23,42,.22);
+    }
+    .toolbar button{
+      border:0; border-radius:999px; padding:9px 14px; cursor:pointer;
+      font-family:inherit; font-weight:800; background:#fff; color:#0f172a;
+    }
+    .toolbar .primary{background:#38bdf8;color:#082f49}
+    .toolbar .danger{background:#fde68a;color:#78350f}
+    .toolbar .status{flex-basis:100%; text-align:center; font-size:13px; opacity:.92}
+
+    .sheet{
+      width:var(--paper-width);
+      min-height:297mm;
+      background:#fff;
+      margin:18px auto 32px;
+      padding:11.5mm 12mm;
+      box-shadow:0 16px 40px rgba(15,23,42,.18);
+    }
+
+    .exam-title{
+      text-align:center;
+      font-size:16px;
+      font-weight:900;
+      margin:0 0 2px;
+    }
+    .exam-subtitle{
+      text-align:center;
+      font-size:11.5px;
+      color:#374151;
+      margin:0 0 7px;
+    }
+    .instruction{
+      border:1px solid var(--line);
+      border-radius:8px;
+      padding:6px 8px;
+      background:#f9fafb;
+      font-size:10.2px;
+      line-height:1.3;
+      margin-bottom:7px;
+    }
+
+    .lab-case{
+      border:1.4px solid #111827;
+      border-radius:10px;
+      padding:7px 8px;
+      margin-bottom:8px;
+      break-inside:avoid;
+      page-break-inside:avoid;
+    }
+    .case-head{
+      display:flex; justify-content:space-between; gap:8px; align-items:flex-start;
+      margin-bottom:5px;
+    }
+    .case-title{
+      font-size:11.5px;
+      font-weight:900;
+    }
+    .case-tag{
+      font-size:9.4px;
+      font-weight:900;
+      border:1px solid #111827;
+      border-radius:999px;
+      padding:2px 7px;
+      white-space:nowrap;
+      background:#f3f4f6;
+    }
+    .case-desc{
+      font-size:9.8px;
+      color:#374151;
+      margin-bottom:6px;
+    }
+
+    .lab-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:6px;
+      margin-bottom:6px;
+    }
+    .mini-card{
+      border:1px solid var(--line);
+      border-radius:8px;
+      padding:5px;
+      background:#fff;
+    }
+    .mini-title{
+      font-size:9px;
+      font-weight:900;
+      text-align:center;
+      margin-bottom:4px;
+      color:#374151;
+    }
+    .lab-svg{
+      width:100%;
+      height:auto;
+      display:block;
+      border:1px solid #e5e7eb;
+      border-radius:6px;
+      background:linear-gradient(to bottom,#f8fafc,#ffffff);
+    }
+
+    .question{
+      border-top:1px dashed #cbd5e1;
+      padding-top:5px;
+      margin-top:5px;
+    }
+    .q-head{
+      display:flex; justify-content:space-between; gap:8px; align-items:flex-start;
+      margin-bottom:3px;
+    }
+    .q-title{
+      font-size:10.5px;
+      font-weight:800;
+      line-height:1.25;
+    }
+    .score{
+      white-space:nowrap;
+      font-size:9.4px;
+      font-weight:900;
+    }
+    .choices{
+      margin:2px 0 0 18px;
+      padding-left:12px;
+      columns:2;
+      column-gap:16px;
+      font-size:9.7px;
+    }
+    .choices li{
+      margin:0 0 2px;
+      break-inside:avoid;
+    }
+
+    .answer-space{
+      display:block;
+      min-height:18mm;
+      margin:5px 0 1px;
+      border:1px dashed #9ca3af;
+      border-radius:7px;
+      background:
+        repeating-linear-gradient(to bottom,
+          transparent 0,
+          transparent 6.2mm,
+          rgba(156,163,175,.55) 6.25mm,
+          transparent 6.45mm);
+    }
+    .answer-space.tall{min-height:24mm}
+
+    .solution-box{
+      display:none;
+      margin-top:7px;
+      border:1px solid #bfdbfe;
+      border-left:4px solid #2563eb;
+      background:#eff6ff;
+      border-radius:8px;
+      padding:6px 7px;
+      font-size:9.6px;
+      line-height:1.32;
+    }
+    .solution-title{
+      font-size:10.3px;
+      font-weight:900;
+      margin-bottom:4px;
+    }
+    .ans-red{
+      color:var(--red);
+      font-weight:900;
+    }
+    .answer-key{
+      display:none;
+      margin-top:10px;
+      border-top:2px solid #111827;
+      padding-top:7px;
+    }
+    .answer-key h3{
+      margin:0 0 6px;
+      font-size:13px;
+    }
+    .key-grid{
+      display:grid;
+      grid-template-columns:repeat(6,1fr);
+      gap:5px;
+    }
+    .key-item{
+      border:1px solid #111827;
+      text-align:center;
+      padding:5px 2px;
+      font-size:10px;
+      font-weight:900;
+    }
+
+    body.mode-solution .solution-box{display:block}
+    body.mode-key .answer-key,
+    body.mode-solution .answer-key{display:block}
+
+    @page{size:A4 portrait; margin:0}
+    @media print{
+      body{background:#fff; -webkit-print-color-adjust:exact; print-color-adjust:exact;}
+      .toolbar{display:none!important}
+      .sheet{box-shadow:none; margin:0; width:210mm; min-height:297mm}
+      .exam-title{font-size:14.5pt}
+      .q-title{font-size:9.3pt}
+      .choices{font-size:8.8pt}
+      .case-desc,.instruction{font-size:8.7pt}
+      .solution-box{font-size:8.3pt}
+    }
+    @media screen and (max-width:860px){
+      .sheet{width:calc(100vw - 18px)}
+      .lab-grid{grid-template-columns:1fr}
+      .choices{columns:1}
+      .key-grid{grid-template-columns:repeat(3,1fr)}
+    }
+  
+
+/* =========================
+   PATCH: compact print fix
+   - keep all 3 lab cases on one A4 page in exam mode
+   - reduce blank spaces
+   - keep print buttons working
+========================= */
+:root{--paper-width:210mm;}
+.sheet{
+  width:210mm !important;
+  min-height:297mm !important;
+  margin:14px auto 24px !important;
+  padding:7.5mm 9mm !important;
+  overflow:hidden !important;
+  page-break-after:always !important;
+  break-after:page !important;
+}
+.exam-title{font-size:13.2px !important;line-height:1.12 !important;margin:0 0 1px !important;}
+.exam-subtitle{font-size:9.1px !important;line-height:1.12 !important;margin:0 0 4px !important;}
+.instruction{font-size:8.25px !important;line-height:1.12 !important;padding:3px 5px !important;margin-bottom:4px !important;}
+.lab-case{padding:4px 5px !important;margin-bottom:4px !important;border-radius:8px !important;break-inside:avoid !important;page-break-inside:avoid !important;}
+.case-head{margin-bottom:2px !important;}
+.case-title{font-size:9.4px !important;line-height:1.12 !important;}
+.case-tag{font-size:7.6px !important;padding:1px 5px !important;}
+.case-desc{font-size:7.7px !important;line-height:1.12 !important;margin-bottom:3px !important;}
+.lab-grid{gap:4px !important;margin-bottom:3px !important;}
+.mini-card{padding:2px !important;border-radius:6px !important;}
+.mini-title{font-size:7.3px !important;line-height:1.05 !important;margin-bottom:1px !important;}
+.lab-svg{height:22mm !important;max-height:22mm !important;width:100% !important;}
+.question{padding-top:2px !important;margin-top:2px !important;}
+.q-head{margin-bottom:1px !important;}
+.q-title{font-size:8.0px !important;line-height:1.13 !important;font-weight:800 !important;}
+.score{font-size:7.5px !important;}
+.answer-space{min-height:9mm !important;margin:2px 0 0 !important;border-radius:5px !important;background:#fff !important;}
+.answer-space.tall{min-height:12mm !important;}
+.solution-box{font-size:8.0px !important;line-height:1.18 !important;padding:4px 5px !important;margin-top:3px !important;}
+.solution-title{font-size:8.8px !important;margin-bottom:2px !important;}
+.answer-key{margin-top:5px !important;padding-top:4px !important;}
+.answer-key h3{font-size:10px !important;margin:0 0 3px !important;}
+.key-grid{gap:3px !important;}
+.key-item{font-size:7.5px !important;padding:3px 2px !important;}
+
+/* key mode: make room for short key */
+body.mode-key .answer-space{display:none !important;}
+body.mode-key .answer-key{display:block !important;}
+
+/* solution mode: hide visuals and answer blanks so detailed solution is readable */
+body.mode-solution .lab-grid,
+body.mode-solution .answer-space{display:none !important;}
+body.mode-solution .solution-box{display:block !important;}
+body.mode-solution .answer-key{display:block !important;}
+body.mode-solution .lab-case{break-inside:auto !important;page-break-inside:auto !important;}
+
+@media print{
+  html,body{width:210mm;background:#fff !important;}
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .toolbar{display:none !important;}
+  .sheet{
+    width:210mm !important;
+    min-height:297mm !important;
+    margin:0 !important;
+    padding:7.5mm 9mm !important;
+    box-shadow:none !important;
+    overflow:hidden !important;
+  }
+  .exam-title{font-size:11.5pt !important;}
+  .exam-subtitle{font-size:8.0pt !important;}
+  .instruction{font-size:7.3pt !important;}
+  .case-desc{font-size:6.8pt !important;}
+  .case-title{font-size:8.2pt !important;}
+  .q-title{font-size:7.0pt !important;}
+  .score{font-size:6.8pt !important;}
+  .mini-title{font-size:6.6pt !important;}
+  .lab-svg{height:21mm !important;max-height:21mm !important;}
+  .answer-space{min-height:8.5mm !important;}
+  body.mode-solution .sheet{overflow:visible !important;height:auto !important;min-height:297mm !important;}
+}
+
+  
+
+/* ===============================
+   READABILITY PATCH: Font 12 policy
+   PART D Lab Visual
+   - 1 case per A4 page
+   - main readable text = 12px
+   - support labels not below 10.5px
+================================ */
+
+body {
+  font-size: 12px !important;
+  line-height: 1.35 !important;
+}
+
+.sheet {
+  width: 210mm !important;
+  min-height: 297mm !important;
+  margin: 16px auto 28px !important;
+  padding: 12mm !important;
+  overflow: hidden !important;
+  page-break-after: always !important;
+  break-after: page !important;
+}
+
+.exam-title {
+  font-size: 17px !important;
+  line-height: 1.22 !important;
+  margin: 0 0 4px !important;
+}
+
+.exam-subtitle {
+  font-size: 12px !important;
+  line-height: 1.25 !important;
+  margin: 0 0 7px !important;
+}
+
+.instruction,
+.case-desc,
+.q-title,
+.question,
+.choices {
+  font-size: 12px !important;
+  line-height: 1.35 !important;
+}
+
+.instruction {
+  padding: 6px 8px !important;
+  margin-bottom: 8px !important;
+}
+
+.lab-case {
+  padding: 8px 9px !important;
+  margin-bottom: 0 !important;
+  border-radius: 10px !important;
+  break-inside: avoid !important;
+  page-break-inside: avoid !important;
+}
+
+.case-head {
+  margin-bottom: 6px !important;
+}
+
+.case-title {
+  font-size: 14px !important;
+  line-height: 1.25 !important;
+}
+
+.case-tag,
+.score,
+.mini-title {
+  font-size: 10.5px !important;
+  line-height: 1.25 !important;
+}
+
+.case-tag {
+  padding: 2px 8px !important;
+}
+
+.case-desc {
+  margin-bottom: 8px !important;
+}
+
+.lab-grid {
+  gap: 7px !important;
+  margin-bottom: 8px !important;
+}
+
+.mini-card {
+  padding: 5px !important;
+  border-radius: 8px !important;
+}
+
+.mini-title {
+  margin-bottom: 4px !important;
+}
+
+.lab-svg {
+  height: 36mm !important;
+  max-height: 36mm !important;
+  width: 100% !important;
+}
+
+.question {
+  padding-top: 7px !important;
+  margin-top: 7px !important;
+}
+
+.q-head {
+  margin-bottom: 4px !important;
+}
+
+.answer-space {
+  min-height: 20mm !important;
+  margin: 5px 0 2px !important;
+  border-radius: 7px !important;
+  background:
+    repeating-linear-gradient(to bottom,
+      transparent 0,
+      transparent 6.2mm,
+      rgba(156,163,175,.55) 6.25mm,
+      transparent 6.45mm) !important;
+}
+
+.answer-space.tall {
+  min-height: 24mm !important;
+}
+
+.solution-box {
+  font-size: 12px !important;
+  line-height: 1.35 !important;
+  padding: 7px 8px !important;
+  margin-top: 7px !important;
+}
+
+.solution-title {
+  font-size: 13px !important;
+  line-height: 1.25 !important;
+  margin-bottom: 5px !important;
+}
+
+.answer-key {
+  display: none;
+  margin-top: 8px !important;
+  padding-top: 7px !important;
+}
+
+body.mode-key .answer-key,
+body.mode-solution .answer-key {
+  display: block !important;
+}
+
+.key-only-page {
+  display: none !important;
+}
+
+body.mode-key .key-only-page,
+body.mode-solution .key-only-page {
+  display: block !important;
+}
+
+.key-only-page .answer-key {
+  display: block !important;
+  border-top: 0 !important;
+}
+
+.key-only-page .key-grid {
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 8px !important;
+}
+
+.key-item {
+  font-size: 12px !important;
+  line-height: 1.35 !important;
+  padding: 8px 6px !important;
+}
+
+body.mode-solution .answer-space {
+  display: none !important;
+}
+
+body.mode-solution .solution-box {
+  display: block !important;
+}
+
+@media print {
+  html, body {
+    width: 210mm !important;
+    background: #fff !important;
+  }
+
+  body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .toolbar {
+    display: none !important;
+  }
+
+  .sheet {
+    width: 210mm !important;
+    min-height: 297mm !important;
+    margin: 0 !important;
+    padding: 12mm !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+    page-break-after: always !important;
+    break-after: page !important;
+  }
+
+  .exam-title {
+    font-size: 17px !important;
+  }
+
+  .exam-subtitle,
+  .instruction,
+  .case-desc,
+  .q-title,
+  .question,
+  .choices {
+    font-size: 12px !important;
+    line-height: 1.35 !important;
+  }
+
+  .case-title {
+    font-size: 14px !important;
+  }
+
+  .case-tag,
+  .score,
+  .mini-title {
+    font-size: 10.5px !important;
+  }
+
+  .lab-svg {
+    height: 36mm !important;
+    max-height: 36mm !important;
+  }
+
+  .answer-space {
+    min-height: 20mm !important;
+  }
+
+  .solution-box {
+    font-size: 12px !important;
+    line-height: 1.35 !important;
+  }
+
+  body.mode-solution .sheet {
+    overflow: hidden !important;
+    height: 297mm !important;
+    min-height: 297mm !important;
+  }
+}
+</style>
+</head>
+<body class="mode-exam">
+<div class="toolbar">
+<button class="primary" onclick="printExam()">🖨️ พิมพ์ข้อสอบ</button>
+<button onclick="printWithKey()">✅ พิมพ์พร้อมเฉลยสั้น</button>
+<button onclick="printSolution()">📘 พิมพ์เฉลยละเอียด</button>
+<button class="danger" onclick="toggleSolution()">💡 เปิด/ปิดเฉลยบนจอ</button>
+<div class="status" id="statusText">โหมดปัจจุบัน: Part D ฟอนต์ 12px อ่านง่าย — แยก Case ละหน้า</div>
+</div>
+<main class="sheet exam-page case-page"><div class="exam-title">Part D (Lab Visual Description Version): Hydrocarbon Reactions / ปฏิกิริยาไฮโดรคาร์บอนแบบบรรยายจากภาพ Lab</div><div class="exam-subtitle">Lab-based written explanation / เขียนอธิบายจากภาพผลการทดลอง <b>(6 questions × 2 points = 12 points / 12 คะแนน)</b></div><div class="instruction">
+<b>Instructions / คำชี้แจง:</b>
+      Use the laboratory-style diagrams and observations to write a short explanation. State the evidence from the experiment, the type of hydrocarbon or reaction, and the expected product when required.
+      <br/>
+      จงใช้ภาพจำลองผลการทดลองและผลการสังเกตเพื่อเขียนอธิบายสั้น ๆ โดยระบุหลักฐานจากการทดลอง ประเภทของไฮโดรคาร์บอนหรือชนิดของปฏิกิริยา และผลิตภัณฑ์ที่คาดว่าจะเกิดเมื่อโจทย์ถาม
+    </div><section class="lab-case">
+<div class="case-head">
+<div class="case-title">Case A: Substance X / กรณีศึกษา A: สาร X</div>
+<div class="case-tag">Questions 1–2 / ข้อ 1–2</div>
+</div>
+<div class="case-desc">
+        Molecular formula of X is <b>C₄H₈</b>. In the dark, bromine solution loses its orange color. Dilute KMnO₄ also loses its purple color and gives a brown precipitate.
+        <br/>
+        สาร X มีสูตรโมเลกุล <b>C₄H₈</b> เมื่อนำไปทดสอบกับสารละลายโบรมีนในที่มืด สีส้มจางหาย และเมื่อนำไปทดสอบกับ KMnO₄ เจือจาง สีม่วงจางหายพร้อมเกิดตะกอนสีน้ำตาล
+      </div>
+<div class="lab-grid">
+<div class="mini-card">
+<div class="mini-title">Br₂ in the dark / Br₂ ในที่มืด</div>
+<svg aria-label="bromine dark test" class="lab-svg" viewbox="0 0 210 135">
+<rect fill="#fff" height="92" rx="12" stroke="#94a3b8" stroke-width="3" width="58" x="18" y="18"></rect>
+<rect fill="#fff" height="92" rx="12" stroke="#94a3b8" stroke-width="3" width="58" x="134" y="18"></rect>
+<rect fill="#f97316" height="51" rx="8" width="46" x="24" y="53"></rect>
+<rect fill="#f8fafc" height="51" rx="8" width="46" x="140" y="53"></rect>
+<text fill="#374151" font-size="11" font-weight="900" x="32" y="45">before</text>
+<text fill="#374151" font-size="11" font-weight="900" x="149" y="45">after</text>
+<text fill="#111827" font-size="19" font-weight="900" x="79" y="74">→</text>
+<text font-size="11" font-weight="800" x="20" y="124">orange color disappears</text>
+</svg>
+</div>
+<div class="mini-card">
+<div class="mini-title">Dilute KMnO₄ / KMnO₄ เจือจาง</div>
+<svg aria-label="permanganate test" class="lab-svg" viewbox="0 0 210 135">
+<rect fill="#fff" height="92" rx="12" stroke="#94a3b8" stroke-width="3" width="58" x="18" y="18"></rect>
+<rect fill="#fff" height="92" rx="12" stroke="#94a3b8" stroke-width="3" width="58" x="134" y="18"></rect>
+<rect fill="#a855f7" height="51" rx="8" width="46" x="24" y="53"></rect>
+<rect fill="#faf5ff" height="44" rx="8" width="46" x="140" y="60"></rect>
+<rect fill="#92400e" height="11" rx="4" width="40" x="143" y="93"></rect>
+<text fill="#374151" font-size="11" font-weight="900" x="32" y="45">before</text>
+<text fill="#374151" font-size="11" font-weight="900" x="149" y="45">after</text>
+<text fill="#111827" font-size="19" font-weight="900" x="79" y="74">→</text>
+<text font-size="11" font-weight="800" x="18" y="124">purple fades + brown ppt</text>
+</svg>
+</div>
+</div>
+<div class="question">
+<div class="q-head">
+<div class="q-title">1. Explain why Substance X should be classified as an alkene. / จงอธิบายว่าเพราะเหตุใดสาร X จึงควรจัดเป็นแอลคีน</div>
+<div class="score">(2 pts)</div>
+</div>
+<div class="answer-space"></div>
+</div>
+<div class="question">
+<div class="q-head">
+<div class="q-title">2. Describe the reaction of X with Br₂ in the dark, including the reaction type and product type. / จงบรรยายปฏิกิริยาของ X กับ Br₂ ในที่มืด พร้อมระบุชนิดปฏิกิริยาและชนิดผลิตภัณฑ์</div>
+<div class="score">(2 pts)</div>
+</div>
+<div class="answer-space"></div>
+</div>
+<div class="solution-box">
+<div class="solution-title">Case A Solution / เฉลยกรณี A</div>
+<b>Q1:</b> The formula C₄H₈ fits the general formula of an alkene or cycloalkane, but the decolorization of both Br₂ and KMnO₄ indicates the presence of a C=C double bond. Therefore X is most likely an <span class="ans-red">alkene</span>.
+        <br/>
+        สูตร C₄H₈ และการฟอกสีทั้ง Br₂ และ KMnO₄ ชี้ว่ามีพันธะไม่อิ่มตัว จึงน่าจะเป็น <span class="ans-red">แอลคีน</span>
+<br/><br/>
+<b>Q2:</b> X reacts with Br₂ in the dark by an <span class="ans-red">addition reaction</span>. Br atoms add across the C=C double bond, forming a <span class="ans-red">dibromoalkane</span>.
+      </div>
+</section></main><main class="sheet exam-page case-page case-page-2"><div class="exam-title">Part D: Hydrocarbon Reactions / ปฏิกิริยาไฮโดรคาร์บอน</div><div class="exam-subtitle">Lab-based written explanation <b>(continued: Case B / ต่อ: กรณี B)</b></div><div class="instruction"><b>Instructions / คำชี้แจง:</b> Continue writing a short explanation from the laboratory observations. / เขียนอธิบายสั้น ๆ จากผลการทดลองต่อ</div><section class="lab-case">
+<div class="case-head">
+<div class="case-title">Case B: Substance Y / กรณีศึกษา B: สาร Y</div>
+<div class="case-tag">Questions 3–4 / ข้อ 3–4</div>
+</div>
+<div class="case-desc">
+        Y does not change bromine solution in the dark. Under UV light, bromine solution decolorizes and moist blue litmus paper turns red.
+        <br/>
+        สาร Y ไม่ทำให้สารละลายโบรมีนเปลี่ยนสีในที่มืด แต่เมื่อฉายแสง UV สีของโบรมีนจางหาย และกระดาษลิตมัสชื้นสีน้ำเงินเปลี่ยนเป็นสีแดง
+      </div>
+<div class="lab-grid">
+<div class="mini-card">
+<div class="mini-title">Br₂ in the dark / Br₂ ในที่มืด</div>
+<svg aria-label="no reaction in dark" class="lab-svg" viewbox="0 0 210 135">
+<rect fill="#fff" height="92" rx="12" stroke="#94a3b8" stroke-width="3" width="58" x="18" y="18"></rect>
+<rect fill="#fff" height="92" rx="12" stroke="#94a3b8" stroke-width="3" width="58" x="134" y="18"></rect>
+<rect fill="#f97316" height="51" rx="8" width="46" x="24" y="53"></rect>
+<rect fill="#f97316" height="51" rx="8" width="46" x="140" y="53"></rect>
+<text fill="#111827" font-size="19" font-weight="900" x="70" y="74">→</text>
+<text font-size="11" font-weight="800" x="18" y="124">orange remains</text>
+</svg>
+</div>
+<div class="mini-card">
+<div class="mini-title">Br₂ + UV / Br₂ + แสง UV</div>
+<svg aria-label="uv bromination litmus" class="lab-svg" viewbox="0 0 210 135">
+<circle cx="105" cy="18" fill="#fef08a" r="12" stroke="#f59e0b" stroke-width="2"></circle>
+<text fill="#92400e" font-size="11" font-weight="900" x="97" y="22">UV</text>
+<rect fill="#fff" height="84" rx="12" stroke="#94a3b8" stroke-width="3" width="58" x="18" y="26"></rect>
+<rect fill="#fff" height="84" rx="12" stroke="#94a3b8" stroke-width="3" width="58" x="96" y="26"></rect>
+<rect fill="#f97316" height="45" rx="8" width="46" x="24" y="59"></rect>
+<rect fill="#f8fafc" height="45" rx="8" width="46" x="102" y="59"></rect>
+<rect fill="#dc2626" height="58" rx="4" stroke="#7f1d1d" stroke-width="2" width="18" x="167" y="50"></rect>
+<text font-size="10.5" font-weight="800" x="156" y="124">litmus red</text>
+</svg>
+</div>
+</div>
+<div class="question">
+<div class="q-head">
+<div class="q-title">3. Explain why Substance Y is most likely an alkane. / จงอธิบายว่าเพราะเหตุใดสาร Y จึงน่าจะเป็นแอลเคน</div>
+<div class="score">(2 pts)</div>
+</div>
+<div class="answer-space"></div>
+</div>
+<div class="question">
+<div class="q-head">
+<div class="q-title">4. Write the general reaction pattern of Y with Br₂ under UV light and state the reaction type. / จงเขียนรูปแบบสมการทั่วไปของ Y กับ Br₂ ภายใต้แสง UV และระบุชนิดปฏิกิริยา</div>
+<div class="score">(2 pts)</div>
+</div>
+<div class="answer-space"></div>
+</div>
+<div class="solution-box">
+<div class="solution-title">Case B Solution / เฉลยกรณี B</div>
+<b>Q3:</b> Y does not react with Br₂ in the dark, but reacts under UV light and forms acidic HBr, shown by blue litmus turning red. This behavior is typical of an <span class="ans-red">alkane</span>.
+        <br/>
+<b>Q4:</b> The reaction is <span class="ans-red">free-radical substitution</span> under UV light:
+        \(C_nH_{2n+2}+Br_2 \xrightarrow{UV} C_nH_{2n+1}Br+HBr\).
+      </div>
+</section></main><main class="sheet exam-page case-page case-page-3"><div class="exam-title">Part D: Hydrocarbon Reactions / ปฏิกิริยาไฮโดรคาร์บอน</div><div class="exam-subtitle">Lab-based written explanation <b>(continued: Case C / ต่อ: กรณี C)</b></div><div class="instruction"><b>Instructions / คำชี้แจง:</b> Continue writing a short explanation from the laboratory observations. / เขียนอธิบายสั้น ๆ จากผลการทดลองต่อ</div><section class="lab-case">
+<div class="case-head">
+<div class="case-title">Case C: Substance Z / กรณีศึกษา C: สาร Z</div>
+<div class="case-tag">Questions 5–6 / ข้อ 5–6</div>
+</div>
+<div class="case-desc">
+        Z burns with a very smoky flame. Bromine in the dark shows no change, but Br₂ with FeBr₃ decolorizes. KMnO₄ shows no obvious change.
+        <br/>
+        สาร Z เผาไหม้ให้เปลวไฟมีเขม่ามาก โบรมีนในที่มืดไม่เปลี่ยนสี แต่ Br₂ เมื่อมี FeBr₃ จะจางสี และ KMnO₄ ไม่เกิดการเปลี่ยนแปลงชัดเจน
+      </div>
+<div class="lab-grid">
+<div class="mini-card">
+<div class="mini-title">Combustion / การเผาไหม้</div>
+<svg aria-label="smoky flame" class="lab-svg" viewbox="0 0 210 135">
+<rect fill="#cbd5e1" height="22" rx="4" stroke="#64748b" stroke-width="2" width="42" x="84" y="86"></rect>
+<path d="M105 38 C88 58, 88 71, 105 92 C122 71,122 58,105 38Z" fill="#f97316" stroke="#b45309" stroke-width="2"></path>
+<path d="M105 52 C96 64, 96 72,105 84 C114 72,114 64,105 52Z" fill="#fde68a"></path>
+<circle cx="76" cy="34" fill="#111827" opacity=".85" r="8"></circle>
+<circle cx="90" cy="24" fill="#1f2937" opacity=".75" r="10"></circle>
+<circle cx="107" cy="18" fill="#374151" opacity=".72" r="12"></circle>
+<circle cx="126" cy="24" fill="#111827" opacity=".8" r="10"></circle>
+<text font-size="11" font-weight="800" x="51" y="123">heavy soot / เขม่ามาก</text>
+</svg>
+</div>
+<div class="mini-card">
+<div class="mini-title">Br₂ + FeBr₃ / Br₂ + FeBr₃</div>
+<svg aria-label="bromine with catalyst" class="lab-svg" viewbox="0 0 210 135">
+<rect fill="#fff" height="92" rx="12" stroke="#94a3b8" stroke-width="3" width="58" x="18" y="18"></rect>
+<rect fill="#fff" height="92" rx="12" stroke="#94a3b8" stroke-width="3" width="58" x="134" y="18"></rect>
+<rect fill="#f97316" height="51" rx="8" width="46" x="24" y="53"></rect>
+<rect fill="#f8fafc" height="51" rx="8" width="46" x="140" y="53"></rect>
+<rect fill="#d97706" height="20" rx="5" width="38" x="85" y="16"></rect>
+<text fill="#fff" font-size="11" font-weight="900" x="89" y="30">FeBr₃</text>
+<text font-size="11" font-weight="800" x="18" y="124">orange disappears</text>
+</svg>
+</div>
+</div>
+<div class="question">
+<div class="q-head">
+<div class="q-title">5. Explain why Substance Z is most likely an aromatic hydrocarbon. / จงอธิบายว่าเพราะเหตุใดสาร Z จึงน่าจะเป็นไฮโดรคาร์บอนอะโรมาติก</div>
+<div class="score">(2 pts)</div>
+</div>
+<div class="answer-space"></div>
+</div>
+<div class="question">
+<div class="q-head">
+<div class="q-title">6. Describe the reaction of Z with Br₂/FeBr₃, including the reaction type and expected product. / จงบรรยายปฏิกิริยาของ Z กับ Br₂/FeBr₃ พร้อมระบุชนิดปฏิกิริยาและผลิตภัณฑ์ที่คาดว่าจะเกิด</div>
+<div class="score">(2 pts)</div>
+</div>
+<div class="answer-space"></div>
+</div>
+<div class="solution-box">
+<div class="solution-title">Case C Solution / เฉลยกรณี C</div>
+<b>Q5:</b> Z gives heavy soot on burning, does not react with Br₂ in the dark, but reacts with Br₂ when FeBr₃ is present. These observations are characteristic of an <span class="ans-red">aromatic hydrocarbon</span>.
+        <br/>
+<b>Q6:</b> Z reacts with Br₂/FeBr₃ by <span class="ans-red">electrophilic substitution</span>. One hydrogen on the aromatic ring is replaced by Br, giving a <span class="ans-red">bromoaromatic compound + HBr</span>.
+      </div>
+</section></main><main class="sheet key-only-page"><div class="exam-title">Part D: Answer Key / เฉลยสั้น</div><section class="answer-key">
+<h3>Answer Key / เฉลยสั้น</h3>
+<div class="key-grid">
+<div class="key-item">1. X = alkene</div>
+<div class="key-item">2. addition → dibromoalkane</div>
+<div class="key-item">3. Y = alkane</div>
+<div class="key-item">4. substitution under UV</div>
+<div class="key-item">5. Z = aromatic</div>
+<div class="key-item">6. electrophilic substitution</div>
+</div>
+</section></main>
+<script>
+    const statusText = document.getElementById('statusText');
+    function setStatus(t){ if(statusText) statusText.textContent = t; }
+    function setMode(mode){
+      document.body.classList.remove('mode-exam','mode-key','mode-solution');
+      document.body.classList.add(mode);
+    }
+    function printExam(){
+      setMode('mode-exam');
+      setStatus('โหมดปัจจุบัน: พิมพ์ข้อสอบ');
+      setTimeout(()=>window.print(), 200);
+    }
+    function printWithKey(){
+      setMode('mode-key');
+      setStatus('โหมดปัจจุบัน: พิมพ์พร้อมเฉลยสั้น');
+      setTimeout(()=>window.print(), 200);
+    }
+    function printSolution(){
+      setMode('mode-solution');
+      setStatus('โหมดปัจจุบัน: พิมพ์เฉลยละเอียด');
+      setTimeout(()=>window.print(), 200);
+    }
+    function toggleSolution(){
+      if(document.body.classList.contains('mode-solution')){
+        setMode('mode-exam');
+        setStatus('ปิดเฉลยบนจอแล้ว');
+      }else{
+        setMode('mode-solution');
+        setStatus('เปิดเฉลยบนจอแล้ว');
+      }
+    }
+  </script>
+</body>
+</html>
