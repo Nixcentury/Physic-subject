@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Chemistry Reaction Rate Lab V.2.3</title>
+  <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <style>
+    :root{
+      --primary:#000000;
+      --accent:#8b5cf6;
+      --bg-body:#f3e8ff;
+      --border:4px solid #000000;
+      --shadow:6px 6px 0px #000000;
+      --card-bg:#ffffff;
+      --text:#0f172a;
+      --time:#f97316;
+      --mass:#3b82f6;
+      --gas:#10b981;
+      --rate:#8b5cf6;
+      --danger:#ef4444;
+      --soft:#faf5ff;
+      --ok:#16a34a;
+      --warn:#f59e0b;
+      --cyan:#06b6d4;
+    }
+    *{box-sizing:border-box;font-family:'K2D',sans-serif;}
+    body{
+      background-color:var(--bg-body);
+      margin:0;
+      padding:20px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      color:var(--text);
+      overflow-x:hidden;
+    }
+    .container{
+      background:var(--card-bg);
+      border:var(--border);
+      box-shadow:8px 8px 0 #000;
+      width:100%;
+      max-width:1380px;
+      padding:20px;
+      display:flex;
+      flex-direction:column;
+      gap:20px;
+    }
+    .header-title{
+      margin:0;
+      padding:15px;
+      background:var(--accent);
+      color:#fff;
+      border:var(--border);
+      font-size:27px;
+      font-weight:900;
+      text-transform:uppercase;
+      text-align:center;
+      box-shadow:4px 4px 0 #000;
+      letter-spacing:.5px;
+      line-height:1.25;
+    }
+    .sub-title{
+      margin:0;
+      background:#111827;
+      color:#fff;
+      border:3px solid #000;
+      box-shadow:4px 4px 0 #000;
+      padding:10px 14px;
+      font-weight:900;
+      font-size:17px;
+      text-align:center;
+    }
+    .dashboard{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:15px;
+      background:#faf5ff;
+      border:var(--border);
+      padding:15px;
+      box-shadow:4px 4px 0 #000;
+    }
+    .dash-box{
+      background:#fff;
+      border:3px solid #000;
+      padding:14px;
+      text-align:center;
+      position:relative;
+      min-height:108px;
+    }
+    .dash-label{font-size:15px;font-weight:900;color:#0f172a;line-height:1.2;}
+    .dash-value{font-size:28px;font-weight:900;font-family:monospace;margin-top:6px;line-height:1.1;}
+    .dash-unit{font-size:13px;font-weight:900;display:block;margin-top:3px;}
+    .main-layout{display:flex;flex-wrap:wrap;gap:20px;}
+    .controls-panel{flex:1;min-width:390px;display:flex;flex-direction:column;gap:15px;}
+    .visual-panel{
+      flex:1.45;
+      min-width:500px;
+      height:520px;
+      background:#fff;
+      border:4px solid #000;
+      position:relative;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+      background-image:radial-gradient(#e2e8f0 2px, transparent 2px);
+      background-size:25px 25px;
+      box-shadow:inset 4px 4px 0 rgba(0,0,0,.05);
+    }
+    canvas{display:block;width:100%;height:100%;}
+    .mode-selector,.control-card,.info-card,.data-card,.analysis-card{
+      background:#fff;
+      border:3px solid #000;
+      padding:15px;
+      box-shadow:3px 3px 0 #000;
+    }
+    .mode-selector label,.control-card label,.info-card h3,.data-card h3,.analysis-card h3{
+      font-size:18px;
+      font-weight:900;
+      display:block;
+      margin:0 0 10px;
+      color:var(--accent);
+    }
+    select,input,textarea{
+      width:100%;
+      border:3px solid #000;
+      padding:10px;
+      font-size:15px;
+      font-weight:800;
+      background:#f8fafc;
+      outline:none;
+    }
+    textarea{min-height:58px;resize:vertical;user-select:text;}
+    .controls-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;}
+    .condition-card{background:#fff;border:3px solid #000;padding:12px;box-shadow:3px 3px 0 #000;}
+    .condition-card label{font-size:15px;font-weight:900;display:block;margin-bottom:8px;line-height:1.25;}
+    .btn-row{display:flex;gap:10px;flex-wrap:wrap;}
+    .btn-action{
+      border:3px solid #000;
+      padding:10px 12px;
+      font-size:15px;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:3px 3px 0 #000;
+      transition:.08s;
+      border-radius:8px;
+      text-align:center;
+      flex:1;
+      min-width:120px;
+    }
+    .btn-action:active{transform:translate(3px,3px);box-shadow:none;}
+    .btn-start{background:#22c55e;color:#052e16;}
+    .btn-reset{background:#000;color:#fff;border-color:var(--accent);box-shadow:4px 4px 0 var(--accent);}
+    .btn-key{background:#facc15;color:#422006;}
+    .btn-check{background:#60a5fa;color:#0f172a;}
+    .btn-detail{background:#c084fc;color:#2e1065;}
+    .btn-noise{background:#fb923c;color:#431407;}
+    .info-card{background:#faf5ff;border-color:#8b5cf6;box-shadow:4px 4px 0 #8b5cf6;}
+    .equation-box{
+      background:#fff;
+      border:3px solid #000;
+      padding:12px;
+      margin:10px 0;
+      text-align:center;
+      font-size:18px;
+      font-weight:900;
+      overflow-x:auto;
+      user-select:text;
+    }
+    .pill-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;}
+    .pill{border:3px solid #000;background:#fff;padding:8px 10px;font-weight:900;border-radius:999px;box-shadow:2px 2px 0 #000;}
+    .pill.good{background:#dcfce7;color:#166534;}
+    .pill.warn{background:#fef3c7;color:#92400e;}
+    .pill.blue{background:#dbeafe;color:#1e3a8a;}
+    .data-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:20px;}
+    .table-wrap{overflow:auto;border:3px solid #000;background:#fff;}
+    table{width:100%;border-collapse:collapse;font-size:14px;min-width:1080px;}
+    th,td{border:2px solid #000;padding:8px;text-align:center;vertical-align:middle;}
+    th{background:#ede9fe;font-weight:900;}
+    td:first-child,th:first-child{font-weight:900;background:#faf5ff;}
+    tfoot td{background:#fef3c7;font-weight:900;}
+    .rate-input,.avg-input,.species-input{width:115px;text-align:center;padding:7px;border-width:2px;font-family:monospace;background:#fff;user-select:text;}
+    .species-input{width:140px;}
+    .mini-status{display:block;font-size:12px;font-weight:900;margin-top:4px;min-height:17px;}
+    .right{color:var(--ok);}.wrong{color:var(--danger);}.muted{color:#64748b;}
+    .chart-grid{display:grid;grid-template-columns:1fr;gap:15px;}
+    .chart-card{background:#fff;border:3px solid #000;padding:12px;box-shadow:3px 3px 0 #000;}
+    .chart-title{font-weight:900;color:#111827;margin-bottom:8px;font-size:15px;}
+    .chart-canvas{height:250px;width:100%;border:2px solid #000;background:#fff;}
+    .analysis-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+    .qa-card{background:#fff;border:3px solid #000;padding:10px;box-shadow:2px 2px 0 #000;}
+    .qa-card b{font-size:14px;line-height:1.25;display:block;margin-bottom:7px;color:#111827;}
+    .hidden{display:none !important;}
+    .key-panel,.detail-panel{
+      background:#ecfeff;
+      border:3px solid #0891b2;
+      box-shadow:4px 4px 0 #0891b2;
+      padding:15px;
+      font-weight:800;
+      line-height:1.55;
+    }
+    .detail-panel{background:#fff7ed;border-color:#f97316;box-shadow:4px 4px 0 #f97316;}
+    .key-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+    .key-item{background:#fff;border:2px solid #000;padding:8px;text-align:center;font-weight:900;}
+    .species-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:10px;}
+    .species-card{background:#fff;border:3px solid #000;padding:10px;text-align:center;box-shadow:2px 2px 0 #000;}
+    .species-card .sp-name{font-weight:900;margin-bottom:6px;color:#4c1d95;}
+    .small-note{font-size:13px;color:#334155;font-weight:800;line-height:1.45;margin-top:8px;}
+    .completion-row td{background:#dcfce7 !important;font-weight:900;}
+    .limit-cell{font-family:monospace;font-weight:900;color:#166534;}
+    .status-badge{display:inline-block;border:2px solid #000;border-radius:999px;padding:4px 8px;font-weight:900;box-shadow:1px 1px 0 #000;background:#e0f2fe;color:#075985;}
+    .status-badge.done{background:#dcfce7;color:#166534;}
+    .footer-note{background:#111827;color:#fff;border:3px solid #000;box-shadow:3px 3px 0 #000;padding:10px;text-align:center;font-weight:900;}
+    @media(max-width:1050px){
+      .dashboard{grid-template-columns:repeat(2,1fr)}
+      .visual-panel,.controls-panel{min-width:100%;}
+      .data-grid{grid-template-columns:1fr;}
+      .analysis-grid{grid-template-columns:1fr 1fr;}
+      .species-grid{grid-template-columns:1fr 1fr;}
+    }
+    @media(max-width:650px){
+      body{padding:10px;}
+      .container{padding:12px;}
+      .dashboard,.controls-grid,.analysis-grid,.species-grid{grid-template-columns:1fr;}
+      .header-title{font-size:21px;}
+      .dash-value{font-size:24px;}
+      .visual-panel{height:420px;}
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1 class="header-title">🧪 Chemistry Interactive Reaction Rate Lab V.2.3<br>ห้องปฏิบัติการจำลองอัตราการเกิดปฏิกิริยา</h1>
+  <p class="sub-title">ทุกด่านมี Simulation + ตาราง + กราฟเส้น + แผนภูมิแท่ง + ช่องคำนวณ Rate / Every lab uses simulation, data table, line graph, bar chart, and rate calculation.</p>
+
+  <div class="dashboard">
+    <div class="dash-box" style="border-color:var(--time);color:var(--time);">
+      <div class="dash-label">⏱️ เวลาจนสารหมด<br>Completion time</div>
+      <div class="dash-value"><span id="dash-time">0</span></div>
+      <span class="dash-unit">s</span>
+    </div>
+    <div class="dash-box" style="border-color:var(--mass);color:var(--mass);">
+      <div class="dash-label">📡 ค่าที่วัดสุดท้าย<br>Final measured value</div>
+      <div class="dash-value"><span id="dash-final">0</span></div>
+      <span class="dash-unit" id="dash-final-unit">unit</span>
+    </div>
+    <div class="dash-box" style="border-color:var(--gas);color:var(--gas);">
+      <div class="dash-label">💨 ผลิตภัณฑ์ที่ติดตาม<br>Tracked product</div>
+      <div class="dash-value"><span id="dash-product">0</span></div>
+      <span class="dash-unit" id="dash-product-unit">unit</span>
+    </div>
+    <div class="dash-box" style="border-color:var(--rate);color:var(--rate);">
+      <div class="dash-label">📈 อัตราเฉลี่ย<br>Average tracked rate</div>
+      <div class="dash-value"><span id="dash-avg">0</span></div>
+      <span class="dash-unit" id="dash-avg-unit">unit/s</span>
+    </div>
+  </div>
+
+  <div class="main-layout">
+    <div class="controls-panel">
+      <div class="mode-selector">
+        <label>📌 เลือกด่านการทดลอง / Select experiment lab</label>
+        <select id="lab-select" onchange="changeLab()"></select>
+      </div>
+
+      <div class="info-card">
+        <h3 id="lab-title">Lab title</h3>
+        <div id="equation" class="equation-box">Equation</div>
+        <div id="tracking-note" class="small-note"></div>
+        <div class="pill-row" id="lab-pills"></div>
+      </div>
+
+      <div class="controls-grid" id="condition-grid"></div>
+
+      <div class="control-card">
+        <label>🎛️ ควบคุมการทดลอง / Experiment controls</label>
+        <div class="btn-row">
+          <button class="btn-action btn-start" onclick="runExperiment()">▶️ เริ่ม/เล่นผลทดลอง<br>Run lab</button>
+          <button class="btn-action btn-noise" onclick="newTrialNoise()">🎲 สุ่มผลซ้ำ<br>New trial noise</button>
+          <button class="btn-action btn-reset" onclick="resetAnswers()">🧹 ล้างคำตอบ<br>Clear answers</button>
+        </div>
+        <div class="small-note" id="experiment-id">Experiment ID: -</div>
+      </div>
+
+      <div class="control-card">
+        <label>🔎 เฉลย / Keys</label>
+        <div class="btn-row">
+          <button class="btn-action btn-check" onclick="checkIntervalRates()">✅ ตรวจอัตรารายช่วง<br>Check interval rates</button>
+          <button class="btn-action btn-key" onclick="toggleRateKey()">👀 แอบดูเฉลยอัตรา<br>Peek rate key</button>
+          <button class="btn-action btn-detail" onclick="toggleDetailedSolution()">📘 เฉลยละเอียด<br>Detailed solution</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="visual-panel">
+      <canvas id="simCanvas"></canvas>
+    </div>
+  </div>
+
+  <div class="data-card">
+    <h3>📋 ตารางข้อมูลการทดลอง / Experimental data table</h3>
+    <div class="table-wrap">
+      <table id="data-table">
+        <thead id="table-head"></thead>
+        <tbody id="table-body"></tbody>
+        <tfoot id="table-foot"></tfoot>
+      </table>
+    </div>
+    <div class="small-note">หมายเหตุ / Note: ตารางนี้แสดงสารกำหนดปริมาณที่เหลือ และไฮไลต์แถวที่สารตั้งต้นตัวกำหนดปริมาณหมด / The table shows the limiting reactant remaining and highlights the row when it is used up. คอลัมน์อัตรารายช่วงให้ช่วยกันคำนวณในห้องเรียน แล้วค่อยกดตรวจหรือแอบดูเฉลย / Calculate the interval-rate column together before checking or peeking at the key.</div>
+  </div>
+
+  <div id="rate-key-panel" class="key-panel hidden">
+    <h3>👀 เฉลยอัตรารายช่วง / Interval rate key</h3>
+    <div id="rate-key-grid" class="key-grid"></div>
+  </div>
+
+  <div class="data-grid">
+    <div class="data-card">
+      <h3>📈 กราฟแสดงการเปลี่ยนแปลงตามเวลา / Line graph over time</h3>
+      <div class="chart-card">
+        <div id="line-title" class="chart-title">Line graph</div>
+        <canvas id="lineChart" class="chart-canvas"></canvas>
+      </div>
+    </div>
+    <div class="data-card">
+      <h3>📊 แผนภูมิอัตรารายช่วง / Interval rate bar chart</h3>
+      <div class="chart-card">
+        <div id="bar-title" class="chart-title">Bar chart</div>
+        <canvas id="barChart" class="chart-canvas"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="analysis-card">
+    <h3>🧠 วิเคราะห์ผลจากข้อมูล / Interpret the evidence</h3>
+    <div class="analysis-grid">
+      <div class="qa-card"><b>1) ช่วงใดเร็วที่สุด?<br>Which interval is the fastest?</b><textarea placeholder="ตอบจากแผนภูมิแท่ง / Use the bar chart"></textarea></div>
+      <div class="qa-card"><b>2) กราฟชันแปลว่าอะไร?<br>What does a steep graph mean?</b><textarea placeholder="เชื่อมกับ rate / Connect to rate"></textarea></div>
+      <div class="qa-card"><b>3) ทำไมช่วงท้ายช้าลง?<br>Why does it slow down near the end?</b><textarea placeholder="ใช้ collision theory / Use collision theory"></textarea></div>
+      <div class="qa-card"><b>4) ปัจจัยใดทำให้เร็วขึ้น?<br>Which factor makes it faster?</b><textarea placeholder="ดูเงื่อนไขที่เลือก / Use selected conditions"></textarea></div>
+    </div>
+  </div>
+
+  <div class="analysis-card">
+    <h3>⚖️ อัตราตามสมการเคมี / Rate relationship from the balanced equation</h3>
+    <div id="rate-relation" class="equation-box"></div>
+    <div class="small-note" id="relation-note"></div>
+    <div id="species-grid" class="species-grid"></div>
+    <div id="species-btn-row" class="btn-row" style="margin-top:12px;">
+      <button class="btn-action btn-check" onclick="checkSpeciesRates()">✅ ตรวจอัตราตามสมการ<br>Check species rates</button>
+      <button class="btn-action btn-key" onclick="toggleSpeciesKey()">👀 แอบดูเฉลยสมการ<br>Peek equation key</button>
+    </div>
+  </div>
+
+  <div id="species-key-panel" class="key-panel hidden">
+    <h3>👀 เฉลยอัตราตามสมการ / Species-rate key</h3>
+    <div id="species-key-grid" class="key-grid"></div>
+  </div>
+
+  <div id="detail-panel" class="detail-panel hidden">
+    <h3>📘 เฉลยละเอียด / Detailed solution</h3>
+    <div id="detail-content"></div>
+  </div>
+
+  <div class="footer-note">V2.4: แก้ Lab 4 ให้วัดความขุ่นเป็นค่าเชิงสัมพัทธ์ ไม่ใช่มวล / Lab 4 now tracks relative cloudiness, not mass.</div>
+</div>
+
+<script>
+const GAS_MOLAR_VOLUME_ML = 24000;
+const MOLAR_MASS = { CO2: 44.0, CaCO3: 100.1, S: 32.1 };
+
+const LABS = {
+  caco3_hcl: {
+    id: 'caco3_hcl',
+    titleTH: 'Lab 1: มวลลดลง — หินปูนกับกรดไฮโดรคลอริก',
+    titleEN: 'Lab 1: Mass loss — Calcium carbonate and hydrochloric acid',
+    short: 'CO₂ from mass loss',
+    equationTex: '\\[CaCO_3(s)+2HCl(aq)\\rightarrow CaCl_2(aq)+H_2O(l)+CO_2(g)\\]',
+    rateTex: '\\[rate=-\\frac{\\Delta n(CaCO_3)}{\\Delta t}=-\\frac{1}{2}\\frac{\\Delta n(HCl)}{\\Delta t}=\\frac{\\Delta n(CaCl_2)}{\\Delta t}=\\frac{\\Delta n(H_2O)}{\\Delta t}=\\frac{\\Delta n(CO_2)}{\\Delta t}\\]',
+    trackingTH: 'เราติดตามการเกิด CO₂ ทางอ้อมจากมวลรวมบนตาชั่งที่ลดลง / มวลที่หายไปคือ CO₂ ที่หลุดออกจากระบบเปิด',
+    trackingEN: 'We indirectly track CO₂ production from the decrease in total mass on the balance. The lost mass is escaped CO₂.',
+    limitingTH: 'CaCO₃ หมดก่อน', limitingEN: 'CaCO₃ is limiting', excessTH: 'HCl เกินพอ', excessEN: 'HCl is in excess',
+    measureMode: 'mass_loss',
+    measuredLabelTH: 'มวลรวมบนตาชั่ง', measuredLabelEN: 'Total mass on balance', measuredUnit: 'g',
+    productLabelTH: 'CO₂ ที่หลุดออก', productLabelEN: 'CO₂ escaped', productUnit: 'g',
+    trackedRateUnit: 'g/s', lineTrend: 'decrease', initialMeasured: 100.00,
+    productMax: 0.44, trackedSpecies: 'CO2', trackedSpeciesUnit: 'mass', trackedCoeff: 1,
+    baseK: 0.0105,
+    conditions: [
+      { key:'conc', labelTH:'🧪 ความเข้มข้น HCl', labelEN:'HCl concentration', options:[
+        {value:'low', th:'เจือจาง 0.20 M', en:'Dilute 0.20 M', factor:0.65, note:'ช้ากว่า / slower'},
+        {value:'mid', th:'กลาง 0.50 M', en:'Medium 0.50 M', factor:1.00, note:'มาตรฐาน / standard'},
+        {value:'high', th:'เข้มข้น 1.00 M', en:'Concentrated 1.00 M', factor:1.55, note:'เร็วกว่า / faster'}
+      ]},
+      { key:'surface', labelTH:'🪨 ขนาด CaCO₃', labelEN:'CaCO₃ surface area', options:[
+        {value:'chunk', th:'ก้อนใหญ่', en:'Large chips', factor:0.72, note:'พื้นที่ผิวน้อย / smaller surface area'},
+        {value:'small', th:'เม็ดเล็ก', en:'Small pieces', factor:1.00, note:'ปานกลาง / medium'},
+        {value:'powder', th:'ผงละเอียด', en:'Powder', factor:1.65, note:'พื้นที่ผิวมาก / larger surface area'}
+      ]},
+      { key:'temp', labelTH:'🌡️ อุณหภูมิ', labelEN:'Temperature', options:[
+        {value:'cool', th:'เย็น 15°C', en:'Cool 15°C', factor:0.72, note:'ช้ากว่า / slower'},
+        {value:'room', th:'ห้อง 25°C', en:'Room 25°C', factor:1.00, note:'มาตรฐาน / standard'},
+        {value:'warm', th:'อุ่น 40°C', en:'Warm 40°C', factor:1.45, note:'เร็วกว่า / faster'}
+      ]}
+    ],
+    species: [
+      {key:'CaCO3', display:'CaCO₃', role:'reactant', coeff:1},
+      {key:'HCl', display:'HCl', role:'reactant', coeff:2},
+      {key:'CaCl2', display:'CaCl₂', role:'product', coeff:1},
+      {key:'H2O', display:'H₂O', role:'product', coeff:1},
+      {key:'CO2', display:'CO₂', role:'product', coeff:1}
+    ],
+    detailIntroTH: 'ใน Lab นี้ CaCO₃ เป็นสารกำหนดปริมาณ จึงทำให้ CO₂ สุดท้ายใกล้เคียงเดิม แต่กรดเข้มขึ้น/ผงละเอียดขึ้น/อุ่นขึ้นจะทำให้ถึงจุดสิ้นสุดเร็วกว่า',
+    detailIntroEN: 'In this lab, CaCO₃ is the limiting reactant, so the final CO₂ is nearly the same. Higher acid concentration, powder, or warming makes the reaction reach completion faster.'
+  },
+  mg_hcl: {
+    id: 'mg_hcl',
+    titleTH: 'Lab 2: ปริมาตรแก๊สเพิ่มขึ้น — แมกนีเซียมกับกรดไฮโดรคลอริก',
+    titleEN: 'Lab 2: Gas volume increases — Magnesium and hydrochloric acid',
+    short: 'H₂ gas volume',
+    equationTex: '\\[Mg(s)+2HCl(aq)\\rightarrow MgCl_2(aq)+H_2(g)\\]',
+    rateTex: '\\[rate=-\\frac{\\Delta n(Mg)}{\\Delta t}=-\\frac{1}{2}\\frac{\\Delta n(HCl)}{\\Delta t}=\\frac{\\Delta n(MgCl_2)}{\\Delta t}=\\frac{\\Delta n(H_2)}{\\Delta t}\\]',
+    trackingTH: 'เราติดตามการเกิด H₂ โดยอ่านปริมาตรแก๊สที่เพิ่มขึ้นในกระบอกเก็บแก๊ส',
+    trackingEN: 'We track H₂ production by measuring the increasing gas volume in a gas syringe.',
+    limitingTH: 'Mg หมดก่อน', limitingEN: 'Mg is limiting', excessTH: 'HCl เกินพอ', excessEN: 'HCl is in excess',
+    measureMode: 'gas_volume',
+    measuredLabelTH: 'ปริมาตร H₂', measuredLabelEN: 'H₂ volume', measuredUnit: 'mL',
+    productLabelTH: 'H₂ ที่เกิดขึ้น', productLabelEN: 'H₂ produced', productUnit: 'mL',
+    trackedRateUnit: 'mL/s', lineTrend: 'increase', initialMeasured: 0,
+    productMax: 86, trackedSpecies: 'H2', trackedSpeciesUnit: 'volume', trackedCoeff: 1,
+    baseK: 0.0115,
+    conditions: [
+      { key:'conc', labelTH:'🧪 ความเข้มข้น HCl', labelEN:'HCl concentration', options:[
+        {value:'low', th:'เจือจาง 0.20 M', en:'Dilute 0.20 M', factor:0.65, note:'ช้ากว่า / slower'},
+        {value:'mid', th:'กลาง 0.50 M', en:'Medium 0.50 M', factor:1.00, note:'มาตรฐาน / standard'},
+        {value:'high', th:'เข้มข้น 1.00 M', en:'Concentrated 1.00 M', factor:1.50, note:'เร็วกว่า / faster'}
+      ]},
+      { key:'surface', labelTH:'📏 รูปร่าง Mg', labelEN:'Mg shape', options:[
+        {value:'ribbon', th:'แถบยาว', en:'Ribbon', factor:1.00, note:'มาตรฐาน / standard'},
+        {value:'coiled', th:'ขดแน่น', en:'Coiled ribbon', factor:0.75, note:'สัมผัสกรดน้อยกว่า / less exposed'},
+        {value:'pieces', th:'ตัดเป็นชิ้นเล็ก', en:'Small pieces', factor:1.40, note:'พื้นที่ผิวมากกว่า / more exposed'}
+      ]},
+      { key:'temp', labelTH:'🌡️ อุณหภูมิ', labelEN:'Temperature', options:[
+        {value:'cool', th:'เย็น 15°C', en:'Cool 15°C', factor:0.75, note:'ช้ากว่า / slower'},
+        {value:'room', th:'ห้อง 25°C', en:'Room 25°C', factor:1.00, note:'มาตรฐาน / standard'},
+        {value:'warm', th:'อุ่น 40°C', en:'Warm 40°C', factor:1.38, note:'เร็วกว่า / faster'}
+      ]}
+    ],
+    species: [
+      {key:'Mg', display:'Mg', role:'reactant', coeff:1},
+      {key:'HCl', display:'HCl', role:'reactant', coeff:2},
+      {key:'MgCl2', display:'MgCl₂', role:'product', coeff:1},
+      {key:'H2', display:'H₂', role:'product', coeff:1}
+    ],
+    detailIntroTH: 'ใน Lab นี้ Mg เป็นสารกำหนดปริมาณ จึงให้ H₂ สุดท้ายใกล้เคียงเดิม แต่เงื่อนไขที่เพิ่มการชนทำให้ H₂ เกิดเร็วขึ้น',
+    detailIntroEN: 'In this lab, Mg is limiting, so the final H₂ amount is nearly the same. Conditions that increase effective collisions produce H₂ faster.'
+  },
+  h2o2_cat: {
+    id: 'h2o2_cat',
+    titleTH: 'Lab 3: ตัวเร่งปฏิกิริยา — การสลายตัวของไฮโดรเจนเปอร์ออกไซด์',
+    titleEN: 'Lab 3: Catalyst — Hydrogen peroxide decomposition',
+    short: 'O₂ and catalyst',
+    equationTex: '\\[2H_2O_2(aq)\\rightarrow 2H_2O(l)+O_2(g)\\]',
+    rateTex: '\\[rate=-\\frac{1}{2}\\frac{\\Delta n(H_2O_2)}{\\Delta t}=\\frac{1}{2}\\frac{\\Delta n(H_2O)}{\\Delta t}=\\frac{\\Delta n(O_2)}{\\Delta t}\\]',
+    trackingTH: 'เราติดตามการเกิด O₂ จากปริมาตรแก๊สที่เพิ่มขึ้น และเปรียบเทียบผลของตัวเร่ง โดยตัวเร่งหลักที่ใช้คือ MnO₂',
+    trackingEN: 'We track O₂ production from the increasing gas volume and compare the effect of catalysts. The main catalyst used is MnO₂.',
+    catalystInfoTH: 'ตัวเร่งหลักใน Lab นี้: MnO₂ หรือแมงกานีสไดออกไซด์ — ทำให้ H₂O₂ สลายตัวเร็วขึ้น แต่ไม่ถูกใช้หมด',
+    catalystInfoEN: 'Main catalyst in this lab: MnO₂, manganese dioxide — speeds up H₂O₂ decomposition but is not consumed.',
+    limitingTH: 'H₂O₂ หมดก่อน', limitingEN: 'H₂O₂ is limiting', excessTH: 'ตัวเร่งไม่ถูกใช้หมด', excessEN: 'Catalyst is not consumed',
+    measureMode: 'gas_volume',
+    measuredLabelTH: 'ปริมาตร O₂', measuredLabelEN: 'O₂ volume', measuredUnit: 'mL',
+    productLabelTH: 'O₂ ที่เกิดขึ้น', productLabelEN: 'O₂ produced', productUnit: 'mL',
+    trackedRateUnit: 'mL/s', lineTrend: 'increase', initialMeasured: 0,
+    productMax: 72, trackedSpecies: 'O2', trackedSpeciesUnit: 'volume', trackedCoeff: 1,
+    baseK: 0.0060,
+    conditions: [
+      { key:'cat', labelTH:'⚡ ตัวเร่งปฏิกิริยา', labelEN:'Catalyst', options:[
+        {value:'none', th:'ไม่มีตัวเร่ง', en:'No catalyst', factor:0.45, note:'ช้ามาก / very slow'},
+        {value:'yeast', th:'ยีสต์ / catalase', en:'Yeast / catalase', factor:1.25, note:'เร็วขึ้น / faster'},
+        {value:'mno2', th:'MnO₂', en:'MnO₂', factor:2.20, note:'เร็วมาก / very fast'}
+      ]},
+      { key:'conc', labelTH:'🧪 ความเข้มข้น H₂O₂', labelEN:'H₂O₂ concentration', options:[
+        {value:'low', th:'เจือจาง 3%', en:'Dilute 3%', factor:0.80, note:'ช้ากว่า / slower'},
+        {value:'mid', th:'กลาง 6%', en:'Medium 6%', factor:1.00, note:'มาตรฐาน / standard'},
+        {value:'high', th:'เข้มข้น 9%', en:'Concentrated 9%', factor:1.22, note:'เร็วกว่า / faster'}
+      ]},
+      { key:'temp', labelTH:'🌡️ อุณหภูมิ', labelEN:'Temperature', options:[
+        {value:'cool', th:'เย็น 15°C', en:'Cool 15°C', factor:0.78, note:'ช้ากว่า / slower'},
+        {value:'room', th:'ห้อง 25°C', en:'Room 25°C', factor:1.00, note:'มาตรฐาน / standard'},
+        {value:'warm', th:'อุ่น 40°C', en:'Warm 40°C', factor:1.32, note:'เร็วกว่า / faster'}
+      ]}
+    ],
+    species: [
+      {key:'H2O2', display:'H₂O₂', role:'reactant', coeff:2},
+      {key:'H2O', display:'H₂O', role:'product', coeff:2},
+      {key:'O2', display:'O₂', role:'product', coeff:1}
+    ],
+    detailIntroTH: 'ใน Lab นี้ H₂O₂ เป็นสารกำหนดปริมาณ ตัวเร่งทำให้ปฏิกิริยาเร็วขึ้น แต่ไม่ได้เพิ่ม O₂ สูงสุดถ้าใช้ H₂O₂ เท่าเดิม',
+    detailIntroEN: 'In this lab, H₂O₂ is limiting. A catalyst makes the reaction faster but does not increase the final O₂ amount if the same amount of H₂O₂ is used.'
+  },
+  thio_hcl: {
+    id: 'thio_hcl',
+    tier: 'extension',
+    titleTH: 'Extension Lab 4: ความขุ่นเพิ่มขึ้น — โซเดียมไทโอซัลเฟตกับกรดไฮโดรคลอริก',
+    titleEN: 'Extension Lab 4: Cloudiness increases — Sodium thiosulfate and hydrochloric acid',
+    short: 'Extension: sulfur precipitate / cloudiness',
+    equationTex: '\\[Na_2S_2O_3(aq)+2HCl(aq)\\rightarrow 2NaCl(aq)+SO_2(g)+S(s)+H_2O(l)\\]',
+    rateTex: '\\[\\text{relative rate}\\approx\\frac{\\Delta(\\%\\,\\text{cloudiness})}{\\Delta t}\\quad\\text{or}\\quad\\text{relative rate}\\propto\\frac{1}{t_{cross}}\\]',
+    trackingTH: 'เราติดตาม “ความขุ่น” ของสารละลายเป็นค่าเปอร์เซ็นต์จำลอง ไม่ใช่มวลโดยตรง ในห้องทดลองจริงมักจับเวลาจนกากบาทใต้บีกเกอร์มองไม่เห็น',
+    trackingEN: 'We track solution cloudiness as a simulated percentage, not as direct mass. In a real lab, students often time how long it takes for a cross under the beaker to disappear.',
+    limitingTH: 'Na₂S₂O₃ หมดก่อน', limitingEN: 'Na₂S₂O₃ is limiting', excessTH: 'HCl เกินพอ', excessEN: 'HCl is in excess',
+    measureMode: 'cloudiness',
+    measuredLabelTH: 'ความขุ่นของสารละลาย', measuredLabelEN: 'Solution cloudiness', measuredUnit: '%',
+    productLabelTH: 'ความขุ่นที่เพิ่มขึ้น', productLabelEN: 'Cloudiness increase', productUnit: '%',
+    trackedRateUnit: '%/s', lineTrend: 'increase', initialMeasured: 0,
+    productMax: 100, trackedSpecies: 'cloudiness', trackedSpeciesUnit: 'relative', trackedCoeff: 1,
+    skipSpeciesRates: true, limitingInitialMol: 0.0020,
+    baseK: 0.0090,
+    conditions: [
+      { key:'thio', labelTH:'🧪 ความเข้มข้น Na₂S₂O₃', labelEN:'Na₂S₂O₃ concentration', options:[
+        {value:'low', th:'เจือจาง 0.05 M', en:'Dilute 0.05 M', factor:0.70, note:'ขุ่นช้ากว่า / slower clouding'},
+        {value:'mid', th:'กลาง 0.10 M', en:'Medium 0.10 M', factor:1.00, note:'มาตรฐาน / standard'},
+        {value:'high', th:'เข้มข้น 0.20 M', en:'Concentrated 0.20 M', factor:1.45, note:'ขุ่นเร็วกว่า / faster clouding'}
+      ]},
+      { key:'acid', labelTH:'🧴 ความเข้มข้น HCl', labelEN:'HCl concentration', options:[
+        {value:'low', th:'เจือจาง 0.20 M', en:'Dilute 0.20 M', factor:0.78, note:'ช้ากว่า / slower'},
+        {value:'mid', th:'กลาง 0.50 M', en:'Medium 0.50 M', factor:1.00, note:'มาตรฐาน / standard'},
+        {value:'high', th:'เข้มข้น 1.00 M', en:'Concentrated 1.00 M', factor:1.32, note:'เร็วกว่า / faster'}
+      ]},
+      { key:'temp', labelTH:'🌡️ อุณหภูมิ', labelEN:'Temperature', options:[
+        {value:'cool', th:'เย็น 15°C', en:'Cool 15°C', factor:0.74, note:'ช้ากว่า / slower'},
+        {value:'room', th:'ห้อง 25°C', en:'Room 25°C', factor:1.00, note:'มาตรฐาน / standard'},
+        {value:'warm', th:'อุ่น 40°C', en:'Warm 40°C', factor:1.40, note:'เร็วกว่า / faster'}
+      ]}
+    ],
+    species: [
+      {key:'Na2S2O3', display:'Na₂S₂O₃', role:'reactant', coeff:1},
+      {key:'HCl', display:'HCl', role:'reactant', coeff:2},
+      {key:'NaCl', display:'NaCl', role:'product', coeff:2},
+      {key:'SO2', display:'SO₂', role:'product', coeff:1},
+      {key:'S', display:'S', role:'product', coeff:1},
+      {key:'H2O', display:'H₂O', role:'product', coeff:1}
+    ],
+    detailIntroTH: 'ใน Lab นี้ Na₂S₂O₃ เป็นสารกำหนดปริมาณ สารละลายขุ่นขึ้นเพราะเกิดตะกอนกำมะถัน S แต่ค่าที่แสดงใน simulator คือเปอร์เซ็นต์ความขุ่น ไม่ใช่มวลของตะกอน',
+    detailIntroEN: 'In this lab, Na₂S₂O₃ is limiting. The solution becomes cloudy because sulfur precipitate forms, but the simulator displays percent cloudiness, not precipitate mass.'
+  }
+};
+
+let currentLabId = 'caco3_hcl';
+let selections = {};
+let currentData = [];
+let currentKey = {};
+let trialSeed = Math.floor(Math.random()*9000)+1000;
+let animationProgress = 0;
+let isRunning = false;
+let bubbles = [];
+let rafId = null;
+
+const canvas = document.getElementById('simCanvas');
+const ctx = canvas.getContext('2d');
+const lineCanvas = document.getElementById('lineChart');
+const lineCtx = lineCanvas.getContext('2d');
+const barCanvas = document.getElementById('barChart');
+const barCtx = barCanvas.getContext('2d');
+let dpr = window.devicePixelRatio || 1;
+
+function seededNoise(index, amp){
+  const x = Math.sin((trialSeed + index*37) * 12.9898) * 43758.5453;
+  return (x - Math.floor(x) - 0.5) * 2 * amp;
+}
+function fmt(x, dec=2){ return Number(x).toFixed(dec); }
+function fmtSmart(x){
+  if(Math.abs(x) >= 10) return Number(x).toFixed(1);
+  if(Math.abs(x) >= 1) return Number(x).toFixed(2);
+  if(Math.abs(x) >= 0.01) return Number(x).toFixed(3);
+  return Number(x).toExponential(2);
+}
+function renderMath(){
+  if(window.MathJax && MathJax.typesetPromise){ MathJax.typesetPromise(); }
+}
+function setupSelectors(){
+  const sel = document.getElementById('lab-select');
+  sel.innerHTML = Object.values(LABS).map(l => `<option value="${l.id}">${l.titleTH} / ${l.titleEN}</option>`).join('');
+  sel.value = currentLabId;
+}
+function changeLab(){
+  currentLabId = document.getElementById('lab-select').value;
+  const lab = LABS[currentLabId];
+  selections = {};
+  lab.conditions.forEach(c => selections[c.key] = c.options[Math.min(1,c.options.length-1)].value);
+  trialSeed = Math.floor(Math.random()*9000)+1000;
+  buildConditionControls();
+  generateAndRender();
+  resetAnswers(false);
+}
+function buildConditionControls(){
+  const lab = LABS[currentLabId];
+  const grid = document.getElementById('condition-grid');
+  grid.innerHTML = lab.conditions.map(c => `
+    <div class="condition-card">
+      <label>${c.labelTH}<br><span class="muted">${c.labelEN}</span></label>
+      <select id="cond-${c.key}" onchange="updateCondition('${c.key}', this.value)">
+        ${c.options.map(o => `<option value="${o.value}" ${selections[c.key]===o.value?'selected':''}>${o.th} / ${o.en}</option>`).join('')}
+      </select>
+      <div class="small-note" id="note-${c.key}"></div>
+    </div>`).join('');
+  updateConditionNotes();
+}
+function updateCondition(key, value){
+  selections[key] = value;
+  generateAndRender();
+  resetAnswers(false);
+}
+function getOption(condition){
+  const lab = LABS[currentLabId];
+  const c = lab.conditions.find(x => x.key === condition);
+  return c.options.find(o => o.value === selections[condition]);
+}
+function getFactor(){
+  const lab = LABS[currentLabId];
+  let f = 1;
+  lab.conditions.forEach(c => {
+    const opt = c.options.find(o => o.value === selections[c.key]);
+    f *= opt.factor;
+  });
+  return f;
+}
+function updateConditionNotes(){
+  const lab = LABS[currentLabId];
+  lab.conditions.forEach(c => {
+    const opt = c.options.find(o => o.value === selections[c.key]);
+    const el = document.getElementById(`note-${c.key}`);
+    if(el) el.innerHTML = `${opt.note}<br>speed factor ×${opt.factor.toFixed(2)}`;
+  });
+}
+function trackedAmountToMoles(lab, productAmount){
+  if(lab.trackedSpeciesUnit === 'mass') return productAmount / MOLAR_MASS[lab.trackedSpecies];
+  if(lab.trackedSpeciesUnit === 'volume') return productAmount / GAS_MOLAR_VOLUME_ML;
+  if(lab.trackedSpeciesUnit === 'relative') {
+    const frac = lab.productMax > 0 ? productAmount / lab.productMax : 0;
+    return frac * (lab.limitingInitialMol || 0.0020);
+  }
+  return 0;
+}
+function getLimitingSpecies(lab){
+  return lab.species.find(sp => sp.role === 'reactant');
+}
+function getLimitingSnapshot(lab, productAmount){
+  const limiting = getLimitingSpecies(lab);
+  const nTracked = trackedAmountToMoles(lab, productAmount);
+  const extent = nTracked / lab.trackedCoeff;
+  const nTrackedMax = trackedAmountToMoles(lab, lab.productMax);
+  const extentMax = nTrackedMax / lab.trackedCoeff;
+  const initialLimiting = limiting.coeff * extentMax;
+  const consumedLimiting = limiting.coeff * extent;
+  const left = Math.max(0, initialLimiting - consumedLimiting);
+  const percentLeft = initialLimiting > 0 ? (left / initialLimiting) * 100 : 0;
+  return { limiting, initialLimiting, consumedLimiting, left, percentLeft, extent, extentMax };
+}
+function generateData(){
+  const lab = LABS[currentLabId];
+  const k = lab.baseK * getFactor();
+  // 99% completion point: run until the limiting reactant is effectively used up.
+  // Use a wider cap and adaptive time step so slow conditions remain visible without forcing an unrealistically early ending.
+  let tEnd = Math.ceil((-Math.log(0.01) / k) / 30) * 30;
+  tEnd = Math.max(120, Math.min(tEnd, 1800));
+  const dt = tEnd <= 240 ? 30 : (tEnd <= 720 ? 60 : 120);
+  const times = [];
+  for(let t=0; t<tEnd; t+=dt) times.push(t);
+  if(times[times.length-1] !== tEnd) times.push(tEnd);
+  const noiseAmp = lab.measureMode === 'mass_loss' ? 0.006 : (lab.trackedSpeciesUnit === 'relative' ? 1.2 : 0.85);
+  const rows = times.map((t, idx) => {
+    let product = lab.productMax * (1 - Math.exp(-k*t));
+    if(t === 0) product = 0;
+    if(t === tEnd) product = lab.productMax;
+    if(idx>0 && idx<times.length-1) product += seededNoise(idx, noiseAmp);
+    product = Math.max(0, Math.min(lab.productMax, product));
+    let measured = lab.measureMode === 'mass_loss' ? lab.initialMeasured - product : product;
+    if(lab.measureMode === 'mass_loss') measured = Math.max(lab.initialMeasured - lab.productMax, measured);
+    const snap = getLimitingSnapshot(lab, product);
+    const completed = t === tEnd || snap.percentLeft <= 0.2;
+    return { idx, t, measured, product, limitingLeft:snap.left, limitingPercentLeft:snap.percentLeft, completed, interval:'-', intervalRate:null, dt:null, deltaProduct:null };
+  });
+  for(let i=1;i<rows.length;i++){
+    rows[i].dt = rows[i].t - rows[i-1].t;
+    rows[i].deltaProduct = rows[i].product - rows[i-1].product;
+    rows[i].intervalRate = rows[i].deltaProduct / rows[i].dt;
+    rows[i].interval = `${rows[i-1].t}–${rows[i].t}`;
+  }
+  return rows;
+}
+function computeKey(){
+  const lab = LABS[currentLabId];
+  const last = currentData[currentData.length-1];
+  const avgTrackedRate = last.product / last.t;
+  const nTracked = trackedAmountToMoles(lab, last.product);
+  const limitingSnapshot = getLimitingSnapshot(lab, last.product);
+  const reactionRateMol = lab.skipSpeciesRates ? null : (nTracked / lab.trackedCoeff) / last.t;
+  const speciesRates = {};
+  if(!lab.skipSpeciesRates){
+    lab.species.forEach(sp => {
+      speciesRates[sp.key] = sp.coeff * reactionRateMol;
+    });
+  }
+  return { avgTrackedRate, nTracked, reactionRateMol, speciesRates, tEnd:last.t, productTotal:last.product, limitingSnapshot };
+}
+function generateAndRender(){
+  updateConditionNotes();
+  currentData = generateData();
+  currentKey = computeKey();
+  renderHeader();
+  renderTable();
+  renderRateRelation();
+  renderDash();
+  drawCharts();
+  renderCanvas();
+  renderMath();
+}
+function renderHeader(){
+  const lab = LABS[currentLabId];
+  document.getElementById('lab-title').innerHTML = `${lab.titleTH}<br><span class="muted">${lab.titleEN}</span>`;
+  document.getElementById('equation').innerHTML = lab.equationTex;
+  const catalystLine = lab.catalystInfoTH ? `<br><b>ตัวเร่ง / Catalyst:</b> ${lab.catalystInfoTH}<br>${lab.catalystInfoEN}` : '';
+  document.getElementById('tracking-note').innerHTML = `${lab.trackingTH}<br>${lab.trackingEN}${catalystLine}<br><b>Rate mode note:</b> ปริมาณสารกำหนดปริมาณตั้งต้นถูกล็อกไว้ เพื่อให้เห็นผลต่อ “ความเร็ว” มากกว่าปริมาณสุดท้าย / The initial amount of the limiting reactant is fixed to highlight speed, not a larger final yield.`;
+  const catalystPill = lab.catalystInfoTH ? `<span class="pill" style="background:#fef08a;color:#713f12;">ตัวเร่ง / Catalyst: MnO₂</span>` : '';
+  const tierPill = lab.tier === 'extension' ? `<span class="pill warn">ศึกษาเพิ่มเติม / Extension</span>` : `<span class="pill good">ใช้ในห้องเรียน / In-class core</span>`;
+  document.getElementById('lab-pills').innerHTML = `
+    <span class="pill good">สารกำหนดปริมาณ / Limiting: ${lab.limitingTH.replace(' หมดก่อน','')} / ${lab.limitingEN.replace(' is limiting','')}</span>
+    <span class="pill warn">สารเกินพอ / Excess: ${lab.excessTH} / ${lab.excessEN}</span>
+    <span class="pill blue">Product tracked: ${lab.productLabelTH} / ${lab.productLabelEN}</span>
+    ${catalystPill}
+    ${tierPill}
+  `;
+  document.getElementById('experiment-id').textContent = `Experiment ID: RXN-${currentLabId.toUpperCase()}-${trialSeed}`;
+}
+function renderDash(){
+  const lab = LABS[currentLabId];
+  const last = currentData[currentData.length-1];
+  document.getElementById('dash-time').textContent = last.t;
+  document.getElementById('dash-final').textContent = lab.measuredUnit === 'g' ? fmt(last.measured,2) : fmt(last.measured,1);
+  document.getElementById('dash-final-unit').textContent = `${lab.measuredUnit} (${lab.measuredLabelEN})`;
+  document.getElementById('dash-product').textContent = lab.productUnit === 'g' ? fmt(last.product,2) : fmt(last.product,1);
+  document.getElementById('dash-product-unit').textContent = `${lab.productUnit} (${lab.productLabelEN})`;
+  document.getElementById('dash-avg').textContent = fmtSmart(currentKey.avgTrackedRate);
+  document.getElementById('dash-avg-unit').textContent = lab.trackedRateUnit;
+}
+function renderTable(){
+  const lab = LABS[currentLabId];
+  document.getElementById('table-head').innerHTML = `
+    <tr>
+      <th>ลำดับ<br>No.</th>
+      <th>ช่วงเวลา<br>Interval (s)</th>
+      <th>เวลา<br>Time (s)</th>
+      <th>${lab.measuredLabelTH}<br>${lab.measuredLabelEN} (${lab.measuredUnit})</th>
+      <th>${lab.productLabelTH}<br>${lab.productLabelEN} (${lab.productUnit})</th>
+      <th>สารกำหนดปริมาณที่เหลือ<br>Limiting reactant left (mol)</th>
+      <th>สถานะ<br>Status</th>
+      <th>อัตราการเกิดปฏิกิริยารายช่วง<br>Interval tracked rate (${lab.trackedRateUnit})</th>
+    </tr>`;
+  document.getElementById('table-body').innerHTML = currentData.map((r,i) => {
+    const measured = lab.measuredUnit === 'g' ? fmt(r.measured,2) : fmt(r.measured,1);
+    const product = lab.productUnit === 'g' ? fmt(r.product,2) : fmt(r.product,1);
+    const limitText = r.completed ? '0.000' : fmtSmart(r.limitingLeft);
+    const statusText = r.completed ? '<span class="status-badge done">สารหมด / complete</span>' : `<span class="status-badge">เหลือ ${fmt(r.limitingPercentLeft,1)}% / left</span>`;
+    const input = i===0 ? '<span class="muted">เริ่มต้น / start</span>' : `<input class="rate-input" data-row="${i}" placeholder="?" inputmode="decimal"><span class="mini-status" id="rate-status-${i}"></span>`;
+    return `<tr class="${r.completed?'completion-row':''}">
+      <td>${i+1}</td>
+      <td>${i===0?'-':r.interval}</td>
+      <td>${r.t}</td>
+      <td>${measured}</td>
+      <td>${product}</td>
+      <td class="limit-cell">${limitText}</td>
+      <td>${statusText}</td>
+      <td>${input}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('table-foot').innerHTML = `
+    <tr>
+      <td colspan="7">อัตราเฉลี่ยทั้งการทดลอง / Average tracked rate = ${lab.productLabelTH} รวม ÷ เวลาที่สารกำหนดปริมาณหมด<br><span class="muted">Average tracked rate = total ${lab.productLabelEN} ÷ completion time</span></td>
+      <td><input id="avg-input" class="avg-input" placeholder="?" inputmode="decimal"><span class="mini-status" id="avg-status"></span></td>
+    </tr>`;
+}
+function renderRateKey(){
+  const lab = LABS[currentLabId];
+  const html = currentData.slice(1).map((r,i) => `<div class="key-item">${r.interval} s<br>${fmtSmart(r.intervalRate)} ${lab.trackedRateUnit}</div>`).join('') +
+    `<div class="key-item" style="background:#fef3c7;">Average<br>${fmtSmart(currentKey.avgTrackedRate)} ${lab.trackedRateUnit}</div>`;
+  document.getElementById('rate-key-grid').innerHTML = html;
+}
+function renderRateRelation(){
+  const lab = LABS[currentLabId];
+  document.getElementById('rate-relation').innerHTML = lab.rateTex;
+  const speciesBtnRow = document.getElementById('species-btn-row');
+  if(lab.skipSpeciesRates){
+    if(speciesBtnRow) speciesBtnRow.style.display = 'none';
+    document.getElementById('relation-note').innerHTML = `Lab นี้วัด <b>ความขุ่นเป็นค่าเชิงสัมพัทธ์</b> ไม่ใช่มวลหรือโมลโดยตรง จึงไม่ควรแปลงเป็น mol/s หรือใช้อัตราตามสัมประสิทธิ์สมการจากข้อมูลความขุ่นนี้โดยตรง<br><span class="muted">This extension lab uses relative cloudiness, not direct mass or moles, so do not convert the cloudiness data to mol/s or species rates without calibration.</span>`;
+    document.getElementById('species-grid').innerHTML = `<div class="qa-card" style="grid-column:1/-1;"><b>ใช้สำหรับฝึกอ่านแนวโน้ม / Use for trend interpretation</b><br>ความขุ่นเพิ่มเร็วกว่า = ปฏิกิริยาเกิดเร็วกว่าในเชิงสัมพัทธ์ / Faster clouding means a higher relative reaction rate.<br>ถ้าทดลองแบบกากบาทหาย ให้เปรียบเทียบด้วย \\(1/t_{cross}\\) / For the disappearing-cross method, compare using \\(1/t_{cross}\\).</div>`;
+    document.getElementById('species-key-panel').classList.add('hidden');
+    renderDetail();
+    return;
+  }
+  if(speciesBtnRow) speciesBtnRow.style.display = 'flex';
+  const tracked = lab.trackedSpecies;
+  const limit = currentKey.limitingSnapshot;
+  document.getElementById('relation-note').innerHTML = `หลังจากหาอัตราเฉลี่ยจากค่าที่ติดตามแล้ว ให้แปลงเป็น mol/s แล้วใช้สัมประสิทธิ์ในสมการดุล / After finding the average tracked rate, convert it to mol/s and use the coefficients in the balanced equation.<br>
+  ช่องคำตอบให้ใส่ “ขนาดของอัตรา” เป็นค่าบวก ส่วนสารตั้งต้นให้ตีความว่าเป็นอัตราการถูกใช้ไป / Enter positive rate magnitudes; for reactants, interpret the value as the rate of consumption.<br>
+  ใช้ผลรวมสุดท้าย / Total tracked product: <b>${fmtSmart(currentKey.productTotal)} ${lab.productUnit}</b>, เวลาที่สารกำหนดปริมาณหมด / limiting reactant completion time: <b>${currentKey.tEnd} s</b>.<br>
+  สารกำหนดปริมาณ / Limiting reactant: <b>${limit.limiting.display}</b>, ปริมาณเริ่มต้นโดยประมาณ / initial amount ≈ <b>${fmtSmart(limit.initialLimiting)} mol</b>, ปริมาณที่เหลือปลายทาง / final amount left = <b>0 mol</b>.`;
+  document.getElementById('species-grid').innerHTML = lab.species.map(sp => {
+    const action = sp.role === 'reactant' ? 'ถูกใช้ไป / consumed' : 'เกิดขึ้น / produced';
+    return `<div class="species-card">
+      <div class="sp-name">${sp.display}</div>
+      <div class="small-note">${action}</div>
+      <input class="species-input" data-species="${sp.key}" placeholder="mol/s" inputmode="decimal">
+      <span class="mini-status" id="sp-status-${sp.key}"></span>
+    </div>`;
+  }).join('');
+  renderSpeciesKey();
+  renderDetail();
+}
+function renderSpeciesKey(){
+  const lab = LABS[currentLabId];
+  if(lab.skipSpeciesRates){
+    document.getElementById('species-key-grid').innerHTML = `<div class="key-item">Lab นี้ไม่มีเฉลย mol/s ตามสมการจากความขุ่นโดยตรง<br><span class="muted">No direct species-rate key from relative cloudiness.</span></div>`;
+    return;
+  }
+  document.getElementById('species-key-grid').innerHTML = lab.species.map(sp => {
+    const sign = sp.role === 'reactant' ? 'consumed' : 'produced';
+    return `<div class="key-item">${sp.display}<br>${fmtSmart(currentKey.speciesRates[sp.key])} mol/s<br><span class="muted">${sign}</span></div>`;
+  }).join('') + `<div class="key-item" style="background:#fef3c7;">Reaction rate<br>${fmtSmart(currentKey.reactionRateMol)} mol/s</div>`;
+}
+function renderDetail(){
+  const lab = LABS[currentLabId];
+  const last = currentData[currentData.length-1];
+  if(lab.skipSpeciesRates){
+    const fastest = currentData.slice(1).reduce((a,b)=> b.intervalRate>a.intervalRate?b:a, currentData[1]);
+    document.getElementById('detail-content').innerHTML = `
+      <p><b>แนวคิดหลัก / Main idea:</b> ${lab.detailIntroTH}<br>${lab.detailIntroEN}</p>
+      <p><b>1) ค่าที่ติดตาม / Tracked quantity:</b> ${lab.productLabelTH} = ${fmtSmart(last.product)}${lab.productUnit}. ค่านี้คือดัชนีความขุ่น ไม่ใช่มวลของ S / This is a cloudiness index, not the mass of sulfur.</p>
+      <div class="equation-box">\\[\\text{Average relative rate}=\\frac{\\Delta(\\%\\,\\text{cloudiness})}{\\Delta t}=\\frac{${fmtSmart(last.product)}}{${last.t}}=${fmtSmart(currentKey.avgTrackedRate)}\\,${lab.trackedRateUnit}\\]</div>
+      <p><b>2) ช่วงเร็วที่สุด / Fastest interval:</b> ${fastest.interval} s เพราะความขุ่นเพิ่มขึ้นต่อวินาทีมากที่สุด / because cloudiness increases the most per second.</p>
+      <p><b>3) ทำไมไม่แปลงเป็นมวลหรือ mol/s? / Why not convert to mass or mol/s?</b><br>ความขุ่นขึ้นกับปริมาณตะกอน ขนาดอนุภาค แสง ความลึกของสารละลาย และวิธีสังเกต จึงเป็นค่าเชิงสัมพัทธ์ ถ้าจะหา mol/s ต้องมีการสอบเทียบเครื่องมือก่อน / Cloudiness depends on precipitate amount, particle size, light path, solution depth, and observation method, so it is relative unless calibrated.</p>
+      <p><b>4) ถ้าใช้วิธีกากบาทหาย / Disappearing-cross method:</b> เวลาน้อยกว่าแปลว่าเร็วกว่า และมักเปรียบเทียบด้วย \\(1/t_{cross}\\).</p>
+    `;
+    renderMath();
+    return;
+  }
+  let convertLine = '';
+  if(lab.trackedSpeciesUnit === 'mass'){
+    const mr = MOLAR_MASS[lab.trackedSpecies];
+    const productText = lab.productMax < 1 ? fmt(last.product,3) : fmt(last.product,2);
+    convertLine = `\\[n(${lab.trackedSpecies})=\\frac{m}{M_r}=\\frac{${productText}}{${mr}}=${fmtSmart(currentKey.nTracked)}\\,mol\\]`;
+  } else {
+    convertLine = `\\[n(${lab.trackedSpecies})=\\frac{V}{24000}=\\frac{${fmt(last.product,1)}}{24000}=${fmtSmart(currentKey.nTracked)}\\,mol\\]`;
+  }
+  const fastest = currentData.slice(1).reduce((a,b)=> b.intervalRate>a.intervalRate?b:a, currentData[1]);
+  document.getElementById('detail-content').innerHTML = `
+    <p><b>แนวคิดหลัก / Main idea:</b> ${lab.detailIntroTH}<br>${lab.detailIntroEN}</p>
+    <p><b>1) ค่าที่ติดตาม / Tracked quantity:</b> ${lab.productLabelTH} = ${fmtSmart(last.product)} ${lab.productUnit}, เวลาจนสารกำหนดปริมาณหมด = ${last.t} s.</p>
+    <p><b>สารกำหนดปริมาณ / Limiting reactant:</b> ${currentKey.limitingSnapshot.limiting.display} เริ่มต้นประมาณ ${fmtSmart(currentKey.limitingSnapshot.initialLimiting)} mol และเหลือ 0 mol ในแถวสุดท้ายของตาราง / starts at about ${fmtSmart(currentKey.limitingSnapshot.initialLimiting)} mol and reaches 0 mol in the final table row.</p>
+    <div class="equation-box">\\[\\text{Average tracked rate}=\\frac{\\text{total tracked product}}{\\text{completion time}}=\\frac{${fmtSmart(last.product)}}{${last.t}}=${fmtSmart(currentKey.avgTrackedRate)}\\,${lab.trackedRateUnit}\\]</div>
+    <p><b>2) ช่วงเร็วที่สุด / Fastest interval:</b> ${fastest.interval} s เพราะอัตรารายช่วงมากที่สุด / because it has the largest interval rate.</p>
+    <p><b>3) แปลงเป็นโมล / Convert to moles:</b></p>
+    <div class="equation-box">${convertLine}</div>
+    <p><b>4) อัตราปฏิกิริยาเฉลี่ยตามสมการ / Average reaction rate from the equation:</b></p>
+    <div class="equation-box">\\[rate=\\frac{n(${lab.trackedSpecies})/${lab.trackedCoeff}}{\\Delta t}=\\frac{${fmtSmart(currentKey.nTracked)}/${lab.trackedCoeff}}{${last.t}}=${fmtSmart(currentKey.reactionRateMol)}\\,mol/s\\]</div>
+    <p><b>5) อัตราของสารอื่น / Rates of other substances:</b> ใช้สัมประสิทธิ์ในสมการดุล เช่น ถ้าสัมประสิทธิ์เป็น 2 อัตราการเปลี่ยนแปลงของสารนั้นจะเป็น 2 เท่าของ reaction rate / Use the balanced-equation coefficients; coefficient 2 means the species changes at twice the reaction rate.</p>
+  `;
+  renderMath();
+}
+function parseVal(v){
+  if(!v) return NaN;
+  return Number(String(v).replace(/,/g,'').trim());
+}
+function approxEqual(ans, key){
+  const tol = Math.max(Math.abs(key)*0.08, 0.00005);
+  return Math.abs(ans-key) <= tol;
+}
+function checkIntervalRates(){
+  currentData.slice(1).forEach(r => {
+    const input = document.querySelector(`.rate-input[data-row="${r.idx}"]`);
+    const status = document.getElementById(`rate-status-${r.idx}`);
+    const ans = parseVal(input.value);
+    if(Number.isFinite(ans) && approxEqual(ans, r.intervalRate)){
+      status.textContent = 'ถูก / correct'; status.className = 'mini-status right';
+    } else {
+      status.textContent = `ลองใหม่ / try again`; status.className = 'mini-status wrong';
+    }
+  });
+  const avgAns = parseVal(document.getElementById('avg-input').value);
+  const avgStatus = document.getElementById('avg-status');
+  if(Number.isFinite(avgAns) && approxEqual(avgAns, currentKey.avgTrackedRate)){
+    avgStatus.textContent = 'ถูก / correct'; avgStatus.className = 'mini-status right';
+  } else {
+    avgStatus.textContent = 'ลองใหม่ / try again'; avgStatus.className = 'mini-status wrong';
+  }
+}
+function checkSpeciesRates(){
+  const lab = LABS[currentLabId];
+  if(lab.skipSpeciesRates) return;
+  lab.species.forEach(sp => {
+    const input = document.querySelector(`.species-input[data-species="${sp.key}"]`);
+    const status = document.getElementById(`sp-status-${sp.key}`);
+    const ans = parseVal(input.value);
+    const key = currentKey.speciesRates[sp.key];
+    if(Number.isFinite(ans) && approxEqual(ans, key)){
+      status.textContent = 'ถูก / correct'; status.className = 'mini-status right';
+    } else {
+      status.textContent = 'ลองใหม่ / try again'; status.className = 'mini-status wrong';
+    }
+  });
+}
+function toggleRateKey(){
+  renderRateKey();
+  document.getElementById('rate-key-panel').classList.toggle('hidden');
+}
+function toggleSpeciesKey(){
+  renderSpeciesKey();
+  document.getElementById('species-key-panel').classList.toggle('hidden');
+}
+function toggleDetailedSolution(){
+  renderDetail();
+  document.getElementById('detail-panel').classList.toggle('hidden');
+}
+function resetAnswers(hidePanels=true){
+  document.querySelectorAll('input.rate-input,input.avg-input,input.species-input,textarea').forEach(el => el.value='');
+  document.querySelectorAll('.mini-status').forEach(el => {el.textContent=''; el.className='mini-status';});
+  if(hidePanels){
+    document.getElementById('rate-key-panel').classList.add('hidden');
+    document.getElementById('species-key-panel').classList.add('hidden');
+    document.getElementById('detail-panel').classList.add('hidden');
+  }
+}
+function newTrialNoise(){
+  trialSeed = Math.floor(Math.random()*9000)+1000;
+  generateAndRender();
+  resetAnswers(false);
+}
+function runExperiment(){
+  animationProgress = 0;
+  isRunning = true;
+}
+function resizeCanvasElement(cnv, context){
+  const rect = cnv.getBoundingClientRect();
+  cnv.width = Math.max(1, rect.width * dpr);
+  cnv.height = Math.max(1, rect.height * dpr);
+  context.setTransform(dpr,0,0,dpr,0,0);
+}
+function resizeAll(){
+  dpr = window.devicePixelRatio || 1;
+  resizeCanvasElement(canvas,ctx);
+  resizeCanvasElement(lineCanvas,lineCtx);
+  resizeCanvasElement(barCanvas,barCtx);
+  drawCharts();
+}
+window.addEventListener('resize', resizeAll);
+function drawCharts(){
+  drawLineChart();
+  drawBarChart();
+}
+function drawAxes(c,w,h,margin){
+  c.strokeStyle = '#000'; c.lineWidth = 2;
+  c.beginPath(); c.moveTo(margin.left, margin.top); c.lineTo(margin.left, h-margin.bottom); c.lineTo(w-margin.right, h-margin.bottom); c.stroke();
+  c.strokeStyle = '#e5e7eb'; c.lineWidth = 1;
+  for(let i=1;i<=4;i++){
+    const y = margin.top + (h-margin.top-margin.bottom)*i/5;
+    c.beginPath(); c.moveTo(margin.left, y); c.lineTo(w-margin.right, y); c.stroke();
+  }
+}
+function drawLineChart(){
+  const lab = LABS[currentLabId];
+  const cnv = lineCanvas, c = lineCtx;
+  const w = cnv.width/dpr, h = cnv.height/dpr;
+  c.clearRect(0,0,w,h); c.fillStyle='#fff'; c.fillRect(0,0,w,h);
+  const m = {left:54,right:20,top:28,bottom:45};
+  drawAxes(c,w,h,m);
+  const xs = currentData.map(r=>r.t);
+  const ys = currentData.map(r=>r.measured);
+  const xmin=0, xmax=Math.max(...xs);
+  let ymin=Math.min(...ys), ymax=Math.max(...ys);
+  const pad=(ymax-ymin)*0.12 || 1; ymin-=pad; ymax+=pad;
+  function X(t){return m.left+(t-xmin)/(xmax-xmin)*(w-m.left-m.right);}
+  function Y(v){return h-m.bottom-(v-ymin)/(ymax-ymin)*(h-m.top-m.bottom);}
+  c.strokeStyle = '#2563eb'; c.lineWidth=4; c.beginPath();
+  currentData.forEach((r,i)=>{ const x=X(r.t), y=Y(r.measured); if(i===0)c.moveTo(x,y); else c.lineTo(x,y);}); c.stroke();
+  currentData.forEach(r=>{ const x=X(r.t), y=Y(r.measured); c.fillStyle='#fff'; c.beginPath(); c.arc(x,y,5,0,Math.PI*2); c.fill(); c.strokeStyle='#2563eb'; c.lineWidth=3; c.stroke(); });
+  c.fillStyle='#111827'; c.font='900 12px K2D'; c.textAlign='center'; c.fillText('Time / เวลา (s)', w/2, h-12);
+  c.save(); c.translate(16,h/2); c.rotate(-Math.PI/2); c.fillText(`${lab.measuredLabelEN} (${lab.measuredUnit})`,0,0); c.restore();
+  c.textAlign='left'; c.fillStyle='#2563eb'; c.fillText(lab.lineTrend==='decrease'?'Measured value decreases over time':'Measured value increases over time', m.left+5, 18);
+  document.getElementById('line-title').textContent = `${lab.measuredLabelTH} / ${lab.measuredLabelEN} vs Time`;
+}
+function drawBarChart(){
+  const lab = LABS[currentLabId];
+  const cnv = barCanvas, c = barCtx;
+  const w = cnv.width/dpr, h = cnv.height/dpr;
+  c.clearRect(0,0,w,h); c.fillStyle='#fff'; c.fillRect(0,0,w,h);
+  const m = {left:54,right:20,top:28,bottom:55};
+  drawAxes(c,w,h,m);
+  const rows=currentData.slice(1);
+  const maxRate=Math.max(...rows.map(r=>r.intervalRate))*1.15 || 1;
+  const plotW=w-m.left-m.right, plotH=h-m.top-m.bottom;
+  const gap=8; const bw=(plotW-gap*(rows.length+1))/rows.length;
+  rows.forEach((r,i)=>{
+    const x=m.left+gap+i*(bw+gap);
+    const bh=(r.intervalRate/maxRate)*plotH;
+    const y=h-m.bottom-bh;
+    c.fillStyle='#8b5cf6'; c.fillRect(x,y,bw,bh); c.strokeStyle='#000'; c.lineWidth=2; c.strokeRect(x,y,bw,bh);
+    c.save(); c.translate(x+bw/2,h-m.bottom+8); c.rotate(-Math.PI/5); c.fillStyle='#111827'; c.font='900 10px K2D'; c.textAlign='right'; c.fillText(r.interval,0,0); c.restore();
+  });
+  c.fillStyle='#111827'; c.font='900 12px K2D'; c.textAlign='center'; c.fillText('Time interval / ช่วงเวลา (s)', w/2, h-10);
+  c.save(); c.translate(16,h/2); c.rotate(-Math.PI/2); c.fillText(`Rate (${lab.trackedRateUnit})`,0,0); c.restore();
+  c.textAlign='left'; c.fillStyle='#7c3aed'; c.fillText('Tall bar = faster interval', m.left+5, 18);
+  document.getElementById('bar-title').textContent = `อัตรารายช่วง / Interval rate (${lab.trackedRateUnit})`;
+}
+function initBubbles(){
+  bubbles=[];
+  for(let i=0;i<55;i++) bubbles.push({x:0,y:0,r:2+Math.random()*5,phase:Math.random()*Math.PI*2, speed:0.5+Math.random()*1.8, alpha:.35+Math.random()*.5});
+}
+function renderCanvas(){
+  if(!rafId){ initBubbles(); animate(); }
+}
+function animate(){
+  drawSimulation();
+  rafId=requestAnimationFrame(animate);
+}
+function drawSimulation(){
+  const lab = LABS[currentLabId];
+  const w=canvas.width/dpr, h=canvas.height/dpr;
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,w,h);
+  ctx.fillStyle='#eef2ff';
+  for(let x=0;x<w;x+=25){ for(let y=0;y<h;y+=25){ ctx.beginPath(); ctx.arc(x,y,1.5,0,Math.PI*2); ctx.fill(); } }
+  const last=currentData[currentData.length-1];
+  if(isRunning){ animationProgress += 0.006*getFactor(); if(animationProgress>=1){ animationProgress=1; isRunning=false; } }
+  else if(animationProgress===0){ animationProgress = 0.72; }
+  const shownProduct = last.product * animationProgress;
+  if(lab.id==='caco3_hcl') drawMassLossLab(w,h,shownProduct,last.product);
+  else if(lab.id==='mg_hcl') drawGasSyringeLab(w,h,shownProduct,last.product,'H₂');
+  else if(lab.id==='h2o2_cat') drawGasSyringeLab(w,h,shownProduct,last.product,'O₂');
+  else if(lab.id==='thio_hcl') drawCloudinessLab(w,h,shownProduct,last.product);
+  else drawGasSyringeLab(w,h,shownProduct,last.product,'gas');
+}
+function drawMassLossLab(w,h,shownProduct,maxProduct){
+  const cx=w/2, baseY=h-82;
+  // Balance
+  ctx.fillStyle='#e5e7eb'; ctx.strokeStyle='#000'; ctx.lineWidth=4;
+  roundRect(ctx,cx-170,baseY,340,36,8,true,true);
+  ctx.fillStyle='#f8fafc'; roundRect(ctx,cx-105,baseY-46,210,46,8,true,true);
+  ctx.fillStyle='#111827'; ctx.font='900 16px K2D'; ctx.textAlign='center'; ctx.fillText('digital balance',cx,baseY-20);
+  const totalMass = LABS.caco3_hcl.initialMeasured - shownProduct;
+  ctx.fillStyle='#dc2626'; ctx.font='900 24px monospace'; ctx.fillText(`${totalMass.toFixed(2)} g`,cx,baseY+24);
+  // Beaker
+  const bx=cx-95, by=baseY-210, bw=190, bh=165;
+  ctx.fillStyle='rgba(239,246,255,.88)'; ctx.strokeStyle='#000'; ctx.lineWidth=5;
+  ctx.beginPath(); ctx.moveTo(bx+22,by); ctx.lineTo(bx+bw-22,by); ctx.lineTo(bx+bw-40,by+bh); ctx.lineTo(bx+40,by+bh); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.fillStyle='#bfdbfe'; ctx.beginPath(); ctx.moveTo(bx+38,by+88); ctx.quadraticCurveTo(cx,by+105,bx+bw-38,by+88); ctx.lineTo(bx+bw-47,by+bh-15); ctx.lineTo(bx+47,by+bh-15); ctx.closePath(); ctx.fill();
+  ctx.fillStyle='#111827'; ctx.font='900 14px K2D'; ctx.fillText('HCl(aq) excess',cx,by+78);
+  // CaCO3 stones shrink with progress
+  const remain = Math.max(0.1, 1-animationProgress);
+  ctx.fillStyle='#9ca3af'; ctx.strokeStyle='#000'; ctx.lineWidth=2;
+  for(let i=0;i<8;i++){
+    const px=bx+58+(i%4)*25; const py=by+128+Math.floor(i/4)*18;
+    ctx.beginPath(); ctx.arc(px,py,(5+((i*7)%4))*remain+2,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  }
+  ctx.fillStyle='#111827'; ctx.font='900 13px K2D'; ctx.fillText('CaCO₃ limiting',cx,by+bh+18);
+  // Bubbles escaping
+  const intensity = Math.max(.1, getFactor()) * (1-animationProgress*.8);
+  bubbles.forEach((b,i)=>{
+    const xx=cx-70+(i%9)*17 + Math.sin(b.phase+animationProgress*16)*5;
+    const yy=by+120 - ((animationProgress*260*b.speed + i*18) % 210);
+    const rr=b.r*Math.min(1.8,intensity);
+    if(yy<by-55 || yy>by+135) return;
+    ctx.globalAlpha=b.alpha; ctx.fillStyle='#10b981'; ctx.beginPath(); ctx.arc(xx,yy,rr,0,Math.PI*2); ctx.fill(); ctx.strokeStyle='#047857'; ctx.lineWidth=1; ctx.stroke(); ctx.globalAlpha=1;
+  });
+  ctx.fillStyle='#047857'; ctx.font='900 16px K2D'; ctx.fillText('CO₂ escapes',cx+160,by+25);
+  ctx.font='900 14px K2D'; ctx.fillText(`CO₂ ≈ ${shownProduct.toFixed(2)} g`,cx+160,by+50);
+}
+function drawGasSyringeLab(w,h,shownProduct,maxProduct,gasLabel){
+  const cx=w/2, baseY=h-88;
+  // Flask
+  ctx.fillStyle='#eff6ff'; ctx.strokeStyle='#000'; ctx.lineWidth=5;
+  ctx.beginPath(); ctx.moveTo(cx-95,baseY-25); ctx.lineTo(cx-50,baseY-185); ctx.lineTo(cx+50,baseY-185); ctx.lineTo(cx+95,baseY-25); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.fillStyle='#bfdbfe'; ctx.beginPath(); ctx.moveTo(cx-70,baseY-70); ctx.quadraticCurveTo(cx,baseY-45,cx+70,baseY-70); ctx.lineTo(cx+82,baseY-30); ctx.lineTo(cx-82,baseY-30); ctx.closePath(); ctx.fill();
+  ctx.fillStyle='#111827'; ctx.font='900 15px K2D'; ctx.textAlign='center';
+  ctx.fillText(currentLabId==='mg_hcl'?'Mg + HCl':'H₂O₂',cx,baseY-85);
+  if(currentLabId==='h2o2_cat'){
+    const catOpt = getOption('cat');
+    ctx.fillStyle = '#713f12'; ctx.font = '900 13px K2D';
+    ctx.fillText(`Catalyst: ${catOpt.th}`, cx, baseY-62);
+    if(catOpt.value==='mno2'){
+      ctx.fillStyle='#facc15'; ctx.strokeStyle='#000'; ctx.lineWidth=2;
+      roundRect(ctx,cx-42,baseY-56,84,22,6,true,true);
+      ctx.fillStyle='#111827'; ctx.font='900 13px K2D'; ctx.fillText('MnO₂',cx,baseY-40);
+    }
+  }
+  // Catalyst or metal pieces
+  ctx.fillStyle=currentLabId==='mg_hcl'?'#9ca3af':'#334155'; ctx.strokeStyle='#000'; ctx.lineWidth=2;
+  for(let i=0;i<7;i++){ ctx.beginPath(); ctx.arc(cx-45+i*15,baseY-43-(i%2)*7,5,0,Math.PI*2); ctx.fill(); ctx.stroke(); }
+  // Tube
+  ctx.strokeStyle='#000'; ctx.lineWidth=5; ctx.beginPath(); ctx.moveTo(cx+50,baseY-180); ctx.lineTo(cx+170,baseY-205); ctx.lineTo(cx+170,baseY-250); ctx.stroke();
+  // Gas syringe
+  const sx=cx+110, sy=baseY-295, sw=270, sh=58;
+  ctx.fillStyle='#fff'; ctx.strokeStyle='#000'; ctx.lineWidth=4; roundRect(ctx,sx,sy,sw,sh,8,true,true);
+  ctx.fillStyle='#dbeafe'; const fillW=Math.max(8,(shownProduct/maxProduct)*sw); ctx.fillRect(sx,sy,fillW,sh); ctx.strokeRect(sx,sy,sw,sh);
+  ctx.fillStyle='#64748b'; ctx.fillRect(sx+fillW-8,sy-12,15,sh+24); ctx.strokeRect(sx+fillW-8,sy-12,15,sh+24);
+  ctx.fillStyle='#111827'; ctx.font='900 14px K2D'; ctx.fillText('gas syringe',sx+sw/2,sy-18);
+  ctx.fillStyle='#047857'; ctx.font='900 22px monospace'; ctx.fillText(`${gasLabel}: ${shownProduct.toFixed(1)} mL`,sx+sw/2,sy+37);
+  // Bubbles in flask
+  const intensity = Math.max(.1, getFactor()) * (1-animationProgress*.75);
+  bubbles.forEach((b,i)=>{
+    const xx=cx-62+(i%8)*18 + Math.sin(b.phase+animationProgress*20)*4;
+    const yy=baseY-45 - ((animationProgress*240*b.speed + i*13) % 130);
+    if(yy<baseY-180 || yy>baseY-38) return;
+    const rr=b.r*Math.min(1.6,intensity);
+    ctx.globalAlpha=b.alpha; ctx.fillStyle='#10b981'; ctx.beginPath(); ctx.arc(xx,yy,rr,0,Math.PI*2); ctx.fill(); ctx.strokeStyle='#047857'; ctx.lineWidth=1; ctx.stroke(); ctx.globalAlpha=1;
+  });
+  // Label explaining speed
+  ctx.fillStyle='#7c3aed'; ctx.font='900 15px K2D'; ctx.fillText('Faster condition → syringe fills sooner',cx,baseY+10);
+}
+function drawCloudinessLab(w,h,shownProduct,maxProduct){
+  const cx=w/2, baseY=h-82;
+  const progress = maxProduct>0 ? Math.max(0, Math.min(1, shownProduct/maxProduct)) : 0;
+  // Cross card under beaker
+  ctx.fillStyle='#fff'; ctx.strokeStyle='#000'; ctx.lineWidth=4;
+  roundRect(ctx,cx-150,baseY-8,300,48,8,true,true);
+  ctx.strokeStyle=`rgba(0,0,0,${Math.max(0.08,1-progress*1.25)})`; ctx.lineWidth=8;
+  ctx.beginPath(); ctx.moveTo(cx-42,baseY+6); ctx.lineTo(cx+42,baseY+34); ctx.moveTo(cx+42,baseY+6); ctx.lineTo(cx-42,baseY+34); ctx.stroke();
+  ctx.fillStyle='#111827'; ctx.font='900 13px K2D'; ctx.textAlign='center'; ctx.fillText('cross under beaker',cx,baseY+64);
+  // Beaker
+  const bx=cx-110, by=baseY-235, bw=220, bh=205;
+  ctx.fillStyle='rgba(255,255,255,.86)'; ctx.strokeStyle='#000'; ctx.lineWidth=5;
+  ctx.beginPath(); ctx.moveTo(bx+25,by); ctx.lineTo(bx+bw-25,by); ctx.lineTo(bx+bw-45,by+bh); ctx.lineTo(bx+45,by+bh); ctx.closePath(); ctx.fill(); ctx.stroke();
+  // Liquid gets cloudy/yellow as sulfur forms
+  const alpha = 0.15 + progress*0.72;
+  ctx.fillStyle=`rgba(250, 204, 21, ${alpha})`;
+  ctx.beginPath(); ctx.moveTo(bx+42,by+88); ctx.quadraticCurveTo(cx,by+112,bx+bw-42,by+88); ctx.lineTo(bx+bw-55,by+bh-15); ctx.lineTo(bx+55,by+bh-15); ctx.closePath(); ctx.fill();
+  // Particles of sulfur
+  ctx.fillStyle='rgba(202,138,4,.78)'; ctx.strokeStyle='rgba(0,0,0,.45)'; ctx.lineWidth=1;
+  const nDots = Math.floor(20 + progress*110);
+  for(let i=0;i<nDots;i++){
+    const px = bx+55 + ((i*37 + Math.floor(progress*100)) % 112);
+    const py = by+100 + ((i*23 + Math.floor(progress*80)) % 78);
+    const r = 1.5 + ((i*11)%4)*0.45;
+    ctx.beginPath(); ctx.arc(px,py,r,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  }
+  ctx.fillStyle='#111827'; ctx.font='900 15px K2D'; ctx.fillText('Na₂S₂O₃ + HCl',cx,by+72);
+  ctx.fillStyle='#a16207'; ctx.font='900 18px K2D'; ctx.fillText(`Cloudiness ≈ ${shownProduct.toFixed(1)}%`,cx,by+bh+22);
+  ctx.fillStyle='#7c3aed'; ctx.font='900 15px K2D'; ctx.fillText('Cloudiness index (%) — not mass',cx,baseY+92);
+}
+function roundRect(c,x,y,w,h,r,fill,stroke){
+  c.beginPath(); c.moveTo(x+r,y); c.lineTo(x+w-r,y); c.quadraticCurveTo(x+w,y,x+w,y+r); c.lineTo(x+w,y+h-r); c.quadraticCurveTo(x+w,y+h,x+w-r,y+h); c.lineTo(x+r,y+h); c.quadraticCurveTo(x,y+h,x,y+h-r); c.lineTo(x,y+r); c.quadraticCurveTo(x,y,x+r,y); c.closePath(); if(fill)c.fill(); if(stroke)c.stroke();
+}
+
+function init(){
+  setupSelectors();
+  changeLab();
+  setTimeout(()=>{ resizeAll(); initBubbles(); generateAndRender(); },100);
+}
+init();
+</script>
+</body>
+</html>
