@@ -1,0 +1,1792 @@
+<!DOCTYPE html>
+
+<html lang="th">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Physics M5 Combined Exam | 50 pts | 60 min | text fixed | Scope fixed</title>
+<script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+    };
+  </script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&amp;family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --paper-width: 210mm;
+  --paper-height: 297mm;
+  --page-pad-x: 12mm;
+  --page-pad-y: 10mm;
+  --ink: #111827;
+  --line: #d1d5db;
+  --soft: #f8fafc;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: #e5e7eb;
+  color: var(--ink);
+  font-family: "Google Sans", "Noto Sans Thai", Arial, sans-serif;
+  font-size: 12px;
+  line-height: 1.32;
+}
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  background: #0f172a;
+  color: white;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.24);
+}
+.toolbar button {
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 900;
+  background: white;
+  color: #0f172a;
+}
+.toolbar button.primary { background: #bae6fd; color: #082f49; }
+.toolbar button.gold { background: #fde68a; color: #78350f; }
+.toolbar .status {
+  flex-basis: 100%;
+  text-align: center;
+  font-size: 12px;
+  opacity: 0.9;
+}
+.screen-guide {
+  width: min(var(--paper-width), calc(100vw - 24px));
+  margin: 16px auto 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: white;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.11);
+  color: #334155;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.print-area { width: 100%; }
+.sheet, .exam-sheet {
+  width: var(--paper-width);
+  height: var(--paper-height);
+  margin: 16px auto 30px;
+  padding: var(--page-pad-y) var(--page-pad-x);
+  background: white;
+  box-shadow: 0 16px 48px rgba(15, 23, 42, 0.22);
+  overflow: hidden;
+  page-break-after: always;
+  break-after: page;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.combined-header {
+  flex: 0 0 auto;
+  margin-bottom: 7px;
+}
+.part-note, .phys-note {
+  border-left: 4px solid #111827;
+  background: #f3f4f6;
+  padding: 5px 8px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1.22;
+}
+.combined-title, .page-title {
+  text-align: center;
+  font-size: 15.5px;
+  line-height: 1.16;
+  font-weight: 900;
+  margin: 0;
+}
+.combined-subtitle, .page-subtitle {
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.18;
+  color: #374151;
+  margin-top: 2px;
+}
+.combined-score {
+  border: 1px solid #111827;
+  border-radius: 8px;
+  padding: 4px 7px;
+  margin-top: 5px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.18;
+  font-weight: 900;
+  background: #fff;
+}
+.sheet-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  gap: 6px;
+  align-content: start;
+}
+.question {
+  border: 1.4px solid #111827;
+  border-radius: 10px;
+  padding: 7px 8px;
+  background: #fff;
+  break-inside: avoid;
+  page-break-inside: avoid;
+  overflow: hidden;
+}
+.question-head, .qhead {
+  display: grid;
+  grid-template-columns: 30px 1fr auto;
+  gap: 8px;
+  align-items: start;
+  margin-bottom: 6px;
+}
+.q-number, .num {
+  display: inline-flex;
+  width: 26px;
+  height: 26px;
+  border: 1.4px solid #111827;
+  border-radius: 999px;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 900;
+}
+.q-title, .qtitle {
+  font-size: 12px;
+  line-height: 1.25;
+  font-weight: 900;
+}
+.score-badge, .score {
+  white-space: nowrap;
+  border: 1px solid #111827;
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 10.5px;
+  font-weight: 900;
+  background: #fff;
+}
+.scenario, .scenario-box {
+  border-left: 4px solid #111827;
+  background: #f8fafc;
+  padding: 6px 8px;
+  margin: 5px 0;
+  font-size: 12px;
+  line-height: 1.25;
+}
+.model-row {
+  display: grid;
+  grid-template-columns: 1.05fr .95fr;
+  gap: 7px;
+  margin: 6px 0;
+  align-items: start;
+}
+.model-card, .data-card, .photo-box, .figure-card {
+  border: 1px solid #111827;
+  border-radius: 8px;
+  background: #fff;
+  padding: 5px 6px;
+}
+.model-title, .data-title, .figure-title {
+  font-size: 11px;
+  font-weight: 900;
+  margin-bottom: 4px;
+  line-height: 1.18;
+}
+.caption, .figure-caption {
+  font-size: 10.5px;
+  line-height: 1.18;
+  margin-top: 3px;
+}
+.diagram, .model-svg, .ref-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid #111827;
+  border-radius: 8px;
+  background: white;
+  margin: 5px auto;
+}
+.diagram { max-width: 450px; }
+.choices {
+  margin: 6px 0 0 34px;
+  padding-left: 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 20px;
+  row-gap: 3px;
+  font-size: 12px;
+  line-height: 1.3;
+}
+.choices li { min-height: 17px; padding-left: 2px; }
+.data-table, .ref-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  margin: 4px 0;
+  font-size: 11px;
+  line-height: 1.16;
+}
+.data-table th, .data-table td,
+.ref-table th, .ref-table td {
+  border: 1px solid #111827;
+  padding: 3px 4px;
+  text-align: center;
+  vertical-align: middle;
+}
+.data-table th, .ref-table th {
+  background: #f3f4f6;
+  font-weight: 900;
+}
+.subq {
+  margin: 6px 0 0;
+  padding-left: 19px;
+  font-size: 12px;
+  line-height: 1.25;
+}
+.subq li { margin-bottom: 5px; padding-left: 2px; }
+.pts, .points { font-weight: 900; white-space: nowrap; }
+.ans, .answer-space {
+  display: block;
+  min-height: 11mm;
+  margin: 3px 0 4px;
+  border: 1px dashed #9ca3af;
+  border-radius: 6px;
+  background: transparent;
+}
+.ans.small, .answer-space.small { min-height: 7mm; }
+.ans.tall, .answer-space.tall { min-height: 15mm; }
+.solution, .solution-box {
+  display: none;
+  margin-top: 7px;
+  padding: 8px 9px;
+  border: 1px solid #111827;
+  border-left: 4px solid #111827;
+  background: #fff;
+  font-size: 11px;
+  line-height: 1.28;
+  border-radius: 8px;
+}
+.solution-title { font-weight: 900; font-size: 12px; margin-bottom: 4px; }
+.sol-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+.sol-card { border: 1px solid #111827; border-radius: 6px; padding: 4px 5px; background: #fff; }
+.ans-red, .red { color: #111827; font-weight: 900; text-decoration: underline; text-underline-offset: 2px; }
+body.mode-solution .solution,
+body.mode-solution .solution-box { display: block; }
+body.mode-solution .ans,
+body.mode-solution .answer-space { display: none; }
+
+.answer-key-sheet { display: none; }
+body.mode-key .answer-key-sheet,
+body.mode-solution .answer-key-sheet { display: flex; }
+.answer-key h2 {
+  font-size: 17px;
+  margin: 0 0 8px;
+  border-bottom: 2px solid #111827;
+  padding-bottom: 4px;
+}
+.answer-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  font-size: 12px;
+}
+.answer-cell {
+  border: 1px solid #111827;
+  padding: 7px 4px;
+  text-align: center;
+  font-weight: 900;
+  line-height: 1.25;
+}
+.written-key-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 5px;
+  font-size: 11px;
+}
+.written-key-item {
+  border: 1px solid #111827;
+  border-radius: 7px;
+  padding: 5px 7px;
+  line-height: 1.3;
+}
+
+.page-footer {
+  position: absolute;
+  right: 10mm;
+  bottom: 5mm;
+  font-size: 10.5px;
+  color: #111827;
+}
+
+article.question .formula-box,
+article.question .mini-formula,
+article.question .formula-strip,
+article.question .formula-row,
+article.question .formula-title,
+article.question .no-formula-strip,
+article.question .hint-box,
+article.question .optional-hint,
+article.question .template-note,
+article.question .symbol-strip {
+  display: none !important;
+}
+
+/* Cover page */
+.cover-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+.cover-card {
+  border: 1.4px solid #111827;
+  border-radius: 10px;
+  padding: 10px;
+  min-height: 40mm;
+  background: #fff;
+}
+.cover-card h3 {
+  margin: 0 0 6px;
+  font-size: 13px;
+  line-height: 1.2;
+}
+.cover-card p, .cover-card li {
+  font-size: 12px;
+  line-height: 1.35;
+  margin: 4px 0;
+}
+.student-box {
+  border: 1.4px solid #111827;
+  border-radius: 10px;
+  padding: 8px 10px;
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.student-line {
+  border-bottom: 1.2px solid #111827;
+  min-height: 9mm;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+@page { size: A4 portrait; margin: 0; }
+@media print {
+  html, body { width: 210mm; background: white !important; }
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 12px; }
+  .toolbar, .screen-guide { display: none !important; }
+  .sheet, .exam-sheet {
+    width: 210mm !important;
+    height: 297mm !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: var(--page-pad-y) var(--page-pad-x) !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+    page-break-after: always !important;
+    break-after: page !important;
+  }
+  * {
+    color: #000 !important;
+    border-color: #000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  .sheet, .exam-sheet, .question, .cover-card, .model-card, .data-card, .solution, .solution-box, .sol-card {
+    background: #fff !important;
+  }
+  .part-note, .phys-note, .scenario, .scenario-box, .data-table th, .ref-table th {
+    background: #f3f3f3 !important;
+  }
+  .combined-score, .score-badge, .score {
+    background: #fff !important;
+  }
+  .q-title, .qtitle, .choices, .scenario, .scenario-box, .subq {
+    font-size: 9pt !important;
+    line-height: 1.22 !important;
+  }
+  .data-table, .data-table th, .data-table td {
+    font-size: 8.3pt !important;
+  }
+  img { filter: grayscale(100%) contrast(1.12) !important; }
+  svg text, svg tspan { fill: #000 !important; stroke: none !important; }
+  svg line, svg path, svg polyline, svg polygon, svg rect, svg circle, svg ellipse {
+    stroke: #000 !important;
+  }
+  svg [stroke="#2563eb"], svg [stroke="#dc2626"], svg [stroke="#047857"], svg [stroke="#7c3aed"], svg [stroke="blue"], svg [stroke="red"] {
+    stroke: #000 !important;
+  }
+  svg [fill="#2563eb"], svg [fill="#dc2626"], svg [fill="#047857"], svg [fill="#7c3aed"], svg [fill="blue"], svg [fill="red"] {
+    fill: #000 !important;
+  }
+  svg [fill="#eff6ff"], svg [fill="#dbeafe"], svg [fill="#e0f2fe"], svg [fill="#eef2ff"], svg [fill="#fef3c7"], svg [fill="#dcfce7"], svg [fill="#e5e7eb"], svg [fill="#f9fafb"], svg [fill="#f8fafc"], svg [fill="#f3f4f6"] {
+    fill: #fff !important;
+  }
+}
+@media screen and (max-width: 860px) {
+  .screen-guide, .sheet, .exam-sheet, .ref-sheet { width: calc(100vw - 18px) !important; height: auto; min-height: 297mm; }
+  .model-row, .sol-grid, .cover-grid { grid-template-columns: 1fr; }
+  .choices, .answer-grid { grid-template-columns: 1fr; }
+}
+
+
+/* =========================================================
+   PATCH: Remove cover + Part A text-only compact MCQ
+========================================================= */
+.part-a-textonly {
+  height: 297mm !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+.part-a-textonly .sheet-body {
+  display: grid !important;
+  gap: 6px !important;
+  align-content: start !important;
+}
+.part-a-textonly .question {
+  padding: 7px 8px !important;
+  overflow: hidden !important;
+}
+.part-a-textonly svg,
+.part-a-textonly img,
+.part-a-textonly .diagram,
+.part-a-textonly .model-row,
+.part-a-textonly .model-card,
+.part-a-textonly .photo-grid,
+.part-a-textonly .photo-box,
+.part-a-textonly .figure-card,
+.part-a-textonly .caption,
+.part-a-textonly .figure-caption {
+  display: none !important;
+}
+.part-a-textonly .q-title,
+.part-a-textonly .qtitle {
+  font-size: 12px !important;
+  line-height: 1.24 !important;
+}
+.part-a-textonly .choices {
+  font-size: 12px !important;
+  line-height: 1.25 !important;
+  margin-top: 5px !important;
+  row-gap: 2px !important;
+}
+.part-a-textonly .score-badge,
+.part-a-textonly .score {
+  font-size: 10.5px !important;
+  background: #fff !important;
+}
+@media print {
+  .part-a-textonly .q-title,
+  .part-a-textonly .qtitle,
+  .part-a-textonly .choices {
+    font-size: 9pt !important;
+    line-height: 1.2 !important;
+  }
+}
+
+
+/* =========================================================
+   PATCH v65: compact 65-point version
+========================================================= */
+.part-a-onepage {
+  height: 297mm !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+.part-a-onepage .combined-header {
+  margin-bottom: 4px !important;
+}
+.part-a-onepage .part-note {
+  font-size: 10.5px !important;
+  padding: 4px 7px !important;
+  margin-bottom: 4px !important;
+}
+.part-a-onepage .combined-title {
+  font-size: 13.5px !important;
+}
+.part-a-onepage .combined-subtitle,
+.part-a-onepage .combined-score {
+  font-size: 10.5px !important;
+}
+.part-a-onepage .sheet-body {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 3px !important;
+  align-content: start !important;
+}
+.part-a-onepage .question {
+  padding: 4px 6px !important;
+  border-radius: 7px !important;
+}
+.part-a-onepage .question-head,
+.part-a-onepage .qhead {
+  grid-template-columns: 24px 1fr auto !important;
+  gap: 5px !important;
+  margin-bottom: 2px !important;
+}
+.part-a-onepage .q-number,
+.part-a-onepage .num {
+  width: 21px !important;
+  height: 21px !important;
+  font-size: 10px !important;
+}
+.part-a-onepage .q-title,
+.part-a-onepage .qtitle {
+  font-size: 10.5px !important;
+  line-height: 1.13 !important;
+}
+.part-a-onepage .score-badge,
+.part-a-onepage .score {
+  font-size: 8.8px !important;
+  padding: 2px 5px !important;
+}
+.part-a-onepage .choices {
+  margin: 2px 0 0 24px !important;
+  padding-left: 14px !important;
+  display: grid !important;
+  grid-template-columns: repeat(5, 1fr) !important;
+  column-gap: 8px !important;
+  row-gap: 0 !important;
+  font-size: 10.2px !important;
+  line-height: 1.15 !important;
+}
+.part-a-onepage .choices li {
+  min-height: 0 !important;
+  padding-left: 0 !important;
+}
+.part-a-onepage svg,
+.part-a-onepage img,
+.part-a-onepage .diagram,
+.part-a-onepage .model-row,
+.part-a-onepage .model-card,
+.part-a-onepage .photo-grid,
+.part-a-onepage .photo-box,
+.part-a-onepage .figure-card,
+.part-a-onepage .caption,
+.part-a-onepage .figure-caption {
+  display: none !important;
+}
+
+.ref-sheet#reference-f4-compact .ref-card h3 {
+  font-size: 11px !important;
+}
+.ref-sheet#reference-f4-compact .ref-formula,
+.ref-sheet#reference-f4-compact .ref-table,
+.ref-sheet#reference-f4-compact .ref-card p,
+.ref-sheet#reference-f4-compact .ref-small {
+  font-size: 9.8px !important;
+}
+.ref-sheet#reference-f4-compact .ref-grid {
+  gap: 5px !important;
+}
+.ref-sheet#reference-f4-compact .ref-svg {
+  max-height: 60mm !important;
+}
+
+@media print {
+  .part-a-onepage .q-title,
+  .part-a-onepage .qtitle {
+    font-size: 7.8pt !important;
+    line-height: 1.12 !important;
+  }
+  .part-a-onepage .choices {
+    font-size: 7.7pt !important;
+    line-height: 1.12 !important;
+  }
+  .part-a-onepage .question {
+    padding: 3.5px 5.5px !important;
+  }
+}
+</style>
+<style id="m5-reference-sheet-css">
+/* =========================================================
+   Physics M5 Reference Sheet / ใบสูตรท้ายไฟล์
+   - A4 portrait
+   - black-and-white friendly
+   - main readable font around 12px
+   - use at the end of the exam only
+========================================================= */
+.ref-sheet {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 16px auto 30px;
+  padding: 10mm 11mm 11mm;
+  background: #fff;
+  color: #111827;
+  box-shadow: 0 16px 48px rgba(15, 23, 42, 0.22);
+  page-break-after: always;
+  break-after: page;
+  overflow: hidden;
+  position: relative;
+  font-family: "Google Sans", "Noto Sans Thai", Arial, sans-serif;
+}
+
+.ref-header {
+  border-bottom: 2px solid #111827;
+  padding-bottom: 5px;
+  margin-bottom: 7px;
+}
+
+.ref-note {
+  border-left: 4px solid #111827;
+  background: #f3f4f6;
+  padding: 5px 8px;
+  margin-bottom: 5px;
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1.22;
+}
+
+.ref-title {
+  text-align: center;
+  font-size: 16px;
+  line-height: 1.15;
+  font-weight: 900;
+  margin: 0;
+}
+
+.ref-subtitle {
+  text-align: center;
+  font-size: 11.5px;
+  line-height: 1.18;
+  margin-top: 2px;
+  color: #374151;
+  font-weight: 700;
+}
+
+.ref-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  align-items: start;
+}
+
+.ref-grid.three {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.ref-card {
+  border: 1.25px solid #111827;
+  border-radius: 9px;
+  background: #fff;
+  padding: 6px 7px;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.ref-card.wide {
+  grid-column: 1 / -1;
+}
+
+.ref-card h3 {
+  margin: 0 0 4px;
+  font-size: 12px;
+  line-height: 1.18;
+  font-weight: 900;
+  border-bottom: 1px solid #111827;
+  padding-bottom: 3px;
+}
+
+.ref-card p,
+.ref-card li {
+  font-size: 11.2px;
+  line-height: 1.25;
+  margin: 3px 0;
+}
+
+.ref-formulas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin-top: 3px;
+}
+
+.ref-formulas.one {
+  grid-template-columns: 1fr;
+}
+
+.ref-formulas.three {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.ref-formula {
+  border: 1px solid #111827;
+  border-radius: 7px;
+  padding: 4px 5px;
+  text-align: center;
+  font-size: 11.4px;
+  line-height: 1.2;
+  font-weight: 900;
+  background: #fff;
+}
+
+.ref-small {
+  font-size: 10.2px !important;
+  line-height: 1.18 !important;
+  color: #111827;
+}
+
+.ref-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  margin: 4px 0 0;
+  font-size: 10.4px;
+  line-height: 1.16;
+}
+
+.ref-table th,
+.ref-table td {
+  border: 1px solid #111827;
+  padding: 3px 4px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.ref-table th {
+  background: #f3f4f6;
+  font-weight: 900;
+}
+
+.ref-list {
+  margin: 4px 0 0;
+  padding-left: 16px;
+}
+
+.ref-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid #111827;
+  border-radius: 8px;
+  background: #fff;
+  margin: 4px auto;
+}
+
+.ref-footer {
+  position: absolute;
+  right: 10mm;
+  bottom: 5mm;
+  font-size: 10.5px;
+  color: #111827;
+}
+
+.ref-badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 4px 0;
+}
+
+.ref-badge {
+  border: 1px solid #111827;
+  border-radius: 999px;
+  padding: 2px 7px;
+  font-size: 10.2px;
+  line-height: 1.2;
+  font-weight: 900;
+  background: #fff;
+}
+
+.ref-em {
+  font-weight: 900;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+@media print {
+  .ref-sheet {
+    width: 210mm !important;
+    min-height: 297mm !important;
+    margin: 0 !important;
+    padding: 10mm 11mm 11mm !important;
+    box-shadow: none !important;
+    page-break-after: always !important;
+    break-after: page !important;
+    color: #000 !important;
+    background: #fff !important;
+  }
+
+  .ref-sheet * {
+    color: #000 !important;
+    border-color: #000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  .ref-note,
+  .ref-table th {
+    background: #f3f3f3 !important;
+  }
+
+  .ref-card,
+  .ref-formula,
+  .ref-svg,
+  .ref-badge {
+    background: #fff !important;
+  }
+
+  svg text,
+  svg tspan {
+    fill: #000 !important;
+    stroke: none !important;
+  }
+
+  svg line,
+  svg path,
+  svg polyline,
+  svg polygon,
+  svg rect,
+  svg circle,
+  svg ellipse {
+    stroke: #000 !important;
+  }
+
+  svg [fill="#111827"],
+  svg [fill="#000"],
+  svg [fill="black"] {
+    fill: #000 !important;
+  }
+
+  svg [fill="#f3f4f6"],
+  svg [fill="#f8fafc"],
+  svg [fill="#fff"],
+  svg [fill="#ffffff"],
+  svg [fill="white"] {
+    fill: #fff !important;
+  }
+}
+</style>
+<style id="scope-50-compact-css">
+/* 50-point / 60-minute scope patch */
+.compact-ref .compact-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:4.5px;
+  align-items:start;
+}
+.compact-ref .ref-header{margin-bottom:5px!important;padding-bottom:4px!important;}
+.compact-ref .ref-note{font-size:10px!important;padding:4px 7px!important;margin-bottom:4px!important;}
+.compact-ref .ref-title{font-size:14px!important;line-height:1.1!important;}
+.compact-ref .ref-subtitle{font-size:9.6px!important;line-height:1.12!important;}
+.compact-ref .ref-card{padding:4.5px 5px!important;border-radius:7px!important;}
+.compact-ref .ref-card h3{font-size:10px!important;line-height:1.1!important;margin:0 0 3px!important;padding-bottom:2px!important;}
+.compact-ref .ref-formulas{grid-template-columns:1fr 1fr!important;gap:2.5px!important;margin-top:2px!important;}
+.compact-ref .ref-formula{font-size:9.3px!important;line-height:1.08!important;padding:2.5px 3px!important;border-radius:5px!important;}
+.compact-ref .ref-small{font-size:8.6px!important;line-height:1.12!important;margin:2px 0!important;}
+.compact-ref .ref-table{font-size:8.4px!important;line-height:1.05!important;margin-top:2px!important;}
+.compact-ref .ref-table th,.compact-ref .ref-table td{padding:2px!important;}
+.compact-ref .wide-unit{grid-column:1 / -1;}
+@media print{
+  .compact-ref{height:297mm!important;min-height:0!important;overflow:hidden!important;padding:9mm 10mm 10mm!important;}
+  .compact-ref .compact-grid{gap:4px!important;}
+}
+</style></head>
+<body class="mode-exam">
+<div class="toolbar">
+<button class="primary" onclick="printExam()">🖨️ พิมพ์ข้อสอบ</button>
+<div class="status" id="statusText">Physics M5 Combined Exam | 50 points | 60 minutes | text reviewed</div>
+</div>
+<section class="screen-guide"><b>Structure / โครงสร้าง:</b> Part A = 10, Part B = 10, Part C = 10, Part D = 10, Part E = 10, Total = 50 points / 50 คะแนน.<br/><b>Time / เวลา:</b> 60 minutes / 60 นาที — ลดข้อเขียนที่ซ้ำและตัดสมการคลื่นออกแล้ว<br/><b>Scope adjusted / ปรับขอบเขตแล้ว:</b> คาบ-ความถี่-จลนศาสตร์การหมุน-ทอร์กสมดุล-ตรีโกณมิติ/SHM; ไม่มีแรงสู่ศูนย์กลาง, ความเร่งสู่ศูนย์กลาง, พลศาสตร์การหมุน หรือ \(\sum\tau=I\alpha\)<br/><b>Style / รูปแบบ:</b> no formula hints inside questions; one compact formula sheet at the back; black-and-white friendly.</section>
+<main class="print-area">
+<section class="sheet exam-sheet part-a-sheet part-a-onepage">
+<section class="combined-header">
+<div class="part-note">Part A / ข้อกา</div>
+<div class="combined-title">Part A: Multiple Choice — Rotation and Circular Motion / ข้อปรนัย การหมุนและวงกลม</div>
+<div class="combined-subtitle">Questions 1–10 / ข้อ 1–10</div>
+<div class="combined-score">Part A total = 10 points / 10 คะแนน — 10 questions × 1 point</div>
+</section>
+<div class="sheet-body">
+<article class="question m5-mcq">
+<div class="question-head">
+<span class="q-number">1</span>
+<div class="q-title">
+      พัดลมตัวหนึ่งหมุนครบ 1 รอบในเวลา \(0.50\,s\) จงหาอัตราเร็วเชิงมุมของพัดลม
+      <br/>
+      A fan completes 1 revolution in \(0.50\,s\). Find its angular speed.
+    </div>
+<div class="score-badge">1 pt / 1 คะแนน</div>
+</div>
+<ol class="choices" type="A">
+<li>\(3.14\,rad/s\)</li>
+<li>\(6.28\,rad/s\)</li>
+<li>\(12.6\,rad/s\)</li>
+<li>\(25.1\,rad/s\)</li>
+<li>\(0.50\,rad/s\)</li>
+</ol>
+</article><article class="question m5-mcq">
+<div class="question-head">
+<span class="q-number">2</span>
+<div class="q-title">
+      ล้อหมุนด้วยความถี่ \(5.0\,Hz\) จงหาอัตราเร็วเชิงมุมของล้อ
+      <br/>
+      A wheel rotates with frequency \(5.0\,Hz\). Find its angular speed.
+    </div>
+<div class="score-badge">1 pt / 1 คะแนน</div>
+</div>
+<ol class="choices" type="A">
+<li>\(5.0\,rad/s\)</li>
+<li>\(10.0\,rad/s\)</li>
+<li>\(15.7\,rad/s\)</li>
+<li>\(31.4\,rad/s\)</li>
+<li>\(62.8\,rad/s\)</li>
+</ol>
+</article><article class="question m5-mcq">
+<div class="question-head">
+<span class="q-number">3</span>
+<div class="q-title">
+      จุดบนขอบล้อรัศมี \(0.40\,m\) หมุนด้วยอัตราเร็วเชิงมุม \(10\,rad/s\) จงหาอัตราเร็วเชิงเส้นของจุดนั้น
+      <br/>
+      A point on the rim of a wheel of radius \(0.40\,m\) rotates at \(10\,rad/s\). Find its linear speed.
+    </div>
+<div class="score-badge">1 pt / 1 คะแนน</div>
+</div>
+<ol class="choices" type="A">
+<li>\(0.40\,m/s\)</li>
+<li>\(4.0\,m/s\)</li>
+<li>\(10\,m/s\)</li>
+<li>\(25\,m/s\)</li>
+<li>\(40\,m/s\)</li>
+</ol>
+</article><article class="question m5-mcq">
+<div class="question-head">
+<span class="q-number">4</span>
+<div class="q-title">
+      จานหมุนเริ่มจากหยุดนิ่ง แล้วมีอัตราเร็วเชิงมุม \(20\,rad/s\) ในเวลา \(4.0\,s\) จงหาอัตราเร่งเชิงมุม
+      <br/>
+      A disk starts from rest and reaches angular speed \(20\,rad/s\) in \(4.0\,s\). Find its angular acceleration.
+    </div>
+<div class="score-badge">1 pt / 1 คะแนน</div>
+</div>
+<ol class="choices" type="A">
+<li>\(2.0\,rad/s^2\)</li>
+<li>\(4.0\,rad/s^2\)</li>
+<li>\(5.0\,rad/s^2\)</li>
+<li>\(16\,rad/s^2\)</li>
+<li>\(80\,rad/s^2\)</li>
+</ol>
+</article><article class="question m5-mcq">
+<div class="question-head">
+<span class="q-number">5</span>
+<div class="q-title">
+      วงล้อเริ่มหมุนจากหยุดนิ่งด้วยอัตราเร่งเชิงมุม \(2.0\,rad/s^2\) เป็นเวลา \(5.0\,s\) จงหามุมที่หมุนได้
+      <br/>
+      A wheel starts from rest with angular acceleration \(2.0\,rad/s^2\) for \(5.0\,s\). Find the angular displacement.
+    </div>
+<div class="score-badge">1 pt / 1 คะแนน</div>
+</div>
+<ol class="choices" type="A">
+<li>\(5.0\,rad\)</li>
+<li>\(10\,rad\)</li>
+<li>\(12.5\,rad\)</li>
+<li>\(25\,rad\)</li>
+<li>\(50\,rad\)</li>
+</ol>
+</article><article class="question m5-mcq">
+<div class="question-head">
+<span class="q-number">6</span>
+<div class="q-title">
+      จานหมุนมีอัตราเร็วเชิงมุมเริ่มต้น \(6.0\,rad/s\) และมีอัตราเร่งเชิงมุม \(3.0\,rad/s^2\) เป็นเวลา \(4.0\,s\) จงหาอัตราเร็วเชิงมุมสุดท้าย
+      <br/>
+      A disk has initial angular speed \(6.0\,rad/s\) and angular acceleration \(3.0\,rad/s^2\) for \(4.0\,s\). Find the final angular speed.
+    </div>
+<div class="score-badge">1 pt / 1 คะแนน</div>
+</div>
+<ol class="choices" type="A">
+<li>\(9.0\,rad/s\)</li>
+<li>\(12\,rad/s\)</li>
+<li>\(18\,rad/s\)</li>
+<li>\(24\,rad/s\)</li>
+<li>\(72\,rad/s\)</li>
+</ol>
+</article><article class="question m5-mcq">
+<div class="question-head">
+<span class="q-number">7</span>
+<div class="q-title">
+      ล้อหมุนครบ \(3.0\) รอบ จงหาการกระจัดเชิงมุมของล้อ
+      <br/>
+      A wheel completes \(3.0\) revolutions. Find its angular displacement.
+    </div>
+<div class="score-badge">1 pt / 1 คะแนน</div>
+</div>
+<ol class="choices" type="A">
+<li>\(3.0\,rad\)</li>
+<li>\(6.28\,rad\)</li>
+<li>\(18.8\,rad\)</li>
+<li>\(37.7\,rad\)</li>
+<li>\(1.50\,rad\)</li>
+</ol>
+</article><article class="question m5-mcq">
+<div class="question-head">
+<span class="q-number">8</span>
+<div class="q-title">
+      จุดบนขอบจานรัศมี \(0.50\,m\) หมุนผ่านมุม \(6.0\,rad\) จงหาระยะทางตามแนวโค้ง
+      <br/>
+      A point on the rim of a disk of radius \(0.50\,m\) turns through \(6.0\,rad\). Find the arc length.
+    </div>
+<div class="score-badge">1 pt / 1 คะแนน</div>
+</div>
+<ol class="choices" type="A">
+<li>\(1.0\,m\)</li>
+<li>\(2.0\,m\)</li>
+<li>\(2.5\,m\)</li>
+<li>\(3.0\,m\)</li>
+<li>\(6.0\,m\)</li>
+</ol>
+</article><article class="question m5-mcq">
+<div class="question-head">
+<span class="q-number">9</span>
+<div class="q-title">
+      ล้อรัศมี \(0.25\,m\) มีความเร่งเชิงมุม \(4.0\,rad/s^2\) จงหาความเร่งสัมผัสที่ขอบล้อ
+      <br/>
+      A wheel of radius \(0.25\,m\) has angular acceleration \(4.0\,rad/s^2\). Find the tangential acceleration at the rim.
+    </div>
+<div class="score-badge">1 pt / 1 คะแนน</div>
+</div>
+<ol class="choices" type="A">
+<li>\(0.25\,m/s^2\)</li>
+<li>\(0.50\,m/s^2\)</li>
+<li>\(1.0\,m/s^2\)</li>
+<li>\(4.0\,m/s^2\)</li>
+<li>\(16.0\,m/s^2\)</li>
+</ol>
+</article><article class="question m5-mcq">
+<div class="question-head">
+<span class="q-number">10</span>
+<div class="q-title">
+      ออกแรง \(20\,N\) ตั้งฉากกับประตูที่ระยะ \(0.60\,m\) จากบานพับ จงหาทอร์กที่เกิดขึ้นกับประตู
+      <br/>
+      A \(20\,N\) force is applied perpendicular to a door at \(0.60\,m\) from the hinge. Find the torque on the door.
+    </div>
+<div class="score-badge">1 pt / 1 คะแนน</div>
+</div>
+<ol class="choices" type="A">
+<li>\(6.0\,N\cdot m\)</li>
+<li>\(12\,N\cdot m\)</li>
+<li>\(20\,N\cdot m\)</li>
+<li>\(33\,N\cdot m\)</li>
+<li>\(60\,N\cdot m\)</li>
+</ol>
+</article>
+</div>
+<div class="page-footer">Page 1 / 10</div>
+</section><section class="sheet exam-sheet part-b-sheet">
+<section class="combined-header">
+<div class="part-note">Part B / ข้อเขียน</div>
+<div class="combined-title">Part B: Period, Frequency, and Angular Speed / คาบ ความถี่ และอัตราเร็วเชิงมุม</div>
+<div class="combined-subtitle">Question 1 of 2 / ข้อ 1 จาก 2</div>
+<div class="combined-score">Part B total = 10 points / 10 คะแนน</div>
+</section>
+<div class="sheet-body">
+<article class="question">
+<div class="qhead">
+<span class="num">1</span>
+<div class="qtitle">ล้อหมุนหลายรอบในเวลาที่กำหนด / A wheel completes several revolutions in a given time</div>
+<div class="score">5 pts / 5 คะแนน</div>
+</div>
+<div class="scenario">
+        ล้อทดลองหมุนครบ \(12\) รอบ ในเวลา \(6.0\,s\). ให้ถือว่าล้อหมุนด้วยอัตราคงที่
+        <br/>
+        A laboratory wheel completes \(12\) revolutions in \(6.0\,s\). Assume the wheel rotates at a constant rate.
+      </div>
+<div class="model-row">
+<div class="model-card">
+<div class="model-title">SVG model / รูปจำลอง</div>
+<svg aria-label="Wheel revolutions in time" class="model-svg" viewbox="0 0 430 270">
+<defs>
+<marker id="arrQ1" markerheight="8" markerwidth="10" orient="auto" refx="9" refy="4">
+<polygon fill="#111827" points="0 0,10 4,0 8"></polygon>
+</marker>
+</defs>
+<rect fill="#fff" height="242" rx="12" stroke="#111827" stroke-width="3" width="402" x="14" y="14"></rect>
+<text class="svg-label" font-size="15" text-anchor="middle" x="215" y="38">Rotating wheel at constant rate</text>
+<circle cx="148" cy="136" fill="#fff" r="70" stroke="#111827" stroke-width="4"></circle>
+<circle cx="148" cy="136" fill="#111827" r="5"></circle>
+<line stroke="#111827" stroke-width="3" x1="148" x2="148" y1="136" y2="66"></line>
+<line stroke="#111827" stroke-width="3" x1="148" x2="218" y1="136" y2="136"></line>
+<line stroke="#111827" stroke-width="3" x1="148" x2="148" y1="136" y2="206"></line>
+<line stroke="#111827" stroke-width="3" x1="148" x2="78" y1="136" y2="136"></line>
+<line stroke="#111827" stroke-width="2.5" x1="148" x2="197" y1="136" y2="87"></line>
+<line stroke="#111827" stroke-width="2.5" x1="148" x2="99" y1="136" y2="87"></line>
+<circle cx="148" cy="66" fill="#fff" r="8" stroke="#111827" stroke-width="3"></circle>
+<path d="M232 98 A94 94 0 0 1 236 173" fill="none" marker-end="url(#arrQ1)" stroke="#111827" stroke-width="4"></path>
+<text class="svg-label" font-size="14" x="244" y="138">ω</text>
+<rect fill="#fff" height="116" rx="10" stroke="#111827" stroke-width="3" width="102" x="282" y="78"></rect>
+<text class="svg-label" font-size="15" text-anchor="middle" x="333" y="108">N = 12 rev</text>
+<text class="svg-label" font-size="15" text-anchor="middle" x="333" y="138">t = 6.0 s</text>
+<line stroke="#111827" stroke-width="2" x1="295" x2="371" y1="154" y2="154"></line>
+<text class="svg-small" font-size="12" text-anchor="middle" x="333" y="177">constant rate</text>
+<text class="svg-small" font-size="12" text-anchor="middle" x="215" y="230">constant rotational motion</text>
+</svg>
+<div class="caption">แปลงจากจำนวนรอบและเวลาไปเป็น \(T\), \(f\), \(\omega\) / Convert revolutions and time into period, frequency, and angular speed.</div>
+</div>
+<div class="data-card">
+<div class="data-title">Given data / ข้อมูลกำหนด</div>
+<table class="data-table">
+<tr><th>Quantity / ปริมาณ</th><th>Value / ค่า</th></tr>
+<tr><td>Number of revolutions \(N\)</td><td>\(12\)</td></tr>
+<tr><td>Total time \(t\)</td><td>\(6.0\,s\)</td></tr>
+<tr><td>Use</td><td>\(\pi\approx3.14\)</td></tr>
+<tr><td>Motion</td><td>constant rate</td></tr>
+</table>
+</div>
+</div>
+<ol class="subq" type="ก">
+<li>หาคาบ \(T\) ของล้อ<br/>Find the period \(T\) of the wheel. <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+<li>หาความถี่ \(f\)<br/>Find the frequency \(f\). <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+<li>หาอัตราเร็วเชิงมุม \(\omega\)<br/>Find the angular speed \(\omega\). <span class="pts">(2 pts / 2 คะแนน)</span><span class="ans"></span></li>
+<li>ในเวลา \(3.0\,s\) ล้อหมุนไปได้กี่รอบ<br/>In \(3.0\,s\), how many revolutions does the wheel complete? <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+</ol>
+</article>
+</div>
+<div class="page-footer">Page 2 / 10</div>
+</section>
+<section class="sheet exam-sheet part-b-sheet">
+<section class="combined-header">
+<div class="part-note">Part B / ข้อเขียน</div>
+<div class="combined-title">Part B: Period, Frequency, and Angular Speed / คาบ ความถี่ และอัตราเร็วเชิงมุม</div>
+<div class="combined-subtitle">Question 2 of 2 / ข้อ 2 จาก 2</div>
+<div class="combined-score">Part B total = 10 points / 10 คะแนน</div>
+</section>
+<div class="sheet-body">
+<article class="question">
+<div class="qhead">
+<span class="num">2</span>
+<div class="qtitle">วัตถุเคลื่อนที่เป็นวงกลมด้วยความถี่คงที่ / Circular motion with constant frequency</div>
+<div class="score">5 pts / 5 คะแนน</div>
+</div>
+<div class="scenario">
+        วัตถุหนึ่งเคลื่อนที่เป็นวงกลมรัศมี \(r=0.50\,m\) ด้วยความถี่ \(f=0.80\,Hz\). ที่ตำแหน่งขวาสุดของวงกลม วัตถุกำลังเคลื่อนที่ทวนเข็มนาฬิกา
+        <br/>
+        An object moves in a circle of radius \(r=0.50\,m\) with frequency \(f=0.80\,Hz\). At the rightmost point, the object moves counterclockwise.
+      </div>
+<div class="model-row">
+<div class="model-card">
+<div class="model-title">SVG model / รูปจำลอง</div>
+<svg aria-label="Circular motion radius frequency" class="model-svg" viewbox="0 0 430 270">
+<defs>
+<marker id="arrQ2" markerheight="8" markerwidth="10" orient="auto" refx="9" refy="4">
+<polygon fill="#111827" points="0 0,10 4,0 8"></polygon>
+</marker>
+</defs>
+<rect fill="#fff" height="242" rx="12" stroke="#111827" stroke-width="3" width="402" x="14" y="14"></rect>
+<text class="svg-label" font-size="15" text-anchor="middle" x="215" y="37">Counterclockwise circular motion</text>
+<rect fill="#fff" height="92" rx="8" stroke="#111827" stroke-width="3" width="94" x="38" y="70"></rect>
+<text class="svg-label" font-size="14" text-anchor="middle" x="85" y="101">f = 0.80 Hz</text>
+<text class="svg-label" font-size="14" text-anchor="middle" x="85" y="132">r = 0.50 m</text>
+<text class="svg-small" font-size="11" text-anchor="middle" x="85" y="152">CCW</text>
+<circle cx="220" cy="140" fill="#fff" r="76" stroke="#111827" stroke-dasharray="8 6" stroke-width="4"></circle>
+<circle cx="220" cy="140" fill="#111827" r="5"></circle>
+<line stroke="#111827" stroke-width="3" x1="220" x2="296" y1="140" y2="140"></line>
+<text class="svg-label" font-size="13" x="246" y="130">r</text>
+<circle cx="296" cy="140" fill="#fff" r="11" stroke="#111827" stroke-width="4"></circle>
+<line marker-end="url(#arrQ2)" stroke="#111827" stroke-width="4" x1="296" x2="296" y1="140" y2="81"></line>
+<text class="svg-label" font-size="14" x="305" y="103">v</text>
+<path d="M302 82 A85 85 0 0 0 245 62" fill="none" marker-end="url(#arrQ2)" stroke="#111827" stroke-width="3"></path>
+<text class="svg-small" font-size="11" x="306" y="69">rotation</text>
+<line stroke="#9ca3af" stroke-dasharray="5 4" stroke-width="1.5" x1="220" x2="220" y1="140" y2="57"></line>
+<text class="svg-small" font-size="12" text-anchor="middle" x="220" y="224">At the rightmost point, velocity is tangent to the circle.</text>
+</svg>
+<div class="caption">ที่ตำแหน่งขวาสุด ทิศ \(v\) เป็นแนวสัมผัสและชี้ขึ้นสำหรับการหมุนทวนเข็ม / At the rightmost point, the tangential velocity points upward for counterclockwise motion.</div>
+</div>
+<div class="data-card">
+<div class="data-title">Given data / ข้อมูลกำหนด</div>
+<table class="data-table">
+<tr><th>Quantity / ปริมาณ</th><th>Value / ค่า</th></tr>
+<tr><td>\(r\)</td><td>\(0.50\,m\)</td></tr>
+<tr><td>\(f\)</td><td>\(0.80\,Hz\)</td></tr>
+<tr><td>Direction</td><td>counterclockwise</td></tr>
+<tr><td>Position</td><td>rightmost point</td></tr>
+</table>
+</div>
+</div>
+<ol class="subq" type="ก">
+<li>หาคาบ \(T\)<br/>Find the period \(T\). <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+<li>หาอัตราเร็วเชิงมุม \(\omega\)<br/>Find the angular speed \(\omega\). <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans"></span></li>
+<li>หาอัตราเร็วเชิงเส้น \(v\)<br/>Find the linear speed \(v\). <span class="pts">(2 pts / 2 คะแนน)</span><span class="ans"></span></li>
+<li>ที่ตำแหน่งขวาสุด ทิศของ \(v\) ชี้ไปทางใด และเพราะเหตุใด<br/>At the rightmost point, which direction does \(v\) point? Why? <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans"></span></li>
+</ol>
+</article>
+</div>
+<div class="page-footer">Page 3 / 10</div>
+</section>
+<section class="sheet exam-sheet part-c-sheet">
+<section class="combined-header">
+<div class="part-note">Part C / ข้อเขียน</div>
+<div class="combined-title">Part C: Rotational Kinematics / จลนศาสตร์การหมุน</div>
+<div class="combined-subtitle">Question 1 of 2 / ข้อ 1 จาก 2</div>
+<div class="combined-score">Part C total = 10 points / 10 คะแนน</div>
+</section>
+<div class="sheet-body">
+<article class="question">
+<div class="qhead">
+<span class="num">1</span>
+<div class="qtitle">ล้อเริ่มหมุนจากหยุดนิ่ง / A wheel starts rotating from rest</div>
+<div class="score">5 pts / 5 คะแนน</div>
+</div>
+<div class="scenario">
+        ล้อรัศมี \(R=0.80\,m\) เริ่มหมุนจากหยุดนิ่งด้วยความเร่งเชิงมุมคงที่ \(\alpha=2.0\,rad/s^2\) เป็นเวลา \(4.0\,s\).
+        <br/>
+        A wheel of radius \(R=0.80\,m\) starts from rest with constant angular acceleration \(\alpha=2.0\,rad/s^2\) for \(4.0\,s\).
+      </div>
+<div class="model-row">
+<div class="model-card"><div class="model-title">SVG model / รูปจำลอง</div><svg aria-label="Wheel from rest with angular acceleration" class="model-svg" viewbox="0 0 430 270">
+<defs>
+<marker id="arrB1" markerheight="8" markerwidth="10" orient="auto" refx="9" refy="4">
+<polygon fill="#111827" points="0 0,10 4,0 8"></polygon>
+</marker>
+</defs>
+<rect fill="#fff" height="242" rx="12" stroke="#111827" stroke-width="3" width="402" x="14" y="14"></rect>
+<text class="svg-label" font-size="15" text-anchor="middle" x="215" y="38">Wheel starts from rest</text>
+<circle cx="152" cy="136" fill="#fff" r="72" stroke="#111827" stroke-width="4"></circle>
+<circle cx="152" cy="136" fill="#111827" r="5"></circle>
+<g stroke="#111827" stroke-width="3">
+<line x1="152" x2="152" y1="136" y2="64"></line>
+<line x1="152" x2="224" y1="136" y2="136"></line>
+<line x1="152" x2="152" y1="136" y2="208"></line>
+<line x1="152" x2="80" y1="136" y2="136"></line>
+</g>
+<circle cx="152" cy="64" fill="#fff" r="8" stroke="#111827" stroke-width="3"></circle>
+<path d="M236 96 A96 96 0 0 1 239 176" fill="none" marker-end="url(#arrB1)" stroke="#111827" stroke-width="4"></path>
+<text class="svg-label" font-size="14" x="247" y="138">α</text>
+<rect fill="#fff" height="132" rx="10" stroke="#111827" stroke-width="3" width="100" x="285" y="72"></rect>
+<text class="svg-label" font-size="14" text-anchor="middle" x="335" y="102">R = 0.80 m</text>
+<text class="svg-label" font-size="14" text-anchor="middle" x="335" y="130">α = 2.0</text>
+<text class="svg-small" font-size="11" text-anchor="middle" x="335" y="150">rad/s²</text>
+<line stroke="#111827" stroke-width="2" x1="297" x2="373" y1="163" y2="163"></line>
+<text class="svg-label" font-size="14" text-anchor="middle" x="335" y="188">t = 4.0 s</text>
+<text class="svg-small" font-size="12" text-anchor="middle" x="215" y="232">constant angular acceleration from rest</text>
+</svg><div class="caption">แผนภาพแสดงล้อที่เริ่มหมุนจากหยุดนิ่ง / The diagram shows a wheel starting from rest.</div></div>
+<div class="data-card"><div class="data-title">Given data / ข้อมูลกำหนด</div>
+<table class="data-table">
+<tr><th>Quantity / ปริมาณ</th><th>Value / ค่า</th></tr>
+<tr><td>\(R\)</td><td>\(0.80\,m\)</td></tr>
+<tr><td>\(\omega_0\)</td><td>\(0\,rad/s\)</td></tr>
+<tr><td>\(\alpha\)</td><td>\(2.0\,rad/s^2\)</td></tr>
+<tr><td>\(t\)</td><td>\(4.0\,s\)</td></tr>
+</table>
+</div>
+</div>
+<ol class="subq" type="ก">
+<li>หาความเร็วมุมสุดท้าย \(\omega\)<br/>Find the final angular speed \(\omega\). <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+<li>หาระยะเชิงมุม \(\theta\)<br/>Find the angular displacement \(\theta\). <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans"></span></li>
+<li>ล้อหมุนไปกี่รอบโดยประมาณ<br/>Approximately how many revolutions does the wheel complete? <span class="pts">(2 pts / 2 คะแนน)</span><span class="ans"></span></li>
+<li>หาอัตราเร็วเชิงเส้นที่ขอบล้อ ณ \(t=4.0s\)<br/>Find the linear speed at the rim at \(t=4.0s\). <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+</ol>
+</article>
+</div>
+<div class="page-footer">Page 4 / 10</div>
+</section>
+<section class="sheet exam-sheet part-c-sheet">
+<section class="combined-header">
+<div class="part-note">Part C / ข้อเขียน</div>
+<div class="combined-title">Part C: Rotational Kinematics / จลนศาสตร์การหมุน</div>
+<div class="combined-subtitle">Question 2 of 2 / ข้อ 2 จาก 2</div>
+<div class="combined-score">Part C total = 10 points / 10 คะแนน</div>
+</section>
+<div class="sheet-body">
+<article class="question">
+<div class="qhead">
+<span class="num">2</span>
+<div class="qtitle">พัดลมชะลอจนหยุด / A fan slows down to rest</div>
+<div class="score">5 pts / 5 คะแนน</div>
+</div>
+<div class="scenario">
+        พัดลมมีความเร็วมุมเริ่มต้น \(\omega_0=20\,rad/s\) แล้วถูกเบรกด้วยความเร่งเชิงมุมคงที่ \(\alpha=-4.0\,rad/s^2\). รัศมีใบพัด \(R=0.30\,m\).
+        <br/>
+        A fan has initial angular speed \(\omega_0=20\,rad/s\) and is braked with constant angular acceleration \(\alpha=-4.0\,rad/s^2\). The blade radius is \(R=0.30\,m\).
+      </div>
+<div class="model-row">
+<div class="model-card"><div class="model-title">SVG model / รูปจำลอง</div><svg aria-label="Fan slowing down with negative angular acceleration" class="model-svg" viewbox="0 0 430 270">
+<defs>
+<marker id="arrB5" markerheight="8" markerwidth="10" orient="auto" refx="9" refy="4">
+<polygon fill="#111827" points="0 0,10 4,0 8"></polygon>
+</marker>
+</defs>
+<rect fill="#fff" height="242" rx="12" stroke="#111827" stroke-width="3" width="402" x="14" y="14"></rect>
+<text class="svg-label" font-size="15" text-anchor="middle" x="215" y="38">A fan slows down uniformly</text>
+<circle cx="150" cy="138" fill="#fff" r="70" stroke="#111827" stroke-width="4"></circle>
+<circle cx="150" cy="138" fill="#fff" r="7" stroke="#111827" stroke-width="3"></circle>
+<path d="M150 138 C176 86, 205 84, 222 112 C190 111, 172 122, 150 138" fill="#fff" stroke="#111827" stroke-width="3"></path>
+<path d="M150 138 C100 112, 92 86, 118 66 C126 99, 137 118, 150 138" fill="#fff" stroke="#111827" stroke-width="3"></path>
+<path d="M150 138 C151 194, 127 213, 96 201 C124 184, 139 164, 150 138" fill="#fff" stroke="#111827" stroke-width="3"></path>
+<path d="M236 96 A96 96 0 0 1 239 176" fill="none" marker-end="url(#arrB5)" stroke="#111827" stroke-width="4"></path>
+<text class="svg-label" font-size="14" x="247" y="138">rotation</text>
+<rect fill="#fff" height="128" rx="10" stroke="#111827" stroke-width="3" width="92" x="292" y="70"></rect>
+<text class="svg-label" font-size="13" text-anchor="middle" x="338" y="98">ω₀ = 20</text>
+<text class="svg-small" font-size="11" text-anchor="middle" x="338" y="116">rad/s</text>
+<text class="svg-label" font-size="13" text-anchor="middle" x="338" y="142">α = −4.0</text>
+<text class="svg-small" font-size="11" text-anchor="middle" x="338" y="160">rad/s²</text>
+<text class="svg-label" font-size="13" text-anchor="middle" x="338" y="187">R = 0.30 m</text>
+<text class="svg-small" font-size="12" text-anchor="middle" x="215" y="232">fan slowing down uniformly</text>
+</svg><div class="caption">เครื่องหมายลบของ \(\alpha\) หมายถึงความเร็วมุมลดลง / Negative \(\alpha\) means angular speed decreases.</div></div>
+<div class="data-card"><div class="data-title">Given data / ข้อมูลกำหนด</div>
+<table class="data-table">
+<tr><th>Quantity / ปริมาณ</th><th>Value / ค่า</th></tr>
+<tr><td>\(\omega_0\)</td><td>\(20\,rad/s\)</td></tr>
+<tr><td>\(\alpha\)</td><td>\(-4.0\,rad/s^2\)</td></tr>
+<tr><td>final \(\omega\)</td><td>\(0\,rad/s\)</td></tr>
+<tr><td>\(R\)</td><td>\(0.30\,m\)</td></tr>
+</table>
+</div>
+</div>
+<ol class="subq" type="ก">
+<li>หาเวลาที่พัดลมหยุดหมุน<br/>Find the stopping time of the fan. <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+<li>หาระยะเชิงมุม \(\theta\) ระหว่างการชะลอ<br/>Find the angular displacement \(\theta\) during braking. <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans"></span></li>
+<li>คิดเป็นจำนวนรอบประมาณเท่าใด<br/>Approximately how many revolutions is this? <span class="pts">(2 pts / 2 คะแนน)</span><span class="ans"></span></li>
+<li>หาขนาดความเร่งสัมผัสที่ปลายใบพัด<br/>Find the magnitude of tangential acceleration at the blade tip. <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+</ol>
+</article>
+</div>
+<div class="page-footer">Page 5 / 10</div>
+</section>
+<section class="sheet exam-sheet part-d-sheet">
+<section class="combined-header">
+<div class="part-note">Part D / ข้อเขียน</div>
+<div class="combined-title">Part D: Torque and Rotational Equilibrium / ทอร์กและสมดุลการหมุน</div>
+<div class="combined-subtitle">Question 1 of 2 / ข้อ 1 จาก 2</div>
+<div class="combined-score">Part D total = 10 points / 10 คะแนน</div>
+</section>
+<div class="sheet-body">
+<article class="question">
+<div class="qhead">
+<span class="num">1</span>
+<div class="qtitle">ประแจขันน็อต / Using a wrench on a bolt</div>
+<div class="score">5 pts / 5 คะแนน</div>
+</div>
+<div class="scenario">
+        ช่างกำลังใช้ประแจหมุนน็อต โดยจุดหมุนอยู่ที่ศูนย์กลางน็อต ให้ถือว่าทุกแรงกระทำในระนาบเดียวกัน และพิจารณาเฉพาะขนาดและทิศของทอร์ก
+        <br/>
+        A mechanic uses a wrench to rotate a bolt. The pivot is at the center of the bolt. Assume all forces act in the same plane and consider only the magnitude and direction of torque.
+      </div>
+<div class="model-row">
+<div class="model-card">
+<div class="model-title">SVG model / รูปจำลอง</div>
+<svg aria-label="wrench torque cases" class="model-svg" viewbox="0 0 430 260">
+<defs>
+<marker id="arrC1" markerheight="8" markerwidth="10" orient="auto" refx="9" refy="4"><polygon fill="#111827" points="0 0,10 4,0 8"></polygon></marker>
+</defs>
+<rect fill="#fff" height="236" rx="12" stroke="#111827" stroke-width="3" width="406" x="12" y="12"></rect>
+<g>
+<rect fill="#fff" height="16" rx="8" stroke="#111827" stroke-width="3" width="110" x="42" y="56"></rect>
+<circle cx="42" cy="64" fill="#fff" r="10" stroke="#111827" stroke-width="3"></circle>
+<line marker-end="url(#arrC1)" stroke="#111827" stroke-width="4" x1="152" x2="152" y1="64" y2="24"></line>
+<text class="svg-label" font-size="13" x="160" y="30">Case A: 40 N</text>
+<text class="svg-small" font-size="11" x="68" y="92">r = 0.30 m</text>
+</g>
+<g>
+<rect fill="#fff" height="16" rx="8" stroke="#111827" stroke-width="3" width="82" x="42" y="138"></rect>
+<circle cx="42" cy="146" fill="#fff" r="10" stroke="#111827" stroke-width="3"></circle>
+<line marker-end="url(#arrC1)" stroke="#111827" stroke-width="4" x1="124" x2="124" y1="146" y2="116"></line>
+<text class="svg-label" font-size="13" x="132" y="122">Case B: 30 N</text>
+<text class="svg-small" font-size="11" x="66" y="174">r = 0.20 m</text>
+</g>
+<g>
+<rect fill="#fff" height="16" rx="8" stroke="#111827" stroke-width="3" width="110" x="246" y="98"></rect>
+<circle cx="246" cy="106" fill="#fff" r="10" stroke="#111827" stroke-width="3"></circle>
+<line marker-end="url(#arrC1)" stroke="#111827" stroke-width="4" x1="356" x2="390" y1="106" y2="72"></line>
+<path d="M366 106 A16 16 0 0 0 378 95" fill="none" stroke="#111827" stroke-width="2"></path>
+<text class="svg-small" font-size="11" x="383" y="99">60°</text>
+<text class="svg-label" font-size="13" x="332" y="137">20 N</text>
+<text class="svg-small" font-size="11" x="272" y="82">Case C, r = 0.50 m</text>
+</g>
+<text class="svg-small" font-size="12" text-anchor="middle" x="214" y="228">Take CCW as positive. / ให้ทวนเข็มเป็นบวก</text>
+</svg>
+<div class="caption">ในแต่ละกรณี จุดหมุนคือศูนย์กลางน็อตที่ปลายประแจด้านซ้าย / In each case, the pivot is the bolt center at the left end of the wrench.</div>
+</div>
+<div class="data-card">
+<div class="data-title">Given data / ข้อมูลกำหนด</div>
+<table class="data-table">
+<tr><th>Case / กรณี</th><th>Data / ข้อมูล</th></tr>
+<tr><td>A</td><td>\(r=0.30\,m\), \(F=40\,N\), perpendicular</td></tr>
+<tr><td>B</td><td>\(r=0.20\,m\), \(F=30\,N\), perpendicular</td></tr>
+<tr><td>C</td><td>\(r=0.50\,m\), \(F=20\,N\), \(\theta=60^\circ\)</td></tr>
+</table>
+</div>
+</div>
+<ol class="subq" type="ก">
+<li>หาทอร์กในกรณี A พร้อมทิศการหมุน / Find the torque in Case A with rotational direction. <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+<li>หาทอร์กในกรณี B พร้อมทิศการหมุน / Find the torque in Case B with rotational direction. <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+<li>หาทอร์กในกรณี C พร้อมทิศการหมุน / Find the torque in Case C with rotational direction. <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+<li>กรณีใดให้ทอร์กมากที่สุด และเพราะเหตุใด / Which case gives the largest torque, and why? <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+<li>ถ้าแรงพาดผ่านจุดหมุนพอดี ทอร์กจะเป็นเท่าใด / If the line of action passes through the pivot, what is the torque? <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+</ol>
+</article>
+</div>
+<div class="page-footer">Page 6 / 10</div>
+</section>
+<section class="sheet exam-sheet part-d-sheet">
+<section class="combined-header">
+<div class="part-note">Part D / ข้อเขียน</div>
+<div class="combined-title">Part D: Torque and Rotational Equilibrium / ทอร์กและสมดุลการหมุน</div>
+<div class="combined-subtitle">Question 2 of 2 / ข้อ 2 จาก 2</div>
+<div class="combined-score">Part D total = 10 points / 10 คะแนน</div>
+</section>
+<div class="sheet-body">
+<article class="question">
+<div class="qhead"><span class="num">2</span><div class="qtitle">ไม้กระดกสมดุลหรือไม่ / Is the seesaw balanced?</div><div class="score">5 pts / 5 คะแนน</div></div>
+<div class="scenario">
+        เด็กคนหนึ่งนั่งทางซ้ายของจุดหมุน ส่วนผู้ใหญ่นั่งทางขวา ให้ละเลยน้ำหนักของแผ่นไม้ แล้วพิจารณาเฉพาะแรงน้ำหนักของคนทั้งสอง
+        <br/>
+        A child sits on the left of the pivot and an adult sits on the right. Neglect the weight of the board and consider only the weights of the two people.
+      </div>
+<div class="model-row">
+<div class="model-card"><div class="model-title">SVG model / รูปจำลอง</div>
+<svg aria-label="seesaw torque" class="model-svg" viewbox="0 0 430 250">
+<rect fill="#fff" height="222" rx="12" stroke="#111827" stroke-width="3" width="402" x="14" y="14"></rect>
+<line stroke="#111827" stroke-width="6" x1="42" x2="388" y1="154" y2="154"></line>
+<polygon fill="#fff" points="210,154 240,154 225,192" stroke="#111827" stroke-width="3"></polygon>
+<circle cx="125" cy="120" fill="#fff" r="18" stroke="#111827" stroke-width="3"></circle>
+<line stroke="#111827" stroke-width="3" x1="125" x2="125" y1="138" y2="172"></line>
+<line stroke="#111827" stroke-width="3" x1="112" x2="138" y1="150" y2="150"></line>
+<line stroke="#111827" stroke-width="3" x1="125" x2="114" y1="172" y2="194"></line>
+<line stroke="#111827" stroke-width="3" x1="125" x2="136" y1="172" y2="194"></line>
+<line stroke="#111827" stroke-width="4" x1="125" x2="125" y1="98" y2="126"></line>
+<text class="svg-label" font-size="13" x="82" y="92">250 N</text>
+<text class="svg-small" font-size="11" x="91" y="213">1.20 m</text>
+<circle cx="310" cy="112" fill="#fff" r="20" stroke="#111827" stroke-width="3"></circle>
+<line stroke="#111827" stroke-width="3" x1="310" x2="310" y1="132" y2="172"></line>
+<line stroke="#111827" stroke-width="3" x1="294" x2="326" y1="148" y2="148"></line>
+<line stroke="#111827" stroke-width="3" x1="310" x2="296" y1="172" y2="194"></line>
+<line stroke="#111827" stroke-width="3" x1="310" x2="324" y1="172" y2="194"></line>
+<line stroke="#111827" stroke-width="4" x1="310" x2="310" y1="90" y2="118"></line>
+<text class="svg-label" font-size="13" x="272" y="84">400 N</text>
+<text class="svg-small" font-size="11" x="292" y="213">x</text>
+<text class="svg-small" font-size="11" x="206" y="214">pivot</text>
+</svg>
+<div class="caption">แรงน้ำหนักทั้งสองกระทำลงในแนวดิ่ง / Both weights act vertically downward.</div>
+</div>
+<div class="data-card"><div class="data-title">Given data / ข้อมูลกำหนด</div>
+<table class="data-table">
+<tr><th>Person / คน</th><th>Weight / น้ำหนัก</th><th>Distance from pivot / ระยะจากจุดหมุน</th></tr>
+<tr><td>Child / เด็ก</td><td>\(250\,N\)</td><td>\(1.20\,m\) to the left</td></tr>
+<tr><td>Adult / ผู้ใหญ่</td><td>\(400\,N\)</td><td>\(x\) to the right</td></tr>
+</table>
+</div>
+</div>
+<ol class="subq" type="ก">
+<li>หาโมเมนต์ของแรงจากน้ำหนักเด็กเทียบกับจุดหมุน พร้อมระบุทิศการหมุน / Find the torque from the child's weight about the pivot, including direction. <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+<li>ถ้าไม้กระดกสมดุล จงหา \(x\) / If the seesaw is balanced, find \(x\). <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+<li>ถ้าผู้ใหญ่นั่งห่างจุดหมุนเพียง \(0.60\,m\) จงหาโมเมนต์ลัพธ์รอบจุดหมุน / If the adult sits only \(0.60\,m\) from the pivot, find the net torque about the pivot. <span class="pts">(2 pts / 2 คะแนน)</span><span class="ans small"></span></li>
+<li>ไม้กระดกจะหมุนไปทางด้านใด / Which side will move downward? <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+</ol>
+</article>
+</div>
+<div class="page-footer">Page 7 / 10</div>
+</section>
+<section class="sheet exam-sheet part-e-sheet">
+<section class="combined-header">
+<div class="part-note">Part E / ข้อเขียน</div>
+<div class="combined-title">Part E: Trigonometry and SHM / ตรีโกณมิติและ SHM</div>
+<div class="combined-subtitle">Question 1 of 2 / ข้อ 1 จาก 2</div>
+<div class="combined-score">Part E total = 10 points / 10 คะแนน</div>
+</section>
+<div class="sheet-body">
+<article class="question">
+<div class="qhead">
+<span class="num">1</span>
+<div class="qtitle">มุมเกินหนึ่งรอบ มุมติดลบ และค่าตรีโกณมิติ / Co-terminal angles and trigonometric values</div>
+<div class="score">5 pts / 5 คะแนน</div>
+</div>
+<div class="scenario">
+        จงลดมุมให้อยู่ในหนึ่งรอบมาตรฐาน แล้วใช้มุมที่ได้เพื่อหาค่าตรีโกณมิติ
+        <br/>
+        Reduce each angle to one standard turn, then use the reduced angle to find the trigonometric value.
+      </div>
+<div class="model-row">
+<div class="model-card">
+<div class="model-title">พื้นที่วาดรูป / Drawing space</div>
+<div class="draw-box">
+<div class="draw-hint">วาดวงกลมหนึ่งหน่วยเอง ใช้การหมุนเกินรอบหรือหมุนย้อนกลับเพื่อหามุมร่วมปลาย / Draw the unit circle yourself and use extra turns or reverse turns to find co-terminal angles.</div>
+</div>
+</div>
+<div class="data-card">
+<div class="data-title">Angles / มุม</div>
+<table class="data-table">
+<tr><th>Angle</th><th>Find standard angle</th><th>Then find</th></tr>
+<tr><td>\(390^\circ\)</td><td></td><td>\(\sin390^\circ\)</td></tr>
+<tr><td>\(-300^\circ\)</td><td></td><td>\(\cos(-300^\circ)\)</td></tr>
+<tr><td>\(\frac{13\pi}{4}\)</td><td></td><td>\(\tan\frac{13\pi}{4}\)</td></tr>
+<tr><td>\(-\frac{11\pi}{6}\)</td><td></td><td>\(\sin(-\frac{11\pi}{6})\)</td></tr>
+</table>
+</div>
+</div>
+<ol class="subq" type="ก">
+<li>ลด \(390^\circ\) และ \(-300^\circ\) ให้อยู่ในช่วง \(0^\circ\le\theta&lt;360^\circ\)<br/>Reduce \(390^\circ\) and \(-300^\circ\) to \(0^\circ\le\theta&lt;360^\circ\). <span class="pts">(2 pts / 2 คะแนน)</span><span class="ans small"></span></li>
+<li>ลด \(\frac{13\pi}{4}\) และ \(-\frac{11\pi}{6}\) ให้อยู่ในช่วง \(0\le\theta&lt;2\pi\)<br/>Reduce \(\frac{13\pi}{4}\) and \(-\frac{11\pi}{6}\) to \(0\le\theta&lt;2\pi\). <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+<li>หา \(\sin390^\circ\), \(\cos(-300^\circ)\), \(\tan\frac{13\pi}{4}\), \(\sin(-\frac{11\pi}{6})\)<br/>Find the four trigonometric values. <span class="pts">(2 pts / 2 คะแนน)</span><span class="ans"></span></li>
+</ol>
+</article>
+</div>
+<div class="page-footer">Page 8 / 10</div>
+</section>
+<section class="sheet exam-sheet part-e-sheet">
+<section class="combined-header">
+<div class="part-note">Part E / ข้อเขียน</div>
+<div class="combined-title">Part E: Trigonometry and SHM / ตรีโกณมิติและ SHM</div>
+<div class="combined-subtitle">Question 2 of 2 / ข้อ 2 จาก 2</div>
+<div class="combined-score">Part E total = 10 points / 10 คะแนน</div>
+</section>
+<div class="sheet-body">
+<article class="question">
+<div class="qhead">
+<span class="num">2</span>
+<div class="qtitle">การกระจัดของ SHM จากสมการที่กำหนด / SHM displacement from a given equation</div>
+<div class="score">5 pts / 5 คะแนน</div>
+</div>
+<div class="scenario">
+        อนุภาคหนึ่งเคลื่อนที่แบบ SHM โดยมีสมการการกระจัด \(x=0.12\cos\theta\) เมตร และมีความเร็วมุม \(\omega=2.0\,rad/s\). และกำหนดสมการความเร็ว \(v=-0.24\sin\theta\) เมตรต่อวินาที
+        <br/>
+        A particle undergoes SHM with displacement equation \(x=0.12\cos\theta\) metres and angular speed \(\omega=2.0\,rad/s\). The velocity equation is given as \(v=-0.24\sin\theta\) metres per second.
+      </div>
+<div class="model-row">
+<div class="model-card">
+<div class="model-title">พื้นที่วาดรูป / Drawing space</div>
+<div class="draw-box">
+<div class="draw-hint">วาดวงกลมหรือกราฟคร่าว ๆ เพื่อช่วยตัดสินเครื่องหมายของการกระจัดและความเร็ว / Draw a unit circle or rough graph to decide the signs of displacement and velocity.</div>
+</div>
+</div>
+<div class="data-card">
+<div class="data-title">Evaluate / แทนค่า</div>
+<table class="data-table">
+<tr><th>Expression</th><th>Angle</th></tr>
+<tr><td>\(x=0.12\cos\theta\)</td><td>\(0,\frac{\pi}{3},\frac{\pi}{2},\pi\)</td></tr>
+<tr><td>\(v=-0.24\sin\theta\)</td><td>\(\frac{\pi}{3}\)</td></tr>
+</table>
+</div>
+</div>
+<ol class="subq" type="ก">
+<li>หา \(x\) เมื่อ \(\theta=0,\frac{\pi}{3},\frac{\pi}{2},\pi\)<br/>Find \(x\) when \(\theta=0,\frac{\pi}{3},\frac{\pi}{2},\pi\). <span class="pts">(2 pts / 2 คะแนน)</span><span class="ans"></span></li>
+<li>หา \(v\) เมื่อ \(\theta=\frac{\pi}{3}\)<br/>Find \(v\) when \(\theta=\frac{\pi}{3}\). <span class="pts">(1 pt / 1 คะแนน)</span><span class="ans small"></span></li>
+<li>เรียงเครื่องหมายของ \(x\) ที่ \(\theta=0,\frac{\pi}{3},\frac{\pi}{2},\pi\)<br/>List the signs of \(x\) at \(\theta=0,\frac{\pi}{3},\frac{\pi}{2},\pi\). <span class="pts">(2 pts / 2 คะแนน)</span><span class="ans small"></span></li>
+</ol>
+</article>
+</div>
+<div class="page-footer">Page 9 / 10</div>
+</section>
+<style id="compact-onepage-ref-css">
+/* =========================================================
+   PATCH v5: One-page limited formula sheet
+   ลดใบสูตรท้ายไฟล์จาก 4 หน้าเหลือ 1 หน้า
+========================================================= */
+.compact-ref {
+  padding: 8mm 8mm 9mm !important;
+  min-height: 297mm !important;
+  height: 297mm !important;
+  overflow: hidden !important;
+}
+.compact-ref .ref-header {
+  padding-bottom: 3px !important;
+  margin-bottom: 5px !important;
+}
+.compact-ref .ref-note {
+  font-size: 9.8px !important;
+  padding: 3px 6px !important;
+  margin-bottom: 3px !important;
+}
+.compact-ref .ref-title {
+  font-size: 14px !important;
+  line-height: 1.12 !important;
+}
+.compact-ref .ref-subtitle {
+  font-size: 9.7px !important;
+  line-height: 1.12 !important;
+  margin-top: 1px !important;
+}
+.compact-ref .compact-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr 1fr !important;
+  gap: 4px !important;
+  align-items: start !important;
+}
+.compact-ref .ref-card {
+  padding: 4px 5px !important;
+  border-radius: 6px !important;
+  break-inside: avoid !important;
+  page-break-inside: avoid !important;
+}
+.compact-ref .ref-card h3 {
+  font-size: 9.6px !important;
+  line-height: 1.1 !important;
+  margin: 0 0 3px !important;
+  padding-bottom: 2px !important;
+}
+.compact-ref .ref-formulas,
+.compact-ref .ref-formulas.one,
+.compact-ref .ref-formulas.three {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 2px !important;
+  margin-top: 0 !important;
+}
+.compact-ref .ref-formulas.two {
+  grid-template-columns: 1fr 1fr !important;
+}
+.compact-ref .ref-formula {
+  font-size: 9.6px !important;
+  line-height: 1.08 !important;
+  padding: 2px 3px !important;
+  border-radius: 4px !important;
+  min-height: 0 !important;
+}
+.compact-ref .ref-table {
+  font-size: 8.6px !important;
+  line-height: 1.05 !important;
+  margin: 2px 0 0 !important;
+}
+.compact-ref .ref-table th,
+.compact-ref .ref-table td {
+  padding: 2px 2px !important;
+}
+.compact-ref .ref-small {
+  font-size: 8.6px !important;
+  line-height: 1.08 !important;
+  margin: 2px 0 0 !important;
+}
+.compact-ref .ref-footer {
+  right: 8mm !important;
+  bottom: 4mm !important;
+  font-size: 9px !important;
+}
+@media print {
+  .compact-ref {
+    padding: 8mm 8mm 9mm !important;
+    height: 297mm !important;
+    min-height: 297mm !important;
+    overflow: hidden !important;
+  }
+  .compact-ref .ref-title { font-size: 10.5pt !important; }
+  .compact-ref .ref-note,
+  .compact-ref .ref-subtitle,
+  .compact-ref .ref-formula,
+  .compact-ref .ref-card h3 { font-size: 7.2pt !important; }
+  .compact-ref .ref-table { font-size: 6.4pt !important; }
+  .compact-ref .ref-small { font-size: 6.3pt !important; }
+}
+</style>
+<section class="ref-sheet formula-sheet compact-ref" id="reference-compact-onepage">
+<section class="ref-header">
+<div class="ref-note">แผ่นสูตรแบบจำกัด 1 หน้า / One-page limited formula sheet</div>
+<h2 class="ref-title">Physics M5 Formula Sheet / สูตรฟิสิกส์ ม.5</h2>
+<div class="ref-subtitle">ใช้ \(\pi \approx 3.14\) | ขอบเขต 50 คะแนน / 60 นาที | ไม่มี \(F_c\), \(a_c\), \(\sum\tau=I\alpha\)</div>
+</section>
+<div class="compact-grid">
+<div class="ref-card">
+<h3>1. คาบ ความถี่ และมุม</h3>
+<div class="ref-formulas">
+<div class="ref-formula">\(T=\dfrac{t}{N}\)</div>
+<div class="ref-formula">\(f=\dfrac{N}{t}=\dfrac1T\)</div>
+<div class="ref-formula">\(1\,rev=2\pi\,rad=360^\circ\)</div>
+<div class="ref-formula">\(\theta=2\pi N\)</div>
+<div class="ref-formula">\(\omega=\dfrac{\theta}{t}=2\pi f=\dfrac{2\pi}{T}\)</div>
+</div>
+</div>
+<div class="ref-card">
+<h3>2. เชิงเส้น-เชิงมุม</h3>
+<div class="ref-formulas">
+<div class="ref-formula">\(s=r\theta\)</div>
+<div class="ref-formula">\(v=\omega r\)</div>
+<div class="ref-formula">\(a_t=\alpha r\)</div>
+</div>
+<p class="ref-small">\(s\): ระยะตามแนวโค้ง, \(v\): ความเร็วแนวสัมผัส, \(a_t\): ความเร่งสัมผัส</p>
+</div>
+<div class="ref-card">
+<h3>3. จลนศาสตร์การหมุน</h3>
+<div class="ref-formulas">
+<div class="ref-formula">\(\omega=\omega_0+\alpha t\)</div>
+<div class="ref-formula">\(\theta=\omega_0t+\dfrac12\alpha t^2\)</div>
+<div class="ref-formula">\(\omega^2=\omega_0^2+2\alpha\theta\)</div>
+<div class="ref-formula">\(\theta=\dfrac{\omega_0+\omega}{2}t\)</div>
+</div>
+<p class="ref-small">เริ่มจากหยุดนิ่ง: \(\omega_0=0\) | หยุดพอดี: \(\omega=0\)</p>
+</div>
+<div class="ref-card">
+<h3>4. ทอร์กและสมดุลการหมุน</h3>
+<div class="ref-formulas">
+<div class="ref-formula">\(\tau=rF\sin\theta\)</div>
+<div class="ref-formula">ตั้งฉาก: \(\tau=rF\)</div>
+<div class="ref-formula">สมดุล: \(\sum\tau=0\)</div>
+</div>
+<p class="ref-small">ทวนเข็ม = บวก หรือ ตามเข็ม = บวก เลือกอย่างใดอย่างหนึ่งให้คงที่</p>
+</div>
+<div class="ref-card">
+<h3>5. มุมพิเศษ</h3>
+<table class="ref-table trig-compact">
+<tr><th>มุม</th><th>rad</th><th>sin</th><th>cos</th><th>tan</th></tr>
+<tr><td>0°</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+<tr><td>30°</td><td>\(\pi/6\)</td><td>\(1/2\)</td><td>\(\sqrt3/2\)</td><td>\(1/\sqrt3\)</td></tr>
+<tr><td>45°</td><td>\(\pi/4\)</td><td>\(\sqrt2/2\)</td><td>\(\sqrt2/2\)</td><td>1</td></tr>
+<tr><td>60°</td><td>\(\pi/3\)</td><td>\(\sqrt3/2\)</td><td>\(1/2\)</td><td>\(\sqrt3\)</td></tr>
+<tr><td>90°</td><td>\(\pi/2\)</td><td>1</td><td>0</td><td>-</td></tr>
+<tr><td>180°</td><td>\(\pi\)</td><td>0</td><td>-1</td><td>0</td></tr>
+<tr><td>360°</td><td>\(2\pi\)</td><td>0</td><td>1</td><td>0</td></tr>
+</table>
+</div>
+<div class="ref-card">
+<h3>6. มุมเกินรอบและเครื่องหมาย</h3>
+<div class="ref-formulas">
+<div class="ref-formula">องศา: ลบ/บวก \(360^\circ n\)</div>
+<div class="ref-formula">เรเดียน: ลบ/บวก \(2\pi n\)</div>
+<div class="ref-formula">จุดบนวงกลม: \((x,y)=(\cos\theta,\sin\theta)\)</div>
+</div>
+<table class="ref-table"><tr><th>จตุภาค</th><th>ค่าที่เป็นบวก</th></tr><tr><td>I</td><td>ทั้งหมด</td></tr><tr><td>II</td><td>sin</td></tr><tr><td>III</td><td>tan</td></tr><tr><td>IV</td><td>cos</td></tr></table>
+</div>
+<div class="ref-card">
+<h3>7. SHM</h3>
+<div class="ref-formulas">
+<div class="ref-formula">\(x=A\cos(\omega t+\phi)\)</div>
+<div class="ref-formula">\(x=A\sin(\omega t+\phi)\)</div>
+<div class="ref-formula">\(T=\dfrac{2\pi}{\omega}\), \(f=\dfrac1T\)</div>
+<div class="ref-formula">\(v_{max}=A\omega\)</div>
+</div>
+<p class="ref-small">แทนค่าในวงเล็บก่อน → ลดมุมให้อยู่ในรอบที่คุ้น → ดูเครื่องหมาย → คูณด้วย \(A\)</p>
+</div>
+<div class="ref-card">
+<h3>8. ช่วยเลือกสูตรเร็ว</h3>
+<table class="ref-table"><tr><th>โจทย์ให้</th><th>เริ่มจาก</th></tr><tr><td>จำนวนรอบ + เวลา</td><td>\(T, f, \omega\)</td></tr><tr><td>รัศมี + มุม</td><td>\(s=r\theta\)</td></tr><tr><td>รัศมี + \(\omega\)</td><td>\(v=\omega r\)</td></tr><tr><td>เริ่ม/หยุด + \(\alpha,t\)</td><td>สมการจลนศาสตร์การหมุน</td></tr><tr><td>แรงกับระยะจากจุดหมุน</td><td>\(\tau=rF\sin\theta\)</td></tr></table>
+</div>
+<div class="ref-card wide-unit">
+<h3>9. หน่วยที่ควรระวัง</h3>
+<table class="ref-table unit-compact"><tr><th>ปริมาณ</th><th>หน่วย</th><th>หมายเหตุ</th></tr><tr><td>\(\theta\)</td><td>rad</td><td>ใช้กับสูตร \(s=r\theta\), \(\omega=\theta/t\)</td></tr><tr><td>\(\omega\)</td><td>rad/s</td><td>อัตราเร็วเชิงมุม</td></tr><tr><td>\(\alpha\)</td><td>rad/s²</td><td>อัตราเร่งเชิงมุม</td></tr><tr><td>\(\tau\)</td><td>N·m</td><td>ทอร์ก ไม่ใช่พลังงาน</td></tr></table>
+</div>
+</div>
+<div class="ref-footer">Page 10 / 10</div>
+</section>
+</main>
+<script>function printExam(){ window.print(); }
+function renumberPages(){
+  const sheets = Array.from(document.querySelectorAll(".print-area > section.sheet, .print-area > section.ref-sheet"));
+  sheets.forEach((sheet, i) => {
+    let footer = sheet.querySelector(".page-footer, .ref-footer");
+    if (!footer) {
+      footer = document.createElement("div");
+      footer.className = "page-footer";
+      sheet.appendChild(footer);
+    }
+    footer.textContent = `Page ${i+1}`;
+  });
+}
+window.addEventListener("load", renumberPages);</script>
+</body>
+</html>
