@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Physics M4 Formal Combined | 50 pts | Template Style</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+
+
+:root { --paper-width:210mm; --paper-height:297mm; --pad-x:14mm; --pad-y:10mm; --ink:#111; }
+* { box-sizing:border-box; }
+html, body { margin:0; padding:0; }
+body { background:#e5e7eb; color:var(--ink); font-family:"Google Sans","Noto Sans Thai",Arial,sans-serif; font-size:11.7px; line-height:1.32; }
+.toolbar { position:sticky; top:0; z-index:50; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; align-items:center; padding:10px; background:#0f172a; color:white; }
+.toolbar button { border:0; border-radius:999px; padding:8px 14px; cursor:pointer; font-family:inherit; font-size:12px; font-weight:900; background:white; color:#0f172a; }
+.toolbar .primary { background:#bae6fd; color:#082f49; } .toolbar .gold { background:#fde68a; color:#78350f; }
+.toolbar .status { flex-basis:100%; text-align:center; opacity:.9; }
+.screen-guide { width:min(var(--paper-width),calc(100vw - 24px)); margin:14px auto 0; padding:10px 12px; background:white; border-radius:10px; box-shadow:0 10px 28px rgba(15,23,42,.12); }
+.sheet { width:var(--paper-width); height:var(--paper-height); margin:16px auto 28px; padding:var(--pad-y) var(--pad-x); background:white; box-shadow:0 16px 42px rgba(15,23,42,.22); overflow:hidden; page-break-after:always; break-after:page; position:relative; display:flex; flex-direction:column; }
+.school-header { display:block; text-align:center; border-bottom:1.5px solid #111; padding-bottom:3mm; margin-bottom:3mm; }
+.logo-box { display:none !important; }
+.school-title { text-align:center; line-height:1.25; } .school-title .group { font-size:12px; font-weight:700; } .school-title .main { font-size:15px; font-weight:900; margin-top:1mm; } .school-title .meta { font-size:11.5px; }
+.part-title { font-size:12.5px; font-weight:900; margin:2.4mm 0 2mm; }
+.mcq-list { margin:0; padding:0; list-style:none; display:grid; gap:1.4mm; }
+.mcq-item { break-inside:avoid; page-break-inside:avoid; }
+.mcq-stem { display:grid; grid-template-columns:8mm 1fr; gap:1mm; align-items:start; }
+.qnum { font-weight:900; } .en { display:block; font-size:10.5px; color:#333; line-height:1.22; margin-top:.2mm; }
+.choices { margin:.6mm 0 0 9mm; padding:0; list-style:none; display:grid; grid-template-columns:repeat(5,1fr); gap:1mm 2.4mm; font-size:10.7px; }
+.choice-label { font-weight:900; }
+.section-header { display:flex; justify-content:space-between; gap:4mm; align-items:flex-end; border-bottom:1.5px solid #111; padding-bottom:2mm; margin-bottom:2.5mm; }
+.section-header h2 { margin:0; font-size:13px; line-height:1.2; } .section-header .score { font-weight:900; white-space:nowrap; }
+.written-question { border:1.2px solid #111; padding:4mm; flex:1 1 auto; display:flex; flex-direction:column; min-height:0; }
+.written-head { font-weight:900; font-size:12.7px; line-height:1.28; margin-bottom:1.5mm; }
+.item-score { float:right; white-space:nowrap; }
+.given-title { margin:2mm 0 1mm; font-weight:900; }
+.given-table { width:100%; border-collapse:collapse; table-layout:fixed; margin-bottom:2mm; font-size:10.5px; }
+.given-table td { border:1px solid #111; padding:1.4mm 1.7mm; vertical-align:middle; }
+.given-table td:first-child { width:44%; font-weight:700; background:#f8f8f8; }
+.small-diagram { display:block; width:100%; max-width:76mm; margin:1.2mm auto 1.8mm; border:1px solid #111; }
+.torque-diagram { max-width:86mm; }
+.subq { margin:1.2mm 0 0; padding-left:7mm; }
+.subq li { margin-bottom:1mm; padding-left:1mm; }
+.pts { font-weight:900; white-space:nowrap; }
+.work-frame { flex:1 1 auto; border:1px solid #111; margin-top:3mm; padding:3mm; min-height:86mm; position:relative; }
+.work-frame::before { content:"พื้นที่แสดงวิธีทำ / Working area"; position:absolute; top:-3.4mm; left:4mm; background:#fff; padding:0 2mm; font-weight:700; font-size:10.5px; }
+.work-lines { height:100%; background:repeating-linear-gradient(to bottom, transparent 0, transparent 8.8mm, #cfcfcf 8.9mm, transparent 9mm); }
+.solution-box, .mc-answer, .solution-only { display:none; }
+body.mode-solution .solution-box { display:block; margin-top:2.5mm; padding:3mm; border:1px solid #111; background:#fff; font-size:11.2px; line-height:1.35; }
+body.mode-solution .mc-answer { display:inline; font-weight:900; margin-left:2mm; }
+body.mode-solution .work-frame { display:none; }
+body.mode-solution .solution-only { display:block; }
+.solution-title { font-weight:900; margin-bottom:1mm; }
+.ref-grid { display:grid; grid-template-columns:1fr 1fr; gap:4mm 6mm; }
+.ref-block { break-inside:avoid; page-break-inside:avoid; }
+.ref-block h3 { font-size:12px; margin:0 0 1mm; border-bottom:1px solid #111; padding-bottom:.8mm; }
+.ref-block p { margin:1mm 0; }
+.ref-table { width:100%; border-collapse:collapse; font-size:10.2px; }
+.ref-table th,.ref-table td { border:1px solid #111; padding:1.3mm; text-align:center; }
+.answer-sheet-table { width:100%; border-collapse:collapse; margin-top:5mm; }
+.answer-sheet-table th,.answer-sheet-table td { border:1px solid #111; text-align:center; padding:2mm 1mm; height:8.5mm; }
+.score-table { width:100%; border-collapse:collapse; margin-top:6mm; }
+.score-table th,.score-table td { border:1px solid #111; padding:2mm; text-align:center; }
+.page-footer { position:absolute; right:12mm; bottom:5mm; font-size:10.5px; }
+@page { size:A4 portrait; margin:0; }
+@media print { html,body { width:210mm; background:white!important; } .toolbar,.screen-guide { display:none!important; } .sheet { width:210mm!important; height:297mm!important; margin:0!important; box-shadow:none!important; page-break-after:always!important; break-after:page!important; overflow:hidden!important; } * { color:#000!important; border-color:#000!important; box-shadow:none!important; text-shadow:none!important; } .given-table td:first-child { background:#f8f8f8!important; } img { filter:grayscale(100%) contrast(1.1); } }
+@media screen and (max-width:860px) { .sheet { width:calc(100vw - 18px); height:auto; min-height:297mm; } .school-header,.ref-grid { grid-template-columns:1fr; } .choices { grid-template-columns:1fr; } }
+
+
+/* =========================================================
+   PATCH v8: Part A vertical choices + formal requested header
+========================================================= */
+.school-header {
+  padding-bottom: 2.4mm;
+  margin-bottom: 2.2mm;
+}
+.school-title .group { font-size: 11.8px; font-weight: 700; }
+.school-title .main { font-size: 14.2px; font-weight: 900; margin-top: .8mm; }
+.school-title .meta { font-size: 11.1px; line-height: 1.18; }
+.mcq-list { gap: .55mm !important; }
+.mcq-stem { grid-template-columns: 7mm 1fr !important; gap: .7mm !important; }
+.mcq-item { margin: 0 !important; padding: 0 !important; }
+.mcq-item .en { font-size: 9.7px !important; line-height: 1.08 !important; margin-top: 0 !important; }
+.choices {
+  margin: .15mm 0 .15mm 7.5mm !important;
+  padding: 0 !important;
+  display: block !important;
+  list-style: none !important;
+  font-size: 10.1px !important;
+  line-height: 1.08 !important;
+}
+.choices li {
+  display: block !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.choice-label { display: inline-block; width: 4.5mm; font-weight: 900; }
+.part-title { margin: 1.8mm 0 1.2mm !important; }
+.small-diagram {
+  max-width: 82mm !important;
+  max-height: 34mm !important;
+  object-fit: contain;
+  margin: 1mm auto 1.4mm !important;
+}
+.fan-diagram, .wheel-diagram { max-width: 86mm !important; }
+@media print {
+  .mcq-item .en { font-size: 8.2pt !important; line-height: 1.05 !important; }
+  .choices { font-size: 8.5pt !important; line-height: 1.05 !important; }
+  .school-title .main { font-size: 12.8pt !important; }
+}
+
+
+/* =========================================================
+   PATCH v6: Solution mode auto-pagination
+   - Exam print mode remains identical.
+   - Only when body has .mode-solution, sheets are allowed to grow.
+   - This prevents hidden/clipped solutions and lets the browser add
+     extra printed pages inside the overflowing part/question.
+========================================================= */
+body.mode-solution .sheet {
+  height: auto !important;
+  min-height: var(--paper-height) !important;
+  overflow: visible !important;
+  display: block !important;
+}
+body.mode-solution .written-question {
+  display: block !important;
+  min-height: 0 !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+body.mode-solution .work-frame {
+  display: none !important;
+}
+body.mode-solution .solution-box {
+  overflow: visible !important;
+  break-inside: auto !important;
+  page-break-inside: auto !important;
+}
+body.mode-solution .mcq-item {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+body.mode-solution .given-table,
+body.mode-solution .subq {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+body.mode-solution .page-footer {
+  display: none !important;
+}
+@media print {
+  body.mode-solution .sheet {
+    width: 210mm !important;
+    height: auto !important;
+    min-height: 297mm !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    display: block !important;
+    page-break-after: always !important;
+    break-after: page !important;
+  }
+  body.mode-solution .written-question {
+    display: block !important;
+    min-height: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+    break-inside: auto !important;
+    page-break-inside: auto !important;
+  }
+  body.mode-solution .solution-box {
+    display: block !important;
+    overflow: visible !important;
+    break-inside: auto !important;
+    page-break-inside: auto !important;
+  }
+  body.mode-solution .mcq-item {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+}
+
+
+/* ===== Y13 Electromagnetism adjustments matching v9 formal style ===== */
+body { font-size:11.6px; }
+.school-title .main { font-size:13.9px; }
+.part-title { font-size:12.2px; }
+.mcq-list { gap:.65mm !important; }
+.mcq-stem { grid-template-columns:7mm 1fr !important; }
+.mcq-item .en { font-size:9.7px !important; line-height:1.08 !important; margin-top:.1mm !important; }
+.choices { display:block !important; grid-template-columns:none !important; margin:.25mm 0 .4mm 7.5mm !important; font-size:9.9px !important; line-height:1.08 !important; }
+.choices li { display:block !important; margin:0 0 .25mm 0 !important; padding:0 !important; }
+.choice-label { display:inline-block; width:4.5mm; font-weight:900; }
+.mcq-svg-wrap { margin:1mm 0 1.2mm 7mm; text-align:center; }
+.mcq-svg-wrap svg { width:100%; max-height:62mm; border:1px solid #111; display:block; margin:0 auto; }
+.mcq-page-tight .mcq-svg-wrap svg { max-height:44mm; }
+.written-head .scenario-text { display:block; font-weight:400; font-size:11.3px; line-height:1.25; margin-top:1.1mm; }
+.written-head .scenario-text .en { display:block; font-size:10.2px; }
+.diagram-row { display:grid; grid-template-columns:1fr; gap:1.2mm; margin:1.2mm 0 1.5mm; }
+.diagram-row svg { display:block; width:100%; max-width:92mm; max-height:42mm; margin:0 auto; border:1px solid #111; background:white; }
+.diagram-row .diagram-caption { font-size:9px; text-align:center; margin-top:.5mm; color:#333; }
+.given-table { font-size:10.2px; }
+.subq { font-size:10.7px; line-height:1.25; }
+.work-frame { min-height:58mm; }
+.written-question.compact-q .work-frame { min-height:48mm; }
+.formula-reference-sheet { height:297mm !important; min-height:297mm !important; overflow:hidden !important; }
+.formula-reference-sheet .page-header { display:none; }
+.formula-reference-sheet .ref-grid-r1, .formula-reference-sheet .ref-grid-r2 { display:grid; gap:4mm; }
+.formula-reference-sheet .ref-grid-r1 { grid-template-columns:.9fr 1.1fr; }
+.formula-reference-sheet .ref-grid-r2 { grid-template-columns:1fr 1fr; }
+.formula-reference-sheet .ref-card, .formula-reference-sheet .lenz-main, .formula-reference-sheet .concept-row div, .formula-reference-sheet .ref-note { border:1px solid #111; border-radius:6px; padding:2.2mm; background:#fff; }
+.formula-reference-sheet h3 { font-size:11px; margin:0 0 1.2mm; border-bottom:1px solid #111; padding-bottom:.7mm; }
+.formula-reference-sheet .big-formula { border:1px solid #111; border-radius:6px; padding:1.8mm; text-align:center; font-size:13px; font-weight:900; }
+.formula-reference-sheet .ref-table { width:100%; border-collapse:collapse; font-size:8.6px; }
+.formula-reference-sheet .ref-table th, .formula-reference-sheet .ref-table td { border:1px solid #111; padding:1mm; text-align:center; }
+.formula-reference-sheet .ref-list { font-size:9px; line-height:1.22; margin:1mm 0 0; padding-left:4mm; }
+.formula-reference-sheet .concept-row { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5mm; }
+.formula-reference-sheet .concept-row.two { grid-template-columns:1fr 1fr; }
+.formula-reference-sheet .ref-svg { width:100%; max-height:48mm; border:1px solid #111; }
+.formula-reference-sheet .direction-icons { display:grid; grid-template-columns:1fr 1fr; gap:2mm; }
+.formula-reference-sheet .direction-icons div { border:1px solid #111; border-radius:6px; padding:1.6mm; text-align:center; }
+.formula-reference-sheet .big-icon { font-size:24px; font-weight:900; }
+.ref-r2 .current-fields { grid-column:1 / -1; }
+@media print {
+  .mcq-item .en { font-size:8.2pt !important; }
+  .choices { font-size:8.4pt !important; line-height:1.05 !important; }
+  .mcq-svg-wrap svg { max-height:58mm !important; }
+  .mcq-page-tight .mcq-svg-wrap svg { max-height:40mm !important; }
+  .written-head .scenario-text { font-size:8.7pt !important; }
+  .given-table { font-size:7.9pt !important; }
+  .subq { font-size:8.5pt !important; }
+  .diagram-row svg { max-height:40mm !important; }
+  .formula-reference-sheet .ref-table { font-size:6.8pt !important; }
+  .formula-reference-sheet h3 { font-size:8.6pt !important; }
+}
+
+
+
+
+/* ===== M4 formal-template rebuild ===== */
+body { font-size:11.6px; }
+.school-title .main { font-size:13.8px; }
+.part-title { font-size:12.2px; }
+.mcq-list { gap:.9mm !important; }
+.mcq-stem { grid-template-columns:7mm 1fr !important; gap:.7mm !important; }
+.mcq-item { break-inside:avoid; page-break-inside:avoid; }
+.mcq-item .mcq-extra { margin:.8mm 0 .7mm 7mm; }
+.mcq-item .en { font-size:9.6px !important; line-height:1.12 !important; }
+.choices { display:block !important; grid-template-columns:none !important; margin:.35mm 0 .55mm 7.5mm !important; font-size:10.15px !important; line-height:1.12 !important; }
+.choices li { display:block !important; margin:0 0 .35mm 0 !important; padding:0 !important; }
+.choice-label { display:inline-block; width:4.8mm; font-weight:900; }
+.mcq-extra svg,
+.ruler-box-svg { width:100% !important; max-width:92mm !important; max-height:44mm !important; display:block !important; margin:1mm auto !important; border:1px solid #111 !important; border-radius:0 !important; background:#fff !important; }
+.mcq-extra .data-table,
+.mcq-extra .given-table,
+.data-table { width:100%; border-collapse:collapse; table-layout:fixed; margin:1mm 0; font-size:10px; line-height:1.15; }
+.mcq-extra .data-table td,
+.mcq-extra .data-table th,
+.mcq-extra .given-table td,
+.mcq-extra .given-table th,
+.data-table td,.data-table th { border:1px solid #111; padding:1mm 1.2mm; text-align:center; vertical-align:middle; }
+.mcq-extra .data-table th,
+.mcq-extra .given-table th,
+.data-table th { background:#f8f8f8; font-weight:900; }
+.scenario-box { border:1px solid #111; border-left:3px solid #111; padding:2mm; margin:1.5mm 0; background:#fff; font-size:10.8px; line-height:1.25; }
+.written-body { font-size:10.8px; line-height:1.26; }
+.written-body .data-table { margin:1.4mm 0; font-size:10px; }
+.written-body .data-table td:first-child,
+.written-body .data-table th { font-weight:700; background:#f8f8f8; }
+.written-body svg,
+.written-body .diagram,
+.written-body .figure-svg,
+.written-body .instrument-svg,
+.written-body .ruler-box-svg { width:100% !important; max-width:96mm !important; max-height:48mm !important; display:block !important; margin:1mm auto !important; border:1px solid #111 !important; border-radius:0 !important; background:#fff !important; }
+.written-body .instrument-grid,
+.written-body .photo-grid,
+.written-body .two-col,
+.written-body .draw-grid { display:grid; grid-template-columns:1fr 1fr; gap:2mm; margin:1.4mm 0; }
+.written-body .instrument-card,
+.written-body .figure-card,
+.written-body .photo-box,
+.written-body .tri-card { border:1px solid #111; padding:1.6mm; background:#fff; border-radius:0; }
+.written-body .instrument-title,
+.written-body .figure-title,
+.written-body .tri-title { font-weight:900; margin-bottom:.8mm; font-size:10.2px; }
+.written-body .instrument-caption,
+.written-body .figure-caption { font-size:9.2px; line-height:1.15; }
+.written-body .formula-box,
+.written-body .formula-strip { display:grid; grid-template-columns:1fr 1fr; gap:1.5mm; margin:1.4mm 0; font-size:10px; }
+.written-body .formula-box div,
+.written-body .formula-strip div { border:1px solid #111; padding:1.2mm; background:#fff; text-align:center; font-weight:700; }
+.written-body .subq { margin:1.6mm 0 0; padding-left:7mm; font-size:10.7px; line-height:1.25; }
+.written-body .subq li { margin-bottom:1.1mm; padding-left:1mm; }
+.blank-line { display:inline-block; min-width:28mm; border-bottom:1px dotted #111; }
+.answer-space, .hint-box, .optional-hint { display:none !important; }
+.work-frame { min-height:64mm; }
+.written-question.m4-long .work-frame { min-height:46mm; }
+.written-question.m4-compact .work-frame { min-height:54mm; }
+.solution-box .ans-red, .ans-red { color:#111 !important; font-weight:900; text-decoration:underline; text-underline-offset:2px; }
+body.mode-solution .written-body .answer-space { display:none !important; }
+.ref-sheet .ref-grid { grid-template-columns:1fr 1fr; gap:3mm 5mm; }
+.ref-sheet .ref-block h3 { font-size:11.5px; }
+.ref-sheet .ref-block p, .ref-sheet .ref-block li { font-size:10px; line-height:1.25; }
+.ref-sheet .ref-table { font-size:9.1px; }
+.ref-sheet .ref-table th, .ref-sheet .ref-table td { padding:1mm; }
+.ref-note { border:1px solid #111; padding:1.5mm; font-size:9.4px; line-height:1.2; }
+@media print {
+  .choices { font-size:8.4pt !important; line-height:1.06 !important; }
+  .mcq-item .en { font-size:8.0pt !important; }
+  .mcq-extra svg, .ruler-box-svg { max-height:41mm !important; }
+  .written-body, .scenario-box { font-size:8.4pt !important; }
+  .written-body .subq { font-size:8.4pt !important; }
+  .written-body .data-table { font-size:7.8pt !important; }
+  .written-body svg { max-height:44mm !important; }
+}
+
+</style>
+</head>
+<body class="mode-exam">
+<div class="toolbar">
+<button class="primary" onclick="printExam()">🖨️ พิมพ์ข้อสอบ</button>
+<button class="gold" onclick="printSolution()">✅ พิมพ์เฉลย</button>
+<button onclick="toggleSolution()">👁️ เปิด/ปิดเฉลย</button>
+<div class="status" id="statusText">Physics M4 Formal Combined | 50 points | template style</div>
+</div>
+<section class="screen-guide">ไฟล์เดียวแบบ combined: ใช้ template ที่โอเค, พิมพ์ข้อสอบซ่อนเฉลย, พิมพ์เฉลยแสดงเฉลย, ตัวเลือกเรียงแนวตั้ง, ข้อเขียนมีพื้นที่แสดงวิธีทำ, ไม่มีโลโก้และไม่มีกระดาษคำตอบท้ายไฟล์</section>
+<main>
+<section class="sheet">
+<div class="part-title">ตอนที่ 1 / Part A: ข้อปรนัย เลือกคำตอบที่ถูกต้องที่สุด (ข้อ 1–4)</div>
+<ol class="mcq-list">
+<li class="mcq-item">
+<div class="mcq-stem"><span class="qnum">1.</span><span>
+      นักเรียนใช้ไม้บรรทัดวัดขนาดของกล่องดังรูป ควรบันทึกความยาวที่เห็นเป็นเท่าใดในหน่วยมิลลิเมตร
+      <br/>
+      A student uses a ruler to measure the box shown. What length should be recorded in millimeters?
+    <span class="mc-answer">ตอบ ง</span></span></div>
+<div class="mcq-extra"><svg aria-label="box measured on ruler" class="ruler-box-svg" style="width:100%;max-width:420px;height:auto;display:block;margin:6px auto;border:1px solid #d1d5db;border-radius:8px;background:#ffffff;" viewbox="0 0 520 230">
+<defs>
+<lineargradient id="boxShadeQ1" x1="0" x2="1">
+<stop offset="0" stop-color="#ffffff"></stop>
+<stop offset="1" stop-color="#d1d5db"></stop>
+</lineargradient>
+</defs>
+<line stroke="#111827" stroke-width="2" x1="80" x2="420" y1="175" y2="175"></line>
+<g stroke="#111827">
+<line stroke-width="2" x1="80" x2="80" y1="160" y2="190"></line>
+<line stroke-width="2" x1="180" x2="180" y1="160" y2="190"></line>
+<line stroke-width="2" x1="280" x2="280" y1="160" y2="190"></line>
+<line stroke-width="2" x1="380" x2="380" y1="160" y2="190"></line>
+<g stroke-width="1">
+<line x1="90" x2="90" y1="168" y2="182"></line>
+<line x1="100" x2="100" y1="168" y2="182"></line>
+<line x1="110" x2="110" y1="168" y2="182"></line>
+<line x1="120" x2="120" y1="168" y2="182"></line>
+<line x1="130" x2="130" y1="164" y2="186"></line>
+<line x1="140" x2="140" y1="168" y2="182"></line>
+<line x1="150" x2="150" y1="168" y2="182"></line>
+<line x1="160" x2="160" y1="168" y2="182"></line>
+<line x1="170" x2="170" y1="168" y2="182"></line>
+<line x1="190" x2="190" y1="168" y2="182"></line>
+<line x1="200" x2="200" y1="168" y2="182"></line>
+<line x1="210" x2="210" y1="168" y2="182"></line>
+<line x1="220" x2="220" y1="168" y2="182"></line>
+<line x1="230" x2="230" y1="164" y2="186"></line>
+<line x1="240" x2="240" y1="168" y2="182"></line>
+<line x1="250" x2="250" y1="168" y2="182"></line>
+<line x1="260" x2="260" y1="168" y2="182"></line>
+<line x1="270" x2="270" y1="168" y2="182"></line>
+<line x1="290" x2="290" y1="168" y2="182"></line>
+<line x1="300" x2="300" y1="168" y2="182"></line>
+<line x1="310" x2="310" y1="168" y2="182"></line>
+<line x1="320" x2="320" y1="168" y2="182"></line>
+<line x1="330" x2="330" y1="164" y2="186"></line>
+<line x1="340" x2="340" y1="168" y2="182"></line>
+<line x1="350" x2="350" y1="168" y2="182"></line>
+<line x1="360" x2="360" y1="168" y2="182"></line>
+<line x1="370" x2="370" y1="168" y2="182"></line>
+</g>
+</g>
+<text font-size="16" font-weight="900" x="74" y="212">0</text>
+<text font-size="16" font-weight="900" x="174" y="212">1</text>
+<text font-size="16" font-weight="900" x="274" y="212">2</text>
+<text font-size="16" font-weight="900" x="374" y="212">3</text>
+<text font-size="14" font-weight="900" x="410" y="212">cm</text>
+<polygon fill="#f9fafb" points="80,80 330,80 380,45 130,45" stroke="#111827" stroke-width="2"></polygon>
+<polygon fill="url(#boxShadeQ1)" points="330,80 380,45 380,155 330,175" stroke="#111827" stroke-width="2"></polygon>
+<rect fill="#ffffff" height="95" stroke="#111827" stroke-width="2" width="250" x="80" y="80"></rect>
+<line stroke="#dc2626" stroke-dasharray="4 3" stroke-width="2" x1="330" x2="330" y1="175" y2="192"></line>
+</svg></div>
+<ol class="choices"><li><span class="choice-label">ก.</span> \(2.5\,mm\)</li><li><span class="choice-label">ข.</span> \(2.50\,mm\)</li><li><span class="choice-label">ค.</span> \(25\,mm\)</li><li><span class="choice-label">ง.</span> \(25.0\,mm\)</li><li><span class="choice-label">จ.</span> \(250\,mm\)</li></ol>
+<div class="solution-box"><div class="solution-title">แนวคำตอบ / Solution</div>
+<b>เฉลย / Solution: D.</b>
+    จากรูปอ่านความยาวได้ประมาณ \(2.50\,cm\). เนื่องจาก \(1\,cm=10\,mm\)
+    ดังนั้น \(2.50\,cm=25.0\,mm\).
+    <br/>
+    ตอบ <span class="ans-red">\(25.0\,mm\)</span>
+</div>
+</li><li class="mcq-item">
+<div class="mcq-stem"><span class="qnum">2.</span><span>
+      อนุภาคทรงกลม 3 ชนิด มีเส้นผ่านศูนย์กลาง \(1650\,pm\), \(1.5\,nm\) และ \(0.0036\,\mu m\)
+      จงเรียงลำดับเส้นผ่านศูนย์กลางจากเล็กไปใหญ่
+      <br/>
+      Three spherical particles have diameters \(1650\,pm\), \(1.5\,nm\), and \(0.0036\,\mu m\).
+      What is their order of diameter from smallest to largest?
+    <span class="mc-answer">ตอบ จ</span></span></div>
+
+<ol class="choices"><li><span class="choice-label">ก.</span> \(0.0036\,\mu m,\;1.5\,nm,\;1650\,pm\)</li><li><span class="choice-label">ข.</span> \(1.5\,nm,\;0.0036\,\mu m,\;1650\,pm\)</li><li><span class="choice-label">ค.</span> \(1650\,pm,\;1.5\,nm,\;0.0036\,\mu m\)</li><li><span class="choice-label">ง.</span> \(0.0036\,\mu m,\;1650\,pm,\;1.5\,nm\)</li><li><span class="choice-label">จ.</span> \(1.5\,nm,\;1650\,pm,\;0.0036\,\mu m\)</li></ol>
+<div class="solution-box"><div class="solution-title">แนวคำตอบ / Solution</div>
+<b>เฉลย / Solution: E.</b>
+    \(1650\,pm=1.650\,nm\), \(1.5\,nm=1.5\,nm\), และ \(0.0036\,\mu m=3.6\,nm\).
+    ดังนั้นเรียงจากเล็กไปใหญ่ได้เป็น
+    \(1.5\,nm &lt; 1650\,pm &lt; 0.0036\,\mu m\).
+    <br/>
+    ตอบ <span class="ans-red">E</span>
+</div>
+</li><li class="mcq-item">
+<div class="mcq-stem"><span class="qnum">3.</span><span>
+      อัตราเร็ว \(0.175\,km/h\) มีค่าเท่าไรในหน่วย \(cm/min\) โดยคำนึงถึงจำนวนเลขนัยสำคัญด้วย
+      <br/>
+      Convert \(0.175\,km/h\) to \(cm/min\), using the proper number of significant figures.
+    <span class="mc-answer">ตอบ ค</span></span></div>
+
+<ol class="choices"><li><span class="choice-label">ก.</span> \(29.2\,cm/min\)</li><li><span class="choice-label">ข.</span> \(2.92\,cm/min\)</li><li><span class="choice-label">ค.</span> \(292\,cm/min\)</li><li><span class="choice-label">ง.</span> \(1.05\times10^3\,cm/min\)</li><li><span class="choice-label">จ.</span> \(1.05\times10^4\,cm/min\)</li></ol>
+<div class="solution-box"><div class="solution-title">แนวคำตอบ / Solution</div>
+<b>เฉลย / Solution: C.</b>
+    \[
+      0.175\,km/h
+      =
+      0.175\times\frac{100000\,cm}{60\,min}
+      =
+      291.666...
+      \approx 292\,cm/min
+    \]
+    ตอบ <span class="ans-red">\(292\,cm/min\)</span>
+</div>
+</li><li class="mcq-item">
+<div class="mcq-stem"><span class="qnum">4.</span><span>
+      ข้อใดมีเลขนัยสำคัญ 3 ตัวทุกจำนวน
+      <br/>
+      Which choice contains three significant figures for every number?
+    <span class="mc-answer">ตอบ ค</span></span></div>
+<div class="mcq-extra"><table class="data-table">
+<tbody>
+<tr>
+<td>A</td>
+<td>\(0.001\)</td>
+<td>\(1.005\)</td>
+<td>\(1.0\times10^3\)</td>
+</tr>
+<tr>
+<td>B</td>
+<td>\(0.001\)</td>
+<td>\(1.005\)</td>
+<td>\(1.03\times10^3\)</td>
+</tr>
+<tr>
+<td>C</td>
+<td>\(0.101\)</td>
+<td>\(1.05\)</td>
+<td>\(1.03\times10^3\)</td>
+</tr>
+<tr>
+<td>D</td>
+<td>\(0.112\)</td>
+<td>\(1.500\)</td>
+<td>\(1.030\times10^3\)</td>
+</tr>
+<tr>
+<td>E</td>
+<td>\(0.010\)</td>
+<td>\(1.005\)</td>
+<td>\(10.00\)</td>
+</tr>
+</tbody>
+</table></div>
+<ol class="choices"><li><span class="choice-label">ก.</span> A</li><li><span class="choice-label">ข.</span> B</li><li><span class="choice-label">ค.</span> C</li><li><span class="choice-label">ง.</span> D</li><li><span class="choice-label">จ.</span> E</li></ol>
+<div class="solution-box"><div class="solution-title">แนวคำตอบ / Solution</div>
+<b>เฉลย / Solution: C.</b>
+    \(0.101\), \(1.05\), และ \(1.03\times10^3\) มี 3 เลขนัยสำคัญทั้งหมด
+    <br/>
+    ตอบ <span class="ans-red">C</span>
+</div>
+</li>
+</ol>
+<div class="page-footer">1</div>
+</section><section class="sheet">
+<div class="part-title">ตอนที่ 1 / Part A: ข้อปรนัย เลือกคำตอบที่ถูกต้องที่สุด (ข้อ 5–6: ความไม่แน่นอนและความคลาดเคลื่อน)</div>
+<ol class="mcq-list">
+<li class="mcq-item">
+<div class="mcq-stem"><span class="qnum">5.</span><span>
+  นักเรียนใช้ไม้บรรทัดที่มีช่องเล็กสุด \(1\,mm\) วัดความยาวของวัตถุได้ \(24.0\,mm\) ถ้าประมาณความไม่แน่นอนของเครื่องมือเป็นครึ่งหนึ่งของช่องเล็กสุด ควรเขียนผลการวัดอย่างไร
+  <br/>
+  A student measures an object as \(24.0\,mm\) using a ruler with the smallest division \(1\,mm\). If the instrument uncertainty is half of the smallest division, how should the measurement be reported?
+<span class="mc-answer">ตอบ ข</span></span></div>
+<div class="mcq-extra"><table class="data-table error-data-table">
+<tbody>
+<tr><td>ค่าที่อ่านได้ / Reading</td><td>\(24.0\,mm\)</td></tr>
+<tr><td>ช่องเล็กสุด / Smallest division</td><td>\(1\,mm\)</td></tr>
+<tr><td>หลักการ / Rule</td><td>uncertainty \(=\pm\frac{1}{2}\) smallest division</td></tr>
+</tbody>
+</table></div>
+<ol class="choices"><li><span class="choice-label">ก.</span> \((24.0\pm0.1)\,mm\)</li><li><span class="choice-label">ข.</span> \((24.0\pm0.5)\,mm\)</li><li><span class="choice-label">ค.</span> \((24.0\pm1.0)\,mm\)</li><li><span class="choice-label">ง.</span> \((24.0\pm2.0)\,mm\)</li><li><span class="choice-label">จ.</span> \((24.0\pm5.0)\,mm\)</li></ol>
+<div class="solution-box"><div class="solution-title">แนวคำตอบ / Solution</div>
+<b>เฉลย / Solution: B.</b>
+ช่องเล็กสุดของไม้บรรทัดคือ \(1\,mm\) ดังนั้นความไม่แน่นอนของเครื่องมือประมาณ
+\(\pm\frac{1}{2}(1\,mm)=\pm0.5\,mm\).
+จึงควรเขียนเป็น <span class="ans-red">\((24.0\pm0.5)\,mm\)</span>.
+</div>
+</li><li class="mcq-item">
+<div class="mcq-stem"><span class="qnum">6.</span><span>
+  ในการทดลองวัดความยาว วัตถุมีค่ามาตรฐาน \(10.0\,cm\) แต่นักเรียนวัดได้ \(9.6\,cm\) จงหาร้อยละความคลาดเคลื่อน
+  <br/>
+  In a length-measurement experiment, the accepted value is \(10.0\,cm\), but a student obtains \(9.6\,cm\). Find the percent error.
+<span class="mc-answer">ตอบ ค</span></span></div>
+<div class="mcq-extra"><table class="data-table error-data-table">
+<tbody>
+<tr><td>Accepted value / ค่ามาตรฐาน</td><td>\(10.0\,cm\)</td></tr>
+<tr><td>Measured value / ค่าที่วัดได้</td><td>\(9.6\,cm\)</td></tr>
+<tr><td>Formula / สูตร</td><td>\(\%\text{ error}=\frac{|\text{measured}-\text{accepted}|}{\text{accepted}}\times100\)</td></tr>
+</tbody>
+</table></div>
+<ol class="choices"><li><span class="choice-label">ก.</span> \(0.4\%\)</li><li><span class="choice-label">ข.</span> \(2.0\%\)</li><li><span class="choice-label">ค.</span> \(4.0\%\)</li><li><span class="choice-label">ง.</span> \(9.6\%\)</li><li><span class="choice-label">จ.</span> \(40\%\)</li></ol>
+<div class="solution-box"><div class="solution-title">แนวคำตอบ / Solution</div>
+<b>เฉลย / Solution: C.</b>
+\[
+\%\text{ error}=\frac{|9.6-10.0|}{10.0}\times100
+=\frac{0.4}{10.0}\times100=4.0\%.
+\]
+ตอบ <span class="ans-red">\(4.0\%\)</span>.
+</div>
+</li>
+</ol>
+<div class="page-footer">2</div>
+</section><section class="sheet">
+<div class="part-title">ตอนที่ 1 / Part A: ข้อปรนัย เลือกคำตอบที่ถูกต้องที่สุด (ข้อ 7–10)</div>
+<ol class="mcq-list">
+<li class="mcq-item">
+<div class="mcq-stem"><span class="qnum">7.</span><span>แรงขนาด \(10\,N\) ทำมุม \(37^\circ\) เหนือแนวราบ จงหาองค์ประกอบแรงในแนวแกน \(x\) โดยใช้ \(\cos37^\circ=4/5\)<br/>A \(10\,N\) force makes a \(37^\circ\) angle above the horizontal. Find its \(x\)-component using \(\cos37^\circ=4/5\).<span class="mc-answer">ตอบ ค</span></span></div>
+
+<ol class="choices"><li><span class="choice-label">ก.</span> \(6\,N\)</li><li><span class="choice-label">ข.</span> \(7\,N\)</li><li><span class="choice-label">ค.</span> \(8\,N\)</li><li><span class="choice-label">ง.</span> \(10\,N\)</li><li><span class="choice-label">จ.</span> \(12\,N\)</li></ol>
+<div class="solution-box"><div class="solution-title">แนวคำตอบ / Solution</div><b>เฉลย / Solution: C.</b> \(F_x=F\cos\theta=10(4/5)=8\,N\). ตอบ <span class="ans-red">\(8\,N\)</span></div>
+</li><li class="mcq-item">
+<div class="mcq-stem"><span class="qnum">8.</span><span>แรงสองแรงตั้งฉากกัน มีแรง \(6\,N\) ไปทางขวา และ \(8\,N\) ขึ้นด้านบน จงหาขนาดแรงลัพธ์<br/>Two perpendicular forces act on an object: \(6\,N\) to the right and \(8\,N\) upward. Find the resultant force magnitude.<span class="mc-answer">ตอบ ค</span></span></div>
+
+<ol class="choices"><li><span class="choice-label">ก.</span> \(2\,N\)</li><li><span class="choice-label">ข.</span> \(8\,N\)</li><li><span class="choice-label">ค.</span> \(10\,N\)</li><li><span class="choice-label">ง.</span> \(14\,N\)</li><li><span class="choice-label">จ.</span> \(48\,N\)</li></ol>
+<div class="solution-box"><div class="solution-title">แนวคำตอบ / Solution</div><b>เฉลย / Solution: C.</b> \(R=\sqrt{6^2+8^2}=\sqrt{100}=10\,N\). ตอบ <span class="ans-red">\(10\,N\)</span></div>
+</li><li class="mcq-item">
+<div class="mcq-stem"><span class="qnum">9.</span><span>นักเรียนเดินไปทางตะวันออก \(3\,m\) แล้วเดินไปทางเหนือ \(4\,m\) จงหาขนาดการกระจัด<br/>A student walks \(3\,m\) east and then \(4\,m\) north. Find the displacement magnitude.<span class="mc-answer">ตอบ ข</span></span></div>
+
+<ol class="choices"><li><span class="choice-label">ก.</span> \(4\,m\)</li><li><span class="choice-label">ข.</span> \(5\,m\)</li><li><span class="choice-label">ค.</span> \(7\,m\)</li><li><span class="choice-label">ง.</span> \(12\,m\)</li><li><span class="choice-label">จ.</span> \(25\,m\)</li></ol>
+<div class="solution-box"><div class="solution-title">แนวคำตอบ / Solution</div><b>เฉลย / Solution: B.</b> \(d=\sqrt{3^2+4^2}=5\,m\). ตอบ <span class="ans-red">\(5\,m\)</span></div>
+</li><li class="mcq-item">
+<div class="mcq-stem"><span class="qnum">10.</span><span>วัตถุมีมวล \(270\,g\) และมีปริมาตร \(100\,cm^3\) จงหาความหนาแน่นของวัตถุ<br/>An object has mass \(270\,g\) and volume \(100\,cm^3\). Find its density.<span class="mc-answer">ตอบ ง</span></span></div>
+
+<ol class="choices"><li><span class="choice-label">ก.</span> \(0.27\,g/cm^3\)</li><li><span class="choice-label">ข.</span> \(1.00\,g/cm^3\)</li><li><span class="choice-label">ค.</span> \(2.00\,g/cm^3\)</li><li><span class="choice-label">ง.</span> \(2.70\,g/cm^3\)</li><li><span class="choice-label">จ.</span> \(27000\,g/cm^3\)</li></ol>
+<div class="solution-box"><div class="solution-title">แนวคำตอบ / Solution</div><b>เฉลย / Solution: D.</b> \(\rho=m/V=270/100=2.70\,g/cm^3\). ตอบ <span class="ans-red">\(2.70\,g/cm^3\)</span></div>
+</li>
+</ol>
+<div class="page-footer">3</div>
+</section><section class="sheet written-sheet">
+<div class="section-header"><h2>ตอนที่ 2 / Part B: การวัด หน่วย เครื่องมือ เลขนัยสำคัญ และความคลาดเคลื่อน / Measurement, Units, Instruments, Significant Figures, and Error</h2><div class="score">20 คะแนน</div></div>
+<article class="written-question m4-compact">
+<div class="written-head"><span>ข้อ 1.</span> 
+          สถานการณ์ที่ 1: ห้องทดลองการวัดพื้นฐาน
+          <br/>
+          Situation 1: Basic Measurement Lab
+         <span class="item-score">(5 คะแนน / 5 คะแนน)</span></div>
+<div class="written-body"><div class="scenario-box">
+        นักเรียนเตรียมทดลองการเคลื่อนที่ของรถบนราง จึงต้องระบุปริมาณทางฟิสิกส์ที่ใช้ในรายงานผลการทดลองให้ถูกต้อง
+        <br/>
+        Students are preparing a cart-motion experiment. They must correctly identify physical quantities and SI units for the lab report.
+      </div><table class="data-table">
+<thead>
+<tr>
+<th>ปริมาณ<br/>Quantity</th>
+<th>ฐานหรืออนุพันธ์<br/>Base or derived</th>
+<th>หน่วย SI<br/>SI unit</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>มวล<br/>mass</td><td></td><td></td></tr>
+<tr><td>เวลา<br/>time</td><td></td><td></td></tr>
+<tr><td>ความยาว<br/>length</td><td></td><td></td></tr>
+<tr><td>ความเร็ว<br/>velocity</td><td></td><td></td></tr>
+<tr><td>ความเร่ง<br/>acceleration</td><td></td><td></td></tr>
+<tr><td>แรง<br/>force</td><td></td><td></td></tr>
+<tr><td>ความหนาแน่น<br/>density</td><td></td><td></td></tr>
+</tbody>
+</table><ol class="subq" type="ก">
+<li>เติมตารางให้ถูกต้อง / Complete the table correctly. <span class="points">(4 pts)</span></li>
+<li>
+          อธิบายสั้น ๆ ว่าทำไมความหนาแน่นจึงเป็นปริมาณอนุพันธ์
+          <br/>
+          Briefly explain why density is a derived quantity. <span class="points">(1 pt)</span>
+
+</li>
+</ol></div>
+<div class="work-frame"><div class="work-lines"></div></div>
+<div class="solution-box written-solution"><div class="solution-title">แนวคำตอบ / Solution</div>
+<div class="solution-title">เฉลยละเอียด / Detailed solution</div>
+<table class="data-table">
+<thead>
+<tr><th>Quantity</th><th>Base / derived</th><th>SI unit</th></tr>
+</thead>
+<tbody>
+<tr><td>mass / มวล</td><td><span class="ans-red">base / ฐาน</span></td><td><span class="ans-red">kg</span></td></tr>
+<tr><td>time / เวลา</td><td><span class="ans-red">base / ฐาน</span></td><td><span class="ans-red">s</span></td></tr>
+<tr><td>length / ความยาว</td><td><span class="ans-red">base / ฐาน</span></td><td><span class="ans-red">m</span></td></tr>
+<tr><td>velocity / ความเร็ว</td><td><span class="ans-red">derived / อนุพันธ์</span></td><td><span class="ans-red">m/s</span></td></tr>
+<tr><td>acceleration / ความเร่ง</td><td><span class="ans-red">derived / อนุพันธ์</span></td><td><span class="ans-red">m/s²</span></td></tr>
+<tr><td>force / แรง</td><td><span class="ans-red">derived / อนุพันธ์</span></td><td><span class="ans-red">N = kg·m/s²</span></td></tr>
+<tr><td>density / ความหนาแน่น</td><td><span class="ans-red">derived / อนุพันธ์</span></td><td><span class="ans-red">kg/m³</span></td></tr>
+</tbody>
+</table>
+        ความหนาแน่นเป็นปริมาณอนุพันธ์ เพราะ \(\rho = \frac{m}{V}\) โดย \(m\) มาจากมวล และ \(V\) มาจากปริมาตร
+        <br/>
+        Density is a derived quantity because \(\rho = \frac{m}{V}\), which combines mass and volume.
+      </div>
+</article>
+<div class="page-footer">4</div>
+</section><section class="sheet written-sheet">
+<div class="section-header"><h2>ตอนที่ 2 / Part B: การวัด หน่วย เครื่องมือ เลขนัยสำคัญ และความคลาดเคลื่อน / Measurement, Units, Instruments, Significant Figures, and Error</h2><div class="score">20 คะแนน</div></div>
+<article class="written-question m4-long">
+<div class="written-head"><span>ข้อ 2.</span> 
+      สถานการณ์ที่ 2: ตรวจรายงานผลการทดลองและการแปลงหน่วย
+      <br/>
+      Situation 2: Checking Lab Results and Unit Conversion
+     <span class="item-score">(5 คะแนน / 5 คะแนน)</span></div>
+<div class="written-body"><div class="scenario-box">
+    นักเรียนกลุ่มหนึ่งทำการทดลองวัดขนาด ความเร็ว ปริมาตร และความหนาแน่นของวัตถุหลายชนิด
+    แต่ข้อมูลดิบจากเครื่องมือวัดยังอยู่ในหน่วยที่ต่างกัน จึงต้องแปลงเป็นหน่วย SI ก่อนนำไปใช้คำนวณต่อ
+    <br/>
+    A student group performed a lab measuring size, speed, volume, and density of several objects.
+    However, the raw data from the instruments are in different units, so they must be converted to SI units before further calculation.
+  </div><div style="border:2px solid #0f172a;border-radius:10px;padding:10px;margin:8px 0;background:#f8fafc;">
+<div style="font-weight:900;font-size:14px;margin-bottom:6px;color:#0f172a;">
+      🔬 Lab Result Sheet / ใบบันทึกผลการทดลอง
+    </div>
+<table style="width:100%;border-collapse:collapse;font-size:12px;line-height:1.35;background:white;">
+<tr style="background:#e5e7eb;font-weight:900;">
+<th style="border:1px solid #111827;padding:5px;">รายการวัด / Measurement</th>
+<th style="border:1px solid #111827;padding:5px;">เครื่องมือ / Instrument</th>
+<th style="border:1px solid #111827;padding:5px;">ค่าที่อ่านได้ / Raw data</th>
+<th style="border:1px solid #111827;padding:5px;">ต้องแปลงเป็น / Convert to</th>
+</tr>
+<tr>
+<td style="border:1px solid #111827;padding:5px;">ความหนาของเส้นใย / Fiber thickness</td>
+<td style="border:1px solid #111827;padding:5px;">Microscope scale</td>
+<td style="border:1px solid #111827;padding:5px;text-align:center;">350 μm</td>
+<td style="border:1px solid #111827;padding:5px;text-align:center;">m</td>
+</tr>
+<tr>
+<td style="border:1px solid #111827;padding:5px;">พื้นที่แผ่นโลหะเล็ก / Small metal sheet area</td>
+<td style="border:1px solid #111827;padding:5px;">Grid paper</td>
+<td style="border:1px solid #111827;padding:5px;text-align:center;">4.0 cm²</td>
+<td style="border:1px solid #111827;padding:5px;text-align:center;">m²</td>
+</tr>
+<tr>
+<td style="border:1px solid #111827;padding:5px;">ปริมาตรก้อนตัวอย่าง / Sample volume</td>
+<td style="border:1px solid #111827;padding:5px;">Water displacement</td>
+<td style="border:1px solid #111827;padding:5px;text-align:center;">8.0 cm³</td>
+<td style="border:1px solid #111827;padding:5px;text-align:center;">m³</td>
+</tr>
+<tr>
+<td style="border:1px solid #111827;padding:5px;">ความหนาแน่นของชิ้นงาน / Sample density</td>
+<td style="border:1px solid #111827;padding:5px;">Balance + cylinder</td>
+<td style="border:1px solid #111827;padding:5px;text-align:center;">1.2 g/cm³</td>
+<td style="border:1px solid #111827;padding:5px;text-align:center;">kg/m³</td>
+</tr>
+<tr>
+<td style="border:1px solid #111827;padding:5px;">อัตราเร็วรถทดลอง / Lab cart speed</td>
+<td style="border:1px solid #111827;padding:5px;">Motion sensor</td>
+<td style="border:1px solid #111827;padding:5px;text-align:center;">72 km/h</td>
+<td style="border:1px solid #111827;padding:5px;text-align:center;">m/s</td>
+</tr>
+</table>
+</div><ol class="subq" type="ก">
+<li>
+      จากผลการวัดความหนาของเส้นใย จงแปลง \(350\,\mu m\) เป็นหน่วย m
+      <br/>
+      Convert the measured fiber thickness \(350\,\mu m\) to meters.
+      <br/>
+      \(350\,\mu m =\) __________ m <span class="points">(1 pt)</span>
+</li>
+<li>
+      จากผลการวัดพื้นที่แผ่นโลหะเล็ก จงแปลง \(4.0\,cm^2\) เป็นหน่วย \(m^2\)
+      <br/>
+      Convert the small metal sheet area \(4.0\,cm^2\) to \(m^2\).
+      <br/>
+      \(4.0\,cm^2 =\) __________ \(m^2\) <span class="points">(1 pt)</span>
+</li>
+<li>
+      จากการแทนที่น้ำในกระบอกตวง จงแปลงปริมาตร \(8.0\,cm^3\) เป็นหน่วย \(m^3\)
+      <br/>
+      Convert the displaced volume \(8.0\,cm^3\) to \(m^3\).
+      <br/>
+      \(8.0\,cm^3 =\) __________ \(m^3\) <span class="points">(1 pt)</span>
+</li>
+<li>
+      จากข้อมูลมวลและปริมาตรของชิ้นงาน ได้ความหนาแน่น \(1.2\,g/cm^3\)
+      จงแปลงเป็น \(kg/m^3\)
+      <br/>
+      The sample density is \(1.2\,g/cm^3\). Convert it to \(kg/m^3\).
+      <br/>
+      \(1.2\,g/cm^3 =\) __________ \(kg/m^3\) <span class="points">(1 pt)</span>
+</li>
+<li>
+      เครื่องตรวจจับการเคลื่อนที่รายงานอัตราเร็วของรถทดลองเป็น \(72\,km/h\)
+      จงแปลงเป็น \(m/s\)
+      <br/>
+      The motion sensor reports the lab cart speed as \(72\,km/h\). Convert it to \(m/s\).
+      <br/>
+      \(72\,km/h =\) __________ \(m/s\) <span class="points">(1 pt)</span>
+</li>
+</ol></div>
+<div class="work-frame"><div class="work-lines"></div></div>
+<div class="solution-box written-solution"><div class="solution-title">แนวคำตอบ / Solution</div>
+<div class="solution-title">เฉลยละเอียด / Detailed solution</div>
+<div class="sol-grid">
+<div class="sol-card">
+        ก) ความหนาเส้นใย / Fiber thickness<br/>
+        \(350\,\mu m = 350 \times 10^{-6}\,m\)
+        \(= \)<span class="ans-red">\(3.50\times10^{-4}\,m\)</span>
+</div>
+<div class="sol-card">
+        ข) พื้นที่แผ่นโลหะ / Metal sheet area<br/>
+        \(4.0\,cm^2 = 4.0(10^{-2}\,m)^2\)
+        \(= 4.0\times10^{-4}\,m^2\)
+        <br/>
+        ตอบ <span class="ans-red">\(4.0\times10^{-4}\,m^2\)</span>
+</div>
+<div class="sol-card">
+        ค) ปริมาตรก้อนตัวอย่าง / Sample volume<br/>
+        \(8.0\,cm^3 = 8.0(10^{-2}\,m)^3\)
+        \(= 8.0\times10^{-6}\,m^3\)
+        <br/>
+        ตอบ <span class="ans-red">\(8.0\times10^{-6}\,m^3\)</span>
+</div>
+<div class="sol-card">
+        ง) ความหนาแน่น / Density<br/>
+        \(1.2\,g/cm^3 = 1.2\frac{10^{-3}\,kg}{10^{-6}\,m^3}\)
+        \(= 1.2\times10^3\,kg/m^3\)
+        <br/>
+        ตอบ <span class="ans-red">\(1.2\times10^3\,kg/m^3\)</span>
+</div>
+<div class="sol-card">
+        จ) อัตราเร็วรถทดลอง / Lab cart speed<br/>
+        \(72\,km/h = 72\times\frac{1000\,m}{3600\,s}\)
+        \(= 20\,m/s\)
+        <br/>
+        ตอบ <span class="ans-red">\(20\,m/s\)</span>
+</div>
+</div>
+</div>
+</article>
+<div class="page-footer">5</div>
+</section><section class="sheet written-sheet">
+<div class="section-header"><h2>ตอนที่ 2 / Part B: การวัด หน่วย เครื่องมือ เลขนัยสำคัญ และความคลาดเคลื่อน / Measurement, Units, Instruments, Significant Figures, and Error</h2><div class="score">20 คะแนน</div></div>
+<article class="written-question m4-long">
+<div class="written-head"><span>ข้อ 3.</span> 
+          สถานการณ์ที่ 3: อ่านค่าเวอร์เนียคาลิเปอร์จากรูป
+          <br/>
+          Situation 3: Reading a Vernier Caliper from a Figure
+         <span class="item-score">(5 คะแนน / 5 คะแนน)</span></div>
+<div class="written-body"><div class="scenario-box">
+        เวอร์เนียคาลิเปอร์มีความละเอียด 0.01 cm ให้อ่านค่าสเกลหลัก สเกลเวอร์เนีย และผลการวัดรวมจากรูป
+        <br/>
+        The vernier caliper has a resolution of 0.01 cm. Read the main scale, vernier scale, and total measurement.
+      </div><div class="instrument-card">
+<div class="instrument-title">
+          รูปที่ 3: เวอร์เนียคาลิเปอร์ / Figure 3: Vernier caliper
+        </div>
+<svg aria-label="vernier caliper reading 2.34 cm" class="instrument-svg" viewbox="0 0 445 178">
+<rect fill="#f8fafc" height="55" rx="4" stroke="#111827" stroke-width="1.5" width="380" x="22" y="25"></rect>
+<line stroke="#111827" stroke-width="2" x1="30" x2="410" y1="80" y2="80"></line>
+<g stroke="#111827">
+<line stroke-width="2.5" x1="30" x2="30" y1="35" y2="80"></line>
+<line stroke-width="1.8" x1="60" x2="60" y1="45" y2="80"></line>
+<line stroke-width="1.8" x1="90" x2="90" y1="45" y2="80"></line>
+<line stroke-width="2.5" x1="120" x2="120" y1="35" y2="80"></line>
+<line stroke-width="1.8" x1="150" x2="150" y1="45" y2="80"></line>
+<line stroke-width="2.5" x1="180" x2="180" y1="35" y2="80"></line>
+<line stroke-width="1.8" x1="210" x2="210" y1="45" y2="80"></line>
+<line stroke-width="2.5" x1="240" x2="240" y1="35" y2="80"></line>
+<line stroke-width="1.8" x1="270" x2="270" y1="45" y2="80"></line>
+<line stroke-width="2.5" x1="300" x2="300" y1="35" y2="80"></line>
+<line stroke-width="1.8" x1="330" x2="330" y1="45" y2="80"></line>
+<line stroke-width="2.5" x1="360" x2="360" y1="35" y2="80"></line>
+<line stroke-width="1.8" x1="390" x2="390" y1="45" y2="80"></line>
+</g>
+<text font-size="11" font-weight="800" x="22" y="21">Main scale / สเกลหลัก</text>
+<text font-size="11" font-weight="800" x="22" y="96">2.0</text>
+<text font-size="11" font-weight="800" x="112" y="96">2.3</text>
+<text font-size="11" font-weight="800" x="172" y="96">2.5</text>
+<text font-size="11" font-weight="800" x="232" y="96">2.7</text>
+<text font-size="11" font-weight="800" x="352" y="96">3.1</text>
+<text font-size="11" x="398" y="96">cm</text>
+<!-- vernier zero at 2.34 cm: x = 132; mark 4 aligns at x = 240 -->
+<rect fill="#ffedd5" height="45" rx="4" stroke="#ea580c" stroke-width="1.5" width="292" x="120" y="106"></rect>
+<line stroke="#ea580c" stroke-width="2.5" x1="132" x2="132" y1="106" y2="151"></line>
+<line stroke="#ea580c" stroke-width="1.8" x1="159" x2="159" y1="113" y2="151"></line>
+<line stroke="#ea580c" stroke-width="1.8" x1="186" x2="186" y1="113" y2="151"></line>
+<line stroke="#ea580c" stroke-width="1.8" x1="213" x2="213" y1="113" y2="151"></line>
+<line stroke="#ea580c" stroke-width="2.5" x1="240" x2="240" y1="106" y2="151"></line>
+<line stroke="#ea580c" stroke-width="1.8" x1="267" x2="267" y1="113" y2="151"></line>
+<line stroke="#ea580c" stroke-width="1.8" x1="294" x2="294" y1="113" y2="151"></line>
+<line stroke="#ea580c" stroke-width="1.8" x1="321" x2="321" y1="113" y2="151"></line>
+<line stroke="#ea580c" stroke-width="1.8" x1="348" x2="348" y1="113" y2="151"></line>
+<line stroke="#ea580c" stroke-width="1.8" x1="375" x2="375" y1="113" y2="151"></line>
+<line stroke="#ea580c" stroke-width="2.5" x1="402" x2="402" y1="106" y2="151"></line>
+<text fill="#9a3412" font-size="11" font-weight="800" x="128" y="166">0</text>
+<text fill="#9a3412" font-size="11" font-weight="800" x="236" y="166">4</text>
+<text fill="#9a3412" font-size="11" font-weight="800" x="398" y="166">10</text>
+<text fill="#9a3412" font-size="11" x="286" y="126">Vernier scale / สเกลเวอร์เนีย</text>
+</svg>
+</div><ol class="subq" type="ก">
+<li>อ่านค่าสเกลหลักได้เท่าใด / What is the main scale reading? <span class="points">(1 pt)</span></li>
+<li>ขีดเวอร์เนียที่ตรงกับสเกลหลักคือขีดที่เท่าใด / Which vernier mark aligns with the main scale? <span class="points">(1 pt)</span></li>
+<li>ค่าสเกลเวอร์เนียมีค่าเท่าใด / What is the vernier scale reading? <span class="points">(1 pt)</span></li>
+<li>ผลการวัดรวมเป็นเท่าใด / What is the total measurement? <span class="points">(1 pt)</span></li>
+<li>ควรรายงานคำตอบเป็นทศนิยมกี่ตำแหน่ง เพราะเหตุใด / How many decimal places should be reported, and why? <span class="points">(1 pt)</span></li>
+</ol></div>
+<div class="work-frame"><div class="work-lines"></div></div>
+<div class="solution-box written-solution"><div class="solution-title">แนวคำตอบ / Solution</div>
+<div class="solution-title">เฉลยละเอียด / Detailed solution</div>
+<div class="sol-grid">
+<div class="sol-card">สเกลหลัก = <span class="ans-red">2.30 cm</span></div>
+<div class="sol-card">ขีดเวอร์เนียที่ตรงกัน = <span class="ans-red">ขีดที่ 4</span></div>
+<div class="sol-card">สเกลเวอร์เนีย = \(4\times0.01\) = <span class="ans-red">0.04 cm</span></div>
+<div class="sol-card">ผลรวม = \(2.30+0.04\) = <span class="ans-red">2.34 cm</span></div>
+<div class="sol-card">ความละเอียด 0.01 cm จึงรายงานเป็น <span class="ans-red">ทศนิยม 2 ตำแหน่ง</span></div>
+</div>
+</div>
+</article>
+<div class="page-footer">6</div>
+</section><section class="sheet written-sheet">
+<div class="section-header"><h2>ตอนที่ 2 / Part B: การวัด หน่วย เครื่องมือ เลขนัยสำคัญ และความคลาดเคลื่อน / Measurement, Units, Instruments, Significant Figures, and Error</h2><div class="score">20 คะแนน</div></div>
+<article class="written-question m4-long">
+<div class="written-head"><span>ข้อ 4.</span> 
+      สถานการณ์ที่ 4: รายงานผล Lab ความหนาแน่นของโลหะและความคลาดเคลื่อน
+      <br/>
+      Situation 4: Metal Density Lab Report and Experimental Error
+     <span class="item-score">(5 คะแนน / 5 คะแนน)</span></div>
+<div class="written-body"><div class="scenario-box">
+    นักเรียนได้รับชิ้นโลหะไม่ทราบชนิด 1 ชิ้น และต้องหาความหนาแน่นของโลหะเพื่อใช้เปรียบเทียบกับค่ามาตรฐาน
+    โดยใช้เครื่องชั่งดิจิทัลวัดมวล และใช้วิธีแทนที่น้ำในกระบอกตวงเพื่อหาปริมาตร
+    <br/>
+    A student receives an unknown metal sample and must determine its density for comparison with reference values.
+    The mass is measured using a digital balance, and the volume is measured by water displacement in a graduated cylinder.
+  </div><div style="border:2px solid #0f172a;border-radius:10px;padding:10px;margin:8px 0;background:#f8fafc;">
+<div style="font-weight:900;font-size:14px;margin-bottom:6px;color:#0f172a;">
+      🧪 Lab Result Sheet / ใบบันทึกผลการทดลอง
+    </div>
+<table style="width:100%;border-collapse:collapse;font-size:12px;line-height:1.35;background:white;">
+<tr style="background:#e5e7eb;font-weight:900;">
+<th style="border:1px solid #111827;padding:5px;">ขั้นตอน / Step</th>
+<th style="border:1px solid #111827;padding:5px;">เครื่องมือ / Instrument</th>
+<th style="border:1px solid #111827;padding:5px;">ค่าที่วัดได้ / Measured value</th>
+<th style="border:1px solid #111827;padding:5px;">ความคลาดเคลื่อน / Uncertainty</th>
+</tr>
+<tr>
+<td style="border:1px solid #111827;padding:5px;">
+          วัดมวลของชิ้นโลหะ<br/>
+          Measure mass of metal sample
+        </td>
+<td style="border:1px solid #111827;padding:5px;text-align:center;">
+          Digital balance
+        </td>
+<td style="border:1px solid #111827;padding:5px;text-align:center;font-weight:900;">
+          24.60 g
+        </td>
+<td style="border:1px solid #111827;padding:5px;text-align:center;">
+          ± 0.01 g
+        </td>
+</tr>
+<tr>
+<td style="border:1px solid #111827;padding:5px;">
+          หาปริมาตรจากการแทนที่น้ำ<br/>
+          Find volume by water displacement
+        </td>
+<td style="border:1px solid #111827;padding:5px;text-align:center;">
+          Graduated cylinder
+        </td>
+<td style="border:1px solid #111827;padding:5px;text-align:center;font-weight:900;">
+          8.2 cm³
+        </td>
+<td style="border:1px solid #111827;padding:5px;text-align:center;">
+          ± 0.1 cm³
+        </td>
+</tr>
+</table>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+<div style="border:1px solid #cbd5e1;border-radius:8px;padding:8px;background:white;">
+<div style="font-weight:900;color:#1d4ed8;margin-bottom:4px;">Balance Reading / ค่าจากเครื่องชั่ง</div>
+<div style="font-size:22px;font-weight:900;text-align:center;font-family:monospace;">24.60 g</div>
+<div style="font-size:12px;text-align:center;color:#64748b;">resolution = 0.01 g</div>
+</div>
+<div style="border:1px solid #cbd5e1;border-radius:8px;padding:8px;background:white;">
+<div style="font-weight:900;color:#0f766e;margin-bottom:4px;">Water Displacement / การแทนที่น้ำ</div>
+<div style="font-size:12px;line-height:1.5;">
+          Initial water level = 35.0 cm³<br/>
+          Final water level = 43.2 cm³<br/>
+          Volume of sample = <strong>8.2 cm³</strong>
+</div>
+</div>
+</div>
+</div><ol class="subq" type="ก">
+<li>
+      คำนวณความหนาแน่นดิบของโลหะจาก \(\rho = \frac{m}{V}\)
+      <br/>
+      Calculate the raw density of the metal sample.
+      <span class="points">(2 pts)</span>
+
+</li>
+<li>
+      จากกฎเลขนัยสำคัญของการหาร คำตอบควรมีเลขนัยสำคัญกี่ตัว และควรรายงานความหนาแน่นเป็นเท่าใด
+      <br/>
+      According to the significant-figure rule for division, how many significant figures should the answer have, and what is the rounded density?
+      <span class="points">(1 pt)</span>
+
+</li>
+<li>
+      หา percentage error ของการวัดมวล
+      <br/>
+      Find the percentage error of the mass measurement.
+      <span class="points">(1 pt)</span>
+
+</li>
+<li>
+      หา percentage error ของการวัดปริมาตร
+      <br/>
+      Find the percentage error of the volume measurement.
+      <span class="points">(1 pt)</span>
+
+</li>
+</ol></div>
+<div class="work-frame"><div class="work-lines"></div></div>
+<div class="solution-box written-solution"><div class="solution-title">แนวคำตอบ / Solution</div>
+<div class="solution-title">เฉลยละเอียด / Detailed solution</div>
+<div class="sol-grid">
+<div class="sol-card">
+        ก) ความหนาแน่นดิบ / Raw density<br/>
+        \[
+          \rho = \frac{m}{V}
+          = \frac{24.60}{8.2}
+          = 3.000...\;g/cm^3
+        \]
+        ดังนั้นค่าดิบคือ <span class="ans-red">\(3.000...\;g/cm^3\)</span>
+</div>
+<div class="sol-card">
+        ข) เลขนัยสำคัญ / Significant figures<br/>
+        \(24.60\) มี 4 เลขนัยสำคัญ แต่ \(8.2\) มี 2 เลขนัยสำคัญ<br/>
+        การหารต้องตอบตามจำนวนเลขนัยสำคัญที่น้อยที่สุด คือ 2 ตัว
+        \[
+          3.000... \approx 3.0\;g/cm^3
+        \]
+        ตอบตามเลขนัยสำคัญ <span class="ans-red">\(3.0\;g/cm^3\)</span>
+</div>
+<div class="sol-card">
+        ค) Percentage error ของมวล / Mass percentage error<br/>
+        \[
+          \%error_m
+          = \frac{0.01}{24.60}\times100
+          \approx 0.041\%
+        \]
+        ตอบ <span class="ans-red">ประมาณ \(0.041\%\)</span>
+</div>
+<div class="sol-card">
+        ง) Percentage error ของปริมาตร / Volume percentage error<br/>
+        \[
+          \%error_V
+          = \frac{0.1}{8.2}\times100
+          \approx 1.2\%
+        \]
+        ตอบ <span class="ans-red">ประมาณ \(1.2\%\)</span>
+</div>
+</div>
+</div>
+</article>
+<div class="page-footer">7</div>
+</section><section class="sheet written-sheet">
+<div class="section-header"><h2>ตอนที่ 3 / Part C: ตรีโกณมิติ เวกเตอร์ และแรงลัพธ์ / Trigonometry, Vectors, and Resultant Forces</h2><div class="score">20 คะแนน</div></div>
+<article class="written-question m4-compact">
+<div class="written-head"><span>ข้อ 1.</span> 
+          สถานการณ์ที่ 1: วาดสามเหลี่ยมมุมฉากด้านเอียงเท่ากับ 1
+          <br/>
+          Situation 1: Drawing Unit Right Triangles for Vector Components
+         <span class="item-score">(6 คะแนน / 6 คะแนน)</span></div>
+<div class="written-body"><div class="scenario-box">
+        ให้นักเรียนวาดสามเหลี่ยมมุมฉากโดยกำหนดให้ด้านตรงข้ามมุมฉากหรือด้านเอียงเท่ากับ 1
+        สำหรับมุมที่ใช้บ่อยในการแตกเวกเตอร์ ได้แก่ \(30^\circ, 37^\circ, 45^\circ, 53^\circ, 60^\circ\)
+        <br/>
+        Draw right triangles with hypotenuse equal to 1 for common vector-resolution angles.
+      </div><div class="draw-grid">
+<div class="tri-card"><div class="tri-title">30°</div><div class="blank-triangle"></div></div>
+<div class="tri-card"><div class="tri-title">37°</div><div class="blank-triangle"></div></div>
+<div class="tri-card"><div class="tri-title">45°</div><div class="blank-triangle"></div></div>
+<div class="tri-card"><div class="tri-title">53°</div><div class="blank-triangle"></div></div>
+<div class="tri-card"><div class="tri-title">60°</div><div class="blank-triangle"></div></div>
+</div><table class="data-table">
+<thead>
+<tr>
+<th>มุม \( \theta \)</th>
+<th>ด้านประชิด \(=\cos\theta\)</th>
+<th>ด้านตรงข้าม \(=\sin\theta\)</th>
+<th>\(\tan\theta=\frac{\sin\theta}{\cos\theta}\)</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>30°</td><td></td><td></td><td></td></tr>
+<tr><td>37°</td><td></td><td></td><td></td></tr>
+<tr><td>45°</td><td></td><td></td><td></td></tr>
+<tr><td>53°</td><td></td><td></td><td></td></tr>
+<tr><td>60°</td><td></td><td></td><td></td></tr>
+</tbody>
+</table><ol class="subq" type="ก">
+<li>วาดสามเหลี่ยมมุมฉากให้ครบ 5 มุม โดยให้ด้านเอียงเท่ากับ 1 / Draw all 5 unit right triangles. <span class="points">(2 pts / 2 คะแนน)</span></li>
+<li>เติมค่าด้านประชิดและด้านตรงข้าม / Complete adjacent and opposite values. <span class="points">(2 pts / 2 คะแนน)</span></li>
+<li>เติมค่า \( \tan\theta \) / Complete \( \tan\theta \). <span class="points">(1 pt / 1 คะแนน)</span></li>
+<li>สรุปว่าเมื่อมุมวัดจากแกน \(x\), องค์ประกอบแกน \(x\) และ \(y\) ใช้ sin หรือ cos. <span class="points">(1 pt / 1 คะแนน)</span></li>
+</ol></div>
+<div class="work-frame"><div class="work-lines"></div></div>
+<div class="solution-box written-solution"><div class="solution-title">แนวคำตอบ / Solution</div>
+<div class="solution-title">เฉลยย่อ / Short solution</div>
+<div class="sol-grid">
+<div class="sol-card">30°: cos=0.87, sin=0.50, tan=0.58<br/>37°: cos=0.80, sin=0.60, tan=0.75</div>
+<div class="sol-card">45°: cos=0.71, sin=0.71, tan=1.00<br/>53°: cos=0.60, sin=0.80, tan=1.33</div>
+<div class="sol-card">60°: cos=0.50, sin=0.87, tan=1.73</div>
+<div class="sol-card">ถ้ามุมวัดจากแกน \(x\): องค์ประกอบ \(x = F\cos\theta\), องค์ประกอบ \(y = F\sin\theta\)</div>
+</div>
+</div>
+</article>
+<div class="page-footer">8</div>
+</section><section class="sheet written-sheet">
+<div class="section-header"><h2>ตอนที่ 3 / Part C: ตรีโกณมิติ เวกเตอร์ และแรงลัพธ์ / Trigonometry, Vectors, and Resultant Forces</h2><div class="score">20 คะแนน</div></div>
+<article class="written-question m4-long">
+<div class="written-head"><span>ข้อ 2.</span> 
+          สถานการณ์ที่ 2: โดรนลอยอยู่กลางอากาศและแรงรอบตัว
+          <br/>
+          Situation 2: A Drone Floating in Air and Surrounding Forces
+         <span class="item-score">(8 คะแนน / 8 คะแนน)</span></div>
+<div class="written-body"><div class="scenario-box">
+        โดรนลำหนึ่งลอยอยู่กลางอากาศ มีแรงโน้มถ่วงลงด้านล่าง แรงยกจากใบพัดขึ้นด้านบน
+        แรงขับจากเครื่องไปทางขวา และแรงลมต้านไปทางซ้าย ให้นักเรียนวาดแผนภาพแรงให้ถูกต้องก่อนคำนวณ
+        <br/>
+        A drone floats in the air. Gravity acts downward, lift acts upward, engine thrust acts to the right, and wind resistance acts to the left.
+      </div><div class="photo-grid">
+<div class="photo-box">
+<div class="figure-title">Drone diagram / รูปโดรนขาวดำ</div>
+<svg aria-label="black-and-white drone diagram" class="drone-bw-svg" role="img" viewbox="0 0 420 170">
+<rect fill="#fff" height="168" rx="8" stroke="#111827" stroke-width="1.5" width="418" x="1" y="1"></rect>
+<line stroke="#111827" stroke-linecap="round" stroke-width="5" x1="210" x2="95" y1="82" y2="55"></line>
+<line stroke="#111827" stroke-linecap="round" stroke-width="5" x1="210" x2="325" y1="82" y2="55"></line>
+<line stroke="#111827" stroke-linecap="round" stroke-width="5" x1="210" x2="95" y1="88" y2="120"></line>
+<line stroke="#111827" stroke-linecap="round" stroke-width="5" x1="210" x2="325" y1="88" y2="120"></line>
+<ellipse cx="210" cy="85" fill="#fff" rx="48" ry="28" stroke="#111827" stroke-width="3"></ellipse>
+<rect fill="#fff" height="28" rx="7" stroke="#111827" stroke-width="2.5" width="50" x="185" y="98"></rect>
+<circle cx="210" cy="112" fill="#fff" r="9" stroke="#111827" stroke-width="2.5"></circle>
+<g fill="none" stroke="#111827" stroke-width="3">
+<ellipse cx="82" cy="52" rx="48" ry="13"></ellipse>
+<ellipse cx="338" cy="52" rx="48" ry="13"></ellipse>
+<ellipse cx="82" cy="122" rx="48" ry="13"></ellipse>
+<ellipse cx="338" cy="122" rx="48" ry="13"></ellipse>
+</g>
+<g fill="#111827">
+<circle cx="82" cy="52" r="6"></circle>
+<circle cx="338" cy="52" r="6"></circle>
+<circle cx="82" cy="122" r="6"></circle>
+<circle cx="338" cy="122" r="6"></circle>
+</g>
+<text fill="#111827" font-size="14" font-weight="900" x="166" y="38">drone / โดรน</text>
+</svg>
+<div class="figure-caption">ไม่ให้เวกเตอร์ในรูป: นักเรียนต้องวาดเองจากสถานการณ์ / Vectors are not given; students must draw them.</div>
+</div>
+<div class="photo-box">
+<div class="figure-title">Free-body diagram area / พื้นที่วาดแผนภาพแรง</div>
+<div class="draw-fbd"></div>
+<div class="figure-caption">ให้วาด \(W\), \(L\), \(T\), และ \(F_{wind}\) พร้อมทิศทางให้ถูกต้อง</div>
+</div>
+</div><table class="data-table">
+<thead><tr><th>แรง / Force</th><th>ขนาด / Magnitude</th><th>ทิศทาง / Direction</th></tr></thead>
+<tbody>
+<tr><td>น้ำหนัก \(W\)</td><td>18 N</td><td>ลง / downward</td></tr>
+<tr><td>แรงยก \(L\)</td><td>25 N</td><td>ขึ้น / upward</td></tr>
+<tr><td>แรงขับ \(T\)</td><td>12 N</td><td>ขวา / right</td></tr>
+<tr><td>แรงลม \(F_{wind}\)</td><td>7 N</td><td>ซ้าย / left</td></tr>
+</tbody>
+</table><ol class="subq" type="ก">
+<li>
+    วาดเวกเตอร์แรงทั้ง 4 แรงลงในพื้นที่แผนภาพแรงให้ถูกทิศ ได้แก่ 
+    น้ำหนัก \(W\) ลงด้านล่าง, แรงยก \(L\) ขึ้นด้านบน, แรงขับ \(T\) ไปทางขวา และแรงลม \(F_{wind}\) ไปทางซ้าย
+    <br/>
+    Draw all four force vectors correctly in the free-body diagram area:
+    weight \(W\) downward, lift \(L\) upward, thrust \(T\) to the right, and wind force \(F_{wind}\) to the left.
+    <span class="points">(2 pts / 2 คะแนน)</span>
+</li>
+<li>
+    เขียนองค์ประกอบหรือเครื่องหมายของแรงแต่ละแรงในแกน \(x\) และแกน \(y\)
+    โดยกำหนดให้ทิศขวาและทิศขึ้นเป็นบวก
+    <br/>
+    Write the component or sign of each force along the \(x\)-axis and \(y\)-axis,
+    taking right and upward directions as positive.
+    <span class="points">(2 pts / 2 คะแนน)</span>
+
+</li>
+<li>
+    หาแรงลัพธ์ในแนวแกน \(x\), หรือ \(\Sigma F_x\), และแรงลัพธ์ในแนวแกน \(y\), หรือ \(\Sigma F_y\)
+    <br/>
+    Find the resultant force along the \(x\)-axis, \(\Sigma F_x\), and the resultant force along the \(y\)-axis, \(\Sigma F_y\).
+    <span class="points">(2 pts / 2 คะแนน)</span>
+
+</li>
+<li>
+    หาขนาดของแรงลัพธ์รวม \(R\) จากองค์ประกอบแรงในแนวแกน \(x\) และแกน \(y\)
+    <br/>
+    Find the magnitude of the resultant force \(R\) from the force components along the \(x\)-axis and \(y\)-axis.
+    <span class="points">(1 pt / 1 คะแนน)</span>
+
+</li>
+<li>
+    หาทิศทางของแรงลัพธ์ และอธิบายว่าโดรนมีแนวโน้มจะเคลื่อนที่ไปทางใด
+    <br/>
+    Find the direction of the resultant force and explain the direction in which the drone tends to move.
+    <span class="points">(1 pt / 1 คะแนน)</span>
+
+</li>
+</ol></div>
+<div class="work-frame"><div class="work-lines"></div></div>
+<div class="solution-box written-solution"><div class="solution-title">แนวคำตอบ / Solution</div>
+<div class="solution-title">เฉลยย่อ / Short solution</div>
+<div class="sol-grid">
+<div class="sol-card">วาดแรง: \(W=18N\) ลง, \(L=25N\) ขึ้น, \(T=12N\) ขวา, \(F_{wind}=7N\) ซ้าย</div>
+<div class="sol-card">\(\Sigma F_x=12-7=\)<span class="ans-red">+5 N</span>, \(\Sigma F_y=25-18=\)<span class="ans-red">+7 N</span></div>
+<div class="sol-card">\(R=\sqrt{5^2+7^2}=\)<span class="ans-red">8.6 N</span></div>
+<div class="sol-card">\(\theta=\tan^{-1}(7/5)\approx\)<span class="ans-red">54.5°</span> เหนือแกน +x, Q1 → โดรนมีแนวโน้มเคลื่อนขึ้นและไปทางขวา</div>
+</div>
+</div>
+</article>
+<div class="page-footer">9</div>
+</section><section class="sheet written-sheet">
+<div class="section-header"><h2>ตอนที่ 3 / Part C: ตรีโกณมิติ เวกเตอร์ และแรงลัพธ์ / Trigonometry, Vectors, and Resultant Forces</h2><div class="score">20 คะแนน</div></div>
+<article class="written-question m4-compact">
+<div class="written-head"><span>ข้อ 3.</span> สถานการณ์ที่ 3: รวมแรงจากแรงเอียงและแรงแนวนอน<br/>Situation 3: Resultant Force from an Inclined Force and a Horizontal Force <span class="item-score">(6 คะแนน / 6 คะแนน)</span></div>
+<div class="written-body"><div class="scenario-box">
+วัตถุถูกกระทำด้วยแรง \(F_1=10\,N\) ทำมุม \(37^\circ\) เหนือแนวราบไปทางขวา และแรง \(F_2=8\,N\) ไปทางซ้าย ให้ใช้ \(\sin37^\circ=3/5\), \(\cos37^\circ=4/5\).<br/>
+An object is acted on by \(F_1=10\,N\) at \(37^\circ\) above the positive horizontal direction and \(F_2=8\,N\) to the left. Use \(\sin37^\circ=3/5\), \(\cos37^\circ=4/5\).
+</div><div class="figure-card">
+<div class="figure-title">Force diagram / แผนภาพแรง</div>
+<svg aria-label="inclined force and horizontal force" class="figure-svg" viewbox="0 0 600 190">
+<defs>
+<marker id="arrVectorQ5" markerheight="8" markerwidth="10" orient="auto" refx="9" refy="4"><polygon fill="#111827" points="0 0,10 4,0 8"></polygon></marker>
+</defs>
+<rect fill="#f3f4f6" height="42" rx="6" stroke="#111827" stroke-width="3" width="80" x="250" y="95"></rect>
+<text font-size="14" font-weight="900" text-anchor="middle" x="290" y="122">object</text>
+<line stroke="#111827" stroke-dasharray="6 4" stroke-width="2" x1="290" x2="450" y1="116" y2="116"></line>
+<line marker-end="url(#arrVectorQ5)" stroke="#111827" stroke-width="4" x1="290" x2="418" y1="116" y2="20"></line>
+<line marker-end="url(#arrVectorQ5)" stroke="#111827" stroke-width="4" x1="290" x2="135" y1="116" y2="116"></line>
+<path d="M330 116 A40 40 0 0 0 322 92" fill="none" stroke="#111827" stroke-width="2"></path>
+<text font-size="13" font-weight="900" x="342" y="101">37°</text>
+<text font-size="14" font-weight="900" x="424" y="31">F₁ = 10 N</text>
+<text font-size="14" font-weight="900" x="70" y="105">F₂ = 8 N</text>
+<text font-size="13" x="445" y="134">+x</text>
+<text font-size="13" x="298" y="34">+y</text>
+</svg>
+</div><ol class="subq" type="ก">
+<li>หาองค์ประกอบ \(F_{1x}\) <br/>Find \(F_{1x}\). <span class="points">(1 pt / 1 คะแนน)</span></li>
+<li>หาองค์ประกอบ \(F_{1y}\) <br/>Find \(F_{1y}\). <span class="points">(1 pt / 1 คะแนน)</span></li>
+<li>หาผลรวมแรงในแนวแกน \(x\), \(\Sigma F_x\) <br/>Find \(\Sigma F_x\). <span class="points">(1 pt / 1 คะแนน)</span></li>
+<li>หาผลรวมแรงในแนวแกน \(y\), \(\Sigma F_y\) <br/>Find \(\Sigma F_y\). <span class="points">(1 pt / 1 คะแนน)</span></li>
+<li>หาขนาดและทิศของแรงลัพธ์ <br/>Find the magnitude and direction of the resultant force. <span class="points">(2 pts / 2 คะแนน)</span></li>
+</ol></div>
+<div class="work-frame"><div class="work-lines"></div></div>
+<div class="solution-box written-solution"><div class="solution-title">แนวคำตอบ / Solution</div>
+<div class="solution-title">เฉลยย่อ / Short solution</div>
+<div class="sol-grid">
+<div class="sol-card">\(F_{1x}=10\cos37^\circ=10(4/5)=\)<span class="ans-red">8 N</span></div>
+<div class="sol-card">\(F_{1y}=10\sin37^\circ=10(3/5)=\)<span class="ans-red">6 N</span></div>
+<div class="sol-card">\(\Sigma F_x=8-8=\)<span class="ans-red">0 N</span></div>
+<div class="sol-card">\(\Sigma F_y=6\)<span class="ans-red"> N upward</span></div>
+<div class="sol-card">ดังนั้นแรงลัพธ์ \(R=6\,N\) ทิศขึ้น / resultant is <span class="ans-red">6 N upward</span></div>
+</div>
+</div>
+</article>
+<div class="page-footer">10</div>
+</section><section class="sheet ref-sheet">
+<div class="part-title">ใบสูตรและข้อมูลอ้างอิงที่อนุญาตให้ใช้ / Allowed Reference Data</div>
+<div class="ref-grid">
+  <div class="ref-block"><h3>1. หน่วยฐาน SI / SI Base Units</h3>
+    <table class="ref-table"><tr><th>Quantity</th><th>Unit</th><th>Symbol</th></tr>
+    <tr><td>Length / ความยาว</td><td>metre</td><td>m</td></tr>
+    <tr><td>Mass / มวล</td><td>kilogram</td><td>kg</td></tr>
+    <tr><td>Time / เวลา</td><td>second</td><td>s</td></tr>
+    <tr><td>Electric current / กระแสไฟฟ้า</td><td>ampere</td><td>A</td></tr>
+    <tr><td>Temperature / อุณหภูมิ</td><td>kelvin</td><td>K</td></tr>
+    <tr><td>Amount / ปริมาณสาร</td><td>mole</td><td>mol</td></tr>
+    <tr><td>Luminous intensity / ความเข้มแสง</td><td>candela</td><td>cd</td></tr></table>
+  </div>
+  <div class="ref-block"><h3>2. คำอุปสรรคสำคัญ / Important Prefixes</h3>
+    <table class="ref-table"><tr><th>Prefix</th><th>Symbol</th><th>Factor</th></tr>
+    <tr><td>giga</td><td>G</td><td>\(10^9\)</td></tr>
+    <tr><td>mega</td><td>M</td><td>\(10^6\)</td></tr>
+    <tr><td>kilo</td><td>k</td><td>\(10^3\)</td></tr>
+    <tr><td>centi</td><td>c</td><td>\(10^{-2}\)</td></tr>
+    <tr><td>milli</td><td>m</td><td>\(10^{-3}\)</td></tr>
+    <tr><td>micro</td><td>\(\mu\)</td><td>\(10^{-6}\)</td></tr>
+    <tr><td>nano</td><td>n</td><td>\(10^{-9}\)</td></tr>
+    <tr><td>pico</td><td>p</td><td>\(10^{-12}\)</td></tr></table>
+  </div>
+  <div class="ref-block"><h3>3. การแปลงหน่วย / Unit Conversion</h3>
+    <p>\(1\,km=10^3\,m\), \(1\,cm=10^{-2}\,m\), \(1\,mm=10^{-3}\,m\)</p>
+    <p>\(1\,cm^2=10^{-4}\,m^2\), \(1\,cm^3=10^{-6}\,m^3\)</p>
+    <p>\(1\,g/cm^3=10^3\,kg/m^3\)</p>
+    <p>\(1\,km/h=\dfrac{1000}{3600}\,m/s\)</p>
+  </div>
+  <div class="ref-block"><h3>4. การวัดและความคลาดเคลื่อน / Measurement & Error</h3>
+    <p>\(x=x_{best}\pm\Delta x\)</p>
+    <p>\(\%error=\dfrac{|measured-accepted|}{accepted}	imes100\)</p>
+    <p>\(
+ho=\dfrac{m}{V}\)</p>
+  </div>
+  <div class="ref-block"><h3>5. ตรีโกณมิติที่ใช้บ่อย / Common Trigonometry</h3>
+    <table class="ref-table"><tr><th>\(	heta\)</th><th>\(\sin	heta\)</th><th>\(\cos	heta\)</th><th>\(	an	heta\)</th></tr>
+    <tr><td>30°</td><td>1/2</td><td>\(\sqrt3/2\)</td><td>\(\sqrt3/3\)</td></tr>
+    <tr><td>37°</td><td>3/5</td><td>4/5</td><td>3/4</td></tr>
+    <tr><td>45°</td><td>\(\sqrt2/2\)</td><td>\(\sqrt2/2\)</td><td>1</td></tr>
+    <tr><td>53°</td><td>4/5</td><td>3/5</td><td>4/3</td></tr>
+    <tr><td>60°</td><td>\(\sqrt3/2\)</td><td>1/2</td><td>\(\sqrt3\)</td></tr></table>
+  </div>
+  <div class="ref-block"><h3>6. เวกเตอร์และแรงลัพธ์ / Vectors & Resultant</h3>
+    <p>ถ้ามุมวัดจากแกน \(x\): \(F_x=F\cos	heta\), \(F_y=F\sin	heta\)</p>
+    <p>\(\Sigma F_x=F_{right}-F_{left}\), \(\Sigma F_y=F_{up}-F_{down}\)</p>
+    <p>\(R=\sqrt{(\Sigma F_x)^2+(\Sigma F_y)^2}\)</p>
+    <p>\(	an	heta=\dfrac{|\Sigma F_y|}{|\Sigma F_x|}\)</p>
+    <p>\(d=\sqrt{(\Delta x)^2+(\Delta y)^2}\)</p>
+  </div>
+</div>
+<div class="page-footer">11</div>
+</section>
+</main>
+<script>
+async function typesetReady() {
+  if (window.MathJax && MathJax.typesetPromise) {
+    try { await MathJax.typesetPromise(); } catch (e) { console.warn(e); }
+  }
+}
+async function setMode(mode) {
+  document.body.classList.remove('mode-exam','mode-solution');
+  document.body.classList.add(mode);
+  const status = document.getElementById('statusText');
+  if (status) status.textContent = mode === 'mode-solution' ? 'โหมดเฉลย / Solution mode' : 'โหมดข้อสอบ / Exam mode';
+  await typesetReady();
+}
+async function printExam() { await setMode('mode-exam'); setTimeout(() => window.print(), 250); }
+async function printSolution() { await setMode('mode-solution'); setTimeout(() => window.print(), 250); }
+function toggleSolution() { if (document.body.classList.contains('mode-solution')) setMode('mode-exam'); else setMode('mode-solution'); }
+window.addEventListener('load', () => typesetReady());
+</script>
+</body>
+</html>
