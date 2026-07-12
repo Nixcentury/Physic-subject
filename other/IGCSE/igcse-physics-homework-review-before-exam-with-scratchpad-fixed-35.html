@@ -266,12 +266,29 @@ ${key('0','0','num')}${key('u','u')}${key('v','v')}${key('a','a')}${key('s','s')
 </div></details>`;}
 function solutionHTML(q){if(q.kind==='mcq') return `<div class="solution"><h4>Explanation / เฉลย</h4><div class="solution-step"><strong>Correct answer</strong>${q.correct}. ${q.choices.find(c=>c[0]===q.correct)[1]}</div><div class="solution-step"><strong>Reason</strong>${q.explanation}</div></div>`; return `<div class="solution"><h4>Full Solution / เฉลยละเอียด</h4>${q.solution.map(([a,b])=>`<div class="solution-step"><strong>${a}</strong><div>${b}</div></div>`).join('')}</div>`;}
 function figureHTML(fig){ if(!fig) return ''; if(fig.type==='vernierCm') return vernierSVG('cm', fig.main, fig.coincide); if(fig.type==='vernierMm') return vernierSVG('mm', fig.main, fig.coincide); if(fig.type==='distanceGraph') return distanceGraphSVG(); if(fig.type==='speedGraph') return speedGraphSVG(); return ''; }
-function renderQuestion(q){
+function renderQuestion(q, displayNo){
   const fig = figureHTML(q.figure);
   const problemBlock = fig ? `<div class="problem">${fig}</div>` : '';
-  return `<article class="question-card" id="card-${q.id}" data-section="${q.section}"><div class="card-head"><div class="q-no">${q.id}</div><div class="q-title"><h3>${q.title}</h3><p>${q.prompt}</p></div><span class="tag">${q.tag} • ${q.marks} mark${q.marks>1?'s':''}</span></div>${problemBlock}${q.kind==='mcq'?`<div class="choices">${optionHTML(q)}</div>`:calcInputHTML(q)}<div class="feedback" id="feedback-${q.id}"></div>${solutionHTML(q)}</article>`;
+  return `<article class="question-card" id="card-${q.id}" data-section="${q.section}"><div class="card-head"><div class="q-no">${displayNo}</div><div class="q-title"><h3>${q.title}</h3><p>${q.prompt}</p></div><span class="tag">${q.tag} • ${q.marks} mark${q.marks>1?'s':''}</span></div>${problemBlock}${q.kind==='mcq'?`<div class="choices">${optionHTML(q)}</div>`:calcInputHTML(q)}<div class="feedback" id="feedback-${q.id}"></div>${solutionHTML(q)}</article>`;
 }
-function renderQuiz(){const root=document.getElementById('quizRoot'); root.innerHTML = sections.map(sec=>`<section class="section-block" id="section-${sec.id}"><div class="section-title"><div class="section-badge">${sec.id}</div><div><h2>${sec.title}</h2><p>${sec.desc}</p></div></div>${questions.filter(q=>q.section===sec.id).map(renderQuestion).join('')}</section>`).join(''); bindEvents(); typeset(); updateProgress();}
+function renderQuiz(){
+  const root = document.getElementById('quizRoot');
+  let displayNo = 1;
+  root.innerHTML = sections.map(sec => {
+    const qs = questions.filter(q => q.section === sec.id);
+    const qHtml = qs.map(q => renderQuestion(q, displayNo++)).join('');
+    return `<section class="section-block" id="section-${sec.id}">
+      <div class="section-title">
+        <div class="section-badge">${sec.id}</div>
+        <div><h2>${sec.title}</h2><p>${sec.desc}</p></div>
+      </div>
+      ${qHtml}
+    </section>`;
+  }).join('');
+  bindEvents();
+  typeset();
+  updateProgress();
+}
 function bindEvents(){document.querySelectorAll('.choice input').forEach(input=>input.addEventListener('change',()=>{document.querySelectorAll(`.choice[data-q="${input.name.slice(1)}"]`).forEach(c=>c.classList.remove('selected')); input.closest('.choice').classList.add('selected'); updateProgress();})); document.querySelectorAll('math-field.answer-field').forEach(mf=>{mf.addEventListener('input',updateProgress); mf.addEventListener('focusin',()=>{window.activeMathField=mf;});}); document.querySelectorAll('.unit-select').forEach(sel=>sel.addEventListener('change',updateProgress)); document.querySelectorAll('.keyboard-shell .key').forEach(btn=>btn.addEventListener('click',ev=>{const card=ev.currentTarget.closest('.question-card'); const mf=card.querySelector('math-field.answer-field'); if(!mf) return; mf.focus(); const command=ev.currentTarget.dataset.command; const insert=ev.currentTarget.dataset.insert; if(command){ if(command==='clear') mf.value=''; else mf.executeCommand(command);} else if(insert){ mf.insert(insert);} updateProgress();}));}
 function typeset(){ if(window.MathJax?.typesetPromise) MathJax.typesetPromise().catch(()=>{}); }
 function vernierSVG(unit, mainText, coincide){const scaleLabel = unit==='cm'?'cm scale':'mm scale'; return `<div class="figure"><svg class="svg-box" viewBox="0 0 820 230" role="img" aria-label="Vernier caliper"><rect x="20" y="20" width="780" height="190" rx="18" fill="#f8fafc" stroke="#d7deea"/><text x="44" y="48" font-weight="800" fill="#334155">Vernier caliper reading (${unit})</text><text x="44" y="72" fill="#64748b" font-size="14">Zero is just after ${mainText}; highlighted vernier line ${coincide} coincides with a main scale line.</text><line x1="80" y1="105" x2="740" y2="105" stroke="#334155" stroke-width="3"/>${Array.from({length:12},(_,i)=>`<g><line x1="${90+i*55}" y1="90" x2="${90+i*55}" y2="120" stroke="#334155" stroke-width="2"/><text x="${90+i*55}" y="142" text-anchor="middle" font-family="JetBrains Mono" font-size="13">${unit==='cm'?(2+i/10).toFixed(1):14+i}</text></g>`).join('')}<text x="80" y="168" fill="#64748b" font-size="13">Main scale (${scaleLabel})</text><rect x="215" y="155" width="360" height="45" rx="8" fill="#e0f2fe" stroke="#0284c7"/><line x1="225" y1="150" x2="225" y2="202" stroke="#0284c7" stroke-width="3"/>${Array.from({length:10},(_,i)=>`<g><line x1="${225+i*35}" y1="157" x2="${225+i*35}" y2="195" stroke="${i===coincide?'#dc2626':'#0284c7'}" stroke-width="${i===coincide?4:2}"/><text x="${225+i*35}" y="218" text-anchor="middle" font-family="JetBrains Mono" font-size="12" fill="${i===coincide?'#dc2626':'#334155'}">${i}</text></g>`).join('')}<text x="590" y="185" fill="#dc2626" font-weight="900">line ${coincide} matches</text></svg></div>`;}
