@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Quiz: ระบบสมการการเคลื่อนที่</title>
+    <!-- ใช้ MathJax CDN ที่ปลอดภัย ไม่ต้องผ่าน polyfill.io -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <style>
+        body {
+            font-family: 'ChulaCharasNew', 'Sarabun', 'Segoe UI', sans-serif;
+            background-color: #f0f4f8;
+            color: #2c3e50;
+            padding: 30px 15px;
+            line-height: 1.7;
+        }
+        .container {
+            max-width: 750px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+        h1 {
+            text-align: center;
+            color: #1e3a8a;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 35px;
+            font-size: 14px;
+        }
+        .quiz-card {
+            background: #f8fafc;
+            border-left: 5px solid #3b82f6;
+            padding: 22px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        .question {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #1e293b;
+        }
+        .input-block {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        input[type="number"] {
+            padding: 10px 14px;
+            width: 140px;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        input[type="number"]:focus {
+            border-color: #3b82f6;
+        }
+        button {
+            border: none;
+            padding: 10px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-submit {
+            background-color: #3b82f6;
+            color: white;
+        }
+        .btn-submit:hover {
+            background-color: #2563eb;
+        }
+        .btn-giveup {
+            background-color: #e2e8f0;
+            color: #475569;
+        }
+        .btn-giveup:hover {
+            background-color: #cbd5e1;
+            color: #1e293b;
+        }
+        .result {
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 15px;
+            display: none;
+        }
+        .correct { color: #16a34a; }
+        .incorrect { color: #dc2626; }
+        
+        .solution {
+            display: none;
+            margin-top: 20px;
+            background: #f1f5f9;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 15px;
+            border-top: 4px solid #10b981;
+        }
+        .solution-title {
+            color: #0f766e;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .step-block {
+            background: #ffffff;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border-left: 3px solid #64748b;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📝 Interactive Quiz: ระบบสมการการเคลื่อนที่</h1>
+    <div class="subtitle">ตอบผิดคิดใหม่ได้เรื่อยๆ หรือกดคุยเฉลยเมื่อยอมแพ้</div>
+
+    <!-- ข้อที่ 1 -->
+    <div class="quiz-card">
+        <div class="question">
+            <strong>ข้อที่ 1:</strong> บ้านนายแดงกับนายดำห่างกัน <span style="color:#d97706;font-weight:bold;">12 กิโลเมตร</span> ถ้าแดงออกก่อนดำ 1 ชั่วโมง ทั้งคู่จะเจอกันเมื่อดำเดินทางไปแล้ว <span style="color:#d97706;font-weight:bold;">36 นาที</span> แต่ถ้าดำออกก่อนแดง 30 นาที ทั้งคู่จะพบกันตรงจุดกึ่งกลางระหว่างบ้านทั้งสองพอดี 
+            <br><br>
+            ถ้าอัตราเร็วของนายแดงเท่ากับ \(x\) กม./ชม. และอัตราเร็วของนายดำเท่ากับ \(y\) กม./ชม. จงหาค่าของ \(x - y\)
+        </div>
+        <div class="input-block">
+            <label for="ans1">คำตอบของคุณคือ: </label>
+            <input type="number" id="ans1" step="0.01" placeholder="ระบุตัวเลข">
+            <button class="btn-submit" onclick="checkAnswer(1, 2)">ส่งคำตอบ</button>
+            <button class="btn-giveup" onclick="giveUp(1)">ยอมแพ้</button>
+        </div>
+        <div class="result" id="result-1"></div>
+        
+        <!-- เฉลยข้อ 1 -->
+        <div class="solution" id="sol-1">
+            <div class="solution-title">💡 เฉลยละเอียด ข้อที่ 1</div>
+            
+            <strong>1. วิเคราะห์กรณีที่ 1: แดงออกก่อนดำ 1 ชม. และเจอกันหลังดำวิ่งได้ 36 นาที (\(0.6\) ชม.)</strong>
+            <div class="step-block">
+                • เวลาที่นายแดงใช้: \(t_1 = 0.6 + 1 = 1.6\) ชั่วโมง<br>
+                • เวลาที่นายดำใช้: \(t_2 = 0.6\) ชั่วโมง<br>
+                • สมการระยะทางรวม: \(S_1 + S_2 = 12\)<br>
+                จะได้: \(1.6x + 0.6y = 12\) <br>
+                นำ 5 คูณตลอดเพื่อปรับรูปสมการ: \(8x + 3y = 60\) --- (สมการที่ 1)
+            </div>
+
+            <strong>2. วิเคราะห์กรณีที่ 2: ดำออกก่อนแดง 30 นาที (\(0.5\) ชม.) พบกันที่กึ่งกลางพอดี (\(S = 6\) กม.)</strong>
+            <div class="step-block">
+                ให้แดงใช้เวลาเดินทาง \(t\) ชั่วโมง ดำจะใช้เวลา \(t + 0.5\) ชั่วโมง<br>
+                • นายแดง: \(x \cdot t = 6 \implies x = \frac{6}{t}\) --- (สมการที่ 2)<br>
+                • นายดำ: \(y \cdot (t + 0.5) = 6 \implies y = \frac{6}{t + 0.5} = \frac{12}{2t + 1}\) --- (สมการที่ 3)
+            </div>
+
+            <strong>3. แก้ระบบสมการเพื่อหาค่า</strong>
+            <div class="step-block">
+                แทน (สมการที่ 2) และ (3) ลงใน (สมการที่ 1):<br>
+                $$8\left(\frac{6}{t}\right) + 3\left(\frac{12}{2t + 1}\right) = 60$$
+                $$\frac{48}{t} + \frac{36}{2t + 1} = 60$$
+                นำ 12 หารตลอด: \(\frac{4}{t} + \frac{3}{2t + 1} = 5\)<br>
+                คูณตลอดด้วย \(t(2t + 1)\) จะได้สมการกำลังสอง: \(10t^2 - 6t - 4 = 0 \implies (10t + 4)(t - 1) = 0\)<br>
+                ได้เวลาเป็นบวกคือ \(t = 1\) ชั่วโมง
+            </div>
+
+            <strong>4. สรุปหาค่า \(x - y\)</strong>
+            <div class="step-block">
+                • แทน \(t = 1\) ในสมการที่ 2: \(x = \frac{6}{1} = 6\) กม./ชม.<br>
+                • แทน \(t = 1\) ในสมการที่ 3: \(y = \frac{12}{2(1) + 1} = 4\) กม./ชม.<br>
+                ดังนั้น \(x - y = 6 - 4 =\) <strong style="color:#16a34a; font-size: 1.2em;">2</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- ข้อที่ 2 -->
+    <div class="quiz-card">
+        <div class="question">
+            <strong>ข้อที่ 2:</strong> บ้านนายแดงกับนายดำห่างกัน <span style="color:#d97706;font-weight:bold;">18 กิโลเมตร</span> ถ้าแดงออกก่อนดำ 1 ชั่วโมง ทั้งคู่จะเจอกันเมื่อดำเดินทางไปแล้ว <span style="color:#d97706;font-weight:bold;">36 นาที</span> แต่ถ้าดำออกก่อนแดง 30 นาที ทั้งคู่จะพบกันตรงจุดกึ่งกลางระหว่างบ้านทั้งสองพอดี 
+            <br><br>
+            ถ้าอัตราเร็วของนายแดงเท่ากับ \(x\) กม./ชม. และอัตราเร็วของนายดำเท่ากับ \(y\) กม./ชม. จงหาค่าของ \(x - y\)
+        </div>
+        <div class="input-block">
+            <label for="ans2">คำตอบของคุณคือ: </label>
+            <input type="number" id="ans2" step="0.01" placeholder="ระบุตัวเลข">
+            <button class="btn-submit" onclick="checkAnswer(2, 3)">ส่งคำตอบ</button>
+            <button class="btn-giveup" onclick="giveUp(2)">ยอมแพ้</button>
+        </div>
+        <div class="result" id="result-2"></div>
+        
+        <!-- เฉลยข้อ 2 -->
+        <div class="solution" id="sol-2">
+            <div class="solution-title">💡 เฉลยละเอียด ข้อที่ 2</div>
+            
+            <strong>1. วิเคราะห์กรณีที่ 1: แดงออกก่อนดำ 1 ชม. และเจอกันหลังดำวิ่งได้ 36 นาที (\(0.6\) ชม.)</strong>
+            <div class="step-block">
+                • เวลาของแดง: \(t_1 = 1.6\) ชม., เวลาของดำ: \(t_2 = 0.6\) ชม.<br>
+                • สมการระยะทางรวม: \(1.6x + 0.6y = 18\)<br>
+                นำ 5 คูณตลอด: \(8x + 3y = 90\) --- (สมการที่ 1)
+            </div>
+
+            <strong>2. วิเคราะห์กรณีที่ 2: ดำออกก่อนแดง 30 นาที พบกันที่กึ่งกลางพอดี (\(S = 9\) กม.)</strong>
+            <div class="step-block">
+                ให้แดงใช้เวลา \(t\) ชั่วโมง ดำใช้ \(t + 0.5\) ชั่วโมง<br>
+                • นายแดง: \(x = \frac{9}{t}\) --- (สมการที่ 2)<br>
+                • นายดำ: \(y = \frac{9}{t + 0.5} = \frac{18}{2t + 1}\) --- (สมการที่ 3)
+            </div>
+
+            <strong>3. แก้ระบบสมการเพื่อหาค่า</strong>
+            <div class="step-block">
+                แทนลงในสมการที่ 1:<br>
+                $$8\left(\frac{9}{t}\right) + 3\left(\frac{18}{2t + 1}\right) = 90$$
+                $$\frac{72}{t} + \frac{54}{2t + 1} = 90$$
+                นำ 18 หารตลอด: \(\frac{4}{t} + \frac{3}{2t + 1} = 5\)<br>
+                ซึ่งจะได้สมการเดียวกันกับข้อ 1 คือ \(t = 1\) ชั่วโมง
+            </div>
+
+            <strong>4. สรุปหาค่า \(x - y\)</strong>
+            <div class="step-block">
+                • แทน \(t = 1\): \(x = \frac{9}{1} = 9\) กม./ชม.<br>
+                • แทน \(t = 1\): \(y = \frac{18}{2(1) + 1} = 6\) กม./ชม.<br>
+                ดังนั้น \(x - y = 9 - 6 =\) <strong style="color:#16a34a; font-size: 1.2em;">3</strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function checkAnswer(qNum, target) {
+        const inputEl = document.getElementById('ans' + qNum);
+        const resultEl = document.getElementById('result-' + qNum);
+        const solEl = document.getElementById('sol-' + qNum);
+        const val = parseFloat(inputEl.value);
+
+        resultEl.style.display = "block";
+
+        if (isNaN(val)) {
+            resultEl.innerHTML = "❌ กรุณากรอกตัวเลขคำตอบก่อนครับ";
+            resultEl.className = "result incorrect";
+            return;
+        }
+
+        // หากตอบถูก
+        if (Math.abs(val - target) < 0.01) {
+            resultEl.innerHTML = "🎉 ถูกต้องแล้วครับ! สุดยอดเลย";
+            resultEl.className = "result correct";
+            solEl.style.display = "block"; // แสดงเฉลยทันที
+            
+            if (window.MathJax) {
+                MathJax.typesetPromise([solEl]);
+            }
+        } else {
+            // หากตอบผิด จะยังไม่แสดงเฉลย ให้ลองตอบใหม่
+            resultEl.innerHTML = `❌ ยังไม่ถูกครับ! ลองคำนวณใหม่อีกครั้งนะ สู้ๆ`;
+            resultEl.className = "result incorrect";
+        }
+    }
+
+    function giveUp(qNum) {
+        const resultEl = document.getElementById('result-' + qNum);
+        const solEl = document.getElementById('sol-' + qNum);
+        
+        resultEl.style.display = "block";
+        resultEl.innerHTML = "🏳️ ยอมแพ้แล้วใช่ไหม? มาดูวิธีคิดกันครับ";
+        resultEl.className = "result";
+        resultEl.style.color = "#475569";
+        
+        solEl.style.display = "block"; // บังคับแสดงเฉลย
+        
+        if (window.MathJax) {
+            MathJax.typesetPromise([solEl]);
+        }
+    }
+</script>
+
+</body>
+</html>
