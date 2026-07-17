@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Interactive Math Quiz — ระบบสมการทรงกรวย</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+Thai:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [["\\(", "\\)"], ["$", "$"]],
+    displayMath: [["\\[", "\\]"]]
+  },
+  svg: { fontCache: "global" }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+:root{--bg:#f3f7fb;--card:#fff;--ink:#172033;--muted:#667085;--blue:#2563eb;--green:#16a34a;--red:#dc2626;--amber:#f59e0b;--line:#d7deea;--shadow:0 20px 55px rgba(15,23,42,.10);--radius:24px;--font-ui:"Inter","Noto Sans Thai",system-ui,sans-serif;--font-mono:"JetBrains Mono",monospace}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;color:var(--ink);font-family:var(--font-ui);line-height:1.55;background:radial-gradient(circle at 6% 0%,rgba(37,99,235,.18),transparent 35%),radial-gradient(circle at 96% 4%,rgba(20,184,166,.14),transparent 30%),linear-gradient(180deg,#f8fbff 0%,var(--bg) 100%)}
+.page{max-width:1220px;margin:0 auto;padding:28px 18px 72px}.hero{position:relative;overflow:hidden;border:1px solid rgba(148,163,184,.28);background:linear-gradient(135deg,rgba(255,255,255,.94),rgba(239,246,255,.94));border-radius:32px;box-shadow:var(--shadow);padding:34px;margin-bottom:18px}.hero:after{content:"";position:absolute;width:360px;height:360px;right:-130px;top:-160px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,.18),transparent 70%)}.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius999px;background:rgba(37,99,235,.10);color:#1d4ed8;font-weight:900;font-size:.84rem;letter-spacing:.03em;text-transform:uppercase;margin-bottom:12px}h1{font-size:clamp(2rem,4vw,3.35rem);line-height:1.05;margin:0 0 12px;font-weight:900;letter-spacing:-.045em}.subtitle{max-width:920px;color:#475467;font-size:1.08rem;margin:0}.thai{color:#475467;margin-top:8px;font-weight:700}.pill-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}.pill{border:1px solid rgba(37,99,235,.18);background:#fff;border-radius:999px;padding:8px 12px;color:#334155;font-weight:800;font-size:.9rem}
+.toolbar{position:sticky;top:0;z-index:60;margin:16px 0 22px;background:rgba(255,255,255,.9);backdrop-filter:blur(16px);border:1px solid rgba(148,163,184,.28);border-radius:22px;box-shadow:0 10px 34px rgba(15,23,42,.08);padding:12px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}.score-box{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.stat{background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;padding:9px 12px;font-weight:900;color:#334155}.stat.primary{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}.progress-wrap{flex:1;min-width:220px;max-width:420px}.progress{height:12px;background:#e2e8f0;border-radius:999px;overflow:hidden}.bar{height:100%;width:0;background:linear-gradient(90deg,#2563eb,#14b8a6);transition:.2s width}.progress-label{font-size:.82rem;color:#64748b;font-weight:800;margin-top:4px}.btn{border:0;border-radius:14px;padding:10px 14px;font-family:inherit;font-weight:900;cursor:pointer;background:#e2e8f0;color:#172033;transition:.15s transform,.15s box-shadow,.15s background;touch-action:manipulation}.btn:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(15,23,42,.12)}.btn.primary{background:var(--blue);color:#fff}.btn.green{background:var(--green);color:#fff}.btn.red{background:var(--red);color:#fff}.btn.amber{background:var(--amber);color:#fff}.btn.ghost{background:#fff;border:1px solid #d0d7e2}
+.section-title{display:flex;align-items:center;gap:12px;margin:30px 0 14px}.section-badge{display:grid;place-items:center;width:42px;height:42px;border-radius:16px;background:#172033;color:#fff;font-weight:900}.section-title h2{margin:0;font-size:1.32rem}.section-title p{margin:2px 0 0;color:#667085}.question-card{background:var(--card);border:1px solid rgba(148,163,184,.30);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;margin-bottom:18px;overflow:hidden}.question-card.correct{border-color:rgba(22,163,74,.45);box-shadow:0 20px 55px rgba(22,163,74,.10)}.question-card.wrong{border-color:rgba(220,38,38,.35)}.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:14px}.q-no{display:inline-grid;place-items:center;width:46px;height:46px;border-radius:17px;background:#172033;color:#fff;font-weight:900;flex:0 0 auto}.q-title{flex:1}.q-title h3{margin:0 0 4px;font-size:1.15rem}.q-title p{margin:0;color:#64748b}.tag{display:inline-flex;align-items:center;padding:7px 10px;border-radius:999px;background:#f1f5f9;color:#475569;font-size:.82rem;font-weight:900;white-space:nowrap}
+.problem{background:linear-gradient(180deg,#f8fafc,#fff);border:1px solid #e2e8f0;border-radius:20px;padding:18px;margin:14px 0}.problem-text{font-size:1.02rem;color:#344054}.problem-text .th{font-weight:800;color:#1f2937;margin-bottom:8px}.problem-text .en{color:#475467}
+.answer-row{display:grid;grid-template-columns:minmax(220px,1fr) 170px;gap:10px;align-items:end;margin-top:12px}.answer-row.no-unit{grid-template-columns:minmax(220px,1fr)}label.field-label{display:block;font-size:.84rem;font-weight:900;color:#475569;margin-bottom:6px}
+input.text-answer{display:block;width:100%;min-height:56px;border:2px solid #d0d7e2;border-radius:18px;padding:10px 12px;font-size:1.32rem;background:#fbfdff;color:#111827;font-family:var(--font-ui);font-weight:800}input.text-answer:focus{border-color:#2563eb;box-shadow:0 0 0 4px rgba(37,99,235,.13);outline:none}
+input.text-answer.ok{border-color:var(--green);background:#dcfce7}
+input.text-answer.bad{border-color:var(--red);background:#fee2e2}
+.feedback{border-radius:18px;padding:12px 14px;margin-top:14px;font-weight:800;display:none}.feedback.good{background:#dcfce7;color:#166534;border:1px solid #bbf7d0}.feedback.bad{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
+.solution{display:none;margin-top:14px;border:1px solid #dbeafe;background:#f8fbff;border-radius:20px;padding:16px}.solution h4{margin:0 0 8px;color:#1d4ed8}.solution-step{border-left:4px solid #2563eb;background:#fff;border-radius:0 14px 14px 0;padding:12px;margin:10px 0}.solution-step strong{display:block;margin-bottom:4px;color:#172033}
+.scratch-shell{margin-top:14px;border:1px solid #dbe3ef;background:linear-gradient(180deg,#ffffff,#f8fbff);border-radius:18px;overflow:hidden;box-shadow:0 8px 22px rgba(15,23,42,.05)}.scratch-toggle{width:100%;border:0;background:#eff6ff;color:#1d4ed8;font-family:inherit;font-weight:900;padding:12px 14px;cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:10px}.scratch-panel{display:none;padding:12px;border-top:1px solid #dbe3ef}.scratch-shell.open .scratch-panel{display:block}.scratch-toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}.scratch-btn{border:1px solid #cbd5e1;background:#fff;border-radius:10px;padding:7px 10px;font-family:inherit;font-weight:800;cursor:pointer;color:#334155;box-shadow:0 2px 0 #dbe3ef}.scratch-btn.active{background:#2563eb;border-color:#2563eb;color:#fff;box-shadow:0 2px 0 #1d4ed8}.scratch-size{accent-color:#2563eb;width:110px}
+/* ขยายขนาดกระดานทด (ความสูงเพิ่มขึ้นเป็น 450px) */
+.scratch-canvas-wrap{position:relative;width:100%;height:450px;background:linear-gradient(#eef2f7 1px, transparent 1px),linear-gradient(90deg,#eef2f7 1px, transparent 1px),#ffffff;background-size:24px 24px;border:1px solid #cbd5e1;border-radius:14px;overflow:hidden;touch-action:none}.scratch-canvas{width:100%;height:100%;display:block}.scratch-hint{margin:8px 0 0;color:#64748b;font-size:.88rem;font-weight:700}
+.check-controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center}
+.question-card.locked input.text-answer, .question-card.locked .check-controls .btn{opacity:.6;pointer-events:none}
+.question-card.gaveup{border-color:rgba(245,158,11,.55);box-shadow:0 20px 55px rgba(245,158,11,.10)}
+.question-card.correct{border-color:rgba(22,163,74,.45);box-shadow:0 20px 55px rgba(22,163,74,.10)}
+@media(max-width:900px){.toolbar{position:static}.answer-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="hero">
+  <div class="eyebrow">คณิตศาสตร์ ม.ต้น • ระบบสมการพหุนาม</div>
+  <h1>โจทย์ประยุกต์ระบบสมการ: ปริมาตรทรงกรวย</h1>
+  <p class="subtitle">กิจกรรมฝึกฝนแบบมีปฏิสัมพันธ์ (Interactive Check-Each): ป้อนคำตอบที่เป็นจำนวนเต็ม ตรวจสอบทีละข้อ หากตอบผิดสามารถคิดซ้ำได้เรื่อยๆ หรือกดปุ่มยอมแพ้เพื่อดูเฉลยละเอียดที่แสดงผลด้วย MathJax</p>
+  <div class="pill-row"><span class="pill">2 ข้อท้าทาย</span><span class="pill">ระบบตรวจคำตอบแยกข้อ</span><span class="pill">กระดานทดไซส์ใหญ่พิเศษ (450px)</span><span class="pill">คำตอบเป็นจำนวนเต็ม</span></div>
+</header>
+
+<section class="toolbar">
+  <div class="score-box"><div class="stat primary" id="scoreText">Mastery: 0 / 2</div><div class="stat" id="answeredText">เสร็จสิ้น: 0 / 2</div></div>
+  <div class="progress-wrap"><div class="progress"><div class="bar" id="progressBar"></div></div><div class="progress-label" id="progressLabel">หากตอบถูกหรือกด ยอมแพ้ จะปลดล็อกเฉลยละเอียดเฉพาะข้อนั้น</div></div>
+  <div class="score-box"><button class="btn red" type="button" onclick="location.reload()">ล้างข้อมูลใหม่ (Reset)</button></div>
+</section>
+
+<main id="quizRoot">
+  <!-- ข้อที่ 1 -->
+  <article class="question-card" id="card-1">
+    <div class="card-head">
+      <div class="q-no">1</div>
+      <div class="q-title"><h3>โลหะหลอมทรงกรวยชุดที่ 1</h3><p>การวิเคราะห์สมการพื้นที่ฐานและความสูง</p></div>
+      <span class="tag">ข้อที่ 1</span>
+    </div>
+    <div class="problem">
+      <div class="problem-text">
+        <div class="th">โลหะทรงกรวยรูปหนึ่ง มีพื้นที่ฐานและความสูงเป็นจำนวนเต็ม สามารถหลอมเป็นทรงกรวยได้สองแบบ โดยแบบแรก มีพื้นที่ของหน้าฐานลดลง 2 ตารางหน่วย ความสูงเพิ่มขึ้น 3 หน่วย แบบที่สอง มีพื้นที่ของหน้าฐานเพิ่มขึ้น 5 ตารางหน่วย ความสูงลดลง 4 หน่วย ถ้าทั้งสองแบบนี้มีปริมาตรเท่ากันและเท่ากับปริมาตรเดิมของทรงกรวย แล้วพื้นที่ฐานเดิมของโลหะทรงกรวยรูปนี้มีค่าเท่าใด</div>
+        <div class="en">A solid metal cone has an integer base area and height. It can be recast into two different designs. The first design reduces the base area by 2 square units while increasing the height by 3 units. The second design increases the base area by 5 square units while decreasing the height by 4 units. If both designs maintain a volume equal to the original cone, what is the original base area?</div>
+      </div>
+    </div>
+    <div class="answer-row no-unit">
+      <div>
+        <label class="field-label">ระบุคำตอบของคุณ (จำนวนเต็ม)</label>
+        <input type="number" class="text-answer" id="ans-1" placeholder="ใส่ตัวเลขที่นี่" oninput="updateAnsweredStatus()">
+      </div>
+    </div>
+    <div class="check-controls">
+      <button class="btn primary" type="button" onclick="checkOne(1, 10)">Check this question / ตรวจข้อนี้</button>
+      <button class="btn amber" type="button" onclick="giveUpOne(1)">Give up / ยอมแพ้</button>
+    </div>
+    
+    <!-- กระดาษทด ข้อ 1 -->
+    <div class="scratch-shell">
+      <button type="button" class="scratch-toggle" onclick="toggleScratch(1)"><span>📝 Scratchpad / กระดานทดไซส์ใหญ่พิเศษ</span><span>เปิด/ปิด</span></button>
+      <div class="scratch-panel">
+        <div class="scratch-toolbar">
+          <button type="button" class="scratch-btn active" onclick="scratchTool(1,'pen',this)">ปากกา</button>
+          <button type="button" class="scratch-btn" onclick="scratchTool(1,'eraser',this)">ยางลบ</button>
+          <input class="scratch-size" type="range" min="2" max="18" value="4" oninput="scratchSize(1,this.value)">
+          <button type="button" class="scratch-btn" onclick="clearScratch(1)">ล้างกระดานทด</button>
+        </div>
+        <div class="scratch-canvas-wrap"><canvas class="scratch-canvas" id="scratch-1"></canvas></div>
+        <p class="scratch-hint">ใช้พื้นที่ด้านบนสำหรับวาดความสัมพันธ์พหุนาม หรือคำนวณเลขเศษส่วนได้เต็มที่ครับ</p>
+      </div>
+    </div>
+    <div class="feedback" id="fb-1"></div>
+    <div class="solution" id="sol-1">
+      <h4>Detailed solution / เฉลยละเอียด</h4>
+      <div class="solution-step"><strong>1. ตั้งสมการจากความสัมพันธ์ของปริมาตร</strong><div>สูตรปริมาตรทรงกรวย $V = \frac{1}{3}Ah$ เมื่อ $A$ คือพื้นที่ฐาน และ $h$ คือความสูงเดิม เนื่องจากปริมาตรเท่าเดิมทุกกรณี ตัวคูณ $\frac{1}{3}$ จะตัดกันหมด สรุปพจน์ได้ดังนี้:</div></div>
+      <div class="solution-step"><strong>2. วิเคราะห์กรณีที่ 1 (ฐานลด 2, สูงเพิ่ม 3)</strong><div>$$(A-2)(h+3) = Ah$$$$Ah + 3A - 2h - 6 = Ah \implies 3A - 2h = 6 \quad \text{--- (สมการที่ 1)}$$</div></div>
+      <div class="solution-step"><strong>3. วิเคราะห์กรณีที่ 2 (ฐานเพิ่ม 5, สูงลด 4)</strong><div>$$(A+5)(h-4) = Ah$$$$Ah - 4A + 5h - 20 = Ah \implies -4A + 5h = 20 \quad \text{--- (สมการที่ 2)}$$</div></div>
+      <div class="solution-step"><strong>4. แก้ระบบสมการหาค่า $A$ และ $h$</strong><div>นำ $5 \times$ (สมการที่ 1): $15A - 10h = 30$ <br>นำ $2 \times$ (สมการที่ 2): $-8A + 10h = 40$ <br>บวกสมการทั้งสองเข้าด้วยกัน: $7A = 70 \implies A = 10$<br>แทนค่าหาความสูงเดิมจะได้ $h = 12$</div></div>
+      <div class="solution-step"><strong>สรุปคำตอบ</strong><div>พื้นที่ฐานเดิมของโลหะทรงกรวยชุดนี้เท่ากับ <strong style="color:var(--green)">10</strong> ตารางหน่วย</div></div>
+    </div>
+  </article>
+
+  <!-- ข้อที่ 2 -->
+  <article class="question-card" id="card-2">
+    <div class="card-head">
+      <div class="q-no">2</div>
+      <div class="q-title"><h3>โลหะหลอมทรงกรวยชุดที่ 2</h3><p>การวิเคราะห์สมการพื้นที่ฐานและความสูง</p></div>
+      <span class="tag">ข้อที่ 2</span>
+    </div>
+    <div class="problem">
+      <div class="problem-text">
+        <div class="th">โลหะทรงกรวยรูปหนึ่ง มีพื้นที่ฐานและความสูงเป็นจำนวนเต็ม สามารถหลอมเป็นทรงกรวยได้สองแบบ โดยแบบแรก มีพื้นที่ของหน้าฐานลดลง 3 ตารางหน่วย ความสูงเพิ่มขึ้น 2 หน่วย แบบที่สอง มีพื้นที่ของหน้าฐานเพิ่มขึ้น 6 ตารางหน่วย ความสูงลดลง 3 หน่วย ถ้าทั้งสองแบบนี้มีปริมาตรเท่ากันและเท่ากับปริมาตรเดิมของทรงกรวย แล้วพื้นที่ฐานเดิมของโลหะทรงกรวยรูปนี้มีค่าเท่าใด</div>
+        <div class="en">A solid metal cone has an integer base area and height. It can be recast into two different designs. The first design reduces the base area by 3 square units while increasing the height by 2 units. The second design increases the base area by 6 square units while decreasing the height by 3 units. If both designs maintain a volume equal to the original cone, what is the original base area?</div>
+      </div>
+    </div>
+    <div class="answer-row no-unit">
+      <div>
+        <label class="field-label">ระบุคำตอบของคุณ (จำนวนเต็ม)</label>
+        <input type="number" class="text-answer" id="ans-2" placeholder="ใส่ตัวเลขที่นี่" oninput="updateAnsweredStatus()">
+      </div>
+    </div>
+    <div class="check-controls">
+      <button class="btn primary" type="button" onclick="checkOne(2, 15)">Check this question / ตรวจข้อนี้</button>
+      <button class="btn amber" type="button" onclick="giveUpOne(2)">Give up / ยอมแพ้</button>
+    </div>
+    
+    <!-- กระดาษทด ข้อ 2 -->
+    <div class="scratch-shell">
+      <button type="button" class="scratch-toggle" onclick="toggleScratch(2)"><span>📝 Scratchpad / กระดานทดไซส์ใหญ่พิเศษ</span><span>เปิด/ปิด</span></button>
+      <div class="scratch-panel">
+        <div class="scratch-toolbar">
+          <button type="button" class="scratch-btn active" onclick="scratchTool(2,'pen',this)">ปากกา</button>
+          <button type="button" class="scratch-btn" onclick="scratchTool(2,'eraser',this)">ยางลบ</button>
+          <input class="scratch-size" type="range" min="2" max="18" value="4" oninput="scratchSize(2,this.value)">
+          <button type="button" class="scratch-btn" onclick="clearScratch(2)">ล้างกระดาษทด</button>
+        </div>
+        <div class="scratch-canvas-wrap"><canvas class="scratch-canvas" id="scratch-2"></canvas></div>
+        <p class="scratch-hint">ใช้พื้นที่ด้านบนสำหรับวาดความสัมพันธ์พหุนาม หรือคำนวณเลขเศษส่วนได้เต็มที่ครับ</p>
+      </div>
+    </div>
+    <div class="feedback" id="fb-2"></div>
+    <div class="solution" id="sol-2">
+      <h4>Detailed solution / เฉลยละเอียด</h4>
+      <div class="solution-step"><strong>1. ตั้งสมการจากความสัมพันธ์ของปริมาตร</strong><div>ตัดทอนตัวคูณสัมประสิทธิ์เศษส่วนออก เหลือการคูณผลพหุนามของพื้นที่ฐาน ($A$) และความสูง ($h$):</div></div>
+      <div class="solution-step"><strong>2. วิเคราะห์กรณีที่ 1 (ฐานลด 3, สูงเพิ่ม 2)</strong><div>$$(A-3)(h+2) = Ah$$$$Ah + 2A - 3h - 6 = Ah \implies 2A - 3h = 6 \quad \text{--- (สมการที่ 1)}$$</div></div>
+      <div class="solution-step"><strong>3. วิเคราะห์กรณีที่ 2 (ฐานเพิ่ม 6, สูงลด 3)</strong><div>$$(A+6)(h-3) = Ah$$$$Ah - 3A + 6h - 18 = Ah \implies -3A + 6h = 18 \quad \text{--- (สมการที่ 2)}$$</div></div>
+      <div class="solution-step"><strong>4. แก้ระบบสมการหาค่า $A$ และ $h$</strong><div>นำ $2 \times$ (สมการที่ 2): $-6A + 12h = 36$ <br>นำ $4 \times$ (สมการที่ 1): $8A - 12h = 24$ <br>บวกสมการทั้งสองเข้าด้วยกัน: $2A = 60 \implies A = 15$<br>แทนค่าหาความสูงเดิมจะได้ $h = 10$</div></div>
+      <div class="solution-step"><strong>สรุปคำตอบ</strong><div>พื้นที่ฐานเดิมของโลหะทรงกรวยชุดนี้เท่ากับ <strong style="color:var(--green)">15</strong> ตารางหน่วย</div></div>
+    </div>
+  </article>
+</main>
+</div>
+
+<script>
+const quizState = {
+  1: { done: false, correct: false, gaveUp: false },
+  2: { done: false, correct: false, gaveUp: false }
+};
+
+const scratch = {};
+
+function updateAnsweredStatus() {
+  let doneCount = 0;
+  let correctCount = 0;
+  let answeredCount = 0;
+
+  for (let id in quizState) {
+    if (quizState[id].done) doneCount++;
+    if (quizState[id].correct) correctCount++;
+    
+    const inputVal = document.getElementById(`ans-${id}`).value.trim();
+    if (inputVal !== "") answeredCount++;
+  }
+
+  document.getElementById('answeredText').textContent = `เสร็จสิ้น: ${doneCount} / 2 • กำลังป้อนคำตอบ: ${answeredCount}`;
+  document.getElementById('scoreText').textContent = `Mastery: ${correctCount} / 2`;
+  
+  const pct = Math.round((doneCount / 2) * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+}
+
+function checkOne(id, correctAnswer) {
+  const st = quizState[id];
+  if (st.done) return;
+
+  const inputEl = document.getElementById(`ans-${id}`);
+  const fbEl = document.getElementById(`fb-${id}`);
+  const cardEl = document.getElementById(`card-${id}`);
+  const solEl = document.getElementById(`sol-${id}`);
+  const val = parseInt(inputEl.value.trim(), 10);
+
+  fbEl.style.display = "block";
+
+  if (isNaN(val)) {
+    fbEl.className = "feedback bad";
+    fbEl.innerHTML = "⚠️ ยังไม่ได้กรอกคำตอบเป็นตัวเลขครับ <span class='mini'>Please enter a number first.</span>";
+    return;
+  }
+
+  if (val === correctAnswer) {
+    st.done = true;
+    st.correct = true;
+    cardEl.classList.remove('wrong');
+    cardEl.classList.add('correct', 'locked');
+    inputEl.classList.remove('bad');
+    inputEl.classList.add('ok');
+    
+    fbEl.className = "feedback good";
+    fbEl.innerHTML = "✅ ถูกต้อง! ปลดล็อกเฉลยละเอียดเรียบร้อยแล้ว <span class='mini'>Correct answer! detailed solution is unlocked.</span>";
+    
+    solEl.style.display = "block";
+    lockControls(id);
+  } else {
+    cardEl.classList.add('wrong');
+    inputEl.classList.add('bad');
+    fbEl.className = "feedback bad";
+    fbEl.innerHTML = "❌ ยังไม่ถูกครับ! ลองคำนวณใหม่อีกครั้งนะ (ระบบให้คุณตอบซ้ำจนกว่าจะถูก หรือกดปุ่มยอมแพ้ได้ครับ)";
+  }
+  
+  updateAnsweredStatus();
+  if (window.MathJax) MathJax.typesetPromise([solEl]);
+}
+
+function giveUpOne(id) {
+  const st = quizState[id];
+  if (st.done) return;
+
+  st.done = true;
+  st.gaveUp = true;
+  
+  const cardEl = document.getElementById(`card-${id}`);
+  const fbEl = document.getElementById(`fb-${id}`);
+  const solEl = document.getElementById(`sol-${id}`);
+  const inputEl = document.getElementById(`ans-${id}`);
+
+  cardEl.classList.remove('wrong');
+  cardEl.classList.add('gaveup', 'locked');
+  inputEl.classList.remove('bad');
+  
+  fbEl.style.display = "block";
+  fbEl.className = "feedback bad";
+  fbEl.style.background = "#fff7ed";
+  fbEl.style.color = "#c2410c";
+  fbEl.style.borderColor = "#ffedd5";
+  fbEl.innerHTML = "⚠️ ปลดล็อกเฉลยละเอียดแล้ว แต่จะไม่ได้คะแนนในข้อนี้ <span class='mini'>Give up — detailed solution unlocked.</span>";
+
+  solEl.style.display = "block";
+  lockControls(id);
+  updateAnsweredStatus();
+  if (window.MathJax) MathJax.typesetPromise([solEl]);
+}
+
+function lockControls(id) {
+  const cardEl = document.getElementById(`card-${id}`);
+  cardEl.querySelectorAll('input, .check-controls .btn').forEach(el => {
+    el.disabled = true;
+  });
+}
+
+function toggleScratch(id) {
+  document.querySelector(`#card-${id} .scratch-shell`).classList.toggle('open');
+  resizeScratch(id);
+}
+
+function initScratchpads() {
+  [1, 2].forEach(id => {
+    const c = document.getElementById(`scratch-${id}`);
+    if (c && !scratch[id]) setupScratch(id, c);
+  });
+}
+
+function setupScratch(id, c) {
+  const ctx = c.getContext('2d');
+  scratch[id] = { tool: 'pen', size: 4, drawing: false, ctx, c };
+  resizeScratch(id);
+
+  const pos = e => {
+    const r = c.getBoundingClientRect();
+    const p = e.touches ? e.touches[0] : e;
+    return {
+      x: (p.clientX - r.left) * (c.width / r.width),
+      y: (p.clientY - r.top) * (c.height / r.height)
+    };
+  };
+
+  const down = e => {
+    if(quizState[id].done) return;
+    e.preventDefault();
+    scratch[id].drawing = true;
+    const p = pos(e);
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+  };
+
+  const move = e => {
+    if (!scratch[id].drawing || quizState[id].done) return;
+    e.preventDefault();
+    const p = pos(e);
+    ctx.lineWidth = scratch[id].size;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = scratch[id].tool === 'eraser' ? '#ffffff' : '#172033';
+    ctx.globalCompositeOperation = scratch[id].tool === 'eraser' ? 'destination-out' : 'source-over';
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+  };
+
+  const up = () => {
+    scratch[id].drawing = false;
+    ctx.globalCompositeOperation = 'source-over';
+  };
+
+  c.addEventListener('pointerdown', down);
+  c.addEventListener('pointermove', move);
+  c.addEventListener('pointerup', up);
+  c.addEventListener('pointerleave', up);
+}
+
+function resizeScratch(id) {
+  const s = scratch[id];
+  if (!s) return;
+  const wrap = s.c.parentElement;
+  const old = s.ctx.getImageData(0, 0, s.c.width || 1, s.c.height || 1);
+  s.c.width = wrap.clientWidth * devicePixelRatio;
+  s.c.height = wrap.clientHeight * devicePixelRatio;
+  s.ctx.fillStyle = '#fff';
+  s.ctx.fillRect(0, 0, s.c.width, s.c.height);
+  try { s.ctx.putImageData(old, 0, 0) } catch (e) {}
+}
+
+function scratchTool(id, tool, btn) {
+  scratch[id].tool = tool;
+  btn.parentElement.querySelectorAll('.scratch-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function scratchSize(id, size) {
+  if (scratch[id]) scratch[id].size = Number(size);
+}
+
+function clearScratch(id) {
+  const s = scratch[id];
+  if (!s || quizState[id].done) return;
+  s.ctx.clearRect(0, 0, s.c.width, s.c.height);
+  s.ctx.fillStyle = '#fff';
+  s.ctx.fillRect(0, 0, s.c.width, s.c.height);
+}
+
+window.addEventListener('resize', () => Object.keys(scratch).forEach(resizeScratch));
+
+// เริ่มต้นโหลดตัวกระดาษทด
+setTimeout(initScratchpads, 150);
+</script>
+</body>
+</html>
