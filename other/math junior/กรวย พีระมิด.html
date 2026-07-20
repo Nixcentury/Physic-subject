@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Surface Area & Volume Mastery Quiz V4 — Detailed Solutions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+Thai:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script>
+window.MathJax={
+  tex:{inlineMath:[["\\(","\\)"],["$","$"]],displayMath:[["\\[","\\]"]]},
+  svg:{fontCache:"global"}
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<script type="module" src="https://unpkg.com/mathlive?module"></script>
+<style>
+:root{
+  --bg:#f3f7fb;--card:#fff;--ink:#172033;--muted:#667085;
+  --blue:#2563eb;--green:#16a34a;--amber:#f59e0b;--purple:#7c3aed;
+  --line:#d7deea;--shadow:0 20px 55px rgba(15,23,42,.10);
+  --radius:24px;--font:"Inter","Noto Sans Thai",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;min-height:100vh;color:var(--ink);font-family:var(--font);line-height:1.58;
+  background:
+    radial-gradient(circle at 5% 0%,rgba(37,99,235,.16),transparent 34%),
+    radial-gradient(circle at 96% 3%,rgba(124,58,237,.13),transparent 30%),
+    linear-gradient(180deg,#f8fbff 0%,var(--bg) 100%);
+}
+button,input,select,math-field{font-family:inherit}
+.page{max-width:1220px;margin:0 auto;padding:28px 18px 190px}
+.hero{
+  position:relative;overflow:hidden;padding:34px;border:1px solid rgba(148,163,184,.28);
+  border-radius:32px;background:linear-gradient(135deg,rgba(255,255,255,.97),rgba(239,246,255,.95));
+  box-shadow:var(--shadow);margin-bottom:18px;
+}
+.hero:after{
+  content:"";position:absolute;width:380px;height:380px;border-radius:50%;
+  right:-145px;top:-175px;background:radial-gradient(circle,rgba(124,58,237,.18),transparent 70%);
+}
+.eyebrow{
+  display:inline-flex;padding:8px 12px;border-radius:999px;background:#ede9fe;color:#6d28d9;
+  font-weight:900;font-size:.84rem;letter-spacing:.03em;text-transform:uppercase;margin-bottom:12px;
+}
+h1{font-size:clamp(2rem,4vw,3.25rem);line-height:1.06;margin:0 0 12px;font-weight:900;letter-spacing:-.045em}
+.subtitle{max-width:960px;margin:0;color:#475467;font-size:1.07rem}
+.hero-note{margin:8px 0 0;color:#475467;font-weight:750}
+.pill-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.pill{padding:8px 12px;border-radius:999px;border:1px solid #dbeafe;background:#fff;color:#334155;font-weight:850;font-size:.9rem}
+
+.formula-lab{
+  margin:18px 0;border:1px solid #c7d2fe;border-radius:24px;background:#fff;box-shadow:var(--shadow);overflow:hidden;
+}
+.formula-toggle{
+  width:100%;border:0;background:linear-gradient(90deg,#eef2ff,#f5f3ff);padding:15px 18px;
+  display:flex;align-items:center;justify-content:space-between;gap:14px;color:#4338ca;font-weight:900;
+  cursor:pointer;text-align:left;
+}
+.formula-body{display:none;padding:18px}
+.formula-lab.open .formula-body{display:block}
+.formula-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.formula-card{border:1px solid #e2e8f0;border-radius:18px;padding:14px;background:#fbfdff}
+.formula-card h3{margin:0 0 8px;font-size:1rem}
+.formula-card p{margin:5px 0;color:#475467}
+.limit-box{margin-top:12px;border-left:5px solid var(--amber);border-radius:0 16px 16px 0;background:#fffbeb;padding:13px 15px;color:#92400e;font-weight:800}
+
+.toolbar{
+  position:sticky;top:0;z-index:50;margin:18px 0 24px;padding:12px;border-radius:22px;
+  border:1px solid rgba(148,163,184,.3);background:rgba(255,255,255,.91);backdrop-filter:blur(15px);
+  box-shadow:0 10px 34px rgba(15,23,42,.08);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+}
+.score-box{display:flex;gap:9px;flex-wrap:wrap}
+.stat{padding:9px 12px;border-radius:15px;border:1px solid #e2e8f0;background:#f8fafc;color:#334155;font-weight:900}
+.stat.primary{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}
+.progress-wrap{flex:1;min-width:220px;max-width:420px}
+.progress{height:12px;border-radius:999px;background:#e2e8f0;overflow:hidden}
+.bar{height:100%;width:0;background:linear-gradient(90deg,#2563eb,#7c3aed);transition:.2s width}
+.progress-label{margin-top:4px;color:#64748b;font-size:.82rem;font-weight:800}
+.btn{border:0;border-radius:14px;padding:10px 14px;font-weight:900;cursor:pointer;background:#e2e8f0;color:#172033;transition:.15s transform,.15s box-shadow}
+.btn:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(15,23,42,.12)}
+.btn.primary{background:var(--blue);color:#fff}
+.btn.green{background:var(--green);color:#fff}
+.btn.amber{background:var(--amber);color:#fff}
+.btn.ghost{background:#fff;border:1px solid #d0d7e2}
+.btn.dark{background:#172033;color:#fff}
+
+.section-title{display:flex;align-items:center;gap:12px;margin:31px 0 14px}
+.section-badge{display:grid;place-items:center;width:44px;height:44px;border-radius:16px;background:#172033;color:#fff;font-weight:900}
+.section-title h2{margin:0;font-size:1.32rem}
+.section-title p{margin:2px 0 0;color:#667085}
+
+.question-card{
+  background:var(--card);border:1px solid rgba(148,163,184,.3);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:22px;margin-bottom:18px;overflow:hidden;
+}
+.question-card.correct{border-color:rgba(22,163,74,.5);box-shadow:0 20px 55px rgba(22,163,74,.11)}
+.question-card.gaveup{border-color:rgba(245,158,11,.56);box-shadow:0 20px 55px rgba(245,158,11,.10)}
+/* ตั้งใจไม่มีสถานะสีแดงเมื่อผิด และไม่ทำเครื่องหมายรายช่อง */
+.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:14px}
+.q-no{display:inline-grid;place-items:center;width:48px;height:48px;border-radius:17px;background:#172033;color:#fff;font-weight:900;flex:0 0 auto}
+.q-title{flex:1}
+.q-title h3{margin:0 0 4px;font-size:1.16rem}
+.q-title p{margin:0;color:#64748b}
+.tag{display:inline-flex;padding:7px 10px;border-radius:999px;background:#f1f5f9;color:#475569;font-size:.82rem;font-weight:900;white-space:nowrap}
+.problem{background:linear-gradient(180deg,#f8fafc,#fff);border:1px solid #e2e8f0;border-radius:20px;padding:18px;margin:14px 0}
+.problem-text{font-size:1.02rem;color:#344054}
+.problem-text .th{font-weight:800;color:#1f2937;margin-bottom:6px}
+.problem-text .en{color:#667085;font-size:.94rem}
+.figure{margin-top:14px;border:1px solid #e5e7eb;border-radius:18px;background:#fff;padding:10px;overflow:auto}
+.figure svg{width:100%;min-width:520px;height:auto;display:block}
+
+.answer-grid{display:grid;gap:11px;margin-top:12px}
+.answer-part{border:1px solid #dbe3ef;border-radius:18px;padding:13px;background:#fff}
+.part-label{display:block;margin-bottom:8px;color:#334155;font-weight:900}
+.answer-row{display:grid;grid-template-columns:minmax(220px,1fr) 150px;gap:10px;align-items:end}
+.answer-row.one{grid-template-columns:minmax(220px,420px)}
+
+math-field.answer-math{
+  display:block;width:100%;min-height:58px;border:2px solid #d0d7e2;border-radius:18px;
+  background:#fbfdff;padding:9px 12px;color:#111827;font-size:1.28rem;
+  --caret-color:#2563eb;--selection-background-color:#bfdbfe;
+}
+math-field.answer-math:focus-within{
+  outline:none;border-color:#2563eb;box-shadow:0 0 0 4px rgba(37,99,235,.12);
+}
+.choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.choice-grid.tf{grid-template-columns:repeat(2,minmax(130px,220px))}
+.choice-card{display:block;cursor:pointer;user-select:none}
+.choice-card input{position:absolute;opacity:0;pointer-events:none}
+.choice-ui{
+  min-height:58px;border:2px solid #d8e0eb;border-radius:17px;background:#fff;
+  display:flex;align-items:center;gap:11px;padding:11px 13px;
+  color:#334155;font-weight:850;
+  transition:.16s border-color,.16s background,.16s transform,.16s box-shadow;
+}
+.choice-card:hover .choice-ui{
+  transform:translateY(-1px);border-color:#a5b4fc;box-shadow:0 7px 18px rgba(37,99,235,.08);
+}
+.choice-mark{
+  width:24px;height:24px;border-radius:8px;border:2px solid #cbd5e1;background:#f8fafc;
+  display:grid;place-items:center;flex:0 0 auto;color:transparent;font-size:.9rem;font-weight:1000;
+}
+.choice-card input:checked + .choice-ui{
+  border-color:#2563eb;background:#eff6ff;box-shadow:0 0 0 3px rgba(37,99,235,.10);
+}
+.choice-card input:checked + .choice-ui .choice-mark{
+  border-color:#2563eb;background:#2563eb;color:#fff;
+}
+.choice-text{min-width:0;line-height:1.45}
+.choice-text mjx-container{margin:0!important}
+.unit-chip{min-height:54px;border:2px solid #e2e8f0;border-radius:17px;background:#f8fafc;display:grid;place-items:center;padding:8px 10px;color:#475569;font-weight:900}
+
+.check-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.feedback{display:none;margin-top:14px;border-radius:18px;padding:12px 14px;font-weight:850}
+.feedback.show{display:block}
+.feedback.good{background:#dcfce7;color:#166534;border:1px solid #bbf7d0}
+.feedback.retry{background:#eff6ff;color:#1e3a8a;border:1px solid #bfdbfe}
+.feedback.warn{background:#fffbeb;color:#92400e;border:1px solid #fde68a}
+.solution{display:none;margin-top:14px;border:1px solid #dbeafe;background:#f8fbff;border-radius:20px;padding:16px}
+.solution.show{display:block}
+.solution h4{margin:0 0 8px;color:#1d4ed8}
+.solution-step{border-left:4px solid #2563eb;background:#fff;border-radius:0 14px 14px 0;padding:12px;margin:10px 0}
+.solution-step strong{display:block;margin-bottom:4px}
+.solution-answer{border:1px solid #bbf7d0;background:#f0fdf4;border-radius:16px;padding:13px 14px;margin:12px 0;color:#166534}
+.solution-answer strong,.solution-note strong{display:block;margin-bottom:5px}
+.solution-note{border:1px solid #fde68a;background:#fffbeb;border-radius:16px;padding:13px 14px;margin:12px 0;color:#92400e}
+.solution mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:3px 0;margin:.65em 0!important}
+
+.scratch-shell{margin-top:14px;border:1px solid #dbe3ef;border-radius:18px;overflow:hidden;background:#fff}
+.scratch-toggle{
+  width:100%;border:0;background:#eff6ff;color:#1d4ed8;padding:12px 14px;text-align:left;
+  display:flex;justify-content:space-between;gap:10px;font-weight:900;cursor:pointer;
+}
+.scratch-panel{display:none;padding:12px;border-top:1px solid #dbe3ef}
+.scratch-shell.open .scratch-panel{display:block}
+.scratch-toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:9px}
+.scratch-btn{border:1px solid #cbd5e1;background:#fff;border-radius:10px;padding:7px 10px;font-weight:800;cursor:pointer}
+.scratch-btn.active{background:#2563eb;color:#fff;border-color:#2563eb}
+.scratch-size{width:110px;accent-color:#2563eb}
+.scratch-canvas-wrap{
+  width:100%;height:330px;border:1px solid #cbd5e1;border-radius:14px;overflow:hidden;touch-action:none;
+  background:linear-gradient(#eef2f7 1px,transparent 1px),linear-gradient(90deg,#eef2f7 1px,transparent 1px),#fff;
+  background-size:24px 24px;
+}
+.scratch-canvas{display:block;width:100%;height:100%}
+.scratch-hint{margin:8px 0 0;color:#64748b;font-size:.88rem;font-weight:700}
+
+.summary-panel{display:none;margin:22px 0;padding:20px;border-radius:24px;background:#fff;border:1px solid #c7d2fe;box-shadow:var(--shadow)}
+.summary-panel.show{display:block}
+.summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.summary-tile{border:1px solid #e2e8f0;border-radius:18px;background:#f8fafc;padding:14px}
+.summary-tile .big{font-size:1.55rem;font-weight:900;color:#4338ca}
+.summary-tile .label{color:#64748b;font-weight:800;font-size:.9rem}
+.hidden-correct .question-card.correct{display:none}
+
+
+.kb-shell{
+  position:fixed;left:50%;bottom:10px;transform:translateX(-50%);
+  width:min(1120px,calc(100% - 22px));z-index:90;
+  border:1px solid rgba(148,163,184,.40);border-radius:24px;
+  background:rgba(255,255,255,.95);backdrop-filter:blur(17px);
+  box-shadow:0 24px 65px rgba(15,23,42,.18);padding:10px;
+}
+.kb-shell.collapsed .kb-grid{display:none}
+.kb-top{display:flex;justify-content:space-between;align-items:center;gap:10px;color:#334155;font-weight:900}
+.kb-caption{display:flex;align-items:center;gap:9px}
+.kb-dot{width:10px;height:10px;border-radius:50%;background:#7c3aed;box-shadow:0 0 0 5px #ede9fe}
+.kb-grid{display:grid;grid-template-columns:repeat(14,minmax(42px,1fr));gap:7px;margin-top:9px}
+.key{
+  min-height:40px;border:1px solid #cbd5e1;border-radius:11px;background:#f8fafc;
+  color:#172033;font-weight:900;cursor:pointer;padding:7px 5px;
+  transition:.13s transform,.13s background,.13s border-color;
+}
+.key:hover{transform:translateY(-1px);background:#eff6ff;border-color:#93c5fd}
+.key.math{background:#eef2ff;color:#4338ca}
+.key.action{background:#fff7ed;color:#9a3412}
+.key.wide{grid-column:span 2}
+
+@media(max-width:920px){
+  .toolbar{position:static}.formula-grid{grid-template-columns:1fr 1fr}
+  .choice-grid{grid-template-columns:1fr}.kb-grid{grid-template-columns:repeat(7,minmax(38px,1fr))}
+  .answer-row{grid-template-columns:1fr}.figure svg{min-width:470px}
+}
+@media(max-width:600px){
+  .page{padding:16px 11px 70px}.hero{padding:24px}.question-card{padding:16px}
+  .card-head{flex-direction:column}.formula-grid,.summary-grid{grid-template-columns:1fr}
+  .figure svg{min-width:440px}.scratch-canvas-wrap{height:290px}.kb-grid{grid-template-columns:repeat(5,minmax(38px,1fr))}.kb-shell{bottom:6px}
+}
+@media print{
+  body{background:#fff}.page{max-width:none;padding:0}
+  .toolbar,.scratch-shell,.check-controls,.formula-toggle,.kb-shell{display:none!important}
+  .formula-body{display:block!important}.hero,.question-card,.formula-lab{box-shadow:none;break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="page" id="pageRoot">
+<header class="hero">
+  <div class="eyebrow">Private Tutoring Quiz • Geometry Mastery</div>
+  <h1>พื้นที่ผิวและปริมาตร: พีระมิด ปริซึม กรวย ทรงกระบอก และทรงกลม</h1>
+  <p class="subtitle">ฝึกให้แม่นทั้งสูตร ความหมายของความสูงตรง–ความสูงเอียง ข้อจำกัดของสูตร และการประยุกต์พีทาโกรัสกับระบบสมการ</p>
+  <p class="hero-note">ตัวเลือกเป็นการ์ดแบบติ๊ก ช่องคำนวณใช้ MathLive และเฉลยทุกข้อปรับเป็นแบบทีละขั้น ตั้งแต่เลือกสูตร วาดความสัมพันธ์ แทนค่า ตรวจข้อจำกัด จนถึงสรุปคำตอบ</p>
+  <div class="pill-row">
+    <span class="pill">24 ข้อใหญ่</span><span class="pill">สูตร + ข้อจำกัด</span>
+    <span class="pill">Pythagoras</span><span class="pill">ระบบสมการ</span>
+    <span class="pill">Regular Triangle & Hexagon Bases</span><span class="pill">Prism • Cylinder • Frustum</span><span class="pill">Composite Solids</span><span class="pill">MathJax Choices</span><span class="pill">MathLive Keyboard</span><span class="pill">Step-by-step Solutions</span><span class="pill">Ultimate Boss</span>
+  </div>
+</header>
+
+<section class="formula-lab" id="formulaLab">
+  <button class="formula-toggle" type="button" onclick="document.getElementById('formulaLab').classList.toggle('open')">
+    <span>เปิด/ปิด Formula Lab สำหรับครูอธิบายก่อนเริ่ม Quiz</span><span>สูตรสำคัญ + จุดห้ามใช้ผิด</span>
+  </button>
+  <div class="formula-body">
+    <div class="formula-grid">
+      <div class="formula-card"><h3>พีระมิด</h3><p>\(V=\frac13Bh\)</p><p>\(h\) ต้องเป็นความสูงตั้งฉากกับฐาน</p></div>
+      <div class="formula-card"><h3>พีระมิดฐานสม่ำเสมอ</h3><p>\(A_L=\frac12Pl\)</p><p>ใช้ได้เมื่อหน้าข้างทุกหน้ามีความสูงเอียงเดียวกัน</p></div>
+      <div class="formula-card"><h3>พีระมิดฐานสี่เหลี่ยมจัตุรัส</h3><p>\(l^2=h^2+\left(\frac a2\right)^2\)</p><p>\(A_L=2al,\ A_T=a^2+2al\)</p></div>
+      <div class="formula-card"><h3>กรวยกลมตรง</h3><p>\(l^2=h^2+r^2\)</p><p>\(A_L=\pi rl,\ A_T=\pi rl+\pi r^2\)</p></div>
+      <div class="formula-card"><h3>ทรงกลม</h3><p>\(A=4\pi r^2\)</p><p>\(V=\frac43\pi r^3\)</p></div>
+      <div class="formula-card"><h3>ครึ่งทรงกลม</h3><p>ผิวโค้ง \(=2\pi r^2\)</p><p>ผิวทั้งหมดรวมฐาน \(=3\pi r^2\)</p></div>
+
+      <div class="formula-card"><h3>ฐานสามเหลี่ยมด้านเท่า</h3><p>\(B=\frac{\sqrt3}{4}a^2\)</p><p>อะโพทีม \(q=\frac{a\sqrt3}{6}\)</p></div>
+      <div class="formula-card"><h3>ฐานหกเหลี่ยมด้านเท่า</h3><p>\(B=\frac{3\sqrt3}{2}a^2\)</p><p>อะโพทีม \(q=\frac{\sqrt3}{2}a\)</p></div>
+      <div class="formula-card"><h3>ปริซึมตรง</h3><p>\(A_L=Ph,\ A_T=Ph+2B\)</p><p>\(V=Bh\)</p></div>
+      <div class="formula-card"><h3>ทรงกระบอก</h3><p>\(A_L=2\pi rh\)</p><p>\(A_T=2\pi rh+2\pi r^2,\ V=\pi r^2h\)</p></div>
+      <div class="formula-card"><h3>กรวยตัดยอด</h3><p>\(A_L=\pi(R+r)l\)</p><p>\(V=\frac13\pi h(R^2+Rr+r^2)\)</p></div>
+
+    </div>
+    <div class="limit-box">
+      จุดสำคัญ: สูตร \(\frac12Pl\) ไม่ใช่สูตรลัดสำหรับพีระมิดทุกแบบ หากหน้าข้างมีความสูงเอียงต่างกัน ต้องหาพื้นที่สามเหลี่ยมแต่ละคู่แล้วบวกกัน
+      และการหาปริมาตรต้องใช้ “ความสูงตั้งฉาก” ไม่ใช่ความสูงเอียง สำหรับฐานรูปหลายเหลี่ยมสม่ำเสมอ เส้นที่ใช้หา \(l\) คืออะโพทีมของฐาน ไม่ใช่ระยะจากศูนย์กลางไปจุดยอดฐาน
+    </div>
+  </div>
+</section>
+
+<section class="toolbar">
+  <div class="score-box">
+    <div class="stat primary" id="scoreText">ผ่านแล้ว 0 / 24</div>
+    <div class="stat" id="perfectText">ถูกครั้งแรก 0</div>
+    <div class="stat" id="gaveText">ยอมแพ้ 0</div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress"><div class="bar" id="progressBar"></div></div>
+    <div class="progress-label">ระบบบอกจำนวนส่วนที่ถูกเท่านั้น ไม่ทำเครื่องหมายรายช่อง</div>
+  </div>
+  <div class="score-box">
+    <button class="btn green" type="button" onclick="scrollToFirstIncomplete()">ข้อที่ยังไม่ผ่าน</button>
+    <button class="btn ghost" type="button" id="hideBtn" onclick="togglePassed()">ซ่อนข้อที่ผ่าน</button>
+    <button class="btn dark" type="button" onclick="resetAll()">Reset</button>
+  </div>
+</section>
+
+<section class="summary-panel" id="summaryPanel">
+  <h2 style="margin:0 0 12px">สรุปผล / Summary</h2>
+  <div class="summary-grid">
+    <div class="summary-tile"><div class="big" id="sumSolved">0</div><div class="label">ผ่านแล้ว</div></div>
+    <div class="summary-tile"><div class="big" id="sumPerfect">0</div><div class="label">ถูกครั้งแรก</div></div>
+    <div class="summary-tile"><div class="big" id="sumGave">0</div><div class="label">ยอมแพ้</div></div>
+    <div class="summary-tile"><div class="big" id="sumPct">0%</div><div class="label">Progress</div></div>
+  </div>
+</section>
+
+<main id="quizRoot"></main>
+</div>
+
+<div class="kb-shell" id="kbShell">
+  <div class="kb-top">
+    <div class="kb-caption"><span class="kb-dot"></span><span>Geometry Math Keyboard — คลิกช่องคำตอบก่อน</span></div>
+    <button class="btn ghost" type="button" onclick="document.getElementById('kbShell').classList.toggle('collapsed')">ย่อ / ขยาย</button>
+  </div>
+  <div class="kb-grid" id="kbGrid"></div>
+</div>
+
+<script type="application/json" id="questionData">
+[{"id":1,"sec":"A","tag":"Formula Limits","title":"สูตรไหนใช้ได้จริง","fig":"formula","prompt":"เลือก ถูก / ผิด ทุกข้อความ ระบบจะบอกเพียงจำนวนส่วนที่ถูก","en":"Judge each statement. The system only reports how many parts are correct.","parts":[["tf","พีระมิดที่หน้าข้างทุกหน้ามีความสูงเอียงเดียวกัน ใช้ \\(A_L=\\frac12Pl\\) ได้",true],["tf","พีระมิดทุกชนิดใช้ \\(A_L=\\frac12Pl\\) โดยเลือกความสูงเอียงด้านใดด้านหนึ่งมาแทน \\(l\\) ได้เสมอ",false],["tf","พื้นที่ผิวทั้งหมดของกรวยเท่ากับ \\(\\pi rl\\)",false],["tf","ปริมาตรพีระมิดใช้ความสูงตั้งฉากกับฐาน",true],["tf","ทรงกลมมีพื้นที่ผิว \\(4\\pi r^2\\)",true],["tf","กรวยกลมตรงมีความสัมพันธ์ \\(l^2=h^2+r^2\\)",true]],"hint":"แยกให้ชัดระหว่างผิวข้างกับผิวทั้งหมด และระหว่างความสูงตรงกับความสูงเอียง","sol":"<div class=\"solution-step\"><strong>แนวคิดก่อนตรวจแต่ละข้อความ</strong><div>สูตรผิวข้างของพีระมิด \\(\\frac12Pl\\) เกิดจากการรวมพื้นที่สามเหลี่ยมหน้าข้าง \\(\\frac12(\\text{ด้านฐาน})(\\text{ความสูงเอียง})\\) ทุกหน้า ดังนั้นจะใช้ \\(l\\) ค่าเดียวได้ ก็ต่อเมื่อหน้าข้างทุกหน้ามีความสูงเอียงเท่ากัน</div></div><div class=\"solution-step\"><strong>ตรวจข้อความที่ 1–2</strong><div>ข้อความที่ 1 <b>ถูก</b> เพราะเมื่อทุกหน้ามีความสูงเอียงร่วมกัน \\(l\\) จะได้ \\[A_L=\\frac12(a_1+a_2+\\cdots+a_n)l=\\frac12Pl.\\]ข้อความที่ 2 <b>ผิด</b> เพราะพีระมิดฐานไม่สม่ำเสมออาจมีความสูงเอียงหลายค่า จึงต้องหาพื้นที่สามเหลี่ยมแต่ละหน้าหรือแต่ละคู่แล้วบวกกัน</div></div><div class=\"solution-step\"><strong>ตรวจข้อความที่ 3–4</strong><div>ข้อความที่ 3 <b>ผิด</b> เพราะ \\(\\pi rl\\) เป็นเพียงพื้นที่ผิวข้างของกรวย ถ้าถามพื้นที่ผิวทั้งหมดต้องบวกฐานอีกหนึ่งวง:\\[A_T=\\pi rl+\\pi r^2.\\]ข้อความที่ 4 <b>ถูก</b> เพราะปริมาตรพีระมิดใช้ระยะตั้งฉากจากยอดลงสู่ระนาบฐาน:\\[V=\\frac13Bh.\\]</div></div><div class=\"solution-step\"><strong>ตรวจข้อความที่ 5–6</strong><div>ข้อความที่ 5 <b>ถูก</b>: ทรงกลมมีพื้นที่ผิว \\(4\\pi r^2\\). ข้อความที่ 6 <b>ถูก</b>: หน้าตัดผ่านแกนของกรวยกลมตรงให้สามเหลี่ยมมุมฉากที่มีด้านประกอบ \\(h,r\\) และด้านตรงข้ามมุมฉาก \\(l\\), ดังนั้น\\[l^2=h^2+r^2.\\]</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>ถูก, ผิด, ผิด, ถูก, ถูก, ถูก</div></div>"},{"id":2,"sec":"A","tag":"Meaning of Symbols","title":"เลือกความยาวให้ถูกชนิด","fig":"heights","prompt":"เลือกคำตอบที่ตรงกับสัญลักษณ์ในสูตร","en":"Choose the correct type of length used in each formula.","parts":[["mc","ใน \\(V=\\frac13Bh\\) ของพีระมิด ค่า \\(h\\) คืออะไร","ตั้งฉากกับฐาน",["ตั้งฉากกับฐาน","ตามขอบเอียง","บนหน้าข้าง"]],["mc","ใน \\(A_L=\\pi rl\\) ของกรวย ค่า \\(l\\) คืออะไร","ความสูงเอียง",["รัศมี","ความสูงตรง","ความสูงเอียง"]],["mc","ในพีระมิดฐานสี่เหลี่ยมจัตุรัสด้าน \\(a\\) เส้นที่ใช้กับพีทาโกรัสเพื่อหา \\(l\\) คือ","a/2",["a","a/2","เส้นทแยงมุมฐานทั้งหมด"]]],"hint":"มองสามเหลี่ยมมุมฉากที่ลากจากยอดลงศูนย์กลางฐาน แล้วออกไปกึ่งกลางด้านฐาน","sol":"<div class=\"solution-step\"><strong>ข้อ 1: ความสูงในสูตรปริมาตร</strong><div>ในสูตร \\[V=\\frac13Bh\\] ค่า \\(h\\) ต้องเป็นระยะที่ตั้งฉากกับระนาบฐาน เพราะปริมาตรวัดการซ้อนชั้นของพื้นที่ฐานตามแนวตั้งฉาก ไม่ใช่ตามขอบเอียง</div></div><div class=\"solution-step\"><strong>ข้อ 2: ความสูงในสูตรผิวข้างกรวย</strong><div>ในสูตร \\[A_L=\\pi rl\\] ค่า \\(l\\) คือความสูงเอียงจากยอดกรวยไปยังเส้นรอบวงฐาน เมื่อคลี่ผิวกรวยออก \\(l\\) จะเป็นรัศมีของภาควงกลม</div></div><div class=\"solution-step\"><strong>ข้อ 3: เส้นที่ใช้หา \\(l\\) ของพีระมิดฐานจัตุรัส</strong><div>ลากหน้าตัดจากยอด ผ่านศูนย์กลางฐาน ไปยังกึ่งกลางด้านฐาน จะได้สามเหลี่ยมมุมฉาก ที่มีด้านประกอบ \\(h\\) และ \\(\\frac a2\\):\\[l^2=h^2+\\left(\\frac a2\\right)^2.\\]</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>ตั้งฉากกับฐาน, ความสูงเอียง, และ \\(\\frac a2\\)</div></div>"},{"id":3,"sec":"A","tag":"Square Pyramid Symbolic","title":"พีระมิดฐานจัตุรัสแบบตัวแปร","fig":"squarePyramid","prompt":"พีระมิดฐานสี่เหลี่ยมจัตุรัสยาวด้านละ \\(a\\) สูงตั้งฉาก \\(h\\) และสูงเอียง \\(l\\)","en":"A square pyramid has base side a, vertical height h, and slant height l.","parts":[["mc","ความสัมพันธ์ของ \\(l\\) ที่ถูกต้อง","sqrt(h2+a2/4)",["sqrt(h2+a2)","sqrt(h2+a2/4)","h+a/2"]],["mc","พื้นที่ผิวข้าง","2al",["al","2al","4al"]],["mc","พื้นที่ผิวทั้งหมด","a2+2al",["a2+al","a2+2al","2a2+2al"]],["mc","ปริมาตร","a2h/3",["a2h","a2h/2","a2h/3"]]],"hint":"ผิวข้างมีสามเหลี่ยม 4 หน้า แต่ละหน้ามีพื้นที่ \\(\\frac12al\\)","sol":"<div class=\"solution-step\"><strong>1. หาความสูงเอียง</strong><div>ระยะจากศูนย์กลางฐานไปกึ่งกลางด้านของสี่เหลี่ยมจัตุรัสเท่ากับ \\(\\frac a2\\). ใช้พีทาโกรัส:\\[l^2=h^2+\\left(\\frac a2\\right)^2=h^2+\\frac{a^2}{4}\\]\\[\\therefore\\quad l=\\sqrt{h^2+\\frac{a^2}{4}}.\\]</div></div><div class=\"solution-step\"><strong>2. พื้นที่ผิวข้าง</strong><div>หน้าข้างมี 4 หน้า แต่ละหน้าเป็นสามเหลี่ยมฐาน \\(a\\) สูงเอียง \\(l\\):\\[A_L=4\\left(\\frac12al\\right)=2al.\\]</div></div><div class=\"solution-step\"><strong>3. พื้นที่ผิวทั้งหมด</strong><div>พื้นที่ฐานคือ \\(a^2\\), ดังนั้น\\[A_T=a^2+A_L=a^2+2al.\\]</div></div><div class=\"solution-step\"><strong>4. ปริมาตร</strong><div>ใช้พื้นที่ฐาน \\(B=a^2\\) และความสูงตั้งฉาก \\(h\\):\\[V=\\frac13Bh=\\frac13a^2h.\\]</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\(l=\\sqrt{h^2+\\frac{a^2}{4}},\\quad A_L=2al,\\quad A_T=a^2+2al,\\quad V=\\frac13a^2h\\)</div></div>"},{"id":4,"sec":"A","tag":"Rectangular Pyramid Trap","title":"ข้อจำกัดของสูตรครึ่งเส้นรอบรูปฐาน","fig":"rectPyramid","prompt":"พีระมิดฐานสี่เหลี่ยมผืนผ้า \\(a\\times b\\) มียอดอยู่เหนือจุดศูนย์กลางฐาน ให้ \\(l_a\\) เป็นความสูงเอียงของหน้าที่มีฐานยาว \\(a\\) และ \\(l_b\\) ของหน้าที่มีฐานยาว \\(b\\)","en":"A right rectangular pyramid generally has two different slant heights.","parts":[["mc","\\(l_a\\) เท่ากับ","sqrt(h2+b2/4)",["sqrt(h2+a2/4)","sqrt(h2+b2/4)","sqrt(h2+a2+b2)"]],["mc","\\(l_b\\) เท่ากับ","sqrt(h2+a2/4)",["sqrt(h2+a2/4)","sqrt(h2+b2/4)","h+(a+b)/2"]],["mc","พื้นที่ผิวข้าง","ala+blb",["(a+b)(la+lb)","ala+blb","2ala+2blb"]],["tf","ถ้า \\(l_a\\ne l_b\\) จะใช้ \\(\\frac12P l\\) โดยเลือก \\(l\\) เพียงค่าเดียวไม่ได้",true]],"hint":"หน้าคู่ที่มีฐานยาวเท่ากันมีความสูงเอียงเท่ากัน แต่คนละคู่ไม่จำเป็นต้องเท่ากัน","sol":"<div class=\"solution-step\"><strong>1. ทำไมมีความสูงเอียงสองค่า</strong><div>พีระมิดฐานสี่เหลี่ยมผืนผ้ามีหน้าข้างสองคู่ หน้าที่มีฐานยาว \\(a\\) ใช้ระยะจากศูนย์กลางฐานไปด้านนั้น ซึ่งเท่ากับครึ่งหนึ่งของอีกมิติ คือ \\(\\frac b2\\). จึงได้\\[l_a=\\sqrt{h^2+\\left(\\frac b2\\right)^2}.\\]</div></div><div class=\"solution-step\"><strong>2. ความสูงเอียงของหน้าที่มีฐาน \\(b\\)</strong><div>ในทำนองเดียวกัน หน้าที่มีฐานยาว \\(b\\) ใช้ระยะ \\(\\frac a2\\):\\[l_b=\\sqrt{h^2+\\left(\\frac a2\\right)^2}.\\]</div></div><div class=\"solution-step\"><strong>3. รวมพื้นที่หน้าข้าง</strong><div>หน้าฐาน \\(a\\) มี 2 หน้า:\\[2\\left(\\frac12a l_a\\right)=a l_a.\\]หน้าฐาน \\(b\\) มี 2 หน้า:\\[2\\left(\\frac12b l_b\\right)=b l_b.\\]ดังนั้น\\[A_L=a l_a+b l_b.\\]</div></div><div class=\"solution-note\"><strong>จุดที่ต้องระวัง</strong><div>ถ้า \\(l_a\\ne l_b\\) ห้ามนำความสูงเอียงค่าใดค่าหนึ่งไปแทนใน \\(\\frac12Pl\\) เพราะสูตรนั้นสมมติว่าทุกหน้ามีความสูงเอียงเดียวกัน</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\(l_a=\\sqrt{h^2+\\frac{b^2}{4}},\\quad l_b=\\sqrt{h^2+\\frac{a^2}{4}},\\quad A_L=a l_a+b l_b\\)</div></div>"},{"id":5,"sec":"B","tag":"Square Pyramid Numbers","title":"พีระมิดฐานจัตุรัส 10–12–13","fig":"squarePyramid","prompt":"พีระมิดฐานจัตุรัสด้านละ 10 หน่วย สูงตั้งฉาก 12 หน่วย","en":"Square pyramid: base side 10, vertical height 12.","parts":[["num","ความสูงเอียง \\(l\\)",13,0.001,"หน่วย"],["num","พื้นที่ผิวข้าง",260,0.001,"ตารางหน่วย"],["num","พื้นที่ผิวทั้งหมด",360,0.001,"ตารางหน่วย"],["num","ปริมาตร",400,0.001,"ลูกบาศก์หน่วย"]],"hint":"ครึ่งหนึ่งของด้านฐานเท่ากับ 5 จึงเกิดสามเหลี่ยม 5–12–13","sol":"<div class=\"solution-step\"><strong>1. หาความสูงเอียง</strong><div>ด้านฐาน \\(a=10\\), สูงตั้งฉาก \\(h=12\\), และครึ่งด้านฐานเท่ากับ \\(5\\):\\[l=\\sqrt{12^2+5^2}=\\sqrt{144+25}=\\sqrt{169}=13.\\]</div></div><div class=\"solution-step\"><strong>2. พื้นที่ผิวข้าง</strong><div>\\[A_L=2al=2(10)(13)=260.\\]</div></div><div class=\"solution-step\"><strong>3. พื้นที่ผิวทั้งหมด</strong><div>พื้นที่ฐาน \\(B=10^2=100\\):\\[A_T=B+A_L=100+260=360.\\]</div></div><div class=\"solution-step\"><strong>4. ปริมาตร</strong><div>\\[V=\\frac13Bh=\\frac13(100)(12)=400.\\]</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\(l=13,\\ A_L=260,\\ A_T=360,\\ V=400\\)</div></div>"},{"id":6,"sec":"B","tag":"Two Slant Heights","title":"พีระมิดฐานผืนผ้า: ต้องใช้สองความสูงเอียง","fig":"rectPyramid","prompt":"ฐานเป็นสี่เหลี่ยมผืนผ้า 10 × 18 หน่วย และสูงตั้งฉาก 12 หน่วย ยอดอยู่เหนือศูนย์กลางฐาน","en":"Rectangular pyramid: base 10 by 18 and vertical height 12.","parts":[["num","ความสูงเอียงของหน้าที่มีฐานยาว 10",15,0.001,"หน่วย"],["num","ความสูงเอียงของหน้าที่มีฐานยาว 18",13,0.001,"หน่วย"],["num","พื้นที่ผิวข้าง",384,0.001,"ตารางหน่วย"],["num","พื้นที่ผิวทั้งหมด",564,0.001,"ตารางหน่วย"],["num","ปริมาตร",720,0.001,"ลูกบาศก์หน่วย"]],"hint":"หน้าฐาน 10 ใช้ระยะจากศูนย์กลางไปอีกด้านเท่ากับ 9 ส่วนหน้าฐาน 18 ใช้ระยะ 5","sol":"<div class=\"solution-step\"><strong>1. แยกหน้าข้างออกเป็นสองคู่</strong><div>ฐานมีขนาด \\(10\\times18\\), สูงตั้งฉาก \\(12\\). หน้าที่มีฐานยาว 10 ใช้ระยะจากศูนย์กลางฐานไปด้านนั้นเท่ากับ \\(\\frac{18}{2}=9\\):\\[l_{10}=\\sqrt{12^2+9^2}=\\sqrt{225}=15.\\]</div></div><div class=\"solution-step\"><strong>2. หาความสูงเอียงอีกคู่</strong><div>หน้าที่มีฐานยาว 18 ใช้ระยะ \\(\\frac{10}{2}=5\\):\\[l_{18}=\\sqrt{12^2+5^2}=\\sqrt{169}=13.\\]</div></div><div class=\"solution-step\"><strong>3. พื้นที่ผิวข้าง</strong><div>หน้าฐาน 10 จำนวน 2 หน้า:\\[2\\left(\\frac12(10)(15)\\right)=150.\\]หน้าฐาน 18 จำนวน 2 หน้า:\\[2\\left(\\frac12(18)(13)\\right)=234.\\]\\[\\therefore A_L=150+234=384.\\]</div></div><div class=\"solution-step\"><strong>4. พื้นที่ผิวทั้งหมดและปริมาตร</strong><div>พื้นที่ฐาน \\(B=10(18)=180\\):\\[A_T=384+180=564,\\]\\[V=\\frac13(180)(12)=720.\\]</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\(l_{10}=15,\\ l_{18}=13,\\ A_L=384,\\ A_T=564,\\ V=720\\)</div></div>"},{"id":7,"sec":"B","tag":"Cone 5–12–13","title":"กรวยกลมตรงพื้นฐาน","fig":"cone","prompt":"กรวยรัศมี 5 หน่วย และสูงตั้งฉาก 12 หน่วย ตอบค่าที่เป็นสัมประสิทธิ์ของ \\(\\pi\\)","en":"Right cone with radius 5 and height 12. Enter coefficients of pi.","parts":[["num","ความสูงเอียง \\(l\\)",13,0.001,"หน่วย"],["num","สัมประสิทธิ์ของ \\(\\pi\\) ในพื้นที่ผิวข้าง",65,0.001,""],["num","สัมประสิทธิ์ของ \\(\\pi\\) ในพื้นที่ผิวทั้งหมด",90,0.001,""],["num","สัมประสิทธิ์ของ \\(\\pi\\) ในปริมาตร",100,0.001,""]],"hint":"ใช้พีทาโกรัสก่อน แล้วแยก \\(\\pi rl\\), \\(\\pi r^2\\), และ \\(\\frac13\\pi r^2h\\)","sol":"<div class=\"solution-step\"><strong>1. หาความสูงเอียง</strong><div>\\[l=\\sqrt{r^2+h^2}=\\sqrt{5^2+12^2}=\\sqrt{169}=13.\\]</div></div><div class=\"solution-step\"><strong>2. พื้นที่ผิวข้าง</strong><div>\\[A_L=\\pi rl=\\pi(5)(13)=65\\pi.\\]</div></div><div class=\"solution-step\"><strong>3. พื้นที่ผิวทั้งหมด</strong><div>พื้นที่ฐาน \\(=\\pi r^2=25\\pi\\):\\[A_T=65\\pi+25\\pi=90\\pi.\\]</div></div><div class=\"solution-step\"><strong>4. ปริมาตร</strong><div>\\[V=\\frac13\\pi r^2h=\\frac13\\pi(25)(12)=100\\pi.\\]</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>สัมประสิทธิ์คือ \\(13,\\ 65,\\ 90,\\ 100\\) ตามลำดับ</div></div>"},{"id":8,"sec":"B","tag":"Diameter Trap","title":"โจทย์ให้เส้นผ่านศูนย์กลาง","fig":"cone","prompt":"กรวยมีเส้นผ่านศูนย์กลางฐาน 14 หน่วย และความสูงเอียง 25 หน่วย ตอบสัมประสิทธิ์ของ \\(\\pi\\)","en":"Cone diameter 14 and slant height 25.","parts":[["num","รัศมี",7,0.001,"หน่วย"],["num","ความสูงตั้งฉาก",24,0.001,"หน่วย"],["num","สัมประสิทธิ์ของ \\(\\pi\\) ในพื้นที่ผิวข้าง",175,0.001,""],["num","สัมประสิทธิ์ของ \\(\\pi\\) ในพื้นที่ผิวทั้งหมด",224,0.001,""],["num","สัมประสิทธิ์ของ \\(\\pi\\) ในปริมาตร",392,0.001,""]],"hint":"อย่าใช้ 14 เป็นรัศมี และใช้สามเหลี่ยม 7–24–25","sol":"<div class=\"solution-step\"><strong>1. เปลี่ยนเส้นผ่านศูนย์กลางเป็นรัศมี</strong><div>\\[r=\\frac{14}{2}=7.\\]</div></div><div class=\"solution-step\"><strong>2. หาความสูงตั้งฉาก</strong><div>ทราบความสูงเอียง \\(l=25\\):\\[h=\\sqrt{l^2-r^2}=\\sqrt{25^2-7^2}=\\sqrt{625-49}=\\sqrt{576}=24.\\]</div></div><div class=\"solution-step\"><strong>3. พื้นที่ผิว</strong><div>\\[A_L=\\pi rl=\\pi(7)(25)=175\\pi,\\]\\[A_T=175\\pi+\\pi(7^2)=175\\pi+49\\pi=224\\pi.\\]</div></div><div class=\"solution-step\"><strong>4. ปริมาตร</strong><div>\\[V=\\frac13\\pi(7^2)(24)=\\frac13\\pi(49)(24)=392\\pi.\\]</div></div><div class=\"solution-note\"><strong>จุดที่ต้องระวัง</strong><div>โจทย์ให้เส้นผ่านศูนย์กลาง 14 ไม่ใช่รัศมี 14</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\(r=7,\\ h=24,\\ A_L=175\\pi,\\ A_T=224\\pi,\\ V=392\\pi\\)</div></div>"},{"id":9,"sec":"B","tag":"Sphere","title":"ทรงกลมรัศมี 6","fig":"sphere","prompt":"ทรงกลมรัศมี 6 หน่วย ตอบสัมประสิทธิ์ของ \\(\\pi\\)","en":"Sphere radius 6. Enter coefficients of pi.","parts":[["num","สัมประสิทธิ์ในพื้นที่ผิว",144,0.001,""],["num","สัมประสิทธิ์ในปริมาตร",288,0.001,""]],"hint":"พื้นที่ผิวใช้กำลังสอง ปริมาตรใช้กำลังสาม","sol":"<div class=\"solution-step\"><strong>1. พื้นที่ผิวทรงกลม</strong><div>\\[A=4\\pi r^2=4\\pi(6^2)=4\\pi(36)=144\\pi.\\]</div></div><div class=\"solution-step\"><strong>2. ปริมาตรทรงกลม</strong><div>\\[V=\\frac43\\pi r^3=\\frac43\\pi(6^3)=\\frac43\\pi(216)=288\\pi.\\]</div></div><div class=\"solution-note\"><strong>จุดที่ต้องระวัง</strong><div>พื้นที่ผิวใช้ \\(r^2\\) แต่ปริมาตรใช้ \\(r^3\\)</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>สัมประสิทธิ์ของ \\(\\pi\\) คือ \\(144\\) และ \\(288\\)</div></div>"},{"id":10,"sec":"B","tag":"Hemisphere","title":"ครึ่งทรงกลม: ผิวโค้งหรือผิวทั้งหมด","fig":"hemisphere","prompt":"ครึ่งทรงกลมรัศมี 3 หน่วย ตอบสัมประสิทธิ์ของ \\(\\pi\\)","en":"Hemisphere radius 3.","parts":[["num","พื้นที่ผิวโค้ง",18,0.001,""],["num","พื้นที่ผิวทั้งหมดรวมฐานวงกลม",27,0.001,""],["num","ปริมาตร",18,0.001,""]],"hint":"ผิวโค้งคือครึ่งหนึ่งของผิวทรงกลม แต่ผิวทั้งหมดต้องบวกฐานวงกลมอีกหนึ่งฐาน","sol":"<div class=\"solution-step\"><strong>1. พื้นที่ผิวโค้ง</strong><div>ครึ่งทรงกลมมีผิวโค้งเป็นครึ่งหนึ่งของผิวทรงกลม:\\[A_{\\text{โค้ง}}=\\frac12(4\\pi r^2)=2\\pi r^2=2\\pi(3^2)=18\\pi.\\]</div></div><div class=\"solution-step\"><strong>2. พื้นที่ผิวทั้งหมด</strong><div>ต้องบวกฐานวงกลมอีกหนึ่งหน้า:\\[A_T=2\\pi r^2+\\pi r^2=3\\pi r^2=3\\pi(9)=27\\pi.\\]</div></div><div class=\"solution-step\"><strong>3. ปริมาตร</strong><div>\\[V=\\frac12\\left(\\frac43\\pi r^3\\right)=\\frac23\\pi(3^3)=\\frac23\\pi(27)=18\\pi.\\]</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>สัมประสิทธิ์คือ \\(18,\\ 27,\\ 18\\)</div></div>"},{"id":11,"sec":"C","tag":"Exposed Surface","title":"ตัดทรงกลมครึ่งหนึ่งแล้วทาสีทุกผิว","fig":"cutSphere","prompt":"ทรงกลมรัศมี 5 หน่วยถูกตัดผ่านศูนย์กลางเป็นสองซีก แล้วทาสีทุกผิวที่สัมผัสอากาศของทั้งสองชิ้น ตอบสัมประสิทธิ์ของ \\(\\pi\\)","en":"A sphere of radius 5 is cut into two hemispheres, and all exposed surfaces are painted.","parts":[["num","พื้นที่ผิวโค้งรวมของสองซีก",100,0.001,""],["num","พื้นที่หน้าตัดวงกลมรวมสองหน้า",50,0.001,""],["num","พื้นที่ที่ต้องทาสีทั้งหมด",150,0.001,""]],"hint":"ผิวโค้งรวมยังเท่ากับผิวทรงกลมเดิม และเกิดหน้าตัดวงกลมใหม่ 2 หน้า","sol":"<div class=\"solution-step\"><strong>1. พื้นที่ผิวโค้งรวมของสองซีก</strong><div>เมื่อรวมผิวโค้งของครึ่งทรงกลมสองซีก จะเท่ากับผิวทรงกลมเดิม:\\[A_{\\text{โค้งรวม}}=4\\pi r^2=4\\pi(5^2)=100\\pi.\\]</div></div><div class=\"solution-step\"><strong>2. พื้นที่หน้าตัดใหม่</strong><div>การตัดทำให้เกิดหน้าวงกลม 2 หน้า:\\[A_{\\text{ตัดรวม}}=2\\pi r^2=2\\pi(25)=50\\pi.\\]</div></div><div class=\"solution-step\"><strong>3. พื้นที่ที่ทาสีทั้งหมด</strong><div>\\[A_{\\text{รวม}}=100\\pi+50\\pi=150\\pi.\\]</div></div><div class=\"solution-note\"><strong>จุดที่ต้องระวัง</strong><div>คำว่า “ทาสีทุกผิวที่สัมผัสอากาศหลังตัด” ทำให้ต้องนับหน้าตัดวงกลมใหม่ด้วย</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>สัมประสิทธิ์คือ \\(100,\\ 50,\\ 150\\)</div></div>"},{"id":12,"sec":"C","tag":"Reverse Pythagoras","title":"รู้ความสูงเอียง แต่ต้องหาความสูงตรง","fig":"squarePyramid","prompt":"พีระมิดฐานจัตุรัสด้านละ 16 หน่วย มีความสูงเอียง 10 หน่วย","en":"Square pyramid base side 16 and slant height 10.","parts":[["num","ความสูงตั้งฉาก",6,0.001,"หน่วย"],["num","พื้นที่ผิวข้าง",320,0.001,"ตารางหน่วย"],["num","พื้นที่ผิวทั้งหมด",576,0.001,"ตารางหน่วย"],["num","ปริมาตร",512,0.001,"ลูกบาศก์หน่วย"]],"hint":"ครึ่งด้านฐานเท่ากับ 8 และ \\(h^2+8^2=10^2\\)","sol":"<div class=\"solution-step\"><strong>1. หาความสูงตั้งฉาก</strong><div>ด้านฐาน \\(a=16\\), ดังนั้นระยะจากศูนย์กลางฐานไปกึ่งกลางด้านคือ \\(8\\). ทราบ \\(l=10\\):\\[h=\\sqrt{l^2-\\left(\\frac a2\\right)^2}=\\sqrt{10^2-8^2}=\\sqrt{100-64}=6.\\]</div></div><div class=\"solution-step\"><strong>2. พื้นที่ผิวข้าง</strong><div>\\[A_L=2al=2(16)(10)=320.\\]</div></div><div class=\"solution-step\"><strong>3. พื้นที่ผิวทั้งหมด</strong><div>พื้นที่ฐาน \\(=16^2=256\\):\\[A_T=320+256=576.\\]</div></div><div class=\"solution-step\"><strong>4. ปริมาตร</strong><div>\\[V=\\frac13(256)(6)=512.\\]</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\(h=6,\\ A_L=320,\\ A_T=576,\\ V=512\\)</div></div>"},{"id":13,"sec":"D","tag":"Cone System","title":"ย้อนหามิติกรวยจากพื้นที่ผิว","fig":"coneSystem","prompt":"กรวยกลมตรงมีพื้นที่ผิวข้าง \\(65\\pi\\) และพื้นที่ผิวทั้งหมด \\(90\\pi\\)","en":"A right cone has lateral area 65pi and total area 90pi.","parts":[["num","รัศมี",5,0.001,"หน่วย"],["num","ความสูงเอียง",13,0.001,"หน่วย"],["num","ความสูงตั้งฉาก",12,0.001,"หน่วย"],["num","สัมประสิทธิ์ของ \\(\\pi\\) ในปริมาตร",100,0.001,""]],"hint":"หาพื้นที่ฐานจาก ผิวทั้งหมด − ผิวข้าง ก่อน","sol":"<div class=\"solution-step\"><strong>1. แยกพื้นที่ฐานออกจากพื้นที่ผิวทั้งหมด</strong><div>\\[A_{\\text{ฐาน}}=A_T-A_L=90\\pi-65\\pi=25\\pi.\\]แต่ \\(A_{\\text{ฐาน}}=\\pi r^2\\), ดังนั้น\\[\\pi r^2=25\\pi\\Rightarrow r^2=25\\Rightarrow r=5.\\]</div></div><div class=\"solution-step\"><strong>2. หาความสูงเอียง</strong><div>\\[\\pi rl=65\\pi\\]\\[\\pi(5)l=65\\pi\\Rightarrow 5l=65\\Rightarrow l=13.\\]</div></div><div class=\"solution-step\"><strong>3. หาความสูงตั้งฉาก</strong><div>\\[h=\\sqrt{l^2-r^2}=\\sqrt{13^2-5^2}=\\sqrt{169-25}=12.\\]</div></div><div class=\"solution-step\"><strong>4. หาปริมาตร</strong><div>\\[V=\\frac13\\pi r^2h=\\frac13\\pi(25)(12)=100\\pi.\\]</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\(r=5,\\ l=13,\\ h=12,\\ V=100\\pi\\)</div></div>"},{"id":14,"sec":"D","tag":"Pyramid System","title":"ระบบสมการ: พื้นที่ฐานกับผิวข้าง","fig":"pyramidSystem","prompt":"พีระมิดฐานจัตุรัสมีพื้นที่ผิวทั้งหมด 360 ตารางหน่วย และพื้นที่ผิวข้างมากกว่าพื้นที่ฐาน 160 ตารางหน่วย","en":"A square pyramid has total area 360, and lateral area exceeds base area by 160.","parts":[["num","พื้นที่ฐาน",100,0.001,"ตารางหน่วย"],["num","พื้นที่ผิวข้าง",260,0.001,"ตารางหน่วย"],["num","ด้านของฐาน",10,0.001,"หน่วย"],["num","ความสูงเอียง",13,0.001,"หน่วย"],["num","ความสูงตั้งฉาก",12,0.001,"หน่วย"],["num","ปริมาตร",400,0.001,"ลูกบาศก์หน่วย"]],"hint":"ตั้ง \\(B+L=360\\) และ \\(L-B=160\\) ก่อน แล้วค่อยย้อนหารูปทรง","sol":"<div class=\"solution-step\"><strong>1. ตั้งระบบสมการพื้นที่</strong><div>ให้ \\(B\\) เป็นพื้นที่ฐาน และ \\(L\\) เป็นพื้นที่ผิวข้าง:\\[\\begin{aligned}B+L&=360\\\\L-B&=160\\end{aligned}\\]</div></div><div class=\"solution-step\"><strong>2. แก้ระบบสมการ</strong><div>บวกสมการทั้งสอง:\\[2L=520\\Rightarrow L=260.\\]แทนกลับใน \\(B+L=360\\):\\[B=360-260=100.\\]</div></div><div class=\"solution-step\"><strong>3. ย้อนหาด้านฐานและความสูงเอียง</strong><div>ฐานเป็นสี่เหลี่ยมจัตุรัส:\\[a^2=100\\Rightarrow a=10.\\]และ \\(L=2al\\):\\[260=2(10)l\\Rightarrow l=13.\\]</div></div><div class=\"solution-step\"><strong>4. หาความสูงตั้งฉากและปริมาตร</strong><div>\\[h=\\sqrt{13^2-5^2}=\\sqrt{144}=12,\\]\\[V=\\frac13(100)(12)=400.\\]</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\(B=100,\\ L=260,\\ a=10,\\ l=13,\\ h=12,\\ V=400\\)</div></div>"},{"id":15,"sec":"E","tag":"Recast Cone Boss","title":"Boss: หลอมกรวยใหม่และแก้ระบบสมการ","fig":"recast","prompt":"กรวยเดิมมีพื้นที่ฐาน \\(A\\) ตารางหน่วย และสูง \\(h\\) หน่วย แบบที่ 1 ลดพื้นที่ฐาน 2 และเพิ่มความสูง 3 ส่วนแบบที่ 2 เพิ่มพื้นที่ฐาน 5 และลดความสูง 4 ทั้งสองแบบมีปริมาตรเท่ากับกรวยเดิม","en":"A cone is recast into two designs while preserving volume.","parts":[["mc","สมการจากแบบที่ 1","(A-2)(h+3)=Ah",["(A-2)(h+3)=Ah","(A+2)(h-3)=Ah","(A-2)+(h+3)=Ah"]],["mc","สมการจากแบบที่ 2","(A+5)(h-4)=Ah",["(A+5)(h-4)=Ah","(A-5)(h+4)=Ah","(A+5)+(h-4)=Ah"]],["num","พื้นที่ฐานเดิม \\(A\\)",10,0.001,"ตารางหน่วย"],["num","ความสูงเดิม \\(h\\)",12,0.001,"หน่วย"],["num","ปริมาตรเดิม",40,0.001,"ลูกบาศก์หน่วย"]],"hint":"ตัวคูณ \\(\\frac13\\) ของปริมาตรกรวยตัดกันทุกกรณี จึงเปรียบเทียบเพียง \\(Ah\\)","sol":"<div class=\"solution-step\"><strong>1. เขียนสมการอนุรักษ์ปริมาตร</strong><div>ปริมาตรกรวยเดิมคือ \\(\\frac13Ah\\). ทุกกรณีเป็นกรวยเหมือนกันจึงตัด \\(\\frac13\\) ได้</div></div><div class=\"solution-step\"><strong>2. แบบที่ 1</strong><div>\\[(A-2)(h+3)=Ah\\]\\[Ah+3A-2h-6=Ah\\]\\[\\therefore\\quad 3A-2h=6 \\qquad (1)\\]</div></div><div class=\"solution-step\"><strong>3. แบบที่ 2</strong><div>\\[(A+5)(h-4)=Ah\\]\\[Ah-4A+5h-20=Ah\\]\\[\\therefore\\quad -4A+5h=20 \\qquad (2)\\]</div></div><div class=\"solution-step\"><strong>4. แก้ระบบสมการ</strong><div>คูณสมการ (1) ด้วย 5 และสมการ (2) ด้วย 2:\\[\\begin{aligned}15A-10h&=30\\\\-8A+10h&=40\\end{aligned}\\]บวกกัน:\\[7A=70\\Rightarrow A=10.\\]แทนใน (1):\\[3(10)-2h=6\\Rightarrow h=12.\\]</div></div><div class=\"solution-step\"><strong>5. หาปริมาตรและตรวจสอบ</strong><div>\\[V=\\frac13Ah=\\frac13(10)(12)=40.\\]ตรวจแบบที่ 1: \\(\\frac13(8)(15)=40\\). ตรวจแบบที่ 2: \\(\\frac13(15)(8)=40\\)</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\(A=10,\\ h=12,\\ V=40\\)</div></div>"},{"id":16,"sec":"E","tag":"Ultimate Composite Boss","title":"Ultimate Boss: กรวยต่อครึ่งทรงกลม","fig":"composite","prompt":"ของประดับประกอบด้วยกรวยกลมตรงต่อกับครึ่งทรงกลมโดยใช้ฐานวงกลมเดียวกัน รอยต่อไม่สัมผัสอากาศ กรวยมีความสูงเอียง 5 หน่วย และพื้นที่ผิวภายนอกทั้งหมดเท่ากับ \\(33\\pi\\)","en":"A cone is joined to a hemisphere with the same radius. The shared circular base is internal.","parts":[["mc","สมการพื้นที่ผิวภายนอกที่ถูกต้อง","pi*r*l+2pi*r2=33pi",["pi*r*l+2pi*r2=33pi","pi*r*l+3pi*r2=33pi","pi*r2+2pi*r2=33pi"]],["num","รัศมีร่วม",3,0.001,"หน่วย"],["num","ความสูงตั้งฉากของกรวย",4,0.001,"หน่วย"],["num","สัมประสิทธิ์ของ \\(\\pi\\) ในปริมาตรรวม",30,0.001,""]],"hint":"พื้นที่วงกลมตรงรอยต่อเป็นผิวภายใน จึงไม่นำมารวม ส่วนรัศมีหาได้จาก \\(5r+2r^2=33\\)","sol":"<div class=\"solution-step\"><strong>1. เลือกเฉพาะผิวที่สัมผัสอากาศ</strong><div>ฐานวงกลมของกรวยและฐานวงกลมของครึ่งทรงกลมประกบกัน จึงเป็นผิวภายในและไม่นับ พื้นที่ภายนอกมีเพียงผิวข้างกรวยกับผิวโค้งครึ่งทรงกลม</div></div><div class=\"solution-step\"><strong>2. ตั้งสมการพื้นที่ผิว</strong><div>\\[\\pi rl+2\\pi r^2=33\\pi.\\]เมื่อ \\(l=5\\):\\[5\\pi r+2\\pi r^2=33\\pi.\\]หารด้วย \\(\\pi\\):\\[2r^2+5r-33=0.\\]</div></div><div class=\"solution-step\"><strong>3. แก้สมการหารัศมี</strong><div>\\[(2r+11)(r-3)=0.\\]ได้ \\(r=3\\) หรือ \\(r=-\\frac{11}{2}\\). รัศมีต้องเป็นบวก จึงรับ \\(r=3\\)</div></div><div class=\"solution-step\"><strong>4. หาความสูงกรวย</strong><div>\\[h=\\sqrt{l^2-r^2}=\\sqrt{5^2-3^2}=\\sqrt{16}=4.\\]</div></div><div class=\"solution-step\"><strong>5. หาปริมาตรรวม</strong><div>กรวย:\\[V_c=\\frac13\\pi(3^2)(4)=12\\pi.\\]ครึ่งทรงกลม:\\[V_h=\\frac23\\pi(3^3)=18\\pi.\\]\\[V_{\\text{รวม}}=12\\pi+18\\pi=30\\pi.\\]</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\(r=3,\\ h=4,\\ V_{\\text{รวม}}=30\\pi\\)</div></div>"},{"id":17,"sec":"F","tag":"Regular Polygon Bases","title":"ฐานสามเหลี่ยมด้านเท่าและฐานหกเหลี่ยมด้านเท่า","fig":"regularBases","prompt":"เลือก ถูก / ผิด โดยเน้นสูตรพื้นที่ฐาน อะโพทีม และเส้นที่ต้องใช้กับพีทาโกรัส","en":"Judge formulas for regular triangular and regular hexagonal bases.","parts":[["tf","สามเหลี่ยมด้านเท่าด้านละ \\(a\\) มีพื้นที่ \\(\\frac{\\sqrt3}{4}a^2\\)",true],["tf","หกเหลี่ยมด้านเท่าด้านละ \\(a\\) มีพื้นที่ \\(\\frac{3\\sqrt3}{2}a^2\\)",true],["tf","อะโพทีมของหกเหลี่ยมด้านเท่าด้านละ \\(a\\) เท่ากับ \\(\\frac{\\sqrt3}{2}a\\)",true],["tf","การหาความสูงเอียงของพีระมิดฐานรูปหลายเหลี่ยมสม่ำเสมอ ใช้ระยะจากศูนย์กลางฐานไปกึ่งกลางด้านฐาน",true],["tf","ถ้าต้องการหาความสูงเอียงของหน้าข้าง ต้องใช้ระยะจากศูนย์กลางฐานไปจุดยอดของฐานเสมอ",false],["tf","พีระมิดฐานรูปหลายเหลี่ยมสม่ำเสมอใช้ \\(A_L=\\frac12Pl\\) ได้",true]],"hint":"แยกคำว่า รัศมีวงกลมล้อมรอบฐาน ออกจาก อะโพทีมของฐาน เพราะความสูงเอียงพาดไปยังกึ่งกลางด้านฐาน","sol":"<div class=\"solution-step\"><strong>1. พื้นที่สามเหลี่ยมด้านเท่า</strong><div>ลากเส้นสูงจะแบ่งฐานเป็น \\(\\frac a2\\) และเกิดสามเหลี่ยม \\(30^\\circ-60^\\circ-90^\\circ\\):\\[\\text{สูง}=\\frac{\\sqrt3}{2}a.\\]ดังนั้น\\[B=\\frac12a\\left(\\frac{\\sqrt3}{2}a\\right)=\\frac{\\sqrt3}{4}a^2.\\]</div></div><div class=\"solution-step\"><strong>2. พื้นที่หกเหลี่ยมด้านเท่า</strong><div>หกเหลี่ยมด้านเท่าแบ่งเป็นสามเหลี่ยมด้านเท่าด้าน \\(a\\) จำนวน 6 รูป:\\[B=6\\left(\\frac{\\sqrt3}{4}a^2\\right)=\\frac{3\\sqrt3}{2}a^2.\\]</div></div><div class=\"solution-step\"><strong>3. อะโพทีมของหกเหลี่ยม</strong><div>อะโพทีมคือความสูงของสามเหลี่ยมด้านเท่าที่แบ่งออกมา:\\[q=\\frac{\\sqrt3}{2}a.\\]</div></div><div class=\"solution-step\"><strong>4. เส้นที่ใช้หาความสูงเอียง</strong><div>หน้าตัดเพื่อหา \\(l\\) ต้องผ่านยอด ศูนย์กลางฐาน และกึ่งกลางด้านฐาน จึงใช้ <b>อะโพทีมของฐาน</b> \\(q\\):\\[l^2=h^2+q^2.\\]ไม่ใช่ระยะจากศูนย์กลางไปจุดยอดฐาน</div></div><div class=\"solution-step\"><strong>5. เงื่อนไขของสูตรผิวข้าง</strong><div>พีระมิดฐานรูปหลายเหลี่ยมสม่ำเสมอมีความสูงเอียงหน้าข้างเท่ากันทุกหน้า จึงใช้\\[A_L=\\frac12Pl\\]</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>ถูก, ถูก, ถูก, ถูก, ผิด, ถูก</div></div>"},{"id":18,"sec":"F","tag":"Equilateral Triangle Pyramid","title":"พีระมิดฐานสามเหลี่ยมด้านเท่า 3–4–5","fig":"triPyramid","prompt":"พีระมิดสม่ำเสมอมีฐานเป็นสามเหลี่ยมด้านเท่าด้านละ \\(6\\sqrt3\\) หน่วย และสูงตั้งฉาก 4 หน่วย ให้ตอบสัมประสิทธิ์ของ \\(\\sqrt3\\) เมื่อระบุ","en":"Regular pyramid with equilateral base side 6√3 and vertical height 4.","parts":[["num","สัมประสิทธิ์ของ \\(\\sqrt3\\) ในพื้นที่ฐาน",27,0.001,""],["num","อะโพทีมของฐาน",3,0.001,"หน่วย"],["num","ความสูงเอียง",5,0.001,"หน่วย"],["num","สัมประสิทธิ์ของ \\(\\sqrt3\\) ในพื้นที่ผิวข้าง",45,0.001,""],["num","สัมประสิทธิ์ของ \\(\\sqrt3\\) ในพื้นที่ผิวทั้งหมด",72,0.001,""],["num","สัมประสิทธิ์ของ \\(\\sqrt3\\) ในปริมาตร",36,0.001,""]],"hint":"อะโพทีมของสามเหลี่ยมด้านเท่าเท่ากับ \\(\\frac{a\\sqrt3}{6}\\) จึงได้ 3 และเกิดสามเหลี่ยม 3–4–5","sol":"<div class=\"solution-step\"><strong>1. พื้นที่ฐานสามเหลี่ยมด้านเท่า</strong><div>ด้านฐาน \\(a=6\\sqrt3\\):\\[B=\\frac{\\sqrt3}{4}a^2=\\frac{\\sqrt3}{4}(6\\sqrt3)^2=\\frac{\\sqrt3}{4}(108)=27\\sqrt3.\\]</div></div><div class=\"solution-step\"><strong>2. หาอะโพทีมของฐาน</strong><div>อะโพทีมของสามเหลี่ยมด้านเท่า:\\[q=\\frac{a\\sqrt3}{6}=\\frac{(6\\sqrt3)(\\sqrt3)}{6}=\\frac{18}{6}=3.\\]</div></div><div class=\"solution-step\"><strong>3. หาความสูงเอียง</strong><div>\\[l=\\sqrt{h^2+q^2}=\\sqrt{4^2+3^2}=5.\\]</div></div><div class=\"solution-step\"><strong>4. พื้นที่ผิว</strong><div>เส้นรอบรูปฐาน:\\[P=3a=18\\sqrt3.\\]ผิวข้าง:\\[A_L=\\frac12Pl=\\frac12(18\\sqrt3)(5)=45\\sqrt3.\\]ผิวทั้งหมด:\\[A_T=27\\sqrt3+45\\sqrt3=72\\sqrt3.\\]</div></div><div class=\"solution-step\"><strong>5. ปริมาตร</strong><div>\\[V=\\frac13Bh=\\frac13(27\\sqrt3)(4)=36\\sqrt3.\\]</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\(B=27\\sqrt3,\\ q=3,\\ l=5,\\ A_L=45\\sqrt3,\\ A_T=72\\sqrt3,\\ V=36\\sqrt3\\)</div></div>"},{"id":19,"sec":"F","tag":"Regular Hexagonal Pyramid","title":"พีระมิดฐานหกเหลี่ยมด้านเท่า","fig":"hexPyramid","prompt":"พีระมิดสม่ำเสมอมีฐานเป็นหกเหลี่ยมด้านเท่าด้านละ 4 หน่วย และสูงตั้งฉาก 2 หน่วย สามารถพิมพ์คำตอบ exact เช่น \\(48+24\\sqrt3\\)","en":"Regular hexagonal pyramid with base side 4 and vertical height 2.","parts":[["num","อะโพทีมของฐาน",3.4641016151377544,0.001,"หน่วย"],["num","ความสูงเอียง",4,0.001,"หน่วย"],["num","พื้นที่ฐาน",41.569219381653056,0.001,"ตารางหน่วย"],["num","พื้นที่ผิวข้าง",48,0.001,"ตารางหน่วย"],["num","พื้นที่ผิวทั้งหมด",89.56921938165306,0.001,"ตารางหน่วย"],["num","ปริมาตร",27.712812921102035,0.001,"ลูกบาศก์หน่วย"]],"hint":"อะโพทีมฐานคือ \\(2\\sqrt3\\), ดังนั้น \\(l=\\sqrt{2^2+(2\\sqrt3)^2}=4\\)","sol":"<div class=\"solution-step\"><strong>1. พื้นที่ฐานและอะโพทีม</strong><div>หกเหลี่ยมด้านเท่าด้านละ \\(a=4\\):\\[B=\\frac{3\\sqrt3}{2}a^2=\\frac{3\\sqrt3}{2}(16)=24\\sqrt3,\\]\\[q=\\frac{\\sqrt3}{2}a=\\frac{\\sqrt3}{2}(4)=2\\sqrt3.\\]</div></div><div class=\"solution-step\"><strong>2. ความสูงเอียง</strong><div>\\[l=\\sqrt{h^2+q^2}=\\sqrt{2^2+(2\\sqrt3)^2}=\\sqrt{4+12}=4.\\]</div></div><div class=\"solution-step\"><strong>3. พื้นที่ผิว</strong><div>เส้นรอบรูป \\(P=6(4)=24\\):\\[A_L=\\frac12Pl=\\frac12(24)(4)=48.\\]\\[A_T=48+24\\sqrt3.\\]</div></div><div class=\"solution-step\"><strong>4. ปริมาตร</strong><div>\\[V=\\frac13Bh=\\frac13(24\\sqrt3)(2)=16\\sqrt3.\\]</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\(q=2\\sqrt3,\\ l=4,\\ B=24\\sqrt3,\\ A_L=48,\\ A_T=48+24\\sqrt3,\\ V=16\\sqrt3\\)</div></div>"},{"id":20,"sec":"F","tag":"Triangular Prism","title":"ปริซึมฐานสามเหลี่ยมมุมฉาก","fig":"triPrism","prompt":"ปริซึมตรงมีฐานเป็นสามเหลี่ยมมุมฉากด้านประกอบมุมฉาก 6 และ 8 หน่วย ด้านตรงข้ามมุมฉาก 10 หน่วย และปริซึมยาว 12 หน่วย","en":"Right triangular prism with a 6-8-10 base and prism length 12.","parts":[["num","พื้นที่ฐานหนึ่งหน้า",24,0.001,"ตารางหน่วย"],["num","พื้นที่ผิวข้าง",288,0.001,"ตารางหน่วย"],["num","พื้นที่ผิวทั้งหมด",336,0.001,"ตารางหน่วย"],["num","ปริมาตร",288,0.001,"ลูกบาศก์หน่วย"]],"hint":"ปริซึมตรงมีผิวข้างเท่ากับ เส้นรอบรูปฐาน × ความยาวปริซึม","sol":"<div class=\"solution-step\"><strong>1. พื้นที่ฐานสามเหลี่ยม</strong><div>ฐานเป็นสามเหลี่ยมมุมฉากด้านประกอบมุมฉาก 6 และ 8:\\[B=\\frac12(6)(8)=24.\\]</div></div><div class=\"solution-step\"><strong>2. พื้นที่ผิวข้างของปริซึมตรง</strong><div>เส้นรอบรูปฐาน:\\[P=6+8+10=24.\\]ความยาวปริซึม \\(=12\\):\\[A_L=P(12)=24(12)=288.\\]</div></div><div class=\"solution-step\"><strong>3. พื้นที่ผิวทั้งหมด</strong><div>มีฐานสามเหลี่ยม 2 หน้า:\\[A_T=A_L+2B=288+2(24)=336.\\]</div></div><div class=\"solution-step\"><strong>4. ปริมาตร</strong><div>\\[V=B(12)=24(12)=288.\\]</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\(B=24,\\ A_L=288,\\ A_T=336,\\ V=288\\)</div></div>"},{"id":21,"sec":"F","tag":"Regular Hexagonal Prism","title":"ปริซึมฐานหกเหลี่ยมด้านเท่า","fig":"hexPrism","prompt":"ปริซึมตรงมีฐานเป็นหกเหลี่ยมด้านเท่าด้านละ 3 หน่วย และสูง 8 หน่วย สามารถพิมพ์คำตอบ exact ที่มี \\(\\sqrt3\\)","en":"Right regular hexagonal prism with side 3 and height 8.","parts":[["num","พื้นที่ฐานหนึ่งหน้า",23.38268590217984,0.001,"ตารางหน่วย"],["num","พื้นที่ผิวข้าง",144,0.001,"ตารางหน่วย"],["num","พื้นที่ผิวทั้งหมด",190.7653718043597,0.001,"ตารางหน่วย"],["num","ปริมาตร",187.06148721743872,0.001,"ลูกบาศก์หน่วย"]],"hint":"พื้นที่ฐานหกเหลี่ยมด้านเท่า \\(=\\frac{3\\sqrt3}{2}a^2\\) และผิวข้างปริซึมตรง \\(=Ph\\)","sol":"<div class=\"solution-step\"><strong>1. พื้นที่ฐานหกเหลี่ยม</strong><div>\\[B=\\frac{3\\sqrt3}{2}a^2=\\frac{3\\sqrt3}{2}(3^2)=\\frac{27\\sqrt3}{2}.\\]</div></div><div class=\"solution-step\"><strong>2. พื้นที่ผิวข้าง</strong><div>เส้นรอบรูปฐาน \\(P=6(3)=18\\), สูงปริซึม 8:\\[A_L=Ph=18(8)=144.\\]</div></div><div class=\"solution-step\"><strong>3. พื้นที่ผิวทั้งหมด</strong><div>\\[A_T=A_L+2B=144+2\\left(\\frac{27\\sqrt3}{2}\\right)=144+27\\sqrt3.\\]</div></div><div class=\"solution-step\"><strong>4. ปริมาตร</strong><div>\\[V=Bh=\\frac{27\\sqrt3}{2}(8)=108\\sqrt3.\\]</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\(B=\\frac{27\\sqrt3}{2},\\ A_L=144,\\ A_T=144+27\\sqrt3,\\ V=108\\sqrt3\\)</div></div>"},{"id":22,"sec":"F","tag":"Cylinder","title":"ทรงกระบอก: ผิวข้าง ผิวทั้งหมด และปริมาตร","fig":"cylinder","prompt":"ทรงกระบอกรัศมี 7 หน่วย และสูง 10 หน่วย ตอบสัมประสิทธิ์ของ \\(\\pi\\)","en":"Cylinder radius 7 and height 10.","parts":[["num","สัมประสิทธิ์ของ \\(\\pi\\) ในพื้นที่ผิวข้าง",140,0.001,""],["num","สัมประสิทธิ์ของ \\(\\pi\\) ในพื้นที่ผิวทั้งหมด",238,0.001,""],["num","สัมประสิทธิ์ของ \\(\\pi\\) ในปริมาตร",490,0.001,""]],"hint":"ผิวข้างทรงกระบอกคลี่เป็นสี่เหลี่ยมผืนผ้า กว้าง \\(2\\pi r\\) และสูง \\(h\\)","sol":"<div class=\"solution-step\"><strong>1. พื้นที่ผิวข้าง</strong><div>ผิวข้างทรงกระบอกคลี่เป็นสี่เหลี่ยมผืนผ้า กว้างเท่ากับเส้นรอบวง \\(2\\pi r\\) และสูง \\(h\\):\\[A_L=2\\pi rh=2\\pi(7)(10)=140\\pi.\\]</div></div><div class=\"solution-step\"><strong>2. พื้นที่ผิวทั้งหมด</strong><div>ฐานวงกลมสองหน้ามีพื้นที่รวม:\\[2\\pi r^2=2\\pi(7^2)=98\\pi.\\]\\[A_T=140\\pi+98\\pi=238\\pi.\\]</div></div><div class=\"solution-step\"><strong>3. ปริมาตร</strong><div>\\[V=\\pi r^2h=\\pi(7^2)(10)=490\\pi.\\]</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>สัมประสิทธิ์คือ \\(140,\\ 238,\\ 490\\)</div></div>"},{"id":23,"sec":"F","tag":"Cone Frustum","title":"กรวยตัดยอด","fig":"frustum","prompt":"กรวยตัดยอดมีรัศมีฐานใหญ่ 6 หน่วย รัศมีฐานเล็ก 3 หน่วย และสูงตั้งฉาก 4 หน่วย ตอบสัมประสิทธิ์ของ \\(\\pi\\)","en":"Cone frustum with radii 6 and 3, vertical height 4.","parts":[["num","ความสูงเอียง",5,0.001,"หน่วย"],["num","สัมประสิทธิ์ของ \\(\\pi\\) ในพื้นที่ผิวข้าง",45,0.001,""],["num","สัมประสิทธิ์ของ \\(\\pi\\) ในพื้นที่ผิวทั้งหมด",90,0.001,""],["num","สัมประสิทธิ์ของ \\(\\pi\\) ในปริมาตร",84,0.001,""]],"hint":"ความสูงเอียงใช้ผลต่างรัศมี: \\(l^2=h^2+(R-r)^2\\)","sol":"<div class=\"solution-step\"><strong>1. หาความสูงเอียงของกรวยตัดยอด</strong><div>หน้าตัดผ่านแกนให้สามเหลี่ยมมุมฉากที่มีด้านแนวนอนเป็นผลต่างรัศมี:\\[R-r=6-3=3.\\]\\[l=\\sqrt{h^2+(R-r)^2}=\\sqrt{4^2+3^2}=5.\\]</div></div><div class=\"solution-step\"><strong>2. พื้นที่ผิวข้าง</strong><div>\\[A_L=\\pi(R+r)l=\\pi(6+3)(5)=45\\pi.\\]</div></div><div class=\"solution-step\"><strong>3. พื้นที่ผิวทั้งหมด</strong><div>บวกฐานวงกลมสองหน้า:\\[A_T=45\\pi+\\pi(6^2)+\\pi(3^2)=45\\pi+36\\pi+9\\pi=90\\pi.\\]</div></div><div class=\"solution-step\"><strong>4. ปริมาตร</strong><div>\\[V=\\frac13\\pi h(R^2+Rr+r^2)\\]\\[=\\frac13\\pi(4)(6^2+6\\cdot3+3^2)\\]\\[=\\frac43\\pi(36+18+9)=\\frac43\\pi(63)=84\\pi.\\]</div></div><div class=\"solution-note\"><strong>จุดที่ต้องระวัง</strong><div>สูตรพีทาโกรัสใช้ \\(R-r\\) ไม่ใช่ \\(R+r\\)</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\(l=5,\\ A_L=45\\pi,\\ A_T=90\\pi,\\ V=84\\pi\\)</div></div>"},{"id":24,"sec":"F","tag":"Boss: Equilateral Base System","title":"Boss: ระบบสมการพีระมิดฐานสามเหลี่ยมด้านเท่า","fig":"triSystem","prompt":"พีระมิดสม่ำเสมอฐานสามเหลี่ยมด้านเท่ามีพื้นที่ผิวทั้งหมด \\(72\\sqrt3\\) และพื้นที่ผิวข้างมากกว่าพื้นที่ฐาน \\(18\\sqrt3\\). นอกจากนี้มีปริมาตร \\(36\\sqrt3\\)","en":"A regular triangular pyramid is reconstructed from total area, area difference, and volume.","parts":[["num","พื้นที่ฐาน",46.76537180435968,0.001,"ตารางหน่วย"],["num","พื้นที่ผิวข้าง",77.94228634059948,0.001,"ตารางหน่วย"],["num","ความยาวด้านฐาน",10.392304845413264,0.001,"หน่วย"],["num","อะโพทีมของฐาน",3,0.001,"หน่วย"],["num","ความสูงเอียง",5,0.001,"หน่วย"],["num","ความสูงตั้งฉาก",4,0.001,"หน่วย"]],"hint":"ตั้ง \\(B+L=72\\sqrt3\\) และ \\(L-B=18\\sqrt3\\) ก่อน จากนั้นย้อนหาด้านฐาน ความสูงเอียง และใช้ปริมาตรหา \\(h\\)","sol":"<div class=\"solution-step\"><strong>1. ตั้งระบบสมการพื้นที่</strong><div>ให้ \\(B\\) เป็นพื้นที่ฐาน และ \\(L\\) เป็นพื้นที่ผิวข้าง:\\[\\begin{aligned}B+L&=72\\sqrt3\\\\L-B&=18\\sqrt3\\end{aligned}\\]</div></div><div class=\"solution-step\"><strong>2. แก้หา \\(B\\) และ \\(L\\)</strong><div>บวกสมการ:\\[2L=90\\sqrt3\\Rightarrow L=45\\sqrt3.\\]แทนกลับ:\\[B=72\\sqrt3-45\\sqrt3=27\\sqrt3.\\]</div></div><div class=\"solution-step\"><strong>3. ย้อนหาด้านฐาน</strong><div>ฐานเป็นสามเหลี่ยมด้านเท่า:\\[\\frac{\\sqrt3}{4}a^2=27\\sqrt3.\\]หารด้วย \\(\\sqrt3\\):\\[\\frac14a^2=27\\Rightarrow a^2=108.\\]รับความยาวบวก:\\[a=\\sqrt{108}=6\\sqrt3.\\]</div></div><div class=\"solution-step\"><strong>4. หาอะโพทีมและความสูงเอียง</strong><div>\\[q=\\frac{a\\sqrt3}{6}=\\frac{(6\\sqrt3)(\\sqrt3)}6=3.\\]เส้นรอบรูป \\(P=3a=18\\sqrt3\\). จาก \\(L=\\frac12Pl\\):\\[45\\sqrt3=\\frac12(18\\sqrt3)l=9\\sqrt3\\,l\\Rightarrow l=5.\\]</div></div><div class=\"solution-step\"><strong>5. หาความสูงตั้งฉากจากปริมาตร</strong><div>\\[36\\sqrt3=\\frac13Bh=\\frac13(27\\sqrt3)h=9\\sqrt3\\,h.\\]\\[\\therefore h=4.\\]</div></div><div class=\"solution-step\"><strong>6. ตรวจสอบความสอดคล้อง</strong><div>\\[l^2=h^2+q^2\\Rightarrow 5^2=4^2+3^2\\Rightarrow 25=25.\\]</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\(B=27\\sqrt3,\\ L=45\\sqrt3,\\ a=6\\sqrt3,\\ q=3,\\ l=5,\\ h=4\\)</div></div>"}]
+</script>
+
+<script>
+const questions=JSON.parse(document.getElementById('questionData').textContent);
+const sections={
+  A:["A","Formula Mastery & Restrictions","สูตร ความหมายของตัวแปร และข้อจำกัด"],
+  B:["B","Direct Calculation","คำนวณพีระมิด กรวย และทรงกลม"],
+  C:["C","Exposed Surface & Pythagoras","ผิวที่สัมผัสอากาศและพีทาโกรัสย้อนกลับ"],
+  D:["D","Systems of Equations","ย้อนหามิติจากระบบสมการ"],
+  E:["E","Boss Zone","โจทย์บอสและรูปทรงประกอบ"],
+  F:["F","Regular Bases & More Solids","ฐานสามเหลี่ยมด้านเท่า ฐานหกเหลี่ยม ปริซึม ทรงกระบอก และกรวยตัดยอด"]
+};
+let states=questions.map(()=>({attempts:0,solved:false,perfect:false,gave:false,checked:false}));
+let hidePassed=false;
+const scratch={};
+
+function fig(name){
+  const defs='<defs><marker id="arr" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#172033"/></marker></defs>';
+  if(name==="cone"||name==="coneSystem"){
+    return `<svg viewBox="0 0 560 260">${defs}
+      <ellipse cx="280" cy="203" rx="112" ry="34" fill="#dbeafe" stroke="#172033" stroke-width="4"/>
+      <path d="M168 203 L280 40 L392 203" fill="rgba(124,58,237,.10)" stroke="#172033" stroke-width="4"/>
+      <line x1="280" y1="40" x2="280" y2="203" stroke="#2563eb" stroke-width="4" stroke-dasharray="8 7"/>
+      <line x1="280" y1="203" x2="392" y2="203" stroke="#16a34a" stroke-width="5"/>
+      <text x="292" y="118" font-size="23" font-weight="900">h</text><text x="330" y="183" font-size="23" font-weight="900">r</text>
+      <text x="338" y="102" font-size="23" font-weight="900">l</text>
+      ${name==="coneSystem"?'<text x="55" y="52" font-size="22" font-weight="900">Lateral + Base → Dimensions</text>':''}
+    </svg>`;
+  }
+  if(name==="sphere"){
+    return `<svg viewBox="0 0 560 260"><defs><radialGradient id="sg" cx="35%" cy="30%"><stop offset="0" stop-color="#eff6ff"/><stop offset="1" stop-color="#93c5fd"/></radialGradient></defs>
+      <circle cx="280" cy="132" r="92" fill="url(#sg)" stroke="#172033" stroke-width="4"/>
+      <ellipse cx="280" cy="132" rx="92" ry="26" fill="none" stroke="#2563eb" stroke-width="3" stroke-dasharray="7 6"/>
+      <line x1="280" y1="132" x2="370" y2="132" stroke="#16a34a" stroke-width="5"/>
+      <text x="326" y="122" font-size="24" font-weight="900">r</text>
+    </svg>`;
+  }
+  if(name==="hemisphere"||name==="cutSphere"){
+    return `<svg viewBox="0 0 560 260">
+      <path d="M150 158 A130 130 0 0 1 410 158" fill="#dbeafe" stroke="#172033" stroke-width="4"/>
+      <ellipse cx="280" cy="158" rx="130" ry="38" fill="#fff7ed" stroke="#172033" stroke-width="4"/>
+      <line x1="280" y1="158" x2="405" y2="158" stroke="#16a34a" stroke-width="5"/>
+      <text x="338" y="148" font-size="24" font-weight="900">r</text>
+      ${name==="cutSphere"?'<text x="88" y="52" font-size="22" font-weight="900">ตัดแล้วเกิดหน้าวงกลมใหม่ 2 หน้า</text>':''}
+    </svg>`;
+  }
+  if(name==="squarePyramid"||name==="pyramidSystem"){
+    return `<svg viewBox="0 0 560 270">${defs}
+      <polygon points="150,205 360,205 445,165 235,165" fill="#e0e7ff" stroke="#172033" stroke-width="4"/>
+      <line x1="298" y1="43" x2="150" y2="205" stroke="#172033" stroke-width="4"/>
+      <line x1="298" y1="43" x2="360" y2="205" stroke="#172033" stroke-width="4"/>
+      <line x1="298" y1="43" x2="445" y2="165" stroke="#172033" stroke-width="4"/>
+      <line x1="298" y1="43" x2="235" y2="165" stroke="#172033" stroke-width="4"/>
+      <line x1="298" y1="43" x2="298" y2="185" stroke="#2563eb" stroke-width="4" stroke-dasharray="8 7"/>
+      <line x1="298" y1="43" x2="255" y2="205" stroke="#16a34a" stroke-width="5"/>
+      <text x="310" y="120" font-size="23" font-weight="900">h</text><text x="257" y="118" font-size="23" font-weight="900">l</text>
+      ${name==="pyramidSystem"?'<text x="55" y="45" font-size="21" font-weight="900">B + L = 360,  L − B = 160</text>':''}
+    </svg>`;
+  }
+  if(name==="rectPyramid"){
+    return `<svg viewBox="0 0 560 270">
+      <polygon points="105,205 380,205 470,165 195,165" fill="#ede9fe" stroke="#172033" stroke-width="4"/>
+      <line x1="286" y1="42" x2="105" y2="205" stroke="#172033" stroke-width="4"/>
+      <line x1="286" y1="42" x2="380" y2="205" stroke="#172033" stroke-width="4"/>
+      <line x1="286" y1="42" x2="470" y2="165" stroke="#172033" stroke-width="4"/>
+      <line x1="286" y1="42" x2="195" y2="165" stroke="#172033" stroke-width="4"/>
+      <line x1="286" y1="42" x2="242" y2="205" stroke="#16a34a" stroke-width="5"/>
+      <line x1="286" y1="42" x2="425" y2="185" stroke="#f59e0b" stroke-width="5"/>
+      <text x="220" y="120" font-size="22" font-weight="900">lₐ</text><text x="365" y="110" font-size="22" font-weight="900">lᵦ</text>
+    </svg>`;
+  }
+
+  if(name==="regularBases"){
+    return `<svg viewBox="0 0 560 280">
+      <polygon points="105,220 215,40 325,220" fill="#eef2ff" stroke="#172033" stroke-width="4"/>
+      <line x1="215" y1="40" x2="215" y2="220" stroke="#2563eb" stroke-width="4" stroke-dasharray="8 7"/>
+      <polygon points="390,55 480,105 480,205 390,255 300,205 300,105" fill="#ede9fe" stroke="#172033" stroke-width="4"/>
+      <line x1="390" y1="155" x2="480" y2="155" stroke="#16a34a" stroke-width="5"/>
+      <line x1="390" y1="155" x2="435" y2="230" stroke="#f59e0b" stroke-width="5"/>
+      <text x="78" y="255" font-size="20" font-weight="900">Equilateral triangle</text>
+      <text x="330" y="275" font-size="20" font-weight="900">Regular hexagon</text>
+    </svg>`;
+  }
+  if(name==="triPyramid"||name==="triSystem"){
+    return `<svg viewBox="0 0 560 290">
+      <polygon points="135,220 420,220 290,155" fill="#ede9fe" stroke="#172033" stroke-width="4"/>
+      <line x1="285" y1="45" x2="135" y2="220" stroke="#172033" stroke-width="4"/>
+      <line x1="285" y1="45" x2="420" y2="220" stroke="#172033" stroke-width="4"/>
+      <line x1="285" y1="45" x2="290" y2="155" stroke="#172033" stroke-width="4"/>
+      <line x1="285" y1="45" x2="282" y2="198" stroke="#2563eb" stroke-width="4" stroke-dasharray="8 7"/>
+      <line x1="285" y1="45" x2="278" y2="220" stroke="#16a34a" stroke-width="5"/>
+      <text x="298" y="125" font-size="22" font-weight="900">h</text>
+      <text x="245" y="132" font-size="22" font-weight="900">l</text>
+      ${name==="triSystem"?'<text x="52" y="28" font-size="20" font-weight="900">B + L และ L − B → ย้อนหามิติ</text>':''}
+    </svg>`;
+  }
+  if(name==="hexPyramid"){
+    return `<svg viewBox="0 0 560 300">
+      <polygon points="165,215 260,165 375,175 430,230 335,275 220,265" fill="#e0e7ff" stroke="#172033" stroke-width="4"/>
+      <line x1="292" y1="38" x2="165" y2="215" stroke="#172033" stroke-width="4"/>
+      <line x1="292" y1="38" x2="260" y2="165" stroke="#172033" stroke-width="4"/>
+      <line x1="292" y1="38" x2="375" y2="175" stroke="#172033" stroke-width="4"/>
+      <line x1="292" y1="38" x2="430" y2="230" stroke="#172033" stroke-width="4"/>
+      <line x1="292" y1="38" x2="335" y2="275" stroke="#172033" stroke-width="4"/>
+      <line x1="292" y1="38" x2="220" y2="265" stroke="#172033" stroke-width="4"/>
+      <line x1="292" y1="38" x2="300" y2="220" stroke="#2563eb" stroke-width="4" stroke-dasharray="8 7"/>
+      <line x1="292" y1="38" x2="382" y2="252" stroke="#16a34a" stroke-width="5"/>
+      <text x="304" y="132" font-size="22" font-weight="900">h</text><text x="345" y="145" font-size="22" font-weight="900">l</text>
+    </svg>`;
+  }
+  if(name==="triPrism"){
+    return `<svg viewBox="0 0 560 270">
+      <polygon points="105,205 185,75 265,205" fill="#dbeafe" stroke="#172033" stroke-width="4"/>
+      <polygon points="295,205 375,75 455,205" fill="#eef2ff" stroke="#172033" stroke-width="4"/>
+      <line x1="105" y1="205" x2="295" y2="205" stroke="#172033" stroke-width="4"/>
+      <line x1="185" y1="75" x2="375" y2="75" stroke="#172033" stroke-width="4"/>
+      <line x1="265" y1="205" x2="455" y2="205" stroke="#172033" stroke-width="4"/>
+      <text x="260" y="58" font-size="22" font-weight="900">length = 12</text>
+      <text x="88" y="235" font-size="20" font-weight="900">6–8–10 base</text>
+    </svg>`;
+  }
+  if(name==="hexPrism"){
+    return `<svg viewBox="0 0 560 290">
+      <polygon points="135,105 205,65 275,105 275,185 205,225 135,185" fill="#ede9fe" stroke="#172033" stroke-width="4"/>
+      <polygon points="300,105 370,65 440,105 440,185 370,225 300,185" fill="#eef2ff" stroke="#172033" stroke-width="4"/>
+      <line x1="135" y1="105" x2="300" y2="105" stroke="#172033" stroke-width="4"/>
+      <line x1="205" y1="65" x2="370" y2="65" stroke="#172033" stroke-width="4"/>
+      <line x1="275" y1="105" x2="440" y2="105" stroke="#172033" stroke-width="4"/>
+      <line x1="275" y1="185" x2="440" y2="185" stroke="#172033" stroke-width="4"/>
+      <line x1="205" y1="225" x2="370" y2="225" stroke="#172033" stroke-width="4"/>
+      <line x1="135" y1="185" x2="300" y2="185" stroke="#172033" stroke-width="4"/>
+      <text x="255" y="50" font-size="22" font-weight="900">height = 8</text>
+    </svg>`;
+  }
+  if(name==="cylinder"){
+    return `<svg viewBox="0 0 560 280">
+      <ellipse cx="280" cy="70" rx="105" ry="32" fill="#eef2ff" stroke="#172033" stroke-width="4"/>
+      <path d="M175 70 L175 215" stroke="#172033" stroke-width="4"/>
+      <path d="M385 70 L385 215" stroke="#172033" stroke-width="4"/>
+      <ellipse cx="280" cy="215" rx="105" ry="32" fill="#dbeafe" stroke="#172033" stroke-width="4"/>
+      <line x1="280" y1="70" x2="280" y2="215" stroke="#2563eb" stroke-width="4" stroke-dasharray="8 7"/>
+      <line x1="280" y1="215" x2="385" y2="215" stroke="#16a34a" stroke-width="5"/>
+      <text x="295" y="145" font-size="24" font-weight="900">h</text><text x="330" y="205" font-size="24" font-weight="900">r</text>
+    </svg>`;
+  }
+  if(name==="frustum"){
+    return `<svg viewBox="0 0 560 290">
+      <ellipse cx="280" cy="70" rx="62" ry="22" fill="#eef2ff" stroke="#172033" stroke-width="4"/>
+      <path d="M218 70 L145 220" stroke="#172033" stroke-width="4"/>
+      <path d="M342 70 L415 220" stroke="#172033" stroke-width="4"/>
+      <ellipse cx="280" cy="220" rx="135" ry="38" fill="#dbeafe" stroke="#172033" stroke-width="4"/>
+      <line x1="280" y1="70" x2="280" y2="220" stroke="#2563eb" stroke-width="4" stroke-dasharray="8 7"/>
+      <line x1="342" y1="70" x2="415" y2="220" stroke="#16a34a" stroke-width="5"/>
+      <text x="295" y="147" font-size="23" font-weight="900">h</text><text x="365" y="145" font-size="23" font-weight="900">l</text>
+      <text x="300" y="62" font-size="20" font-weight="900">r</text><text x="350" y="210" font-size="20" font-weight="900">R</text>
+    </svg>`;
+  }
+
+  if(name==="composite"){
+    return `<svg viewBox="0 0 560 320">
+      <path d="M170 190 L280 35 L390 190" fill="#ede9fe" stroke="#172033" stroke-width="4"/>
+      <path d="M170 190 A110 110 0 0 0 390 190" fill="#dbeafe" stroke="#172033" stroke-width="4"/>
+      <ellipse cx="280" cy="190" rx="110" ry="28" fill="none" stroke="#64748b" stroke-width="3" stroke-dasharray="8 7"/>
+      <line x1="280" y1="35" x2="390" y2="190" stroke="#16a34a" stroke-width="5"/>
+      <text x="345" y="108" font-size="24" font-weight="900">l = 5</text>
+      <text x="80" y="292" font-size="22" font-weight="900">วงกลมรอยต่อเป็นผิวภายใน — ไม่นับในพื้นที่ภายนอก</text>
+    </svg>`;
+  }
+  if(name==="recast"){
+    return `<svg viewBox="0 0 560 260">${defs}
+      <path d="M250 130 L130 80 L130 180 Z" fill="#dbeafe" stroke="#172033" stroke-width="4"/>
+      <line x1="270" y1="130" x2="390" y2="70" stroke="#172033" stroke-width="5" marker-end="url(#arr)"/>
+      <line x1="270" y1="130" x2="390" y2="190" stroke="#172033" stroke-width="5" marker-end="url(#arr)"/>
+      <path d="M430 70 L395 125 L465 125 Z" fill="#ede9fe" stroke="#172033" stroke-width="3"/>
+      <path d="M430 190 L390 235 L470 235 Z" fill="#fff7ed" stroke="#172033" stroke-width="3"/>
+      <text x="38" y="46" font-size="22" font-weight="900">ปริมาตรเดิม = ปริมาตรใหม่ทั้งสองแบบ</text>
+    </svg>`;
+  }
+  if(name==="heights"){
+    return `<svg viewBox="0 0 560 250">
+      <polygon points="120,205 430,205 275,55" fill="#eef2ff" stroke="#172033" stroke-width="4"/>
+      <line x1="275" y1="55" x2="275" y2="205" stroke="#2563eb" stroke-width="5" stroke-dasharray="8 7"/>
+      <line x1="275" y1="55" x2="430" y2="205" stroke="#16a34a" stroke-width="5"/>
+      <text x="288" y="130" font-size="24" font-weight="900">h</text><text x="365" y="126" font-size="24" font-weight="900">l</text>
+      <text x="200" y="235" font-size="21" font-weight="900">ตั้งฉาก vs เอียง</text>
+    </svg>`;
+  }
+  return `<svg viewBox="0 0 560 240">
+    <rect x="55" y="35" width="450" height="170" rx="24" fill="#f8fafc" stroke="#172033" stroke-width="4"/>
+    <text x="95" y="83" font-size="22" font-weight="900">Surface Area ≠ Volume</text>
+    <text x="95" y="125" font-size="22" font-weight="900">Vertical height ≠ Slant height</text>
+    <text x="95" y="167" font-size="22" font-weight="900">Check formula restrictions first</text>
+  </svg>`;
+}
+
+function render(){
+  const root=document.getElementById("quizRoot");
+  root.innerHTML=Object.keys(sections).map(sec=>{
+    const s=sections[sec];
+    return `<div class="section-title"><div class="section-badge">${s[0]}</div><div><h2>${s[1]}</h2><p>${s[2]}</p></div></div>`+
+      questions.filter(q=>q.sec===sec).map(renderQuestion).join("");
+  }).join("");
+  setupScratchpads();
+  setupMathFields();
+  buildKeyboard();
+  updateStats();
+  typeset();
+}
+
+function renderQuestion(q){
+  return `<article class="question-card" id="card-${q.id}">
+    <div class="card-head">
+      <div class="q-no">${q.id}</div>
+      <div class="q-title"><h3>${q.title}</h3><p>${q.tag}</p></div>
+      <span class="tag" id="tag-${q.id}">ยังไม่ผ่าน</span>
+    </div>
+    <div class="problem">
+      <div class="problem-text"><div class="th">${q.prompt}</div><div class="en">${q.en||""}</div></div>
+      <div class="figure">${fig(q.fig)}</div>
+    </div>
+    <div class="scratch-shell">
+      <button class="scratch-toggle" type="button" onclick="toggleScratch(${q.id})"><span>พื้นที่ทด / Scratchpad</span><span>เปิด–ปิด</span></button>
+      <div class="scratch-panel">
+        <div class="scratch-toolbar">
+          <button class="scratch-btn active" type="button" onclick="setScratchTool(${q.id},'pen',this)">Pen</button>
+          <button class="scratch-btn" type="button" onclick="setScratchTool(${q.id},'eraser',this)">Eraser</button>
+          <button class="scratch-btn" type="button" onclick="clearScratch(${q.id})">Clear</button>
+          <label style="font-weight:800;color:#64748b">Size <input class="scratch-size" type="range" min="1" max="18" value="3" oninput="setScratchSize(${q.id},this.value)"></label>
+        </div>
+        <div class="scratch-canvas-wrap"><canvas class="scratch-canvas" id="scratch-${q.id}"></canvas></div>
+        <p class="scratch-hint">ใช้วาดรูปย่อย ตั้งสมการ หรือทำพีทาโกรัส โดยคำตอบจะไม่ถูกทำเครื่องหมายรายช่อง</p>
+      </div>
+    </div>
+    <div class="answer-grid">${q.parts.map((p,i)=>renderPart(q.id,i,p)).join("")}</div>
+    <div class="check-controls">
+      <button class="btn primary" type="button" onclick="checkQuestion(${q.id})">ตรวจข้อนี้</button>
+      <button class="btn ghost" type="button" onclick="showHint(${q.id})">คำใบ้</button>
+      <button class="btn amber" type="button" onclick="giveUp(${q.id})">ยอมแพ้ / เปิดเฉลย</button>
+      <button class="btn ghost" type="button" onclick="clearAnswers(${q.id})">ล้างคำตอบ</button>
+    </div>
+    <div class="feedback" id="fb-${q.id}"></div>
+    <div class="solution" id="sol-${q.id}">
+      <h4>เฉลยละเอียดทีละขั้น / Step-by-step Solution</h4>
+      ${q.sol}
+    </div>
+  </article>`;
+}
+
+
+let activeMathField=null;
+
+function setupMathFields(){
+  document.querySelectorAll("math-field.answer-math").forEach(mf=>{
+    mf.addEventListener("focus",()=>activeMathField=mf);
+    mf.addEventListener("pointerdown",()=>activeMathField=mf);
+  });
+}
+
+function buildKeyboard(){
+  const grid=document.getElementById("kbGrid");
+  if(!grid||grid.dataset.ready==="1")return;
+  const keys=[
+    ["7","7",""],["8","8",""],["9","9",""],["+","+",""],["−","-",""],
+    ["×","\\times",""],["÷","/",""],["=","=",""],["(", "(", ""],[")",")",""],
+    ["⌫","BACK","action"],["Clear","CLEAR","action"],["←","LEFT",""],["→","RIGHT",""],
+    ["4","4",""],["5","5",""],["6","6",""],["0","0",""],["1","1",""],["2","2",""],["3","3",""],
+    [".",".",""],["π","\\pi","math"],["x²","^2","math"],["x³","^3","math"],
+    ["√","\\sqrt{#0}","math"],["√3","\\sqrt{3}","math"],["frac","\\frac{#0}{#0}","math"],
+    ["r","r","math"],["R","R","math"],["h","h","math"],["l","l","math"],["A","A","math"],["V","V","math"],
+    ["space"," ","wide"],["ซ่อน","TOGGLE","wide action"]
+  ];
+  grid.innerHTML=keys.map(k=>`<button class="key ${k[2]||""}" type="button"
+    onclick="pressKey('${String(k[1]).replace(/\\/g,"\\\\").replace(/'/g,"\\'")}')">${k[0]}</button>`).join("");
+  grid.dataset.ready="1";
+}
+
+function pressKey(k){
+  if(k==="TOGGLE"){
+    document.getElementById("kbShell").classList.add("collapsed");
+    return;
+  }
+  if(!activeMathField)return;
+  activeMathField.focus();
+  if(k==="BACK"){activeMathField.executeCommand("deleteBackward");return}
+  if(k==="CLEAR"){activeMathField.value="";return}
+  if(k==="LEFT"){activeMathField.executeCommand("moveToPreviousChar");return}
+  if(k==="RIGHT"){activeMathField.executeCommand("moveToNextChar");return}
+  activeMathField.insert(k);
+}
+
+function renderPart(qid,i,p){
+  const id=`q${qid}p${i}`;
+  if(p[0]==="num"){
+    return `<div class="answer-part"><label class="part-label">${p[1]}</label>
+      <div class="answer-row">
+        <math-field class="answer-math" id="${id}" virtual-keyboard-mode="manual" smart-mode
+          aria-label="${escapeAttr(p[1])}"></math-field>
+        <div class="unit-chip">${p[4]||"ตอบเป็นตัวเลข"}</div>
+      </div></div>`;
+  }
+
+  const options=p[0]==="tf"
+    ? [["true","ถูก"],["false","ผิด"]]
+    : p[3].map(o=>[o,displayOption(o)]);
+
+  return `<div class="answer-part"><div class="part-label">${p[1]}</div>
+    <div class="choice-grid ${p[0]==="tf"?"tf":""}">
+      ${options.map(o=>`
+        <label class="choice-card">
+          <input type="radio" name="${id}" value="${escapeAttr(o[0])}">
+          <span class="choice-ui">
+            <span class="choice-mark">✓</span>
+            <span class="choice-text">${o[1]}</span>
+          </span>
+        </label>`).join("")}
+    </div></div>`;
+}
+
+function displayOption(s){
+  const map={
+    "sqrt(h2+a2/4)":"\\(\\sqrt{h^2+\\frac{a^2}{4}}\\)",
+    "sqrt(h2+a2)":"\\(\\sqrt{h^2+a^2}\\)",
+    "h+a/2":"\\(h+\\frac a2\\)",
+    "2al":"\\(2al\\)","al":"\\(al\\)","4al":"\\(4al\\)",
+    "a2+2al":"\\(a^2+2al\\)","a2+al":"\\(a^2+al\\)","2a2+2al":"\\(2a^2+2al\\)",
+    "a2h":"\\(a^2h\\)","a2h/2":"\\(\\frac12a^2h\\)","a2h/3":"\\(\\frac13a^2h\\)",
+    "sqrt(h2+b2/4)":"\\(\\sqrt{h^2+\\frac{b^2}{4}}\\)",
+    "sqrt(h2+a2+b2)":"\\(\\sqrt{h^2+a^2+b^2}\\)",
+    "h+(a+b)/2":"\\(h+\\frac{a+b}{2}\\)",
+    "(a+b)(la+lb)":"\\((a+b)(l_a+l_b)\\)",
+    "ala+blb":"\\(a l_a+b l_b\\)",
+    "2ala+2blb":"\\(2a l_a+2b l_b\\)",
+    "(A-2)(h+3)=Ah":"\\((A-2)(h+3)=Ah\\)",
+    "(A+2)(h-3)=Ah":"\\((A+2)(h-3)=Ah\\)",
+    "(A-2)+(h+3)=Ah":"\\((A-2)+(h+3)=Ah\\)",
+    "(A+5)(h-4)=Ah":"\\((A+5)(h-4)=Ah\\)",
+    "(A-5)(h+4)=Ah":"\\((A-5)(h+4)=Ah\\)",
+    "(A+5)+(h-4)=Ah":"\\((A+5)+(h-4)=Ah\\)",
+    "pi*r*l+2pi*r2=33pi":"\\(\\pi rl+2\\pi r^2=33\\pi\\)",
+    "pi*r*l+3pi*r2=33pi":"\\(\\pi rl+3\\pi r^2=33\\pi\\)",
+    "pi*r2+2pi*r2=33pi":"\\(\\pi r^2+2\\pi r^2=33\\pi\\)"
+  };
+  return map[s]||s;
+}
+function escapeAttr(s){return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+
+function latexToNumber(value){
+  let s=String(value||"").trim();
+  if(!s)return NaN;
+  s=s.replace(/\\left|\\right/g,"");
+  for(let i=0;i<10;i++){
+    const before=s;
+    s=s.replace(/\\frac\s*\{([^{}]+)\}\s*\{([^{}]+)\}/g,"(($1)/($2))");
+    if(s===before)break;
+  }
+  s=s.replace(/\\sqrt\s*\{([^{}]+)\}/g,"Math.sqrt($1)");
+  s=s.replace(/\\pi/g,"Math.PI");
+  s=s.replace(/\\cdot|\\times|×/g,"*").replace(/÷/g,"/");
+  s=s.replace(/\^/g,"**").replace(/[{}]/g,"").replace(/\s+/g,"");
+  if(!/^[0-9+\-*/().A-Za-z_]*$/.test(s))return NaN;
+  try{
+    const n=Function(`"use strict";return (${s});`)();
+    return Number(n);
+  }catch(e){return NaN}
+}
+
+function readPart(qid,i,p){
+  const name=`q${qid}p${i}`;
+  if(p[0]==="num"){
+    const el=document.getElementById(name);
+    const n=latexToNumber(el?.value||"");
+    return Number.isFinite(n)&&Math.abs(n-p[2])<=p[3];
+  }
+  const checked=document.querySelector(`input[name="${name}"]:checked`);
+  const raw=checked?.value||"";
+  if(p[0]==="tf") return raw!==""&&((raw==="true")===Boolean(p[2]));
+  return raw===p[2];
+}
+
+function checkQuestion(id){
+  const q=questions.find(x=>x.id===id);
+  const st=states[id-1];
+  if(st.gave) return;
+  st.checked=true;st.attempts++;
+  let correct=0;
+  q.parts.forEach((p,i)=>{if(readPart(id,i,p))correct++});
+  const total=q.parts.length;
+  const card=document.getElementById(`card-${id}`);
+  const fb=document.getElementById(`fb-${id}`);
+  card.classList.remove("gaveup");
+  fb.className="feedback show";
+  if(correct===total){
+    st.solved=true;
+    if(st.attempts===1) st.perfect=true;
+    card.classList.add("correct");
+    fb.classList.add("good");
+    fb.innerHTML=`ผ่านแล้ว ✅ ถูกครบ ${correct}/${total} ส่วน`;
+    document.getElementById(`sol-${id}`).classList.add("show");
+  }else{
+    st.solved=false;
+    card.classList.remove("correct");
+    fb.classList.add("retry");
+    fb.innerHTML=`ยังไม่ครบ — ถูก ${correct}/${total} ส่วน<br><span style="font-weight:750">ระบบไม่ระบุว่าส่วนใดผิดและไม่ขึ้นรอยสีแดง ลองตรวจสูตร หน่วย และชนิดของความสูงอีกครั้ง</span>`;
+  }
+  updateTag(id);updateStats();typeset();
+}
+
+function showHint(id){
+  const q=questions.find(x=>x.id===id);
+  const fb=document.getElementById(`fb-${id}`);
+  fb.className="feedback show warn";
+  fb.innerHTML=`คำใบ้: ${q.hint}`;
+  typeset();
+}
+
+function giveUp(id){
+  const st=states[id-1];
+  if(st.solved||st.gave) return;
+  st.gave=true;st.checked=true;
+  const card=document.getElementById(`card-${id}`);
+  card.classList.remove("correct");card.classList.add("gaveup");
+  const fb=document.getElementById(`fb-${id}`);
+  fb.className="feedback show warn";
+  fb.innerHTML="เปิดเฉลยแล้ว ข้อนี้ไม่นับเป็นผ่าน";
+  document.getElementById(`sol-${id}`).classList.add("show");
+  updateTag(id);updateStats();typeset();
+}
+
+function clearAnswers(id){
+  const q=questions.find(x=>x.id===id);
+  q.parts.forEach((p,i)=>{
+    const name=`q${id}p${i}`;
+    if(p[0]==="num"){
+      const el=document.getElementById(name);
+      if(el)el.value="";
+    }else{
+      document.querySelectorAll(`input[name="${name}"]`).forEach(el=>el.checked=false);
+    }
+  });
+  const fb=document.getElementById(`fb-${id}`);
+  fb.className="feedback";fb.innerHTML="";
+}
+
+function updateTag(id){
+  const st=states[id-1],tag=document.getElementById(`tag-${id}`);
+  if(st.gave){tag.textContent="ยอมแพ้";tag.style.background="#fffbeb";tag.style.color="#92400e"}
+  else if(st.solved){tag.textContent=st.perfect?"ผ่านครั้งแรก":"ผ่านแล้ว";tag.style.background="#dcfce7";tag.style.color="#166534"}
+  else if(st.checked){tag.textContent="กำลังตรวจแก้";tag.style.background="#eff6ff";tag.style.color="#1e3a8a"}
+  else{tag.textContent="ยังไม่ผ่าน";tag.removeAttribute("style")}
+}
+
+function updateStats(){
+  const solved=states.filter(s=>s.solved).length;
+  const perfect=states.filter(s=>s.perfect).length;
+  const gave=states.filter(s=>s.gave).length;
+  const pct=Math.round(100*solved/questions.length);
+  document.getElementById("scoreText").textContent=`ผ่านแล้ว ${solved} / ${questions.length}`;
+  document.getElementById("perfectText").textContent=`ถูกครั้งแรก ${perfect}`;
+  document.getElementById("gaveText").textContent=`ยอมแพ้ ${gave}`;
+  document.getElementById("progressBar").style.width=pct+"%";
+  document.getElementById("sumSolved").textContent=solved;
+  document.getElementById("sumPerfect").textContent=perfect;
+  document.getElementById("sumGave").textContent=gave;
+  document.getElementById("sumPct").textContent=pct+"%";
+  document.getElementById("summaryPanel").classList.toggle("show",states.some(s=>s.checked||s.gave));
+}
+
+function scrollToFirstIncomplete(){
+  const q=questions.find(q=>!states[q.id-1].solved&&!states[q.id-1].gave)||questions[0];
+  document.getElementById(`card-${q.id}`).scrollIntoView({behavior:"smooth",block:"start"});
+}
+function togglePassed(){
+  hidePassed=!hidePassed;
+  document.getElementById("pageRoot").classList.toggle("hidden-correct",hidePassed);
+  document.getElementById("hideBtn").textContent=hidePassed?"แสดงทุกข้อ":"ซ่อนข้อที่ผ่าน";
+}
+function resetAll(){
+  if(!confirm("เริ่มใหม่ทั้งหมด?"))return;
+  states=questions.map(()=>({attempts:0,solved:false,perfect:false,gave:false,checked:false}));
+  render();
+}
+function typeset(){if(window.MathJax?.typesetPromise)MathJax.typesetPromise()}
+
+function toggleScratch(id){
+  const shell=document.querySelector(`#card-${id} .scratch-shell`);
+  shell.classList.toggle("open");
+  if(shell.classList.contains("open")) resizeScratch(id,true);
+}
+function setupScratchpads(){
+  document.querySelectorAll(".scratch-canvas").forEach(c=>{
+    const id=Number(c.id.replace("scratch-",""));
+    if(!scratch[id]) initScratch(id);
+  });
+}
+function initScratch(id){
+  const canvas=document.getElementById(`scratch-${id}`);
+  const ctx=canvas.getContext("2d");
+  scratch[id]={canvas,ctx,tool:"pen",size:3,drawing:false,last:null,w:0,h:0};
+  resizeScratch(id,false);
+  canvas.addEventListener("pointerdown",e=>{
+    canvas.setPointerCapture(e.pointerId);
+    scratch[id].drawing=true;scratch[id].last=point(canvas,e);
+  });
+  canvas.addEventListener("pointermove",e=>{
+    const s=scratch[id];if(!s.drawing)return;
+    const p=point(canvas,e);
+    s.ctx.lineCap="round";s.ctx.lineJoin="round";
+    s.ctx.lineWidth=s.tool==="eraser"?s.size*4:s.size;
+    s.ctx.strokeStyle=s.tool==="eraser"?"#fff":"#172033";
+    s.ctx.beginPath();s.ctx.moveTo(s.last.x,s.last.y);s.ctx.lineTo(p.x,p.y);s.ctx.stroke();
+    s.last=p;
+  });
+  const stop=()=>{scratch[id].drawing=false};
+  canvas.addEventListener("pointerup",stop);canvas.addEventListener("pointercancel",stop);
+}
+function resizeScratch(id,force){
+  const s=scratch[id];if(!s)return;
+  const wrap=s.canvas.parentElement;
+  const rect=wrap.getBoundingClientRect();
+  if(rect.width<20&&!force)return;
+  const dpr=window.devicePixelRatio||1;
+  const old=document.createElement("canvas");
+  old.width=s.canvas.width;old.height=s.canvas.height;
+  if(old.width&&old.height)old.getContext("2d").drawImage(s.canvas,0,0);
+  s.canvas.width=Math.max(1,Math.floor(rect.width*dpr));
+  s.canvas.height=Math.max(1,Math.floor(rect.height*dpr));
+  s.canvas.style.width=rect.width+"px";s.canvas.style.height=rect.height+"px";
+  s.ctx=s.canvas.getContext("2d");s.ctx.scale(dpr,dpr);
+  s.w=rect.width;s.h=rect.height;
+  s.ctx.fillStyle="#fff";s.ctx.fillRect(0,0,s.w,s.h);
+  s.ctx.strokeStyle="#eef2f7";s.ctx.lineWidth=1;
+  for(let x=0;x<s.w;x+=24){s.ctx.beginPath();s.ctx.moveTo(x,0);s.ctx.lineTo(x,s.h);s.ctx.stroke()}
+  for(let y=0;y<s.h;y+=24){s.ctx.beginPath();s.ctx.moveTo(0,y);s.ctx.lineTo(s.w,y);s.ctx.stroke()}
+  if(old.width&&old.height)s.ctx.drawImage(old,0,0,old.width,old.height,0,0,s.w,s.h);
+}
+function point(canvas,e){const r=canvas.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
+function setScratchTool(id,tool,btn){
+  scratch[id].tool=tool;
+  btn.parentElement.querySelectorAll(".scratch-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+}
+function setScratchSize(id,v){scratch[id].size=Number(v)}
+function clearScratch(id){
+  const s=scratch[id];if(!s)return;
+  s.ctx.fillStyle="#fff";s.ctx.fillRect(0,0,s.w,s.h);
+  s.ctx.strokeStyle="#eef2f7";s.ctx.lineWidth=1;
+  for(let x=0;x<s.w;x+=24){s.ctx.beginPath();s.ctx.moveTo(x,0);s.ctx.lineTo(x,s.h);s.ctx.stroke()}
+  for(let y=0;y<s.h;y+=24){s.ctx.beginPath();s.ctx.moveTo(0,y);s.ctx.lineTo(s.w,y);s.ctx.stroke()}
+}
+window.addEventListener("resize",()=>Object.keys(scratch).forEach(id=>resizeScratch(Number(id),true)));
+render();
+</script>
+</body>
+</html>

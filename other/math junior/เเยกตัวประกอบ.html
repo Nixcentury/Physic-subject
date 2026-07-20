@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Factorization Entrance Training V2 — Detailed Solutions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+Thai:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script>
+window.MathJax={tex:{inlineMath:[["\\(","\\)"],["$","$"]],displayMath:[["\\[","\\]"]]},svg:{fontCache:"global"}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<script type="module" src="https://unpkg.com/mathlive?module"></script>
+<style>
+:root{
+ --bg:#f4f7fb;--card:#fff;--ink:#172033;--muted:#667085;--blue:#2563eb;
+ --purple:#7c3aed;--green:#16a34a;--amber:#f59e0b;--line:#d7deea;
+ --shadow:0 20px 55px rgba(15,23,42,.10);--radius:24px;
+ --font:"Inter","Noto Sans Thai",system-ui,sans-serif
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:var(--font);line-height:1.58;
+ background:radial-gradient(circle at 5% 0%,rgba(37,99,235,.16),transparent 34%),
+ radial-gradient(circle at 96% 3%,rgba(124,58,237,.13),transparent 30%),
+ linear-gradient(180deg,#fbfdff 0%,var(--bg) 100%)}
+button,input,select,math-field{font-family:inherit}
+.page{max-width:1220px;margin:0 auto;padding:28px 18px 190px}
+.hero{position:relative;overflow:hidden;padding:34px;border:1px solid rgba(148,163,184,.28);
+ border-radius:32px;background:linear-gradient(135deg,rgba(255,255,255,.97),rgba(239,246,255,.95));
+ box-shadow:var(--shadow);margin-bottom:18px}
+.hero:after{content:"";position:absolute;width:390px;height:390px;border-radius:50%;right:-150px;top:-180px;
+ background:radial-gradient(circle,rgba(124,58,237,.18),transparent 70%)}
+.eyebrow{display:inline-flex;padding:8px 12px;border-radius:999px;background:#ede9fe;color:#6d28d9;
+ font-weight:900;font-size:.84rem;letter-spacing:.03em;text-transform:uppercase;margin-bottom:12px}
+h1{font-size:clamp(2rem,4vw,3.25rem);line-height:1.06;margin:0 0 12px;font-weight:900;letter-spacing:-.045em}
+.subtitle{max-width:970px;margin:0;color:#475467;font-size:1.07rem}
+.hero-note{margin:8px 0 0;color:#475467;font-weight:750}
+.pill-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.pill{padding:8px 12px;border-radius:999px;border:1px solid #dbeafe;background:#fff;color:#334155;font-weight:850;font-size:.9rem}
+
+.map{margin:18px 0;border:1px solid #c7d2fe;border-radius:24px;background:#fff;box-shadow:var(--shadow);overflow:hidden}
+.map-toggle{width:100%;border:0;background:linear-gradient(90deg,#eef2ff,#f5f3ff);padding:15px 18px;
+ display:flex;align-items:center;justify-content:space-between;gap:14px;color:#4338ca;font-weight:900;cursor:pointer;text-align:left}
+.map-body{display:none;padding:18px}.map.open .map-body{display:block}
+.map-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.map-card{border:1px solid #e2e8f0;border-radius:18px;padding:14px;background:#fbfdff}
+.map-card h3{margin:0 0 7px;font-size:1rem}.map-card p{margin:4px 0;color:#475467}
+.rule-box{margin-top:12px;border-left:5px solid var(--amber);border-radius:0 16px 16px 0;background:#fffbeb;padding:13px 15px;color:#92400e;font-weight:800}
+
+.toolbar{position:sticky;top:0;z-index:50;margin:18px 0 24px;padding:12px;border-radius:22px;
+ border:1px solid rgba(148,163,184,.3);background:rgba(255,255,255,.92);backdrop-filter:blur(15px);
+ box-shadow:0 10px 34px rgba(15,23,42,.08);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.score-box{display:flex;gap:9px;flex-wrap:wrap}
+.stat{padding:9px 12px;border-radius:15px;border:1px solid #e2e8f0;background:#f8fafc;color:#334155;font-weight:900}
+.stat.primary{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}
+.progress-wrap{flex:1;min-width:220px;max-width:420px}
+.progress{height:12px;border-radius:999px;background:#e2e8f0;overflow:hidden}
+.bar{height:100%;width:0;background:linear-gradient(90deg,#2563eb,#7c3aed);transition:.2s width}
+.progress-label{margin-top:4px;color:#64748b;font-size:.82rem;font-weight:800}
+.btn{border:0;border-radius:14px;padding:10px 14px;font-weight:900;cursor:pointer;background:#e2e8f0;color:#172033;transition:.15s transform,.15s box-shadow}
+.btn:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(15,23,42,.12)}
+.btn.primary{background:var(--blue);color:#fff}.btn.green{background:var(--green);color:#fff}
+.btn.amber{background:var(--amber);color:#fff}.btn.ghost{background:#fff;border:1px solid #d0d7e2}.btn.dark{background:#172033;color:#fff}
+
+.section-title{display:flex;align-items:center;gap:12px;margin:31px 0 14px}
+.section-badge{display:grid;place-items:center;width:44px;height:44px;border-radius:16px;background:#172033;color:#fff;font-weight:900}
+.section-title h2{margin:0;font-size:1.32rem}.section-title p{margin:2px 0 0;color:#667085}
+.question-card{background:var(--card);border:1px solid rgba(148,163,184,.3);border-radius:var(--radius);
+ box-shadow:var(--shadow);padding:22px;margin-bottom:18px;overflow:hidden}
+.question-card.correct{border-color:rgba(22,163,74,.5);box-shadow:0 20px 55px rgba(22,163,74,.11)}
+.question-card.gaveup{border-color:rgba(245,158,11,.56);box-shadow:0 20px 55px rgba(245,158,11,.10)}
+.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:14px}
+.q-no{display:inline-grid;place-items:center;width:48px;height:48px;border-radius:17px;background:#172033;color:#fff;font-weight:900;flex:0 0 auto}
+.q-title{flex:1}.q-title h3{margin:0 0 4px;font-size:1.16rem}.q-title p{margin:0;color:#64748b}
+.tag{display:inline-flex;padding:7px 10px;border-radius:999px;background:#f1f5f9;color:#475569;font-size:.82rem;font-weight:900;white-space:nowrap}
+.problem{background:linear-gradient(180deg,#f8fafc,#fff);border:1px solid #e2e8f0;border-radius:20px;padding:18px;margin:14px 0}
+.problem .th{font-weight:800;color:#1f2937}.problem .en{color:#667085;font-size:.94rem;margin-top:4px}
+.answer-grid{display:grid;gap:11px;margin-top:12px}.answer-part{border:1px solid #dbe3ef;border-radius:18px;padding:13px;background:#fff}
+.part-label{display:block;margin-bottom:8px;color:#334155;font-weight:900}
+.answer-row{display:grid;grid-template-columns:minmax(220px,1fr) 170px;gap:10px;align-items:end}
+.unit-chip{min-height:58px;border:2px solid #e2e8f0;border-radius:17px;background:#f8fafc;display:grid;place-items:center;padding:8px 10px;color:#475569;font-weight:900}
+math-field.answer-math{display:block;width:100%;min-height:58px;border:2px solid #d0d7e2;border-radius:18px;background:#fbfdff;padding:9px 12px;color:#111827;font-size:1.28rem;
+ --caret-color:#2563eb;--selection-background-color:#bfdbfe}
+math-field.answer-math:focus-within{outline:none;border-color:#2563eb;box-shadow:0 0 0 4px rgba(37,99,235,.12)}
+.choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.choice-grid.tf{grid-template-columns:repeat(2,minmax(130px,220px))}
+.choice-card{display:block;cursor:pointer;user-select:none}.choice-card input{position:absolute;opacity:0;pointer-events:none}
+.choice-ui{min-height:58px;border:2px solid #d8e0eb;border-radius:17px;background:#fff;display:flex;align-items:center;gap:11px;padding:11px 13px;color:#334155;font-weight:850;
+ transition:.16s border-color,.16s background,.16s transform,.16s box-shadow}
+.choice-card:hover .choice-ui{transform:translateY(-1px);border-color:#a5b4fc;box-shadow:0 7px 18px rgba(37,99,235,.08)}
+.choice-mark{width:24px;height:24px;border-radius:8px;border:2px solid #cbd5e1;background:#f8fafc;display:grid;place-items:center;flex:0 0 auto;color:transparent;font-size:.9rem;font-weight:1000}
+.choice-card input:checked + .choice-ui{border-color:#2563eb;background:#eff6ff;box-shadow:0 0 0 3px rgba(37,99,235,.10)}
+.choice-card input:checked + .choice-ui .choice-mark{border-color:#2563eb;background:#2563eb;color:#fff}
+.choice-text{min-width:0;line-height:1.45}.choice-text mjx-container{margin:0!important}
+.check-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.feedback{display:none;margin-top:14px;border-radius:18px;padding:12px 14px;font-weight:850}.feedback.show{display:block}
+.feedback.good{background:#dcfce7;color:#166534;border:1px solid #bbf7d0}
+.feedback.retry{background:#eff6ff;color:#1e3a8a;border:1px solid #bfdbfe}
+.feedback.warn{background:#fffbeb;color:#92400e;border:1px solid #fde68a}
+.solution{display:none;margin-top:14px;border:1px solid #dbeafe;background:#f8fbff;border-radius:20px;padding:16px}.solution.show{display:block}
+.solution h4{margin:0 0 8px;color:#1d4ed8}.solution-step{border-left:4px solid #2563eb;background:#fff;border-radius:0 14px 14px 0;padding:12px;margin:10px 0}
+.solution-step strong{display:block;margin-bottom:4px}.solution-answer{border:1px solid #bbf7d0;background:#f0fdf4;border-radius:16px;padding:13px 14px;margin:12px 0;color:#166534}
+.solution-answer strong{display:block;margin-bottom:5px}
+.solution-note{border:1px solid #fde68a;background:#fffbeb;border-radius:16px;padding:13px 14px;margin:12px 0;color:#92400e}
+.solution-check{border:1px solid #c7d2fe;background:#eef2ff;border-radius:16px;padding:13px 14px;margin:12px 0;color:#3730a3}
+.solution-note strong,.solution-check strong{display:block;margin-bottom:5px}
+.solution ol{margin:7px 0 4px 22px;padding:0}
+.solution li{margin:4px 0}.solution mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;padding:3px 0;margin:.65em 0!important}
+
+.scratch-shell{margin-top:14px;border:1px solid #dbe3ef;border-radius:18px;overflow:hidden;background:#fff}
+.scratch-toggle{width:100%;border:0;background:#eff6ff;color:#1d4ed8;padding:12px 14px;text-align:left;display:flex;justify-content:space-between;gap:10px;font-weight:900;cursor:pointer}
+.scratch-panel{display:none;padding:12px;border-top:1px solid #dbe3ef}.scratch-shell.open .scratch-panel{display:block}
+.scratch-toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:9px}
+.scratch-btn{border:1px solid #cbd5e1;background:#fff;border-radius:10px;padding:7px 10px;font-weight:800;cursor:pointer}.scratch-btn.active{background:#2563eb;color:#fff;border-color:#2563eb}
+.scratch-size{width:110px;accent-color:#2563eb}.scratch-canvas-wrap{width:100%;height:300px;border:1px solid #cbd5e1;border-radius:14px;overflow:hidden;touch-action:none;
+ background:linear-gradient(#eef2f7 1px,transparent 1px),linear-gradient(90deg,#eef2f7 1px,transparent 1px),#fff;background-size:24px 24px}
+.scratch-canvas{display:block;width:100%;height:100%}.scratch-hint{margin:8px 0 0;color:#64748b;font-size:.88rem;font-weight:700}
+.hidden-correct .question-card.correct{display:none}
+
+.kb-shell{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);width:min(1140px,calc(100% - 22px));z-index:90;
+ border:1px solid rgba(148,163,184,.40);border-radius:24px;background:rgba(255,255,255,.96);backdrop-filter:blur(17px);box-shadow:0 24px 65px rgba(15,23,42,.18);padding:10px}
+.kb-shell.collapsed .kb-grid{display:none}.kb-top{display:flex;justify-content:space-between;align-items:center;gap:10px;color:#334155;font-weight:900}
+.kb-caption{display:flex;align-items:center;gap:9px}.kb-dot{width:10px;height:10px;border-radius:50%;background:#7c3aed;box-shadow:0 0 0 5px #ede9fe}
+.kb-grid{display:grid;grid-template-columns:repeat(14,minmax(42px,1fr));gap:7px;margin-top:9px}
+.key{min-height:40px;border:1px solid #cbd5e1;border-radius:11px;background:#f8fafc;color:#172033;font-weight:900;cursor:pointer;padding:7px 5px;transition:.13s transform,.13s background,.13s border-color}
+.key:hover{transform:translateY(-1px);background:#eff6ff;border-color:#93c5fd}.key.math{background:#eef2ff;color:#4338ca}.key.action{background:#fff7ed;color:#9a3412}.key.wide{grid-column:span 2}
+
+@media(max-width:920px){.toolbar{position:static}.map-grid{grid-template-columns:1fr 1fr}.choice-grid{grid-template-columns:1fr}.answer-row{grid-template-columns:1fr}.kb-grid{grid-template-columns:repeat(7,minmax(38px,1fr))}}
+@media(max-width:600px){.page{padding:16px 11px 180px}.hero{padding:24px}.question-card{padding:16px}.card-head{flex-direction:column}.map-grid{grid-template-columns:1fr}.kb-grid{grid-template-columns:repeat(5,minmax(38px,1fr))}.kb-shell{bottom:6px}.scratch-canvas-wrap{height:270px}}
+@media print{body{background:#fff}.page{max-width:none;padding:0}.toolbar,.scratch-shell,.check-controls,.map-toggle,.kb-shell{display:none!important}.map-body{display:block!important}.hero,.question-card,.map{box-shadow:none;break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="page" id="pageRoot">
+<header class="hero">
+ <div class="eyebrow">Private Tutoring • Entrance M.4</div>
+ <h1>การแยกตัวประกอบพหุนาม — Factorization Mastery</h1>
+ <p class="subtitle">ตั้งแต่พหุนามกำลังสอง การจัดหมู่ และรูปพิเศษ ไปจนถึงโจทย์ผสมกำลังสูง พร้อมเฉลยละเอียดที่แสดงการมองรูป เลือกวิธี แยกทีละขั้น ตรวจว่าแยกจนสุด และคูณกลับตรวจคำตอบ</p>
+ <p class="hero-note">ข้อเขียนตรวจด้วยการกระจายเป็นพหุนามมาตรฐาน จึงยอมรับการสลับลำดับตัวประกอบและการย้ายเครื่องหมายลบ แต่ยังตรวจว่าคำตอบอยู่ในรูปผลคูณและแยกจนสุดตามระดับโจทย์</p>
+ <div class="pill-row"><span class="pill">20 ข้อใหญ่</span><span class="pill">Commutative-safe Checker</span><span class="pill">MathLive Keyboard</span><span class="pill">No Synthetic Division</span><span class="pill">Detailed Step-by-step Solutions</span><span class="pill">Boss Zone</span></div>
+</header>
+
+<section class="map" id="decisionMap">
+ <button class="map-toggle" type="button" onclick="document.getElementById('decisionMap').classList.toggle('open')"><span>เปิด/ปิด Factorization Decision Map</span><span>เลือกวิธีให้ถูกก่อนลงมือ</span></button>
+ <div class="map-body">
+  <div class="map-grid">
+   <div class="map-card"><h3>1. ดึงตัวประกอบร่วม</h3><p>ทำก่อนเสมอ ตรวจทั้งตัวเลขและเลขชี้กำลังต่ำสุด</p></div>
+   <div class="map-card"><h3>2. สองพจน์</h3><p>ผลต่างกำลังสอง หรือผลบวก–ผลต่างกำลังสาม</p></div>
+   <div class="map-card"><h3>3. สามพจน์</h3><p>พหุนามกำลังสอง หรือกำลังสองสมบูรณ์</p></div>
+   <div class="map-card"><h3>4. สี่พจน์</h3><p>ลองจัดหมู่ หรือเทียบกำลังสามสมบูรณ์</p></div>
+   <div class="map-card"><h3>5. กำลัง 4, 6, 8</h3><p>มองเป็นพหุนามกำลังสองใน \(x^2,x^3,x^4\)</p></div>
+   <div class="map-card"><h3>6. แทนกลับแล้วตรวจต่อ</h3><p>วงเล็บที่ได้อาจยังเป็นผลต่างกำลังสองหรือกำลังสาม</p></div>
+   <div class="map-card"><h3>7. ตรวจด้วยการคูณกลับ</h3><p>ลำดับตัวประกอบสลับได้ แต่ผลคูณต้องเท่าเดิม</p></div>
+   <div class="map-card"><h3>8. แยกจนสุด</h3><p>ห้ามตอบพหุนามเดิม และห้ามหยุดที่วงเล็บที่ยังแยกได้</p></div>
+  </div>
+  <div class="rule-box">ระบบไม่เทียบข้อความตรง ๆ: \((x+2)(x-3)\) และ \((x-3)(x+2)\) ถือว่าเหมือนกัน เพราะตรวจจากสัมประสิทธิ์ของพหุนามหลังคูณกระจาย</div>
+ </div>
+</section>
+
+<section class="toolbar">
+ <div class="score-box"><div class="stat primary" id="scoreText">ผ่านแล้ว 0 / 20</div><div class="stat" id="perfectText">ถูกครั้งแรก 0</div><div class="stat" id="gaveText">ยอมแพ้ 0</div></div>
+ <div class="progress-wrap"><div class="progress"><div class="bar" id="progressBar"></div></div><div class="progress-label">ตอบผิดไม่ขึ้นรอยแดง และไม่บอกช่องผิด — แจ้งเฉพาะจำนวนส่วนที่ถูก</div></div>
+ <div class="score-box"><button class="btn green" onclick="scrollToFirstIncomplete()">ข้อที่ยังไม่ผ่าน</button><button class="btn ghost" id="hideBtn" onclick="togglePassed()">ซ่อนข้อที่ผ่าน</button><button class="btn dark" onclick="resetAll()">Reset</button></div>
+</section>
+<main id="quizRoot"></main>
+</div>
+
+<div class="kb-shell" id="kbShell">
+ <div class="kb-top"><div class="kb-caption"><span class="kb-dot"></span><span>Factorization Keyboard — คลิกช่องคำตอบก่อน</span></div><button class="btn ghost" onclick="document.getElementById('kbShell').classList.toggle('collapsed')">ย่อ / ขยาย</button></div>
+ <div class="kb-grid" id="kbGrid"></div>
+</div>
+
+<script>
+const questions=[{"id":1,"sec":"A","tag":"Decision Map","title":"มองรูปก่อนลงมือ","prompt":"เลือกวิธีเริ่มต้นที่เหมาะที่สุดสำหรับแต่ละพหุนาม","en":"Choose the best first factorization method.","parts":[{"type":"mc","label":"\\(6x^2+18x\\)","answer":"gcf","options":[["gcf","ดึงตัวประกอบร่วม"],["quad","พหุนามกำลังสอง"],["group","จัดหมู่"],["cube","ผลบวก–ผลต่างกำลังสาม"]]},{"type":"mc","label":"\\(x^2+7x+12\\)","answer":"quad","options":[["gcf","ดึงตัวประกอบร่วม"],["quad","พหุนามกำลังสอง"],["dos","ผลต่างกำลังสอง"],["group","จัดหมู่"]]},{"type":"mc","label":"\\(9x^2-24xy+16y^2\\)","answer":"sq","options":[["sq","กำลังสองสมบูรณ์"],["dos","ผลต่างกำลังสอง"],["group","จัดหมู่"],["cube","กำลังสามสมบูรณ์"]]},{"type":"mc","label":"\\(x^3+3x^2-4x-12\\)","answer":"group","options":[["quad","พหุนามกำลังสอง"],["group","จัดหมู่"],["cube","ผลต่างกำลังสาม"],["dos","ผลต่างกำลังสอง"]]},{"type":"mc","label":"\\(8x^3+27y^3\\)","answer":"cube","options":[["cube","ผลบวกกำลังสาม"],["sq","กำลังสองสมบูรณ์"],["group","จัดหมู่"],["dos","ผลต่างกำลังสอง"]]},{"type":"mc","label":"\\(x^4-16\\)","answer":"dos","options":[["dos","ผลต่างกำลังสอง แล้วแยกต่อ"],["quad","พหุนามกำลังสองทั่วไป"],["cube","ผลต่างกำลังสาม"],["gcf","ดึงตัวประกอบร่วม"]]},{"type":"mc","label":"\\(x^4-5x^2+4\\)","answer":"u2","options":[["u2","มองเป็นกำลังสองใน \\(x^2\\)"],["cube","มองเป็นกำลังสาม"],["group","จัดหมู่ 4 พจน์"],["sq","กำลังสองสมบูรณ์"]]},{"type":"mc","label":"\\(x^6-9x^3+8\\)","answer":"u3","options":[["u3","มองเป็นกำลังสองใน \\(x^3\\)"],["dos","ผลต่างกำลังสองทันที"],["group","จัดหมู่"],["gcf","ดึงตัวประกอบร่วม"]]}],"hint":"ดึงตัวประกอบร่วมก่อน แล้วดูจำนวนพจน์และกำลังที่ซ้ำเป็นช่วง ๆ","sol":"<div class=\"solution-step\"><strong>ลำดับคิดที่ควรใช้ทุกครั้ง</strong><div>ก่อนแยกตัวประกอบให้ตรวจตามลำดับต่อไปนี้:<ol><li>มีตัวประกอบร่วมทุกพจน์หรือไม่</li><li>เป็นพหุนาม 2 พจน์ที่เข้ารูปผลต่างกำลังสองหรือผลบวก–ผลต่างกำลังสามหรือไม่</li><li>เป็นพหุนามกำลังสอง 3 พจน์หรือกำลังสองสมบูรณ์หรือไม่</li><li>มี 4 พจน์ที่สามารถจัดหมู่ได้หรือไม่</li><li>เลขชี้กำลังเพิ่มทีละเท่า ๆ กันจนมองเป็นกำลังสองในตัวแปรใหม่ได้หรือไม่</li></ol></div></div><div class=\"solution-step\"><strong>1. \\(6x^2+18x\\)</strong><div>ทุกพจน์หารด้วย \\(6x\\) ลงตัว จึงต้องเริ่มด้วยการดึงตัวประกอบร่วม:\\[6x^2+18x=6x(x+3).\\]</div></div><div class=\"solution-step\"><strong>2. \\(x^2+7x+12\\)</strong><div>เป็นพหุนามกำลังสองสามพจน์ และสัมประสิทธิ์หน้า \\(x^2\\) เป็น 1 จึงหาจำนวนสองจำนวนที่คูณกันได้ 12 และบวกกันได้ 7</div></div><div class=\"solution-step\"><strong>3. \\(9x^2-24xy+16y^2\\)</strong><div>พจน์แรกและพจน์สุดท้ายเป็นกำลังสอง:\\[(3x)^2,\\qquad(4y)^2\\]และพจน์กลางคือ\\[-2(3x)(4y)=-24xy\\]จึงเป็นกำลังสองสมบูรณ์</div></div><div class=\"solution-step\"><strong>4. \\(x^3+3x^2-4x-12\\)</strong><div>มี 4 พจน์และสองพจน์แรกกับสองพจน์หลังดึงวงเล็บเดียวกันได้:\\[x^2(x+3)-4(x+3).\\]ดังนั้นควรเริ่มด้วยการจัดหมู่</div></div><div class=\"solution-step\"><strong>5. \\(8x^3+27y^3\\)</strong><div>\\[8x^3=(2x)^3,\\qquad27y^3=(3y)^3\\]จึงเป็นผลบวกกำลังสาม</div></div><div class=\"solution-step\"><strong>6. \\(x^4-16\\)</strong><div>\\[x^4-16=(x^2)^2-4^2\\]จึงเริ่มด้วยผลต่างกำลังสอง และต้องตรวจว่าตัวประกอบที่ได้ยังแยกต่อได้หรือไม่</div></div><div class=\"solution-step\"><strong>7. \\(x^4-5x^2+4\\)</strong><div>เลขชี้กำลังคือ \\(4,2,0\\) ซึ่งลดลงครั้งละ 2 ให้ \\(u=x^2\\) จะได้ \\(u^2-5u+4\\) เป็นพหุนามกำลังสอง</div></div><div class=\"solution-step\"><strong>8. \\(x^6-9x^3+8\\)</strong><div>เลขชี้กำลังคือ \\(6,3,0\\) ซึ่งลดลงครั้งละ 3 ให้ \\(u=x^3\\) จะได้ \\(u^2-9u+8\\)</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>ดึงตัวประกอบร่วม, พหุนามกำลังสอง, กำลังสองสมบูรณ์, จัดหมู่, ผลบวกกำลังสาม, ผลต่างกำลังสองแล้วแยกต่อ, กำลังสองใน \\(x^2\\), และกำลังสองใน \\(x^3\\)</div></div>"},{"id":2,"sec":"A","tag":"Pattern Limits","title":"สูตรนี้ใช้ได้หรือไม่","prompt":"เลือก ถูก / ผิด ทุกข้อความ","en":"Judge each statement.","parts":[{"type":"tf","label":"\\(a^2+b^2=(a+b)(a-b)\\)","answer":false},{"type":"tf","label":"\\(a^3+b^3=(a+b)(a^2-ab+b^2)\\)","answer":true},{"type":"tf","label":"ถ้าแยก \\(x^4-16\\) ได้เป็น \\((x^2-4)(x^2+4)\\) แล้วถือว่าสุดทันที","answer":false},{"type":"tf","label":"\\(x^2+6x+9=(x+3)^2\\)","answer":true},{"type":"tf","label":"\\(4x^2-12x+9=(2x-3)^2\\)","answer":true},{"type":"tf","label":"\\(x^3-3x^2+3x-1=(x-1)^3\\)","answer":true}],"hint":"ผลต่างกำลังสองใช้เครื่องหมายลบระหว่างกำลังสองเท่านั้น และคำว่าแยกตัวประกอบจนสุดต้องตรวจทุกวงเล็บอีกครั้ง","sol":"<div class=\"solution-step\"><strong>1. \\(a^2+b^2=(a+b)(a-b)\\)</strong><div><b>ผิด</b> เพราะ\\[(a+b)(a-b)=a^2-b^2\\]เครื่องหมายระหว่างกำลังสองต้องเป็นลบ ไม่ใช่บวก</div></div><div class=\"solution-step\"><strong>2. \\(a^3+b^3=(a+b)(a^2-ab+b^2)\\)</strong><div><b>ถูก</b> เป็นสูตรผลบวกกำลังสามโดยตรง</div></div><div class=\"solution-step\"><strong>3. \\((x^2-4)(x^2+4)\\) เป็นคำตอบสุดท้ายของ \\(x^4-16\\)</strong><div><b>ผิด</b> เพราะ \\(x^2-4\\) ยังเป็นผลต่างกำลังสอง:\\[x^2-4=(x-2)(x+2).\\]ดังนั้นต้องแยกต่อเป็น\\[(x-2)(x+2)(x^2+4).\\]</div></div><div class=\"solution-step\"><strong>4. \\(x^2+6x+9=(x+3)^2\\)</strong><div><b>ถูก</b> เพราะ\\[(x+3)^2=x^2+2(3)x+3^2=x^2+6x+9.\\]</div></div><div class=\"solution-step\"><strong>5. \\(4x^2-12x+9=(2x-3)^2\\)</strong><div><b>ถูก</b> เพราะ\\[(2x-3)^2=4x^2-12x+9.\\]</div></div><div class=\"solution-step\"><strong>6. \\(x^3-3x^2+3x-1=(x-1)^3\\)</strong><div><b>ถูก</b> จากสูตร\\[(A-B)^3=A^3-3A^2B+3AB^2-B^3\\]เมื่อ \\(A=x,\\ B=1\\)</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>ผิด, ถูก, ผิด, ถูก, ถูก, ถูก</div></div>"},{"id":3,"sec":"A","tag":"Fully Factored?","title":"แยกจนสุดแล้วหรือยัง","prompt":"พิจารณาในจำนวนเต็ม แล้วเลือกว่ารูปที่ให้แยกตัวประกอบจนสุดแล้วหรือไม่","en":"Decide whether each expression is fully factored over the integers.","parts":[{"type":"tf","label":"\\((x+3)(x^2-4)\\)","answer":false},{"type":"tf","label":"\\((x+3)(x-2)(x+2)\\)","answer":true},{"type":"tf","label":"\\((2x+3y)(4x^2-6xy+9y^2)\\)","answer":true},{"type":"tf","label":"\\((x-2)(x+2)(x^2+4)\\)","answer":true},{"type":"tf","label":"\\((x^3-1)(x^3+1)\\)","answer":false},{"type":"tf","label":"\\((x-1)(x+1)(x^2+1)\\)","answer":true}],"hint":"ตรวจวงเล็บทุกวงว่ามีผลต่างกำลังสองหรือผลบวก–ผลต่างกำลังสามซ่อนอยู่หรือไม่","sol":"<div class=\"solution-step\"><strong>1. \\((x+3)(x^2-4)\\)</strong><div><b>ยังไม่สุด</b> เพราะ\\[x^2-4=(x-2)(x+2).\\]</div></div><div class=\"solution-step\"><strong>2. \\((x+3)(x-2)(x+2)\\)</strong><div><b>แยกจนสุดแล้ว</b> เพราะตัวประกอบเชิงเส้นทั้งสามแยกต่อไม่ได้</div></div><div class=\"solution-step\"><strong>3. \\((2x+3y)(4x^2-6xy+9y^2)\\)</strong><div><b>แยกจนสุดแล้ว</b> วงเล็บสามพจน์ไม่ใช่กำลังสองสมบูรณ์ และเป็นตัวประกอบที่เกิดจากสูตรผลบวกกำลังสาม</div></div><div class=\"solution-step\"><strong>4. \\((x-2)(x+2)(x^2+4)\\)</strong><div><b>แยกจนสุดแล้วในจำนวนเต็ม</b> เพราะ \\(x^2+4\\) เป็นผลบวกกำลังสอง ซึ่งไม่มีสูตรแยกเป็นตัวประกอบเชิงเส้นที่มีสัมประสิทธิ์จำนวนเต็ม</div></div><div class=\"solution-step\"><strong>5. \\((x^3-1)(x^3+1)\\)</strong><div><b>ยังไม่สุด</b> ทั้งสองวงเล็บเป็นผลต่างและผลบวกกำลังสาม:\\[x^3-1=(x-1)(x^2+x+1)\\]\\[x^3+1=(x+1)(x^2-x+1).\\]</div></div><div class=\"solution-step\"><strong>6. \\((x-1)(x+1)(x^2+1)\\)</strong><div><b>แยกจนสุดแล้วในจำนวนเต็ม</b> เพราะ \\(x^2+1\\) แยกต่อไม่ได้</div></div><div class=\"solution-note\"><strong>เกณฑ์สำคัญ</strong><div>คำตอบจะถือว่าแยกจนสุดเมื่อทุกตัวประกอบไม่สามารถแยกต่อด้วยสูตรและสัมประสิทธิ์จำนวนเต็มที่เรียนในบทนี้</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>ยังไม่สุด, สุดแล้ว, สุดแล้ว, สุดแล้ว, ยังไม่สุด, สุดแล้ว</div></div>"},{"id":4,"sec":"B","tag":"Common Factor","title":"ดึงตัวประกอบร่วมก่อนเสมอ","prompt":"แยกตัวประกอบจนสุด","en":"Factor completely.","parts":[{"type":"factor","label":"\\(6x^2+18x\\)","answer":"6*x*(x+3)","minAdd":1},{"type":"factor","label":"\\(15x^3y-20x^2y^2\\)","answer":"5*x^2*y*(3*x-4*y)","minAdd":1},{"type":"factor","label":"\\(-8x^4+12x^2\\)","answer":"-4*x^2*(2*x^2-3)","minAdd":1}],"hint":"หา ห.ร.ม. ของสัมประสิทธิ์ และเลือกเลขชี้กำลังต่ำสุดของตัวแปรแต่ละตัว","sol":"<div class=\"solution-step\"><strong>1. \\(6x^2+18x\\)</strong><div>ห.ร.ม. ของ 6 และ 18 คือ 6 และตัวแปรร่วมที่มีกำลังต่ำสุดคือ \\(x\\):\\[6x^2+18x=6x(x+3).\\]</div></div><div class=\"solution-check\"><strong>ตรวจคำตอบโดยคูณกลับ</strong><div>\\[6x(x+3)=6x^2+18x.\\]</div></div><div class=\"solution-step\"><strong>2. \\(15x^3y-20x^2y^2\\)</strong><div>ห.ร.ม. ของ 15 และ 20 คือ 5, กำลังต่ำสุดของ \\(x\\) คือ 2 และของ \\(y\\) คือ 1:\\[15x^3y-20x^2y^2=5x^2y(3x-4y).\\]</div></div><div class=\"solution-check\"><strong>ตรวจคำตอบโดยคูณกลับ</strong><div>\\[5x^2y(3x-4y)=15x^3y-20x^2y^2.\\]</div></div><div class=\"solution-step\"><strong>3. \\(-8x^4+12x^2\\)</strong><div>ดึง \\(-4x^2\\) เพื่อให้พจน์แรกในวงเล็บเป็นบวก:\\[-8x^4+12x^2=-4x^2(2x^2-3).\\]</div></div><div class=\"solution-note\"><strong>รูปคำตอบสมมูล</strong><div>สามารถเขียนเป็น \\(4x^2(3-2x^2)\\) ได้เช่นกัน เพราะ \\(-4x^2(2x^2-3)=4x^2(3-2x^2)\\)</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\(6x(x+3),\\quad5x^2y(3x-4y),\\quad-4x^2(2x^2-3)\\)</div></div>"},{"id":5,"sec":"B","tag":"Monic Quadratics","title":"พหุนามกำลังสอง เมื่อสัมประสิทธิ์หน้า \\(x^2\\) เป็น 1","prompt":"หาจำนวนสองจำนวนที่คูณกันได้พจน์คงตัว และบวกกันได้สัมประสิทธิ์ของ \\(x\\)","en":"Factor each monic quadratic.","parts":[{"type":"factor","label":"\\(x^2+7x+12\\)","answer":"(x+3)*(x+4)","minAdd":2},{"type":"factor","label":"\\(x^2-x-12\\)","answer":"(x-4)*(x+3)","minAdd":2},{"type":"factor","label":"\\(x^2-9x+20\\)","answer":"(x-4)*(x-5)","minAdd":2}],"hint":"เขียนคู่จำนวนก่อน: ผลคูณ = พจน์คงตัว และผลบวก = สัมประสิทธิ์พจน์กลาง","sol":"<div class=\"solution-step\"><strong>1. \\(x^2+7x+12\\)</strong><div>หาจำนวนสองจำนวน \\(m,n\\) ที่\\[mn=12,\\qquad m+n=7.\\]ได้ \\(m=3,\\ n=4\\), ดังนั้น\\[x^2+7x+12=(x+3)(x+4).\\]</div></div><div class=\"solution-check\"><strong>ตรวจคำตอบโดยคูณกลับ</strong><div>\\[(x+3)(x+4)=x^2+4x+3x+12=x^2+7x+12.\\]</div></div><div class=\"solution-step\"><strong>2. \\(x^2-x-12\\)</strong><div>ต้องการผลคูณ \\(-12\\) และผลบวก \\(-1\\):\\[(-4)(3)=-12,\\qquad-4+3=-1.\\]จึงได้\\[x^2-x-12=(x-4)(x+3).\\]</div></div><div class=\"solution-check\"><strong>ตรวจคำตอบโดยคูณกลับ</strong><div>\\[(x-4)(x+3)=x^2+3x-4x-12=x^2-x-12.\\]</div></div><div class=\"solution-step\"><strong>3. \\(x^2-9x+20\\)</strong><div>ต้องการผลคูณ 20 และผลบวก \\(-9\\):\\[(-4)(-5)=20,\\qquad-4-5=-9.\\]จึงได้\\[x^2-9x+20=(x-4)(x-5).\\]</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\((x+3)(x+4),\\ (x-4)(x+3),\\ (x-4)(x-5)\\)</div></div>"},{"id":6,"sec":"B","tag":"Non-monic Quadratics","title":"พหุนามกำลังสอง เมื่อหน้า \\(x^2\\) ไม่เป็น 1","prompt":"ใช้การแยกพจน์กลางหรือวิธีที่ถนัด แล้วแยกจนสุด","en":"Factor each non-monic quadratic.","parts":[{"type":"factor","label":"\\(6x^2+x-2\\)","answer":"(3*x+2)*(2*x-1)","minAdd":2},{"type":"factor","label":"\\(8x^2-2x-3\\)","answer":"(4*x-3)*(2*x+1)","minAdd":2},{"type":"factor","label":"\\(12x^2-11x-5\\)","answer":"(3*x+1)*(4*x-5)","minAdd":2}],"hint":"คูณสัมประสิทธิ์หน้า \\(x^2\\) กับพจน์คงตัว แล้วหาคู่จำนวนที่บวกกันได้พจน์กลาง","sol":"<div class=\"solution-step\"><strong>1. \\(6x^2+x-2\\)</strong><div>คูณสัมประสิทธิ์หน้า \\(x^2\\) กับพจน์คงตัว:\\[6(-2)=-12.\\]หาจำนวนที่คูณกันได้ \\(-12\\) และบวกกันได้ 1 คือ 4 และ \\(-3\\):\\[6x^2+4x-3x-2\\]\\[=2x(3x+2)-1(3x+2)\\]\\[=(3x+2)(2x-1).\\]</div></div><div class=\"solution-check\"><strong>ตรวจคำตอบโดยคูณกลับ</strong><div>\\[(3x+2)(2x-1)=6x^2+x-2.\\]</div></div><div class=\"solution-step\"><strong>2. \\(8x^2-2x-3\\)</strong><div>\\[8(-3)=-24.\\]เลือก 4 และ \\(-6\\) เพราะ \\(4(-6)=-24\\) และ \\(4-6=-2\\):\\[8x^2+4x-6x-3\\]\\[=4x(2x+1)-3(2x+1)\\]\\[=(4x-3)(2x+1).\\]</div></div><div class=\"solution-step\"><strong>3. \\(12x^2-11x-5\\)</strong><div>\\[12(-5)=-60.\\]เลือก 4 และ \\(-15\\) เพราะ \\(4(-15)=-60\\) และ \\(4-15=-11\\):\\[12x^2+4x-15x-5\\]\\[=4x(3x+1)-5(3x+1)\\]\\[=(3x+1)(4x-5).\\]</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\((3x+2)(2x-1),\\ (4x-3)(2x+1),\\ (3x+1)(4x-5)\\)</div></div>"},{"id":7,"sec":"B","tag":"Perfect Squares","title":"กำลังสองสมบูรณ์","prompt":"แยกตัวประกอบและเขียนให้อยู่ในรูปกำลังสอง","en":"Recognize perfect-square trinomials.","parts":[{"type":"factor","label":"\\(x^2+10x+25\\)","answer":"(x+5)^2","minAdd":2},{"type":"factor","label":"\\(9x^2-24xy+16y^2\\)","answer":"(3*x-4*y)^2","minAdd":2},{"type":"factor","label":"\\(4a^2+12ab+9b^2\\)","answer":"(2*a+3*b)^2","minAdd":2}],"hint":"พจน์แรกและพจน์สุดท้ายต้องเป็นกำลังสอง และพจน์กลางต้องเป็น \\(\\pm2AB\\)","sol":"<div class=\"solution-step\"><strong>สูตรกำลังสองสมบูรณ์</strong><div>\\[A^2+2AB+B^2=(A+B)^2\\]\\[A^2-2AB+B^2=(A-B)^2.\\]</div></div><div class=\"solution-step\"><strong>1. \\(x^2+10x+25\\)</strong><div>\\[x^2=(x)^2,\\qquad25=5^2,\\qquad10x=2(x)(5)\\]จึงได้\\[x^2+10x+25=(x+5)^2.\\]</div></div><div class=\"solution-step\"><strong>2. \\(9x^2-24xy+16y^2\\)</strong><div>\\[9x^2=(3x)^2,\\qquad16y^2=(4y)^2\\]และ\\[-24xy=-2(3x)(4y)\\]จึงได้\\[9x^2-24xy+16y^2=(3x-4y)^2.\\]</div></div><div class=\"solution-step\"><strong>3. \\(4a^2+12ab+9b^2\\)</strong><div>\\[4a^2=(2a)^2,\\qquad9b^2=(3b)^2,\\qquad12ab=2(2a)(3b)\\]ดังนั้น\\[4a^2+12ab+9b^2=(2a+3b)^2.\\]</div></div><div class=\"solution-note\"><strong>จุดตรวจเร็ว</strong><div>ถ้าพจน์แรกและพจน์สุดท้ายเป็นกำลังสอง แต่พจน์กลางไม่เท่ากับ \\(\\pm2AB\\) จะไม่ใช่กำลังสองสมบูรณ์</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\((x+5)^2,\\ (3x-4y)^2,\\ (2a+3b)^2\\)</div></div>"},{"id":8,"sec":"C","tag":"Grouping","title":"จัดหมู่ 4 พจน์","prompt":"จัดสองพจน์หน้าและสองพจน์หลังให้มีวงเล็บร่วม แล้วแยกต่อถ้าทำได้","en":"Factor by grouping.","parts":[{"type":"factor","label":"\\(x^3+3x^2+2x+6\\)","answer":"(x+3)*(x^2+2)","minAdd":2},{"type":"factor","label":"\\(x^3+3x^2-4x-12\\)","answer":"(x+3)*(x-2)*(x+2)","minAdd":3},{"type":"factor","label":"\\(2x^3+6x^2+x+3\\)","answer":"(x+3)*(2*x^2+1)","minAdd":2}],"hint":"เมื่อดึงตัวร่วมจากแต่ละกลุ่มแล้ว วงเล็บที่เหลือต้องเหมือนกัน","sol":"<div class=\"solution-step\"><strong>1. \\(x^3+3x^2+2x+6\\)</strong><div>จัดเป็นสองกลุ่ม:\\[(x^3+3x^2)+(2x+6)\\]\\[=x^2(x+3)+2(x+3)\\]\\[=(x+3)(x^2+2).\\]</div></div><div class=\"solution-check\"><strong>ตรวจคำตอบโดยคูณกลับ</strong><div>\\[(x+3)(x^2+2)=x^3+3x^2+2x+6.\\]</div></div><div class=\"solution-step\"><strong>2. \\(x^3+3x^2-4x-12\\)</strong><div>\\[(x^3+3x^2)+(-4x-12)\\]\\[=x^2(x+3)-4(x+3)\\]\\[=(x+3)(x^2-4).\\]แต่ \\(x^2-4\\) ยังเป็นผลต่างกำลังสอง:\\[(x+3)(x-2)(x+2).\\]</div></div><div class=\"solution-step\"><strong>3. \\(2x^3+6x^2+x+3\\)</strong><div>\\[(2x^3+6x^2)+(x+3)\\]\\[=2x^2(x+3)+1(x+3)\\]\\[=(x+3)(2x^2+1).\\]</div></div><div class=\"solution-note\"><strong>เงื่อนไขของการจัดหมู่</strong><div>หลังดึงตัวประกอบร่วมจากแต่ละกลุ่ม วงเล็บที่เหลือต้องเหมือนกันทุกประการ จึงจะดึงวงเล็บร่วมได้</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\((x+3)(x^2+2),\\ (x+3)(x-2)(x+2),\\ (x+3)(2x^2+1)\\)</div></div>"},{"id":9,"sec":"C","tag":"Reorder then Group","title":"สลับลำดับพจน์ก่อนจัดหมู่","prompt":"เรียงพจน์ใหม่ได้ เพราะการบวกมีสมบัติสลับที่และเปลี่ยนหมู่","en":"Reorder terms, then factor by grouping.","parts":[{"type":"factor","label":"\\(2x^3-18x+x^2-9\\)","answer":"(2*x+1)*(x-3)*(x+3)","minAdd":3},{"type":"factor","label":"\\(3x^3-12x^2+2x-8\\)","answer":"(x-4)*(3*x^2+2)","minAdd":2},{"type":"factor","label":"\\(6x^3+9x^2-4x-6\\)","answer":"(2*x+3)*(3*x^2-2)","minAdd":2}],"hint":"ลองจับพจน์ที่ทำให้หลังดึงตัวร่วมแล้วได้วงเล็บเหมือนกัน","sol":"<div class=\"solution-step\"><strong>หลักการสลับลำดับพจน์</strong><div>การบวกมีสมบัติสลับที่และเปลี่ยนหมู่ จึงสามารถเรียงพจน์ใหม่ได้ ตราบใดที่เครื่องหมายของแต่ละพจน์ไม่เปลี่ยน</div></div><div class=\"solution-step\"><strong>1. \\(2x^3-18x+x^2-9\\)</strong><div>เรียงใหม่:\\[2x^3+x^2-18x-9\\]\\[=x^2(2x+1)-9(2x+1)\\]\\[=(2x+1)(x^2-9)\\]\\[=(2x+1)(x-3)(x+3).\\]</div></div><div class=\"solution-step\"><strong>2. \\(3x^3-12x^2+2x-8\\)</strong><div>\\[(3x^3-12x^2)+(2x-8)\\]\\[=3x^2(x-4)+2(x-4)\\]\\[=(x-4)(3x^2+2).\\]</div></div><div class=\"solution-step\"><strong>3. \\(6x^3+9x^2-4x-6\\)</strong><div>\\[(6x^3+9x^2)+(-4x-6)\\]\\[=3x^2(2x+3)-2(2x+3)\\]\\[=(2x+3)(3x^2-2).\\]</div></div><div class=\"solution-note\"><strong>ข้อผิดพลาดที่พบบ่อย</strong><div>เมื่อย้ายพจน์ \\(-18x\\) หรือ \\(-9\\) ไปตำแหน่งใหม่ เครื่องหมายลบต้องติดไปกับพจน์นั้นเสมอ</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\((2x+1)(x-3)(x+3),\\ (x-4)(3x^2+2),\\ (2x+3)(3x^2-2)\\)</div></div>"},{"id":10,"sec":"C","tag":"Sum & Difference of Cubes","title":"ผลบวกและผลต่างกำลังสาม","prompt":"ใช้สูตรกำลังสาม โดยระวังเครื่องหมายในวงเล็บสามพจน์","en":"Use sum/difference of cubes.","parts":[{"type":"factor","label":"\\(8x^3-27\\)","answer":"(2*x-3)*(4*x^2+6*x+9)","minAdd":2},{"type":"factor","label":"\\(x^3+64\\)","answer":"(x+4)*(x^2-4*x+16)","minAdd":2},{"type":"factor","label":"\\(27a^3+8b^3\\)","answer":"(3*a+2*b)*(9*a^2-6*a*b+4*b^2)","minAdd":2}],"hint":"\\(A^3-B^3=(A-B)(A^2+AB+B^2)\\) และ \\(A^3+B^3=(A+B)(A^2-AB+B^2)\\)","sol":"<div class=\"solution-step\"><strong>สูตรที่ต้องจำ</strong><div>\\[A^3-B^3=(A-B)(A^2+AB+B^2)\\]\\[A^3+B^3=(A+B)(A^2-AB+B^2).\\]</div></div><div class=\"solution-note\"><strong>เทคนิคจำเครื่องหมาย</strong><div>วงเล็บแรกใช้เครื่องหมายเดียวกับโจทย์ ส่วนวงเล็บสามพจน์มีพจน์กลางใช้เครื่องหมายตรงข้าม และพจน์สุดท้ายเป็นบวกเสมอ</div></div><div class=\"solution-step\"><strong>1. \\(8x^3-27\\)</strong><div>\\[8x^3=(2x)^3,\\qquad27=3^3.\\]ให้ \\(A=2x,\\ B=3\\):\\[8x^3-27=(2x-3)(4x^2+6x+9).\\]</div></div><div class=\"solution-step\"><strong>2. \\(x^3+64\\)</strong><div>\\[64=4^3.\\]ให้ \\(A=x,\\ B=4\\):\\[x^3+64=(x+4)(x^2-4x+16).\\]</div></div><div class=\"solution-step\"><strong>3. \\(27a^3+8b^3\\)</strong><div>\\[27a^3=(3a)^3,\\qquad8b^3=(2b)^3.\\]จึงได้\\[27a^3+8b^3=(3a+2b)(9a^2-6ab+4b^2).\\]</div></div><div class=\"solution-check\"><strong>ตรวจคำตอบโดยคูณกลับ</strong><div>ตัวอย่างข้อ 1:\\[(2x-3)(4x^2+6x+9)=8x^3+12x^2+18x-12x^2-18x-27=8x^3-27.\\]</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\((2x-3)(4x^2+6x+9),\\ (x+4)(x^2-4x+16),\\ (3a+2b)(9a^2-6ab+4b^2)\\)</div></div>"},{"id":11,"sec":"C","tag":"Perfect Cubes","title":"กำลังสามสมบูรณ์","prompt":"สังเกตสัมประสิทธิ์ 1 : 3 : 3 : 1","en":"Recognize perfect cubes.","parts":[{"type":"factor","label":"\\(x^3+6x^2+12x+8\\)","answer":"(x+2)^3","minAdd":3},{"type":"factor","label":"\\(8x^3-36x^2y+54xy^2-27y^3\\)","answer":"(2*x-3*y)^3","minAdd":3},{"type":"factor","label":"\\(a^6+3a^4b^2+3a^2b^4+b^6\\)","answer":"(a^2+b^2)^3","minAdd":3}],"hint":"เทียบกับ \\(A^3\\pm3A^2B+3AB^2\\pm B^3=(A\\pm B)^3\\)","sol":"<div class=\"solution-step\"><strong>สูตรกำลังสามสมบูรณ์</strong><div>\\[(A+B)^3=A^3+3A^2B+3AB^2+B^3\\]\\[(A-B)^3=A^3-3A^2B+3AB^2-B^3.\\]</div></div><div class=\"solution-step\"><strong>1. \\(x^3+6x^2+12x+8\\)</strong><div>พจน์แรก \\(=x^3\\), พจน์สุดท้าย \\(=2^3\\):\\[3x^2(2)=6x^2,\\qquad3x(2^2)=12x.\\]ครบตามรูป จึงได้\\[(x+2)^3.\\]</div></div><div class=\"solution-step\"><strong>2. \\(8x^3-36x^2y+54xy^2-27y^3\\)</strong><div>ให้ \\(A=2x,\\ B=3y\\):\\[A^3=8x^3\\]\\[-3A^2B=-3(4x^2)(3y)=-36x^2y\\]\\[3AB^2=3(2x)(9y^2)=54xy^2\\]\\[-B^3=-27y^3.\\]ดังนั้น\\[(2x-3y)^3.\\]</div></div><div class=\"solution-step\"><strong>3. \\(a^6+3a^4b^2+3a^2b^4+b^6\\)</strong><div>มอง \\(a^6=(a^2)^3\\) และ \\(b^6=(b^2)^3\\). ให้ \\(A=a^2,\\ B=b^2\\):\\[(a^2+b^2)^3.\\]</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\((x+2)^3,\\ (2x-3y)^3,\\ (a^2+b^2)^3\\)</div></div>"},{"id":12,"sec":"D","tag":"Difference of Squares","title":"ผลต่างกำลังสองและกำลังสี่","prompt":"แยกต่อจนไม่มีผลต่างกำลังสองเหลือ","en":"Factor repeated differences of squares.","parts":[{"type":"factor","label":"\\(x^2-49\\)","answer":"(x-7)*(x+7)","minAdd":2},{"type":"factor","label":"\\(16a^2-81b^2\\)","answer":"(4*a-9*b)*(4*a+9*b)","minAdd":2},{"type":"factor","label":"\\(x^4-16\\)","answer":"(x-2)*(x+2)*(x^2+4)","minAdd":3}],"hint":"หลังใช้ \\(A^2-B^2\\) แล้ว ให้ตรวจวงเล็บทุกวงอีกครั้ง","sol":"<div class=\"solution-step\"><strong>สูตรผลต่างกำลังสอง</strong><div>\\[A^2-B^2=(A-B)(A+B).\\]</div></div><div class=\"solution-step\"><strong>1. \\(x^2-49\\)</strong><div>\\[49=7^2\\]\\[x^2-49=(x-7)(x+7).\\]</div></div><div class=\"solution-step\"><strong>2. \\(16a^2-81b^2\\)</strong><div>\\[16a^2=(4a)^2,\\qquad81b^2=(9b)^2\\]\\[16a^2-81b^2=(4a-9b)(4a+9b).\\]</div></div><div class=\"solution-step\"><strong>3. \\(x^4-16\\)</strong><div>รอบแรก:\\[x^4-16=(x^2-4)(x^2+4).\\]ตรวจวงเล็บแรก:\\[x^2-4=(x-2)(x+2).\\]ส่วน \\(x^2+4\\) เป็นผลบวกกำลังสองและหยุดได้ในจำนวนเต็ม</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\((x-7)(x+7),\\ (4a-9b)(4a+9b),\\ (x-2)(x+2)(x^2+4)\\)</div></div>"},{"id":13,"sec":"D","tag":"Quadratic in x²","title":"กำลังสี่ที่ปลอมเป็นกำลังสอง","prompt":"ให้ \\(u=x^2\\) ชั่วคราว แล้วแยกต่อหลังแทนกลับ","en":"Treat as a quadratic in x².","parts":[{"type":"factor","label":"\\(x^4-5x^2+4\\)","answer":"(x-1)*(x+1)*(x-2)*(x+2)","minAdd":4},{"type":"factor","label":"\\(x^4+5x^2+4\\)","answer":"(x^2+1)*(x^2+4)","minAdd":2},{"type":"factor","label":"\\(2x^4-5x^2-3\\)","answer":"(2*x^2+1)*(x^2-3)","minAdd":2}],"hint":"แยกในตัวแปร \\(u\\) ก่อน แต่เมื่อแทน \\(u=x^2\\) กลับแล้วต้องตรวจผลต่างกำลังสองอีกครั้ง","sol":"<div class=\"solution-step\"><strong>1. \\(x^4-5x^2+4\\)</strong><div>ให้ \\(u=x^2\\):\\[u^2-5u+4=(u-1)(u-4).\\]แทนกลับ:\\[(x^2-1)(x^2-4).\\]แยกผลต่างกำลังสองทั้งสองวงเล็บ:\\[(x-1)(x+1)(x-2)(x+2).\\]</div></div><div class=\"solution-step\"><strong>2. \\(x^4+5x^2+4\\)</strong><div>ให้ \\(u=x^2\\):\\[u^2+5u+4=(u+1)(u+4).\\]แทนกลับ:\\[(x^2+1)(x^2+4).\\]ทั้งสองวงเล็บเป็นผลบวกกำลังสอง จึงหยุดได้ในจำนวนเต็ม</div></div><div class=\"solution-step\"><strong>3. \\(2x^4-5x^2-3\\)</strong><div>ให้ \\(u=x^2\\):\\[2u^2-5u-3.\\]แยกพจน์กลาง:\\[2u^2+u-6u-3\\]\\[=u(2u+1)-3(2u+1)\\]\\[=(2u+1)(u-3).\\]แทนกลับ:\\[(2x^2+1)(x^2-3).\\]</div></div><div class=\"solution-note\"><strong>เหตุผลที่ข้อ 3 หยุดได้</strong><div>\\(x^2-3\\) ไม่สามารถแยกเป็นตัวประกอบที่มีสัมประสิทธิ์จำนวนเต็มได้ แม้จะแยกเหนือจำนวนจริงเป็น \\((x-\\sqrt3)(x+\\sqrt3)\\)</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\((x-1)(x+1)(x-2)(x+2),\\ (x^2+1)(x^2+4),\\ (2x^2+1)(x^2-3)\\)</div></div>"},{"id":14,"sec":"D","tag":"Quadratic in x³","title":"กำลังหกที่ปลอมเป็นกำลังสอง","prompt":"ให้ \\(u=x^3\\) แล้วใช้สูตรผลบวก–ผลต่างกำลังสามหลังแทนกลับ","en":"Treat as a quadratic in x³, then continue factoring.","parts":[{"type":"factor","label":"\\(x^6-9x^3+8\\)","answer":"(x-1)*(x^2+x+1)*(x-2)*(x^2+2*x+4)","minAdd":4},{"type":"factor","label":"\\(x^6+7x^3-8\\)","answer":"(x-1)*(x^2+x+1)*(x+2)*(x^2-2*x+4)","minAdd":4},{"type":"factor","label":"\\(x^6+9x^3+8\\)","answer":"(x+1)*(x^2-x+1)*(x+2)*(x^2-2*x+4)","minAdd":4}],"hint":"หลังได้วงเล็บ \\(x^3\\pm1\\) หรือ \\(x^3\\pm8\\) ยังต้องใช้สูตรกำลังสามต่อ","sol":"<div class=\"solution-step\"><strong>1. \\(x^6-9x^3+8\\)</strong><div>ให้ \\(u=x^3\\):\\[u^2-9u+8=(u-1)(u-8).\\]แทนกลับ:\\[(x^3-1)(x^3-8).\\]แยกกำลังสามต่อ:\\[x^3-1=(x-1)(x^2+x+1)\\]\\[x^3-8=(x-2)(x^2+2x+4).\\]</div></div><div class=\"solution-step\"><strong>2. \\(x^6+7x^3-8\\)</strong><div>ให้ \\(u=x^3\\):\\[u^2+7u-8=(u-1)(u+8).\\]แทนกลับ:\\[(x^3-1)(x^3+8)\\]\\[=(x-1)(x^2+x+1)(x+2)(x^2-2x+4).\\]</div></div><div class=\"solution-step\"><strong>3. \\(x^6+9x^3+8\\)</strong><div>ให้ \\(u=x^3\\):\\[u^2+9u+8=(u+1)(u+8).\\]แทนกลับและแยกผลบวกกำลังสาม:\\[(x+1)(x^2-x+1)(x+2)(x^2-2x+4).\\]</div></div><div class=\"solution-note\"><strong>ห้ามหยุดเร็ว</strong><div>เมื่อแทน \\(u=x^3\\) กลับแล้ว วงเล็บ \\(x^3\\pm1\\) และ \\(x^3\\pm8\\) ยังต้องใช้สูตรกำลังสามต่อ</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\((x-1)(x^2+x+1)(x-2)(x^2+2x+4)\\), \\((x-1)(x^2+x+1)(x+2)(x^2-2x+4)\\), \\((x+1)(x^2-x+1)(x+2)(x^2-2x+4)\\)</div></div>"},{"id":15,"sec":"D","tag":"Two Variables","title":"พหุนามสองตัวแปรแบบผสม","prompt":"ดึงตัวประกอบร่วมและใช้รูปพิเศษให้ครบ","en":"Factor two-variable expressions completely.","parts":[{"type":"factor","label":"\\(x^4-2x^2y^2+y^4\\)","answer":"(x-y)^2*(x+y)^2","minAdd":4},{"type":"factor","label":"\\(a^4-b^4\\)","answer":"(a-b)*(a+b)*(a^2+b^2)","minAdd":3},{"type":"factor","label":"\\(8x^3y-18xy^3\\)","answer":"2*x*y*(2*x-3*y)*(2*x+3*y)","minAdd":2}],"hint":"ข้อแรกเป็นกำลังสองสมบูรณ์ก่อน แล้วภายในยังเป็นผลต่างกำลังสอง","sol":"<div class=\"solution-step\"><strong>1. \\(x^4-2x^2y^2+y^4\\)</strong><div>เป็นกำลังสองสมบูรณ์เมื่อให้ \\(A=x^2,\\ B=y^2\\):\\[x^4-2x^2y^2+y^4=(x^2-y^2)^2.\\]แต่ภายในยังเป็นผลต่างกำลังสอง:\\[(x^2-y^2)^2=[(x-y)(x+y)]^2\\]\\[=(x-y)^2(x+y)^2.\\]</div></div><div class=\"solution-step\"><strong>2. \\(a^4-b^4\\)</strong><div>\\[a^4-b^4=(a^2)^2-(b^2)^2\\]\\[=(a^2-b^2)(a^2+b^2)\\]\\[=(a-b)(a+b)(a^2+b^2).\\]</div></div><div class=\"solution-step\"><strong>3. \\(8x^3y-18xy^3\\)</strong><div>ดึงตัวประกอบร่วม \\(2xy\\):\\[8x^3y-18xy^3=2xy(4x^2-9y^2).\\]วงเล็บเป็นผลต่างกำลังสอง:\\[4x^2-9y^2=(2x-3y)(2x+3y).\\]ดังนั้น\\[2xy(2x-3y)(2x+3y).\\]</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\((x-y)^2(x+y)^2,\\ (a-b)(a+b)(a^2+b^2),\\ 2xy(2x-3y)(2x+3y)\\)</div></div>"},{"id":16,"sec":"E","tag":"Mixed I","title":"ดึงร่วม แล้วใช้ผลต่างกำลังสอง","prompt":"โจทย์หลายชั้น: ดึงร่วมก่อน แล้วแยกต่อจนสุด","en":"Common factor followed by difference of squares.","parts":[{"type":"factor","label":"\\(3x^5-48x\\)","answer":"3*x*(x-2)*(x+2)*(x^2+4)","minAdd":3},{"type":"factor","label":"\\(5a^3b-45ab^3\\)","answer":"5*a*b*(a-3*b)*(a+3*b)","minAdd":2},{"type":"factor","label":"\\(2x^5y^2-32xy^2\\)","answer":"2*x*y^2*(x-2)*(x+2)*(x^2+4)","minAdd":3}],"hint":"หลังดึงร่วมจะเห็น \\(x^4-16\\) หรือ \\(a^2-9b^2\\)","sol":"<div class=\"solution-step\"><strong>1. \\(3x^5-48x\\)</strong><div>ดึง \\(3x\\):\\[3x^5-48x=3x(x^4-16).\\]แยกผลต่างกำลังสองสองรอบ:\\[x^4-16=(x^2-4)(x^2+4)\\]\\[=(x-2)(x+2)(x^2+4).\\]จึงได้\\[3x(x-2)(x+2)(x^2+4).\\]</div></div><div class=\"solution-step\"><strong>2. \\(5a^3b-45ab^3\\)</strong><div>ดึง \\(5ab\\):\\[5ab(a^2-9b^2)\\]\\[=5ab(a-3b)(a+3b).\\]</div></div><div class=\"solution-step\"><strong>3. \\(2x^5y^2-32xy^2\\)</strong><div>ดึง \\(2xy^2\\):\\[2xy^2(x^4-16)\\]\\[=2xy^2(x-2)(x+2)(x^2+4).\\]</div></div><div class=\"solution-note\"><strong>โครงสร้างร่วมของทั้งสามข้อ</strong><div>ดึงตัวประกอบร่วมก่อน จึงจะมองเห็นผลต่างกำลังสองที่ซ่อนอยู่ด้านใน</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\(3x(x-2)(x+2)(x^2+4),\\ 5ab(a-3b)(a+3b),\\ 2xy^2(x-2)(x+2)(x^2+4)\\)</div></div>"},{"id":17,"sec":"E","tag":"Mixed II","title":"จัดหมู่ แล้วใช้ผลต่างกำลังสอง","prompt":"เมื่อจัดหมู่สำเร็จแล้ว อย่าหยุดถ้ายังมี \\(A^2-B^2\\)","en":"Grouping followed by difference of squares.","parts":[{"type":"factor","label":"\\(2x^3+x^2-18x-9\\)","answer":"(2*x+1)*(x-3)*(x+3)","minAdd":3},{"type":"factor","label":"\\(x^3-2x^2-9x+18\\)","answer":"(x-2)*(x-3)*(x+3)","minAdd":3},{"type":"factor","label":"\\(4x^3+4x^2-25x-25\\)","answer":"(x+1)*(2*x-5)*(2*x+5)","minAdd":3}],"hint":"หาแฟกเตอร์ร่วมของสองกลุ่มก่อน แล้วตรวจวงเล็บกำลังสอง","sol":"<div class=\"solution-step\"><strong>1. \\(2x^3+x^2-18x-9\\)</strong><div>\\[(2x^3+x^2)+(-18x-9)\\]\\[=x^2(2x+1)-9(2x+1)\\]\\[=(2x+1)(x^2-9)\\]\\[=(2x+1)(x-3)(x+3).\\]</div></div><div class=\"solution-step\"><strong>2. \\(x^3-2x^2-9x+18\\)</strong><div>\\[(x^3-2x^2)+(-9x+18)\\]\\[=x^2(x-2)-9(x-2)\\]\\[=(x-2)(x^2-9)\\]\\[=(x-2)(x-3)(x+3).\\]</div></div><div class=\"solution-step\"><strong>3. \\(4x^3+4x^2-25x-25\\)</strong><div>\\[(4x^3+4x^2)+(-25x-25)\\]\\[=4x^2(x+1)-25(x+1)\\]\\[=(x+1)(4x^2-25)\\]\\[=(x+1)(2x-5)(2x+5).\\]</div></div><div class=\"solution-note\"><strong>เป้าหมายสองชั้น</strong><div>ชั้นแรกจัดหมู่ให้เกิดวงเล็บร่วม ชั้นที่สองตรวจว่าวงเล็บที่เหลือเป็นผลต่างกำลังสองหรือไม่</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\((2x+1)(x-3)(x+3),\\ (x-2)(x-3)(x+3),\\ (x+1)(2x-5)(2x+5)\\)</div></div>"},{"id":18,"sec":"E","tag":"Mixed III","title":"มองก้อนเป็นกำลังสาม","prompt":"กำหนดก้อน \\(A\\) และ \\(B\\) ให้ถูก แล้วใช้สูตรกำลังสาม","en":"Recognize composite cubes.","parts":[{"type":"factor","label":"\\(x^6-1\\)","answer":"(x-1)*(x+1)*(x^2+x+1)*(x^2-x+1)","minAdd":4},{"type":"factor","label":"\\(8x^6+27y^3\\)","answer":"(2*x^2+3*y)*(4*x^4-6*x^2*y+9*y^2)","minAdd":2},{"type":"factor","label":"\\(27a^6-8b^3\\)","answer":"(3*a^2-2*b)*(9*a^4+6*a^2*b+4*b^2)","minAdd":2}],"hint":"เช่น \\(8x^6=(2x^2)^3\\) และ \\(27y^3=(3y)^3\\)","sol":"<div class=\"solution-step\"><strong>1. \\(x^6-1\\)</strong><div>มองเป็นผลต่างกำลังสองก่อน:\\[x^6-1=(x^3)^2-1^2=(x^3-1)(x^3+1).\\]จากนั้นแยกกำลังสาม:\\[x^3-1=(x-1)(x^2+x+1)\\]\\[x^3+1=(x+1)(x^2-x+1).\\]</div></div><div class=\"solution-step\"><strong>2. \\(8x^6+27y^3\\)</strong><div>\\[8x^6=(2x^2)^3,\\qquad27y^3=(3y)^3.\\]ให้ \\(A=2x^2,\\ B=3y\\):\\[(2x^2+3y)(4x^4-6x^2y+9y^2).\\]</div></div><div class=\"solution-step\"><strong>3. \\(27a^6-8b^3\\)</strong><div>\\[27a^6=(3a^2)^3,\\qquad8b^3=(2b)^3.\\]ให้ \\(A=3a^2,\\ B=2b\\):\\[(3a^2-2b)(9a^4+6a^2b+4b^2).\\]</div></div><div class=\"solution-note\"><strong>วิธีมองก้อน</strong><div>อย่ามองเฉพาะตัวแปรตัวเดียว ให้มองทั้งก้อน เช่น \\((2x^2)^3=8x^6\\) และ \\((3a^2)^3=27a^6\\)</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\((x-1)(x+1)(x^2+x+1)(x^2-x+1)\\), \\((2x^2+3y)(4x^4-6x^2y+9y^2)\\), \\((3a^2-2b)(9a^4+6a^2b+4b^2)\\)</div></div>"},{"id":19,"sec":"F","tag":"Boss","title":"Boss: กำลังแปดซ้อนกำลังสี่","prompt":"แยก \\(x^8-17x^4+16\\) จนสุด","en":"Factor x⁸ − 17x⁴ + 16 completely.","parts":[{"type":"mc","label":"ควรมองเป็นพหุนามกำลังสองในตัวแปรใด","answer":"x4","options":[["x2","ให้ \\(u=x^2\\)"],["x3","ให้ \\(u=x^3\\)"],["x4","ให้ \\(u=x^4\\)"],["group","จัดหมู่ 4 พจน์"]]},{"type":"factor","label":"คำตอบสุดท้าย","answer":"(x-1)*(x+1)*(x^2+1)*(x-2)*(x+2)*(x^2+4)","minAdd":6}],"hint":"ให้ \\(u=x^4\\), แยก \\(u^2-17u+16\\) แล้วตรวจ \\(x^4-1\\) และ \\(x^4-16\\) ต่อ","sol":"<div class=\"solution-step\"><strong>1. สังเกตช่วงของเลขชี้กำลัง</strong><div>พหุนาม\\[x^8-17x^4+16\\]มีเลขชี้กำลัง \\(8,4,0\\), จึงให้\\[u=x^4.\\]</div></div><div class=\"solution-step\"><strong>2. แยกพหุนามกำลังสองใน \\(u\\)</strong><div>\\[u^2-17u+16.\\]ต้องการจำนวนที่คูณกันได้ 16 และบวกกันได้ \\(-17\\), คือ \\(-1\\) และ \\(-16\\):\\[u^2-17u+16=(u-1)(u-16).\\]</div></div><div class=\"solution-step\"><strong>3. แทนตัวแปรเดิมกลับ</strong><div>\\[(x^4-1)(x^4-16).\\]</div></div><div class=\"solution-step\"><strong>4. แยก \\(x^4-1\\)</strong><div>\\[x^4-1=(x^2-1)(x^2+1)\\]\\[=(x-1)(x+1)(x^2+1).\\]</div></div><div class=\"solution-step\"><strong>5. แยก \\(x^4-16\\)</strong><div>\\[x^4-16=(x^2-4)(x^2+4)\\]\\[=(x-2)(x+2)(x^2+4).\\]</div></div><div class=\"solution-check\"><strong>ตรวจคำตอบโดยคูณกลับ</strong><div>จับคู่กลับเป็น\\[(x^4-1)(x^4-16)=x^8-16x^4-x^4+16=x^8-17x^4+16.\\]</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\((x-1)(x+1)(x^2+1)(x-2)(x+2)(x^2+4)\\)</div></div>"},{"id":20,"sec":"F","tag":"Ultimate Boss","title":"Ultimate Boss: ผลต่างกำลังหก","prompt":"แยก \\(x^6-64\\) จนสุด โดยไม่ใช้หารสังเคราะห์","en":"Factor x⁶ − 64 completely without synthetic division.","parts":[{"type":"mc","label":"ก้าวแรกที่เหมาะที่สุด","answer":"dos","options":[["dos","มองเป็น \\((x^3)^2-8^2\\)"],["cube","ใช้ผลต่างกำลังสามทันทีกับ \\(x^6\\) และ 64"],["group","จัดหมู่"],["quad","แยกพหุนามกำลังสองทั่วไป"]]},{"type":"mc","label":"หลังแยกก้าวแรก จะได้รูปใด","answer":"twocubes","options":[["twocubes","\\((x^3-8)(x^3+8)\\)"],["x2","\\((x^2-8)(x^4+8)\\)"],["square","\\((x^3-4)^2\\)"],["stop","แยกต่อไม่ได้แล้ว"]]},{"type":"factor","label":"คำตอบสุดท้าย","answer":"(x-2)*(x+2)*(x^2+2*x+4)*(x^2-2*x+4)","minAdd":4}],"hint":"ใช้ผลต่างกำลังสองก่อน แล้วแต่ละวงเล็บเป็นผลต่างหรือผลบวกกำลังสาม","sol":"<div class=\"solution-step\"><strong>1. เลือกก้าวแรก</strong><div>\\[x^6-64=(x^3)^2-8^2.\\]จึงเป็นผลต่างกำลังสอง ไม่จำเป็นต้องใช้หารสังเคราะห์</div></div><div class=\"solution-step\"><strong>2. ใช้ผลต่างกำลังสอง</strong><div>\\[x^6-64=(x^3-8)(x^3+8).\\]</div></div><div class=\"solution-step\"><strong>3. แยกผลต่างกำลังสาม</strong><div>\\[x^3-8=x^3-2^3\\]\\[=(x-2)(x^2+2x+4).\\]</div></div><div class=\"solution-step\"><strong>4. แยกผลบวกกำลังสาม</strong><div>\\[x^3+8=x^3+2^3\\]\\[=(x+2)(x^2-2x+4).\\]</div></div><div class=\"solution-step\"><strong>5. รวมคำตอบ</strong><div>\\[x^6-64=(x-2)(x^2+2x+4)(x+2)(x^2-2x+4).\\]</div></div><div class=\"solution-check\"><strong>ตรวจคำตอบโดยคูณกลับ</strong><div>เนื่องจาก\\[(x-2)(x^2+2x+4)=x^3-8\\]และ\\[(x+2)(x^2-2x+4)=x^3+8,\\]ผลคูณจึงเป็น\\[(x^3-8)(x^3+8)=x^6-64.\\]</div></div><div class=\"solution-note\"><strong>สมบัติสลับที่</strong><div>สามารถสลับลำดับตัวประกอบเป็น \\((x+2)(x-2)(x^2-2x+4)(x^2+2x+4)\\) ได้และยังถือว่าถูก</div></div><div class=\"solution-answer\"><strong>สรุปคำตอบ</strong><div>\\((x-2)(x+2)(x^2+2x+4)(x^2-2x+4)\\)</div></div>"}];
+const sections={"A":["A","Pattern Recognition","มองรูป เลือกวิธี และรู้ว่าต้องแยกต่อหรือไม่"],"B":["B","Quadratic Factorization","ตัวประกอบร่วม พหุนามกำลังสอง และกำลังสองสมบูรณ์"],"C":["C","Grouping & Cubes","จัดหมู่ ผลบวก–ผลต่างกำลังสาม และกำลังสามสมบูรณ์"],"D":["D","Higher Powers","ผลต่างกำลังสองซ้ำ กำลังสี่–กำลังหก และสองตัวแปร"],"E":["E","Mixed Challenge","โจทย์ผสมหลายวิธีในข้อเดียว"],"F":["F","Boss Zone","ข้อใหญ่สำหรับเตรียมสอบเข้า ม.4"]};
+let states=questions.map(()=>({attempts:0,solved:false,perfect:false,gave:false,checked:false}));
+let hidePassed=false,activeMathField=null;
+const scratch={};
+
+function escapeAttr(s){return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function render(){
+ const root=document.getElementById("quizRoot");
+ root.innerHTML=Object.keys(sections).map(sec=>{
+  const s=sections[sec];
+  return `<div class="section-title"><div class="section-badge">${s[0]}</div><div><h2>${s[1]}</h2><p>${s[2]}</p></div></div>`+
+   questions.filter(q=>q.sec===sec).map(renderQuestion).join("");
+ }).join("");
+ setupScratchpads();setupMathFields();buildKeyboard();updateStats();typeset();
+}
+function renderQuestion(q){
+ return `<article class="question-card" id="card-${q.id}">
+  <div class="card-head"><div class="q-no">${q.id}</div><div class="q-title"><h3>${q.title}</h3><p>${q.tag}</p></div><span class="tag" id="tag-${q.id}">ยังไม่ผ่าน</span></div>
+  <div class="problem"><div class="th">${q.prompt}</div><div class="en">${q.en||""}</div></div>
+  <div class="scratch-shell"><button class="scratch-toggle" onclick="toggleScratch(${q.id})"><span>พื้นที่ทด / Scratchpad</span><span>เปิด–ปิด</span></button>
+   <div class="scratch-panel"><div class="scratch-toolbar"><button class="scratch-btn active" onclick="setScratchTool(${q.id},'pen',this)">Pen</button><button class="scratch-btn" onclick="setScratchTool(${q.id},'eraser',this)">Eraser</button><button class="scratch-btn" onclick="clearScratch(${q.id})">Clear</button><label style="font-weight:800;color:#64748b">Size <input class="scratch-size" type="range" min="1" max="18" value="3" oninput="setScratchSize(${q.id},this.value)"></label></div>
+   <div class="scratch-canvas-wrap"><canvas class="scratch-canvas" id="scratch-${q.id}"></canvas></div><p class="scratch-hint">ใช้จัดหมู่ แยกพจน์กลาง หรือคูณกลับเพื่อตรวจคำตอบ</p></div>
+  </div>
+  <div class="answer-grid">${q.parts.map((p,i)=>renderPart(q.id,i,p)).join("")}</div>
+  <div class="check-controls"><button class="btn primary" onclick="checkQuestion(${q.id})">ตรวจข้อนี้</button><button class="btn ghost" onclick="showHint(${q.id})">คำใบ้</button><button class="btn amber" onclick="giveUp(${q.id})">ยอมแพ้ / เปิดเฉลย</button><button class="btn ghost" onclick="clearAnswers(${q.id})">ล้างคำตอบ</button></div>
+  <div class="feedback" id="fb-${q.id}"></div>
+  <div class="solution" id="sol-${q.id}"><h4>เฉลยละเอียดทีละขั้น / Step-by-step Solution</h4>${q.sol}</div>
+ </article>`;
+}
+function renderPart(qid,i,p){
+ const id=`q${qid}p${i}`;
+ if(p.type==="factor"){
+  return `<div class="answer-part"><label class="part-label">${p.label}</label><div class="answer-row">
+   <math-field class="answer-math" id="${id}" virtual-keyboard-mode="manual" smart-mode aria-label="${escapeAttr(p.label)}"></math-field>
+   <div class="unit-chip">แยกจนสุด</div></div></div>`;
+ }
+ const options=p.type==="tf"?[["true","ถูก"],["false","ผิด"]]:p.options;
+ return `<div class="answer-part"><div class="part-label">${p.label}</div><div class="choice-grid ${p.type==="tf"?"tf":""}">
+  ${options.map(o=>`<label class="choice-card"><input type="radio" name="${id}" value="${escapeAttr(o[0])}"><span class="choice-ui"><span class="choice-mark">✓</span><span class="choice-text">${o[1]}</span></span></label>`).join("")}
+ </div></div>`;
+}
+function setupMathFields(){document.querySelectorAll("math-field.answer-math").forEach(mf=>{mf.addEventListener("focus",()=>activeMathField=mf);mf.addEventListener("pointerdown",()=>activeMathField=mf)})}
+function buildKeyboard(){
+ const grid=document.getElementById("kbGrid");if(!grid||grid.dataset.ready==="1")return;
+ const keys=[
+  ["7","7",""],["8","8",""],["9","9",""],["+","+",""],["−","-",""],["×","\\cdot",""],["(", "(", ""],[")",")",""],["⌫","BACK","action"],["Clear","CLEAR","action"],["←","LEFT",""],["→","RIGHT",""],["x","x","math"],["y","y","math"],
+  ["4","4",""],["5","5",""],["6","6",""],["1","1",""],["2","2",""],["3","3",""],["0","0",""],["a","a","math"],["b","b","math"],["x²","^2","math"],["x³","^3","math"],["x⁴","^4","math"],["□²","(#0)^2","math"],["□³","(#0)^3","math"],
+  ["(□+□)","(#0+#0)","math"],["(□−□)","(#0-#0)","math"],["(□+□)(□−□)","(#0+#0)(#0-#0)","wide math"],["(□+□)²","(#0+#0)^2","wide math"],["(□−□)³","(#0-#0)^3","wide math"],["ซ่อน","TOGGLE","wide action"]
+ ];
+ grid.innerHTML=keys.map(k=>`<button class="key ${k[2]||""}" type="button" onclick="pressKey('${String(k[1]).replace(/\\/g,"\\\\").replace(/'/g,"\\'")}')">${k[0]}</button>`).join("");
+ grid.dataset.ready="1";
+}
+function pressKey(k){
+ if(k==="TOGGLE"){document.getElementById("kbShell").classList.add("collapsed");return}
+ if(!activeMathField)return;activeMathField.focus();
+ if(k==="BACK"){activeMathField.executeCommand("deleteBackward");return}
+ if(k==="CLEAR"){activeMathField.value="";return}
+ if(k==="LEFT"){activeMathField.executeCommand("moveToPreviousChar");return}
+ if(k==="RIGHT"){activeMathField.executeCommand("moveToNextChar");return}
+ activeMathField.insert(k);
+}
+
+/* ---------- Polynomial parser: commutativity-safe symbolic checker ---------- */
+const VARS=["x","y","a","b"];
+function normalizeLatex(s){
+ s=String(s||"").replace(/\\left|\\right/g,"").replace(/\\cdot|\\times|×/g,"*").replace(/−/g,"-");
+ s=s.replace(/\\,/g,"").replace(/\\ /g,"").replace(/\s+/g,"");
+ let old="";
+ while(old!==s){old=s;s=s.replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g,"(($1)/($2))")}
+ s=s.replace(/\^\{([^{}]+)\}/g,"^($1)").replace(/[{}]/g,m=>m==="{"?"(":")");
+ return s;
+}
+function tokenize(s){
+ const t=[];let i=0;
+ while(i<s.length){
+  const c=s[i];
+  if(/[0-9.]/.test(c)){let j=i+1;while(j<s.length&&/[0-9.]/.test(s[j]))j++;const n=Number(s.slice(i,j));if(!Number.isFinite(n))throw Error("number");t.push({k:"num",v:n});i=j;continue}
+  if(/[xyab]/.test(c)){t.push({k:"var",v:c});i++;continue}
+  if("+-*/^()".includes(c)){t.push({k:c,v:c});i++;continue}
+  throw Error("unsupported");
+ }
+ return t;
+}
+function numNode(v){return{type:"num",v}}function varNode(v){return{type:"var",v}}
+function addNode(a,b){return{type:"add",a,b}}function subNode(a,b){return{type:"sub",a,b}}
+function mulNode(a,b){return{type:"mul",a,b}}function divNode(a,b){return{type:"div",a,b}}
+function powNode(a,n){return{type:"pow",a,n}}function negNode(a){return{type:"neg",a}}
+function parseExpression(src){
+ const ts=tokenize(normalizeLatex(src));let p=0;
+ const peek=()=>ts[p],take=k=>{if(!peek()||peek().k!==k)throw Error("expected "+k);return ts[p++]};
+ function primary(){
+  const z=peek();if(!z)throw Error("primary");
+  if(z.k==="num"){p++;return numNode(z.v)}
+  if(z.k==="var"){p++;return varNode(z.v)}
+  if(z.k==="("){p++;const e=addsub();take(")");return e}
+  throw Error("primary");
+ }
+ function power(){
+  let a=primary();
+  if(peek()?.k==="^"){p++;let exp;
+   if(peek()?.k==="("){p++;const n=take("num").v;take(")");exp=n}else exp=take("num").v;
+   if(!Number.isInteger(exp)||exp<0||exp>20)throw Error("power");a=powNode(a,exp)
+  }
+  return a;
+ }
+ function unary(){if(peek()?.k==="+"){p++;return unary()}if(peek()?.k==="-"){p++;return negNode(unary())}return power()}
+ function startsFactor(z){return z&&["num","var","("].includes(z.k)}
+ function term(){
+  let a=unary();
+  while(true){
+   if(peek()?.k==="*"){p++;a=mulNode(a,unary());continue}
+   if(peek()?.k==="/"){p++;a=divNode(a,unary());continue}
+   if(startsFactor(peek())){a=mulNode(a,unary());continue}
+   break;
+  }
+  return a;
+ }
+ function addsub(){let a=term();while(peek()?.k==="+"||peek()?.k==="-"){const k=ts[p++].k;const b=term();a=k==="+"?addNode(a,b):subNode(a,b)}return a}
+ const ast=addsub();if(p!==ts.length)throw Error("trailing");return ast;
+}
+function zeroPoly(){return new Map()}
+function keyOf(e){return e.join(",")}
+function expOf(k){return k.split(",").map(Number)}
+function polyClean(P){for(const[k,v]of P)if(Math.abs(v)<1e-9)P.delete(k);return P}
+function polyConst(c){const P=zeroPoly();if(Math.abs(c)>1e-9)P.set("0,0,0,0",c);return P}
+function polyVar(v){const e=[0,0,0,0];e[VARS.indexOf(v)]=1;const P=zeroPoly();P.set(keyOf(e),1);return P}
+function polyAdd(A,B,s=1){const P=new Map(A);for(const[k,v]of B)P.set(k,(P.get(k)||0)+s*v);return polyClean(P)}
+function polyMul(A,B){const P=zeroPoly();for(const[ka,va]of A)for(const[kb,vb]of B){const ea=expOf(ka),eb=expOf(kb),e=ea.map((x,i)=>x+eb[i]),k=keyOf(e);P.set(k,(P.get(k)||0)+va*vb)}return polyClean(P)}
+function polyScale(A,c){const P=zeroPoly();for(const[k,v]of A)P.set(k,v*c);return polyClean(P)}
+function scalarOf(P){if(P.size===0)return 0;if(P.size===1&&P.has("0,0,0,0"))return P.get("0,0,0,0");return null}
+function polyPow(A,n){let R=polyConst(1),B=A;while(n>0){if(n%2)R=polyMul(R,B);n=Math.floor(n/2);if(n)B=polyMul(B,B)}return R}
+function astPoly(n){
+ switch(n.type){
+  case"num":return polyConst(n.v);case"var":return polyVar(n.v);case"neg":return polyScale(astPoly(n.a),-1);
+  case"add":return polyAdd(astPoly(n.a),astPoly(n.b));case"sub":return polyAdd(astPoly(n.a),astPoly(n.b),-1);
+  case"mul":return polyMul(astPoly(n.a),astPoly(n.b));case"pow":return polyPow(astPoly(n.a),n.n);
+  case"div":{const A=astPoly(n.a),B=astPoly(n.b),c=scalarOf(B);if(c===null||Math.abs(c)<1e-12)throw Error("division");return polyScale(A,1/c)}
+ }throw Error("ast");
+}
+function polyEqual(A,B){const ks=new Set([...A.keys(),...B.keys()]);for(const k of ks)if(Math.abs((A.get(k)||0)-(B.get(k)||0))>1e-8)return false;return true}
+function unwrapNeg(n){while(n.type==="neg")n=n.a;return n}
+function isAdditive(n){n=unwrapNeg(n);return n.type==="add"||n.type==="sub"}
+function additiveFactorCount(n){
+ n=unwrapNeg(n);
+ if(n.type==="mul")return additiveFactorCount(n.a)+additiveFactorCount(n.b);
+ if(n.type==="div")return additiveFactorCount(n.a)+additiveFactorCount(n.b);
+ if(n.type==="pow"&&isAdditive(n.a))return n.n;
+ if(isAdditive(n))return 1;
+ return 0;
+}
+function hasFactoredShape(n){
+ n=unwrapNeg(n);
+ if(n.type==="mul")return true;
+ if(n.type==="pow"&&isAdditive(n.a)&&n.n>1)return true;
+ return false;
+}
+function checkFactor(latex,expected,minAdd){
+ try{
+  const userAst=parseExpression(latex),expAst=parseExpression(expected);
+  if(!polyEqual(astPoly(userAst),astPoly(expAst)))return false;
+  if(!hasFactoredShape(userAst))return false;
+  if(additiveFactorCount(userAst)<minAdd)return false;
+  return true;
+ }catch(e){return false}
+}
+
+function readPart(qid,i,p){
+ const name=`q${qid}p${i}`;
+ if(p.type==="factor"){const el=document.getElementById(name);return checkFactor(el?.value||"",p.answer,p.minAdd)}
+ const checked=document.querySelector(`input[name="${name}"]:checked`),raw=checked?.value||"";
+ if(p.type==="tf")return raw!==""&&((raw==="true")===Boolean(p.answer));
+ return raw===p.answer;
+}
+function checkQuestion(id){
+ const q=questions.find(x=>x.id===id),st=states[id-1];if(st.gave)return;
+ st.checked=true;st.attempts++;let correct=0;q.parts.forEach((p,i)=>{if(readPart(id,i,p))correct++});
+ const total=q.parts.length,card=document.getElementById(`card-${id}`),fb=document.getElementById(`fb-${id}`);
+ fb.className="feedback show";
+ if(correct===total){st.solved=true;if(st.attempts===1)st.perfect=true;card.classList.add("correct");fb.classList.add("good");fb.innerHTML=`ผ่านแล้ว ✅ ถูกครบ ${correct}/${total} ส่วน`;document.getElementById(`sol-${id}`).classList.add("show")}
+ else{st.solved=false;card.classList.remove("correct");fb.classList.add("retry");fb.innerHTML=`ยังไม่ครบ — ถูก ${correct}/${total} ส่วน<br><span style="font-weight:750">ระบบไม่ระบุว่าส่วนใดผิด ลองคูณกลับ ตรวจเครื่องหมาย และตรวจว่ายังแยกต่อได้หรือไม่</span>`}
+ updateTag(id);updateStats();typeset();
+}
+function showHint(id){const q=questions.find(x=>x.id===id),fb=document.getElementById(`fb-${id}`);fb.className="feedback show warn";fb.innerHTML=`คำใบ้: ${q.hint}`;typeset()}
+function giveUp(id){const st=states[id-1];if(st.solved||st.gave)return;st.gave=true;st.checked=true;const card=document.getElementById(`card-${id}`);card.classList.remove("correct");card.classList.add("gaveup");const fb=document.getElementById(`fb-${id}`);fb.className="feedback show warn";fb.innerHTML="เปิดเฉลยแล้ว ข้อนี้ไม่นับเป็นผ่าน";document.getElementById(`sol-${id}`).classList.add("show");updateTag(id);updateStats();typeset()}
+function clearAnswers(id){const q=questions.find(x=>x.id===id);q.parts.forEach((p,i)=>{const name=`q${id}p${i}`;if(p.type==="factor"){const el=document.getElementById(name);if(el)el.value=""}else document.querySelectorAll(`input[name="${name}"]`).forEach(el=>el.checked=false)});const fb=document.getElementById(`fb-${id}`);fb.className="feedback";fb.innerHTML=""}
+function updateTag(id){const st=states[id-1],tag=document.getElementById(`tag-${id}`);if(st.gave){tag.textContent="ยอมแพ้";tag.style.background="#fffbeb";tag.style.color="#92400e"}else if(st.solved){tag.textContent=st.perfect?"ผ่านครั้งแรก":"ผ่านแล้ว";tag.style.background="#dcfce7";tag.style.color="#166534"}else if(st.checked){tag.textContent="กำลังตรวจแก้";tag.style.background="#eff6ff";tag.style.color="#1e3a8a"}else{tag.textContent="ยังไม่ผ่าน";tag.removeAttribute("style")}}
+function updateStats(){const solved=states.filter(s=>s.solved).length,perfect=states.filter(s=>s.perfect).length,gave=states.filter(s=>s.gave).length,pct=Math.round(100*solved/questions.length);document.getElementById("scoreText").textContent=`ผ่านแล้ว ${solved} / ${questions.length}`;document.getElementById("perfectText").textContent=`ถูกครั้งแรก ${perfect}`;document.getElementById("gaveText").textContent=`ยอมแพ้ ${gave}`;document.getElementById("progressBar").style.width=pct+"%"}
+function scrollToFirstIncomplete(){const q=questions.find(q=>!states[q.id-1].solved&&!states[q.id-1].gave)||questions[0];document.getElementById(`card-${q.id}`).scrollIntoView({behavior:"smooth",block:"start"})}
+function togglePassed(){hidePassed=!hidePassed;document.getElementById("pageRoot").classList.toggle("hidden-correct",hidePassed);document.getElementById("hideBtn").textContent=hidePassed?"แสดงทุกข้อ":"ซ่อนข้อที่ผ่าน"}
+function resetAll(){if(!confirm("เริ่มใหม่ทั้งหมด?"))return;states=questions.map(()=>({attempts:0,solved:false,perfect:false,gave:false,checked:false}));render()}
+function typeset(){if(window.MathJax?.typesetPromise)MathJax.typesetPromise()}
+
+/* Scratchpads */
+function toggleScratch(id){const shell=document.querySelector(`#card-${id} .scratch-shell`);shell.classList.toggle("open");if(shell.classList.contains("open"))resizeScratch(id,true)}
+function setupScratchpads(){document.querySelectorAll(".scratch-canvas").forEach(c=>{const id=Number(c.id.replace("scratch-",""));if(!scratch[id])initScratch(id)})}
+function initScratch(id){const canvas=document.getElementById(`scratch-${id}`),ctx=canvas.getContext("2d");scratch[id]={canvas,ctx,tool:"pen",size:3,drawing:false,last:null,w:0,h:0};resizeScratch(id,false);
+ canvas.addEventListener("pointerdown",e=>{canvas.setPointerCapture(e.pointerId);scratch[id].drawing=true;scratch[id].last=point(canvas,e)});
+ canvas.addEventListener("pointermove",e=>{const s=scratch[id];if(!s.drawing)return;const p=point(canvas,e);s.ctx.lineCap="round";s.ctx.lineJoin="round";s.ctx.lineWidth=s.tool==="eraser"?s.size*4:s.size;s.ctx.strokeStyle=s.tool==="eraser"?"#fff":"#172033";s.ctx.beginPath();s.ctx.moveTo(s.last.x,s.last.y);s.ctx.lineTo(p.x,p.y);s.ctx.stroke();s.last=p});
+ const stop=()=>scratch[id].drawing=false;canvas.addEventListener("pointerup",stop);canvas.addEventListener("pointercancel",stop)}
+function resizeScratch(id,force){const s=scratch[id];if(!s)return;const wrap=s.canvas.parentElement,rect=wrap.getBoundingClientRect();if(rect.width<20&&!force)return;const dpr=window.devicePixelRatio||1;s.canvas.width=Math.max(1,Math.floor(rect.width*dpr));s.canvas.height=Math.max(1,Math.floor(rect.height*dpr));s.canvas.style.width=rect.width+"px";s.canvas.style.height=rect.height+"px";s.ctx=s.canvas.getContext("2d");s.ctx.scale(dpr,dpr);s.w=rect.width;s.h=rect.height;clearScratch(id)}
+function point(canvas,e){const r=canvas.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
+function setScratchTool(id,tool,btn){scratch[id].tool=tool;btn.parentElement.querySelectorAll(".scratch-btn").forEach(b=>b.classList.remove("active"));btn.classList.add("active")}
+function setScratchSize(id,v){scratch[id].size=Number(v)}
+function clearScratch(id){const s=scratch[id];if(!s)return;s.ctx.fillStyle="#fff";s.ctx.fillRect(0,0,s.w,s.h);s.ctx.strokeStyle="#eef2f7";s.ctx.lineWidth=1;for(let x=0;x<s.w;x+=24){s.ctx.beginPath();s.ctx.moveTo(x,0);s.ctx.lineTo(x,s.h);s.ctx.stroke()}for(let y=0;y<s.h;y+=24){s.ctx.beginPath();s.ctx.moveTo(0,y);s.ctx.lineTo(s.w,y);s.ctx.stroke()}}
+window.addEventListener("resize",()=>Object.keys(scratch).forEach(id=>resizeScratch(Number(id),true)));
+render();
+</script>
+</body>
+</html>
