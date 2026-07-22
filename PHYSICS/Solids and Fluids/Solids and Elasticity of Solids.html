@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Physics M.5 | Part 1: Solids and Elasticity</title>
+<title>Part 1: Solids and Elasticity</title>
 
 <!-- MathJax Configuration & Script -->
 <script>
@@ -12,9 +12,7 @@
       inlineMath: [['$', '$'], ['\\(', '\\)']],
       displayMath: [['$$', '$$'], ['\\[', '\\]']]
     },
-    svg: {
-      fontCache: 'global'
-    }
+    svg: { fontCache: 'global' }
   };
 </script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
@@ -84,7 +82,7 @@ h3 { font-size: 16px; line-height: 1.3; margin: 3mm 0 2mm; }
 .en { display: block; color: var(--muted); font-size: .88em; line-height: 1.35; margin-top: .4mm; }
 .inline-en { color: var(--muted); font-size: .9em; }
 
-.key, .formula, .pitfall, .example, .teacher-note {
+.key, .formula, .pitfall, .example {
   border: 1px solid var(--ink);
   padding: 3.5mm 4mm;
   margin: 3mm 0;
@@ -93,7 +91,6 @@ h3 { font-size: 16px; line-height: 1.3; margin: 3mm 0 2mm; }
 .key { border-left: 5px solid var(--accent); background: var(--accent-soft); }
 .formula { background: #fff; text-align: center; font-size: 16px; font-weight: 700; padding: 4mm; }
 .pitfall { background: var(--warn); border-left: 5px solid #d97706; }
-.example { background: var(--note); }
 
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
 .visual-card { border: 1px solid var(--ink); padding: 3mm; break-inside: avoid; background: #fff; text-align: center; }
@@ -102,27 +99,35 @@ h3 { font-size: 16px; line-height: 1.3; margin: 3mm 0 2mm; }
 
 .question {
   border: 1px solid var(--ink);
-  margin: 4mm 0;
-  padding: 3.5mm 4mm;
-  break-inside: avoid;
+  margin: 2mm 0;
+  padding: 4mm 5mm;
+  min-height: 230mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
-.qhead { font-weight: 900; font-size: 15px; margin-bottom: 2mm; color: var(--accent); }
-.qbody p { margin: 1.8mm 0; }
-.answer-lines {
-  margin-top: 3mm;
-  min-height: 20mm;
-  background: repeating-linear-gradient(to bottom, transparent 0, transparent 7.8mm, #b8b8b8 8mm, transparent 8.2mm);
+.qhead { font-weight: 900; font-size: 16px; margin-bottom: 2mm; color: var(--accent); }
+.qbody p { margin: 1.8mm 0; font-size: 15px; }
+
+/* บรรทัดเขียนคำตอบขนาดใหญ่เต็มหน้ากระดาษ A4 */
+.answer-lines.work-space {
+  flex-grow: 1;
+  margin-top: 5mm;
+  margin-bottom: 3mm;
+  min-height: 170mm;
+  background: repeating-linear-gradient(to bottom, transparent 0, transparent 8.8mm, #b8b8b8 9mm, transparent 9.2mm);
 }
-.qtools { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 3mm; }
-.qtools button { border: 1px solid var(--ink); background: #fff; border-radius: 6px; padding: 5px 9px; font: 700 12px inherit; cursor: pointer; }
+
+.qtools { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2mm; }
+.qtools button { border: 1px solid var(--ink); background: #fff; border-radius: 6px; padding: 6px 12px; font: 700 13px inherit; cursor: pointer; }
 .toggle-btn[aria-expanded="true"] { background: var(--accent); color: #fff; }
 
 .solution {
   display: none;
   border: 1px solid var(--ink);
   margin-top: 3mm;
-  padding: 3mm;
-  font-size: 13.5px;
+  padding: 4mm;
+  font-size: 14px;
   background: var(--answer);
 }
 .solution.open { display: block; }
@@ -135,37 +140,31 @@ h3 { font-size: 16px; line-height: 1.3; margin: 3mm 0 2mm; }
   color: #6b7280; font-size: 9.5px;
 }
 
-@media(max-width: 820px) {
-  .page { width: calc(100vw - 12px); min-height: auto; margin: 8px auto; padding: 16px; }
-  .two-col { grid-template-columns: 1fr; }
-  .footer { position: static; margin-top: 8mm; }
-}
-
 @media print {
   @page { size: A4 portrait; margin: 9mm 10mm 10mm; }
   html, body { width: auto !important; height: auto !important; background: #fff !important; font-size: 9.5pt !important; }
   .toolbar, .qtools, .solution, .footer { display: none !important; }
   .page {
-    width: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important;
+    width: auto !important; min-height: 270mm !important; margin: 0 !important; padding: 0 !important;
     box-shadow: none !important; position: static !important; break-after: page !important; page-break-after: always !important;
   }
   .page:last-child { break-after: auto !important; page-break-after: auto !important; }
-  * { color: #000 !important; box-shadow: none !important; text-shadow: none !important; }
-  .key, .formula, .pitfall, .example, .visual-card, .question { background: #fff !important; }
+  .question { min-height: 250mm !important; border: none !important; padding: 0 !important; }
+  .answer-lines.work-space { min-height: 210mm !important; }
 }
 </style>
 </head>
 <body>
 
 <nav class="toolbar">
-  <button class="primary" onclick="window.print()">🖨️ พิมพ์ใบงานเปล่า / Print Blank Copy</button>
+  <button class="primary" onclick="window.print()">🖨️ พิมพ์ใบงานเปล่า (A4) / Print Blank Copy</button>
   <button id="toggleAllBtn" onclick="toggleAllSolutions()" aria-expanded="false">👁️ เปิดเฉลยทั้งหมด / Show All Solutions</button>
   <button onclick="hideAll()">🙈 ซ่อนเฉลย / Hide All</button>
   <div class="status" id="status">โหมดเรียนรู้: เฉลยซ่อนอยู่ และจะไม่พิมพ์ออกกระดาษ / Learning mode: solutions are hidden and never printed.</div>
 </nav>
 
 <main>
-  <!-- Page 1: Theory Section -->
+  <!-- Page 1: Theory -->
   <section class="page">
     <div class="part-head">
       <div>
@@ -190,334 +189,286 @@ h3 { font-size: 16px; line-height: 1.3; margin: 3mm 0 2mm; }
       <span class="en">Elasticity allows a material to return to its original shape after external forces are removed. Plasticity results in permanent deformation.</span>
     </p>
 
-    <!-- Two-column SVG Graphics -->
     <div class="two-col">
-      <!-- SVG 1: Elastic vs Plastic -->
       <div class="visual-card">
         <svg viewBox="0 0 280 180">
           <text x="140" y="18" font-size="13" font-weight="bold" text-anchor="middle" fill="#17324d">Elastic vs Plastic Deformation</text>
-          
-          <!-- Elastic Case -->
           <g transform="translate(10, 30)">
             <rect x="10" y="15" width="100" height="18" rx="3" fill="#cbd5e1" stroke="#111" stroke-width="1.5"/>
             <text x="120" y="28" font-size="11" fill="#4b5563">ความยาวเดิม L₀</text>
-            
             <rect x="10" y="42" width="130" height="18" rx="3" fill="#93c5fd" stroke="#111" stroke-width="1.5"/>
             <line x1="140" y1="51" x2="165" y2="51" stroke="#dc2626" stroke-width="2"/>
             <polygon points="165,48 171,51 165,54" fill="#dc2626"/>
             <text x="175" y="55" font-size="11" font-weight="bold" fill="#dc2626">F</text>
-            
             <rect x="10" y="69" width="100" height="18" rx="3" fill="#86efac" stroke="#111" stroke-width="1.5"/>
             <text x="120" y="82" font-size="11" font-weight="bold" fill="#166534">✓ คืนรูปเดิม (Elastic)</text>
           </g>
-
           <line x1="10" y1="125" x2="270" y2="125" stroke="#e2e8f0" stroke-width="1"/>
-
-          <!-- Plastic Case -->
           <g transform="translate(10, 105)">
             <rect x="10" y="28" width="130" height="18" rx="3" fill="#fca5a5" stroke="#111" stroke-width="1.5"/>
             <text x="150" y="41" font-size="11" font-weight="bold" fill="#991b1b">✗ ยืดถาวร (Plastic)</text>
           </g>
         </svg>
-        <div class="caption">
-          <b>การเสียรูป / Deformation Modes:</b> ยืดหยุ่นจะคืนสู่ความยาวเดิมเมื่อปลดแรง ส่วนพลาสติกจะยาวค้างถาวร
-          <span class="en">Elastic restores original length; plastic results in permanent set.</span>
-        </div>
+        <div class="caption"><b>การเสียรูป / Deformation Modes:</b> สภาพยืดหยุ่นคืนรูปได้ สภาพพลาสติกยืดถาวร</div>
       </div>
 
-      <!-- SVG 2: Stress-Strain Curve -->
       <div class="visual-card">
         <svg viewBox="0 0 280 180">
           <text x="140" y="18" font-size="13" font-weight="bold" text-anchor="middle" fill="#17324d">Stress-Strain Curve</text>
-          <!-- Axes -->
           <line x1="35" y1="150" x2="260" y2="150" stroke="#111" stroke-width="2"/>
           <polygon points="260,147 266,150 260,153" fill="#111"/>
           <text x="220" y="168" font-size="11">ความเครียด (ε)</text>
-
           <line x1="35" y1="150" x2="35" y2="30" stroke="#111" stroke-width="2"/>
           <polygon points="32,30 35,24 38,30" fill="#111"/>
           <text x="10" y="25" font-size="11">ความเค้น (σ)</text>
-
-          <!-- Curve -->
           <path d="M 35 150 L 110 70 Q 140 50, 180 55 T 235 90" fill="none" stroke="#2563eb" stroke-width="2.5"/>
-
-          <!-- Points -->
           <circle cx="110" cy="70" r="3" fill="#dc2626"/>
           <text x="75" y="62" font-size="9.5" fill="#dc2626">Hooke's Law Limit</text>
-
           <circle cx="140" cy="55" r="3" fill="#d97706"/>
           <text x="125" y="45" font-size="9.5" fill="#d97706">Elastic Limit</text>
-
           <circle cx="235" cy="90" r="3" fill="#111"/>
           <text x="215" y="105" font-size="9.5">Fracture (ขาด)</text>
         </svg>
-        <div class="caption">
-          <b>กราฟความเค้น-ความเครียด:</b> แสดงช่วงเส้นตรงตามกฎของฮุก (Hooke's Law) และจุดขีดจำกัดสภาพยืดหยุ่น
-          <span class="en">Linear region obeys Hooke's law up to elastic limit.</span>
-        </div>
+        <div class="caption"><b>กราฟความเค้น-ความเครียด:</b> แสดงช่วงเส้นตรงตามกฎของฮุกและขีดจำกัดยืดหยุ่น</div>
       </div>
     </div>
 
     <h3>17.1.2 ความเค้นและความเครียด <span class="inline-en">(Stress and Strain)</span></h3>
-    
-    <!-- SVG 3: Wire Tension Diagram (Fixed Layout) -->
-    <div class="visual-card">
-      <svg viewBox="0 0 520 160">
-        <!-- Top Wire (Original) -->
-        <g transform="translate(100, 10)">
-          <!-- Area Circle -->
-          <ellipse cx="0" cy="25" rx="8" ry="15" fill="#94a3b8" stroke="#111" stroke-width="1.5"/>
-          <text x="-85" y="29" font-size="13" font-weight="bold" fill="#17324d">พื้นที่หน้าตัด $A$</text>
-          
-          <!-- Wire Body -->
-          <rect x="0" y="10" width="260" height="30" fill="#cbd5e1" stroke="#111" stroke-width="2"/>
-          <line x1="0" y1="-2" x2="0" y2="45" stroke="#64748b" stroke-width="1.5" stroke-dasharray="3"/>
-          <line x1="260" y1="-2" x2="260" y2="45" stroke="#64748b" stroke-width="1.5" stroke-dasharray="3"/>
-          <text x="130" y="0" font-size="13" font-weight="bold" text-anchor="middle">ความยาวเดิม $L_0$</text>
-        </g>
-
-        <!-- Bottom Wire (Stretched) -->
-        <g transform="translate(100, 80)">
-          <!-- Area Circle -->
-          <ellipse cx="0" cy="25" rx="8" ry="15" fill="#94a3b8" stroke="#111" stroke-width="1.5"/>
-          
-          <!-- Main Wire -->
-          <rect x="0" y="10" width="260" height="30" fill="#cbd5e1" stroke="#111" stroke-width="2"/>
-          <!-- Extended Part -->
-          <rect x="260" y="10" width="60" height="30" fill="#93c5fd" stroke="#111" stroke-width="2"/>
-          <line x1="320" y1="-2" x2="320" y2="45" stroke="#64748b" stroke-width="1.5" stroke-dasharray="3"/>
-          
-          <text x="290" y="57" font-size="13" font-weight="bold" text-anchor="middle" fill="#2563eb">ยืดออก $\Delta L$</text>
-
-          <!-- Force Arrow -->
-          <line x1="320" y1="25" x2="380" y2="25" stroke="#dc2626" stroke-width="3.5"/>
-          <polygon points="380,19 392,25 380,31" fill="#dc2626"/>
-          <text x="402" y="30" font-size="16" font-weight="bold" fill="#dc2626">แรงดึง $F$</text>
-        </g>
-      </svg>
-      <div class="caption">
-        <b>แผนภาพการยืดของวัตถุ / Wire Tension Diagram:</b> แรง $F$ ดึงตั้งฉากกับพื้นที่หน้าตัด $A$ ทำให้ความยาวเดิม $L_0$ ยืดออกเป็นระยะ $\Delta L$
-      </div>
-    </div>
-
     <p>
-      <b>1. ความเค้นตามยาว (Longitudinal Stress, $\sigma$):</b> แรงกระทำตั้งฉากต่อหนึ่งหน่วยพื้นที่หน้าตัด เป็นปริมาณสเกลาร์
-      <span class="en">Force applied perpendicular per unit cross-sectional area. Unit: $\text{N/m}^2$ or Pascal ($\text{Pa}$).</span>
+      <b>1. ความเค้นตามยาว (Longitudinal Stress, $\sigma$):</b> $\sigma = \frac{F}{A}$ หน่วยเป็น $\text{N/m}^2$ หรือ $\text{Pa}$<br>
+      <b>2. ความเครียดตามยาว (Tensile Strain, $\varepsilon$):</b> $\varepsilon = \frac{\Delta L}{L_0}$ ไม่มีหน่วย
     </p>
-    <div class="formula">
-      $$\sigma = \frac{F}{A}$$
-      <span style="font-size:13px; font-weight:normal; color:var(--muted);">[หน่วย: $\text{N/m}^2$ หรือ $\text{Pa}$]</span>
-    </div>
-
-    <p>
-      <b>2. ความเครียดตามยาว (Tensile Strain, $\varepsilon$):</b> อัตราส่วนระหว่างความยาวที่เพิ่มขึ้น ($\Delta L$) ต่อความยาวเดิม ($L_0$) เป็นปริมาณสเกลาร์<b>ไม่มีหน่วย</b>
-      <span class="en">Ratio of elongation ($\Delta L$) to original length ($L_0$). It is dimensionless.</span>
-    </p>
-    <div class="formula">
-      $$\varepsilon = \frac{\Delta L}{L_0}$$
-      <span style="font-size:13px; font-weight:normal; color:var(--muted);">[ไม่มีหน่วย / Dimensionless]</span>
-    </div>
 
     <h3>17.1.3 มอดูลัสของยัง <span class="inline-en">(Young's Modulus, $Y$)</span></h3>
-    <p>
-      คือ อัตราส่วนระหว่างความเค้นตามยาวต่อความเครียดตามยาว บอกถึงความต้านทานการเปลี่ยนรูปของวัสดุ (วัสดุที่มี $Y$ สูง จะยืดได้ยากกว่า)
-      <span class="en">Ratio of tensile stress to tensile strain. Higher Young's modulus means stiffer material.</span>
-    </p>
     <div class="formula">
       $$Y = \frac{\sigma}{\varepsilon} = \frac{F/A}{\Delta L/L_0} = \frac{F \cdot L_0}{A \cdot \Delta L}$$
-    </div>
-
-    <div class="pitfall">
-      <b>⚠️ จุดที่นักเรียนชอบผิดบ่อย / Common Unit Pitfalls:</b>
-      <ul>
-        <li><b>พื้นที่หน้าตัด ($A$):</b> ต้องเปลี่ยนเป็น $\text{m}^2$ เสมอ! ($1\text{ cm}^2 = 10^{-4}\text{ m}^2$, $1\text{ mm}^2 = 10^{-6}\text{ m}^2$)</li>
-        <li><b>รัศมี/เส้นผ่านศูนย์กลาง:</b> ถ้าโจทย์ให้รัศมี $r$ ต้องคำนวณพื้นที่วงกลม $A = \pi r^2$ ก่อนแทนค่า</li>
-        <li><b>ระยะยืด ($\Delta L$):</b> ถ้าโจทย์บอกเป็นเปอร์เซ็นต์ เช่น ยืดออก $1\%$ หมายถึง $\frac{\Delta L}{L_0} = \frac{1}{100} = 0.01$</li>
-      </ul>
     </div>
 
     <div class="footer"><span>Chapter 17 • Solids & Elasticity</span><span>Page 1</span></div>
   </section>
 
-  <!-- Page 2: Worksheet 17.1 (Questions 1-4) -->
+  <!-- Worksheet 17.1: Question 1 (1 Full Page A4) -->
   <section class="page">
     <div class="part-head">
       <div>
-        <div class="part-no">Worksheet 17.1</div>
-        <h2>แบบฝึกหัด 17.1: สภาพยืดหยุ่น ความเค้น ความเครียด<br><span class="en">Exercise 17.1: Elasticity, Stress, Strain</span></h2>
+        <div class="part-no">Worksheet 17.1 • Page 2</div>
+        <h2>แบบฝึกหัด 17.1: ข้อที่ 1<br><span class="en">Exercise 17.1: Item 1</span></h2>
       </div>
     </div>
-
-    <!-- Q1 -->
     <div class="question">
-      <div class="qhead">ข้อ 1 / Item 1</div>
-      <div class="qbody">
-        <p>ลวดเส้นหนึ่งถูกดึงด้วยแรง $500\text{ N}$ และลวดนี้มีพื้นที่หน้าตัด $10\text{ cm}^2$ จงหาความเค้น</p>
-        <span class="en">A wire is pulled with a force of $500\text{ N}$. If its cross-sectional area is $10\text{ cm}^2$, find the stress.</span>
+      <div>
+        <div class="qhead">ข้อ 1 / Item 1</div>
+        <div class="qbody">
+          <p>ลวดเส้นหนึ่งถูกดึงด้วยแรง $500\text{ N}$ และลวดนี้มีพื้นที่หน้าตัด $10\text{ cm}^2$ จงหาความเค้น</p>
+          <span class="en">A wire is pulled with a force of $500\text{ N}$. If its cross-sectional area is $10\text{ cm}^2$, find the stress.</span>
+        </div>
       </div>
-      <div class="answer-lines"></div>
-      <div class="qtools">
-        <button class="toggle-btn" data-target="sol-q1" onclick="toggleBlock('sol-q1',this)" aria-expanded="false">เปิด–ปิดเฉลย / Show Solution</button>
-      </div>
-      <div class="solution" id="sol-q1">
-        <div class="sol-title">วิธีทำอย่างละเอียด / Detailed Solution:</div>
-        <b>ข้อมูลจากโจทย์:</b> $F = 500\text{ N}$, พื้นที่ $A = 10\text{ cm}^2 = 10 \times 10^{-4}\text{ m}^2 = 10^{-3}\text{ m}^2$<br>
-        <b>สูตร:</b> ความเค้น $\sigma = \frac{F}{A}$<br>
-        <b>แทนค่า:</b>
-        $$\sigma = \frac{500\text{ N}}{10^{-3}\text{ m}^2} = 500 \times 10^3 = 5 \times 10^5\text{ N/m}^2$$
-        <b>ตอบ:</b> ความเค้นเท่ากับ <b>$5 \times 10^5\text{ N/m}^2$</b> (หรือ $\text{Pa}$)
-      </div>
-    </div>
-
-    <!-- Q2 -->
-    <div class="question">
-      <div class="qhead">ข้อ 2 / Item 2</div>
-      <div class="qbody">
-        <p>นำลวดทองแดงดึงด้วยแรง $314\text{ N}$ และลวดนี้มีรัศมี $0.1\text{ m}$ จงหาความเค้น</p>
-        <span class="en">A copper wire with a radius of $0.1\text{ m}$ is pulled with a force of $314\text{ N}$. Find the stress.</span>
-      </div>
-      <div class="answer-lines"></div>
-      <div class="qtools">
-        <button class="toggle-btn" data-target="sol-q2" onclick="toggleBlock('sol-q2',this)" aria-expanded="false">เปิด–ปิดเฉลย / Show Solution</button>
-      </div>
-      <div class="solution" id="sol-q2">
-        <div class="sol-title">วิธีทำอย่างละเอียด / Detailed Solution:</div>
-        <b>ขั้นที่ 1: คำนวณพื้นที่หน้าตัด $A$ จากรัศมี $r = 0.1\text{ m}$</b><br>
-        $$A = \pi r^2 \approx 3.14 \times (0.1)^2 = 3.14 \times 0.01 = 0.0314\text{ m}^2$$<br>
-        <b>ขั้นที่ 2: คำนวณความเค้น $\sigma = \frac{F}{A}$</b><br>
-        $$\sigma = \frac{314\text{ N}}{0.0314\text{ m}^2} = 10,000 = 10^4\text{ N/m}^2$$
-        <b>ตอบ:</b> ความเค้นเท่ากับ <b>$10^4\text{ N/m}^2$</b> (หรือ $10,000\text{ Pa}$)
+      <div class="answer-lines work-space"></div>
+      <div>
+        <div class="qtools">
+          <button class="toggle-btn" data-target="sol-q1" onclick="toggleBlock('sol-q1',this)" aria-expanded="false">เปิด–ปิดเฉลย / Show Solution</button>
+        </div>
+        <div class="solution" id="sol-q1">
+          <div class="sol-title">วิธีทำอย่างละเอียด / Detailed Solution:</div>
+          <b>ข้อมูลจากโจทย์:</b> $F = 500\text{ N}$, พื้นที่ $A = 10\text{ cm}^2 = 10 \times 10^{-4}\text{ m}^2 = 10^{-3}\text{ m}^2$<br>
+          <b>สูตร:</b> ความเค้น $\sigma = \frac{F}{A}$<br>
+          $$\sigma = \frac{500\text{ N}}{10^{-3}\text{ m}^2} = 5 \times 10^5\text{ N/m}^2$$
+          <b>ตอบ:</b> ความเค้นเท่ากับ <b>$5 \times 10^5\text{ N/m}^2$</b>
+        </div>
       </div>
     </div>
-
-    <!-- Q3 -->
-    <div class="question">
-      <div class="qhead">ข้อ 3 / Item 3</div>
-      <div class="qbody">
-        <p>ลวดเงินเดิมยาว $5\text{ m}$ เมื่อออกแรงดึงจนตอนหลังมีความยาว $6\text{ m}$ จงหาความเครียด</p>
-        <span class="en">A silver wire initially $5\text{ m}$ long is stretched to a final length of $6\text{ m}$. Find the tensile strain.</span>
-      </div>
-      <div class="answer-lines"></div>
-      <div class="qtools">
-        <button class="toggle-btn" data-target="sol-q3" onclick="toggleBlock('sol-q3',this)" aria-expanded="false">เปิด–ปิดเฉลย / Show Solution</button>
-      </div>
-      <div class="solution" id="sol-q3">
-        <div class="sol-title">วิธีทำอย่างละเอียด / Detailed Solution:</div>
-        <b>ข้อมูลจากโจทย์:</b> ความยาวเดิม $L_0 = 5\text{ m}$, ความยาวใหม่ $L = 6\text{ m}$<br>
-        <b>หาระยะที่ยืดออก:</b> $\Delta L = L - L_0 = 6 - 5 = 1\text{ m}$<br>
-        <b>สูตร:</b> ความเครียด $\varepsilon = \frac{\Delta L}{L_0}$<br>
-        $$\varepsilon = \frac{1\text{ m}}{5\text{ m}} = 0.2$$
-        <b>ตอบ:</b> ความเครียดเท่ากับ <b>$0.2$</b> (ไม่มีหน่วย)
-      </div>
-    </div>
-
-    <!-- Q4 -->
-    <div class="question">
-      <div class="qhead">ข้อ 4 / Item 4</div>
-      <div class="qbody">
-        <p>นำลวดทองแดงเอาไปเผาไฟทำให้ยืดออก $0.2\text{ m}$ ถ้าเดิมลวดทองแดงมีความยาว $4\text{ m}$ จงหาความเครียด</p>
-        <span class="en">A copper wire expands by $0.2\text{ m}$ when heated. If its original length was $4\text{ m}$, find the strain.</span>
-      </div>
-      <div class="answer-lines"></div>
-      <div class="qtools">
-        <button class="toggle-btn" data-target="sol-q4" onclick="toggleBlock('sol-q4',this)" aria-expanded="false">เปิด–ปิดเฉลย / Show Solution</button>
-      </div>
-      <div class="solution" id="sol-q4">
-        <div class="sol-title">วิธีทำอย่างละเอียด / Detailed Solution:</div>
-        <b>ข้อมูลจากโจทย์:</b> ระยะที่ยืดออก $\Delta L = 0.2\text{ m}$, ความยาวเดิม $L_0 = 4\text{ m}$<br>
-        <b>สูตร:</b> $\varepsilon = \frac{\Delta L}{L_0}$<br>
-        $$\varepsilon = \frac{0.2}{4} = 0.05$$
-        <b>ตอบ:</b> ความเครียดเท่ากับ <b>$0.05$</b> (ไม่มีหน่วย)
-      </div>
-    </div>
-
-    <div class="footer"><span>Worksheet 17.1 • Page 2</span><span>Ex 17.1 (Q1-Q4)</span></div>
+    <div class="footer"><span>Worksheet 17.1</span><span>Item 1 of 7</span></div>
   </section>
 
-  <!-- Page 3: Worksheet 17.1 (Questions 5-7) -->
+  <!-- Worksheet 17.1: Question 2 (1 Full Page A4) -->
   <section class="page">
     <div class="part-head">
       <div>
-        <div class="part-no">Worksheet 17.1 (Cont.)</div>
-        <h2>แบบฝึกหัด 17.1 (ต่อ): มอดูลัสของยัง<br><span class="en">Exercise 17.1: Young's Modulus Calculations</span></h2>
+        <div class="part-no">Worksheet 17.1 • Page 3</div>
+        <h2>แบบฝึกหัด 17.1: ข้อที่ 2<br><span class="en">Exercise 17.1: Item 2</span></h2>
       </div>
     </div>
-
-    <!-- Q5 -->
     <div class="question">
-      <div class="qhead">ข้อ 5 / Item 5</div>
-      <div class="qbody">
-        <p>ลวดทองแดงเส้นหนึ่งยาว $4\text{ m}$ มีพื้นที่ภาคตัดขวาง $1\text{ cm}^2$ มีค่าโมดูลัสของยังเป็น $1.1 \times 10^{11}\text{ N/m}^2$ จะต้องออกแรงดึงเท่าใดจึงจะทำให้ลวดเส้นนี้ยืดออกอีก $1\text{ mm}$</p>
-        <span class="en">A copper wire $4\text{ m}$ long with a cross-sectional area of $1\text{ cm}^2$ has a Young's modulus of $1.1 \times 10^{11}\text{ N/m}^2$. What stretching force is required to extend it by $1\text{ mm}$?</span>
+      <div>
+        <div class="qhead">ข้อ 2 / Item 2</div>
+        <div class="qbody">
+          <p>นำลวดทองแดงดึงด้วยแรง $314\text{ N}$ และลวดนี้มีรัศมี $0.1\text{ m}$ จงหาความเค้น</p>
+          <span class="en">A copper wire with a radius of $0.1\text{ m}$ is pulled with a force of $314\text{ N}$. Find the stress.</span>
+        </div>
       </div>
-      <div class="answer-lines"></div>
-      <div class="qtools">
-        <button class="toggle-btn" data-target="sol-q5" onclick="toggleBlock('sol-q5',this)" aria-expanded="false">เปิด–ปิดเฉลย / Show Solution</button>
-      </div>
-      <div class="solution" id="sol-q5">
-        <div class="sol-title">วิธีทำอย่างละเอียด / Detailed Solution:</div>
-        <b>แปลนหน่วยข้อมูล:</b>
-        <ul>
-          <li>$L_0 = 4\text{ m}$</li>
-          <li>$A = 1\text{ cm}^2 = 1 \times 10^{-4}\text{ m}^2$</li>
-          <li>$Y = 1.1 \times 10^{11}\text{ N/m}^2$</li>
-          <li>$\Delta L = 1\text{ mm} = 1 \times 10^{-3}\text{ m}$</li>
-        </ul>
-        <b>จากสูตรมอดูลัสของยัง:</b> $Y = \frac{F \cdot L_0}{A \cdot \Delta L} \implies F = \frac{Y \cdot A \cdot \Delta L}{L_0}$<br>
-        <b>แทนค่า:</b>
-        $$F = \frac{(1.1 \times 10^{11}) \times (1 \times 10^{-4}) \times (1 \times 10^{-3})}{4}$$
-        $$F = \frac{1.1 \times 10^4}{4} = \frac{11,000}{4} = 2,750\text{ N}$$
-        <b>ตอบ:</b> จะต้องออกแรงดึง <b>$2,750\text{ นิวตัน}$</b>
+      <div class="answer-lines work-space"></div>
+      <div>
+        <div class="qtools">
+          <button class="toggle-btn" data-target="sol-q2" onclick="toggleBlock('sol-q2',this)" aria-expanded="false">เปิด–ปิดเฉลย / Show Solution</button>
+        </div>
+        <div class="solution" id="sol-q2">
+          <div class="sol-title">วิธีทำอย่างละเอียด / Detailed Solution:</div>
+          <b>ขั้นที่ 1: หาพื้นที่หน้าตัด $A$</b> $\implies A = \pi r^2 \approx 3.14 \times (0.1)^2 = 0.0314\text{ m}^2$<br>
+          <b>ขั้นที่ 2: หาความเค้น</b> $\implies \sigma = \frac{F}{A} = \frac{314\text{ N}}{0.0314\text{ m}^2} = 10^4\text{ N/m}^2$<br>
+          <b>ตอบ:</b> ความเค้นเท่ากับ <b>$10^4\text{ N/m}^2$</b>
+        </div>
       </div>
     </div>
+    <div class="footer"><span>Worksheet 17.1</span><span>Item 2 of 7</span></div>
+  </section>
 
-    <!-- Q6 -->
+  <!-- Worksheet 17.1: Question 3 (1 Full Page A4) -->
+  <section class="page">
+    <div class="part-head">
+      <div>
+        <div class="part-no">Worksheet 17.1 • Page 4</div>
+        <h2>แบบฝึกหัด 17.1: ข้อที่ 3<br><span class="en">Exercise 17.1: Item 3</span></h2>
+      </div>
+    </div>
     <div class="question">
-      <div class="qhead">ข้อ 6 / Item 6</div>
-      <div class="qbody">
-        <p>แขวนมวล $400\text{ kg}$ กับเส้นลวดโลหะชนิดหนึ่งยาว $10\text{ m}$ มีพื้นที่หน้าตัด $2 \times 10^{-4}\text{ m}^2$ เส้นลวดนี้จะยืดออกเป็นระยะเท่าใด กำหนดให้ค่ายังโมดูลัสของเส้นลวดเป็น $2 \times 10^{11}\text{ N/m}^2$ (กำหนด $g = 10\text{ m/s}^2$)</p>
-        <span class="en">A $400\text{ kg}$ mass is suspended from a $10\text{ m}$ metal wire with a cross-sectional area of $2 \times 10^{-4}\text{ m}^2$. How much does the wire stretch if Young's modulus is $2 \times 10^{11}\text{ N/m}^2$?</span>
+      <div>
+        <div class="qhead">ข้อ 3 / Item 3</div>
+        <div class="qbody">
+          <p>ลวดเงินเดิมยาว $5\text{ m}$ เมื่อออกแรงดึงจนตอนหลังมีความยาว $6\text{ m}$ จงหาความเครียด</p>
+          <span class="en">A silver wire initially $5\text{ m}$ long is stretched to a final length of $6\text{ m}$. Find the tensile strain.</span>
+        </div>
       </div>
-      <div class="answer-lines"></div>
-      <div class="qtools">
-        <button class="toggle-btn" data-target="sol-q6" onclick="toggleBlock('sol-q6',this)" aria-expanded="false">เปิด–ปิดเฉลย / Show Solution</button>
-      </div>
-      <div class="solution" id="sol-q6">
-        <div class="sol-title">วิธีทำอย่างละเอียด / Detailed Solution:</div>
-        <b>ข้อมูลโจทย์:</b>
-        <ul>
-          <li>แรงดึง $F = mg = 400 \times 10 = 4,000\text{ N}$</li>
-          <li>$L_0 = 10\text{ m}$, $A = 2 \times 10^{-4}\text{ m}^2$, $Y = 2 \times 10^{11}\text{ N/m}^2$</li>
-        </ul>
-        <b>จากสูตร:</b> $\Delta L = \frac{F \cdot L_0}{A \cdot Y}$<br>
-        <b>แทนค่า:</b>
-        $$\Delta L = \frac{4,000 \times 10}{(2 \times 10^{-4}) \times (2 \times 10^{11})} = \frac{40,000}{4 \times 10^7} = 10^{-3}\text{ m} = 1\text{ mm}$$
-        <b>ตอบ:</b> เส้นลวดจะยืดออกเป็นระยะ <b>$1 \times 10^{-3}\text{ เมตร}$</b> (หรือ $1\text{ มิลลิเมตร}$)
+      <div class="answer-lines work-space"></div>
+      <div>
+        <div class="qtools">
+          <button class="toggle-btn" data-target="sol-q3" onclick="toggleBlock('sol-q3',this)" aria-expanded="false">เปิด–ปิดเฉลย / Show Solution</button>
+        </div>
+        <div class="solution" id="sol-q3">
+          <div class="sol-title">วิธีทำอย่างละเอียด / Detailed Solution:</div>
+          <b>หาระยะที่ยืดออก:</b> $\Delta L = 6 - 5 = 1\text{ m}$<br>
+          <b>สูตรความเครียด:</b> $\varepsilon = \frac{\Delta L}{L_0} = \frac{1\text{ m}}{5\text{ m}} = 0.2$<br>
+          <b>ตอบ:</b> ความเครียดเท่ากับ <b>$0.2$</b> (ไม่มีหน่วย)
+        </div>
       </div>
     </div>
+    <div class="footer"><span>Worksheet 17.1</span><span>Item 3 of 7</span></div>
+  </section>
 
-    <!-- Q7 -->
+  <!-- Worksheet 17.1: Question 4 (1 Full Page A4) -->
+  <section class="page">
+    <div class="part-head">
+      <div>
+        <div class="part-no">Worksheet 17.1 • Page 5</div>
+        <h2>แบบฝึกหัด 17.1: ข้อที่ 4<br><span class="en">Exercise 17.1: Item 4</span></h2>
+      </div>
+    </div>
     <div class="question">
-      <div class="qhead">ข้อ 7 / Item 7</div>
-      <div class="qbody">
-        <p>ลวดเส้นหนึ่งยาวเท่ากับ $L$ มีพื้นที่ภาคตัดขวางเป็น $A$ และมีค่าโมดูลัสของยังเป็น $Y$ ถ้าต้องการยืดออก $1\%$ จะต้องใช้แรงดึงเท่าใด</p>
-        <span class="en">A wire has length $L$, cross-sectional area $A$, and Young's modulus $Y$. What force is required to stretch it by $1\%$?</span>
+      <div>
+        <div class="qhead">ข้อ 4 / Item 4</div>
+        <div class="qbody">
+          <p>นำลวดทองแดงเอาไปเผาไฟทำให้ยืดออก $0.2\text{ m}$ ถ้าเดิมลวดทองแดงมีความยาว $4\text{ m}$ จงหาความเครียด</p>
+          <span class="en">A copper wire expands by $0.2\text{ m}$ when heated. If its original length was $4\text{ m}$, find the strain.</span>
+        </div>
       </div>
-      <div class="answer-lines"></div>
-      <div class="qtools">
-        <button class="toggle-btn" data-target="sol-q7" onclick="toggleBlock('sol-q7',this)" aria-expanded="false">เปิด–ปิดเฉลย / Show Solution</button>
-      </div>
-      <div class="solution" id="sol-q7">
-        <div class="sol-title">วิธีทำอย่างละเอียด / Detailed Solution:</div>
-        <b>วิเคราะห์โจทย์:</b> ยืดออก $1\%$ หมายความว่า อัตราส่วนความเครียด $\frac{\Delta L}{L_0} = \frac{1}{100} = 0.01$<br>
-        <b>จากสูตรมอดูลัสของยัง:</b> $Y = \frac{F/A}{\Delta L/L_0} \implies F = Y \cdot A \cdot \left(\frac{\Delta L}{L_0}\right)$<br>
-        <b>แทนค่าความเครียด $0.01$:</b>
-        $$F = Y \cdot A \cdot 0.01 = 0.01 YA = \frac{YA}{100}$$
-        <b>ตอบ:</b> จะต้องใช้แรงดึงเท่ากับ <b>$0.01 YA$</b> (หรือ $\frac{YA}{100}$)
+      <div class="answer-lines work-space"></div>
+      <div>
+        <div class="qtools">
+          <button class="toggle-btn" data-target="sol-q4" onclick="toggleBlock('sol-q4',this)" aria-expanded="false">เปิด–ปิดเฉลย / Show Solution</button>
+        </div>
+        <div class="solution" id="sol-q4">
+          <div class="sol-title">วิธีทำอย่างละเอียด / Detailed Solution:</div>
+          <b>สูตร:</b> $\varepsilon = \frac{\Delta L}{L_0} = \frac{0.2\text{ m}}{4\text{ m}} = 0.05$<br>
+          <b>ตอบ:</b> ความเครียดเท่ากับ <b>$0.05$</b> (ไม่มีหน่วย)
+        </div>
       </div>
     </div>
+    <div class="footer"><span>Worksheet 17.1</span><span>Item 4 of 7</span></div>
+  </section>
 
-    <div class="footer"><span>Worksheet 17.1 • Page 3</span><span>Ex 17.1 (Q5-Q7)</span></div>
+  <!-- Worksheet 17.1: Question 5 (1 Full Page A4) -->
+  <section class="page">
+    <div class="part-head">
+      <div>
+        <div class="part-no">Worksheet 17.1 • Page 6</div>
+        <h2>แบบฝึกหัด 17.1: ข้อที่ 5<br><span class="en">Exercise 17.1: Item 5</span></h2>
+      </div>
+    </div>
+    <div class="question">
+      <div>
+        <div class="qhead">ข้อ 5 / Item 5</div>
+        <div class="qbody">
+          <p>ลวดทองแดงเส้นหนึ่งยาว $4\text{ m}$ มีพื้นที่ภาคตัดขวาง $1\text{ cm}^2$ มีค่าโมดูลัสของยังเป็น $1.1 \times 10^{11}\text{ N/m}^2$ จะต้องออกแรงดึงเท่าใดจึงจะทำให้ลวดเส้นนี้ยืดออกอีก $1\text{ mm}$</p>
+          <span class="en">A copper wire $4\text{ m}$ long with a cross-sectional area of $1\text{ cm}^2$ has a Young's modulus of $1.1 \times 10^{11}\text{ N/m}^2$. What stretching force is required to extend it by $1\text{ mm}$?</span>
+        </div>
+      </div>
+      <div class="answer-lines work-space"></div>
+      <div>
+        <div class="qtools">
+          <button class="toggle-btn" data-target="sol-q5" onclick="toggleBlock('sol-q5',this)" aria-expanded="false">เปิด–ปิดเฉลย / Show Solution</button>
+        </div>
+        <div class="solution" id="sol-q5">
+          <div class="sol-title">วิธีทำอย่างละเอียด / Detailed Solution:</div>
+          <b>สูตร:</b> $F = \frac{Y \cdot A \cdot \Delta L}{L_0}$<br>
+          <b>แทนค่า:</b> $F = \frac{(1.1 \times 10^{11}) \times (10^{-4}) \times (10^{-3})}{4} = \frac{11,000}{4} = 2,750\text{ N}$<br>
+          <b>ตอบ:</b> จะต้องออกแรงดึง <b>$2,750\text{ นิวตัน}$</b>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>Worksheet 17.1</span><span>Item 5 of 7</span></div>
+  </section>
+
+  <!-- Worksheet 17.1: Question 6 (1 Full Page A4) -->
+  <section class="page">
+    <div class="part-head">
+      <div>
+        <div class="part-no">Worksheet 17.1 • Page 7</div>
+        <h2>แบบฝึกหัด 17.1: ข้อที่ 6<br><span class="en">Exercise 17.1: Item 6</span></h2>
+      </div>
+    </div>
+    <div class="question">
+      <div>
+        <div class="qhead">ข้อ 6 / Item 6</div>
+        <div class="qbody">
+          <p>แขวนมวล $400\text{ kg}$ กับเส้นลวดโลหะชนิดหนึ่งยาว $10\text{ m}$ มีพื้นที่หน้าตัด $2 \times 10^{-4}\text{ m}^2$ เส้นลวดนี้จะยืดออกเป็นระยะเท่าใด กำหนดให้ค่ายังโมดูลัสของเส้นลวดเป็น $2 \times 10^{11}\text{ N/m}^2$ (กำหนด $g = 10\text{ m/s}^2$)</p>
+          <span class="en">A $400\text{ kg}$ mass is suspended from a $10\text{ m}$ metal wire with a cross-sectional area of $2 \times 10^{-4}\text{ m}^2$. How much does the wire stretch if Young's modulus is $2 \times 10^{11}\text{ N/m}^2$?</span>
+        </div>
+      </div>
+      <div class="answer-lines work-space"></div>
+      <div>
+        <div class="qtools">
+          <button class="toggle-btn" data-target="sol-q6" onclick="toggleBlock('sol-q6',this)" aria-expanded="false">เปิด–ปิดเฉลย / Show Solution</button>
+        </div>
+        <div class="solution" id="sol-q6">
+          <div class="sol-title">วิธีทำอย่างละเอียด / Detailed Solution:</div>
+          <b>แรงดึง:</b> $F = mg = 400 \times 10 = 4,000\text{ N}$<br>
+          <b>สูตร:</b> $\Delta L = \frac{F \cdot L_0}{A \cdot Y} = \frac{4,000 \times 10}{(2 \times 10^{-4}) \times (2 \times 10^{11})} = 10^{-3}\text{ m} = 1\text{ mm}$<br>
+          <b>ตอบ:</b> เส้นลวดจะยืดออกเป็นระยะ <b>$1\text{ mm}$</b> (หรือ $1 \times 10^{-3}\text{ m}$)
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>Worksheet 17.1</span><span>Item 6 of 7</span></div>
+  </section>
+
+  <!-- Worksheet 17.1: Question 7 (1 Full Page A4) -->
+  <section class="page">
+    <div class="part-head">
+      <div>
+        <div class="part-no">Worksheet 17.1 • Page 8</div>
+        <h2>แบบฝึกหัด 17.1: ข้อที่ 7<br><span class="en">Exercise 17.1: Item 7</span></h2>
+      </div>
+    </div>
+    <div class="question">
+      <div>
+        <div class="qhead">ข้อ 7 / Item 7</div>
+        <div class="qbody">
+          <p>ลวดเส้นหนึ่งยาวเท่ากับ $L$ มีพื้นที่ภาคตัดขวางเป็น $A$ และมีค่าโมดูลัสของยังเป็น $Y$ ถ้าต้องการยืดออก $1\%$ จะต้องใช้แรงดึงเท่าใด</p>
+          <span class="en">A wire has length $L$, cross-sectional area $A$, and Young's modulus $Y$. What force is required to stretch it by $1\%$?</span>
+        </div>
+      </div>
+      <div class="answer-lines work-space"></div>
+      <div>
+        <div class="qtools">
+          <button class="toggle-btn" data-target="sol-q7" onclick="toggleBlock('sol-q7',this)" aria-expanded="false">เปิด–ปิดเฉลย / Show Solution</button>
+        </div>
+        <div class="solution" id="sol-q7">
+          <div class="sol-title">วิธีทำอย่างละเอียด / Detailed Solution:</div>
+          <b>ความเครียด $1\%$:</b> $\frac{\Delta L}{L_0} = 0.01$<br>
+          <b>จากสูตร:</b> $F = Y \cdot A \cdot \left(\frac{\Delta L}{L_0}\right) = 0.01 YA = \frac{YA}{100}$<br>
+          <b>ตอบ:</b> จะต้องใช้แรงดึงเท่ากับ <b>$0.01 YA$</b> (หรือ $\frac{YA}{100}$)
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>Worksheet 17.1</span><span>Item 7 of 7</span></div>
   </section>
 </main>
 
