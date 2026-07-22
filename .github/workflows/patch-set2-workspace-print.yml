@@ -1,0 +1,158 @@
+name: One-time patch Set 2 workspace and print safety
+
+on:
+  push:
+    paths:
+      - '.github/workflows/patch-set2-workspace-print.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch-set2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Add working space and force blank student printing
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('PHYSICS/ELECTRICIRY/physics-m5-dc-set2-current-charge-measurement-bilingual.html')
+          text = path.read_text(encoding='utf-8')
+
+          css_marker = '/* SET2_WORKSPACE_PRINT_PATCH */'
+          if css_marker not in text:
+              patch_css = r'''
+          /* SET2_WORKSPACE_PRINT_PATCH */
+          .worksheet-page .answer-lines{
+            position:relative;
+            min-height:30mm;
+            margin-top:4mm;
+            padding:9mm 3mm 2mm;
+            border:1px solid #9ca3af;
+            background:repeating-linear-gradient(to bottom,transparent 0,transparent 8mm,#b8b8b8 8.15mm,transparent 8.3mm);
+          }
+          .worksheet-page .answer-lines::before{
+            content:"พื้นที่แสดงวิธีทำ / Show your working";
+            position:absolute;
+            top:2mm;
+            left:3mm;
+            padding:0 2mm;
+            background:#fff;
+            color:#4b5563;
+            font-size:10.5px;
+            font-weight:800;
+          }
+          .worksheet-page .answer-lines.small{min-height:30mm}
+          .worksheet-page .answer-lines.large{min-height:48mm}
+          .worksheet-page .question:has(.source-graph) .answer-lines{min-height:26mm}
+          body.print-student .toolbar,
+          body.print-student .qtools,
+          body.print-student .hint,
+          body.print-student .solution,
+          body.print-student .footer{
+            display:none!important;
+            visibility:hidden!important;
+            height:0!important;
+            max-height:0!important;
+            margin:0!important;
+            padding:0!important;
+            border:0!important;
+            overflow:hidden!important;
+          }
+          @media print{
+            .toolbar,.qtools,.hint,.solution,.footer{
+              display:none!important;
+              visibility:hidden!important;
+              height:0!important;
+              max-height:0!important;
+              margin:0!important;
+              padding:0!important;
+              border:0!important;
+              overflow:hidden!important;
+            }
+            .worksheet-page .answer-lines,
+            .worksheet-page .answer-lines.small{
+              min-height:28mm!important;
+              padding-top:9mm!important;
+              border:1px solid #777!important;
+              background:repeating-linear-gradient(to bottom,transparent 0,transparent 7mm,#999 7.15mm,transparent 7.3mm)!important;
+            }
+            .worksheet-page .answer-lines.large{min-height:45mm!important}
+            .worksheet-page .question:has(.source-graph) .answer-lines{min-height:24mm!important}
+            .worksheet-page .answer-lines::before{color:#000!important;background:#fff!important}
+          }
+          '''
+              text = text.replace('</style>', patch_css + '\n</style>', 1)
+
+          text = text.replace('onclick="window.print()"', 'onclick="printBlankCopy()"', 1)
+
+          js_marker = '/* SET2_PRINT_SAFE_JS */'
+          if js_marker not in text:
+              old = "window.addEventListener('beforeprint',hideAllAnswers);"
+              new = r'''/* SET2_PRINT_SAFE_JS */
+          function prepareStudentPrint(){
+            document.body.classList.add('print-student');
+            hideAllAnswers();
+            document.querySelectorAll('.solution,.hint').forEach(el=>{
+              el.classList.remove('open');
+              el.setAttribute('hidden','');
+              el.style.setProperty('display','none','important');
+              el.style.setProperty('visibility','hidden','important');
+            });
+            const status=document.getElementById('status');
+            if(status) status.textContent='กำลังเตรียมชุดนักเรียนเปล่า / Preparing blank student copy…';
+          }
+          function finishStudentPrint(){
+            document.body.classList.remove('print-student');
+            document.querySelectorAll('.solution,.hint').forEach(el=>{
+              el.removeAttribute('hidden');
+              el.style.removeProperty('display');
+              el.style.removeProperty('visibility');
+              el.classList.remove('open');
+            });
+            const status=document.getElementById('status');
+            if(status) status.textContent='เฉลยซ่อนอยู่และจะไม่พิมพ์ออกกระดาษ / Solutions are hidden and never printed.';
+          }
+          function printBlankCopy(){
+            prepareStudentPrint();
+            const runPrint=()=>requestAnimationFrame(()=>requestAnimationFrame(()=>window.print()));
+            if(window.MathJax&&MathJax.startup&&MathJax.startup.promise){
+              MathJax.startup.promise.then(runPrint).catch(runPrint);
+            }else if(document.fonts&&document.fonts.ready){
+              document.fonts.ready.then(runPrint).catch(runPrint);
+            }else{
+              setTimeout(runPrint,120);
+            }
+          }
+          window.addEventListener('beforeprint',prepareStudentPrint);
+          window.addEventListener('afterprint',finishStudentPrint);
+          const set2PrintMedia=window.matchMedia?window.matchMedia('print'):null;
+          if(set2PrintMedia){
+            const onSet2PrintChange=e=>e.matches?prepareStudentPrint():finishStudentPrint();
+            if(set2PrintMedia.addEventListener)set2PrintMedia.addEventListener('change',onSet2PrintChange);
+            else if(set2PrintMedia.addListener)set2PrintMedia.addListener(onSet2PrintChange);
+          }'''
+              if old not in text:
+                  raise SystemExit('beforeprint marker not found')
+              text = text.replace(old, new, 1)
+
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit patched workbook
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo 'No changes needed.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add PHYSICS/ELECTRICIRY/physics-m5-dc-set2-current-charge-measurement-bilingual.html
+          git commit -m 'Improve Set 2 working spaces and blank-copy printing'
+          git push
