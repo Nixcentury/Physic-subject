@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A-Level Chemistry - Reactions of Organic Compounds (Font Size 14px)</title>
+
+<!-- MathJax Configuration with extpfeil & mhchem Extensions -->
+<script>
+  MathJax = {
+    loader: { load: ['[tex]/mhchem', '[tex]/extpfeil'] },
+    tex: {
+      packages: {'[+]': ['mhchem', 'extpfeil']},
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']]
+    },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+<style>
+:root {
+  --ink: #0f172a;
+  --muted: #475569;
+  --paper: #ffffff;
+  --screen: #f1f5f9;
+  --chem-primary: #0284c7;
+  --chem-soft: #f0f9ff;
+  --chem-border: #bae6fd;
+  --warn: #fffbeb;
+  --warn-border: #f59e0b;
+  --answer: #f0fdf4;
+  --answer-border: #16a34a;
+  --a4w: 210mm;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--screen);
+  color: var(--ink);
+  font-family: "Sarabun", "Noto Sans Thai", -apple-system, sans-serif;
+  line-height: 1.55;
+  font-size: 14px; /* ปรับขนาดฟอนต์มาตรฐานเป็น 14px */
+}
+
+.en { display: block; color: var(--muted); font-size: 0.9em; font-weight: 400; line-height: 1.35; margin-top: 1px; }
+.inline-en { color: var(--muted); font-size: 0.9em; font-weight: 400; }
+
+/* Toolbar */
+.toolbar {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+  padding: 10px 12px;
+  background: #0f172a; color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,.15);
+}
+.toolbar button {
+  border: 0; border-radius: 6px; padding: 8px 14px;
+  background: #fff; color: #0f172a; font: 700 13px inherit;
+  cursor: pointer; transition: all 0.2s;
+}
+.toolbar button:hover { background: #e2e8f0; }
+.toolbar .primary { background: #38bdf8; color: #0f172a; }
+.toolbar .primary:hover { background: #7dd3fc; }
+.toolbar .status { flex-basis: 100%; text-align: center; font-size: 12px; opacity: .85; margin-top: 2px; }
+
+/* Page Layout (A4) */
+.page {
+  width: min(var(--a4w), calc(100vw - 20px));
+  min-height: 297mm;
+  margin: 16px auto;
+  padding: 12mm 14mm 14mm;
+  background: var(--paper);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+  position: relative;
+  break-after: page;
+  page-break-after: always;
+  border-radius: 4px;
+}
+.page:last-child { break-after: auto; page-break-after: auto; }
+
+/* Header */
+.part-head {
+  border-bottom: 2.5px solid var(--chem-primary);
+  padding-bottom: 2.5mm; margin-bottom: 3.5mm;
+  display: flex; align-items: flex-end; justify-content: space-between;
+}
+.part-no { font-size: 12px; font-weight: 800; color: var(--chem-primary); text-transform: uppercase; letter-spacing: 0.5px; }
+h1, h2 { margin: 0; line-height: 1.2; }
+h2 { font-size: 20px; color: var(--ink); }
+h3 { font-size: 15.5px; margin: 3mm 0 1.5mm; color: var(--chem-primary); border-left: 3.5px solid var(--chem-primary); padding-left: 6px; }
+
+/* Cards & Containers */
+.concept-box, .rule-box, .pitfall-box {
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 3mm 4mm;
+  margin: 2.5mm 0;
+  break-inside: avoid;
+}
+.concept-box { background: var(--chem-soft); border-left: 4px solid var(--chem-primary); }
+.rule-box { background: #f8fafc; border: 1px solid #cbd5e1; }
+.pitfall-box { background: var(--warn); border-left: 4px solid var(--warn-border); }
+
+/* SVG Diagram Box */
+.visual-card {
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 2.5mm;
+  background: #fff;
+  text-align: center;
+  margin: 2.5mm 0;
+}
+.visual-card svg { display: block; width: 100%; height: auto; max-height: 65mm; margin: 0 auto; }
+
+/* Tables */
+table.chem-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2.5mm 0;
+  font-size: 13px;
+}
+table.chem-table th, table.chem-table td {
+  border: 1px solid #cbd5e1;
+  padding: 6px 9px;
+  text-align: left;
+}
+table.chem-table th { background: #f1f5f9; color: var(--ink); font-weight: 700; }
+
+/* Worksheet Format */
+.q-block {
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 3.5mm;
+  margin-bottom: 3.5mm;
+  background: #fff;
+  break-inside: avoid;
+}
+.q-head { font-weight: 800; font-size: 15px; color: var(--chem-primary); margin-bottom: 1.5mm; }
+.q-body p { margin: 1mm 0; font-size: 14px; }
+
+.work-space {
+  margin: 2mm 0;
+  min-height: 18mm;
+  background: repeating-linear-gradient(to bottom, transparent 0, transparent 6.8mm, #e2e8f0 7mm, transparent 7.2mm);
+  border-radius: 4px;
+}
+
+.qtools button {
+  border: 1px solid var(--chem-primary); color: var(--chem-primary);
+  background: #fff; border-radius: 4px; padding: 4px 10px;
+  font: 700 12.5px inherit; cursor: pointer; transition: all 0.2s;
+}
+.qtools button:hover { background: var(--chem-soft); }
+
+.solution {
+  display: none;
+  border: 1px solid var(--answer-border); border-left: 4px solid var(--answer-border);
+  border-radius: 4px; margin-top: 2mm; padding: 3mm;
+  font-size: 13.5px; background: var(--answer);
+}
+.solution.open { display: block; }
+.sol-title { font-weight: 800; margin-bottom: 1mm; color: #15803d; }
+
+.footer {
+  position: absolute; left: 14mm; right: 14mm; bottom: 6mm;
+  border-top: 1px solid #e2e8f0; padding-top: 1.5mm;
+  display: flex; justify-content: space-between;
+  color: #94a3b8; font-size: 10px;
+}
+
+/* Print Rules */
+@media print {
+  @page { size: A4 portrait; margin: 8mm; }
+  html, body { background: #fff !important; font-size: 10pt !important; }
+  .toolbar, .qtools, .solution, .footer { display: none !important; }
+  .page {
+    width: auto !important; min-height: 275mm !important;
+    margin: 0 !important; padding: 0 !important;
+    box-shadow: none !important; border-radius: 0 !important;
+    break-after: page !important; page-break-after: always !important;
+  }
+  .page:last-child { break-after: auto !important; page-break-after: auto !important; }
+  .work-space { min-height: 25mm !important; }
+}
+</style>
+</head>
+<body>
+
+<nav class="toolbar">
+  <button class="primary" onclick="window.print()">🖨️ พิมพ์ใบงานเปล่า (A4) / Print Blank Sheet</button>
+  <button id="toggleAllBtn" onclick="toggleAllSolutions()" aria-expanded="false">👁️ เปิดเฉลยทั้งหมด / Show All Solutions</button>
+  <button onclick="hideAll()">🙈 ซ่อนเฉลย / Hide All Solutions</button>
+  <div class="status" id="status">โหมดเรียนรู้: เฉลยซ่อนอยู่ และจะไม่พิมพ์ออกกระดาษ / Learning mode: solutions are hidden and non-printable.</div>
+</nav>
+
+<main>
+  <!-- PAGE 1: THEORY 1 -->
+  <section class="page">
+    <div class="part-head">
+      <div>
+        <div class="part-no">A-Level Chemistry Summary • Organic Reactions</div>
+        <h2>ปฏิกิริยาของสารประกอบที่มี O และ N (Part 1)<br><span class="en">Reactions of Oxygen and Nitrogen Containing Compounds (Part 1)</span></h2>
+      </div>
+    </div>
+
+    <!-- BOX: How to Identify 1, 2, 3 Degree Alcohols -->
+    <div class="concept-box" style="border-left-color: #0284c7; background: #f0f9ff;">
+      <b>🔍 วิธีเช็กชนิดแอลกอฮอล์ $1^\circ, 2^\circ, 3^\circ$ ดูอย่างไร? <span class="inline-en">(How to Classify $1^\circ, 2^\circ, 3^\circ$ Alcohols)</span></b><br>
+      มองไปที่ <b>คาร์บอนตัวที่เกาะกับ $-\text{OH}$</b> ($\alpha\text{-Carbon}$) แล้วนับว่ามี **เพื่อน C มาเกาะกี่ตัว** หรือ **เหลือ H กี่ตัว**:
+      <span class="en">Look at the carbon attached to $-\text{OH}$ ($\alpha\text{-Carbon}$) and count the attached carbon atoms or remaining $\text{H}$ atoms:</span>
+      <ul style="margin: 1.5mm 0 0; padding-left: 18px;">
+        <li><b>$1^\circ\text{ Alcohol (Primary):}$</b> C ที่เกาะ $-\text{OH}$ มี C อื่นมาเกาะ **1 ตัว** ($\text{R-CH}_2\text{-OH}$) $\implies$ Ex: Ethanol, Propan-1-ol
+          <span class="en">The $\alpha\text{-Carbon}$ is bonded to <b>1 carbon atom</b> ($\text{R-CH}_2\text{-OH}$).</span>
+        </li>
+        <li><b>$2^\circ\text{ Alcohol (Secondary):}$</b> C ที่เกาะ $-\text{OH}$ มี C อื่นมาเกาะ **2 ตัว** ($\text{R}_2\text{CH-OH}$) $\implies$ Ex: Propan-2-ol
+          <span class="en">The $\alpha\text{-Carbon}$ is bonded to <b>2 carbon atoms</b> ($\text{R}_2\text{CH-OH}$).</span>
+        </li>
+        <li><b>$3^\circ\text{ Alcohol (Tertiary):}$</b> C ที่เกาะ $-\text{OH}$ มี C อื่นมาเกาะ **3 ตัว** (<b>ไม่มี $\text{H}$ เหลือเลย!</b> $\rightarrow \text{R}_3\text{C-OH}$) $\implies$ Ex: 2-Methylpropan-2-ol 🚨 <b>เกิดออกซิเดชันไม่ได้!</b>
+          <span class="en">The $\alpha\text{-Carbon}$ is bonded to <b>3 carbon atoms</b> (<b>No remaining $\text{H}$ atom!</b>) $\implies$ 🚨 <b>Cannot undergo oxidation!</b></span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="rule-box">
+      <b>⚛️ กฎทรงมวลและการย้ายที่ของอะตอม H (Law of Conservation of Mass & H-Atom Transfer):</b>
+      <span class="en">Atom Conservation: "H atoms do not disappear, they are transferred to form new molecules."</span>
+      <p style="margin: 1.5mm 0 0.5mm;"><b>1. ทำปฏิกิริยากับโลหะ $\text{Na}$ (Reaction with Active Metal $\text{Na}$):</b> $\text{H}$ จาก $-\text{OH}$ หลุดจับคู่กันเองเกิด **แก๊สไฮโดรเจน ($\text{H}_2\uparrow$)**
+        <span class="en">$\text{H}$ from $-\text{OH}$ is released and combines to form <b>Hydrogen gas ($\text{H}_2\uparrow$)</b> (Flammable bubbles).</span>
+      </p>
+      $$\ce{2 C2H5OH + 2 Na ->[Dry] 2 C2H5ONa + H2(g)^}$$
+
+      <p style="margin: 2mm 0 0.5mm;"><b>2. ปฏิกิริยาออกซิเดชัน (Oxidation with $[\text{O}]$ from $\text{KMnO}_4/\text{H}^+$):</b> $\text{H}$ จากแอลกอฮอล์ $2$ ตัว ไปรวมกับ $[\text{O}]$ เกิด **น้ำ ($\text{H}_2\text{O}$)**
+        <span class="en">$2\text{ H}$ atoms from alcohol combine with $[\text{O}]$ from oxidizing agent to form <b>Water ($\text{H}_2\text{O}$)</b> (No bubbles).</span>
+      </p>
+      $$\ce{C2H5OH + [O] ->[KMnO4/H+] CH3CHO + H2O}$$
+    </div>
+
+    <h3>1. กลุ่มแอลกอฮอล์ และ อีเทอร์ <span class="inline-en">(Alcohols & Ethers)</span></h3>
+    
+    <div class="visual-card">
+      <svg viewBox="0 0 520 135">
+        <rect x="5" y="5" width="510" height="125" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+        <text x="260" y="22" font-size="12.5" font-weight="bold" text-anchor="middle" fill="#0284c7">Alcohol Oxidation Paths & Conditions / เส้นทางออกซิเดชันแอลกอฮอล์</text>
+        
+        <text x="15" y="46" font-size="10.5" font-weight="bold" fill="#0f172a">1° Alcohol:</text>
+        <rect x="80" y="33" width="85" height="20" rx="4" fill="#e0f2fe" stroke="#0284c7"/>
+        <text x="122" y="47" font-size="9.5" text-anchor="middle">R-CH₂-OH</text>
+        <path d="M 170 43 L 210 43" stroke="#0284c7" stroke-width="1.5"/>
+        <text x="190" y="36" font-size="8" text-anchor="middle" fill="#d97706">KMnO₄/H⁺</text>
+        <rect x="215" y="33" width="80" height="20" rx="4" fill="#e0f2fe" stroke="#0284c7"/>
+        <text x="255" y="47" font-size="9.5" text-anchor="middle">R-CHO (Ald)</text>
+        <path d="M 300 43 L 340 43" stroke="#0284c7" stroke-width="1.5"/>
+        <text x="320" y="36" font-size="8" text-anchor="middle" fill="#d97706">KMnO₄/H⁺</text>
+        <rect x="345" y="33" width="135" height="20" rx="4" fill="#dcfce7" stroke="#16a34a"/>
+        <text x="412" y="47" font-size="9.5" text-anchor="middle" font-weight="bold">R-COOH + H₂O</text>
+
+        <text x="15" y="78" font-size="10.5" font-weight="bold" fill="#0f172a">2° Alcohol:</text>
+        <rect x="80" y="65" width="85" height="20" rx="4" fill="#e0f2fe" stroke="#0284c7"/>
+        <text x="122" y="79" font-size="9.5" text-anchor="middle">R-CH(OH)-R'</text>
+        <path d="M 170 75 L 210 75" stroke="#0284c7" stroke-width="1.5"/>
+        <text x="190" y="68" font-size="8" text-anchor="middle" fill="#d97706">KMnO₄/H⁺</text>
+        <rect x="215" y="65" width="165" height="20" rx="4" fill="#dcfce7" stroke="#16a34a"/>
+        <text x="297" y="79" font-size="9.5" text-anchor="middle" font-weight="bold">R-CO-R' (Ketone) + H₂O</text>
+
+        <text x="15" y="110" font-size="10.5" font-weight="bold" fill="#0f172a">3° Alcohol:</text>
+        <rect x="80" y="97" width="85" height="20" rx="4" fill="#fee2e2" stroke="#dc2626"/>
+        <text x="122" y="111" font-size="9.5" text-anchor="middle">R₃C-OH</text>
+        <path d="M 170 107 L 210 107" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="3"/>
+        <text x="315" y="111" font-size="9.5" font-weight="bold" fill="#dc2626">✗ ไม่เกิดปฏิกิริยา (No Reaction - No H on C-OH)</text>
+      </svg>
+    </div>
+
+    <ul>
+      <li><b>$1^\circ\text{ Alcohol (Propan-1-ol):}$</b> $\ce{CH3CH2CH2OH ->[KMnO4/H+] CH3CH2CHO ->[KMnO4/H+] CH3CH2COOH}$</li>
+      <li><b>$2^\circ\text{ Alcohol (Propan-2-ol):}$</b> $\ce{CH3CH(OH)CH3 ->[KMnO4/H+] CH3COCH3 + H2O}$</li>
+      <li><b>$3^\circ\text{ Alcohol (2-Methylpropan-2-ol):}$</b> $\ce{(CH3)3C-OH + [O] ->[KMnO4/H+] \text{No Reaction}}$</li>
+    </ul>
+
+    <p><b>1.2 อีเทอร์ ($\text{R-O-R'}$ / Ethers):</b> เฉื่อยต่อปฏิกิริยาเคมีสูง ไม่ทำปฏิกิริยากับ $\text{Na}$ และไม่ถูกออกซิไดส์
+      <span class="en">Chemically inert, unreactive toward $\text{Na}$ metal and oxidation. Used as organic solvents.</span>
+      <i>ตัวอย่าง / Example:</i> $\ce{CH3OCH2CH3 + Na -> \text{No Reaction}}$
+    </p>
+
+    <h3>2. กลุ่มแอลดีไฮด์ และ คีโตน <span class="inline-en">(Aldehydes & Ketones)</span></h3>
+    <ul>
+      <li><b>Aldehyde ($\text{R-CHO}$):</b> $\ce{CH3CH2CHO + [O] ->[KMnO4/H+] CH3CH2COOH}$
+        <span class="en">Easily oxidized to carboxylic acids due to presence of carbonyl hydrogen.</span>
+      </li>
+      <li><b>Ketone ($\text{R-CO-R'}$):</b> $\ce{CH3COCH3 + [O] ->[KMnO4/H+] \text{No Reaction}}$
+        <span class="en">Resists oxidation under mild conditions due to lack of carbonyl hydrogen.</span>
+      </li>
+    </ul>
+
+    <div class="footer"><span>A-Level Chemistry Summary</span><span>Page 1</span></div>
+  </section>
+
+  <!-- PAGE 2: THEORY 2 -->
+  <section class="page">
+    <div class="part-head">
+      <div>
+        <div class="part-no">A-Level Chemistry Summary • Organic Reactions</div>
+        <h2>ปฏิกิริยาของสารประกอบที่มี O และ N (Part 2)<br><span class="en">Reactions of Oxygen and Nitrogen Containing Compounds (Part 2)</span></h2>
+      </div>
+    </div>
+
+    <h3>3. กรดคาร์บอกซิลิก <span class="inline-en">(Carboxylic Acids, $\text{R-COOH}$)</span></h3>
+    <ul>
+      <li><b>การทดสอบความเป็นกรด (Acidity & Signature Test):</b> $\ce{CH3CH2COOH + NaHCO3 -> CH3CH2COONa + H2O + CO2(g)^}$
+        <span class="en">Reacts with $\text{NaHCO}_3$ releasing $\text{CO}_2$ gas bubbles (Distinguishes carboxylic acids from alcohols and phenols).</span>
+      </li>
+      <li><b>ปฏิกิริยาเอสเทอริฟิเคชัน (Esterification):</b> $\ce{CH3COOH + CH3CH2OH <=>[conc. H2SO4][\Delta] CH3COOCH2CH3 + H2O}$
+        <span class="en">Reversible condensation with alcohols catalyzed by conc. $\text{H}_2\text{SO}_4$ and heat ($\Delta$).</span>
+      </li>
+    </ul>
+
+    <h3>4. เอสเทอร์ <span class="inline-en">(Esters, $\text{R-COOR'}$)</span> — ปฏิกิริยาตัดสาย (Hydrolysis)</h3>
+    <div class="concept-box" style="margin: 1.5mm 0 2.5mm;">
+      <b>💡 เทคนิคการจำการตัดสายเอสเทอร์ (Ester Cleavage Trick): $\text{R-CO} \boldsymbol{ \;\mathbf{\mid}\; } \text{O-R'}$</b><br>
+      เวลาตัดสายเอสเทอร์ด้วยน้ำหรือเบส ให้<b>ตัดพันธะระหว่าง $\text{C}=\text{O}$ กับ $\text{O}$</b> เสมอ:<br>
+      <span class="en">Always cleave the bond between $\text{C}=\text{O}$ and $\text{O}$ during hydrolysis:</span>
+      • ฝั่งคาร์บอนิล ($\text{R-CO-}$) $\implies$ เติม $-\text{OH}$ ได้เป็น <b>กรดคาร์บอกซิลิก ($\text{R-COOH}$)</b> หรือ เกลือ ($\text{R-COONa}$)
+      <span class="en">Carbonyl side ($\text{R-CO-}$) adds $-\text{OH}$ to yield Carboxylic acid ($\text{R-COOH}$) or Salt ($\text{R-COONa}$).</span>
+      • ฝั่งแอลคอกซี ($-\text{O-R'}$) $\implies$ เติม $-\text{H}$ ได้เป็น <b>แอลกอฮอล์ ($\text{R'-OH}$)</b>
+      <span class="en">Alkoxy side ($-\text{O-R'}$) adds $-\text{H}$ to yield Alcohol ($\text{R'-OH}$).</span>
+    </div>
+
+    <ul>
+      <li><b>สภาวะกรด (Acidic Hydrolysis):</b> $\ce{CH3CH2COOCH3 + H2O <=>[dil. H+][\Delta] CH3CH2COOH + CH3OH}$ [ผันกลับได้ / Reversible $\rightleftharpoons$]</li>
+      <li><b>สภาวะเบส / สะปอนนิฟิเคชัน (Saponification / Basic Hydrolysis):</b> $\ce{CH3COOCH2CH3 + NaOH ->[\Delta] CH3COONa + CH3CH2OH}$ [ไปทางเดียว / Irreversible $\rightarrow$]</li>
+    </ul>
+
+    <h3>5. กลุ่มเอมีน และ เอไมด์ <span class="inline-en">(Amines & Amides)</span></h3>
+    <ul>
+      <li><b>Amine ($\text{R-NH}_2$):</b> เป็น <b>เบสอ่อน (Weak Base)</b> (เปลี่ยนลิตมัส แดง $\rightarrow$ น้ำเงิน) $\ce{CH3COOH + CH3NH2 ->[\Delta \text{ High}] CH3CONHCH3 + H2O}$
+        <span class="en">Acts as a weak base. Reacts with carboxylic acids at high heat ($\Delta$) to synthesize amides.</span>
+      </li>
+      <li><b>Amide ($\text{R-CONH}_2$):</b> เป็น <b>กลาง (Neutral)</b> (ไม่เปลี่ยนสีลิตมัส) การตัดสายต้องใช้สภาวะรุนแรง:
+        <span class="en">Neutral compound (no litmus color change). Cleavage requires strong conditions:</span>
+        <br>• <i>ตัดในกรด (Acidic):</i> $\ce{CH3CONH2 + H2O + HCl ->[\Delta] CH3COOH + NH4Cl}$ (ไม่มีกลิ่น / Odorless)
+        <br>• <i>ตัดในเบส (Basic):</i> $\ce{CH3CONH2 + NaOH ->[\Delta] CH3COONa + NH3(g)^}$ (แก๊สกลิ่นฉุน / Pungent gas)
+      </li>
+    </ul>
+
+    <div class="pitfall-box">
+      <b>🚨 Checklist: จุดหลอก A-Level (Bilingual Trap Alerts!)</b>
+      <table class="chem-table">
+        <thead>
+          <tr>
+            <th>รายการทดสอบ / Test Case</th>
+            <th>สารที่เกิดปฏิกิริยาได้ / Positive Result</th>
+            <th>สารที่ไม่เกิด / Negative Result</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>ฟองแก๊ส $\text{CO}_2$ กับ $\text{NaHCO}_3$</b><br><span class="en">$\text{CO}_2$ gas with $\text{NaHCO}_3$</span></td>
+            <td>กรดคาร์บอกซิลิก ($\text{R-COOH}$)<br><span class="en">Carboxylic acids</span></td>
+            <td>แอลกอฮอล์, ฟีนอล, เอสเทอร์, อีเทอร์<br><span class="en">Alcohols, Phenols, Esters, Ethers</span></td>
+          </tr>
+          <tr>
+            <td><b>ฟองแก๊ส $\text{H}_2$ กับ โลหะ $\text{Na}$</b><br><span class="en">$\text{H}_2$ gas with Active Metal $\text{Na}$</span></td>
+            <td>กรดคาร์บอกซิลิก, แอลกอฮอล์, ฟีนอล<br><span class="en">Carboxylic acids, Alcohols, Phenols</span></td>
+            <td>อีเทอร์, เอสเทอร์, คีโตน<br><span class="en">Ethers, Esters, Ketones</span></td>
+          </tr>
+          <tr>
+            <td><b>กระดาษลิตมัส (Litmus Test)</b></td>
+            <td><b>Amine:</b> เบส (แดง $\rightarrow$ น้ำเงิน / Red to Blue)<br><b>R-COOH:</b> กรด (น้ำเงิน $\rightarrow$ แดง / Blue to Red)</td>
+            <td><b>Amide:</b> เป็นกลาง! (Neutral)<br>แอลกอฮอล์, เอสเทอร์: เป็นกลาง</td>
+          </tr>
+          <tr>
+            <td><b>ลูกศร Hydrolysis (Arrow direction)</b></td>
+            <td><b>สภาวะกรด (Acidic):</b> ผันกลับได้ ($\rightleftharpoons$)</td>
+            <td><b>สภาวะเบส (Basic):</b> ไปทางเดียว ($\rightarrow$)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="footer"><span>A-Level Chemistry Summary</span><span>Page 2</span></div>
+  </section>
+
+  <!-- PAGE 3: WORKSHEET ITEMS 1 - 5 -->
+  <section class="page">
+    <div class="part-head">
+      <div>
+        <div class="part-no">A-Level Chemistry Worksheet • Part 1</div>
+        <h2>แบบฝึกหัดทบทวน: ข้อที่ 1 - 5<br><span class="en">Organic Chemistry Exercise: Items 1 - 5</span></h2>
+      </div>
+    </div>
+
+    <!-- Q1 -->
+    <div class="q-block">
+      <div class="q-head">ข้อ 1 / Item 1: เติมผลิตภัณฑ์และระบุเงื่อนไขบนลูกศรให้สมบูรณ์ <span class="inline-en">(Complete Products & Reaction Conditions)</span></div>
+      <div class="q-body">
+        <p>จงเติมสูตรโครงสร้างของผลิตภัณฑ์หลักที่เกิดขึ้นและระบุเงื่อนไข/ตัวเร่งปฏิกิริยาบนลูกศรให้สมบูรณ์:</p>
+        <span class="en">Complete the chemical equations by predicting the major organic products and writing the required reaction conditions or catalysts over the arrows:</span>
+        <p>1.1 $\ce{CH3COOH + CH3CH2OH ->[?] \dots\dots\dots\dots\dots\dots\dots\dots\dots\dots + \dots\dots\dots\dots}$</p>
+        <p>1.2 $\ce{CH3CH2COOCH3 + H2O ->[?] \dots\dots\dots\dots\dots\dots\dots\dots\dots\dots + \dots\dots\dots\dots}$</p>
+        <p>1.3 $\ce{CH3COOCH3 + NaOH ->[?] \dots\dots\dots\dots\dots\dots\dots\dots\dots\dots + \dots\dots\dots\dots}$</p>
+      </div>
+      <div class="work-space"></div>
+      <div class="qtools"><button onclick="toggleBlock('sol-1', this)">เปิด-ปิดเฉลย / Solution</button></div>
+      <div class="solution" id="sol-1">
+        <div class="sol-title">เฉลยข้อ 1 / Solution 1:</div>
+        1.1 เงื่อนไข / Conditions: $\mathbf{\text{conc. H}_2\text{SO}_4 / \Delta}$ (ลูกศร / Arrow: $\rightleftharpoons$) $\implies \mathbf{\text{CH}_3\text{COOCH}_2\text{CH}_3 + \text{H}_2\text{O}}$<br>
+        1.2 เงื่อนไข / Conditions: $\mathbf{\text{dil. H}^+ / \Delta}$ (ลูกศร / Arrow: $\rightleftharpoons$) $\implies \mathbf{\text{CH}_3\text{CH}_2\text{COOH} + \text{CH}_3\text{OH}}$<br>
+        1.3 เงื่อนไข / Conditions: $\mathbf{\Delta}$ (ลูกศร / Arrow: $\rightarrow$) $\implies \mathbf{\text{CH}_3\text{COONa} + \text{CH}_3\text{OH}}$
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="q-block">
+      <div class="q-head">ข้อ 2 / Item 2: วิเคราะห์กฎทรงมวลและการย้ายที่ของอะตอม H <span class="inline-en">(Atom Conservation & H Transfer)</span></div>
+      <div class="q-body">
+        <p>เมื่อแบ่งเอทานอลใส่อย่างละเท่ากันใน 2 หลอดทดลอง: หลอด A เติมโลหะโซเดียม ($\text{Na}$), หลอด B เติมสารละลาย $\text{KMnO}_4/\text{H}^+$ แล้วนำไปต้ม ทั้งสองหลอดเกิดปรากฏการณ์ที่สังเกตได้ต่างกันอย่างไร และอะตอม $\text{H}$ ที่หลุดออกจากเอทานอลในแต่ละหลอด ย้ายไปสร้างเป็นโมเลกุลใด?</p>
+        <span class="en">Ethanol is divided into two test tubes: Tube A receives sodium metal ($\text{Na}$), while Tube B receives acidifed $\text{KMnO}_4/\text{H}^+$ solution and is heated. Compare the observable differences between both tubes, and specify which molecules the transferred $\text{H}$ atoms from ethanol form in each case.</span>
+      </div>
+      <div class="work-space"></div>
+      <div class="qtools"><button onclick="toggleBlock('sol-2', this)">เปิด-ปิดเฉลย / Solution</button></div>
+      <div class="solution" id="sol-2">
+        <div class="sol-title">เฉลยข้อ 2 / Solution 2:</div>
+        • <b>หลอด A / Tube A:</b> เกิดฟองแก๊สติดไฟ โดย $\text{H}$ ย้ายไปเกิดเป็น <b>แก๊สไฮโดรเจน ($\text{H}_2\uparrow$)</b>
+        <span class="en">Flammable gas bubbles formed; $\text{H}$ transfers to form <b>Hydrogen gas ($\text{H}_2\uparrow$)</b>.</span>
+        • <b>หลอด B / Tube B:</b> สารละลายเปลี่ยนจากสีม่วงเป็นไม่มีสี (ไม่มีฟองแก๊ส) โดย $\text{H}$ ย้ายไปรวมกับ $[\text{O}]$ เกิดเป็น <b>น้ำ ($\text{H}_2\text{O}$)</b>
+        <span class="en">Purple solution turns colorless (no bubbles); $\text{H}$ transfers to form <b>Water ($\text{H}_2\text{O}$)</b>.</span>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="q-block">
+      <div class="q-head">ข้อ 3 / Item 3: ปฏิกิริยาออกซิเดชันจำแนกชนิดแอลกอฮอล์ <span class="inline-en">(Alcohol Classification via Oxidation)</span></div>
+      <div class="q-body">
+        <p>นำแอลกอฮอล์ 3 ชนิด ได้แก่ Propan-1-ol, Propan-2-ol และ 2-Methylpropan-2-ol มาทดสอบกับสารละลาย $\text{KMnO}_4/\text{H}^+$ สารใดบ้างทำให้สีม่วงจางหายไป และสารใดได้ผลิตภัณฑ์ที่สามารถนำไปทำปฏิกิริยากับ $\text{NaHCO}_3$ แล้วเกิดฟองแก๊สต่อได้?</p>
+        <span class="en">When testing Propan-1-ol, Propan-2-ol, and 2-Methylpropan-2-ol with acidified $\text{KMnO}_4/\text{H}^+$, which alcohols decolorize the purple solution, and which alcohol yields an organic product that further reacts with $\text{NaHCO}_3$ to produce gas bubbles?</span>
+      </div>
+      <div class="work-space"></div>
+      <div class="qtools"><button onclick="toggleBlock('sol-3', this)">เปิด-ปิดเฉลย / Solution</button></div>
+      <div class="solution" id="sol-3">
+        <div class="sol-title">เฉลยข้อ 3 / Solution 3:</div>
+        1. สารที่จางสีม่วงได้แก่ <b>Propan-1-ol ($1^\circ$)</b> และ <b>Propan-2-ol ($2^\circ$)</b> ($3^\circ$ ไม่เกิดปฏิกิริยา)
+        <span class="en"><b>Propan-1-ol</b> ($1^\circ$) and <b>Propan-2-ol</b> ($2^\circ$) decolorize $\text{KMnO}_4$ ($3^\circ$ does not react).</span>
+        2. สารที่ได้ผลิตภัณฑ์ไปทำปฏิกิริยากับ $\text{NaHCO}_3$ ได้คือ <b>Propan-1-ol</b> เพราะถูกออกซิไดส์จนได้ <b>กรดโพรพาโนอิก ($\text{CH}_3\text{CH}_2\text{COOH}$)</b>
+        <span class="en"><b>Propan-1-ol</b> forms propanoic acid which reacts with $\text{NaHCO}_3$ to evolve $\text{CO}_2$ gas.</span>
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="q-block">
+      <div class="q-head">ข้อ 4 / Item 4: การตัดสายเอสเทอร์และเอไมด์ด้วยเบส <span class="inline-en">(Ester & Amide Alkaline Hydrolysis)</span></div>
+      <div class="q-body">
+        <p>นำสารประกอบ Ethyl acetate ($\text{CH}_3\text{COOCH}_2\text{CH}_3$) และ Acetamide ($\text{CH}_3\text{CONH}_2$) มาต้มกับสารละลายเบสแก่ ($\text{NaOH}$) ปฏิกิริยาของสารใดมีแก๊สหลุดออกมา และแก๊สดังกล่าวมีสมบัติต่อกระดาษลิตมัสอย่างไร?</p>
+        <span class="en">Boiling Ethyl acetate ($\text{CH}_3\text{COOCH}_2\text{CH}_3$) and Acetamide ($\text{CH}_3\text{CONH}_2$) with strong base ($\text{NaOH}$): Which compound's hydrolysis produces an evolved gas, and what is its chemical effect on moist litmus paper?</span>
+      </div>
+      <div class="work-space"></div>
+      <div class="qtools"><button onclick="toggleBlock('sol-4', this)">เปิด-ปิดเฉลย / Solution</button></div>
+      <div class="solution" id="sol-4">
+        <div class="sol-title">เฉลยข้อ 4 / Solution 4:</div>
+        ปฏิกิริยาของ <b>Acetamide</b> จะให้ <b>แก๊สแอมโมเนีย ($\text{NH}_3\uparrow$)</b> หลุดออกมา มีกลิ่นฉุน เปลี่ยนสีกระดาษลิตมัสชื้นจาก <b>แดงเป็นน้ำเงิน</b>
+        <span class="en"><b>Acetamide</b> releases <b>Ammonia gas ($\text{NH}_3\uparrow$)</b>, turning moist red litmus paper <b>blue</b>.</span>
+      </div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="q-block">
+      <div class="q-head">ข้อ 5 / Item 5: ปริศนาสารอินทรีย์ A, B, C, D <span class="inline-en">(Unknown Organic Compounds Identification)</span></div>
+      <div class="q-body">
+        <p>กำหนดสารอินทรีย์ 4 ชนิด A, B, C และ D มีผลการทดสอบดังนี้:<br>
+        • สาร A เกิดฟองแก๊สกับ $\text{Na}$ และจางสี $\text{KMnO}_4$ ได้ แต่ไม่ทำปฏิกิริยากับ $\text{NaHCO}_3$<br>
+        • สาร B เกิดฟองแก๊สทั้งเมื่อทดสอบกับ $\text{Na}$ และ $\text{NaHCO}_3$<br>
+        • สาร C เปลี่ยนสีกระดาษลิตมัสชื้นจากแดงเป็นน้ำเงิน ส่วนสาร D เป็นกลางและเฉื่อยต่อปฏิกิริยา<br>
+        จงระบุหมู่ฟังก์ชันที่เป็นไปได้ของสาร A, B, C และ D</p>
+        <span class="en">Given four organic compounds A, B, C, and D with the following test results:<br>
+        • Compound A reacts with $\text{Na}$ metal evolving gas and decolorizes $\text{KMnO}_4$, but yields no reaction with $\text{NaHCO}_3$.<br>
+        • Compound B evolves gas bubbles when tested with both $\text{Na}$ metal and $\text{NaHCO}_3$.<br>
+        • Compound C turns moist red litmus paper blue, while Compound D is neutral and chemically inert.<br>
+        Identify the possible functional groups for A, B, C, and D.</span>
+      </div>
+      <div class="work-space"></div>
+      <div class="qtools"><button onclick="toggleBlock('sol-5', this)">เปิด-ปิดเฉลย / Solution</button></div>
+      <div class="solution" id="sol-5">
+        <div class="sol-title">เฉลยข้อ 5 / Solution 5:</div>
+        • <b>สาร A / Comp A:</b> $1^\circ$ หรือ $2^\circ\text{ Alcohol}$ | • <b>สาร B / Comp B:</b> $\text{Carboxylic acid}$<br>
+        • <b>สาร C / Comp C:</b> $\text{Amine}$ (เบสอ่อน / Weak Base) | • <b>สาร D / Comp D:</b> $\text{Ether}$ หรือ $\text{Ester}$
+      </div>
+    </div>
+
+    <div class="footer"><span>A-Level Chemistry Worksheet</span><span>Page 3</span></div>
+  </section>
+
+  <!-- PAGE 4: WORKSHEET ITEMS 6 - 9 -->
+  <section class="page">
+    <div class="part-head">
+      <div>
+        <div class="part-no">A-Level Chemistry Worksheet • Part 2</div>
+        <h2>แบบฝึกหัดทบทวน: ข้อที่ 6 - 9<br><span class="en">Organic Chemistry Exercise: Items 6 - 9</span></h2>
+      </div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="q-block">
+      <div class="q-head">ข้อ 6 / Item 6: การจำแนกชนิดแอลกอฮอล์จากโครงสร้าง <span class="inline-en">(Alcohol Structural Classification)</span></div>
+      <div class="q-body">
+        <p>จงระบุชนิดของแอลกอฮอล์ ($1^\circ, 2^\circ$ หรือ $3^\circ\text{ Alcohol}$) และระบุผลการทดสอบเมื่อนำสารต่อไปนี้มาทำปฏิกิริยากับสารละลาย $\text{KMnO}_4/\text{H}^+$:<br>
+        6.1 Butan-1-ol | 6.2 Butan-2-ol | 6.3 2-Methylpropan-2-ol</p>
+        <span class="en">Classify each of the following alcohols as primary ($1^\circ$), secondary ($2^\circ$), or tertiary ($3^\circ$), and state their observable reaction results when treated with acidified $\text{KMnO}_4/\text{H}^+$ solution:<br>
+        6.1 Butan-1-ol | 6.2 Butan-2-ol | 6.3 2-Methylpropan-2-ol</span>
+      </div>
+      <div class="work-space"></div>
+      <div class="qtools"><button onclick="toggleBlock('sol-6', this)">เปิด-ปิดเฉลย / Solution</button></div>
+      <div class="solution" id="sol-6">
+        <div class="sol-title">เฉลยข้อ 6 / Solution 6:</div>
+        • <b>6.1 Butan-1-ol ($1^\circ$):</b> จางสีม่วง $\text{KMnO}_4$ ได้ เกิดเป็น Butanal $\rightarrow$ Butanoic acid
+        <span class="en">Decolorizes $\text{KMnO}_4$, yields Butanal then Butanoic acid.</span>
+        • <b>6.2 Butan-2-ol ($2^\circ$):</b> จางสีม่วง $\text{KMnO}_4$ ได้ เกิดเป็น Butanone
+        <span class="en">Decolorizes $\text{KMnO}_4$, yields Butanone.</span>
+        • <b>6.3 2-Methylpropan-2-ol ($3^\circ$):</b> 🚨 <b>ไม่เกิดปฏิกิริยา (ไม่จางสีม่วง)</b> เพราะ C-OH ไม่มี H เหลืออยู่
+        <span class="en"><b>No reaction</b> (no $\text{H}$ atom on $\alpha\text{-Carbon}$).</span>
+      </div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="q-block">
+      <div class="q-head">ข้อ 7 / Item 7: การเปรียบเทียบการเกิดแก๊สของสารที่มีหมู่ -OH <span class="inline-en">(-OH Group Gas Evolution Comparison)</span></div>
+      <div class="q-body">
+        <p>เมื่อนำสาร X ($\text{CH}_3\text{CH}_2\text{OH}$) และ สาร Y ($\text{CH}_3\text{COOH}$) ปริมาณเท่ากัน มาทำปฏิกิริยาทดสอบแยกกันกับ ผงฟู ($\text{NaHCO}_3$) และ โลหะโซเดียม ($\text{Na}$) จงเปรียบเทียบประเภทของแก๊สและการเกิดฟองแก๊สที่สังเกตได้ของสารทั้งสอง</p>
+        <span class="en">Testing equal molar amounts of Compound X ($\text{CH}_3\text{CH}_2\text{OH}$) and Compound Y ($\text{CH}_3\text{COOH}$) separately with baking soda ($\text{NaHCO}_3$) and sodium metal ($\text{Na}$): Compare the types of evolved gas and observable bubble formation for both compounds.</span>
+      </div>
+      <div class="work-space"></div>
+      <div class="qtools"><button onclick="toggleBlock('sol-7', this)">เปิด-ปิดเฉลย / Solution</button></div>
+      <div class="solution" id="sol-7">
+        <div class="sol-title">เฉลยข้อ 7 / Solution 7:</div>
+        • <b>ทดสอบกับ โลหะ $\text{Na}$ ($\text{Na}$ metal test):</b> สาร X และ Y **เกิดฟองแก๊ส $\text{H}_2$ ทั้งคู่**
+        <span class="en">Both X and Y produce <b>$\text{H}_2$ gas bubbles</b>.</span>
+        • <b>ทดสอบกับ $\text{NaHCO}_3$ ($\text{NaHCO}_3$ test):</b> เฉพาะ **สาร Y ($\text{CH}_3\text{COOH}$) เท่านั้นที่เกิดฟองแก๊ส $\text{CO}_2$** ส่วนสาร X ไม่เกิดปฏิกิริยา
+        <span class="en">Only Y produces <b>$\text{CO}_2$ gas bubbles</b> (X does not react).</span>
+      </div>
+    </div>
+
+    <!-- Q8 -->
+    <div class="q-block">
+      <div class="q-head">ข้อ 8 / Item 8: การย้อนรอยหาโครงสร้างสารตั้งต้นของเอสเทอร์ <span class="inline-en">(Ester Retrosynthesis Analysis)</span></div>
+      <div class="q-body">
+        <p>ถ้านำเอสเทอร์ Methyl propanoate ($\text{CH}_3\text{CH}_2\text{COOCH}_3$) มาทำไฮโดรลิซิสในสภาวะกรด ($\text{dil. H}^+/\Delta$) จงเขียนสูตรโครงสร้างและชื่อ IUPAC ของกรดคาร์บอกซิลิกและแอลกอฮอล์ที่เป็นสารตั้งต้น พร้อมระบุประเภทของสัญลักษณ์ลูกศรปฏิกิริยา</p>
+        <span class="en">When Methyl propanoate ($\text{CH}_3\text{CH}_2\text{COOCH}_3$) undergoes acidic hydrolysis ($\text{dil. H}^+/\Delta$): Write the structural formulas and IUPAC names of the reactant carboxylic acid and alcohol, and specify the type of reaction arrow symbol used.</span>
+      </div>
+      <div class="work-space"></div>
+      <div class="qtools"><button onclick="toggleBlock('sol-8', this)">เปิด-ปิดเฉลย / Solution</button></div>
+      <div class="solution" id="sol-8">
+        <div class="sol-title">เฉลยข้อ 8 / Solution 8:</div>
+        • ตัดสายตรง $\text{C-O}$ ($\text{CH}_3\text{CH}_2\text{CO} \;\mathbf{\mid}\; \text{OCH}_3$)
+        <span class="en">Cleave bond between $\text{C}=\text{O}$ and $\text{O}$.</span>
+        • ได้ **Propanoic acid ($\text{CH}_3\text{CH}_2\text{COOH}$)** และ **Methanol ($\text{CH}_3\text{OH}$)**
+        <span class="en">Yields <b>Propanoic acid</b> and <b>Methanol</b>.</span>
+        • ใช้ **ลูกศรผันกลับได้ ($\rightleftharpoons$)**
+        <span class="en">Uses <b>reversible arrow ($\rightleftharpoons$)</b>.</span>
+      </div>
+    </div>
+
+    <!-- Q9 -->
+    <div class="q-block">
+      <div class="q-head">ข้อ 9 / Item 9: การจำแนกความแตกต่างระหว่าง Amine และ Amide <span class="inline-en">(Distinguishing Amine vs Amide)</span></div>
+      <div class="q-body">
+        <p>ขวดสารละลายไม่มีสี A บรรจุ $\text{CH}_3\text{CH}_2\text{NH}_2$ และขวด B บรรจุ $\text{CH}_3\text{CONH}_2$ จงเสนอวิธีการทดสอบทางเคมีอย่างง่ายพร้อมระบุผลการสังเกตเพื่อจำแนกสารในขวดทั้งสองออกจากกันอย่างชัดเจน</p>
+        <span class="en">Unlabeled Bottle A contains $\text{CH}_3\text{CH}_2\text{NH}_2$ and Bottle B contains $\text{CH}_3\text{CONH}_2$. Propose a simple chemical test with observable results to clearly distinguish between the two compounds.</span>
+      </div>
+      <div class="work-space"></div>
+      <div class="qtools"><button onclick="toggleBlock('sol-9', this)">เปิด-ปิดเฉลย / Solution</button></div>
+      <div class="solution" id="sol-9">
+        <div class="sol-title">เฉลยข้อ 9 / Solution 9:</div>
+        • **ทดสอบด้วยกระดาษลิตมัสสีแดงชื้น (Moist red litmus paper test):**<br>
+        • ขวดที่เปลี่ยนสีกระดาษลิตมัสจาก **แดงเป็นน้ำเงิน** คือ **$\text{CH}_3\text{CH}_2\text{NH}_2$ (Amine - เบสอ่อน / Weak base)**<br>
+        • ขวดที่ไม่เปลี่ยนสีกระดาษลิตมัส คือ **$\text{CH}_3\text{CONH}_2$ (Amide - เป็นกลาง / Neutral)**
+      </div>
+    </div>
+
+    <div class="footer"><span>A-Level Chemistry Worksheet</span><span>Page 4</span></div>
+  </section>
+
+  <!-- PAGE 5: WORKSHEET ITEMS 10 - 14 -->
+  <section class="page">
+    <div class="part-head">
+      <div>
+        <div class="part-no">A-Level Chemistry Worksheet • Part 3</div>
+        <h2>แบบฝึกหัดทบทวน: ข้อที่ 10 - 14<br><span class="en">Organic Chemistry Exercise: Items 10 - 14</span></h2>
+      </div>
+    </div>
+
+    <!-- Q10 -->
+    <div class="q-block">
+      <div class="q-head">ข้อ 10 / Item 10: การตัดสายเอไมด์ด้วยกรด vs เบส <span class="inline-en">(Amide Cleavage in Acid vs Base)</span></div>
+      <div class="q-body">
+        <p>นำสารประกอบ Propanamide ($\text{CH}_3\text{CH}_2\text{CONH}_2$) แบ่งต้มในสองสภาวะ: หลอดที่ 1 ต้มกับกรด $\text{HCl}$ เข้มข้น, หลอดที่ 2 ต้มกับเบส $\text{NaOH}$ เข้มข้น จงเขียนสูตรโครงสร้างของผลิตภัณฑ์หลักที่เกิดขึ้นในแต่ละหลอดทดลอง</p>
+        <span class="en">Propanamide ($\text{CH}_3\text{CH}_2\text{CONH}_2$) is boiled in two different conditions: Tube 1 with conc. $\text{HCl}$ acid, Tube 2 with conc. $\text{NaOH}$ base. Write the structural formulas of the major products formed in each test tube.</span>
+      </div>
+      <div class="work-space"></div>
+      <div class="qtools"><button onclick="toggleBlock('sol-10', this)">เปิด-ปิดเฉลย / Solution</button></div>
+      <div class="solution" id="sol-10">
+        <div class="sol-title">เฉลยข้อ 10 / Solution 10:</div>
+        • **หลอดที่ 1 (ในกรด / Acidic):** ได้ $\mathbf{\text{CH}_3\text{CH}_2\text{COOH} + \text{NH}_4\text{Cl}}$ (ไม่มีกลิ่น / Odorless)
+        <span class="en">Yields Propanoic acid and Ammonium chloride (Odorless).</span>
+        • **หลอดที่ 2 (ในเบส / Basic):** ได้ $\mathbf{\text{CH}_3\text{CH}_2\text{COONa} + \text{NH}_3(g)\uparrow}$ (แก๊สแอมโมเนียกลิ่นฉุน / Pungent $\text{NH}_3$ gas)
+        <span class="en">Yields Sodium propanoate and Ammonia gas (Pungent odor).</span>
+      </div>
+    </div>
+
+    <!-- Q11 -->
+    <div class="q-block">
+      <div class="q-head">ข้อ 11 / Item 11: โจทย์สังเคราะห์สารแบบหลายสเต็ป <span class="inline-en">(Multi-step Synthesis Reaction)</span></div>
+      <div class="q-body">
+        <p>กำหนดลำดับปฏิกิริยาเคมีดังนี้: $\text{Propan-1-ol} \xrightarrow{\text{KMnO}_4/\text{H}^+} \mathbf{\text{สาร X}} \xrightarrow[\Delta]{\text{Methanol / conc. H}_2\text{SO}_4} \mathbf{\text{สาร Y}}$ จงระบุชื่อ IUPAC และสูตรโครงสร้างของสาร X และสาร Y</p>
+        <span class="en">Given the chemical reaction sequence: $\text{Propan-1-ol} \xrightarrow{\text{KMnO}_4/\text{H}^+} \mathbf{\text{Compound X}} \xrightarrow[\Delta]{\text{Methanol / conc. H}_2\text{SO}_4} \mathbf{\text{Compound Y}}$. Identify the IUPAC names and structural formulas for Compound X and Compound Y.</span>
+      </div>
+      <div class="work-space"></div>
+      <div class="qtools"><button onclick="toggleBlock('sol-11', this)">เปิด-ปิดเฉลย / Solution</button></div>
+      <div class="solution" id="sol-11">
+        <div class="sol-title">เฉลยข้อ 11 / Solution 11:</div>
+        • **สาร X / Comp X:** เกิดจาก $1^\circ\text{ Alc}$ ถูกออกซิไดส์ $\implies$ **Propanoic acid ($\text{CH}_3\text{CH}_2\text{COOH}$)**
+        <span class="en">Oxidation of $1^\circ\text{ Alcohol}$ yields <b>Propanoic acid</b>.</span>
+        • **สาร Y / Comp Y:** เกิดจากกรด + แอลกอฮอล์ $\implies$ **Methyl propanoate ($\text{CH}_3\text{CH}_2\text{COOCH}_3$)**
+        <span class="en">Esterification with Methanol yields <b>Methyl propanoate</b>.</span>
+      </div>
+    </div>
+
+    <!-- Q12 -->
+    <div class="q-block">
+      <div class="q-head">ข้อ 12 / Item 12: การเปรียบเทียบปฏิกิริยาสะปอนนิฟิเคชัน <span class="inline-en">(Saponification Arrow Correction)</span></div>
+      <div class="q-body">
+        <p>พิจารณาสมการปฏิกิริยาเคมีต่อไปนี้: $\ce{CH3COOCH2CH3 + NaOH <=>[{\Delta}] CH3COONa + CH3CH2OH}$ จงระบุจุดผิดพลาดทางเคมีของสมการดังกล่าว พร้อมเขียนสมการปฏิกิริยาที่แก้ไขให้ถูกต้องสมบูรณ์</p>
+        <span class="en">Consider the reaction equation above: Identify the chemical error in the written equation, and write the fully corrected chemical equation.</span>
+      </div>
+      <div class="work-space"></div>
+      <div class="qtools"><button onclick="toggleBlock('sol-12', this)">เปิด-ปิดเฉลย / Solution</button></div>
+      <div class="solution" id="sol-12">
+        <div class="sol-title">เฉลยข้อ 12 / Solution 12:</div>
+        • **จุดผิด / Error:** ใช้ลูกศรผันกลับได้ ($\rightleftharpoons$) (Reversible arrow)<br>
+        • **แก้ไข / Correction:** สะปอนนิฟิเคชันเป็นปฏิกิริยาไปข้างหน้าอย่างเดียว ต้องใช้ลูกศร **ไปทางเดียว ($\rightarrow$)** (Irreversible arrow)<br>
+        • **สมการที่ถูกต้อง / Correct Eq:** $\ce{CH3COOCH2CH3 + NaOH ->[\Delta] CH3COONa + CH3CH2OH}$
+      </div>
+    </div>
+
+    <!-- Q13 -->
+    <div class="q-block">
+      <div class="q-head">ข้อ 13 / Item 13: ปฏิกิริยารวมสังเคราะห์เอไมด์จากแอลกอฮอล์ <span class="inline-en">(Amide Synthesis from Alcohol)</span></div>
+      <div class="q-body">
+        <p>หากต้องการสังเคราะห์สารประกอบ N-Methylacetamide ($\text{CH}_3\text{CONHCH}_3$) โดยมี Ethanol ($\text{CH}_3\text{CH}_2\text{OH}$) เป็นสารตั้งต้นเริ่มต้น จงอธิบายลำดับขั้นตอน พร้อมระบุรีเอเจนต์และเงื่อนไขปฏิกิริยาที่ต้องใช้ในแต่ละสเต็ป</p>
+        <span class="en">To synthesize N-Methylacetamide ($\text{CH}_3\text{CONHCH}_3$) starting from Ethanol ($\text{CH}_3\text{CH}_2\text{OH}$): Describe the reaction steps and specify the reagents and reaction conditions required for each step.</span>
+      </div>
+      <div class="work-space"></div>
+      <div class="qtools"><button onclick="toggleBlock('sol-13', this)">เปิด-ปิดเฉลย / Solution</button></div>
+      <div class="solution" id="sol-13">
+        <div class="sol-title">เฉลยข้อ 13 / Solution 13:</div>
+        • **สเต็ป 1 / Step 1:** นำ Ethanol ออกซิไดส์ด้วย $\text{KMnO}_4/\text{H}^+$ ได้ **Ethanoic acid ($\text{CH}_3\text{COOH}$)**
+        <span class="en">Oxidize Ethanol with $\text{KMnO}_4/\text{H}^+$ to form Ethanoic acid.</span>
+        • **สเต็ป 2 / Step 2:** นำ Ethanoic acid ต้มกับ **Methylamine ($\text{CH}_3\text{NH}_2$)** ที่อุณหภูมิสูง ($\Delta \text{ High}$) ได้ **$\text{CH}_3\text{CONHCH}_3$**
+        <span class="en">React Ethanoic acid with Methylamine at high heat ($\Delta \text{ High}$) to form N-Methylacetamide.</span>
+      </div>
+    </div>
+
+    <!-- Q14 -->
+    <div class="q-block">
+      <div class="q-head">ข้อ 14 / Item 14: ตารางวิเคราะห์แยกกลุ่มสาร 5 ชนิด <span class="inline-en">(Comprehensive 5-Unknowns Matching)</span></div>
+      <div class="q-body">
+        <p>กำหนดสารอินทรีย์ 5 ชนิด ได้แก่ Ethanol, Ethanoic acid, Ethyl acetate, Ethylamine และ Acetamide จงจับคู่ชื่อสารดังกล่าวให้สอดคล้องกับผลการทดสอบในข้อ (1) ถึง (5):<br>
+        (1) เปลี่ยนสีกระดาษลิตมัสชื้นจากแดงเป็นน้ำเงิน<br>
+        (2) เกิดฟองแก๊ส $\text{CO}_2$ เมื่อทดสอบกับสารละลายผงฟู $\text{NaHCO}_3$<br>
+        (3) เมื่อต้มกับสารละลายเบส $\text{NaOH}$ จะได้แก๊สกลิ่นฉุน $\text{NH}_3$ หลุดออกมา<br>
+        (4) เมื่อต้มกับสารละลายเบส $\text{NaOH}$ จะได้เกลือคาร์บอกซิเลตและแอลกอฮอล์ (ไม่มีแก๊สหลุดออกมา)<br>
+        (5) เป็นกลาง ไม่เปลี่ยนสีลิตมัส และไม่เกิดปฏิกิริยาไฮโดรลิซิสเมื่อต้มกับเบส</p>
+        <span class="en">Match the 5 organic compounds: Ethanol, Ethanoic acid, Ethyl acetate, Ethylamine, and Acetamide with the corresponding test observations (1) through (5):<br>
+        (1) Turns moist red litmus paper blue.<br>
+        (2) Evolves $\text{CO}_2$ gas bubbles when treated with $\text{NaHCO}_3$ solution.<br>
+        (3) Evolves pungent $\text{NH}_3$ gas when boiled with $\text{NaOH}$ solution.<br>
+        (4) Yields carboxylate salt and alcohol when boiled with $\text{NaOH}$ solution (no gas evolved).<br>
+        (5) Neutral, no litmus change, and undergoes no hydrolysis when boiled with base.</span>
+      </div>
+      <div class="work-space"></div>
+      <div class="qtools"><button onclick="toggleBlock('sol-14', this)">เปิด-ปิดเฉลย / Solution</button></div>
+      <div class="solution" id="sol-14">
+        <div class="sol-title">เฉลยข้อ 14 / Solution 14:</div>
+        • **(1)** = **Ethylamine** (เบสอ่อน / Weak Base)<br>
+        • **(2)** = **Ethanoic acid** (กรด / Carboxylic Acid)<br>
+        • **(3)** = **Acetamide** (เอไมด์ / Amide)<br>
+        • **(4)** = **Ethyl acetate** (เอสเทอร์ / Ester)<br>
+        • **(5)** = **Ethanol** (แอลกอฮอล์ / Alcohol)
+      </div>
+    </div>
+
+    <div class="footer"><span>A-Level Chemistry Worksheet</span><span>Page 5</span></div>
+  </section>
+</main>
+
+<script>
+function toggleBlock(id, btn) {
+  const el = document.getElementById(id);
+  const open = el.classList.toggle('open');
+  if (btn) { btn.setAttribute('aria-expanded', String(open)); }
+}
+
+function toggleAllSolutions() {
+  const btn = document.getElementById('toggleAllBtn');
+  const open = btn.getAttribute('aria-expanded') !== 'true';
+  document.querySelectorAll('.solution').forEach(x => x.classList.toggle('open', open));
+  btn.setAttribute('aria-expanded', String(open));
+  btn.textContent = open ? '🙈 ซ่อนเฉลยทั้งหมด / Hide All Solutions' : '👁️ เปิดเฉลยทั้งหมด / Show All Solutions';
+  document.getElementById('status').textContent = open 
+    ? 'เฉลยแสดงบนหน้าจอ แต่จะไม่ถูกพิมพ์ / Solutions are visible on screen but non-printable.' 
+    : 'โหมดเรียนรู้: เฉลยซ่อนอยู่ และจะไม่พิมพ์ออกกระดาษ / Learning mode: solutions are hidden and non-printable.';
+}
+
+function hideAll() {
+  document.querySelectorAll('.solution').forEach(x => x.classList.remove('open'));
+  const btn = document.getElementById('toggleAllBtn');
+  btn.setAttribute('aria-expanded', 'false');
+  btn.textContent = '👁️ เปิดเฉลยทั้งหมด / Show All Solutions';
+  document.getElementById('status').textContent = 'โหมดเรียนรู้: เฉลยซ่อนอยู่ และจะไม่พิมพ์ออกกระดาษ / Learning mode: solutions are hidden and non-printable.';
+}
+
+window.addEventListener('beforeprint', hideAll);
+</script>
+</body>
+</html>

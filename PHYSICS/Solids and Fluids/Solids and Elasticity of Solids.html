@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Part 1: Solids and Elasticity</title>
+<title>Solids and Elasticity of Solids</title>
 
 <!-- MathJax Configuration & Script -->
 <script>
@@ -82,7 +82,7 @@ h3 { font-size: 16px; line-height: 1.3; margin: 3mm 0 2mm; }
 .en { display: block; color: var(--muted); font-size: .88em; line-height: 1.35; margin-top: .4mm; }
 .inline-en { color: var(--muted); font-size: .9em; }
 
-.key, .formula, .pitfall, .example {
+.key, .formula, .pitfall, .example, .checklist-card {
   border: 1px solid var(--ink);
   padding: 3.5mm 4mm;
   margin: 3mm 0;
@@ -91,6 +91,22 @@ h3 { font-size: 16px; line-height: 1.3; margin: 3mm 0 2mm; }
 .key { border-left: 5px solid var(--accent); background: var(--accent-soft); }
 .formula { background: #fff; text-align: center; font-size: 16px; font-weight: 700; padding: 4mm; }
 .pitfall { background: var(--warn); border-left: 5px solid #d97706; }
+.checklist-card { background: #f8fafc; border-left: 5px solid #2563eb; }
+
+/* Self-Check Items */
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 2.5mm 0;
+  cursor: pointer;
+}
+.check-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  cursor: pointer;
+}
 
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
 .visual-card { border: 1px solid var(--ink); padding: 3mm; break-inside: avoid; background: #fff; text-align: center; }
@@ -164,13 +180,51 @@ h3 { font-size: 16px; line-height: 1.3; margin: 3mm 0 2mm; }
 </nav>
 
 <main>
-  <!-- Page 1: Theory -->
+  <!-- Page 1: Theory & Self-Check Checklist -->
   <section class="page">
     <div class="part-head">
       <div>
-        <div class="part-no">Chapter 17 • Part 1</div>
-        <h2>17.1 ของแข็งและสภาพยืดหยุ่นของของแข็ง<br><span class="en">Solids and Elasticity of Solids</span></h2>
+        <div class="part-no">Physics Learning Module</div>
+        <h2>ของแข็งและสภาพยืดหยุ่นของของแข็ง<br><span class="en">Solids and Elasticity of Solids</span></h2>
       </div>
+    </div>
+
+    <!-- Self-Check Checklist Card -->
+    <div class="checklist-card">
+      <b style="color: #2563eb; font-size: 15px;">☑ Checklist ความรู้หลังเรียน / Learning Checklist:</b>
+      <span class="en" style="margin-bottom: 2mm;">Check your understanding after studying this section.</span>
+      
+      <label class="check-item">
+        <input type="checkbox">
+        <div>
+          <b>จำกัดความสภาพยืดหยุ่นและพลาสติกได้:</b> อธิบายความแตกต่างของวัตถุที่คืนรูปได้ vs เปลี่ยนรูปถาวร
+          <span class="en">Distinguish between elastic (recoverable) and plastic (permanent) deformation.</span>
+        </div>
+      </label>
+
+      <label class="check-item">
+        <input type="checkbox">
+        <div>
+          <b>คำนวณความเค้น ($\sigma$) และเปลี่ยนหน่วยพื้นที่ได้ถูกต้อง:</b> ใช้ $\sigma = F/A$ โดยเปลี่ยน $\text{cm}^2$ เป็น $\text{m}^2$ ได้
+          <span class="en">Calculate tensile stress ($\sigma = F/A$) with proper area unit conversion to $\text{m}^2$.</span>
+        </div>
+      </label>
+
+      <label class="check-item">
+        <input type="checkbox">
+        <div>
+          <b>คำนวณความเครียด ($\varepsilon$) ได้:</b> เข้าใจอัตราส่วนระยะยืดต่อความยาวเดิม ($\varepsilon = \Delta L / L_0$) และรู้ว่าเป็นปริมาณไม่มีหน่วย
+          <span class="en">Calculate tensile strain ($\varepsilon = \Delta L / L_0$) and recognise it is dimensionless.</span>
+        </div>
+      </label>
+
+      <label class="check-item">
+        <input type="checkbox">
+        <div>
+          <b>ประยุกต์ใช้มอดูลัสของยัง ($Y$):</b> เชื่อมโยงความเค้น ความเครียด และคำนวณแรงดึงหรือระยะยืดของเส้นลวดได้
+          <span class="en">Apply Young's modulus ($Y = \sigma / \varepsilon$) to solve for force, extension, or material properties.</span>
+        </div>
+      </label>
     </div>
 
     <div class="key">
@@ -179,12 +233,12 @@ h3 { font-size: 16px; line-height: 1.3; margin: 3mm 0 2mm; }
       <span class="en">Matter exists in solids, liquids, and gases (liquids and gases are collectively called <i>fluids</i>). Solids maintain fixed shape and volume due to strong intermolecular forces.</span>
     </div>
 
-    <h3>17.1.1 สภาพยืดหยุ่น vs สภาพพลาสติก <span class="inline-en">(Elasticity vs Plasticity)</span></h3>
+    <h3>สภาพยืดหยุ่น vs สภาพพลาสติก <span class="inline-en">(Elasticity vs Plasticity)</span></h3>
     <p>
       เมื่อออกแรงกระทำต่อของแข็ง วัตถุจะเปลี่ยนรูปร่างไปจากเดิม:
       <ul>
-        <li><b>สภาพยืดหยุ่น (Elasticity):</b> เมื่อหยุดแรงกระทำ วัตถุสามารถกลับคืนสู่รูปร่างเดิมได้</li>
-        <li><b>สภาพพลาสติก (Plasticity):</b> เมื่อหยุดแรงกระทำ วัตถุคงรูปร่างที่เปลี่ยนไป (ไม่คืนรูปเดิม)</li>
+        <li><b>สภาพยืดหยุ่น (Elasticity):</b> เมื่อหยุดแรงกระทำ วัตถุสามารถกลับคืนสู่รูปร่างเดิมได้ <span class="inline-en">(Returns to original shape when force is removed)</span></li>
+        <li><b>สภาพพลาสติก (Plasticity):</b> เมื่อหยุดแรงกระทำ วัตถุคงรูปร่างที่เปลี่ยนไป (ไม่คืนรูปเดิม) <span class="inline-en">(Maintains deformed shape after force is removed)</span></li>
       </ul>
       <span class="en">Elasticity allows a material to return to its original shape after external forces are removed. Plasticity results in permanent deformation.</span>
     </p>
@@ -195,7 +249,7 @@ h3 { font-size: 16px; line-height: 1.3; margin: 3mm 0 2mm; }
           <text x="140" y="18" font-size="13" font-weight="bold" text-anchor="middle" fill="#17324d">Elastic vs Plastic Deformation</text>
           <g transform="translate(10, 30)">
             <rect x="10" y="15" width="100" height="18" rx="3" fill="#cbd5e1" stroke="#111" stroke-width="1.5"/>
-            <text x="120" y="28" font-size="11" fill="#4b5563">ความยาวเดิม L₀</text>
+            <text x="120" y="28" font-size="11" fill="#4b5563">ความยาวเดิม L₀ / Original L₀</text>
             <rect x="10" y="42" width="130" height="18" rx="3" fill="#93c5fd" stroke="#111" stroke-width="1.5"/>
             <line x1="140" y1="51" x2="165" y2="51" stroke="#dc2626" stroke-width="2"/>
             <polygon points="165,48 171,51 165,54" fill="#dc2626"/>
@@ -209,7 +263,10 @@ h3 { font-size: 16px; line-height: 1.3; margin: 3mm 0 2mm; }
             <text x="150" y="41" font-size="11" font-weight="bold" fill="#991b1b">✗ ยืดถาวร (Plastic)</text>
           </g>
         </svg>
-        <div class="caption"><b>การเสียรูป / Deformation Modes:</b> สภาพยืดหยุ่นคืนรูปได้ สภาพพลาสติกยืดถาวร</div>
+        <div class="caption">
+          <b>การเสียรูป / Deformation Modes:</b> สภาพยืดหยุ่นคืนรูปได้ สภาพพลาสติกยืดถาวร
+          <span class="en">Elastic deformation recovers original shape; plastic deformation leaves permanent set.</span>
+        </div>
       </div>
 
       <div class="visual-card">
@@ -217,10 +274,10 @@ h3 { font-size: 16px; line-height: 1.3; margin: 3mm 0 2mm; }
           <text x="140" y="18" font-size="13" font-weight="bold" text-anchor="middle" fill="#17324d">Stress-Strain Curve</text>
           <line x1="35" y1="150" x2="260" y2="150" stroke="#111" stroke-width="2"/>
           <polygon points="260,147 266,150 260,153" fill="#111"/>
-          <text x="220" y="168" font-size="11">ความเครียด (ε)</text>
+          <text x="200" y="168" font-size="11">ความเครียด / Strain (ε)</text>
           <line x1="35" y1="150" x2="35" y2="30" stroke="#111" stroke-width="2"/>
           <polygon points="32,30 35,24 38,30" fill="#111"/>
-          <text x="10" y="25" font-size="11">ความเค้น (σ)</text>
+          <text x="10" y="25" font-size="11">ความเค้น / Stress (σ)</text>
           <path d="M 35 150 L 110 70 Q 140 50, 180 55 T 235 90" fill="none" stroke="#2563eb" stroke-width="2.5"/>
           <circle cx="110" cy="70" r="3" fill="#dc2626"/>
           <text x="75" y="62" font-size="9.5" fill="#dc2626">Hooke's Law Limit</text>
@@ -229,30 +286,87 @@ h3 { font-size: 16px; line-height: 1.3; margin: 3mm 0 2mm; }
           <circle cx="235" cy="90" r="3" fill="#111"/>
           <text x="215" y="105" font-size="9.5">Fracture (ขาด)</text>
         </svg>
-        <div class="caption"><b>กราฟความเค้น-ความเครียด:</b> แสดงช่วงเส้นตรงตามกฎของฮุกและขีดจำกัดยืดหยุ่น</div>
+        <div class="caption">
+          <b>กราฟความเค้น-ความเครียด:</b> แสดงช่วงเส้นตรงตามกฎของฮุกและขีดจำกัดยืดหยุ่น
+          <span class="en">Shows Hooke's law linear region, elastic limit, and fracture point.</span>
+        </div>
       </div>
     </div>
 
-    <h3>17.1.2 ความเค้นและความเครียด <span class="inline-en">(Stress and Strain)</span></h3>
+    <h3>ความเค้นและความเครียด <span class="inline-en">(Stress and Strain)</span></h3>
+    
+    <div class="visual-card" style="margin: 3mm 0;">
+      <svg viewBox="0 0 520 160">
+        <!-- Top Wire (Original) -->
+        <g transform="translate(100, 10)">
+          <ellipse cx="0" cy="25" rx="8" ry="15" fill="#94a3b8" stroke="#111" stroke-width="1.5"/>
+          <text x="-95" y="29" font-size="12" font-weight="bold" fill="#17324d">พื้นที่ A / Area A</text>
+          <rect x="0" y="10" width="260" height="30" fill="#cbd5e1" stroke="#111" stroke-width="2"/>
+          <line x1="0" y1="-2" x2="0" y2="45" stroke="#64748b" stroke-width="1.5" stroke-dasharray="3"/>
+          <line x1="260" y1="-2" x2="260" y2="45" stroke="#64748b" stroke-width="1.5" stroke-dasharray="3"/>
+          <text x="130" y="0" font-size="12" font-weight="bold" text-anchor="middle">ความยาวเดิม $L_0$ / Original Length $L_0$</text>
+        </g>
+        <!-- Bottom Wire (Stretched) -->
+        <g transform="translate(100, 80)">
+          <ellipse cx="0" cy="25" rx="8" ry="15" fill="#94a3b8" stroke="#111" stroke-width="1.5"/>
+          <rect x="0" y="10" width="260" height="30" fill="#cbd5e1" stroke="#111" stroke-width="2"/>
+          <rect x="260" y="10" width="60" height="30" fill="#93c5fd" stroke="#111" stroke-width="2"/>
+          <line x1="320" y1="-2" x2="320" y2="45" stroke="#64748b" stroke-width="1.5" stroke-dasharray="3"/>
+          <text x="290" y="57" font-size="12" font-weight="bold" text-anchor="middle" fill="#2563eb">ยืดออก $\Delta L$ / Elongation $\Delta L$</text>
+          <line x1="320" y1="25" x2="380" y2="25" stroke="#dc2626" stroke-width="3.5"/>
+          <polygon points="380,19 392,25 380,31" fill="#dc2626"/>
+          <text x="402" y="30" font-size="15" font-weight="bold" fill="#dc2626">แรง $F$ / Force $F$</text>
+        </g>
+      </svg>
+      <div class="caption">
+        <b>แผนภาพการยืดของวัตถุ / Wire Tension Diagram:</b> แรง $F$ ดึงตั้งฉากกับพื้นที่หน้าตัด $A$ ทำให้ความยาวเดิม $L_0$ ยืดออกเป็นระยะ $\Delta L$
+        <span class="en">Stretching force $F$ applied perpendicular to cross-sectional area $A$ extends original length $L_0$ by $\Delta L$.</span>
+      </div>
+    </div>
+
     <p>
-      <b>1. ความเค้นตามยาว (Longitudinal Stress, $\sigma$):</b> $\sigma = \frac{F}{A}$ หน่วยเป็น $\text{N/m}^2$ หรือ $\text{Pa}$<br>
-      <b>2. ความเครียดตามยาว (Tensile Strain, $\varepsilon$):</b> $\varepsilon = \frac{\Delta L}{L_0}$ ไม่มีหน่วย
+      <b>1. ความเค้นตามยาว (Longitudinal Stress, $\sigma$):</b> แรงกระทำตั้งฉากต่อหนึ่งหน่วยพื้นที่หน้าตัด มีหน่วยเป็น $\text{N/m}^2$ หรือ $\text{Pa}$
+      <span class="en">Perpendicular force applied per unit cross-sectional area. Unit: $\text{N/m}^2$ or Pascal ($\text{Pa}$).</span>
+      <div class="formula">
+        $$\sigma = \frac{F}{A}$$
+      </div>
     </p>
 
-    <h3>17.1.3 มอดูลัสของยัง <span class="inline-en">(Young's Modulus, $Y$)</span></h3>
+    <p>
+      <b>2. ความเครียดตามยาว (Tensile Strain, $\varepsilon$):</b> อัตราส่วนระหว่างความยาวที่เพิ่มขึ้น ($\Delta L$) ต่อความยาวเดิม ($L_0$) เป็นปริมาณสเกลาร์<b>ไม่มีหน่วย</b>
+      <span class="en">Ratio of extension ($\Delta L$) to original length ($L_0$). It is dimensionless.</span>
+      <div class="formula">
+        $$\varepsilon = \frac{\Delta L}{L_0}$$
+      </div>
+    </p>
+
+    <h3>มอดูลัสของยัง <span class="inline-en">(Young's Modulus, $Y$)</span></h3>
+    <p>
+      คือ อัตราส่วนระหว่างความเค้นตามยาวต่อความเครียดตามยาว บอกถึงความต้านทานการเปลี่ยนรูปของวัสดุ
+      <span class="en">Ratio of tensile stress to tensile strain. Indicates the stiffness of a material.</span>
+    </p>
     <div class="formula">
       $$Y = \frac{\sigma}{\varepsilon} = \frac{F/A}{\Delta L/L_0} = \frac{F \cdot L_0}{A \cdot \Delta L}$$
     </div>
 
-    <div class="footer"><span>Chapter 17 • Solids & Elasticity</span><span>Page 1</span></div>
+    <div class="pitfall">
+      <b>⚠️ จุดควรระวังเรื่องหน่วย / Common Unit Pitfalls:</b>
+      <ul>
+        <li><b>พื้นที่หน้าตัด ($A$ / Area $A$):</b> ต้องแปลงเป็น $\text{m}^2$ เสมอ <span class="inline-en">(Must always be converted to $\text{m}^2$: $1\text{ cm}^2 = 10^{-4}\text{ m}^2$, $1\text{ mm}^2 = 10^{-6}\text{ m}^2$)</span></li>
+        <li><b>รัศมี ($r$ / Radius $r$):</b> คำนวณพื้นที่วงกลม $A = \pi r^2$ ก่อนแทนค่า <span class="inline-en">(Calculate circular area $A = \pi r^2$ before substituting)</span></li>
+        <li><b>ยืดออกเป็นเปอร์เซ็นต์ / Percentage extension:</b> ยืดออก $1\%$ หมายถึง $\frac{\Delta L}{L_0} = \frac{1}{100} = 0.01$ <span class="inline-en">($1\%$ extension means strain $\frac{\Delta L}{L_0} = 0.01$)</span></li>
+      </ul>
+    </div>
+
+    <div class="footer"><span>Solids & Elasticity</span><span>Page 1</span></div>
   </section>
 
-  <!-- Worksheet 17.1: Question 1 (1 Full Page A4) -->
+  <!-- Worksheet: Question 1 -->
   <section class="page">
     <div class="part-head">
       <div>
-        <div class="part-no">Worksheet 17.1 • Page 2</div>
-        <h2>แบบฝึกหัด 17.1: ข้อที่ 1<br><span class="en">Exercise 17.1: Item 1</span></h2>
+        <div class="part-no">Worksheet • Page 2</div>
+        <h2>แบบฝึกหัด: ข้อที่ 1<br><span class="en">Exercise: Item 1</span></h2>
       </div>
     </div>
     <div class="question">
@@ -270,22 +384,23 @@ h3 { font-size: 16px; line-height: 1.3; margin: 3mm 0 2mm; }
         </div>
         <div class="solution" id="sol-q1">
           <div class="sol-title">วิธีทำอย่างละเอียด / Detailed Solution:</div>
-          <b>ข้อมูลจากโจทย์:</b> $F = 500\text{ N}$, พื้นที่ $A = 10\text{ cm}^2 = 10 \times 10^{-4}\text{ m}^2 = 10^{-3}\text{ m}^2$<br>
-          <b>สูตร:</b> ความเค้น $\sigma = \frac{F}{A}$<br>
+          <b>ข้อมูลจากโจทย์ / Given data:</b> $F = 500\text{ N}$, พื้นที่ / Area $A = 10\text{ cm}^2 = 10 \times 10^{-4}\text{ m}^2 = 10^{-3}\text{ m}^2$<br>
+          <b>สูตร / Formula:</b> ความเค้น / Stress $\sigma = \frac{F}{A}$<br>
+          <b>แทนค่า / Calculation:</b>
           $$\sigma = \frac{500\text{ N}}{10^{-3}\text{ m}^2} = 5 \times 10^5\text{ N/m}^2$$
-          <b>ตอบ:</b> ความเค้นเท่ากับ <b>$5 \times 10^5\text{ N/m}^2$</b>
+          <b>ตอบ / Answer:</b> ความเค้นเท่ากับ / Stress equals <b>$5 \times 10^5\text{ N/m}^2$</b> (หรือ / or $\text{Pa}$)
         </div>
       </div>
     </div>
-    <div class="footer"><span>Worksheet 17.1</span><span>Item 1 of 7</span></div>
+    <div class="footer"><span>Worksheet</span><span>Item 1 of 7</span></div>
   </section>
 
-  <!-- Worksheet 17.1: Question 2 (1 Full Page A4) -->
+  <!-- Worksheet: Question 2 -->
   <section class="page">
     <div class="part-head">
       <div>
-        <div class="part-no">Worksheet 17.1 • Page 3</div>
-        <h2>แบบฝึกหัด 17.1: ข้อที่ 2<br><span class="en">Exercise 17.1: Item 2</span></h2>
+        <div class="part-no">Worksheet • Page 3</div>
+        <h2>แบบฝึกหัด: ข้อที่ 2<br><span class="en">Exercise: Item 2</span></h2>
       </div>
     </div>
     <div class="question">
@@ -303,21 +418,23 @@ h3 { font-size: 16px; line-height: 1.3; margin: 3mm 0 2mm; }
         </div>
         <div class="solution" id="sol-q2">
           <div class="sol-title">วิธีทำอย่างละเอียด / Detailed Solution:</div>
-          <b>ขั้นที่ 1: หาพื้นที่หน้าตัด $A$</b> $\implies A = \pi r^2 \approx 3.14 \times (0.1)^2 = 0.0314\text{ m}^2$<br>
-          <b>ขั้นที่ 2: หาความเค้น</b> $\implies \sigma = \frac{F}{A} = \frac{314\text{ N}}{0.0314\text{ m}^2} = 10^4\text{ N/m}^2$<br>
-          <b>ตอบ:</b> ความเค้นเท่ากับ <b>$10^4\text{ N/m}^2$</b>
+          <b>ขั้นที่ 1: หาพื้นที่หน้าตัด $A$ / Step 1: Calculate area $A$:</b><br>
+          $$A = \pi r^2 \approx 3.14 \times (0.1\text{ m})^2 = 0.0314\text{ m}^2$$<br>
+          <b>ขั้นที่ 2: หาความเค้น $\sigma$ / Step 2: Calculate stress $\sigma$:</b><br>
+          $$\sigma = \frac{F}{A} = \frac{314\text{ N}}{0.0314\text{ m}^2} = 10,000 = 10^4\text{ N/m}^2$$<br>
+          <b>ตอบ / Answer:</b> ความเค้นเท่ากับ / Stress equals <b>$10^4\text{ N/m}^2$</b> (หรือ / or $10,000\text{ Pa}$)
         </div>
       </div>
     </div>
-    <div class="footer"><span>Worksheet 17.1</span><span>Item 2 of 7</span></div>
+    <div class="footer"><span>Worksheet</span><span>Item 2 of 7</span></div>
   </section>
 
-  <!-- Worksheet 17.1: Question 3 (1 Full Page A4) -->
+  <!-- Worksheet: Question 3 -->
   <section class="page">
     <div class="part-head">
       <div>
-        <div class="part-no">Worksheet 17.1 • Page 4</div>
-        <h2>แบบฝึกหัด 17.1: ข้อที่ 3<br><span class="en">Exercise 17.1: Item 3</span></h2>
+        <div class="part-no">Worksheet • Page 4</div>
+        <h2>แบบฝึกหัด: ข้อที่ 3<br><span class="en">Exercise: Item 3</span></h2>
       </div>
     </div>
     <div class="question">
@@ -335,21 +452,22 @@ h3 { font-size: 16px; line-height: 1.3; margin: 3mm 0 2mm; }
         </div>
         <div class="solution" id="sol-q3">
           <div class="sol-title">วิธีทำอย่างละเอียด / Detailed Solution:</div>
-          <b>หาระยะที่ยืดออก:</b> $\Delta L = 6 - 5 = 1\text{ m}$<br>
-          <b>สูตรความเครียด:</b> $\varepsilon = \frac{\Delta L}{L_0} = \frac{1\text{ m}}{5\text{ m}} = 0.2$<br>
-          <b>ตอบ:</b> ความเครียดเท่ากับ <b>$0.2$</b> (ไม่มีหน่วย)
+          <b>หาระยะที่ยืดออก / Calculate extension:</b> $\Delta L = L - L_0 = 6\text{ m} - 5\text{ m} = 1\text{ m}$<br>
+          <b>สูตรความเครียด / Strain formula:</b> $\varepsilon = \frac{\Delta L}{L_0}$<br>
+          $$\varepsilon = \frac{1\text{ m}}{5\text{ m}} = 0.2$$<br>
+          <b>ตอบ / Answer:</b> ความเครียดเท่ากับ / Strain equals <b>$0.2$</b> (ไม่มีหน่วย / dimensionless)
         </div>
       </div>
     </div>
-    <div class="footer"><span>Worksheet 17.1</span><span>Item 3 of 7</span></div>
+    <div class="footer"><span>Worksheet</span><span>Item 3 of 7</span></div>
   </section>
 
-  <!-- Worksheet 17.1: Question 4 (1 Full Page A4) -->
+  <!-- Worksheet: Question 4 -->
   <section class="page">
     <div class="part-head">
       <div>
-        <div class="part-no">Worksheet 17.1 • Page 5</div>
-        <h2>แบบฝึกหัด 17.1: ข้อที่ 4<br><span class="en">Exercise 17.1: Item 4</span></h2>
+        <div class="part-no">Worksheet • Page 5</div>
+        <h2>แบบฝึกหัด: ข้อที่ 4<br><span class="en">Exercise: Item 4</span></h2>
       </div>
     </div>
     <div class="question">
@@ -367,20 +485,21 @@ h3 { font-size: 16px; line-height: 1.3; margin: 3mm 0 2mm; }
         </div>
         <div class="solution" id="sol-q4">
           <div class="sol-title">วิธีทำอย่างละเอียด / Detailed Solution:</div>
-          <b>สูตร:</b> $\varepsilon = \frac{\Delta L}{L_0} = \frac{0.2\text{ m}}{4\text{ m}} = 0.05$<br>
-          <b>ตอบ:</b> ความเครียดเท่ากับ <b>$0.05$</b> (ไม่มีหน่วย)
+          <b>สูตร / Formula:</b> $\varepsilon = \frac{\Delta L}{L_0}$<br>
+          <b>แทนค่า / Calculation:</b> $\varepsilon = \frac{0.2\text{ m}}{4\text{ m}} = 0.05$<br>
+          <b>ตอบ / Answer:</b> ความเครียดเท่ากับ / Strain equals <b>$0.05$</b> (ไม่มีหน่วย / dimensionless)
         </div>
       </div>
     </div>
-    <div class="footer"><span>Worksheet 17.1</span><span>Item 4 of 7</span></div>
+    <div class="footer"><span>Worksheet</span><span>Item 4 of 7</span></div>
   </section>
 
-  <!-- Worksheet 17.1: Question 5 (1 Full Page A4) -->
+  <!-- Worksheet: Question 5 -->
   <section class="page">
     <div class="part-head">
       <div>
-        <div class="part-no">Worksheet 17.1 • Page 6</div>
-        <h2>แบบฝึกหัด 17.1: ข้อที่ 5<br><span class="en">Exercise 17.1: Item 5</span></h2>
+        <div class="part-no">Worksheet • Page 6</div>
+        <h2>แบบฝึกหัด: ข้อที่ 5<br><span class="en">Exercise: Item 5</span></h2>
       </div>
     </div>
     <div class="question">
@@ -398,21 +517,24 @@ h3 { font-size: 16px; line-height: 1.3; margin: 3mm 0 2mm; }
         </div>
         <div class="solution" id="sol-q5">
           <div class="sol-title">วิธีทำอย่างละเอียด / Detailed Solution:</div>
-          <b>สูตร:</b> $F = \frac{Y \cdot A \cdot \Delta L}{L_0}$<br>
-          <b>แทนค่า:</b> $F = \frac{(1.1 \times 10^{11}) \times (10^{-4}) \times (10^{-3})}{4} = \frac{11,000}{4} = 2,750\text{ N}$<br>
-          <b>ตอบ:</b> จะต้องออกแรงดึง <b>$2,750\text{ นิวตัน}$</b>
+          <b>แปลงหน่วยข้อมูล / Given variables & unit conversions:</b><br>
+          $L_0 = 4\text{ m}$, $A = 1\text{ cm}^2 = 1 \times 10^{-4}\text{ m}^2$, $Y = 1.1 \times 10^{11}\text{ N/m}^2$, $\Delta L = 1\text{ mm} = 10^{-3}\text{ m}$<br><br>
+          <b>สูตร / Formula:</b> $Y = \frac{F \cdot L_0}{A \cdot \Delta L} \implies F = \frac{Y \cdot A \cdot \Delta L}{L_0}$<br>
+          <b>แทนค่า / Substitution:</b>
+          $$F = \frac{(1.1 \times 10^{11}) \times (10^{-4}) \times (10^{-3})}{4} = \frac{1.1 \times 10^4}{4} = \frac{11,000}{4} = 2,750\text{ N}$$
+          <b>ตอบ / Answer:</b> จะต้องออกแรงดึง / Required force equals <b>$2,750\text{ N}$</b>
         </div>
       </div>
     </div>
-    <div class="footer"><span>Worksheet 17.1</span><span>Item 5 of 7</span></div>
+    <div class="footer"><span>Worksheet</span><span>Item 5 of 7</span></div>
   </section>
 
-  <!-- Worksheet 17.1: Question 6 (1 Full Page A4) -->
+  <!-- Worksheet: Question 6 -->
   <section class="page">
     <div class="part-head">
       <div>
-        <div class="part-no">Worksheet 17.1 • Page 7</div>
-        <h2>แบบฝึกหัด 17.1: ข้อที่ 6<br><span class="en">Exercise 17.1: Item 6</span></h2>
+        <div class="part-no">Worksheet • Page 7</div>
+        <h2>แบบฝึกหัด: ข้อที่ 6<br><span class="en">Exercise: Item 6</span></h2>
       </div>
     </div>
     <div class="question">
@@ -430,21 +552,23 @@ h3 { font-size: 16px; line-height: 1.3; margin: 3mm 0 2mm; }
         </div>
         <div class="solution" id="sol-q6">
           <div class="sol-title">วิธีทำอย่างละเอียด / Detailed Solution:</div>
-          <b>แรงดึง:</b> $F = mg = 400 \times 10 = 4,000\text{ N}$<br>
-          <b>สูตร:</b> $\Delta L = \frac{F \cdot L_0}{A \cdot Y} = \frac{4,000 \times 10}{(2 \times 10^{-4}) \times (2 \times 10^{11})} = 10^{-3}\text{ m} = 1\text{ mm}$<br>
-          <b>ตอบ:</b> เส้นลวดจะยืดออกเป็นระยะ <b>$1\text{ mm}$</b> (หรือ $1 \times 10^{-3}\text{ m}$)
+          <b>หาแรงดึง / Calculate tension force:</b> $F = mg = 400\text{ kg} \times 10\text{ m/s}^2 = 4,000\text{ N}$<br>
+          <b>สูตร / Formula:</b> $\Delta L = \frac{F \cdot L_0}{A \cdot Y}$<br>
+          <b>แทนค่า / Substitution:</b>
+          $$\Delta L = \frac{4,000 \times 10}{(2 \times 10^{-4}) \times (2 \times 10^{11})} = \frac{40,000}{4 \times 10^7} = 10^{-3}\text{ m} = 1\text{ mm}$$
+          <b>ตอบ / Answer:</b> เส้นลวดจะยืดออกเป็นระยะ / Wire extension equals <b>$1\text{ mm}$</b> (หรือ / or $1 \times 10^{-3}\text{ m}$)
         </div>
       </div>
     </div>
-    <div class="footer"><span>Worksheet 17.1</span><span>Item 6 of 7</span></div>
+    <div class="footer"><span>Worksheet</span><span>Item 6 of 7</span></div>
   </section>
 
-  <!-- Worksheet 17.1: Question 7 (1 Full Page A4) -->
+  <!-- Worksheet: Question 7 -->
   <section class="page">
     <div class="part-head">
       <div>
-        <div class="part-no">Worksheet 17.1 • Page 8</div>
-        <h2>แบบฝึกหัด 17.1: ข้อที่ 7<br><span class="en">Exercise 17.1: Item 7</span></h2>
+        <div class="part-no">Worksheet • Page 8</div>
+        <h2>แบบฝึกหัด: ข้อที่ 7<br><span class="en">Exercise: Item 7</span></h2>
       </div>
     </div>
     <div class="question">
@@ -462,13 +586,15 @@ h3 { font-size: 16px; line-height: 1.3; margin: 3mm 0 2mm; }
         </div>
         <div class="solution" id="sol-q7">
           <div class="sol-title">วิธีทำอย่างละเอียด / Detailed Solution:</div>
-          <b>ความเครียด $1\%$:</b> $\frac{\Delta L}{L_0} = 0.01$<br>
-          <b>จากสูตร:</b> $F = Y \cdot A \cdot \left(\frac{\Delta L}{L_0}\right) = 0.01 YA = \frac{YA}{100}$<br>
-          <b>ตอบ:</b> จะต้องใช้แรงดึงเท่ากับ <b>$0.01 YA$</b> (หรือ $\frac{YA}{100}$)
+          <b>วิเคราะห์ความเครียด $1\%$ / Strain analysis ($1\%$):</b> $\frac{\Delta L}{L_0} = \frac{1}{100} = 0.01$<br>
+          <b>จากสูตรมอดูลัสของยัง / From Young's modulus equation:</b> $F = Y \cdot A \cdot \left(\frac{\Delta L}{L_0}\right)$<br>
+          <b>แทนค่า / Substitution:</b>
+          $$F = Y \cdot A \cdot 0.01 = 0.01 YA = \frac{YA}{100}$$
+          <b>ตอบ / Answer:</b> จะต้องใช้แรงดึงเท่ากับ / Required force equals <b>$0.01 YA$</b> (หรือ / or $\frac{YA}{100}$)
         </div>
       </div>
     </div>
-    <div class="footer"><span>Worksheet 17.1</span><span>Item 7 of 7</span></div>
+    <div class="footer"><span>Worksheet</span><span>Item 7 of 7</span></div>
   </section>
 </main>
 

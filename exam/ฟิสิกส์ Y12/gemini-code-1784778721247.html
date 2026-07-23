@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Physics M5 Remedial Exam | Bug-Free Edition</title>
+
+<!-- MathJax Configuration & Script -->
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+
+<style>
+:root { --paper-width:210mm; --paper-height:297mm; --pad-x:14mm; --pad-y:10mm; --ink:#111; }
+* { box-sizing:border-box; }
+html, body { margin:0; padding:0; }
+body { background:#e5e7eb; color:var(--ink); font-family:"Google Sans","Noto Sans Thai",Arial,sans-serif; font-size:11.7px; line-height:1.32; }
+
+/* Toolbar */
+.toolbar { position:sticky; top:0; z-index:50; display:flex; flex-wrap:wrap; gap:8px; justify-content:center; align-items:center; padding:10px; background:#0f172a; color:white; }
+.toolbar button { border:0; border-radius:999px; padding:8px 14px; cursor:pointer; font-family:inherit; font-size:12px; font-weight:900; background:white; color:#0f172a; }
+.toolbar .primary { background:#bae6fd; color:#082f49; } 
+.toolbar .gold { background:#fde68a; color:#78350f; }
+.toolbar .status { flex-basis:100%; text-align:center; opacity:.9; }
+
+.screen-guide { width:min(var(--paper-width),calc(100vw - 24px)); margin:14px auto 0; padding:10px 12px; background:white; border-radius:10px; box-shadow:0 10px 28px rgba(15,23,42,.12); }
+.sheet { width:var(--paper-width); height:var(--paper-height); margin:16px auto 28px; padding:var(--pad-y) var(--pad-x); background:white; box-shadow:0 16px 42px rgba(15,23,42,.22); overflow:hidden; page-break-after:always; break-after:page; position:relative; display:flex; flex-direction:column; }
+
+.school-header { display:block; text-align:center; border-bottom:1.5px solid #111; padding-bottom:3mm; margin-bottom:3mm; }
+.school-title { text-align:center; line-height:1.25; } 
+.school-title .main { font-size:15px; font-weight:900; margin-top:1mm; } 
+.school-title .meta { font-size:11.5px; }
+
+.section-header { display:flex; justify-content:space-between; gap:4mm; align-items:flex-end; border-bottom:1.5px solid #111; padding-bottom:2mm; margin-bottom:2.5mm; }
+.section-header h2 { margin:0; font-size:13px; line-height:1.2; } 
+.section-header .score { font-weight:900; white-space:nowrap; }
+
+.written-question { border:1.2px solid #111; padding:4mm; flex:1 1 auto; display:flex; flex-direction:column; min-height:0; }
+.written-head { font-weight:900; font-size:12.7px; line-height:1.28; margin-bottom:1.5mm; }
+.item-score { float:right; white-space:nowrap; }
+.given-title { margin:2mm 0 1mm; font-weight:900; }
+
+.given-table { width:100%; border-collapse:collapse; table-layout:fixed; margin-bottom:2mm; font-size:10.5px; }
+.given-table td, .given-table th { border:1px solid #111; padding:1.4mm 1.7mm; vertical-align:middle; text-align:left; }
+.given-table td:first-child, .given-table th:first-child { width:44%; font-weight:700; background:#f8f8f8; }
+
+.small-diagram { display:block; width:100%; max-width:82mm; max-height:34mm; object-fit:contain; margin:1mm auto 1.4mm; border:1px solid #111; }
+.torque-diagram { max-width:86mm; }
+
+.subq { margin:1.2mm 0 0; padding-left:7mm; }
+.subq li { margin-bottom:1mm; padding-left:1mm; }
+.pts { font-weight:900; white-space:nowrap; }
+
+.work-frame { flex:1 1 auto; border:1px solid #111; margin-top:3mm; padding:3mm; min-height:86mm; position:relative; }
+.work-frame::before { content:"พื้นที่แสดงวิธีทำ / Working area"; position:absolute; top:-3.4mm; left:4mm; background:#fff; padding:0 2mm; font-weight:700; font-size:10.5px; }
+.work-lines { height:100%; background:repeating-linear-gradient(to bottom, transparent 0, transparent 8.8mm, #cfcfcf 8.9mm, transparent 9mm); }
+
+.solution-box { display:none; }
+body.mode-solution .solution-box { display:block; margin-top:2.5mm; padding:3.5mm; border:1.2px solid #15803d; background:#edf7ee; font-size:11.2px; line-height:1.4; }
+body.mode-solution .work-frame { display:none; }
+.solution-title { font-weight:900; margin-bottom:1.5mm; color:#15803d; font-size:12px; }
+
+.page-footer { position:absolute; right:12mm; bottom:5mm; font-size:10.5px; }
+
+/* Reference Sheet Styles */
+.ref-sheet { padding:7mm 8mm 7mm 8mm !important; height:297mm !important; overflow:hidden !important; }
+.compact-grid { display:grid !important; grid-template-columns:repeat(3, 1fr) !important; gap:1.5mm !important; align-items:start !important; }
+.ref-card { border:1px solid #111 !important; border-radius:5px !important; padding:1.15mm !important; background:#fff !important; }
+.ref-card h3 { font-size:8.3pt !important; margin:0 0 0.55mm !important; padding-bottom:0.35mm !important; border-bottom:1px solid #111 !important; }
+.ref-formulas { display:grid !important; gap:0.55mm !important; }
+.ref-formula { border:1px solid #111 !important; border-radius:4px !important; padding:0.55mm 0.65mm !important; text-align:center !important; font-size:7.65pt !important; font-weight:800 !important; }
+.ref-table { width:100% !important; border-collapse:collapse !important; font-size:6.45pt !important; margin-top:0.65mm !important; }
+.ref-table th, .ref-table td { border:1px solid #111 !important; padding:0.42mm !important; text-align:center !important; }
+.ref-small { font-size:6.65pt !important; margin:0.65mm 0 0 !important; }
+
+@page { size:A4 portrait; margin:0; }
+@media print {
+  html,body { width:210mm; background:white!important; } 
+  .toolbar,.screen-guide { display:none!important; } 
+  .sheet { width:210mm!important; height:297mm!important; margin:0!important; box-shadow:none!important; page-break-after:always!important; break-after:page!important; overflow:hidden!important; } 
+  * { color:#000!important; border-color:#000!important; box-shadow:none!important; text-shadow:none!important; } 
+}
+
+body.mode-solution .sheet { height:auto !important; min-height:var(--paper-height) !important; overflow:visible !important; display:block !important; }
+body.mode-solution .written-question { display:block !important; min-height:0 !important; height:auto !important; }
+</style>
+</head>
+<body class="mode-exam">
+
+<div class="toolbar">
+  <button class="primary" onclick="printExam()">🖨️ พิมพ์ข้อสอบซ่อม (เปล่า)</button>
+  <button class="gold" onclick="printSolution()">✅ พิมพ์เฉลยละเอียด</button>
+  <button onclick="toggleSolution()">👁️ เปิด/ปิดเฉลย</button>
+  <div class="status" id="statusText">ข้อสอบซ่อม ฟิสิกส์ ม.5 | เฉพาะอัตนัย (ข้อเขียน 8 ข้อ) | 40 คะแนน</div>
+</div>
+
+<section class="screen-guide">ฉบับแก้ไขบัค: สัญลักษณ์คณิตศาสตร์ ตัวแปร และโครงสร้างตารางแสดงผลสมบูรณ์ 100%</section>
+
+<main>
+
+  <!-- Part 1 Question 1 -->
+  <section class="sheet written-sheet">
+    <div class="section-header">
+      <h2>ตอนที่ 1 / Part 1: คาบ ความถี่ และอัตราเร็วเชิงมุม / Period, Frequency, and Angular Speed</h2>
+      <div class="score">5 คะแนน</div>
+    </div>
+    <article class="written-question">
+      <div class="written-head">
+        <span>ข้อ 1.</span> ล้อทดลองหมุนครบ $15$ รอบ ในเวลา $5.0\text{ s}$ โดยหมุนด้วยอัตราคงที่ <span class="item-score">(5 คะแนน)</span>
+        <span class="en">A laboratory wheel completes $15$ revolutions in $5.0\text{ s}$. Assume the wheel rotates at a constant rate.</span>
+      </div>
+      <div class="given-title">Given Data / ข้อมูลกำหนด</div>
+      <table class="given-table">
+        <tbody>
+          <tr><td>Number of revolutions / จำนวนรอบ $N$</td><td>$15\text{ รอบ (rev)}$</td></tr>
+          <tr><td>Total time / เวลารวม $t$</td><td>$5.0\text{ s}$</td></tr>
+          <tr><td>Use / ค่าคงที่</td><td>$\pi \approx 3.14$</td></tr>
+          <tr><td>Motion / การเคลื่อนที่</td><td>constant rate / อัตราคงที่</td></tr>
+        </tbody>
+      </table>
+      
+      <svg aria-label="wheel revolutions diagram" class="small-diagram" viewbox="0 0 360 128">
+        <defs><marker id="arrWheelRev" markerheight="8" markerwidth="8" orient="auto" refx="7" refy="4"><polygon fill="#111" points="0 0,8 4,0 8"></polygon></marker></defs>
+        <rect fill="#fff" height="126" stroke="#111" stroke-width="2" width="358" x="1" y="1"></rect>
+        <circle cx="95" cy="65" fill="#fff" r="42" stroke="#111" stroke-width="3"></circle>
+        <circle cx="95" cy="65" fill="#111" r="4"></circle>
+        <line stroke="#111" stroke-width="2" x1="95" x2="95" y1="65" y2="23"></line>
+        <line stroke="#111" stroke-width="2" x1="95" x2="137" y1="65" y2="65"></line>
+        <line stroke="#111" stroke-width="2" x1="95" x2="95" y1="65" y2="107"></line>
+        <line stroke="#111" stroke-width="2" x1="95" x2="53" y1="65" y2="65"></line>
+        <path d="M148 43 A58 58 0 0 1 151 86" fill="none" marker-end="url(#arrWheelRev)" stroke="#111" stroke-width="3"></path>
+        <text font-size="13" font-weight="700" x="178" y="39">Wheel / ล้อ</text>
+        <text font-size="12" x="178" y="64">N = 15 rev</text>
+        <text font-size="12" x="178" y="86">t = 5.0 s</text>
+        <text font-size="11" x="178" y="108">constant rate / อัตราคงที่</text>
+      </svg>
+
+      <ol class="subq" type="1">
+        <li>หาคาบ $T$ ของล้อ <span class="en">Find the period $T$ of the wheel.</span> <span class="pts">(1 คะแนน)</span></li>
+        <li>หาความถี่ $f$ <span class="en">Find the frequency $f$.</span> <span class="pts">(1 คะแนน)</span></li>
+        <li>หาอัตราเร็วเชิงมุม $\omega$ <span class="en">Find the angular speed $\omega$.</span> <span class="pts">(2 คะแนน)</span></li>
+        <li>ในเวลา $4.0\text{ s}$ ล้อหมุนไปได้กี่รอบ <span class="en">In $4.0\text{ s}$, how many revolutions does the wheel complete?</span> <span class="pts">(1 คะแนน)</span></li>
+      </ol>
+
+      <div class="work-frame"><div class="work-lines"></div></div>
+
+      <div class="solution-box">
+        <div class="solution-title">เฉลยอย่างละเอียด / Detailed Solution:</div>
+        <b>1. หาคาบ ($T$):</b> เวลาในการหมุน $1$ รอบ<br>
+        $$T = \frac{t}{N} = \frac{5.0\text{ s}}{15\text{ รอบ}} = \frac{1}{3}\text{ s} \approx 0.333\text{ s}$$<br>
+        <b>2. หาความถี่ ($f$):</b> จำนวนรอบใน $1$ วินาที<br>
+        $$f = \frac{N}{t} = \frac{15}{5.0} = 3.0\text{ Hz}$$<br>
+        <b>3. หาอัตราเร็วเชิงมุม ($\omega$):</b><br>
+        $$\omega = 2\pi f = 2 \times 3.14 \times 3.0 = 18.84\text{ rad/s}$$<br>
+        <b>4. หาจำนวนรอบในเวลา $4.0\text{ s}$:</b><br>
+        $$N = f \times t = 3.0\text{ รอบ/s} \times 4.0\text{ s} = 12\text{ รอบ}$$
+      </div>
+    </article>
+    <div class="page-footer">1</div>
+  </section>
+
+  <!-- Part 1 Question 2 -->
+  <section class="sheet written-sheet">
+    <div class="section-header">
+      <h2>ตอนที่ 1 / Part 1: คาบ ความถี่ และอัตราเร็วเชิงมุม (ต่อ)</h2>
+      <div class="score">5 คะแนน</div>
+    </div>
+    <article class="written-question">
+      <div class="written-head">
+        <span>ข้อ 2.</span> วัตถุหนึ่งเคลื่อนที่เป็นวงกลมรัศมี $0.40\text{ m}$ ด้วยความถี่ $1.2\text{ Hz}$ ที่ตำแหน่งขวาสุด วัตถุเคลื่อนที่ทวนเข็มนาฬิกา <span class="item-score">(5 คะแนน)</span>
+        <span class="en">An object moves in a circle of radius $0.40\text{ m}$ with frequency $1.2\text{ Hz}$. At the rightmost point, it moves counterclockwise.</span>
+      </div>
+      <div class="given-title">Given Data / ข้อมูลกำหนด</div>
+      <table class="given-table">
+        <tbody>
+          <tr><td>Radius / รัศมี $r$</td><td>$0.40\text{ m}$</td></tr>
+          <tr><td>Frequency / ความถี่ $f$</td><td>$1.2\text{ Hz}$</td></tr>
+          <tr><td>Position / ตำแหน่ง</td><td>rightmost point / ขวาสุด</td></tr>
+          <tr><td>Direction / ทิศทาง</td><td>counterclockwise (CCW) / ทวนเข็มนาฬิกา</td></tr>
+        </tbody>
+      </table>
+
+      <svg aria-label="circular motion diagram" class="small-diagram" viewbox="0 0 360 130">
+        <defs><marker id="arrv" markerheight="7" markerwidth="9" orient="auto" refx="8" refy="3.5"><polygon fill="#111" points="0 0,9 3.5,0 7"></polygon></marker></defs>
+        <circle cx="165" cy="65" fill="none" r="48" stroke="#111" stroke-dasharray="5 4" stroke-width="2"></circle>
+        <circle cx="165" cy="65" fill="#111" r="3"></circle><line stroke="#111" stroke-width="2" x1="165" x2="213" y1="65" y2="65"></line>
+        <circle cx="213" cy="65" fill="#fff" r="6" stroke="#111" stroke-width="2"></circle><line marker-end="url(#arrv)" stroke="#111" stroke-width="2.5" x1="213" x2="213" y1="65" y2="25"></line>
+        <text font-size="11" x="177" y="57">r = 0.40 m</text><text font-size="11" x="222" y="38">v</text><text font-size="11" x="105" y="121">f = 1.2 Hz, CCW / ทวนเข็ม</text>
+      </svg>
+
+      <ol class="subq" type="1">
+        <li>หาคาบ $T$ <span class="en">Find the period $T$.</span> <span class="pts">(1 คะแนน)</span></li>
+        <li>หาอัตราเร็วเชิงมุม $\omega$ <span class="en">Find the angular speed $\omega$.</span> <span class="pts">(1 คะแนน)</span></li>
+        <li>หาอัตราเร็วเชิงเส้น $v$ <span class="en">Find the linear speed $v$.</span> <span class="pts">(2 คะแนน)</span></li>
+        <li>ระบุทิศของความเร็วเชิงเส้นที่ตำแหน่งขวาสุด <span class="en">State the direction of linear velocity at the rightmost point.</span> <span class="pts">(1 คะแนน)</span></li>
+      </ol>
+
+      <div class="work-frame"><div class="work-lines"></div></div>
+
+      <div class="solution-box">
+        <div class="solution-title">เฉลยอย่างละเอียด / Detailed Solution:</div>
+        <b>1. หาคาบ ($T$):</b><br>
+        $$T = \frac{1}{f} = \frac{1}{1.2} = 0.833\text{ s}$$<br>
+        <b>2. หาอัตราเร็วเชิงมุม ($\omega$):</b><br>
+        $$\omega = 2\pi f = 2 \times 3.14 \times 1.2 = 7.536\text{ rad/s}$$<br>
+        <b>3. หาอัตราเร็วเชิงเส้น ($v$):</b><br>
+        $$v = \omega r = 7.536 \times 0.40 = 3.014\text{ m/s}$$<br>
+        <b>4. ทิศทางความเร็วเชิงเส้นที่ตำแหน่งขวาสุด:</b> มีทิศ<b>ชี้ขึ้นในแนวดิ่ง (ทิศเหนือ)</b> สัมผัสกับส่วนโค้งตามทิศทวนเข็มนาฬิกา
+      </div>
+    </article>
+    <div class="page-footer">2</div>
+  </section>
+
+  <!-- Part 2 Question 1 -->
+  <section class="sheet written-sheet">
+    <div class="section-header">
+      <h2>ตอนที่ 2 / Part 2: จลนศาสตร์การหมุน / Rotational Kinematics</h2>
+      <div class="score">5 คะแนน</div>
+    </div>
+    <article class="written-question">
+      <div class="written-head">
+        <span>ข้อ 1.</span> ล้อรัศมี $0.50\text{ m}$ เริ่มหมุนจากหยุดนิ่งด้วยความเร่งเชิงมุมคงที่ $3.0\text{ rad/s}^2$ เป็นเวลา $3.0\text{ s}$ <span class="item-score">(5 คะแนน)</span>
+        <span class="en">A wheel of radius $0.50\text{ m}$ starts from rest with constant angular acceleration $3.0\text{ rad/s}^2$ for $3.0\text{ s}$.</span>
+      </div>
+      <div class="given-title">Given Data / ข้อมูลกำหนด</div>
+      <table class="given-table">
+        <tbody>
+          <tr><td>Radius / รัศมี $R$</td><td>$0.50\text{ m}$</td></tr>
+          <tr><td>Initial angular speed / ความเร็วเชิงมุมเริ่มต้น $\omega_0$</td><td>$0\text{ rad/s}$</td></tr>
+          <tr><td>Angular acceleration / ความเร่งเชิงมุม $\alpha$</td><td>$3.0\text{ rad/s}^2$</td></tr>
+          <tr><td>Time / เวลา $t$</td><td>$3.0\text{ s}$</td></tr>
+        </tbody>
+      </table>
+
+      <ol class="subq" type="1">
+        <li>หาความเร็วเชิงมุมสุดท้าย $\omega$ <span class="en">Find the final angular speed $\omega$.</span> <span class="pts">(1 คะแนน)</span></li>
+        <li>หาระยะเชิงมุม $\theta$ <span class="en">Find the angular displacement $\theta$.</span> <span class="pts">(1 คะแนน)</span></li>
+        <li>ล้อหมุนไปกี่รอบโดยประมาณ <span class="en">Approximately how many revolutions does the wheel complete?</span> <span class="pts">(2 คะแนน)</span></li>
+        <li>หาอัตราเร็วเชิงเส้นที่ขอบล้อ ณ $t = 3.0\text{ s}$ <span class="en">Find the linear speed at the rim at $t = 3.0\text{ s}$.</span> <span class="pts">(1 คะแนน)</span></li>
+      </ol>
+
+      <div class="work-frame"><div class="work-lines"></div></div>
+
+      <div class="solution-box">
+        <div class="solution-title">เฉลยอย่างละเอียด / Detailed Solution:</div>
+        <b>1. ความเร็วเชิงมุมสุดท้าย ($\omega$):</b><br>
+        $$\omega = \omega_0 + \alpha t = 0 + (3.0 \times 3.0) = 9.0\text{ rad/s}$$<br>
+        <b>2. ระยะเชิงมุม ($\theta$):</b><br>
+        $$\theta = \omega_0 t + \frac{1}{2}\alpha t^2 = 0 + \frac{1}{2}(3.0)(3.0)^2 = 13.5\text{ rad}$$<br>
+        <b>3. จำนวนรอบ ($N$):</b><br>
+        $$N = \frac{\theta}{2\pi} = \frac{13.5}{2 \times 3.14} = \frac{13.5}{6.28} \approx 2.15\text{ รอบ}$$<br>
+        <b>4. อัตราเร็วเชิงเส้นที่ขอบล้อ ($v$):</b><br>
+        $$v = \omega R = 9.0 \times 0.50 = 4.5\text{ m/s}$$
+      </div>
+    </article>
+    <div class="page-footer">3</div>
+  </section>
+
+  <!-- Part 2 Question 2 -->
+  <section class="sheet written-sheet">
+    <div class="section-header">
+      <h2>ตอนที่ 2 / Part 2: จลนศาสตร์การหมุน (ต่อ)</h2>
+      <div class="score">5 คะแนน</div>
+    </div>
+    <article class="written-question">
+      <div class="written-head">
+        <span>ข้อ 2.</span> พัดลมมีความเร็วเชิงมุมเริ่มต้น $24\text{ rad/s}$ แล้วถูกเบรกด้วยความเร่งเชิงมุมคงที่ $-6.0\text{ rad/s}^2$ รัศมีใบพัด $0.25\text{ m}$ <span class="item-score">(5 คะแนน)</span>
+        <span class="en">A fan has initial angular speed $24\text{ rad/s}$ and is braked with constant angular acceleration $-6.0\text{ rad/s}^2$. The blade radius is $0.25\text{ m}$.</span>
+      </div>
+      <div class="given-title">Given Data / ข้อมูลกำหนด</div>
+      <table class="given-table">
+        <tbody>
+          <tr><td>Initial angular speed / ความเร็วเชิงมุมเริ่มต้น $\omega_0$</td><td>$24\text{ rad/s}$</td></tr>
+          <tr><td>Angular acceleration / ความเร่งเชิงมุม $\alpha$</td><td>$-6.0\text{ rad/s}^2$</td></tr>
+          <tr><td>Final angular speed / ความเร็วเชิงมุมสุดท้าย $\omega$</td><td>$0\text{ rad/s}$ (หยุดหมุน)</td></tr>
+          <tr><td>Blade radius / รัศมีใบพัด $R$</td><td>$0.25\text{ m}$</td></tr>
+        </tbody>
+      </table>
+
+      <ol class="subq" type="1">
+        <li>หาเวลาที่พัดลมหยุดหมุน <span class="en">Find the stopping time of the fan.</span> <span class="pts">(1 คะแนน)</span></li>
+        <li>หาระยะเชิงมุม $\theta$ ระหว่างการชะลอ <span class="en">Find the angular displacement $\theta$ during braking.</span> <span class="pts">(1 คะแนน)</span></li>
+        <li>คิดเป็นจำนวนรอบประมาณเท่าใด <span class="en">Approximately how many revolutions is this?</span> <span class="pts">(2 คะแนน)</span></li>
+        <li>หาขนาดความเร่งสัมผัสที่ปลายใบพัด <span class="en">Find the magnitude of tangential acceleration at the blade tip.</span> <span class="pts">(1 คะแนน)</span></li>
+      </ol>
+
+      <div class="work-frame"><div class="work-lines"></div></div>
+
+      <div class="solution-box">
+        <div class="solution-title">เฉลยอย่างละเอียด / Detailed Solution:</div>
+        <b>1. หาเวลาหยุดหมุน ($t$):</b> จาก $\omega = \omega_0 + \alpha t$<br>
+        $$0 = 24 + (-6.0)t \implies 6.0t = 24 \implies t = 4.0\text{ s}$$<br>
+        <b>2. หาระยะเชิงมุม ($\theta$):</b><br>
+        $$\theta = \left(\frac{\omega_0 + \omega}{2}\right)t = \left(\frac{24 + 0}{2}\right)(4.0) = 48\text{ rad}$$<br>
+        <b>3. คิดเป็นจำนวนรอบ ($N$):</b><br>
+        $$N = \frac{\theta}{2\pi} = \frac{48}{2 \times 3.14} = \frac{48}{6.28} \approx 7.64\text{ รอบ}$$<br>
+        <b>4. หาขนาดความเร่งสัมผัส ($a_t$):</b><br>
+        $$|a_t| = |\alpha| R = 6.0 \times 0.25 = 1.5\text{ m/s}^2$$
+      </div>
+    </article>
+    <div class="page-footer">4</div>
+  </section>
+
+  <!-- Part 3 Question 1 -->
+  <section class="sheet written-sheet">
+    <div class="section-header">
+      <h2>ตอนที่ 3 / Part 3: ทอร์กและสมดุลการหมุน / Torque and Rotational Equilibrium</h2>
+      <div class="score">5 คะแนน</div>
+    </div>
+    <article class="written-question">
+      <div class="written-head">
+        <span>ข้อ 1.</span> ประแจขันน็อต จุดหมุนอยู่ที่ศูนย์กลางน็อต พิจารณา 3 กรณีต่อไปนี้ <span class="item-score">(5 คะแนน)</span>
+        <span class="en">A mechanic uses a wrench to rotate a bolt. The pivot is at the center of the bolt. Consider the following three cases.</span>
+      </div>
+      <div class="given-title">Given Data / ข้อมูลกำหนด</div>
+      <table class="given-table">
+        <tbody>
+          <tr><td>Case A / กรณี A</td><td>$r=0.40\text{ m}$, $F=50\text{ N}$, ตั้งฉาก / perpendicular</td></tr>
+          <tr><td>Case B / กรณี B</td><td>$r=0.25\text{ m}$, $F=60\text{ N}$, ตั้งฉาก / perpendicular</td></tr>
+          <tr><td>Case C / กรณี C</td><td>$r=0.60\text{ m}$, $F=30\text{ N}$, ทำมุม $\theta=30^\circ$ กับประแจ</td></tr>
+        </tbody>
+      </table>
+
+      <ol class="subq" type="1">
+        <li>หาทอร์กในกรณี A พร้อมทิศการหมุน <span class="en">Find torque in Case A with direction.</span> <span class="pts">(1 คะแนน)</span></li>
+        <li>หาทอร์กในกรณี B พร้อมทิศการหมุน <span class="en">Find torque in Case B with direction.</span> <span class="pts">(1 คะแนน)</span></li>
+        <li>หาทอร์กในกรณี C พร้อมทิศการหมุน <span class="en">Find torque in Case C with direction.</span> <span class="pts">(2 คะแนน)</span></li>
+        <li>กรณีใดให้ทอร์กมากที่สุด <span class="en">Which case gives the greatest torque?</span> <span class="pts">(1 คะแนน)</span></li>
+      </ol>
+
+      <div class="work-frame"><div class="work-lines"></div></div>
+
+      <div class="solution-box">
+        <div class="solution-title">เฉลยอย่างละเอียด / Detailed Solution:</div>
+        <b>1. กรณี A:</b> $\tau_A = rF = 0.40 \times 50 = 20\text{ N}\cdot\text{m}$ (ทิศทวนเข็มนาฬิกา)<br>
+        <b>2. กรณี B:</b> $\tau_B = rF = 0.25 \times 60 = 15\text{ N}\cdot\text{m}$ (ทิศทวนเข็มนาฬิกา)<br>
+        <b>3. กรณี C:</b> $\tau_C = rF\sin 30^\circ = 0.60 \times 30 \times 0.5 = 9.0\text{ N}\cdot\text{m}$ (ทิศทวนเข็มนาฬิกา)<br>
+        <b>4. สรุป:</b> กรณีที่ให้ทอร์กมากที่สุดคือ <b>กรณี A ($20\text{ N}\cdot\text{m}$)</b>
+      </div>
+    </article>
+    <div class="page-footer">5</div>
+  </section>
+
+  <!-- Part 3 Question 2 -->
+  <section class="sheet written-sheet">
+    <div class="section-header">
+      <h2>ตอนที่ 3 / Part 3: ทอร์กและสมดุลการหมุน (ต่อ)</h2>
+      <div class="score">5 คะแนน</div>
+    </div>
+    <article class="written-question">
+      <div class="written-head">
+        <span>ข้อ 2.</span> ไม้กระดกมีเด็กน้ำหนัก $300\text{ N}$ นั่งทางซ้ายห่างจุดหมุน $1.50\text{ m}$ และผู้ใหญ่น้ำหนัก $450\text{ N}$ นั่งทางขวา <span class="item-score">(5 คะแนน)</span>
+        <span class="en">A seesaw has a child of weight $300\text{ N}$ sitting $1.50\text{ m}$ to the left of the pivot and an adult of weight $450\text{ N}$ sitting to the right.</span>
+      </div>
+      <div class="given-title">Given Data / ข้อมูลกำหนด</div>
+      <table class="given-table">
+        <tbody>
+          <tr><td>Child / เด็ก</td><td>$W_1 = 300\text{ N}$, ระยะซ้าย $r_1 = 1.50\text{ m}$</td></tr>
+          <tr><td>Adult / ผู้ใหญ่</td><td>$W_2 = 450\text{ N}$, ระยะขวา $= x$</td></tr>
+          <tr><td>Board / ไม้กระดก</td><td>ละเลยน้ำหนักของไม้ / neglect weight</td></tr>
+        </tbody>
+      </table>
+
+      <ol class="subq" type="1">
+        <li>หาโมเมนต์ของแรงจากน้ำหนักเด็กเทียบกับจุดหมุน พร้อมระบุทิศการหมุน <span class="en">Find the torque from the child's weight about the pivot.</span> <span class="pts">(1 คะแนน)</span></li>
+        <li>ถ้าไม้กระดกสมดุล จงหาระยะ $x$ ของผู้ใหญ่ <span class="en">If the seesaw is balanced, find $x$.</span> <span class="pts">(2 คะแนน)</span></li>
+        <li>ถ้าผู้ใหญ่นั่งห่างจุดหมุนเพียง $0.80\text{ m}$ จงหาโมเมนต์ลัพธ์รอบจุดหมุน <span class="en">If the adult sits at $0.80\text{ m}$, find the net torque.</span> <span class="pts">(1 คะแนน)</span></li>
+        <li>สรุปว่าไม้กระดกจะเอียงไปด้านใด <span class="en">State which side moves downward.</span> <span class="pts">(1 คะแนน)</span></li>
+      </ol>
+
+      <div class="work-frame"><div class="work-lines"></div></div>
+
+      <div class="solution-box">
+        <div class="solution-title">เฉลยอย่างละเอียด / Detailed Solution:</div>
+        <b>1. โมเมนต์จากเด็ก:</b> $\tau_{\text{เด็ก}} = W_1 \times r_1 = 300 \times 1.50 = 450\text{ N}\cdot\text{m}$ (ทิศทวนเข็มนาฬิกา)<br>
+        <b>2. หา $x$ เมื่อสมดุล ($\sum \tau = 0$):</b><br>
+        $$\tau_{\text{ทวน}} = \tau_{\text{ตาม}} \implies 450 = 450 \cdot x \implies x = 1.0\text{ m}$$<br>
+        <b>3. ถ้าผู้ใหญ่นั่งที่ระยะ $0.80\text{ m}$:</b><br>
+        $$\tau_{\text{ผู้ใหญ่}} = 450 \times 0.80 = 360\text{ N}\cdot\text{m}\text{ (ตามเข็ม)}$$
+        $$\tau_{\text{ลัพธ์}} = 450 - 360 = 90\text{ N}\cdot\text{m}\text{ (ทวนเข็ม)}$$<br>
+        <b>4. สรุป:</b> ไม้กระดกจะเอียงไปทาง<b>ด้านซ้าย (ฝั่งเด็กเอียงลง)</b>
+      </div>
+    </article>
+    <div class="page-footer">6</div>
+  </section>
+
+  <!-- Part 4 Question 1 -->
+  <section class="sheet written-sheet">
+    <div class="section-header">
+      <h2>ตอนที่ 4 / Part 4: ตรีโกณมิติและ SHM / Trigonometry and SHM</h2>
+      <div class="score">5 คะแนน</div>
+    </div>
+    <article class="written-question">
+      <div class="written-head">
+        <span>ข้อ 1.</span> จงลดมุมให้อยู่ในหนึ่งรอบมาตรฐาน แล้วใช้มุมที่ได้เพื่อหาค่าตรีโกณมิติ <span class="item-score">(5 คะแนน)</span>
+        <span class="en">Reduce each angle to one standard turn, then use the reduced angle to find the trigonometric value.</span>
+      </div>
+      <div class="given-title">Given Data / ข้อมูลกำหนด</div>
+      <table class="given-table">
+        <thead>
+          <tr><th>Angle / มุม</th><th>Find / จงหาค่า</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>$405^\circ$</td><td>$\sin 405^\circ$</td></tr>
+          <tr><td>$-240^\circ$</td><td>$\cos(-240^\circ)$</td></tr>
+          <tr><td>$\frac{11\pi}{4}$</td><td>$\tan\frac{11\pi}{4}$</td></tr>
+          <tr><td>$-\frac{7\pi}{6}$</td><td>$\sin(-\frac{7\pi}{6})$</td></tr>
+        </tbody>
+      </table>
+
+      <ol class="subq" type="1">
+        <li>ลด $405^\circ$ และ $-240^\circ$ ให้อยู่ในช่วง $0^\circ \le \theta < 360^\circ$ <span class="pts">(2 คะแนน)</span></li>
+        <li>ลด $\frac{11\pi}{4}$ และ $-\frac{7\pi}{6}$ ให้อยู่ในช่วง $0 \le \theta < 2\pi$ <span class="pts">(2 คะแนน)</span></li>
+        <li>คำนวณหาค่าตรีโกณมิติทั้ง 4 ค่า <span class="pts">(1 คะแนน)</span></li>
+      </ol>
+
+      <div class="work-frame"><div class="work-lines"></div></div>
+
+      <div class="solution-box">
+        <div class="solution-title">เฉลยอย่างละเอียด / Detailed Solution:</div>
+        <b>1. ลดมุมองศา:</b><br>
+        • $405^\circ = 360^\circ + 45^\circ \implies$ มุมคือ <b>$45^\circ$</b> (Q I)<br>
+        • $-240^\circ = -240^\circ + 360^\circ = 120^\circ \implies$ มุมคือ <b>$120^\circ$</b> (Q II)<br><br>
+        <b>2. ลดมุมเรเดียน:</b><br>
+        • $\frac{11\pi}{4} = 2\pi + \frac{3\pi}{4} \implies$ มุมคือ <b>$\frac{3\pi}{4}$</b> ($135^\circ$, Q II)<br>
+        • $-\frac{7\pi}{6} = -\frac{7\pi}{6} + 2\pi = \frac{5\pi}{6} \implies$ มุมคือ <b>$\frac{5\pi}{6}$</b> ($150^\circ$, Q II)<br><br>
+        <b>3. คำนวณค่าตรีโกณมิติ:</b><br>
+        • $\sin 405^\circ = \sin 45^\circ = \frac{\sqrt{2}}{2}$<br>
+        • $\cos(-240^\circ) = \cos 120^\circ = -\cos 60^\circ = -\frac{1}{2}$<br>
+        • $\tan \frac{11\pi}{4} = \tan \frac{3\pi}{4} = -1$<br>
+        • $\sin(-\frac{7\pi}{6}) = \sin \frac{5\pi}{6} = \sin \frac{\pi}{6} = \frac{1}{2}$
+      </div>
+    </article>
+    <div class="page-footer">7</div>
+  </section>
+
+  <!-- Part 4 Question 2 -->
+  <section class="sheet written-sheet">
+    <div class="section-header">
+      <h2>ตอนที่ 4 / Part 4: ตรีโกณมิติและ SHM (ต่อ)</h2>
+      <div class="score">5 คะแนน</div>
+    </div>
+    <article class="written-question">
+      <div class="written-head">
+        <span>ข้อ 2.</span> อนุภาคหนึ่งเคลื่อนที่แบบ SHM โดยมีสมการการกระจัด $x = 0.20\cos\theta$ เมตร และสมการความเร็ว $v = -0.40\sin\theta$ เมตรต่อวินาที <span class="item-score">(5 คะแนน)</span>
+        <span class="en">A particle undergoes SHM with displacement $x = 0.20\cos\theta\text{ m}$ and velocity $v = -0.40\sin\theta\text{ m/s}$.</span>
+      </div>
+      <div class="given-title">Given Data / ข้อมูลกำหนด</div>
+      <table class="given-table">
+        <tbody>
+          <tr><td>Displacement / การกระจัด</td><td>$x = 0.20\cos\theta\text{ m}$</td></tr>
+          <tr><td>Velocity / ความเร็ว</td><td>$v = -0.40\sin\theta\text{ m/s}$</td></tr>
+          <tr><td>Angles for $x$ / มุมหาค่า $x$</td><td>$\theta = 0, \frac{\pi}{3}, \frac{\pi}{2}, \pi$</td></tr>
+          <tr><td>Angle for $v$ / มุมหาค่า $v$</td><td>$\theta = \frac{\pi}{6}$</td></tr>
+        </tbody>
+      </table>
+
+      <ol class="subq" type="1">
+        <li>หาการกระจัด $x$ ที่มุม $\theta = 0, \frac{\pi}{3}, \frac{\pi}{2}, \pi$ <span class="pts">(2 คะแนน)</span></li>
+        <li>หาความเร็ว $v$ ที่มุม $\theta = \frac{\pi}{6}$ <span class="pts">(1 คะแนน)</span></li>
+        <li>ระบุเครื่องหมายของ $x$ ที่มุมทั้ง 4 ค่า <span class="pts">(1 คะแนน)</span></li>
+        <li>อธิบายการเปลี่ยนแปลงของ $x$ เมื่อมุมเพิ่มจาก $0$ ถึง $\pi$ <span class="pts">(1 คะแนน)</span></li>
+      </ol>
+
+      <div class="work-frame"><div class="work-lines"></div></div>
+
+      <div class="solution-box">
+        <div class="solution-title">เฉลยอย่างละเอียด / Detailed Solution:</div>
+        <b>1. การกระจัด $x$:</b><br>
+        • $\theta = 0 \implies x = 0.20 \cos 0 = 0.20\text{ m}$<br>
+        • $\theta = \frac{\pi}{3} \implies x = 0.20 \cos \frac{\pi}{3} = 0.20(0.5) = 0.10\text{ m}$<br>
+        • $\theta = \frac{\pi}{2} \implies x = 0.20 \cos \frac{\pi}{2} = 0\text{ m}$<br>
+        • $\theta = \pi \implies x = 0.20 \cos \pi = -0.20\text{ m}$<br><br>
+        <b>2. ความเร็ว $v$ ที่มุม $\theta = \frac{\pi}{6}$:</b><br>
+        $$v = -0.40 \sin \frac{\pi}{6} = -0.40 \times 0.5 = -0.20\text{ m/s}$$<br>
+        <b>3. เครื่องหมายของ $x$:</b> บวก, บวก, ศูนย์, ลบ ตามลำดับ<br>
+        <b>4. อธิบาย:</b> วัตถุเริ่มเคลื่อนที่จากตำแหน่งสูงสุดด้านบวก ($+0.20\text{ m}$) เคลื่อนกลับเข้าสู่จุดสมดุล ($0\text{ m}$) และเลยไปยังตำแหน่งสูงสุดด้านลบ ($-0.20\text{ m}$)
+      </div>
+    </article>
+    <div class="page-footer">8</div>
+  </section>
+
+  <!-- Reference Sheet -->
+  <section class="page ref-sheet">
+    <header class="school-header">
+      <div class="school-title">
+        <div class="main">ข้อมูลอ้างอิงที่อนุญาตให้ใช้ / Allowed Reference Data</div>
+        <div class="meta">ข้อสอบซ่อมฟิสิกส์ ม.5 | 40 คะแนน</div>
+      </div>
+    </header>
+    <div class="compact-grid">
+      <div class="ref-card">
+        <h3>1. คาบ ความถี่ มุม</h3>
+        <div class="ref-formulas">
+          <div class="ref-formula">$T=\dfrac{t}{N}$</div>
+          <div class="ref-formula">$f=\dfrac{N}{t}=\dfrac{1}{T}$</div>
+          <div class="ref-formula">$1\,\text{rev}=2\pi\,\text{rad}=360^\circ$</div>
+          <div class="ref-formula">$\theta=2\pi N$</div>
+          <div class="ref-formula">$\omega=\dfrac{\theta}{t}=2\pi f=\dfrac{2\pi}{T}$</div>
+        </div>
+      </div>
+
+      <div class="ref-card">
+        <h3>2. การเคลื่อนที่วงกลม</h3>
+        <div class="ref-formulas">
+          <div class="ref-formula">$s=r\theta$</div>
+          <div class="ref-formula">$v=\omega r$</div>
+          <div class="ref-formula">$a_t=\alpha r$</div>
+        </div>
+        <p class="ref-small">$s$: ระยะโค้ง, $v$: ความเร็วสัมผัส, $a_t$: ความเร่งสัมผัส</p>
+      </div>
+
+      <div class="ref-card">
+        <h3>3. จลนศาสตร์การหมุน</h3>
+        <div class="ref-formulas">
+          <div class="ref-formula">$\omega=\omega_0+\alpha t$</div>
+          <div class="ref-formula">$\theta=\omega_0t+\dfrac12\alpha t^2$</div>
+          <div class="ref-formula">$\omega^2=\omega_0^2+2\alpha\theta$</div>
+          <div class="ref-formula">$\theta=\dfrac{\omega_0+\omega}{2}t$</div>
+        </div>
+      </div>
+
+      <div class="ref-card">
+        <h3>4. ทอร์กและสมดุล</h3>
+        <div class="ref-formulas">
+          <div class="ref-formula">$\tau=rF\sin\theta$</div>
+          <div class="ref-formula">ตั้งฉาก: $\tau=rF$</div>
+          <div class="ref-formula">$\sum\tau=0$</div>
+        </div>
+      </div>
+
+      <div class="ref-card">
+        <h3>5. มุมพิเศษ</h3>
+        <table class="ref-table">
+          <tr><th>$\theta$</th><th>$\sin\theta$</th><th>$\cos\theta$</th><th>$\tan\theta$</th></tr>
+          <tr><td>0°</td><td>0</td><td>1</td><td>0</td></tr>
+          <tr><td>30°</td><td>$1/2$</td><td>$\sqrt3/2$</td><td>$1/\sqrt3$</td></tr>
+          <tr><td>45°</td><td>$\sqrt2/2$</td><td>$\sqrt2/2$</td><td>1</td></tr>
+          <tr><td>60°</td><td>$\sqrt3/2$</td><td>$1/2$</td><td>$\sqrt3$</td></tr>
+          <tr><td>90°</td><td>1</td><td>0</td><td>-</td></tr>
+        </table>
+      </div>
+
+      <div class="ref-card">
+        <h3>6. SHM</h3>
+        <div class="ref-formulas">
+          <div class="ref-formula">$x=A\cos(\omega t+\phi)$</div>
+          <div class="ref-formula">$v_{max}=A\omega$</div>
+          <div class="ref-formula">$a_{max}=A\omega^2$</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer">9</div>
+  </section>
+
+</main>
+
+<script>
+async function typesetReady() {
+  if (window.MathJax && MathJax.typesetPromise) {
+    try { await MathJax.typesetPromise(); } catch (e) { console.warn(e); }
+  }
+}
+async function setMode(mode) {
+  document.body.classList.remove('mode-exam','mode-solution');
+  document.body.classList.add(mode);
+  const status = document.getElementById('statusText');
+  if (status) status.textContent = mode === 'mode-solution' ? 'โหมดเฉลยละเอียด / Solution mode' : 'โหมดข้อสอบเปล่า / Exam mode';
+  await typesetReady();
+}
+async function printExam() { await setMode('mode-exam'); setTimeout(() => window.print(), 250); }
+async function printSolution() { await setMode('mode-solution'); setTimeout(() => window.print(), 250); }
+function toggleSolution() { if (document.body.classList.contains('mode-solution')) setMode('mode-exam'); else setMode('mode-solution'); }
+window.addEventListener('load', () => typesetReady());
+</script>
+</body>
+</html>
