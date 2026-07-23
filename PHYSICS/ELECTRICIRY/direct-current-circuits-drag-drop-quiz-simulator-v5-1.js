@@ -125,7 +125,7 @@
   }
 
   window.ExamateLab = {
-    version: '0.5.2',
+    version: '0.5.3',
     bankVersion: BANK_PACKAGE.version || 'ROUND5.1-BANK-50-SELECT-25-VALIDATED',
     labType: 'DIRECT_CURRENT_CIRCUITS_DRAG_DROP_QUIZ',
     timer: null,
@@ -535,8 +535,46 @@
     consumePendingSave();
   }
 
+  function loadSavedStateFromLms() {
+    var studentId = '';
+    var quizId = '';
+
+    try {
+      studentId = (typeof getEffectiveStudentId === 'function')
+        ? getEffectiveStudentId()
+        : ((typeof userData !== 'undefined' && userData)
+          ? (userData.studentID || userData.studentId || '')
+          : (window.currentStudentId || window.studentId || ''));
+      quizId = (typeof currentQuizId !== 'undefined' && currentQuizId)
+        ? currentQuizId
+        : (window.currentQuizId || window.quizId || '');
+    } catch (identityError) {
+      console.warn('[DCC Quiz] Cannot resolve LMS identity', identityError);
+      return;
+    }
+
+    if (!studentId || !quizId || typeof google === 'undefined' || !google.script || !google.script.run) return;
+
+    google.script.run
+      .withSuccessHandler(function (savedRaw) {
+        var saved = parse(savedRaw);
+        if (!saved || saved.type !== 'LAB') return;
+        if (saved.labType && saved.labType !== labApi.labType) return;
+
+        window.pendingLabSave = saved;
+        if (consumePendingSave()) {
+          console.log('[DCC Quiz] Restored progress directly from SavedStates');
+        }
+      })
+      .withFailureHandler(function (error) {
+        console.warn('[DCC Quiz] SavedStates restore failed', error);
+      })
+      .loadProgressFromCloud(studentId, quizId);
+  }
+
   consumePendingSave();
   setTimeout(consumePendingSave, 250);
+  setTimeout(loadSavedStateFromLms, 100);
   document.addEventListener('examate-lab-restore-request', receiveRestoreRequest);
 
   var restoreWatcher = setInterval(function () {
