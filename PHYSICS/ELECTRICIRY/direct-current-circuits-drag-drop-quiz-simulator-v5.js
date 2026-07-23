@@ -34,7 +34,19 @@
     (document.head || document.documentElement).appendChild(script);
   }
 
+  function finalizeEngine() {
+    var lab = window.ExamateLab;
+    if (!lab || lab.__lastQuestionSummaryReady) return;
+    lab.__lastQuestionSummaryReady = true;
+    var originalCheck = lab.checkCurrent;
+    lab.checkCurrent = function () {
+      var result = originalCheck.apply(this, arguments);
+      if (result && result.ok && this.complete()) this.summary();
+      return result;
+    };
+  }
+
   loadScript(BASE + 'direct-current-circuits-drag-drop-quiz-bank-v5-1.js?v=0.5.1', function () {
-    loadScript(BASE + 'direct-current-circuits-drag-drop-quiz-simulator-v5-1.js?v=0.5.1');
+    loadScript(BASE + 'direct-current-circuits-drag-drop-quiz-simulator-v5-1.js?v=0.5.1', finalizeEngine);
   });
 })();
