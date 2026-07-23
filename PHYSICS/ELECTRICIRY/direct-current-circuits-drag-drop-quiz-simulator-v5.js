@@ -1,18 +1,17 @@
 (function () {
   'use strict';
 
-  if (window.__DCC_QUIZ_V51_LOADING__) return;
-  window.__DCC_QUIZ_V51_LOADING__ = true;
-
   var BASE = 'https://nixcentury.github.io/Physic-subject/PHYSICS/ELECTRICIRY/';
   var root = document.getElementById('dc-circuit-quiz-root');
+  if (!root || root.dataset.dccValidatedLoader === '1') return;
+  root.dataset.dccValidatedLoader = '1';
 
   var style = document.createElement('style');
   style.textContent = [
     '#dc-circuit-quiz-root .dcc-circuit-slot.is-vertical svg{width:120px;height:72px;transform:rotate(90deg);transform-origin:center;}',
     '@media(max-width:720px){#dc-circuit-quiz-root .dcc-circuit-slot.is-vertical svg{width:90px;height:55px;}}'
   ].join('');
-  (root || document.head || document.documentElement).appendChild(style);
+  root.appendChild(style);
 
   function showLoadError(message) {
     var box = document.getElementById('dcc-feedback');
