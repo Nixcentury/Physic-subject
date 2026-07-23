@@ -506,13 +506,45 @@
     }
   };
 
-  window.ExamateLab.init();
+  var labApi = window.ExamateLab;
+  labApi.init();
+
+  // Cloud restore may arrive several seconds after this Lab script has loaded.
+  // Keep a lightweight receiver alive while this exact Lab instance is active.
   function consumePendingSave() {
-    if (window.pendingLabSave) {
-      window.ExamateLab.restore(window.pendingLabSave);
+    if (window.ExamateLab !== labApi || !el(ROOT)) return false;
+
+    var pending = parse(window.pendingLabSave);
+    if (!pending) return false;
+
+    // Do not let this Lab consume a save that belongs to another Lab engine.
+    if (pending.labType && pending.labType !== labApi.labType) return false;
+
+    var restored = labApi.restore(pending);
+    if (restored) {
       window.pendingLabSave = null;
+      return true;
     }
+    return false;
   }
+
+  function receiveRestoreRequest(event) {
+    var detail = event && event.detail ? event.detail : null;
+    var incoming = detail && detail.data ? detail.data : null;
+    if (incoming) window.pendingLabSave = incoming;
+    consumePendingSave();
+  }
+
   consumePendingSave();
   setTimeout(consumePendingSave, 250);
+  document.addEventListener('examate-lab-restore-request', receiveRestoreRequest);
+
+  var restoreWatcher = setInterval(function () {
+    if (window.ExamateLab !== labApi || !el(ROOT)) {
+      clearInterval(restoreWatcher);
+      document.removeEventListener('examate-lab-restore-request', receiveRestoreRequest);
+      return;
+    }
+    consumePendingSave();
+  }, 500);
 })();
