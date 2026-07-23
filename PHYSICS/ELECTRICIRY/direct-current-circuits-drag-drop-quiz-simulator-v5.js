@@ -47,6 +47,6 @@
   }
 
   loadScript(BASE + 'direct-current-circuits-drag-drop-quiz-bank-v5-1.js?v=0.5.1', function () {
-    loadScript(BASE + 'direct-current-circuits-drag-drop-quiz-simulator-v5-1.js?v=0.5.1', finalizeEngine);
+    loadScript(BASE + 'direct-current-circuits-drag-drop-quiz-simulator-v5-1.js?v=0.5.2', finalizeEngine);
   });
 })();
