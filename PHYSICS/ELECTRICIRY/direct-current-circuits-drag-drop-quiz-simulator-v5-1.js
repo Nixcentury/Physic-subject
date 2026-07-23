@@ -125,7 +125,7 @@
   }
 
   window.ExamateLab = {
-    version: '0.5.1',
+    version: '0.5.2',
     bankVersion: BANK_PACKAGE.version || 'ROUND5.1-BANK-50-SELECT-25-VALIDATED',
     labType: 'DIRECT_CURRENT_CIRCUITS_DRAG_DROP_QUIZ',
     timer: null,
