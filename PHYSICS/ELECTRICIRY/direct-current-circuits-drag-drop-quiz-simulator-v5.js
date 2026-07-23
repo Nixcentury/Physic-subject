@@ -9,8 +9,8 @@
 
   var style = document.createElement('style');
   style.textContent = [
-    '#dc-circuit-quiz-root .dcc-circuit-slot.is-vertical svg{width:90px;height:60px;transform:rotate(90deg);transform-origin:center;}',
-    '@media(max-width:720px){#dc-circuit-quiz-root .dcc-circuit-slot.is-vertical svg{width:65px;height:45px;}}'
+    '#dc-circuit-quiz-root .dcc-circuit-slot.is-vertical svg{width:120px;height:72px;transform:rotate(90deg);transform-origin:center;}',
+    '@media(max-width:720px){#dc-circuit-quiz-root .dcc-circuit-slot.is-vertical svg{width:90px;height:55px;}}'
   ].join('');
   (root || document.head || document.documentElement).appendChild(style);
 
