@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IGCSE Physics — Energy, Work, Power and Pressure</title>
+<style>
+html,body{height:100%;margin:0}body{display:grid;place-items:center;font-family:Arial,sans-serif;background:#e5e7eb;color:#0f172a}.loading{background:#fff;border:2px solid #0f172a;border-radius:12px;padding:20px 24px;box-shadow:0 12px 32px #0002;font-weight:700;text-align:center}.small{display:block;margin-top:8px;font-size:12px;font-weight:400;color:#475569}
+</style>
+</head>
+<body>
+<div class="loading">กำลังเปิดแบบฝึก IGCSE Physics…<span class="small">Loading one-question-per-page worksheet and detailed solutions</span></div>
+<script>
+(async()=>{
+  try{
+    const folder='./energy-work-power-pressure-set1-one-question-per-page-v5.assets/';
+    const files=Array.from({length:3},(_,i)=>`part${String(i+1).padStart(2,'0')}.txt`);
+    const parts=await Promise.all(files.map(async file=>{
+      const response=await fetch(folder+file,{cache:'no-store'});
+      if(!response.ok) throw new Error(`Cannot load ${file}: ${response.status}`);
+      return response.text();
+    }));
+    const payload=parts.join('');
+    const compressed=Uint8Array.from(atob(payload),c=>c.charCodeAt(0));
+    if(!('DecompressionStream' in window)) throw new Error('Browser does not support DecompressionStream');
+    const stream=new Blob([compressed]).stream().pipeThrough(new DecompressionStream('gzip'));
+    const source=await new Response(stream).text();
+    document.open();
+    document.write(source);
+    document.close();
+  }catch(error){
+    console.error(error);
+    document.body.innerHTML='<div class="loading">ไม่สามารถเปิดไฟล์ได้<span class="small">กรุณารีเฟรชหน้า หรือเปิดด้วย Chrome, Edge, Safari หรือ Firefox เวอร์ชันปัจจุบัน</span></div>';
+  }
+})();
+</script>
+</body>
+</html>
