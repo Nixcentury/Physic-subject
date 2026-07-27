@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ความตึงผิวและความหนืดของของเหลว — Expanded Learning Module v4</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']]
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+:root{
+  --ink:#111827;--muted:#4b5563;--line:#94a3b8;--paper:#fff;--screen:#dbe2ea;
+  --navy:#17324d;--blue:#2563eb;--blue-soft:#eaf2ff;--green:#15803d;--green-soft:#edf8ef;
+  --red:#b91c1c;--amber:#b45309;--amber-soft:#fff7e6;--violet:#6d28d9;--cyan:#0891b2;
+  --a4:210mm;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--screen);color:var(--ink);font-family:"Noto Sans Thai","Leelawadee UI",Tahoma,Arial,sans-serif;line-height:1.52;font-size:15px}
+button{font:inherit}
+.toolbar{position:sticky;top:0;z-index:100;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:10px 12px;background:#111827;color:white;box-shadow:0 2px 15px #0003}
+.toolbar button,.toolbar a{border:0;border-radius:8px;padding:9px 13px;background:white;color:#111827;font-weight:800;cursor:pointer;text-decoration:none}
+.toolbar .primary{background:#dbeafe}.toolbar .solution-print{background:#dcfce7}.toolbar .status{flex-basis:100%;text-align:center;font-size:12px;opacity:.86}
+.page{width:min(var(--a4),calc(100vw - 20px));min-height:297mm;margin:16px auto;padding:12mm 13mm 14mm;background:var(--paper);box-shadow:0 10px 30px #0f172a2e;position:relative;break-after:page;page-break-after:always}
+.page:last-child{break-after:auto;page-break-after:auto}
+.page-header{display:flex;justify-content:space-between;gap:8mm;align-items:flex-end;border-bottom:2px solid var(--navy);padding-bottom:3mm;margin-bottom:4mm}
+.kicker{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--navy);font-weight:900}
+h1{font-size:25px;line-height:1.18;margin:1mm 0}h2{font-size:20px;line-height:1.25;margin:0}h3{font-size:16.5px;margin:4mm 0 2mm;line-height:1.3}h4{font-size:15px;margin:3mm 0 1.5mm}
+p{margin:1.6mm 0}.en{display:block;color:var(--muted);font-size:.88em;line-height:1.4;margin-top:.4mm}.inline-en{color:var(--muted);font-size:.9em}
+.key,.note,.pitfall,.formula,.skill,.solution,.worked,.summary-box{border:1px solid var(--ink);padding:3.2mm 4mm;margin:3mm 0;break-inside:avoid}
+.key{border-left:5px solid var(--blue);background:var(--blue-soft)}.note{border-left:5px solid var(--cyan);background:#ecfeff}.pitfall{border-left:5px solid var(--amber);background:var(--amber-soft)}.formula{background:#fff;text-align:center;font-weight:800;font-size:16px}.skill{background:#f8fafc;border-left:5px solid var(--violet)}.summary-box{background:#f8fafc}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:4mm}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:3mm}.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm}
+.visual{border:1px solid var(--ink);background:#fff;padding:3mm;text-align:center;break-inside:avoid}.visual svg,.visual img{display:block;width:100%;height:auto;max-height:65mm;object-fit:contain;margin:0 auto}.caption{font-size:12px;text-align:left;margin-top:2mm;color:#374151}
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;margin:2mm 0}.legend span::before{content:"";display:inline-block;width:12px;height:4px;margin-right:5px;vertical-align:middle;background:var(--c,#111)}
+.compare{width:100%;border-collapse:collapse;margin:3mm 0;break-inside:avoid}.compare th,.compare td{border:1px solid var(--ink);padding:2mm;vertical-align:top}.compare th{background:#f1f5f9}
+.variable-box{border:1px solid #64748b;border-left:5px solid var(--violet);background:#faf7ff;padding:2.5mm 3mm;margin:2.5mm 0;break-inside:avoid}
+.variable-title{font-weight:900;color:var(--violet);margin-bottom:1.5mm}
+.variable-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.3mm 3mm;font-size:12.5px;line-height:1.35}
+.variable-item{border-bottom:1px dotted #c4b5fd;padding:1mm 0}
+.variable-item b{color:#4c1d95}
+.variable-note{font-size:11.5px;color:#4b5563;margin-top:1.5mm}
+
+.step-list{counter-reset:step;padding:0;margin:2mm 0}.step-list li{list-style:none;position:relative;padding-left:10mm;margin:2mm 0}.step-list li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:.1mm;width:6mm;height:6mm;border-radius:50%;background:var(--navy);color:#fff;font-weight:900;text-align:center;line-height:6mm;font-size:11px}
+.question-card{border:1.5px solid var(--ink);padding:4mm 5mm;margin:3mm 0;break-inside:avoid}.question-card.major{min-height:242mm;display:flex;flex-direction:column}.question-card.half{min-height:113mm}.q-top{flex:0 0 auto}.qhead{display:flex;justify-content:space-between;gap:5mm;align-items:flex-start;margin-bottom:2mm}.qtitle{font-weight:900;font-size:16px;color:var(--navy)}.tag{font-size:11px;border:1px solid var(--navy);border-radius:999px;padding:1mm 2.2mm;color:var(--navy);font-weight:800;white-space:nowrap}.qbody ol{margin:2mm 0 2mm 7mm;padding-left:5mm}.qbody li{margin:1mm 0}.qfigure{margin:3mm auto;text-align:center;break-inside:avoid}.qfigure img{display:block;max-width:100%;max-height:73mm;object-fit:contain;margin:0 auto;border:1px solid #cbd5e1;background:#fff}.qfigure figcaption{font-size:11.5px;color:var(--muted);margin-top:1.5mm}
+.answer-space{flex:1 1 auto;min-height:72mm;margin-top:3mm;background:repeating-linear-gradient(to bottom,transparent 0,transparent 8.7mm,#cbd5e1 8.9mm,transparent 9.1mm)}.answer-space.short{min-height:30mm}.answer-space.medium{min-height:50mm}
+.qtools{display:flex;gap:6px;flex-wrap:wrap;margin-top:2mm}.qtools button{border:1px solid var(--ink);background:#fff;border-radius:6px;padding:6px 11px;font-weight:800;cursor:pointer}.qtools button[aria-expanded="true"]{background:var(--navy);color:#fff}
+.solution{display:none;background:var(--green-soft);border-left:5px solid var(--green);font-size:14px;margin-top:3mm}.solution.open{display:block}.sol-title{font-size:15px;font-weight:900;color:var(--green);margin-bottom:2mm}.sol-step{border-left:3px solid #86a78b;padding-left:3mm;margin:2.5mm 0}.answer-final{border:2px solid var(--green);background:#fff;padding:2.5mm 3mm;margin:3mm 0;font-weight:900;text-align:center}.common{border:1px dashed var(--amber);background:#fffaf0;padding:2.5mm 3mm;margin-top:2.5mm}.mini-svg{border:1px solid #94a3b8;background:#fff;padding:2mm;margin:2.5mm 0;text-align:center}.mini-svg svg{display:block;width:100%;max-height:62mm;margin:auto}
+.formula-map{display:grid;grid-template-columns:repeat(2,1fr);gap:4mm}.formula-card{border:1.5px solid var(--ink);padding:4mm;background:#fff;break-inside:avoid}.formula-card h3{margin-top:0;color:var(--navy)}.formula-card .big{text-align:center;font-size:18px;font-weight:900;margin:3mm 0}
+.checklist{display:grid;grid-template-columns:1fr 1fr;gap:2mm 5mm}.check{display:flex;gap:8px;align-items:flex-start;margin:1.5mm 0}.check input{width:17px;height:17px;margin-top:2px}
+.footer{position:absolute;left:13mm;right:13mm;bottom:6mm;border-top:1px solid #d1d5db;padding-top:1.5mm;display:flex;justify-content:space-between;color:#6b7280;font-size:9.5px}
+.hide-on-screen{display:none}
+@media(max-width:760px){.grid-2,.grid-3,.grid-4,.formula-map,.checklist,.variable-grid{grid-template-columns:1fr}.page{padding:8mm 7mm 12mm}.page-header{align-items:flex-start}.tag{white-space:normal}.question-card.major{min-height:auto}.answer-space{min-height:55mm}}
+@media print{
+  @page{size:A4 portrait;margin:9mm 10mm 10mm}
+  html,body{width:auto!important;height:auto!important;background:#fff!important;font-size:9.5pt!important}
+  .toolbar,.qtools,.footer{display:none!important}
+  .page{width:auto!important;min-height:277mm!important;margin:0!important;padding:0!important;box-shadow:none!important;position:static!important;break-after:page!important;page-break-after:always!important}
+  .page:last-child{break-after:auto!important;page-break-after:auto!important}
+  .question-card{box-shadow:none!important}.question-card.major{min-height:258mm!important}.question-card.half{min-height:126mm!important}
+  body:not(.print-solutions) .solution{display:none!important}
+  body.print-solutions .solution{display:block!important}
+  body.print-solutions .answer-space{display:none!important}
+  body.print-solutions .question-card.major,body.print-solutions .question-card.half{min-height:auto!important}
+  body.print-solutions .page.solution-compact{min-height:auto!important}
+  body.print-solutions .question-card{break-inside:avoid!important}
+  .visual svg,.visual img{max-height:58mm!important}.qfigure img{max-height:64mm!important}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<nav class="toolbar">
+  <button class="primary" onclick="printBlank()">🖨️ พิมพ์ใบงานเปล่า / Print Worksheet</button>
+  <button class="solution-print" onclick="printSolutions()">📘 พิมพ์เฉลยละเอียด / Print Solutions</button>
+  <button id="toggleAll" onclick="toggleAllSolutions()" aria-expanded="false">👁️ เปิดเฉลยทั้งหมด / Show All</button>
+  <button onclick="hideAllSolutions()">🙈 ซ่อนเฉลย / Hide</button>
+  <div class="status" id="status">เฉลยซ่อนอยู่ • ภาพต้นฉบับใช้จากโฟลเดอร์ GitHub L17 • SVG ช่วยคิดอยู่ในไฟล์</div>
+</nav>
+<main>
+
+<!-- PAGE 1 -->
+<section class="page">
+  <header class="page-header"><div><div class="kicker">Concept 1 • Surface Tension</div><h1>ความตึงผิวและความหนืดของของเหลว</h1><span class="en">Surface Tension and Viscosity of Liquids</span></div><div class="tag">Concept → Diagram → Equation</div></header>
+  <div class="key"><b>แนวคิดแกนกลาง:</b> ก่อนใช้สูตร ให้ระบุว่า “แรงเกิดที่ไหน มีทิศใด และความยาวแนวสัมผัสหรือแรงใดต้องนับบ้าง”<span class="en">Before using an equation, identify where each force acts, its direction, and which contact boundaries must be counted.</span></div>
+  <h3>1. ทำไมผิวของเหลวจึงมีลักษณะเหมือนถูกขึง?</h3>
+  <div class="grid-2">
+    <div class="visual">
+      <svg viewBox="0 0 360 220" aria-label="โมเลกุลภายในและที่ผิวของเหลว">
+        <defs><marker id="arr1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#2563eb"/></marker></defs>
+        <rect x="20" y="70" width="320" height="130" rx="8" fill="#dbeafe" stroke="#17324d" stroke-width="2"/>
+        <line x1="20" y1="70" x2="340" y2="70" stroke="#0891b2" stroke-width="4"/>
+        <g fill="#60a5fa" stroke="#17324d">
+          <circle cx="90" cy="130" r="13"/><circle cx="140" cy="150" r="13"/><circle cx="190" cy="128" r="13"/><circle cx="240" cy="158" r="13"/><circle cx="290" cy="125" r="13"/>
+          <circle cx="120" cy="82" r="13" fill="#fbbf24"/><circle cx="210" cy="82" r="13" fill="#fbbf24"/>
+        </g>
+        <g stroke="#2563eb" stroke-width="2" marker-end="url(#arr1)">
+          <line x1="90" y1="130" x2="58" y2="130"/><line x1="90" y1="130" x2="122" y2="130"/><line x1="90" y1="130" x2="90" y2="98"/><line x1="90" y1="130" x2="90" y2="162"/>
+          <line x1="120" y1="82" x2="120" y2="117"/><line x1="210" y1="82" x2="210" y2="117"/>
+        </g>
+        <text x="90" y="188" text-anchor="middle" font-size="13" font-weight="700">ภายใน: แรงเกือบสมดุล</text>
+        <text x="245" y="48" text-anchor="middle" font-size="13" font-weight="700">ที่ผิว: มีแนวโน้มถูกดึงเข้าสู่ของเหลว</text>
+      </svg>
+      <div class="caption"><b>ระดับโมเลกุล:</b> โมเลกุลภายในถูกดึงรอบทิศใกล้เคียงกัน ส่วนโมเลกุลที่ผิวมีแรงยึดเหนี่ยวจากด้านของเหลวมากกว่า ผิวจึงพยายามลดพื้นที่ผิว</div>
+    </div>
+    <div class="visual">
+      <svg viewBox="0 0 360 220" aria-label="ทิศของแรงตึงผิว">
+        <defs><marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#b91c1c"/></marker></defs>
+        <path d="M25 140 Q180 70 335 140 L335 190 L25 190 Z" fill="#bfdbfe" stroke="#17324d" stroke-width="2"/>
+        <line x1="180" y1="91" x2="180" y2="190" stroke="#111827" stroke-width="5"/>
+        <circle cx="180" cy="92" r="7" fill="#111827"/>
+        <line x1="180" y1="92" x2="105" y2="118" stroke="#b91c1c" stroke-width="4" marker-end="url(#arr2)"/>
+        <line x1="180" y1="92" x2="255" y2="118" stroke="#b91c1c" stroke-width="4" marker-end="url(#arr2)"/>
+        <text x="83" y="110" font-size="13" fill="#b91c1c" font-weight="700">แรงตามแนวผิว</text>
+        <text x="220" y="110" font-size="13" fill="#b91c1c" font-weight="700">แรงตามแนวผิว</text>
+        <text x="180" y="211" text-anchor="middle" font-size="13" font-weight="700">แรงตั้งฉากกับเส้นขอบที่ของเหลวสัมผัส</text>
+      </svg>
+      <div class="caption"><b>ทิศของแรง:</b> แรงตึงผิวกระทำตามแนวผิวของเหลว และตั้งฉากกับเส้นขอบที่กำลังพิจารณา</div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="formula"><div>แรงตึงผิวรวม</div>$$F_\gamma=\gamma l_{\text{total}}$$</div>
+    <div class="formula"><div>ความตึงผิว</div>$$\gamma=\frac{F_\gamma}{l_{\text{total}}}$$</div>
+  </div>
+  <table class="compare"><thead><tr><th>ตัวแปร</th><th>ความหมายในสูตร</th><th>หน่วย SI</th></tr></thead><tbody>
+    <tr><td>$F_\gamma$</td><td>ขนาดของแรงตึงผิวรวมจากทุกแนวสัมผัสที่ของเหลวดึงวัตถุ ตัวห้อย $\gamma$ ใช้บอกว่าเป็นแรงที่เกิดจากความตึงผิว</td><td>$\mathrm N$</td></tr>
+    <tr><td>$\gamma$</td><td>ความตึงผิวของของเหลว หรือแรงต่อความยาวแนวสัมผัสหนึ่งหน่วย อ่านว่า “แกมมา”</td><td>$\mathrm{N/m}$</td></tr>
+    <tr><td>$l_{\text{total}}$</td><td>ผลรวมความยาวของแนวสัมผัสทั้งหมดที่ถูกแรงตึงผิวกระทำ คำว่า total เตือนว่าต้องรวมทุกด้านหรือทุกผิว</td><td>$\mathrm m$</td></tr>
+  </tbody></table>
+  <div class="variable-box"><div class="variable-title">อ่านสูตรเป็นประโยค</div>
+    <div>$F_\gamma=\gamma l_{\text{total}}$ หมายถึง “แรงตึงผิวรวม = ความตึงผิวของของเหลว × ความยาวแนวสัมผัสทั้งหมด”</div>
+    <div class="variable-note">ถ้าแนวสัมผัสเพิ่มเป็น 2 เท่า โดย $\gamma$ เท่าเดิม แรงตึงผิวรวมก็เพิ่มเป็น 2 เท่า</div>
+  </div>
+  <div class="pitfall"><b>อย่าสับสน:</b> “แรงตึงผิว” มีหน่วยนิวตัน แต่ “ความตึงผิว” มีหน่วยนิวตันต่อเมตร</div>
+  <div class="footer"><span>Surface Tension & Viscosity — Expanded v4</span><span>1</span></div>
+</section>
+
+<!-- PAGE 2 -->
+<section class="page">
+  <header class="page-header"><div><div class="kicker">Concept 2</div><h2>การนับแนวสัมผัสและสมดุลโมเมนต์</h2><span class="en">Counting contact boundaries and torque balance</span></div></header>
+  <div class="key"><b>หลักที่ใช้ได้กับทุกโจทย์:</b> อย่าจำว่า “เห็นห่วงต้องคูณ 2” ให้ลากเส้นตามบริเวณที่ของเหลวดึงวัตถุจริง แล้วรวมความยาวทุกแนว</div>
+  <ol class="step-list"><li>ทำเครื่องหมายแนวที่ของเหลวสัมผัสวัตถุ</li><li>นับว่ามีกี่แนวหรือกี่ผิว</li><li>หาความยาวของแต่ละแนว</li><li>รวมเป็น $l_{\text{total}}$ แล้วจึงใช้ $F_\gamma=\gamma l_{\text{total}}$</li></ol>
+  <div class="grid-3">
+    <div class="visual"><svg viewBox="0 0 250 160"><line x1="45" y1="90" x2="205" y2="90" stroke="#111" stroke-width="8"/><line x1="45" y1="105" x2="205" y2="105" stroke="#0891b2" stroke-width="4"/><text x="125" y="45" text-anchor="middle" font-weight="700">ลวดตรงสัมผัส 1 แนว</text><text x="125" y="140" text-anchor="middle">$l=L$</text></svg><div class="caption">นับแนวสัมผัสเดียว</div></div>
+    <div class="visual"><svg viewBox="0 0 250 160"><ellipse cx="125" cy="92" rx="70" ry="30" fill="none" stroke="#111" stroke-width="9"/><ellipse cx="125" cy="92" rx="78" ry="38" fill="none" stroke="#0891b2" stroke-width="4"/><ellipse cx="125" cy="92" rx="61" ry="22" fill="none" stroke="#2563eb" stroke-width="4"/><text x="125" y="35" text-anchor="middle" font-weight="700">ห่วง: ด้านนอก + ด้านใน</text><text x="125" y="148" text-anchor="middle">$l=2(2\pi r)=4\pi r$</text></svg><div class="caption">แนววงกลมสองแนว</div></div>
+    <div class="visual"><svg viewBox="0 0 250 160"><rect x="45" y="55" width="160" height="70" fill="#bfdbfe" stroke="#111"/><line x1="180" y1="45" x2="180" y2="135" stroke="#111" stroke-width="8"/><line x1="174" y1="55" x2="174" y2="125" stroke="#0891b2" stroke-width="4"/><line x1="186" y1="55" x2="186" y2="125" stroke="#2563eb" stroke-width="4"/><text x="125" y="28" text-anchor="middle" font-weight="700">ฟิล์มสบู่มี 2 ผิว</text><text x="125" y="153" text-anchor="middle">$l_{\text{total}}=2L$</text></svg><div class="caption">แต่ละผิวดึงลวดหนึ่งครั้ง</div></div>
+  </div>
+  <h3>สมดุลคานที่ใช้วัดความตึงผิว</h3>
+  <div class="grid-2">
+    <div class="visual">
+      <svg viewBox="0 0 420 220"><defs><marker id="arr3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#b91c1c"/></marker></defs><line x1="45" y1="95" x2="375" y2="95" stroke="#111" stroke-width="7"/><polygon points="210,95 190,135 230,135" fill="#64748b"/><line x1="80" y1="35" x2="80" y2="87" stroke="#b91c1c" stroke-width="4" marker-end="url(#arr3)"/><text x="80" y="25" text-anchor="middle" fill="#b91c1c" font-weight="700">$W$</text><line x1="340" y1="35" x2="340" y2="87" stroke="#b91c1c" stroke-width="4" marker-end="url(#arr3)"/><text x="340" y="25" text-anchor="middle" fill="#b91c1c" font-weight="700">$F_\gamma$</text><line x1="80" y1="155" x2="210" y2="155" stroke="#2563eb" stroke-width="3"/><line x1="210" y1="155" x2="340" y2="155" stroke="#2563eb" stroke-width="3"/><text x="145" y="180" text-anchor="middle" fill="#2563eb" font-weight="700">$X$</text><text x="275" y="180" text-anchor="middle" fill="#2563eb" font-weight="700">$Y$</text></svg>
+      <div class="caption">เมื่อคานไม่เร่งเชิงมุม โมเมนต์ตามเข็มเท่ากับโมเมนต์ทวนเข็ม</div>
+    </div>
+    <div>
+      <div class="formula">$$WX=F_\gamma Y$$</div>
+      <div class="formula">$$F_\gamma=\frac{WX}{Y}$$</div>
+      <div class="formula">$$\gamma=\frac{F_\gamma}{l_{\text{total}}}$$</div>
+    </div>
+  </div>
+  <div class="variable-box">
+    <div class="variable-title">ตัวแปรที่ใช้ใน Concept 2</div>
+    <div class="variable-grid">
+      <div class="variable-item"><b>$W$</b> — แรงหรือน้ำหนักที่กดปลายคาน หน่วย $\mathrm N$; ถ้าโจทย์ให้มวล $m$ ต้องหา $W=mg$ ก่อน</div>
+      <div class="variable-item"><b>$X$</b> — ระยะตั้งฉากจากจุดหมุนถึงแนวแรง $W$</div>
+      <div class="variable-item"><b>$Y$</b> — ระยะตั้งฉากจากจุดหมุนถึงแนวแรง $F_\gamma$</div>
+      <div class="variable-item"><b>$F_\gamma$</b> — แรงตึงผิวรวมที่ดึงห่วงหรือลวด หน่วย $\mathrm N$</div>
+      <div class="variable-item"><b>$L$</b> — ความยาวของลวดตรงหรือขอบหนึ่งแนว หน่วย $\mathrm m$</div>
+      <div class="variable-item"><b>$r$</b> — รัศมีของห่วงวงกลม หน่วย $\mathrm m$</div>
+      <div class="variable-item"><b>$l_{\text{total}}$</b> — ความยาวแนวสัมผัสรวมทั้งหมด หน่วย $\mathrm m$</div>
+      <div class="variable-item"><b>$\gamma$</b> — ความตึงผิวของของเหลว หน่วย $\mathrm{N/m}$</div>
+    </div>
+    <div class="variable-note">ในสมการโมเมนต์ $WX=F_\gamma Y$ ระยะ $X$ และ $Y$ ใช้หน่วยเดียวกันได้ เช่น ใช้เซนติเมตรทั้งคู่ เพราะอยู่ในรูปอัตราส่วน แต่ก่อนใช้ $\gamma=F_\gamma/l_{\text{total}}$ ต้องแปลงความยาวเป็นเมตร</div>
+  </div>
+  <div class="note"><b>ปัจจัยที่มีผลต่อความตึงผิว:</b> ชนิดของของเหลว อุณหภูมิ และสารเจือปน เมื่ออุณหภูมิสูงขึ้น ความตึงผิวของของเหลวโดยทั่วไปลดลง ส่วนสารลดแรงตึงผิว เช่น สบู่ ทำให้ความตึงผิวของน้ำลดลง</div>
+  <div class="footer"><span>Surface Tension & Viscosity — Expanded v4</span><span>2</span></div>
+</section>
+
+<!-- PAGE 3 -->
+<section class="page">
+  <header class="page-header"><div><div class="kicker">Concept 3</div><h2>ความหนืด แรงพยุง และความเร็วสุดท้าย</h2><span class="en">Viscosity, buoyancy and terminal velocity</span></div></header>
+  <div class="grid-2">
+    <div><div class="key"><b>ความหนืด $(\eta)$</b> เป็นสมบัติของของไหลที่ต้านการเลื่อนสัมพัทธ์ระหว่างชั้นของของไหล หรือต้านวัตถุที่เคลื่อนผ่านของไหล ไม่ใช่ความหนาแน่น และไม่ใช่สมบัติเฉพาะของเหลว “ข้น” เท่านั้น</div><div class="note"><b>มองเชิงแรง:</b> ถ้าลูกกลมเคลื่อนลง ของไหลจะออกแรงหนืดขึ้นด้านบนเพื่อต้านการเคลื่อนที่ ขณะที่แรงพยุงก็ชี้ขึ้นเช่นกัน แต่เกิดจากความดันของของไหลที่ด้านล่างมากกว่าด้านบน</div><div class="formula">$$[\eta]=\mathrm{Pa\cdot s}=\mathrm{N\,s/m^2}$$</div><div class="note">การแปลงที่ใช้บ่อย: $1\mathrm{\ mPa\cdot s}=10^{-3}\mathrm{\ Pa\cdot s}$</div></div>
+    <div class="visual"><svg viewBox="0 0 360 230"><rect x="20" y="25" width="140" height="175" rx="8" fill="#dbeafe" stroke="#17324d" stroke-width="2"/><rect x="200" y="25" width="140" height="175" rx="8" fill="#fde68a" stroke="#17324d" stroke-width="2"/><circle cx="90" cy="125" r="18" fill="#64748b"/><circle cx="270" cy="85" r="18" fill="#64748b"/><line x1="90" y1="45" x2="90" y2="96" stroke="#b91c1c" stroke-width="4"/><line x1="270" y1="45" x2="270" y2="56" stroke="#b91c1c" stroke-width="4"/><text x="90" y="218" text-anchor="middle" font-weight="700">ความหนืดต่ำ</text><text x="270" y="218" text-anchor="middle" font-weight="700">ความหนืดสูง</text><text x="180" y="14" text-anchor="middle" font-weight="700">เวลาเท่ากัน วัตถุเคลื่อนที่ได้ต่างระยะ</text></svg><div class="caption">ภาพเชิงคุณภาพเพื่อเปรียบเทียบแรงต้าน ไม่ได้ใช้เปรียบเทียบความหนาแน่น</div></div>
+  </div>
+  <h3>กฎของสโตกส์สำหรับทรงกลม</h3>
+  <div class="grid-3"><div class="formula">$$F_v\propto\eta$$</div><div class="formula">$$F_v\propto r$$</div><div class="formula">$$F_v\propto v$$</div></div>
+  <div class="formula">$$F_v=6\pi\eta rv$$</div>
+  <div class="variable-box">
+    <div class="variable-title">ตัวแปรในกฎของสโตกส์</div>
+    <div class="variable-grid">
+      <div class="variable-item"><b>$F_v$</b> — แรงหนืดหรือแรงต้านจากของไหล หน่วย $\mathrm N$; ตัวห้อย $v$ สื่อถึง viscous force</div>
+      <div class="variable-item"><b>$\eta$</b> — สัมประสิทธิ์ความหนืดเชิงพลวัตของของไหล หน่วย $\mathrm{Pa\cdot s}$ อ่านว่า “อีตา”</div>
+      <div class="variable-item"><b>$r$</b> — รัศมีของลูกกลม หน่วย $\mathrm m$</div>
+      <div class="variable-item"><b>$v$</b> — อัตราเร็วของลูกกลมเทียบกับของไหล หน่วย $\mathrm{m/s}$</div>
+      <div class="variable-item"><b>$\pi$</b> — ค่าคงตัวพาย ประมาณ $3.1416$</div>
+    </div>
+  </div>
+  <div class="note"><b>อ่านสูตรให้เป็น:</b> เมื่อของเหลวเดิมและลูกกลมเดิมคงที่ จะได้ $F_v\propto v$ ดังนั้นตอนเริ่มปล่อยที่ $v=0$ แรงหนืดเป็นศูนย์ และเมื่อวัตถุเร็วขึ้น แรงหนืดจะเพิ่มขึ้นเรื่อย ๆ</div>
+  <div class="pitfall"><b>เงื่อนไขสำคัญ:</b> วัตถุเป็นทรงกลม การไหลราบเรียบ ความเร็วไม่สูงมาก และวัตถุไม่อยู่ชิดผนังภาชนะเกินไป</div>
+  <h3>การตกของลูกกลม: จากเริ่มปล่อยสู่ความเร็วสุดท้าย</h3>
+  <div class="grid-3">
+    <div class="visual"><svg viewBox="0 0 240 220"><defs><marker id="a4" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#b91c1c"/></marker></defs><circle cx="120" cy="105" r="25" fill="#94a3b8" stroke="#111"/><line x1="120" y1="132" x2="120" y2="190" stroke="#b91c1c" stroke-width="5" marker-end="url(#a4)"/><line x1="103" y1="78" x2="103" y2="50" stroke="#15803d" stroke-width="4"/><text x="120" y="25" text-anchor="middle" font-weight="700">เริ่มปล่อย</text><text x="132" y="178" fill="#b91c1c" font-weight="700">$mg$</text><text x="70" y="55" fill="#15803d">$F_B$</text><text x="120" y="214" text-anchor="middle">$v=0,\;F_v=0$</text></svg><div class="caption">แรงลงมากกว่าแรงขึ้น จึงเร่งลง</div></div>
+    <div class="visual"><svg viewBox="0 0 240 220"><defs><marker id="a5" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#b91c1c"/></marker><marker id="a5g" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#15803d"/></marker></defs><circle cx="120" cy="105" r="25" fill="#94a3b8" stroke="#111"/><line x1="120" y1="132" x2="120" y2="190" stroke="#b91c1c" stroke-width="5" marker-end="url(#a5)"/><line x1="103" y1="78" x2="103" y2="45" stroke="#15803d" stroke-width="4" marker-end="url(#a5g)"/><line x1="137" y1="78" x2="137" y2="35" stroke="#2563eb" stroke-width="4" marker-end="url(#a5g)"/><text x="120" y="20" text-anchor="middle" font-weight="700">กำลังเร็วขึ้น</text><text x="142" y="180" fill="#b91c1c">$mg$</text><text x="74" y="50" fill="#15803d">$F_B$</text><text x="148" y="48" fill="#2563eb">$F_v$</text><text x="120" y="214" text-anchor="middle">$v\uparrow\Rightarrow F_v\uparrow$</text></svg><div class="caption">แรงหนืดเพิ่ม ทำให้ความเร่งลดลง</div></div>
+    <div class="visual"><svg viewBox="0 0 240 220"><defs><marker id="a6" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#b91c1c"/></marker><marker id="a6g" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#15803d"/></marker></defs><circle cx="120" cy="105" r="25" fill="#94a3b8" stroke="#111"/><line x1="120" y1="132" x2="120" y2="190" stroke="#b91c1c" stroke-width="5" marker-end="url(#a6)"/><line x1="103" y1="78" x2="103" y2="38" stroke="#15803d" stroke-width="4" marker-end="url(#a6g)"/><line x1="137" y1="78" x2="137" y2="38" stroke="#2563eb" stroke-width="4" marker-end="url(#a6g)"/><text x="120" y="20" text-anchor="middle" font-weight="700">ความเร็วสุดท้าย</text><text x="120" y="214" text-anchor="middle">$mg=F_B+F_v,\;a=0$</text></svg><div class="caption">ยังเคลื่อนที่อยู่ แต่ด้วยความเร็วคงตัว</div></div>
+  </div>
+  <div class="note"><b>ความเร็วสุดท้ายไม่ได้หมายถึงความเร็วมากที่สุดแบบมีขีดจำกัดตายตัว:</b> แต่หมายถึงความเร็วคงตัวที่เกิดขึ้นเมื่อแรงลัพธ์เป็นศูนย์ จึงมี $a=0$ แต่ยังมี $v_T\ne0$ และวัตถุยังคงเคลื่อนที่ต่อไป</div>
+  <div class="grid-2"><div class="formula">$$F_B=\rho_fVg$$</div><div class="formula">$$v_T=\frac{2r^2g(\rho_s-\rho_f)}{9\eta}$$</div></div>
+  <div class="variable-box">
+    <div class="variable-title">ตัวแปรในแรงพยุงและความเร็วสุดท้าย</div>
+    <div class="variable-grid">
+      <div class="variable-item"><b>$F_B$</b> — แรงพยุง หน่วย $\mathrm N$; ตัวห้อย $B$ มาจาก buoyancy</div>
+      <div class="variable-item"><b>$\rho_f$</b> — ความหนาแน่นของของไหล หน่วย $\mathrm{kg/m^3}$; $f$ = fluid</div>
+      <div class="variable-item"><b>$V$</b> — ปริมาตรของของไหลที่ถูกแทนที่; เมื่อลูกกลมจมมิด เท่ากับปริมาตรลูกกลม $\frac43\pi r^3$</div>
+      <div class="variable-item"><b>$g$</b> — ความเร่งโน้มถ่วง หน่วย $\mathrm{m/s^2}$</div>
+      <div class="variable-item"><b>$v_T$</b> — ความเร็วสุดท้ายหรือความเร็วคงตัว หน่วย $\mathrm{m/s}$; $T$ = terminal</div>
+      <div class="variable-item"><b>$\rho_s$</b> — ความหนาแน่นของลูกกลมหรือของแข็ง หน่วย $\mathrm{kg/m^3}$; $s$ = sphere/solid</div>
+      <div class="variable-item"><b>$r$</b> — รัศมีลูกกลม หน่วย $\mathrm m$</div>
+      <div class="variable-item"><b>$\eta$</b> — ความหนืดของของไหล หน่วย $\mathrm{Pa\cdot s}$</div>
+      <div class="variable-item"><b>$a$</b> — ความเร่งของลูกกลม; ที่ความเร็วสุดท้าย $a=0$ แต่ $v_T\ne0$</div>
+    </div>
+    <div class="variable-note">ผลต่าง $\rho_s-\rho_f$ บอกว่าลูกกลม “หนักกว่าของไหลต่อหนึ่งหน่วยปริมาตร” มากเพียงใด ถ้าผลต่างมาก แรงขับสุทธิลงมากและ $v_T$ มากขึ้น</div>
+  </div>
+  <div class="footer"><span>Surface Tension & Viscosity — Expanded v4</span><span>3</span></div>
+</section>
+
+<!-- PAGE 4: DERIVATION OF TERMINAL VELOCITY -->
+<section class="page">
+  <header class="page-header"><div><div class="kicker">Concept 4 • Derivation</div><h2>พิสูจน์สมการความเร็วสุดท้ายของลูกกลม</h2><span class="en">Derivation of the terminal velocity of a sphere</span></div><div class="tag">Force Balance</div></header>
+
+  <div class="key"><b>สถานการณ์ที่พิจารณา:</b> ลูกกลมความหนาแน่น $\rho_s$ รัศมี $r$ ตกลงในของเหลวความหนาแน่น $\rho_f$ และความหนืด $\eta$ โดยลูกกลมจมมิดและเคลื่อนที่ด้วยความเร็วสุดท้าย $v_T$</div>
+
+  <div class="grid-2">
+    <div class="visual">
+      <svg viewBox="0 0 360 300"><defs><marker id="vtDown" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#b91c1c"/></marker><marker id="vtUpG" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#15803d"/></marker><marker id="vtUpB" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#2563eb"/></marker></defs><rect x="55" y="20" width="250" height="250" rx="10" fill="#dbeafe" stroke="#17324d" stroke-width="3"/><circle cx="180" cy="145" r="38" fill="#64748b" stroke="#111" stroke-width="2"/><line x1="180" y1="185" x2="180" y2="255" stroke="#b91c1c" stroke-width="6" marker-end="url(#vtDown)"/><line x1="153" y1="107" x2="153" y2="45" stroke="#15803d" stroke-width="6" marker-end="url(#vtUpG)"/><line x1="207" y1="107" x2="207" y2="45" stroke="#2563eb" stroke-width="6" marker-end="url(#vtUpB)"/><text x="195" y="238" fill="#b91c1c" font-weight="700">$W=mg$</text><text x="92" y="58" fill="#15803d" font-weight="700">$F_B$</text><text x="218" y="58" fill="#2563eb" font-weight="700">$F_v$</text><text x="180" y="292" text-anchor="middle" font-weight="700">$a=0\Rightarrow W=F_B+F_v$</text></svg>
+      <div class="caption">ที่ความเร็วสุดท้าย แรงขึ้นรวมเท่ากับน้ำหนักพอดี</div>
+    </div>
+    <div>
+      <h3>แรงทั้งสาม</h3>
+      <table class="compare"><tr><th>แรง</th><th>ขนาด</th><th>ทิศ</th></tr><tr><td>น้ำหนัก</td><td>$W=\rho_sVg$</td><td>ลง</td></tr><tr><td>แรงพยุง</td><td>$F_B=\rho_fVg$</td><td>ขึ้น</td></tr><tr><td>แรงหนืด</td><td>$F_v=6\pi\eta rv_T$</td><td>ขึ้น เมื่อลูกกลมตกลง</td></tr></table>
+      <div class="note"><b>เหตุผลที่ใช้ $m=\rho_sV$:</b> มวลของลูกกลมเท่ากับความหนาแน่นของลูกกลมคูณปริมาตร จึงเขียนน้ำหนักได้เป็น $mg=\rho_sVg$</div>
+    </div>
+  </div>
+
+  <div class="worked">
+    <h3>จัดสมการทีละขั้น</h3>
+    <p><b>1) ใช้กฎข้อที่สองของนิวตันที่ $a=0$</b></p>
+    $$\rho_sVg=\rho_fVg+6\pi\eta rv_T$$
+    <p><b>2) ย้ายแรงพยุงมารวมกับน้ำหนัก</b></p>
+    $$(\rho_s-\rho_f)Vg=6\pi\eta rv_T$$
+    <p><b>3) แทนปริมาตรทรงกลม $V=\dfrac{4}{3}\pi r^3$</b></p>
+    $$(\rho_s-\rho_f)\left(\frac{4}{3}\pi r^3\right)g=6\pi\eta rv_T$$
+    <p><b>4) หารทั้งสองข้างด้วย $6\pi\eta r$</b></p>
+    $$v_T=\frac{(\rho_s-\rho_f)(4/3)\pi r^3g}{6\pi\eta r}$$
+    <p><b>5) ตัด $\pi$ และลดกำลัง $r^3/r=r^2$</b></p>
+    $$v_T=\frac{4}{18}\frac{r^2g(\rho_s-\rho_f)}{\eta}=\boxed{\frac{2r^2g(\rho_s-\rho_f)}{9\eta}}$$
+  </div>
+
+  <div class="grid-2"><div class="note"><b>อ่านความสัมพันธ์:</b> $v_T\propto r^2$ และ $v_T\propto(\rho_s-\rho_f)$ แต่ $v_T\propto1/\eta$ ลูกกลมใหญ่หรือหนักกว่าเมื่อเทียบกับของไหลจะตกเร็วขึ้น ส่วนของเหลวหนืดขึ้นทำให้ตกช้าลง</div><div class="pitfall"><b>ขอบเขต:</b> สูตรนี้อธิบายลูกกลมที่ตกลงเมื่อ $\rho_s>\rho_f$ ภายใต้เงื่อนไขของกฎสโตกส์ ถ้า $\rho_s<\rho_f$ วัตถุมีแนวโน้มลอยขึ้นและต้องกำหนดทิศแรงใหม่</div></div>
+  <div class="footer"><span>Surface Tension & Viscosity — Expanded v4</span><span>4</span></div>
+</section>
+
+<!-- Q1 -->
+<section class="page">
+<header class="page-header"><div><div class="kicker">Original L17 • Surface Tension</div><h2>ข้อ 1 — คานวัดความตึงผิวของปรอท</h2></div><div class="tag">Torque + Contact Lines</div></header>
+<article class="question-card major">
+<div class="q-top"><div class="qhead"><div class="qtitle">โจทย์ / Problem</div><div class="tag">ต้นฉบับ 17.2.1 ข้อ 1</div></div>
+<div class="qbody"><p>ห่วงลวดวงกลมมีรัศมี $14\text{ cm}$ แขวนที่ปลายคานด้านขวา เมื่อคานอยู่ในภาวะกำลังหลุดจากผิวปรอท แรง $1.1\text{ N}$ กระทำที่แขนคานซ้ายยาว $2\text{ cm}$ และห่วงอยู่ที่แขนคานขวายาว $8\text{ cm}$ จงหาความตึงผิวของปรอท</p><span class="en">A circular ring of radius $14\text{ cm}$ is attached to a lever. A $1.1\text{ N}$ force acts $2\text{ cm}$ from the pivot, while the ring is $8\text{ cm}$ from the pivot. Find the surface tension of mercury at the point of detachment.</span>
+<figure class="qfigure"><img src="https://nixcentury.github.io/Physic-subject/PICTURE/PHYSIC/KRU%20KIRD%20FILE/L17/%E0%B9%81%E0%B8%9A%E0%B8%9A%E0%B8%9D%E0%B8%B6%E0%B8%81%E0%B8%AB%E0%B8%B1%E0%B8%94%2017.2.1%20%E0%B8%82%E0%B9%89%E0%B8%AD%E0%B8%97%E0%B8%B5%E0%B9%88%201.png" alt="คาน 2 เซนติเมตรและ 8 เซนติเมตรสำหรับห่วงบนผิวปรอท" onerror="this.style.display='none';this.nextElementSibling.textContent='ภาพ GitHub ยังโหลดไม่ได้ กรุณาตรวจชื่อไฟล์ในโฟลเดอร์ L17';"><figcaption>รูปต้นฉบับจากโฟลเดอร์ GitHub L17</figcaption></figure></div></div>
+<div class="answer-space"></div>
+<div><div class="qtools"><button onclick="toggleSolution('sol1',this)" aria-expanded="false">เปิด–ปิดเฉลย / Solution</button></div>
+<div class="solution" id="sol1"><div class="sol-title">เฉลยละเอียด / Detailed Solution</div>
+<div class="mini-svg"><svg viewBox="0 0 520 220"><defs><marker id="q1a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#b91c1c"/></marker></defs><line x1="60" y1="95" x2="460" y2="95" stroke="#111" stroke-width="7"/><polygon points="220,95 198,140 242,140" fill="#64748b"/><line x1="100" y1="35" x2="100" y2="86" stroke="#b91c1c" stroke-width="5" marker-end="url(#q1a)"/><text x="100" y="25" text-anchor="middle" font-weight="700">$1.1\,\mathrm N$</text><line x1="420" y1="35" x2="420" y2="86" stroke="#b91c1c" stroke-width="5" marker-end="url(#q1a)"/><text x="420" y="25" text-anchor="middle" font-weight="700">$F_\gamma$</text><line x1="100" y1="165" x2="220" y2="165" stroke="#2563eb" stroke-width="3"/><line x1="220" y1="165" x2="420" y2="165" stroke="#2563eb" stroke-width="3"/><text x="160" y="190" text-anchor="middle" fill="#2563eb" font-weight="700">$2\,\mathrm{cm}$</text><text x="320" y="190" text-anchor="middle" fill="#2563eb" font-weight="700">$8\,\mathrm{cm}$</text></svg></div>
+<div class="sol-step"><b>1) หาแรงตึงผิวรวมจากสมดุลโมเมนต์</b>$$1.1(2)=F_\gamma(8)$$ $$F_\gamma=\frac{1.1\times2}{8}=0.275\text{ N}$$ ระยะใช้หน่วยเซนติเมตรทั้งสองข้างได้ เพราะอัตราส่วนของระยะไม่มีหน่วย</div>
+<div class="sol-step"><b>2) หาแนวสัมผัสทั้งหมดของห่วง</b><br>ห่วงถูกดึงตามเส้นรอบวงด้านในและด้านนอก จึงมี$$l_{\text{total}}=2(2\pi r)=4\pi r=4\pi(0.14)=1.759\text{ m}$$</div>
+<div class="sol-step"><b>3) หาความตึงผิว</b>$$\gamma=\frac{F_\gamma}{l_{\text{total}}}=\frac{0.275}{1.759}=0.156\text{ N/m}$$</div>
+<div class="answer-final">ตอบ $\boxed{\gamma\approx0.156\text{ N/m}}$</div><div class="common"><b>จุดที่มักผิด:</b> ห้ามใช้ $1.1\text{ N}$ เป็น $F_\gamma$ โดยตรง เพราะแรงทั้งสองอยู่คนละแขนคาน</div></div></div>
+</article><div class="footer"><span>Original L17 + corrected lever interpretation</span><span>5</span>
+</section>
+
+<!-- Q2 -->
+<section class="page">
+<header class="page-header"><div><div class="kicker">Original L17 • Surface Tension</div><h2>ข้อ 2 — แรงดึงห่วงให้หลุดจากผิวน้ำ</h2></div><div class="tag">Force Balance</div></header>
+<article class="question-card major"><div class="q-top"><div class="qbody"><p>ลวดโลหะรูปวงกลมมีเส้นผ่านศูนย์กลาง $10\text{ cm}$ แตะผิวน้ำพอดี ลวดมีมวล $25\text{ g}$ ความตึงผิวของน้ำเท่ากับ $7.0\times10^{-2}\text{ N/m}$ จงหาแรงดึงขึ้นที่ทำให้ลวดหลุดจากผิวน้ำพอดี กำหนด $g=9.8\text{ m/s}^2$</p><span class="en">A circular metal ring of diameter $10\text{ cm}$ and mass $25\text{ g}$ just touches water. Find the upward force required to detach it. The surface tension is $7.0\times10^{-2}\text{ N/m}$.</span></div></div><div class="answer-space"></div><div><div class="qtools"><button onclick="toggleSolution('sol2',this)" aria-expanded="false">เปิด–ปิดเฉลย / Solution</button></div><div class="solution" id="sol2"><div class="sol-title">เฉลยละเอียด / Detailed Solution</div>
+<div class="mini-svg"><svg viewBox="0 0 400 250"><defs><marker id="q2u" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#2563eb"/></marker><marker id="q2d" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#b91c1c"/></marker></defs><rect x="40" y="150" width="320" height="70" fill="#bfdbfe"/><ellipse cx="200" cy="145" rx="90" ry="28" fill="none" stroke="#111" stroke-width="10"/><line x1="200" y1="112" x2="200" y2="45" stroke="#2563eb" stroke-width="5" marker-end="url(#q2u)"/><text x="215" y="60" fill="#2563eb" font-weight="700">$F_{\rm pull}$</text><line x1="175" y1="165" x2="175" y2="215" stroke="#b91c1c" stroke-width="5" marker-end="url(#q2d)"/><text x="135" y="210" fill="#b91c1c" font-weight="700">$mg$</text><line x1="225" y1="165" x2="225" y2="215" stroke="#b45309" stroke-width="5" marker-end="url(#q2d)"/><text x="235" y="210" fill="#b45309" font-weight="700">$F_\gamma$</text></svg></div>
+<div class="sol-step"><b>1) น้ำหนักของห่วง</b>$$mg=(0.025)(9.8)=0.245\text{ N}$$</div>
+<div class="sol-step"><b>2) แรงตึงผิวรวม</b><br>เส้นรอบวงหนึ่งแนวคือ $\pi d$ และมีด้านในกับด้านนอก$$l_{\text{total}}=2\pi d=2\pi(0.10)=0.6283\text{ m}$$ $$F_\gamma=\gamma l=(0.070)(0.6283)=0.04398\text{ N}$$</div>
+<div class="sol-step"><b>3) ขณะกำลังหลุด แรงลัพธ์เป็นศูนย์</b>$$F_{\rm pull}=mg+F_\gamma=0.245+0.04398=0.28898\text{ N}$$</div>
+<div class="answer-final">ตอบ $\boxed{F_{\rm pull}\approx0.289\text{ N}}$</div><div class="common"><b>จุดที่มักผิด:</b> โจทย์ถามแรงดึงรวม จึงต้องรวมทั้งน้ำหนักและแรงตึงผิว</div></div></div></article><div class="footer"><span>Exercise 17.2.1 Item 2</span><span>6</span>
+</section>
+
+<!-- Q3 -->
+<section class="page">
+<header class="page-header"><div><div class="kicker">Original L17 • Surface Tension</div><h2>ข้อ 3 — การทดลองเพิ่มมวลบนคาน</h2></div><div class="tag">Incremental Torque</div></header>
+<article class="question-card major"><div class="q-top"><div class="qbody"><p>ตอนแรกคานสมดุลและห่วงลวดแตะผิวของเหลวพอดี เมื่อเพิ่มมวลทางซ้าย $5.0\times10^{-3}\text{ kg}$ ห่วงเริ่มหลุด ถ้าแขนคานซ้ายยาว $5\text{ cm}$ แขนขวายาว $10\text{ cm}$ และเส้นรอบวงห่วงยาว $25\text{ cm}$ จงหาความตึงผิวของของเหลว กำหนด $g=10\text{ m/s}^2$</p><figure class="qfigure"><img src="https://nixcentury.github.io/Physic-subject/PICTURE/PHYSIC/KRU%20KIRD%20FILE/L17/%E0%B9%81%E0%B8%9A%E0%B8%9A%E0%B8%9D%E0%B8%B6%E0%B8%81%E0%B8%AB%E0%B8%B1%E0%B8%94%2017.2.1%20%E0%B8%82%E0%B9%89%E0%B8%AD%E0%B8%97%E0%B8%B5%E0%B9%88%203.png" alt="คานก่อนและหลังเพิ่มมวล" onerror="this.style.display='none';this.nextElementSibling.textContent='ภาพ GitHub ยังโหลดไม่ได้ กรุณาตรวจชื่อไฟล์ในโฟลเดอร์ L17';"><figcaption>รูปต้นฉบับจากโฟลเดอร์ GitHub L17</figcaption></figure></div></div><div class="answer-space"></div><div><div class="qtools"><button onclick="toggleSolution('sol3',this)" aria-expanded="false">เปิด–ปิดเฉลย / Solution</button></div><div class="solution" id="sol3"><div class="sol-title">เฉลยละเอียด / Detailed Solution</div>
+<div class="mini-svg"><svg viewBox="0 0 600 235"><line x1="40" y1="85" x2="270" y2="85" stroke="#111" stroke-width="6"/><polygon points="155,85 140,120 170,120" fill="#64748b"/><text x="155" y="25" text-anchor="middle" font-weight="700">ก่อนเพิ่มมวล: ระบบเดิมสมดุล</text><line x1="330" y1="85" x2="560" y2="85" stroke="#111" stroke-width="6"/><polygon points="445,85 430,120 460,120" fill="#64748b"/><circle cx="360" cy="140" r="14" fill="#f59e0b"/><line x1="360" y1="85" x2="360" y2="126" stroke="#111"/><ellipse cx="535" cy="140" rx="28" ry="8" fill="none" stroke="#b91c1c" stroke-width="4"/><line x1="535" y1="85" x2="535" y2="130" stroke="#111"/><text x="445" y="25" text-anchor="middle" font-weight="700">หลังเพิ่มมวล: คิดเฉพาะโมเมนต์ที่เพิ่ม</text><text x="360" y="185" text-anchor="middle">$mg$ ที่เพิ่ม</text><text x="535" y="185" text-anchor="middle">$F_\gamma$</text><text x="400" y="215" text-anchor="middle" fill="#2563eb">$5\,\mathrm{cm}$</text><text x="490" y="215" text-anchor="middle" fill="#2563eb">$10\,\mathrm{cm}$</text></svg></div>
+<div class="sol-step"><b>1) น้ำหนักที่เพิ่ม</b>$$W_{\rm added}=mg=(5.0\times10^{-3})(10)=0.050\text{ N}$$</div>
+<div class="sol-step"><b>2) สมดุลโมเมนต์ของส่วนที่เพิ่ม</b>$$0.050(5)=F_\gamma(10)$$ $$F_\gamma=0.025\text{ N}$$</div>
+<div class="sol-step"><b>3) แนวสัมผัสของห่วง</b><br>เส้นรอบวงที่ให้มาเป็นหนึ่งแนว แต่มีด้านในและด้านนอก$$l_{\text{total}}=2(0.25)=0.50\text{ m}$$</div>
+<div class="sol-step"><b>4) ความตึงผิว</b>$$\gamma=\frac{0.025}{0.50}=0.050\text{ N/m}$$</div><div class="answer-final">ตอบ $\boxed{0.050\text{ N/m}}$</div><div class="common"><b>เหตุผลที่ไม่คิดน้ำหนักเดิม:</b> ก่อนเพิ่มมวล ระบบเดิมสมดุลอยู่แล้ว จึงพิจารณาการเปลี่ยนแปลงของโมเมนต์เท่านั้น</div></div></div></article><div class="footer"><span>Exercise 17.2.1 Item 3</span><span>7</span>
+</section>
+
+<!-- Q4 & Q6 -->
+<section class="page solution-compact">
+<header class="page-header"><div><div class="kicker">New Practice • Surface Tension</div><h2>ข้อ 4 และข้อ 6 — แนวคิดและสัดส่วน</h2></div></header>
+<article class="question-card half"><div class="qhead"><div class="qtitle">ข้อ 4 — ข้อความใดถูกต้องทั้งหมด?</div><div class="tag">Concept Check</div></div><div class="qbody"><ol><li>ความตึงผิวมีหน่วยเป็นนิวตัน</li><li>แรงตึงผิวกระทำตั้งฉากกับผิวของเหลวเสมอ</li><li>เมื่ออุณหภูมิของน้ำสูงขึ้น ความตึงผิวโดยทั่วไปลดลง</li><li>สบู่เป็นสารลดแรงตึงผิวของน้ำ</li></ol><p>เลือกชุดข้อความที่ถูกต้อง: ก. 1 และ 2 &nbsp; ข. 2 และ 3 &nbsp; ค. 3 และ 4 &nbsp; ง. 1, 3 และ 4</p></div><div class="answer-space short"></div><div class="qtools"><button onclick="toggleSolution('sol4',this)" aria-expanded="false">เฉลยข้อ 4</button></div><div class="solution" id="sol4"><div class="sol-title">วิเคราะห์ทุกข้อความ</div><p><b>1 ผิด:</b> ความตึงผิวมีหน่วย $\mathrm{N/m}$ ส่วนแรงตึงผิวมีหน่วย $\mathrm N$</p><p><b>2 ผิด:</b> แรงตึงผิวกระทำตามแนวผิว และตั้งฉากกับเส้นขอบที่พิจารณา</p><p><b>3 ถูก</b> และ <b>4 ถูก</b></p><div class="answer-final">ตอบ $\boxed{\text{ค. ข้อ 3 และ 4}}$</div></div></article>
+<article class="question-card half"><div class="qhead"><div class="qtitle">ข้อ 6 — เปรียบเทียบห่วงสองขนาด</div><div class="tag">Proportional Reasoning</div></div><div class="qbody"><p>ห่วงลวดบางสองวงทำจากลวดชนิดเดียวกันและสัมผัสของเหลวชนิดเดียวกัน ห่วงที่ 2 มีรัศมีเป็น 2 เท่าของห่วงที่ 1 จงเปรียบเทียบแรงตึงผิวรวมที่กระทำต่อห่วงทั้งสอง โดยไม่คิดน้ำหนักของห่วง</p></div><div class="answer-space short"></div><div class="qtools"><button onclick="toggleSolution('sol6',this)" aria-expanded="false">เฉลยข้อ 6</button></div><div class="solution" id="sol6"><div class="mini-svg"><svg viewBox="0 0 500 170"><ellipse cx="130" cy="85" rx="55" ry="25" fill="none" stroke="#111" stroke-width="8"/><ellipse cx="360" cy="85" rx="110" ry="50" fill="none" stroke="#111" stroke-width="8"/><text x="130" y="145" text-anchor="middle">$r_1$</text><text x="360" y="155" text-anchor="middle">$r_2=2r_1$</text></svg></div><p>สำหรับห่วง $F_\gamma=4\pi r\gamma$ เมื่อ $\gamma$ เดิม จึงมี $F_\gamma\propto r$</p>$$\frac{F_{\gamma,2}}{F_{\gamma,1}}=\frac{r_2}{r_1}=2$$<div class="answer-final">$\boxed{F_{\gamma,2}=2F_{\gamma,1}}$</div></div></article>
+<div class="footer"><span>New conceptual practice</span><span>8</span>
+</section>
+
+<!-- Q5 -->
+<section class="page">
+<header class="page-header"><div><div class="kicker">New Practice • Surface Tension</div><h2>ข้อ 5 — ลวดเลื่อนบนฟิล์มสบู่</h2></div><div class="tag">Two Surfaces</div></header>
+<article class="question-card major"><div class="q-top"><div class="qbody"><p>ลวดเลื่อนยาว $8.0\text{ cm}$ วางบนกรอบลวดรูปตัวยูที่มีฟิล์มสบู่ ความตึงผิวของสารละลายสบู่เท่ากับ $3.0\times10^{-2}\text{ N/m}$</p><ol><li>หาแรงที่ต้องออกเพื่อยึดลวดให้อยู่นิ่ง</li><li>ถ้าใช้มวลแขวนผ่านรอกอุดมคติ จงหามวลที่ทำให้สมดุล กำหนด $g=9.8\text{ m/s}^2$</li></ol>
+<div class="mini-svg"><svg viewBox="0 0 520 250"><defs><marker id="q5r" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#b91c1c"/></marker></defs><path d="M80 55 L80 205 L390 205 L390 55" fill="none" stroke="#111" stroke-width="9"/><rect x="80" y="55" width="310" height="150" fill="#bfdbfe" opacity=".55"/><line x1="320" y1="45" x2="320" y2="215" stroke="#111" stroke-width="10"/><line x1="310" y1="130" x2="245" y2="130" stroke="#b91c1c" stroke-width="5" marker-end="url(#q5r)"/><line x1="330" y1="130" x2="395" y2="130" stroke="#2563eb" stroke-width="5" marker-end="url(#q5r)"/><text x="210" y="120" text-anchor="middle" fill="#b91c1c" font-weight="700">$2\gamma L$</text><text x="430" y="120" text-anchor="middle" fill="#2563eb" font-weight="700">$F$</text><text x="320" y="235" text-anchor="middle">$L=8.0\,\mathrm{cm}$</text></svg></div></div></div><div class="answer-space medium"></div><div><div class="qtools"><button onclick="toggleSolution('sol5',this)" aria-expanded="false">เปิด–ปิดเฉลย / Solution</button></div><div class="solution" id="sol5"><div class="sol-title">เฉลยละเอียด / Detailed Solution</div><div class="sol-step"><b>1) แปลงหน่วย</b>$$L=8.0\text{ cm}=0.080\text{ m}$$</div><div class="sol-step"><b>2) ฟิล์มสบู่มีสองผิว</b><br>แต่ละผิวดึงลวดด้วยแรง $\gamma L$ จึงได้$$F=2\gamma L=2(3.0\times10^{-2})(0.080)=4.8\times10^{-3}\text{ N}$$</div><div class="sol-step"><b>3) มวลสมดุล</b>$$mg=F\Rightarrow m=\frac{4.8\times10^{-3}}{9.8}=4.90\times10^{-4}\text{ kg}=0.490\text{ g}$$</div><div class="answer-final">$\boxed{F=4.8\times10^{-3}\text{ N},\quad m\approx0.490\text{ g}}$</div><div class="common"><b>จุดที่มักผิด:</b> ตัวคูณ 2 มาจากฟิล์มสบู่สองผิว ไม่ได้มาจากลวดมีสองปลาย</div></div></div></article><div class="footer"><span>New Practice — Soap Film</span><span>9</span>
+</section>
+
+<!-- Q7 -->
+<section class="page">
+<header class="page-header"><div><div class="kicker">Original L17 • Viscosity</div><h2>ข้อ 7 — ความเร็วสุดท้ายของลูกเหล็กในน้ำเชื่อม</h2></div><div class="tag">Stokes + Buoyancy</div></header>
+<article class="question-card major"><div class="q-top"><div class="qbody"><p>ลูกกลมเหล็กรัศมี $1.0\text{ mm}$ ตกในน้ำเชื่อม ความหนาแน่นของเหล็กและน้ำเชื่อมเท่ากับ $7800$ และ $1600\text{ kg/m}^3$ ตามลำดับ น้ำเชื่อมมีความหนืด $100\text{ mPa·s}$ จงหาความเร็วสุดท้าย กำหนด $g=9.8\text{ m/s}^2$</p></div></div><div class="answer-space"></div><div><div class="qtools"><button onclick="toggleSolution('sol7',this)" aria-expanded="false">เปิด–ปิดเฉลย / Solution</button></div><div class="solution" id="sol7"><div class="sol-title">เฉลยละเอียด / Detailed Solution</div>
+<div class="mini-svg"><svg viewBox="0 0 360 250"><defs><marker id="q7d" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#b91c1c"/></marker><marker id="q7u" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#15803d"/></marker></defs><rect x="60" y="20" width="240" height="210" fill="#fde68a" opacity=".45"/><circle cx="180" cy="125" r="30" fill="#64748b"/><line x1="180" y1="157" x2="180" y2="220" stroke="#b91c1c" stroke-width="5" marker-end="url(#q7d)"/><line x1="160" y1="93" x2="160" y2="42" stroke="#15803d" stroke-width="5" marker-end="url(#q7u)"/><line x1="200" y1="93" x2="200" y2="42" stroke="#2563eb" stroke-width="5" marker-end="url(#q7u)"/><text x="193" y="205" fill="#b91c1c">$mg$</text><text x="115" y="55" fill="#15803d">$F_B$</text><text x="210" y="55" fill="#2563eb">$F_v$</text><text x="180" y="245" text-anchor="middle">ที่ $v_T$: $mg=F_B+F_v$</text></svg></div>
+<div class="sol-step"><b>1) แปลงหน่วย</b>$$r=1.0\times10^{-3}\text{ m},\qquad \eta=100\times10^{-3}=0.100\text{ Pa·s}$$</div>
+<div class="sol-step"><b>2) ตั้งสมดุลแรงที่ความเร็วสุดท้าย</b><br>ที่ $v=v_T$ จะมี $a=0$ ดังนั้นแรงลงเท่ากับแรงขึ้นรวมกัน$$\rho_sVg=\rho_fVg+6\pi\eta rv_T$$ย้ายพจน์แรงพยุงไปทางซ้าย$$(\rho_s-\rho_f)Vg=6\pi\eta rv_T$$แทนปริมาตรทรงกลม $V=\frac43\pi r^3$$$(\rho_s-\rho_f)\left(\frac43\pi r^3\right)g=6\pi\eta rv_T$$หารด้วย $6\pi\eta r$ และตัด $\pi$ กับ $r$$$v_T=\frac{(\rho_s-\rho_f)(4/3)\pi r^3g}{6\pi\eta r}=\frac{2r^2g(\rho_s-\rho_f)}{9\eta}$$</div>
+<div class="sol-step"><b>3) แทนค่า</b>$$v_T=\frac{2(1.0\times10^{-3})^2(9.8)(7800-1600)}{9(0.100)}=0.135\text{ m/s}$$</div><div class="sol-step"><b>4) ตรวจความสมเหตุสมผล</b><br>ค่าความเร็วเป็นบวกเพราะ $\rho_s>\rho_f$ และมีหน่วยเป็น $\mathrm{m/s}$ ตามที่ต้องการ ของเหลวมีความหนืดค่อนข้างสูงจึงทำให้ความเร็วสุดท้ายไม่มาก</div><div class="answer-final">ตอบ $\boxed{v_T\approx0.135\text{ m/s}}$</div><div class="common"><b>ตรวจหน่วยก่อนแทน:</b> ถ้าใส่ $100$ แทน $0.100$ คำตอบจะผิดไป $1000$ เท่า</div></div></div></article><div class="footer"><span>Exercise 17.2.2.2 Item 1</span><span>10</span>
+</section>
+
+<!-- Q8 -->
+<section class="page">
+<header class="page-header"><div><div class="kicker">Original L17 • Buoyancy</div><h2>ข้อ 8 — เปรียบเทียบวัตถุ A และ B ในน้ำ</h2></div><div class="tag">Equal Volume</div></header>
+<article class="question-card major"><div class="q-top"><div class="qbody"><p>วัตถุ A และ B จมมิดในน้ำ มีปริมาตรเท่ากัน $V_A=V_B$ แต่ $\rho_A>\rho_B>\rho_{\rm water}$ จงเปรียบเทียบแรงพยุงที่กระทำต่อวัตถุทั้งสอง และแรงตึงเชือก $T_1,T_2$</p><figure class="qfigure"><img src="https://nixcentury.github.io/Physic-subject/PICTURE/PHYSIC/KRU%20KIRD%20FILE/L17/%E0%B9%81%E0%B8%9A%E0%B8%9A%E0%B8%9D%E0%B8%B6%E0%B8%81%E0%B8%AB%E0%B8%B1%E0%B8%94%2017.2.2.2%20%E0%B8%82%E0%B9%89%E0%B8%AD%E0%B8%97%E0%B8%B5%E0%B9%88%202.png" alt="วัตถุ A และ B จมในน้ำ" onerror="this.style.display='none';this.nextElementSibling.textContent='ภาพ GitHub ยังโหลดไม่ได้ กรุณาตรวจชื่อไฟล์ในโฟลเดอร์ L17';"><figcaption>รูปต้นฉบับจากโฟลเดอร์ GitHub L17</figcaption></figure></div></div><div class="answer-space"></div><div><div class="qtools"><button onclick="toggleSolution('sol8',this)" aria-expanded="false">เปิด–ปิดเฉลย / Solution</button></div><div class="solution" id="sol8"><div class="sol-title">เฉลยละเอียด / Detailed Solution</div>
+<div class="mini-svg"><svg viewBox="0 0 600 290"><defs><marker id="q8u" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#15803d"/></marker><marker id="q8d" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#b91c1c"/></marker></defs><rect x="30" y="40" width="540" height="220" fill="#dbeafe"/><circle cx="190" cy="150" r="38" fill="#64748b"/><circle cx="410" cy="150" r="38" fill="#94a3b8"/><text x="190" y="155" text-anchor="middle" fill="#fff" font-weight="700">A</text><text x="410" y="155" text-anchor="middle" fill="#fff" font-weight="700">B</text><line x1="175" y1="110" x2="175" y2="60" stroke="#15803d" stroke-width="5" marker-end="url(#q8u)"/><line x1="395" y1="110" x2="395" y2="60" stroke="#15803d" stroke-width="5" marker-end="url(#q8u)"/><line x1="205" y1="110" x2="205" y2="70" stroke="#2563eb" stroke-width="5" marker-end="url(#q8u)"/><line x1="425" y1="110" x2="425" y2="78" stroke="#2563eb" stroke-width="5" marker-end="url(#q8u)"/><line x1="190" y1="190" x2="190" y2="255" stroke="#b91c1c" stroke-width="6" marker-end="url(#q8d)"/><line x1="410" y1="190" x2="410" y2="238" stroke="#b91c1c" stroke-width="6" marker-end="url(#q8d)"/><text x="120" y="65" fill="#15803d">$F_B$ เท่ากัน</text><text x="235" y="78" fill="#2563eb">$T_1$</text><text x="455" y="85" fill="#2563eb">$T_2$</text><text x="190" y="280" text-anchor="middle" fill="#b91c1c">$W_A$ มากกว่า</text><text x="410" y="280" text-anchor="middle" fill="#b91c1c">$W_B$</text></svg></div>
+<div class="sol-step"><b>1) แรงพยุง</b>$$F_B=\rho_{\rm water}Vg$$ ของไหลเดียวกัน ปริมาตรจมเท่ากัน จึงได้$$F_{B,A}=F_{B,B}$$</div><div class="sol-step"><b>2) แรงตึงเชือก</b>$$T+F_B=\rho_{\rm object}Vg$$ $$T=(\rho_{\rm object}-\rho_{\rm water})Vg$$ เมื่อ $\rho_A>\rho_B$ จึงได้ $T_1>T_2$</div><div class="answer-final">$\boxed{F_{B,A}=F_{B,B}\quad\text{และ}\quad T_1>T_2}$</div><div class="common"><b>แก่นของข้อ:</b> แรงพยุงไม่ได้ขึ้นกับความหนาแน่นของวัตถุโดยตรง แต่ขึ้นกับของไหลและปริมาตรของไหลที่ถูกแทนที่</div></div></div></article><div class="footer"><span>Exercise 17.2.2.2 Item 2</span><span>11</span>
+</section>
+
+<!-- Q9 & Q11 -->
+<section class="page solution-compact">
+<header class="page-header"><div><div class="kicker">Viscosity Practice</div><h2>ข้อ 9 และข้อ 11 — ความสัมพันธ์และหน่วย</h2></div></header>
+<article class="question-card half"><div class="qhead"><div class="qtitle">ข้อ 9 — ข้อความใดไม่ถูกต้อง?</div><div class="tag">Original L17</div></div><div class="qbody"><p>ปล่อยลูกเหล็กลงในกลีเซอรอล</p><ol><li>ความเร็วต้นเป็นศูนย์</li><li>เมื่อถึงความเร็วสุดท้าย ความเร่งเป็นศูนย์</li><li>แรงพยุงขึ้นกับปริมาตรลูกเหล็ก</li><li>แรงหนืดลดลงเมื่อความเร็วเพิ่มขึ้น</li></ol></div><div class="answer-space short"></div><div class="qtools"><button onclick="toggleSolution('sol9',this)" aria-expanded="false">เฉลยข้อ 9</button></div><div class="solution" id="sol9"><div class="mini-svg"><svg viewBox="0 0 500 190"><line x1="60" y1="150" x2="450" y2="150" stroke="#111" stroke-width="3"/><line x1="60" y1="150" x2="60" y2="25" stroke="#111" stroke-width="3"/><line x1="60" y1="150" x2="430" y2="40" stroke="#2563eb" stroke-width="5"/><text x="460" y="160">$v$</text><text x="35" y="25">$F_v$</text><text x="275" y="85" fill="#2563eb" font-weight="700">$F_v=6\pi\eta rv$</text></svg></div><p>เมื่อ $\eta$ และ $r$ คงที่ จะได้ $F_v\propto v$ ดังนั้นแรงหนืด <b>เพิ่ม</b> เมื่อความเร็วเพิ่ม</p><div class="answer-final">ตอบ $\boxed{\text{ข้อ 4 ไม่ถูกต้อง}}$</div></div></article>
+<article class="question-card half"><div class="qhead"><div class="qtitle">ข้อ 11 — แปลงหน่วยความหนืด</div><div class="tag">Unit Conversion</div></div><div class="qbody"><ol><li>$250\text{ mPa·s}$ เท่ากับกี่ $\text{Pa·s}$?</li><li>$1.5\text{ Pa·s}$ เท่ากับกี่ $\text{mPa·s}$?</li></ol></div><div class="answer-space short"></div><div class="qtools"><button onclick="toggleSolution('sol11',this)" aria-expanded="false">เฉลยข้อ 11</button></div><div class="solution" id="sol11"><p>ใช้ $1\text{ mPa·s}=10^{-3}\text{ Pa·s}$</p>$$250\text{ mPa·s}=250\times10^{-3}=0.250\text{ Pa·s}$$ $$1.5\text{ Pa·s}=1.5\times10^3=1500\text{ mPa·s}$$<div class="answer-final">$\boxed{0.250\text{ Pa·s},\quad1500\text{ mPa·s}}$</div></div></article>
+<div class="footer"><span>Original concept + unit practice</span><span>12</span>
+</section>
+
+<!-- Q10 -->
+<section class="page">
+<header class="page-header"><div><div class="kicker">Original L17 • Buoyancy</div><h2>ข้อ 10 — ความหนาแน่นจากน้ำหนักปรากฏ</h2></div><div class="tag">Apparent Weight</div></header>
+<article class="question-card major"><div class="q-top"><div class="qbody"><p>ชั่งวงแหวนในอากาศได้ $7.84\text{ N}$ และชั่งขณะจมมิดในน้ำได้ $6.86\text{ N}$ จงหาความหนาแน่นของวงแหวน กำหนด $\rho_{\rm water}=1.0\times10^3\text{ kg/m}^3$ และ $g=9.8\text{ m/s}^2$</p><figure class="qfigure"><img src="https://nixcentury.github.io/Physic-subject/PICTURE/PHYSIC/KRU%20KIRD%20FILE/L17/%E0%B9%81%E0%B8%9A%E0%B8%9A%E0%B8%9D%E0%B8%B6%E0%B8%81%E0%B8%AB%E0%B8%B1%E0%B8%94%2017.2.2.2%20%E0%B8%82%E0%B9%89%E0%B8%AD%E0%B8%97%E0%B8%B5%E0%B9%88%204.png" alt="ชั่งวงแหวนในอากาศและในน้ำ" onerror="this.style.display='none';this.nextElementSibling.textContent='ภาพ GitHub ยังโหลดไม่ได้ กรุณาตรวจชื่อไฟล์ในโฟลเดอร์ L17';"><figcaption>รูปต้นฉบับจากโฟลเดอร์ GitHub L17</figcaption></figure></div></div><div class="answer-space medium"></div><div><div class="qtools"><button onclick="toggleSolution('sol10',this)" aria-expanded="false">เปิด–ปิดเฉลย / Solution</button></div><div class="solution" id="sol10"><div class="sol-title">เฉลยละเอียด / Detailed Solution</div>
+<div class="mini-svg"><svg viewBox="0 0 620 250"><defs><marker id="q10u" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#2563eb"/></marker><marker id="q10d" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#b91c1c"/></marker></defs><text x="155" y="25" text-anchor="middle" font-weight="700">ในอากาศ</text><ellipse cx="155" cy="120" rx="45" ry="18" fill="none" stroke="#111" stroke-width="8"/><line x1="155" y1="100" x2="155" y2="45" stroke="#2563eb" stroke-width="5" marker-end="url(#q10u)"/><line x1="155" y1="140" x2="155" y2="205" stroke="#b91c1c" stroke-width="5" marker-end="url(#q10d)"/><text x="175" y="65" fill="#2563eb">$T_{air}$</text><text x="175" y="195" fill="#b91c1c">$W$</text><rect x="335" y="70" width="240" height="160" fill="#bfdbfe"/><text x="455" y="25" text-anchor="middle" font-weight="700">จมในน้ำ</text><ellipse cx="455" cy="145" rx="45" ry="18" fill="none" stroke="#111" stroke-width="8"/><line x1="440" y1="125" x2="440" y2="80" stroke="#2563eb" stroke-width="5" marker-end="url(#q10u)"/><line x1="470" y1="125" x2="470" y2="90" stroke="#15803d" stroke-width="5" marker-end="url(#q10u)"/><line x1="455" y1="165" x2="455" y2="220" stroke="#b91c1c" stroke-width="5" marker-end="url(#q10d)"/><text x="390" y="95" fill="#2563eb">$T_{water}$</text><text x="485" y="100" fill="#15803d">$F_B$</text></svg></div>
+<div class="sol-step"><b>1) แรงพยุงเท่ากับน้ำหนักที่อ่านลดลง</b>$$F_B=7.84-6.86=0.98\text{ N}$$</div><div class="sol-step"><b>2) ปริมาตรวงแหวน</b>$$0.98=1000(V)(9.8)\Rightarrow V=1.0\times10^{-4}\text{ m}^3$$</div><div class="sol-step"><b>3) มวลและความหนาแน่น</b>$$m=\frac{7.84}{9.8}=0.80\text{ kg}$$ $$\rho=\frac{m}{V}=\frac{0.80}{1.0\times10^{-4}}=8.0\times10^3\text{ kg/m}^3$$</div><div class="answer-final">ตอบ $\boxed{8.0\times10^3\text{ kg/m}^3}$</div><div class="common"><b>ทางลัดตรวจคำตอบ:</b> $\rho_{obj}=\rho_w\dfrac{W_{air}}{W_{air}-W_{water}}$</div></div></div></article><div class="footer"><span>Exercise 17.2.2.2 Item 4</span><span>13</span>
+</section>
+
+<!-- Q12 & Q13 -->
+<section class="page solution-compact">
+<header class="page-header"><div><div class="kicker">New Practice • Viscosity</div><h2>ข้อ 12 และข้อ 13 — กฎของสโตกส์และสัดส่วน</h2></div></header>
+<article class="question-card half"><div class="qhead"><div class="qtitle">ข้อ 12 — คำนวณแรงหนืด</div><div class="tag">Direct Calculation</div></div><div class="qbody"><p>ทรงกลมรัศมี $1.5\text{ mm}$ เคลื่อนที่ด้วยความเร็ว $0.040\text{ m/s}$ ในของเหลวที่มีความหนืด $0.80\text{ Pa·s}$ จงหาแรงหนืดตามกฎของสโตกส์</p></div><div class="answer-space short"></div><div class="qtools"><button onclick="toggleSolution('sol12',this)" aria-expanded="false">เฉลยข้อ 12</button></div><div class="solution" id="sol12"><p>แปลง $r=1.5\times10^{-3}\text{ m}$ แล้วใช้</p>$$F_v=6\pi\eta rv=6\pi(0.80)(1.5\times10^{-3})(0.040)$$ $$F_v=9.05\times10^{-4}\text{ N}$$<div class="answer-final">$\boxed{F_v\approx9.05\times10^{-4}\text{ N}}$</div></div></article>
+<article class="question-card half"><div class="qhead"><div class="qtitle">ข้อ 13 — ความเร็วสุดท้ายเปลี่ยนอย่างไร?</div><div class="tag">Scaling</div></div><div class="qbody"><p>พิจารณา $v_T\propto\dfrac{r^2(\rho_s-\rho_f)}{\eta}$ ตอบแต่ละกรณีแยกกัน</p><ol><li>รัศมีเพิ่มเป็น 2 เท่า</li><li>ความหนืดเพิ่มเป็น 2 เท่า</li><li>ผลต่างความหนาแน่นลดเหลือครึ่งหนึ่ง</li></ol></div><div class="answer-space short"></div><div class="qtools"><button onclick="toggleSolution('sol13',this)" aria-expanded="false">เฉลยข้อ 13</button></div><div class="solution" id="sol13"><table class="compare"><tr><th>การเปลี่ยน</th><th>ผลต่อ $v_T$</th></tr><tr><td>$r\to2r$</td><td>$v_T\to4v_T$</td></tr><tr><td>$\eta\to2\eta$</td><td>$v_T\to\frac12v_T$</td></tr><tr><td>$\Delta\rho\to\frac12\Delta\rho$</td><td>$v_T\to\frac12v_T$</td></tr></table><div class="common">รัศมีเป็นกำลังสอง จึงมีผลต่อความเร็วสุดท้ายแรงกว่าการเปลี่ยนแบบเส้นตรง</div></div></article>
+<div class="footer"><span>New Practice — Stokes Law</span><span>14</span>
+</section>
+
+<!-- Q14 -->
+<section class="page">
+<header class="page-header"><div><div class="kicker">New Practice • Experiment</div><h2>ข้อ 14 — หาความหนืดจากการทดลองลูกกลมตก</h2></div><div class="tag">Terminal-Speed Experiment</div></header>
+<article class="question-card major"><div class="q-top"><div class="qbody"><p>ลูกกลมรัศมี $1.0\text{ mm}$ และความหนาแน่น $7800\text{ kg/m}^3$ ตกในของเหลวความหนาแน่น $1200\text{ kg/m}^3$ หลังจากถึงความเร็วสุดท้าย ลูกกลมเคลื่อนที่ระหว่างเครื่องหมาย A และ B ซึ่งห่างกัน $0.20\text{ m}$ ในเวลา $2.5\text{ s}$ จงหาความหนืดของของเหลว กำหนด $g=9.8\text{ m/s}^2$</p>
+<div class="mini-svg"><svg viewBox="0 0 500 300"><rect x="150" y="20" width="200" height="260" rx="12" fill="#dbeafe" stroke="#17324d" stroke-width="3"/><line x1="140" y1="105" x2="360" y2="105" stroke="#b91c1c" stroke-width="3" stroke-dasharray="8 6"/><line x1="140" y1="235" x2="360" y2="235" stroke="#b91c1c" stroke-width="3" stroke-dasharray="8 6"/><text x="115" y="110" font-weight="700">A</text><text x="115" y="240" font-weight="700">B</text><circle cx="250" cy="165" r="22" fill="#64748b"/><line x1="390" y1="105" x2="390" y2="235" stroke="#2563eb" stroke-width="3"/><text x="420" y="175" fill="#2563eb" font-weight="700">$s=0.20\,\mathrm m$</text><text x="250" y="292" text-anchor="middle">ช่วง A–B: $v=v_T$ คงตัว</text></svg></div></div></div><div class="answer-space medium"></div><div><div class="qtools"><button onclick="toggleSolution('sol14',this)" aria-expanded="false">เปิด–ปิดเฉลย / Solution</button></div><div class="solution" id="sol14"><div class="sol-title">เฉลยละเอียด / Detailed Solution</div><div class="sol-step"><b>1) หาความเร็วสุดท้ายจากข้อมูลทดลอง</b>$$v_T=\frac{s}{t}=\frac{0.20}{2.5}=0.080\text{ m/s}$$</div><div class="sol-step"><b>2) จัดรูปสมการความเร็วสุดท้าย</b>$$v_T=\frac{2r^2g(\rho_s-\rho_f)}{9\eta}$$ $$\eta=\frac{2r^2g(\rho_s-\rho_f)}{9v_T}$$</div><div class="sol-step"><b>3) แทนค่า</b>$$\eta=\frac{2(1.0\times10^{-3})^2(9.8)(7800-1200)}{9(0.080)}$$ $$\eta=0.1797\text{ Pa·s}\approx0.180\text{ Pa·s}$$</div><div class="answer-final">ตอบ $\boxed{\eta\approx0.180\text{ Pa·s}}$</div><div class="common"><b>เหตุผลที่จับเวลาช่วง A–B:</b> ต้องเลือกช่วงหลังลูกกลมถึงความเร็วสุดท้ายแล้ว จึงใช้ $v_T=s/t$ ได้อย่างเหมาะสม</div></div></div></article><div class="footer"><span>New Experiment Practice</span><span>15</span>
+</section>
+
+<!-- FORMULA MAP -->
+<section class="page">
+<header class="page-header"><div><div class="kicker">Reference + Self Check</div><h2>แผนที่สูตรและรายการทักษะท้ายบท</h2><span class="en">Formula map and end-of-unit checklist</span></div></header>
+<div class="formula-map">
+  <div class="formula-card"><h3>1. ความตึงผิว</h3><div class="big">$F_\gamma=\gamma l_{\text{total}}$</div><p>นับแนวสัมผัสทุกแนวที่ของเหลวดึงวัตถุ</p></div>
+  <div class="formula-card"><h3>2. สมดุลโมเมนต์</h3><div class="big">$WX=F_\gamma Y$</div><p>ใช้เมื่อแรงตึงผิวถูกหาอ้อมผ่านคาน</p></div>
+  <div class="formula-card"><h3>3. แรงหนืดแบบสโตกส์</h3><div class="big">$F_v=6\pi\eta rv$</div><p>สำหรับทรงกลมและการไหลราบเรียบ</p></div>
+  <div class="formula-card"><h3>4. แรงพยุง</h3><div class="big">$F_B=\rho_fVg$</div><p>ใช้ปริมาตรของไหลที่ถูกแทนที่</p></div>
+  <div class="formula-card"><h3>5. น้ำหนักปรากฏ</h3><div class="big">$W_{app}=W-F_B$</div><p>น้ำหนักที่เครื่องชั่งอ่านลดลงเท่ากับแรงพยุง</p></div>
+  <div class="formula-card"><h3>6. ความเร็วสุดท้าย</h3><div class="big">$v_T=\dfrac{2r^2g(\rho_s-\rho_f)}{9\eta}$</div><p>ที่สภาวะนี้ $a=0$ แต่ $v_T\ne0$</p></div>
+</div>
+<h3>Checklist หลังเรียน</h3>
+<div class="skill"><div class="checklist">
+<label class="check"><input type="checkbox"><span>แยก $F_\gamma$ กับ $\gamma$ และหน่วยได้</span></label>
+<label class="check"><input type="checkbox"><span>นับแนวสัมผัสโดยไม่ท่องตัวคูณ 2</span></label>
+<label class="check"><input type="checkbox"><span>ใช้สมดุลโมเมนต์หาแรงที่ห่วงได้</span></label>
+<label class="check"><input type="checkbox"><span>แปลง $\mathrm{mPa·s}$ เป็น $\mathrm{Pa·s}$ ได้</span></label>
+<label class="check"><input type="checkbox"><span>วาด $mg,F_B,F_v$ ถูกทิศ</span></label>
+<label class="check"><input type="checkbox"><span>อธิบายพัฒนาการสู่ความเร็วสุดท้ายได้</span></label>
+<label class="check"><input type="checkbox"><span>แยกความหนืดออกจากความหนาแน่นได้</span></label>
+<label class="check"><input type="checkbox"><span>อ่านน้ำหนักจริง–น้ำหนักปรากฏได้</span></label>
+</div></div>
+<div class="pitfall"><b>สี่จุดที่ต้องตรวจทุกครั้ง:</b> (1) แนวสัมผัสกี่แนว (2) แรงใดอยู่คนละแขนคาน (3) แปลงหน่วย SI แล้วหรือยัง (4) ที่ความเร็วสุดท้ายมีแรงพยุงรวมอยู่ด้วยหรือไม่</div>
+<div class="summary-box"><b>ลำดับการแก้โจทย์มาตรฐาน:</b><br>ภาพสถานการณ์ $\rightarrow$ แผนภาพแรง $\rightarrow$ หลักสมดุล/กฎฟิสิกส์ $\rightarrow$ สมการ $\rightarrow$ แปลงหน่วย $\rightarrow$ แทนค่า $\rightarrow$ ตรวจหน่วยและความสมเหตุสมผล</div>
+<div class="footer"><span>End of Module</span><span>16</span>
+</section>
+
+</main>
+<script>
+function toggleSolution(id,btn){const el=document.getElementById(id);const open=el.classList.toggle('open');btn.setAttribute('aria-expanded',String(open));}
+function setAll(open){document.querySelectorAll('.solution').forEach(el=>el.classList.toggle('open',open));document.querySelectorAll('.qtools button').forEach(btn=>btn.setAttribute('aria-expanded',String(open)));const all=document.getElementById('toggleAll');all.setAttribute('aria-expanded',String(open));all.textContent=open?'🙈 ซ่อนเฉลยทั้งหมด / Hide All':'👁️ เปิดเฉลยทั้งหมด / Show All';document.getElementById('status').textContent=open?'เฉลยทั้งหมดกำลังแสดงบนหน้าจอ':'เฉลยซ่อนอยู่ • ภาพต้นฉบับใช้จากโฟลเดอร์ GitHub L17 • SVG ช่วยคิดอยู่ในไฟล์';}
+function toggleAllSolutions(){setAll(document.getElementById('toggleAll').getAttribute('aria-expanded')!=='true');}
+function hideAllSolutions(){setAll(false);}
+function printBlank(){document.body.classList.remove('print-solutions');hideAllSolutions();setTimeout(()=>window.print(),80);}
+function printSolutions(){document.body.classList.add('print-solutions');setAll(true);setTimeout(()=>window.print(),100);}
+window.addEventListener('afterprint',()=>{document.body.classList.remove('print-solutions');});
+</script>
+</body>
+</html>
