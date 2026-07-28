@@ -1,274 +1,1307 @@
 <!DOCTYPE html>
-
 <html lang="th">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>ความตึงผิวและความหนืดของของเหลว / Surface Tension and Viscosity of Liquids — Fully Bilingual v5</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Surface Tension and Viscosity of Fluids</title>
+
+<!-- MathJax Configuration & Script -->
 <script>
-window.MathJax = {
-  tex: {
-    inlineMath: [['$', '$'], ['\\(', '\\)']],
-    displayMath: [['$$', '$$'], ['\\[', '\\]']]
-  },
-  svg: { fontCache: 'global' }
-};
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']]
+    },
+    svg: { fontCache: 'global' }
+  };
 </script>
-<script async="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
 <style>
-:root{
-  --ink:#111827;--muted:#4b5563;--line:#94a3b8;--paper:#fff;--screen:#dbe2ea;
-  --navy:#17324d;--blue:#2563eb;--blue-soft:#eaf2ff;--green:#15803d;--green-soft:#edf8ef;
-  --red:#b91c1c;--amber:#b45309;--amber-soft:#fff7e6;--violet:#6d28d9;--cyan:#0891b2;
-  --a4:210mm;
+:root {
+  --ink: #111827;
+  --muted: #4b5563;
+  --line: #9ca3af;
+  --paper: #ffffff;
+  --screen: #e5e7eb;
+  --accent: #17324d;
+  --accent-soft: #eaf0f5;
+  --note: #f7f7f7;
+  --warn: #fff8e8;
+  --answer: #eef7ef;
+  --a4w: 210mm;
 }
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:var(--screen);color:var(--ink);font-family:"Noto Sans Thai","Leelawadee UI",Tahoma,Arial,sans-serif;line-height:1.52;font-size:15px}
-button{font:inherit}
-.toolbar{position:sticky;top:0;z-index:100;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:10px 12px;background:#111827;color:white;box-shadow:0 2px 15px #0003}
-.toolbar button,.toolbar a{border:0;border-radius:8px;padding:9px 13px;background:white;color:#111827;font-weight:800;cursor:pointer;text-decoration:none}
-.toolbar .primary{background:#dbeafe}.toolbar .solution-print{background:#dcfce7}.toolbar .status{flex-basis:100%;text-align:center;font-size:12px;opacity:.86}
-.page{width:min(var(--a4),calc(100vw - 20px));min-height:297mm;margin:16px auto;padding:12mm 13mm 14mm;background:var(--paper);box-shadow:0 10px 30px #0f172a2e;position:relative;break-after:page;page-break-after:always}
-.page:last-child{break-after:auto;page-break-after:auto}
-.page-header{display:flex;justify-content:space-between;gap:8mm;align-items:flex-end;border-bottom:2px solid var(--navy);padding-bottom:3mm;margin-bottom:4mm}
-.kicker{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--navy);font-weight:900}
-h1{font-size:25px;line-height:1.18;margin:1mm 0}h2{font-size:20px;line-height:1.25;margin:0}h3{font-size:16.5px;margin:4mm 0 2mm;line-height:1.3}h4{font-size:15px;margin:3mm 0 1.5mm}
-p{margin:1.6mm 0}.en{display:block;color:var(--muted);font-size:.88em;line-height:1.4;margin-top:.4mm}.inline-en{color:var(--muted);font-size:.9em}
-.key,.note,.pitfall,.formula,.skill,.solution,.worked,.summary-box{border:1px solid var(--ink);padding:3.2mm 4mm;margin:3mm 0;break-inside:avoid}
-.key{border-left:5px solid var(--blue);background:var(--blue-soft)}.note{border-left:5px solid var(--cyan);background:#ecfeff}.pitfall{border-left:5px solid var(--amber);background:var(--amber-soft)}.formula{background:#fff;text-align:center;font-weight:800;font-size:16px}.skill{background:#f8fafc;border-left:5px solid var(--violet)}.summary-box{background:#f8fafc}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:4mm}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:3mm}.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm}
-.visual{border:1px solid var(--ink);background:#fff;padding:3mm;text-align:center;break-inside:avoid}.visual svg,.visual img{display:block;width:100%;height:auto;max-height:65mm;object-fit:contain;margin:0 auto}.caption{font-size:12px;text-align:left;margin-top:2mm;color:#374151}
-.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;margin:2mm 0}.legend span::before{content:"";display:inline-block;width:12px;height:4px;margin-right:5px;vertical-align:middle;background:var(--c,#111)}
-.compare{width:100%;border-collapse:collapse;margin:3mm 0;break-inside:avoid}.compare th,.compare td{border:1px solid var(--ink);padding:2mm;vertical-align:top}.compare th{background:#f1f5f9}
-.variable-box{border:1px solid #64748b;border-left:5px solid var(--violet);background:#faf7ff;padding:2.5mm 3mm;margin:2.5mm 0;break-inside:avoid}
-.variable-title{font-weight:900;color:var(--violet);margin-bottom:1.5mm}
-.variable-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.3mm 3mm;font-size:12.5px;line-height:1.35}
-.variable-item{border-bottom:1px dotted #c4b5fd;padding:1mm 0}
-.variable-item b{color:#4c1d95}
-.variable-note{font-size:11.5px;color:#4b5563;margin-top:1.5mm}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--screen);
+  color: var(--ink);
+  font-family: "Noto Sans Thai", "Tahoma", "Arial", sans-serif;
+  line-height: 1.5;
+  font-size: 15px;
+}
+.toolbar {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+  padding: 10px 12px;
+  background: #111827; color: #fff;
+  box-shadow: 0 2px 12px rgba(0,0,0,.18);
+}
+.toolbar button, .toolbar a {
+  border: 0; border-radius: 8px; padding: 9px 13px;
+  background: #fff; color: #111827; font: 700 13px/1.2 inherit;
+  cursor: pointer; text-decoration: none;
+}
+.toolbar .primary { background: #dbeafe; }
+.toolbar .status { flex-basis: 100%; text-align: center; font-size: 12px; opacity: .85; }
 
-.step-list{counter-reset:step;padding:0;margin:2mm 0}.step-list li{list-style:none;position:relative;padding-left:10mm;margin:2mm 0}.step-list li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:.1mm;width:6mm;height:6mm;border-radius:50%;background:var(--navy);color:#fff;font-weight:900;text-align:center;line-height:6mm;font-size:11px}
-.question-card{border:1.5px solid var(--ink);padding:4mm 5mm;margin:3mm 0;break-inside:avoid}.question-card.major{min-height:242mm;display:flex;flex-direction:column}.question-card.half{min-height:113mm}.q-top{flex:0 0 auto}.qhead{display:flex;justify-content:space-between;gap:5mm;align-items:flex-start;margin-bottom:2mm}.qtitle{font-weight:900;font-size:16px;color:var(--navy)}.tag{font-size:11px;border:1px solid var(--navy);border-radius:999px;padding:1mm 2.2mm;color:var(--navy);font-weight:800;white-space:nowrap}.qbody ol{margin:2mm 0 2mm 7mm;padding-left:5mm}.qbody li{margin:1mm 0}.qfigure{margin:3mm auto;text-align:center;break-inside:avoid}.qfigure img{display:block;max-width:100%;max-height:73mm;object-fit:contain;margin:0 auto;border:1px solid #cbd5e1;background:#fff}.qfigure figcaption{font-size:11.5px;color:var(--muted);margin-top:1.5mm}
-.answer-space{flex:1 1 auto;min-height:72mm;margin-top:3mm;background:repeating-linear-gradient(to bottom,transparent 0,transparent 8.7mm,#cbd5e1 8.9mm,transparent 9.1mm)}.answer-space.short{min-height:30mm}.answer-space.medium{min-height:50mm}
-.qtools{display:flex;gap:6px;flex-wrap:wrap;margin-top:2mm}.qtools button{border:1px solid var(--ink);background:#fff;border-radius:6px;padding:6px 11px;font-weight:800;cursor:pointer}.qtools button[aria-expanded="true"]{background:var(--navy);color:#fff}
-.solution{display:none;background:var(--green-soft);border-left:5px solid var(--green);font-size:14px;margin-top:3mm}.solution.open{display:block}.sol-title{font-size:15px;font-weight:900;color:var(--green);margin-bottom:2mm}.sol-step{border-left:3px solid #86a78b;padding-left:3mm;margin:2.5mm 0}.answer-final{border:2px solid var(--green);background:#fff;padding:2.5mm 3mm;margin:3mm 0;font-weight:900;text-align:center}.common{border:1px dashed var(--amber);background:#fffaf0;padding:2.5mm 3mm;margin-top:2.5mm}.mini-svg{border:1px solid #94a3b8;background:#fff;padding:2mm;margin:2.5mm 0;text-align:center}.mini-svg svg{display:block;width:100%;max-height:62mm;margin:auto}
-.formula-map{display:grid;grid-template-columns:repeat(2,1fr);gap:4mm}.formula-card{border:1.5px solid var(--ink);padding:4mm;background:#fff;break-inside:avoid}.formula-card h3{margin-top:0;color:var(--navy)}.formula-card .big{text-align:center;font-size:18px;font-weight:900;margin:3mm 0}
-.checklist{display:grid;grid-template-columns:1fr 1fr;gap:2mm 5mm}.check{display:flex;gap:8px;align-items:flex-start;margin:1.5mm 0}.check input{width:17px;height:17px;margin-top:2px}
-.footer{position:absolute;left:13mm;right:13mm;bottom:6mm;border-top:1px solid #d1d5db;padding-top:1.5mm;display:flex;justify-content:space-between;color:#6b7280;font-size:9.5px}
-.hide-on-screen{display:none}
-@media(max-width:760px){.grid-2,.grid-3,.grid-4,.formula-map,.checklist,.variable-grid{grid-template-columns:1fr}.page{padding:8mm 7mm 12mm}.page-header{align-items:flex-start}.tag{white-space:normal}.question-card.major{min-height:auto}.answer-space{min-height:55mm}}
-@media print{
-  @page{size:A4 portrait;margin:9mm 10mm 10mm}
-  html,body{width:auto!important;height:auto!important;background:#fff!important;font-size:9.5pt!important}
-  .toolbar,.qtools,.footer{display:none!important}
-  .page{width:auto!important;min-height:277mm!important;margin:0!important;padding:0!important;box-shadow:none!important;position:static!important;break-after:page!important;page-break-after:always!important}
-  .page:last-child{break-after:auto!important;page-break-after:auto!important}
-  .question-card{box-shadow:none!important}.question-card.major{min-height:258mm!important}.question-card.half{min-height:126mm!important}
-  body:not(.print-solutions) .solution{display:none!important}
-  body.print-solutions .solution{display:block!important}
-  body.print-solutions .answer-space{display:none!important}
-  body.print-solutions .question-card.major,body.print-solutions .question-card.half{min-height:auto!important}
-  body.print-solutions .page.solution-compact{min-height:auto!important}
-  body.print-solutions .question-card{break-inside:avoid!important}
-  .visual svg,.visual img{max-height:58mm!important}.qfigure img{max-height:64mm!important}
-  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page {
+  width: min(var(--a4w), calc(100vw - 20px));
+  min-height: 297mm;
+  margin: 16px auto;
+  padding: 13mm 14mm 14mm;
+  background: var(--paper);
+  box-shadow: 0 10px 30px rgba(15,23,42,.18);
+  position: relative;
+  break-after: page;
+  page-break-after: always;
+}
+.page:last-child { break-after: auto; page-break-after: auto; }
+
+.part-head {
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 3mm; margin-bottom: 4mm;
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 5mm;
+}
+.part-no { font-size: 13px; font-weight: 900; color: var(--accent); text-transform: uppercase; }
+h1 { font-size: 26px; line-height: 1.2; margin: 2mm 0; }
+h2 { font-size: 20px; line-height: 1.25; margin: 0; }
+h3 { font-size: 16px; line-height: 1.3; margin: 3mm 0 2mm; }
+
+.en { display: block; color: var(--muted); font-size: .88em; line-height: 1.35; margin-top: .4mm; }
+.inline-en { color: var(--muted); font-size: .9em; }
+
+.key, .formula, .pitfall, .example, .checklist-card, .proof-card {
+  border: 1px solid var(--ink);
+  padding: 3.5mm 4mm;
+  margin: 3mm 0;
+  break-inside: avoid;
+}
+.key { border-left: 5px solid var(--accent); background: var(--accent-soft); }
+.formula { background: #fff; text-align: center; font-size: 16px; font-weight: 700; padding: 3.5mm; }
+.pitfall { background: var(--warn); border-left: 5px solid #d97706; }
+.checklist-card { background: #f8fafc; border-left: 5px solid #2563eb; }
+.proof-card { background: #fafafa; border-left: 5px solid #16a34a; }
+
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 2mm 0;
+  cursor: pointer;
+}
+.check-item input[type="checkbox"] {
+  width: 18px; height: 18px; margin-top: 2px; cursor: pointer;
 }
 
-/* Fully bilingual v5 */
-.en.bi-en{display:block;color:#475569;font-size:.84em;line-height:1.38;margin-top:.55mm;font-weight:500}
-.en-inline{color:#475569;font-size:.88em;font-weight:600}
-td>.en.bi-en,li>.en.bi-en,.caption>.en.bi-en{margin-top:.7mm}
-.svg-bilingual{font-size:11px}
-@media print{
-  .page{min-height:auto!important;padding-bottom:4mm!important}
-  .footer{position:static!important;margin-top:5mm!important}
-  .question-card.major,.question-card.half{min-height:auto!important}
-  .en.bi-en{font-size:8.1pt!important;color:#333!important}
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+.visual-card { border: 1px solid var(--ink); padding: 3mm; break-inside: avoid; background: #fff; text-align: center; }
+.visual-card img, .visual-card svg { display: block; width: 100%; height: auto; max-height: 52mm; object-fit: contain; margin: 0 auto; border-radius: 4px; }
+.caption { font-size: 12px; margin-top: 2mm; text-align: left; }
+
+.question {
+  border: 1px solid var(--ink);
+  margin: 2mm 0;
+  padding: 4mm 5mm;
+  min-height: 230mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
+.qhead { font-weight: 900; font-size: 16px; margin-bottom: 2mm; color: var(--accent); }
+.qbody p { margin: 1.8mm 0; font-size: 15px; }
+
+.answer-lines.work-space {
+  flex-grow: 1;
+  margin-top: 5mm;
+  margin-bottom: 3mm;
+  min-height: 170mm;
+  background: repeating-linear-gradient(to bottom, transparent 0, transparent 8.8mm, #b8b8b8 9mm, transparent 9.2mm);
+}
+
+.qtools { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2mm; }
+.qtools button { border: 1px solid var(--ink); background: #fff; border-radius: 6px; padding: 6px 12px; font: 700 13px inherit; cursor: pointer; }
+.toggle-btn[aria-expanded="true"] { background: var(--accent); color: #fff; }
+
+.solution {
+  display: none;
+  border: 1px solid var(--ink);
+  margin-top: 3mm;
+  padding: 4mm;
+  font-size: 14px;
+  background: var(--answer);
+}
+.solution.open { display: block; }
+.sol-title { font-weight: 900; margin-bottom: 1.5mm; color: #15803d; }
+
+table { width: 100%; border-collapse: collapse; margin: 3mm 0; break-inside: avoid; }
+th, td { border: 1px solid var(--ink); padding: 2mm; vertical-align: top; text-align: left; }
+th { background: #f3f4f6; font-weight: bold; }
+
+.footer {
+  position: absolute; left: 14mm; right: 14mm; bottom: 6mm;
+  border-top: 1px solid #d1d5db; padding-top: 1.5mm;
+  display: flex; justify-content: space-between; gap: 4mm;
+  color: #6b7280; font-size: 9.5px;
+}
+
+@media print {
+  @page { size: A4 portrait; margin: 9mm 10mm 10mm; }
+  html, body { width: auto !important; height: auto !important; background: #fff !important; font-size: 9.5pt !important; }
+  .toolbar, .qtools, .solution, .footer { display: none !important; }
+  .page {
+    width: auto !important; min-height: 270mm !important; margin: 0 !important; padding: 0 !important;
+    box-shadow: none !important; position: static !important; break-after: page !important; page-break-after: always !important;
+  }
+  .page:last-child { break-after: auto !important; page-break-after: auto !important; }
+  .question { min-height: 250mm !important; border: none !important; padding: 0 !important; }
+  .answer-lines.work-space { min-height: 210mm !important; }
+}
+
+/* =========================================================
+   QUESTION-PAGE VISUAL REFINEMENT
+   Content is unchanged; this block only improves presentation.
+   ========================================================= */
+
+.page-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:6mm;
+  margin:0 0 4mm;
+  padding:3.2mm 4mm 3mm;
+  border:1px solid #cbd5e1;
+  border-left:6px solid var(--accent);
+  border-bottom:2px solid var(--accent);
+  border-radius:10px;
+  background:linear-gradient(135deg,#f8fafc 0%,#ffffff 70%);
+  break-inside:avoid;
+}
+.page-header > div:first-child{min-width:0}
+.page-header h2{
+  margin:.8mm 0 0;
+  font-size:20px;
+  line-height:1.25;
+  color:#0f172a;
+}
+.page-header h2 .en,
+.page-header h2 .bi-en{
+  margin-top:1mm;
+  font-size:12px;
+  line-height:1.35;
+  color:#526174;
+  font-weight:600;
+}
+.kicker{
+  font-size:10.5px;
+  line-height:1.2;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--accent);
+  font-weight:900;
+}
+.tag{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 auto;
+  max-width:62mm;
+  padding:1.3mm 2.5mm;
+  border:1px solid #94a3b8;
+  border-radius:999px;
+  background:#fff;
+  color:#334155;
+  font-size:10px;
+  line-height:1.25;
+  font-weight:800;
+  text-align:center;
+  white-space:normal;
+}
+.tag .en,.tag .bi-en{
+  margin:.4mm 0 0;
+  color:#64748b;
+  font-size:9px;
+}
+
+.question-card{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  margin:0;
+  padding:5mm 5.5mm 4.5mm;
+  border:1.4px solid #64748b;
+  border-radius:12px;
+  background:#fff;
+  box-shadow:0 5px 16px rgba(15,23,42,.07);
+  overflow:visible;
+}
+.question-card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  border-radius:11px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.7);
+}
+.question-card.major{min-height:242mm}
+.question-card.half{
+  min-height:111mm;
+  margin-bottom:4mm;
+  padding:4mm 4.5mm;
+}
+.question-card.half:last-of-type{margin-bottom:0}
+
+.q-top{flex:0 0 auto}
+.qhead{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:4mm;
+  margin:-1mm 0 3mm;
+  padding-bottom:2.2mm;
+  border-bottom:1px solid #cbd5e1;
+}
+.qtitle{
+  flex:1 1 auto;
+  color:#17324d;
+  font-size:16px;
+  line-height:1.3;
+  font-weight:900;
+}
+.qtitle .en,.qtitle .bi-en{
+  margin-top:.8mm;
+  color:#526174;
+  font-size:11px;
+  font-weight:600;
+}
+
+.qbody{
+  color:#111827;
+  font-size:14.4px;
+  line-height:1.55;
+}
+.qbody p{margin:1.8mm 0 2.4mm}
+.qbody > .en,
+.qbody p > .en,
+.qbody .bi-en{
+  display:block;
+  margin-top:1mm;
+  padding-left:3mm;
+  border-left:2px solid #bfdbfe;
+  color:#475569;
+  font-size:12.2px;
+  line-height:1.45;
+}
+.qbody ol{
+  margin:2mm 0 2.5mm 7mm;
+  padding-left:6mm;
+}
+.qbody li{
+  margin:1.6mm 0;
+  padding-left:1mm;
+}
+.qbody li::marker{
+  color:#17324d;
+  font-weight:900;
+}
+.qbody li > .en,
+.qbody li > .bi-en{
+  margin-top:.6mm;
+  padding-left:2.5mm;
+  border-left:2px solid #dbeafe;
+  color:#526174;
+  font-size:11.6px;
+  line-height:1.4;
+}
+
+.qfigure{
+  margin:4mm auto 2.5mm;
+  padding:3mm;
+  border:1px solid #cbd5e1;
+  border-radius:9px;
+  background:#f8fafc;
+  text-align:center;
+  break-inside:avoid;
+}
+.qfigure img{
+  display:block;
+  max-width:100%;
+  max-height:68mm;
+  object-fit:contain;
+  margin:0 auto;
+  border:0;
+  background:#fff;
+}
+.qfigure figcaption{
+  margin-top:2mm;
+  color:#64748b;
+  font-size:10.5px;
+  line-height:1.35;
+}
+.qfigure figcaption .en,
+.qfigure figcaption .bi-en{
+  margin-top:.5mm;
+  font-size:9.7px;
+}
+
+.answer-space{
+  position:relative;
+  flex:1 1 auto;
+  min-height:68mm;
+  margin-top:7mm;
+  border:1px solid #cbd5e1;
+  border-radius:8px;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      #fff 0,
+      #fff 8.4mm,
+      #d7dee8 8.55mm,
+      #fff 8.75mm
+    );
+}
+.answer-space::before{
+  content:"พื้นที่ทำงาน / Working area";
+  position:absolute;
+  top:-4mm;
+  left:4mm;
+  padding:0 2mm;
+  background:#fff;
+  color:#475569;
+  font-size:10px;
+  line-height:1.2;
+  font-weight:800;
+  letter-spacing:.02em;
+}
+.answer-space.short{min-height:28mm;margin-top:6mm}
+.answer-space.medium{min-height:48mm;margin-top:6mm}
+.question-card.half .answer-space{min-height:24mm}
+
+.qtools{
+  display:flex;
+  justify-content:flex-end;
+  gap:6px;
+  flex-wrap:wrap;
+  margin-top:3mm;
+  padding-top:2.5mm;
+  border-top:1px dashed #cbd5e1;
+}
+.qtools button{
+  border:1px solid #64748b;
+  border-radius:8px;
+  padding:7px 12px;
+  background:#fff;
+  color:#17324d;
+  font:800 12px/1.25 inherit;
+  cursor:pointer;
+  transition:.15s ease;
+}
+.qtools button:hover{
+  border-color:#17324d;
+  background:#eef4f8;
+  transform:translateY(-1px);
+}
+.qtools button[aria-expanded="true"]{
+  border-color:#17324d;
+  background:#17324d;
+  color:#fff;
+}
+
+.solution{
+  display:none;
+  margin-top:3mm;
+  padding:4mm;
+  border:1px solid #86a78b;
+  border-left:5px solid #15803d;
+  border-radius:9px;
+  background:#f0f8f1;
+  color:#102316;
+  font-size:13px;
+  line-height:1.5;
+}
+.solution.open{display:block}
+.sol-title{
+  margin:0 0 2.5mm;
+  padding-bottom:1.5mm;
+  border-bottom:1px solid #b7d3bc;
+  color:#166534;
+  font-size:14px;
+  font-weight:900;
+}
+.sol-step{
+  margin:2.5mm 0;
+  padding:2.5mm 3mm;
+  border-left:3px solid #9bc3a2;
+  border-radius:0 6px 6px 0;
+  background:rgba(255,255,255,.72);
+}
+.sol-step .en,.sol-step .bi-en{
+  margin-top:1mm;
+  color:#3f5b46;
+  font-size:11.5px;
+}
+.answer-final{
+  margin:3mm 0 1.5mm;
+  padding:2.8mm 3mm;
+  border:2px solid #15803d;
+  border-radius:8px;
+  background:#fff;
+  color:#14532d;
+  text-align:center;
+  font-weight:900;
+}
+.common{
+  margin-top:2.5mm;
+  padding:2.5mm 3mm;
+  border:1px dashed #d97706;
+  border-radius:7px;
+  background:#fffaf0;
+  color:#713f12;
+}
+.mini-svg{
+  margin:2.5mm 0;
+  padding:2.5mm;
+  border:1px solid #cbd5e1;
+  border-radius:8px;
+  background:#fff;
+  text-align:center;
+  break-inside:avoid;
+}
+.mini-svg svg{
+  display:block;
+  width:100%;
+  max-height:62mm;
+  margin:auto;
+}
+
+.solution-compact .question-card.half{
+  min-height:112mm;
+}
+.solution-compact .question-card.half .qbody{
+  font-size:13.2px;
+  line-height:1.45;
+}
+
+.formula-map{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:4mm;
+}
+.formula-card{
+  padding:4mm;
+  border:1.3px solid #64748b;
+  border-radius:10px;
+  background:linear-gradient(180deg,#fff,#f8fafc);
+  break-inside:avoid;
+}
+.formula-card h3{
+  margin:0 0 2mm;
+  color:#17324d;
+  font-size:15px;
+}
+.formula-card .big{
+  margin:2.5mm 0;
+  padding:2mm;
+  border-radius:7px;
+  background:#eef3f7;
+  text-align:center;
+  font-size:17px;
+  font-weight:900;
+}
+.skill{
+  margin:3mm 0;
+  padding:3.5mm 4mm;
+  border:1px solid #94a3b8;
+  border-left:5px solid #2563eb;
+  border-radius:9px;
+  background:#f8fafc;
+}
+.checklist{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:2mm 5mm;
+}
+.check{
+  display:flex;
+  gap:8px;
+  align-items:flex-start;
+  margin:1mm 0;
+  line-height:1.4;
+}
+.check input{width:17px;height:17px;margin-top:2px;flex:0 0 auto}
+.summary-box{
+  margin:3mm 0;
+  padding:3.5mm 4mm;
+  border:1px solid #64748b;
+  border-radius:9px;
+  background:#f8fafc;
+}
+
+.bilingual-inline{line-height:1.45}
+.svg-bilingual{font-family:"Noto Sans Thai","Tahoma","Arial",sans-serif}
+
+@media(max-width:760px){
+  .page-header{align-items:flex-start;flex-direction:column}
+  .tag{max-width:none}
+  .question-card.major,.question-card.half{min-height:auto}
+  .answer-space{min-height:52mm}
+  .formula-map,.checklist{grid-template-columns:1fr}
+}
+
+@media print{
+  .page-header{
+    padding:2.5mm 3mm!important;
+    border-radius:0!important;
+    background:#fff!important;
+  }
+  .question-card{
+    box-shadow:none!important;
+    border-radius:0!important;
+    padding:4mm!important;
+    break-inside:avoid!important;
+  }
+  .question-card.major{min-height:250mm!important}
+  .question-card.half{min-height:122mm!important}
+  .answer-space{
+    border-radius:0!important;
+    background:
+      repeating-linear-gradient(
+        to bottom,
+        #fff 0,
+        #fff 8.2mm,
+        #bfc5cd 8.35mm,
+        #fff 8.55mm
+      )!important;
+  }
+  .qfigure,.mini-svg,.formula-card,.skill,.summary-box{
+    border-radius:0!important;
+    box-shadow:none!important;
+  }
+  .qbody > .en,
+  .qbody p > .en,
+  .qbody .bi-en,
+  .qbody li > .en,
+  .qbody li > .bi-en{
+    color:#333!important;
+    border-left-color:#777!important;
+  }
+}
+
 </style>
 </head>
 <body>
+
 <nav class="toolbar">
-<button class="primary" onclick="printBlank()">🖨️ พิมพ์ใบงานเปล่า / Print Worksheet</button>
-<button class="solution-print" onclick="printSolutions()">📘 พิมพ์เฉลยละเอียด / Print Solutions</button>
-<button aria-expanded="false" id="toggleAll" onclick="toggleAllSolutions()">👁️ เปิดเฉลยทั้งหมด / Show All</button>
-<button onclick="hideAllSolutions()">🙈 ซ่อนเฉลย / Hide</button>
-<div class="status" id="status">เฉลยซ่อนอยู่ / Solutions are hidden • ภาพต้นฉบับจาก GitHub L17 / Original diagrams from GitHub L17 • SVG ช่วยคิดอยู่ในไฟล์ / Explanatory SVGs are embedded</div>
+  <button class="primary" onclick="window.print()">🖨️ พิมพ์ใบงานเปล่า (A4) / Print Blank Copy</button>
+  <button id="toggleAllBtn" onclick="toggleAllSolutions()" aria-expanded="false">👁️ เปิดเฉลยทั้งหมด / Show All Solutions</button>
+  <button onclick="hideAll()">🙈 ซ่อนเฉลย / Hide All</button>
+  <div class="status" id="status">โหมดเรียนรู้: เฉลยซ่อนอยู่ และจะไม่พิมพ์ออกกระดาษ / Learning mode: solutions are hidden and never printed.</div>
 </nav>
+
 <main>
-<!-- PAGE 1 -->
-<section class="page">
-<header class="page-header"><div><div class="kicker">Concept 1 • Surface Tension</div><h1>ความตึงผิวและความหนืดของของเหลว</h1><span class="en">Surface Tension and Viscosity of Liquids</span></div><div class="tag">Concept → Diagram → Equation</div></header>
-<div class="key"><b class="bilingual-inline">แนวคิดแกนกลาง: / Core idea:</b> ก่อนใช้สูตร ให้ระบุว่า “แรงเกิดที่ไหน มีทิศใด และความยาวแนวสัมผัสหรือแรงใดต้องนับบ้าง”<span class="en bi-en">Before using an equation, identify where each force acts, its direction, and which contact lengths or forces must be included.</span><span class="en">Before using an equation, identify where each force acts, its direction, and which contact boundaries must be counted.</span></div>
-<h3>1. ทำไมผิวของเหลวจึงมีลักษณะเหมือนถูกขึง?<span class="en bi-en">1. Why does a liquid surface behave as if it were stretched?</span></h3>
-<div class="grid-2">
-<div class="visual">
-<svg aria-label="โมเลกุลภายในและที่ผิวของเหลว / Molecules inside the liquid and at its surface" viewbox="0 0 360 220">
-<defs><marker id="arr1" markerheight="8" markerwidth="8" orient="auto" refx="6" refy="3"><path d="M0,0 L0,6 L7,3 z" fill="#2563eb"></path></marker></defs>
-<rect fill="#dbeafe" height="130" rx="8" stroke="#17324d" stroke-width="2" width="320" x="20" y="70"></rect>
-<line stroke="#0891b2" stroke-width="4" x1="20" x2="340" y1="70" y2="70"></line>
-<g fill="#60a5fa" stroke="#17324d">
-<circle cx="90" cy="130" r="13"></circle><circle cx="140" cy="150" r="13"></circle><circle cx="190" cy="128" r="13"></circle><circle cx="240" cy="158" r="13"></circle><circle cx="290" cy="125" r="13"></circle>
-<circle cx="120" cy="82" fill="#fbbf24" r="13"></circle><circle cx="210" cy="82" fill="#fbbf24" r="13"></circle>
-</g>
-<g marker-end="url(#arr1)" stroke="#2563eb" stroke-width="2">
-<line x1="90" x2="58" y1="130" y2="130"></line><line x1="90" x2="122" y1="130" y2="130"></line><line x1="90" x2="90" y1="130" y2="98"></line><line x1="90" x2="90" y1="130" y2="162"></line>
-<line x1="120" x2="120" y1="82" y2="117"></line><line x1="210" x2="210" y1="82" y2="117"></line>
-</g>
-<text class="svg-bilingual" font-size="13" font-weight="700" text-anchor="middle" x="90" y="188">ภายใน: แรงเกือบสมดุล / Inside: forces are nearly balanced</text>
-<text class="svg-bilingual" font-size="13" font-weight="700" text-anchor="middle" x="245" y="48">ที่ผิว: มีแนวโน้มถูกดึงเข้าสู่ของเหลว / At the surface: a net pull tends to act inward</text>
+  <!-- Page 1: Theory of Surface Tension & Lever Experiment -->
+  <section class="page">
+    <div class="part-head">
+      <div>
+        <div class="part-no">Physics Learning Module</div>
+        <h2>ความตึงผิวและความหนืดของของเหลว<br><span class="en">Surface Tension and Viscosity of Liquids</span></h2>
+      </div>
+    </div>
+
+    <!-- Self-Check Checklist Card -->
+    <div class="checklist-card">
+      <b style="color: #2563eb; font-size: 15px;">☑ Checklist ความรู้หลังเรียน / Learning Checklist:</b>
+      <span class="en" style="margin-bottom: 1.5mm;">Check your understanding after studying this module.</span>
+      
+      <label class="check-item">
+        <input type="checkbox">
+        <div>
+          <b>เข้าใจและสังเกตปรากฏการณ์แรงตึงผิว:</b> อธิบายสาเหตุที่วัตถุหนาแน่นมากกว่าน้ำลอยได้ และทิศทางของแรงตึงผิว ($F_{\gamma}$)
+          <span class="en">Explain real phenomena (e.g. floating clip) and recognize the direction of surface tension force.</span>
+        </div>
+      </label>
+
+      <label class="check-item">
+        <input type="checkbox">
+        <div>
+          <b>คำนวณขอบสัมผัส ($l$) ได้ถูกต้อง:</b> แยกแยะการคิดขอบผิวสัมผัส 1 ด้าน ($l = L$) vs 2 ด้าน ($l = 2 \times 2\pi r$)
+          <span class="en">Calculate surface tension ($\gamma = F/l$) and determine contact length $l$ for single vs double surfaces.</span>
+        </div>
+      </label>
+
+      <label class="check-item">
+        <input type="checkbox">
+        <div>
+          <b>วิเคราะห์การทดลองคานสมดุล:</b> ใช้สมดุลโมเมนต์ $W \cdot X = F \cdot Y$ เพื่อหาแรงดึงและค่าความตึงผิว ($\gamma$)
+          <span class="en">Apply torque balance ($W \cdot X = F \cdot Y$) on a lever balance to derive surface tension.</span>
+        </div>
+      </label>
+
+      <label class="check-item">
+        <input type="checkbox">
+        <div>
+          <b>พิสูจน์สูตรความเร็วสุดท้าย ($v_T$):</b> ตั้งสมดุล 3 แรง ($mg = F_B + F_v$) และพิสูจน์สมการความเร็วสุดท้ายตามกฎของสโตกส์
+          <span class="en">Derive the terminal velocity formula ($v_T$) using 3-force vertical equilibrium ($mg = F_B + F_v$).</span>
+        </div>
+      </label>
+    </div>
+
+    <h3>1. จากการสังเกตสู่แรงตึงผิว <span class="inline-en">(Observation to Surface Tension)</span></h3>
+    <p>
+      เมื่อสังเกตสิ่งรอบตัว เราพบว่าคลิปหนีบกระดาษโลหะลอยน้ำได้ หรือแมลงเดินบนผิวน้ำได้โดยไม่จม เนื่องจากโมเลกุลที่ผิวหน้าของของเหลวพยายามดึงดูดกันเองเพื่อลดพื้นที่ผิวให้ร้อยที่สุด เกิดเป็นแรงที่พยายามยึดผิวของเหลวเอาไว้ เรียกว่า <b>แรงตึงผิว ($F_{\gamma}$)</b>
+      <span class="en">Molecules on liquid surface experience cohesive inward forces, reducing surface area and forming an elastic-like membrane capable of supporting light objects.</span>
+    </p>
+
+    <!-- Real Photo Cards -->
+    <div class="two-col">
+      <div class="visual-card">
+        <img src="https://www.sciencefirst.com.au/media/wysiwyg/blog/experiments/FloatingPaperClipFace.jpg" alt="Floating Paperclip on Water">
+        <div class="caption">
+          <b>คลิปหนีบกระดาษลอยน้ำ / Floating Clip:</b> ผิวน้ำบุ๋มลงตามขอบลวด สร้างแรงตึงผิวโอบรับรอบขอบลวดโลหะเอาไว้
+          <span class="en">Perimeter line creates upward surface tension to support the clip.</span>
+        </div>
+      </div>
+
+      <div class="visual-card">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/1/1d/Water_strider_Gerris_lacustris.jpg" alt="Water Strider on Water">
+        <div class="caption">
+          <b>แมลงเดินบนผิวน้ำ / Water Strider:</b> ขาแมลงกดผิวน้ำเป็นรอยบุ๋มโค้ง เกิดแรงตึงผิวพยุงน้ำหนัก $mg$
+          <span class="en">Water surface depresses under the insect's legs, generating buoyant & tension forces.</span>
+        </div>
+      </div>
+    </div>
+
+<h3> 2. นิยามและการทดลองวัดความตึงผิวด้วยคานสมดุล <span class="en">2. Definition and Lever Measurement of Surface Tension</span> </h3> <div class="key"> <b>แนวคิดสำคัญ:</b> อย่าดูเพียงรูปร่างของวัตถุ ให้ตรวจว่าของเหลวดึงวัตถุตาม <b>แนวสัมผัสกี่แนว</b> แล้วรวมความยาวทุกแนวเป็น $l_{\text{total}}$ <span class="en"> <b>Key idea:</b> Do not count from the shape of the object alone. Identify every contact boundary along which the liquid pulls, then add their lengths to obtain $l_{\text{total}}$. </span> </div> <p> <b>ความตึงผิว $(\gamma)$</b> คือแรงตึงผิวรวมต่อหนึ่งหน่วยความยาวของแนวสัมผัสทั้งหมด <span class="en"> <b>Surface tension $(\gamma)$</b> is the total surface-tension force per unit total contact length. </span> </p> <div class="two-col"> <div class="formula"> <div> แรงตึงผิวรวม <span class="en">Total surface-tension force</span> </div> $$F_\gamma=\gamma l_{\text{total}}$$ </div> <div class="formula"> <div> ความตึงผิว <span class="en">Surface tension</span> </div> $$\gamma=\frac{F_\gamma}{l_{\text{total}}}$$ </div> </div> <table> <thead> <tr> <th>ตัวแปร / Symbol</th> <th>ความหมาย / Meaning</th> <th>หน่วย SI / SI unit</th> </tr> </thead> <tbody> <tr> <td>$F_\gamma$</td> <td> แรงตึงผิวรวมจากทุกแนวสัมผัส <span class="en">Total surface-tension force from all contact boundaries</span> </td> <td>$\mathrm N$</td> </tr> <tr> <td>$\gamma$</td> <td> ความตึงผิวของของเหลว <span class="en">Surface tension of the liquid</span> </td> <td>$\mathrm{N/m}$</td> </tr> <tr> <td>$l_{\text{total}}$</td> <td> ผลรวมความยาวของแนวสัมผัสทั้งหมดที่ของเหลวดึงวัตถุ <span class="en"> Sum of the lengths of all boundaries along which the liquid pulls the object </span> </td> <td>$\mathrm m$</td> </tr> </tbody> </table> <div class="two-col"> <!-- LEFT: LEVER BALANCE --> <div class="visual-card"> <svg viewBox="0 0 440 280" role="img" aria-labelledby="lever-title lever-desc">
+  <title id="lever-title">
+    Lever balance used to determine the surface-tension force
+  </title>
+
+  <desc id="lever-desc">
+    A downward weight W acts at distance X on the left side of a pivot.
+    The surface-tension force acts at distance Y on the right side.
+  </desc>
+
+  <defs>
+    <marker
+      id="lever-arrow-red"
+      markerWidth="9"
+      markerHeight="9"
+      refX="7"
+      refY="3.5"
+      orient="auto">
+      <path d="M0,0 L0,7 L8,3.5 z" fill="#b91c1c"></path>
+    </marker>
+
+    <marker
+      id="lever-arrow-blue"
+      markerWidth="9"
+      markerHeight="9"
+      refX="7"
+      refY="3.5"
+      orient="auto">
+      <path d="M0,0 L0,7 L8,3.5 z" fill="#2563eb"></path>
+    </marker>
+  </defs>
+
+  <text
+    x="220"
+    y="24"
+    text-anchor="middle"
+    font-size="15"
+    font-weight="700"
+    fill="#17324d">
+    คานสมดุล / Lever balance
+  </text>
+
+  <!-- Beam -->
+  <line
+    x1="45"
+    y1="105"
+    x2="395"
+    y2="105"
+    stroke="#111827"
+    stroke-width="8"
+    stroke-linecap="round">
+  </line>
+
+  <!-- Pivot -->
+  <polygon
+    points="205,105 185,155 225,155"
+    fill="#64748b">
+  </polygon>
+
+  <line
+    x1="205"
+    y1="155"
+    x2="205"
+    y2="205"
+    stroke="#64748b"
+    stroke-width="6">
+  </line>
+
+  <!-- Left force -->
+  <line
+    x1="75"
+    y1="42"
+    x2="75"
+    y2="94"
+    stroke="#b91c1c"
+    stroke-width="5"
+    marker-end="url(#lever-arrow-red)">
+  </line>
+
+  <text
+    x="75"
+    y="35"
+    text-anchor="middle"
+    font-size="14"
+    font-weight="700"
+    fill="#b91c1c">
+    W
+  </text>
+
+  <!-- Right force -->
+  <line
+    x1="365"
+    y1="42"
+    x2="365"
+    y2="94"
+    stroke="#b91c1c"
+    stroke-width="5"
+    marker-end="url(#lever-arrow-red)">
+  </line>
+
+  <text
+    x="365"
+    y="35"
+    text-anchor="middle"
+    font-size="14"
+    font-weight="700"
+    fill="#b91c1c">
+    Fγ
+  </text>
+
+  <!-- Ring and liquid -->
+  <line
+    x1="365"
+    y1="105"
+    x2="365"
+    y2="158"
+    stroke="#111827"
+    stroke-width="2">
+  </line>
+
+  <ellipse
+    cx="365"
+    cy="166"
+    rx="30"
+    ry="9"
+    fill="none"
+    stroke="#b91c1c"
+    stroke-width="4">
+  </ellipse>
+
+  <rect
+    x="315"
+    y="172"
+    width="100"
+    height="42"
+    fill="#bfdbfe"
+    stroke="#64748b"
+    stroke-width="1.5">
+  </rect>
+
+  <!-- Distance X -->
+  <line
+    x1="75"
+    y1="230"
+    x2="205"
+    y2="230"
+    stroke="#2563eb"
+    stroke-width="3"
+    marker-start="url(#lever-arrow-blue)"
+    marker-end="url(#lever-arrow-blue)">
+  </line>
+
+  <text
+    x="140"
+    y="252"
+    text-anchor="middle"
+    font-size="14"
+    font-weight="700"
+    fill="#2563eb">
+    X
+  </text>
+
+  <!-- Distance Y -->
+  <line
+    x1="205"
+    y1="230"
+    x2="365"
+    y2="230"
+    stroke="#2563eb"
+    stroke-width="3"
+    marker-start="url(#lever-arrow-blue)"
+    marker-end="url(#lever-arrow-blue)">
+  </line>
+
+  <text
+    x="285"
+    y="252"
+    text-anchor="middle"
+    font-size="14"
+    font-weight="700"
+    fill="#2563eb">
+    Y
+  </text>
 </svg>
-<div class="caption"><b class="bilingual-inline">ระดับโมเลกุล: / Molecular view:</b> โมเลกุลภายในถูกดึงรอบทิศใกล้เคียงกัน ส่วนโมเลกุลที่ผิวมีแรงยึดเหนี่ยวจากด้านของเหลวมากกว่า ผิวจึงพยายามลดพื้นที่ผิว<span class="en bi-en">Molecules inside the liquid experience nearly balanced attractions in all directions. Surface molecules experience a stronger attraction from the liquid below, so the surface tends to reduce its area.</span></div>
+
+<div class="caption">
+  <b>หน้าที่ของคาน:</b>
+  คานใช้หาแรงตึงผิวรวม $F_\gamma$ จากสมดุลโมเมนต์
+  ไม่ได้ให้ค่าความตึงผิว $\gamma$ โดยตรง
+  <span class="en">
+    <b>Purpose of the lever:</b>
+    The lever is used to determine the total surface-tension force
+    $F_\gamma$ from torque balance. It does not give $\gamma$ directly.
+  </span>
 </div>
-<div class="visual">
-<svg aria-label="ทิศของแรงตึงผิว / Direction of surface-tension force" viewbox="0 0 360 220">
-<defs><marker id="arr2" markerheight="8" markerwidth="8" orient="auto" refx="6" refy="3"><path d="M0,0 L0,6 L7,3 z" fill="#b91c1c"></path></marker></defs>
-<path d="M25 140 Q180 70 335 140 L335 190 L25 190 Z" fill="#bfdbfe" stroke="#17324d" stroke-width="2"></path>
-<line stroke="#111827" stroke-width="5" x1="180" x2="180" y1="91" y2="190"></line>
-<circle cx="180" cy="92" fill="#111827" r="7"></circle>
-<line marker-end="url(#arr2)" stroke="#b91c1c" stroke-width="4" x1="180" x2="105" y1="92" y2="118"></line>
-<line marker-end="url(#arr2)" stroke="#b91c1c" stroke-width="4" x1="180" x2="255" y1="92" y2="118"></line>
-<text class="svg-bilingual" fill="#b91c1c" font-size="13" font-weight="700" x="83" y="110">แรงตามแนวผิว / Force tangent to the surface</text>
-<text class="svg-bilingual" fill="#b91c1c" font-size="13" font-weight="700" x="220" y="110">แรงตามแนวผิว / Force tangent to the surface</text>
-<text class="svg-bilingual" font-size="13" font-weight="700" text-anchor="middle" x="180" y="211">แรงตั้งฉากกับเส้นขอบที่ของเหลวสัมผัส / Force perpendicular to the contact boundary</text>
+
+<div class="formula" style="font-size:14px; padding:2mm;">
+  $$WX=F_\gamma Y$$
+  $$F_\gamma=\frac{WX}{Y}$$
+</div>
+</div> <!-- RIGHT: COUNTING CONTACT BOUNDARIES --> <div class="visual-card"> <svg viewBox="0 0 520 500" role="img" aria-labelledby="contact-title contact-desc">
+  <title id="contact-title">
+    Three examples of counting contact boundaries
+  </title>
+
+  <desc id="contact-desc">
+    The first example has one contact boundary of length L.
+    A soap film has two surfaces, so its total contact length is 2L.
+    A thin circular ring has an inner and an outer circular boundary,
+    giving a total contact length of 4 pi r.
+  </desc>
+
+  <!-- Main title -->
+  <text
+    x="260"
+    y="24"
+    text-anchor="middle"
+    font-size="16"
+    font-weight="700"
+    fill="#17324d">
+    การนับแนวสัมผัส / Counting contact boundaries
+  </text>
+
+  <!-- ================================================= -->
+  <!-- CASE A: ONE CONTACT BOUNDARY -->
+  <!-- ================================================= -->
+
+  <rect
+    x="20"
+    y="42"
+    width="480"
+    height="125"
+    rx="8"
+    fill="#ffffff"
+    stroke="#94a3b8">
+  </rect>
+
+  <text
+    x="40"
+    y="67"
+    font-size="14"
+    font-weight="700"
+    fill="#17324d">
+    A. หนึ่งแนวสัมผัส / One contact boundary
+  </text>
+
+  <!-- Wire -->
+  <line
+    x1="85"
+    y1="110"
+    x2="300"
+    y2="110"
+    stroke="#111827"
+    stroke-width="10"
+    stroke-linecap="round">
+  </line>
+
+  <!-- Highlighted contact boundary -->
+  <line
+    x1="85"
+    y1="119"
+    x2="300"
+    y2="119"
+    stroke="#dc2626"
+    stroke-width="5"
+    stroke-linecap="round">
+  </line>
+
+  <line
+    x1="85"
+    y1="140"
+    x2="300"
+    y2="140"
+    stroke="#2563eb"
+    stroke-width="2">
+  </line>
+
+  <line
+    x1="85"
+    y1="134"
+    x2="85"
+    y2="146"
+    stroke="#2563eb"
+    stroke-width="2">
+  </line>
+
+  <line
+    x1="300"
+    y1="134"
+    x2="300"
+    y2="146"
+    stroke="#2563eb"
+    stroke-width="2">
+  </line>
+
+  <text
+    x="192"
+    y="158"
+    text-anchor="middle"
+    font-size="14"
+    font-weight="700"
+    fill="#2563eb">
+    L
+  </text>
+
+  <text
+    x="390"
+    y="116"
+    text-anchor="middle"
+    font-size="16"
+    font-weight="700">
+    l_total = L
+  </text>
+
+  <!-- ================================================= -->
+  <!-- CASE B: SOAP FILM -->
+  <!-- ================================================= -->
+
+  <rect
+    x="20"
+    y="180"
+    width="480"
+    height="140"
+    rx="8"
+    fill="#ffffff"
+    stroke="#94a3b8">
+  </rect>
+
+  <text
+    x="40"
+    y="205"
+    font-size="14"
+    font-weight="700"
+    fill="#17324d">
+    B. ฟิล์มสบู่สองผิว / A soap film has two surfaces
+  </text>
+
+  <!-- Back surface -->
+  <polygon
+    points="80,225 275,225 300,245 105,245"
+    fill="#bfdbfe"
+    opacity="0.48"
+    stroke="#2563eb"
+    stroke-width="2">
+  </polygon>
+
+  <!-- Front surface -->
+  <polygon
+    points="80,255 275,255 300,275 105,275"
+    fill="#93c5fd"
+    opacity="0.62"
+    stroke="#0891b2"
+    stroke-width="2">
+  </polygon>
+
+  <!-- Sliding wire -->
+  <line
+    x1="287"
+    y1="217"
+    x2="312"
+    y2="283"
+    stroke="#111827"
+    stroke-width="10"
+    stroke-linecap="round">
+  </line>
+
+  <!-- Two highlighted contact boundaries -->
+  <line
+    x1="278"
+    y1="226"
+    x2="301"
+    y2="246"
+    stroke="#dc2626"
+    stroke-width="5">
+  </line>
+
+  <line
+    x1="278"
+    y1="256"
+    x2="301"
+    y2="276"
+    stroke="#f97316"
+    stroke-width="5">
+  </line>
+
+  <text
+    x="355"
+    y="244"
+    font-size="13"
+    fill="#dc2626"
+    font-weight="700">
+    ผิวหน้า: L
+  </text>
+
+  <text
+    x="355"
+    y="262"
+    font-size="11"
+    fill="#dc2626">
+    Front surface: L
+  </text>
+
+  <text
+    x="355"
+    y="285"
+    font-size="13"
+    fill="#f97316"
+    font-weight="700">
+    ผิวหลัง: L
+  </text>
+
+  <text
+    x="355"
+    y="303"
+    font-size="11"
+    fill="#f97316">
+    Back surface: L
+  </text>
+
+  <text
+    x="180"
+    y="305"
+    text-anchor="middle"
+    font-size="16"
+    font-weight="700">
+    l_total = L + L = 2L
+  </text>
+
+  <!-- ================================================= -->
+  <!-- CASE C: CIRCULAR RING -->
+  <!-- ================================================= -->
+
+  <rect
+    x="20"
+    y="333"
+    width="480"
+    height="150"
+    rx="8"
+    fill="#ffffff"
+    stroke="#94a3b8">
+  </rect>
+
+  <text
+    x="40"
+    y="358"
+    font-size="14"
+    font-weight="700"
+    fill="#17324d">
+    C. ห่วงวงกลม / Circular ring
+  </text>
+
+  <!-- Thick wire ring -->
+  <circle
+    cx="160"
+    cy="411"
+    r="55"
+    fill="none"
+    stroke="#111827"
+    stroke-width="18">
+  </circle>
+
+  <!-- Outer boundary -->
+  <circle
+    cx="160"
+    cy="411"
+    r="65"
+    fill="none"
+    stroke="#2563eb"
+    stroke-width="5">
+  </circle>
+
+  <!-- Inner boundary -->
+  <circle
+    cx="160"
+    cy="411"
+    r="45"
+    fill="none"
+    stroke="#dc2626"
+    stroke-width="5">
+  </circle>
+
+  <text
+    x="160"
+    y="406"
+    text-anchor="middle"
+    font-size="13"
+    fill="#dc2626"
+    font-weight="700">
+    ด้านใน
+  </text>
+
+  <text
+    x="160"
+    y="423"
+    text-anchor="middle"
+    font-size="11"
+    fill="#dc2626">
+    Inner
+  </text>
+
+  <text
+    x="160"
+    y="470"
+    text-anchor="middle"
+    font-size="12"
+    fill="#2563eb"
+    font-weight="700">
+    ด้านนอก / Outer
+  </text>
+
+  <text
+    x="355"
+    y="390"
+    text-anchor="middle"
+    font-size="15"
+    font-weight="700">
+    ด้านใน / Inner = 2πr
+  </text>
+
+  <text
+    x="355"
+    y="420"
+    text-anchor="middle"
+    font-size="15"
+    font-weight="700">
+    ด้านนอก / Outer = 2πr
+  </text>
+
+  <text
+    x="355"
+    y="458"
+    text-anchor="middle"
+    font-size="17"
+    font-weight="700"
+    fill="#17324d">
+    l_total = 4πr
+  </text>
 </svg>
-<div class="caption"><b class="bilingual-inline">ทิศของแรง: / Direction of the force:</b> แรงตึงผิวกระทำตามแนวผิวของเหลว และตั้งฉากกับเส้นขอบที่กำลังพิจารณา<span class="en bi-en">Surface-tension force acts tangent to the liquid surface and perpendicular to the contact boundary being considered.</span></div>
+
+<div class="caption">
+  เส้นสีแสดงเฉพาะแนวที่ของเหลวดึงวัตถุจริง
+  จำนวนแนวสัมผัสจึงขึ้นกับสถานการณ์ ไม่ได้ขึ้นกับรูปร่างเพียงอย่างเดียว
+  <span class="en">
+    The coloured lines show the actual boundaries along which the liquid
+    pulls. The number of contact boundaries depends on the physical
+    situation, not only on the object’s shape.
+  </span>
 </div>
-</div>
-<div class="grid-2">
-<div class="formula"><div>แรงตึงผิวรวม<span class="en bi-en">Total surface-tension force</span></div>$$F_\gamma=\gamma l_{\text{total}}$$</div>
-<div class="formula"><div>ความตึงผิว<span class="en bi-en">Surface tension</span></div>$$\gamma=\frac{F_\gamma}{l_{\text{total}}}$$</div>
-</div>
-<table class="compare"><thead><tr><th>ตัวแปร<span class="en bi-en">Variable</span></th><th>ความหมายในสูตร<span class="en bi-en">Meaning in the equation</span></th><th>หน่วย SI<span class="en bi-en">SI unit</span></th></tr></thead><tbody>
-<tr><td>$F_\gamma$</td><td>ขนาดของแรงตึงผิวรวมจากทุกแนวสัมผัสที่ของเหลวดึงวัตถุ ตัวห้อย $\gamma$ ใช้บอกว่าเป็นแรงที่เกิดจากความตึงผิว<span class="en bi-en">The total force exerted by surface tension along all contact boundaries. The subscript $\gamma$ indicates that this force is due to surface tension.</span></td><td>$\mathrm N$</td></tr>
-<tr><td>$\gamma$</td><td>ความตึงผิวของของเหลว หรือแรงต่อความยาวแนวสัมผัสหนึ่งหน่วย อ่านว่า “แกมมา”<span class="en bi-en">The surface tension of the liquid, defined as force per unit contact length. The symbol is read as “gamma.”</span></td><td>$\mathrm{N/m}$</td></tr>
-<tr><td>$l_{\text{total}}$</td><td>ผลรวมความยาวของแนวสัมผัสทั้งหมดที่ถูกแรงตึงผิวกระทำ คำว่า total เตือนว่าต้องรวมทุกด้านหรือทุกผิว<span class="en bi-en">The sum of the lengths of every contact boundary on which surface tension acts. The word “total” reminds us to include every side or surface.</span></td><td>$\mathrm m$</td></tr>
-</tbody></table>
-<div class="variable-box"><div class="variable-title">อ่านสูตรเป็นประโยค<span class="en bi-en">Read the equation as a sentence</span></div>
-<div>$F_\gamma=\gamma l_{\text{total}}$ หมายถึง “แรงตึงผิวรวม = ความตึงผิวของของเหลว × ความยาวแนวสัมผัสทั้งหมด”<span class="en bi-en">$F_\gamma=\gamma l_{\text{total}}$ means “total surface-tension force = surface tension of the liquid × total contact length.”</span></div>
-<div class="variable-note">ถ้าแนวสัมผัสเพิ่มเป็น 2 เท่า โดย $\gamma$ เท่าเดิม แรงตึงผิวรวมก็เพิ่มเป็น 2 เท่า<span class="en bi-en">If the total contact length doubles while $\gamma$ remains unchanged, the total surface-tension force also doubles.</span></div>
-</div>
-<div class="pitfall"><b class="bilingual-inline">อย่าสับสน: / Do not confuse:</b> “แรงตึงผิว” มีหน่วยนิวตัน แต่ “ความตึงผิว” มีหน่วยนิวตันต่อเมตร<span class="en bi-en">“Surface-tension force” is measured in newtons, whereas “surface tension” is measured in newtons per metre.</span></div>
-<div class="footer"><span>Surface Tension &amp; Viscosity — Fully Bilingual v5</span><span>1</span></div>
-</section>
-<!-- PAGE 2 -->
-<section class="page">
-<header class="page-header"><div><div class="kicker">Concept 2</div><h2>การนับแนวสัมผัสและสมดุลโมเมนต์</h2><span class="en">Counting contact boundaries and torque balance</span></div></header>
-<div class="key"><b class="bilingual-inline">หลักที่ใช้ได้กับทุกโจทย์: / A rule that works for every problem:</b> อย่าจำว่า “เห็นห่วงต้องคูณ 2” ให้ลากเส้นตามบริเวณที่ของเหลวดึงวัตถุจริง แล้วรวมความยาวทุกแนว<span class="en bi-en">Do not memorise “a ring always means multiply by 2.” Trace the actual boundaries along which the liquid pulls the object, then add all of their lengths.</span></div>
-<ol class="step-list"><li>ทำเครื่องหมายแนวที่ของเหลวสัมผัสวัตถุ<span class="en bi-en">Mark each boundary where the liquid contacts the object.</span></li><li>นับว่ามีกี่แนวหรือกี่ผิว<span class="en bi-en">Count how many boundaries or surfaces are involved.</span></li><li>หาความยาวของแต่ละแนว<span class="en bi-en">Find the length of each boundary.</span></li><li>รวมเป็น $l_{\text{total}}$ แล้วจึงใช้ $F_\gamma=\gamma l_{\text{total}}$<span class="en bi-en">Add them to obtain $l_{\text{total}}$, then use $F_\gamma=\gamma l_{\text{total}}$.</span></li></ol>
-<div class="grid-3">
-<div class="visual"><svg viewbox="0 0 250 160"><line stroke="#111" stroke-width="8" x1="45" x2="205" y1="90" y2="90"></line><line stroke="#0891b2" stroke-width="4" x1="45" x2="205" y1="105" y2="105"></line><text class="svg-bilingual" font-weight="700" text-anchor="middle" x="125" y="45">ลวดตรงสัมผัส 1 แนว / Straight wire: one contact boundary</text><text text-anchor="middle" x="125" y="140">$l=L$</text></svg><div class="caption">นับแนวสัมผัสเดียว<span class="en bi-en">Count one contact boundary.</span></div></div>
-<div class="visual"><svg viewbox="0 0 250 160"><ellipse cx="125" cy="92" fill="none" rx="70" ry="30" stroke="#111" stroke-width="9"></ellipse><ellipse cx="125" cy="92" fill="none" rx="78" ry="38" stroke="#0891b2" stroke-width="4"></ellipse><ellipse cx="125" cy="92" fill="none" rx="61" ry="22" stroke="#2563eb" stroke-width="4"></ellipse><text class="svg-bilingual" font-weight="700" text-anchor="middle" x="125" y="35">ห่วง: ด้านนอก + ด้านใน / Ring: outer boundary + inner boundary</text><text text-anchor="middle" x="125" y="148">$l=2(2\pi r)=4\pi r$</text></svg><div class="caption">แนววงกลมสองแนว<span class="en bi-en">Two circular contact boundaries.</span></div></div>
-<div class="visual"><svg viewbox="0 0 250 160"><rect fill="#bfdbfe" height="70" stroke="#111" width="160" x="45" y="55"></rect><line stroke="#111" stroke-width="8" x1="180" x2="180" y1="45" y2="135"></line><line stroke="#0891b2" stroke-width="4" x1="174" x2="174" y1="55" y2="125"></line><line stroke="#2563eb" stroke-width="4" x1="186" x2="186" y1="55" y2="125"></line><text class="svg-bilingual" font-weight="700" text-anchor="middle" x="125" y="28">ฟิล์มสบู่มี 2 ผิว / A soap film has two surfaces</text><text text-anchor="middle" x="125" y="153">$l_{\text{total}}=2L$</text></svg><div class="caption">แต่ละผิวดึงลวดหนึ่งครั้ง<span class="en bi-en">Each surface pulls on the wire once.</span></div></div>
-</div>
-<h3>สมดุลคานที่ใช้วัดความตึงผิว<span class="en bi-en">Lever Balance Used to Measure Surface Tension</span></h3>
-<div class="grid-2">
-<div class="visual">
-<svg viewbox="0 0 420 220"><defs><marker id="arr3" markerheight="8" markerwidth="8" orient="auto" refx="6" refy="3"><path d="M0,0 L0,6 L7,3 z" fill="#b91c1c"></path></marker></defs><line stroke="#111" stroke-width="7" x1="45" x2="375" y1="95" y2="95"></line><polygon fill="#64748b" points="210,95 190,135 230,135"></polygon><line marker-end="url(#arr3)" stroke="#b91c1c" stroke-width="4" x1="80" x2="80" y1="35" y2="87"></line><text fill="#b91c1c" font-weight="700" text-anchor="middle" x="80" y="25">$W$</text><line marker-end="url(#arr3)" stroke="#b91c1c" stroke-width="4" x1="340" x2="340" y1="35" y2="87"></line><text fill="#b91c1c" font-weight="700" text-anchor="middle" x="340" y="25">$F_\gamma$</text><line stroke="#2563eb" stroke-width="3" x1="80" x2="210" y1="155" y2="155"></line><line stroke="#2563eb" stroke-width="3" x1="210" x2="340" y1="155" y2="155"></line><text fill="#2563eb" font-weight="700" text-anchor="middle" x="145" y="180">$X$</text><text fill="#2563eb" font-weight="700" text-anchor="middle" x="275" y="180">$Y$</text></svg>
-<div class="caption">เมื่อคานไม่เร่งเชิงมุม โมเมนต์ตามเข็มเท่ากับโมเมนต์ทวนเข็ม<span class="en bi-en">When the lever has no angular acceleration, the clockwise moment equals the anticlockwise moment.</span></div>
-</div>
-<div>
-<div class="formula">$$WX=F_\gamma Y$$</div>
-<div class="formula">$$F_\gamma=\frac{WX}{Y}$$</div>
-<div class="formula">$$\gamma=\frac{F_\gamma}{l_{\text{total}}}$$</div>
-</div>
-</div>
-<div class="variable-box">
-<div class="variable-title">ตัวแปรที่ใช้ใน Concept 2<span class="en bi-en">Variables Used in Concept 2</span></div>
-<div class="variable-grid">
-<div class="variable-item"><b>$W$</b> — แรงหรือน้ำหนักที่กดปลายคาน หน่วย $\mathrm N$; ถ้าโจทย์ให้มวล $m$ ต้องหา $W=mg$ ก่อน<span class="en bi-en">— Force or weight acting at the end of the lever, measured in $\mathrm N$. If the problem gives a mass $m$, first calculate $W=mg$.</span></div>
-<div class="variable-item"><b>$X$</b> — ระยะตั้งฉากจากจุดหมุนถึงแนวแรง $W$<span class="en bi-en">— Perpendicular distance from the pivot to the line of action of $W$.</span></div>
-<div class="variable-item"><b>$Y$</b> — ระยะตั้งฉากจากจุดหมุนถึงแนวแรง $F_\gamma$<span class="en bi-en">— Perpendicular distance from the pivot to the line of action of $F_\gamma$.</span></div>
-<div class="variable-item"><b>$F_\gamma$</b> — แรงตึงผิวรวมที่ดึงห่วงหรือลวด หน่วย $\mathrm N$<span class="en bi-en">— Total surface-tension force pulling on the ring or wire, measured in $\mathrm N$.</span></div>
-<div class="variable-item"><b>$L$</b> — ความยาวของลวดตรงหรือขอบหนึ่งแนว หน่วย $\mathrm m$<span class="en bi-en">— Length of a straight wire or one contact boundary, measured in $\mathrm m$.</span></div>
-<div class="variable-item"><b>$r$</b> — รัศมีของห่วงวงกลม หน่วย $\mathrm m$<span class="en bi-en">— Radius of the circular ring, measured in $\mathrm m$.</span></div>
-<div class="variable-item"><b>$l_{\text{total}}$</b> — ความยาวแนวสัมผัสรวมทั้งหมด หน่วย $\mathrm m$<span class="en bi-en">— Total length of all contact boundaries, measured in $\mathrm m$.</span></div>
-<div class="variable-item"><b>$\gamma$</b> — ความตึงผิวของของเหลว หน่วย $\mathrm{N/m}$<span class="en bi-en">— Surface tension of the liquid, measured in $\mathrm{N/m}$.</span></div>
-</div>
-<div class="variable-note">ในสมการโมเมนต์ $WX=F_\gamma Y$ ระยะ $X$ และ $Y$ ใช้หน่วยเดียวกันได้ เช่น ใช้เซนติเมตรทั้งคู่ เพราะอยู่ในรูปอัตราส่วน แต่ก่อนใช้ $\gamma=F_\gamma/l_{\text{total}}$ ต้องแปลงความยาวเป็นเมตร<span class="en bi-en">In the moment equation $WX=F_\gamma Y$, $X$ and $Y$ may use the same unit, such as centimetres, because they form a ratio. Before using $\gamma=F_\gamma/l_{\text{total}}$, however, convert the contact length to metres.</span></div>
-</div>
-<div class="note"><b class="bilingual-inline">ปัจจัยที่มีผลต่อความตึงผิว: / Factors affecting surface tension:</b> ชนิดของของเหลว อุณหภูมิ และสารเจือปน เมื่ออุณหภูมิสูงขึ้น ความตึงผิวของของเหลวโดยทั่วไปลดลง ส่วนสารลดแรงตึงผิว เช่น สบู่ ทำให้ความตึงผิวของน้ำลดลง<span class="en bi-en">Surface tension depends on the type of liquid, temperature, and dissolved substances. In general, increasing temperature lowers surface tension. Surfactants such as soap reduce the surface tension of water.</span></div>
-<div class="footer"><span>Surface Tension &amp; Viscosity — Fully Bilingual v5</span><span>2</span></div>
-</section>
-<!-- PAGE 3 -->
-<section class="page">
-<header class="page-header"><div><div class="kicker">Concept 3</div><h2>ความหนืด แรงพยุง และความเร็วสุดท้าย</h2><span class="en">Viscosity, buoyancy and terminal velocity</span></div></header>
-<div class="grid-2">
-<div><div class="key"><b class="bilingual-inline">ความหนืด $(\eta)$ / Viscosity $(\eta)$</b> เป็นสมบัติของของไหลที่ต้านการเลื่อนสัมพัทธ์ระหว่างชั้นของของไหล หรือต้านวัตถุที่เคลื่อนผ่านของไหล ไม่ใช่ความหนาแน่น และไม่ใช่สมบัติเฉพาะของเหลว “ข้น” เท่านั้น<span class="en bi-en">is a property of a fluid that resists relative motion between its layers or resists an object moving through it. Viscosity is not density, and it is not limited to liquids that appear “thick.”</span></div><div class="note"><b class="bilingual-inline">มองเชิงแรง: / Force perspective:</b> ถ้าลูกกลมเคลื่อนลง ของไหลจะออกแรงหนืดขึ้นด้านบนเพื่อต้านการเคลื่อนที่ ขณะที่แรงพยุงก็ชี้ขึ้นเช่นกัน แต่เกิดจากความดันของของไหลที่ด้านล่างมากกว่าด้านบน<span class="en bi-en">If the sphere moves downward, the fluid exerts an upward viscous force opposing the motion. The buoyant force also points upward, but it arises because fluid pressure is greater at the bottom of the sphere than at the top.</span></div><div class="formula">$$[\eta]=\mathrm{Pa\cdot s}=\mathrm{N\,s/m^2}$$</div><div class="note">การแปลงที่ใช้บ่อย: $1\mathrm{\ mPa\cdot s}=10^{-3}\mathrm{\ Pa\cdot s}$<span class="en bi-en">Common conversion: $1\mathrm{\ mPa\cdot s}=10^{-3}\mathrm{\ Pa\cdot s}$.</span></div></div>
-<div class="visual"><svg viewbox="0 0 360 230"><rect fill="#dbeafe" height="175" rx="8" stroke="#17324d" stroke-width="2" width="140" x="20" y="25"></rect><rect fill="#fde68a" height="175" rx="8" stroke="#17324d" stroke-width="2" width="140" x="200" y="25"></rect><circle cx="90" cy="125" fill="#64748b" r="18"></circle><circle cx="270" cy="85" fill="#64748b" r="18"></circle><line stroke="#b91c1c" stroke-width="4" x1="90" x2="90" y1="45" y2="96"></line><line stroke="#b91c1c" stroke-width="4" x1="270" x2="270" y1="45" y2="56"></line><text class="svg-bilingual" font-weight="700" text-anchor="middle" x="90" y="218">ความหนืดต่ำ / Low viscosity</text><text class="svg-bilingual" font-weight="700" text-anchor="middle" x="270" y="218">ความหนืดสูง / High viscosity</text><text class="svg-bilingual" font-weight="700" text-anchor="middle" x="180" y="14">เวลาเท่ากัน วัตถุเคลื่อนที่ได้ต่างระยะ / In the same time, the objects travel different distances</text></svg><div class="caption">ภาพเชิงคุณภาพเพื่อเปรียบเทียบแรงต้าน ไม่ได้ใช้เปรียบเทียบความหนาแน่น<span class="en bi-en">This qualitative diagram compares resistive effects; it does not compare densities.</span></div></div>
-</div>
-<h3>กฎของสโตกส์สำหรับทรงกลม<span class="en bi-en">Stokes’ Law for a Sphere</span></h3>
-<div class="grid-3"><div class="formula">$$F_v\propto\eta$$</div><div class="formula">$$F_v\propto r$$</div><div class="formula">$$F_v\propto v$$</div></div>
-<div class="formula">$$F_v=6\pi\eta rv$$</div>
-<div class="variable-box">
-<div class="variable-title">ตัวแปรในกฎของสโตกส์<span class="en bi-en">Variables in Stokes’ Law</span></div>
-<div class="variable-grid">
-<div class="variable-item"><b>$F_v$</b> — แรงหนืดหรือแรงต้านจากของไหล หน่วย $\mathrm N$; ตัวห้อย $v$ สื่อถึง viscous force<span class="en bi-en">— Viscous or drag force exerted by the fluid, measured in $\mathrm N$. The subscript $v$ denotes viscous force.</span></div>
-<div class="variable-item"><b>$\eta$</b> — สัมประสิทธิ์ความหนืดเชิงพลวัตของของไหล หน่วย $\mathrm{Pa\cdot s}$ อ่านว่า “อีตา”<span class="en bi-en">— Dynamic viscosity of the fluid, measured in $\mathrm{Pa\cdot s}$. The symbol is read as “eta.”</span></div>
-<div class="variable-item"><b>$r$</b> — รัศมีของลูกกลม หน่วย $\mathrm m$<span class="en bi-en">— Radius of the sphere, measured in $\mathrm m$.</span></div>
-<div class="variable-item"><b>$v$</b> — อัตราเร็วของลูกกลมเทียบกับของไหล หน่วย $\mathrm{m/s}$<span class="en bi-en">— Speed of the sphere relative to the fluid, measured in $\mathrm{m/s}$.</span></div>
-<div class="variable-item"><b>$\pi$</b> — ค่าคงตัวพาย ประมาณ $3.1416$<span class="en bi-en">— The constant pi, approximately $3.1416$.</span></div>
-</div>
-</div>
-<div class="note"><b class="bilingual-inline">อ่านสูตรให้เป็น: / Interpret the equation:</b> เมื่อของเหลวเดิมและลูกกลมเดิมคงที่ จะได้ $F_v\propto v$ ดังนั้นตอนเริ่มปล่อยที่ $v=0$ แรงหนืดเป็นศูนย์ และเมื่อวัตถุเร็วขึ้น แรงหนืดจะเพิ่มขึ้นเรื่อย ๆ<span class="en bi-en">For the same fluid and sphere, $F_v\propto v$. Therefore, at release when $v=0$, the viscous force is zero; as the sphere speeds up, the viscous force increases.</span></div>
-<div class="pitfall"><b class="bilingual-inline">เงื่อนไขสำคัญ: / Important conditions:</b> วัตถุเป็นทรงกลม การไหลราบเรียบ ความเร็วไม่สูงมาก และวัตถุไม่อยู่ชิดผนังภาชนะเกินไป<span class="en bi-en">The object is spherical, the flow is laminar, the speed is not too high, and the sphere is not too close to the container wall.</span></div>
-<h3>การตกของลูกกลม: จากเริ่มปล่อยสู่ความเร็วสุดท้าย<span class="en bi-en">Falling Sphere: From Release to Terminal Velocity</span></h3>
-<div class="grid-3">
-<div class="visual"><svg viewbox="0 0 240 220"><defs><marker id="a4" markerheight="8" markerwidth="8" orient="auto" refx="6" refy="3"><path d="M0,0 L0,6 L7,3 z" fill="#b91c1c"></path></marker></defs><circle cx="120" cy="105" fill="#94a3b8" r="25" stroke="#111"></circle><line marker-end="url(#a4)" stroke="#b91c1c" stroke-width="5" x1="120" x2="120" y1="132" y2="190"></line><line stroke="#15803d" stroke-width="4" x1="103" x2="103" y1="78" y2="50"></line><text class="svg-bilingual" font-weight="700" text-anchor="middle" x="120" y="25">เริ่มปล่อย / Just released</text><text fill="#b91c1c" font-weight="700" x="132" y="178">$mg$</text><text fill="#15803d" x="70" y="55">$F_B$</text><text text-anchor="middle" x="120" y="214">$v=0,\;F_v=0$</text></svg><div class="caption">แรงลงมากกว่าแรงขึ้น จึงเร่งลง<span class="en bi-en">The downward force is greater than the upward forces, so the sphere accelerates downward.</span></div></div>
-<div class="visual"><svg viewbox="0 0 240 220"><defs><marker id="a5" markerheight="8" markerwidth="8" orient="auto" refx="6" refy="3"><path d="M0,0 L0,6 L7,3 z" fill="#b91c1c"></path></marker><marker id="a5g" markerheight="8" markerwidth="8" orient="auto" refx="6" refy="3"><path d="M0,0 L0,6 L7,3 z" fill="#15803d"></path></marker></defs><circle cx="120" cy="105" fill="#94a3b8" r="25" stroke="#111"></circle><line marker-end="url(#a5)" stroke="#b91c1c" stroke-width="5" x1="120" x2="120" y1="132" y2="190"></line><line marker-end="url(#a5g)" stroke="#15803d" stroke-width="4" x1="103" x2="103" y1="78" y2="45"></line><line marker-end="url(#a5g)" stroke="#2563eb" stroke-width="4" x1="137" x2="137" y1="78" y2="35"></line><text class="svg-bilingual" font-weight="700" text-anchor="middle" x="120" y="20">กำลังเร็วขึ้น / Speeding up</text><text fill="#b91c1c" x="142" y="180">$mg$</text><text fill="#15803d" x="74" y="50">$F_B$</text><text fill="#2563eb" x="148" y="48">$F_v$</text><text text-anchor="middle" x="120" y="214">$v\uparrow\Rightarrow F_v\uparrow$</text></svg><div class="caption">แรงหนืดเพิ่ม ทำให้ความเร่งลดลง<span class="en bi-en">The viscous force increases, so the acceleration decreases.</span></div></div>
-<div class="visual"><svg viewbox="0 0 240 220"><defs><marker id="a6" markerheight="8" markerwidth="8" orient="auto" refx="6" refy="3"><path d="M0,0 L0,6 L7,3 z" fill="#b91c1c"></path></marker><marker id="a6g" markerheight="8" markerwidth="8" orient="auto" refx="6" refy="3"><path d="M0,0 L0,6 L7,3 z" fill="#15803d"></path></marker></defs><circle cx="120" cy="105" fill="#94a3b8" r="25" stroke="#111"></circle><line marker-end="url(#a6)" stroke="#b91c1c" stroke-width="5" x1="120" x2="120" y1="132" y2="190"></line><line marker-end="url(#a6g)" stroke="#15803d" stroke-width="4" x1="103" x2="103" y1="78" y2="38"></line><line marker-end="url(#a6g)" stroke="#2563eb" stroke-width="4" x1="137" x2="137" y1="78" y2="38"></line><text class="svg-bilingual" font-weight="700" text-anchor="middle" x="120" y="20">ความเร็วสุดท้าย / Terminal velocity</text><text text-anchor="middle" x="120" y="214">$mg=F_B+F_v,\;a=0$</text></svg><div class="caption">ยังเคลื่อนที่อยู่ แต่ด้วยความเร็วคงตัว<span class="en bi-en">The sphere is still moving, but at constant speed.</span></div></div>
-</div>
-<div class="note"><b class="bilingual-inline">ความเร็วสุดท้ายไม่ได้หมายถึงความเร็วมากที่สุดแบบมีขีดจำกัดตายตัว: / Terminal velocity does not mean a universal maximum speed:</b> แต่หมายถึงความเร็วคงตัวที่เกิดขึ้นเมื่อแรงลัพธ์เป็นศูนย์ จึงมี $a=0$ แต่ยังมี $v_T\ne0$ และวัตถุยังคงเคลื่อนที่ต่อไป<span class="en bi-en">It is the constant speed reached when the resultant force becomes zero. Thus $a=0$, but $v_T\ne0$, and the object continues moving.</span></div>
-<div class="grid-2"><div class="formula">$$F_B=\rho_fVg$$</div><div class="formula">$$v_T=\frac{2r^2g(\rho_s-\rho_f)}{9\eta}$$</div></div>
-<div class="variable-box">
-<div class="variable-title">ตัวแปรในแรงพยุงและความเร็วสุดท้าย<span class="en bi-en">Variables in Buoyancy and Terminal Velocity</span></div>
-<div class="variable-grid">
-<div class="variable-item"><b>$F_B$</b> — แรงพยุง หน่วย $\mathrm N$; ตัวห้อย $B$ มาจาก buoyancy<span class="en bi-en">— Buoyant force, measured in $\mathrm N$. The subscript $B$ stands for buoyancy.</span></div>
-<div class="variable-item"><b>$\rho_f$</b> — ความหนาแน่นของของไหล หน่วย $\mathrm{kg/m^3}$; $f$ = fluid<span class="en bi-en">— Density of the fluid, measured in $\mathrm{kg/m^3}$; $f$ = fluid.</span></div>
-<div class="variable-item"><b>$V$</b> — ปริมาตรของของไหลที่ถูกแทนที่; เมื่อลูกกลมจมมิด เท่ากับปริมาตรลูกกลม $\frac43\pi r^3$<span class="en bi-en">— Volume of displaced fluid. When the sphere is fully submerged, this equals the sphere’s volume, $\frac43\pi r^3$.</span></div>
-<div class="variable-item"><b>$g$</b> — ความเร่งโน้มถ่วง หน่วย $\mathrm{m/s^2}$<span class="en bi-en">— Gravitational acceleration, measured in $\mathrm{m/s^2}$.</span></div>
-<div class="variable-item"><b>$v_T$</b> — ความเร็วสุดท้ายหรือความเร็วคงตัว หน่วย $\mathrm{m/s}$; $T$ = terminal<span class="en bi-en">— Terminal or constant velocity, measured in $\mathrm{m/s}$; $T$ = terminal.</span></div>
-<div class="variable-item"><b>$\rho_s$</b> — ความหนาแน่นของลูกกลมหรือของแข็ง หน่วย $\mathrm{kg/m^3}$; $s$ = sphere/solid<span class="en bi-en">— Density of the sphere or solid, measured in $\mathrm{kg/m^3}$; $s$ = sphere/solid.</span></div>
-<div class="variable-item"><b>$r$</b> — รัศมีลูกกลม หน่วย $\mathrm m$<span class="en bi-en">— Radius of the sphere, measured in $\mathrm m$.</span></div>
-<div class="variable-item"><b>$\eta$</b> — ความหนืดของของไหล หน่วย $\mathrm{Pa\cdot s}$<span class="en bi-en">— Viscosity of the fluid, measured in $\mathrm{Pa\cdot s}$.</span></div>
-<div class="variable-item"><b>$a$</b> — ความเร่งของลูกกลม; ที่ความเร็วสุดท้าย $a=0$ แต่ $v_T\ne0$<span class="en bi-en">— Acceleration of the sphere. At terminal velocity, $a=0$ but $v_T\ne0$.</span></div>
-</div>
-<div class="variable-note">ผลต่าง $\rho_s-\rho_f$ บอกว่าลูกกลม “หนักกว่าของไหลต่อหนึ่งหน่วยปริมาตร” มากเพียงใด ถ้าผลต่างมาก แรงขับสุทธิลงมากและ $v_T$ มากขึ้น<span class="en bi-en">The difference $\rho_s-\rho_f$ indicates how much denser the sphere is than the fluid per unit volume. A larger difference produces a larger net downward driving force and a greater $v_T$.</span></div>
-</div>
-<div class="footer"><span>Surface Tension &amp; Viscosity — Fully Bilingual v5</span><span>3</span></div>
-</section>
-<!-- PAGE 4: DERIVATION OF TERMINAL VELOCITY -->
-<section class="page">
-<header class="page-header"><div><div class="kicker">Concept 4 • Derivation</div><h2>พิสูจน์สมการความเร็วสุดท้ายของลูกกลม</h2><span class="en">Derivation of the terminal velocity of a sphere</span></div><div class="tag">Force Balance</div></header>
-<div class="key"><b class="bilingual-inline">สถานการณ์ที่พิจารณา: / Situation considered:</b> ลูกกลมความหนาแน่น $\rho_s$ รัศมี $r$ ตกลงในของเหลวความหนาแน่น $\rho_f$ และความหนืด $\eta$ โดยลูกกลมจมมิดและเคลื่อนที่ด้วยความเร็วสุดท้าย $v_T$<span class="en bi-en">A fully submerged sphere of density $\rho_s$ and radius $r$ falls through a fluid of density $\rho_f$ and viscosity $\eta$ at terminal velocity $v_T$.</span></div>
-<div class="grid-2">
-<div class="visual">
-<svg viewbox="0 0 360 300"><defs><marker id="vtDown" markerheight="8" markerwidth="8" orient="auto" refx="6" refy="3"><path d="M0,0 L0,6 L7,3 z" fill="#b91c1c"></path></marker><marker id="vtUpG" markerheight="8" markerwidth="8" orient="auto" refx="6" refy="3"><path d="M0,0 L0,6 L7,3 z" fill="#15803d"></path></marker><marker id="vtUpB" markerheight="8" markerwidth="8" orient="auto" refx="6" refy="3"><path d="M0,0 L0,6 L7,3 z" fill="#2563eb"></path></marker></defs><rect fill="#dbeafe" height="250" rx="10" stroke="#17324d" stroke-width="3" width="250" x="55" y="20"></rect><circle cx="180" cy="145" fill="#64748b" r="38" stroke="#111" stroke-width="2"></circle><line marker-end="url(#vtDown)" stroke="#b91c1c" stroke-width="6" x1="180" x2="180" y1="185" y2="255"></line><line marker-end="url(#vtUpG)" stroke="#15803d" stroke-width="6" x1="153" x2="153" y1="107" y2="45"></line><line marker-end="url(#vtUpB)" stroke="#2563eb" stroke-width="6" x1="207" x2="207" y1="107" y2="45"></line><text fill="#b91c1c" font-weight="700" x="195" y="238">$W=mg$</text><text fill="#15803d" font-weight="700" x="92" y="58">$F_B$</text><text fill="#2563eb" font-weight="700" x="218" y="58">$F_v$</text><text font-weight="700" text-anchor="middle" x="180" y="292">$a=0\Rightarrow W=F_B+F_v$</text></svg>
-<div class="caption">ที่ความเร็วสุดท้าย แรงขึ้นรวมเท่ากับน้ำหนักพอดี<span class="en bi-en">At terminal velocity, the total upward force exactly equals the weight.</span></div>
-</div>
-<div>
-<h3>แรงทั้งสาม<span class="en bi-en">The Three Forces</span></h3>
-<table class="compare"><tr><th>แรง<span class="en bi-en">Force</span></th><th>ขนาด<span class="en bi-en">Magnitude</span></th><th>ทิศ<span class="en bi-en">Direction</span></th></tr><tr><td>น้ำหนัก<span class="en bi-en">Weight</span></td><td>$W=\rho_sVg$</td><td>ลง<span class="en bi-en">Downward</span></td></tr><tr><td>แรงพยุง<span class="en bi-en">Buoyant force</span></td><td>$F_B=\rho_fVg$</td><td>ขึ้น<span class="en bi-en">Upward</span></td></tr><tr><td>แรงหนืด<span class="en bi-en">Viscous force</span></td><td>$F_v=6\pi\eta rv_T$</td><td>ขึ้น เมื่อลูกกลมตกลง<span class="en bi-en">Upward when the sphere falls downward</span></td></tr></table>
-<div class="note"><b class="bilingual-inline">เหตุผลที่ใช้ $m=\rho_sV$: / Why we use $m=\rho_sV$:</b> มวลของลูกกลมเท่ากับความหนาแน่นของลูกกลมคูณปริมาตร จึงเขียนน้ำหนักได้เป็น $mg=\rho_sVg$<span class="en bi-en">The sphere’s mass equals its density multiplied by its volume, so its weight can be written as $mg=\rho_sVg$.</span></div>
-</div>
-</div>
-<div class="worked">
-<h3>จัดสมการทีละขั้น<span class="en bi-en">Derivation Step by Step</span></h3>
-<p><b class="bilingual-inline">1) ใช้กฎข้อที่สองของนิวตันที่ $a=0$ / 1) Apply Newton’s second law with $a=0$</b></p>
-    $$\rho_sVg=\rho_fVg+6\pi\eta rv_T$$
-    <p><b class="bilingual-inline">2) ย้ายแรงพยุงมารวมกับน้ำหนัก / 2) Move the buoyant-force term to the left-hand side</b></p>
-    $$(\rho_s-\rho_f)Vg=6\pi\eta rv_T$$
-    <p><b class="bilingual-inline">3) แทนปริมาตรทรงกลม $V=\dfrac{4}{3}\pi r^3$ / 3) Substitute the sphere volume $V=\dfrac{4}{3}\pi r^3$</b></p>
-    $$(\rho_s-\rho_f)\left(\frac{4}{3}\pi r^3\right)g=6\pi\eta rv_T$$
-    <p><b class="bilingual-inline">4) หารทั้งสองข้างด้วย $6\pi\eta r$ / 4) Divide both sides by $6\pi\eta r$</b></p>
-    $$v_T=\frac{(\rho_s-\rho_f)(4/3)\pi r^3g}{6\pi\eta r}$$
-    <p><b class="bilingual-inline">5) ตัด $\pi$ และลดกำลัง $r^3/r=r^2$ / 5) Cancel $\pi$ and simplify $r^3/r=r^2$</b></p>
-    $$v_T=\frac{4}{18}\frac{r^2g(\rho_s-\rho_f)}{\eta}=\boxed{\frac{2r^2g(\rho_s-\rho_f)}{9\eta}}$$
-  </div>
-<div class="grid-2"><div class="note"><b class="bilingual-inline">อ่านความสัมพันธ์: / Interpret the proportionalities:</b> $v_T\propto r^2$ และ $v_T\propto(\rho_s-\rho_f)$ แต่ $v_T\propto1/\eta$ ลูกกลมใหญ่หรือหนักกว่าเมื่อเทียบกับของไหลจะตกเร็วขึ้น ส่วนของเหลวหนืดขึ้นทำให้ตกช้าลง<span class="en bi-en">$v_T\propto r^2$ and $v_T\propto(\rho_s-\rho_f)$, whereas $v_T\propto1/\eta$. A larger sphere or a sphere that is denser relative to the fluid falls faster; a more viscous fluid makes it fall more slowly.</span></div><div class="pitfall"><b class="bilingual-inline">ขอบเขต: / Scope:</b> สูตรนี้อธิบายลูกกลมที่ตกลงเมื่อ $\rho_s&gt;\rho_f$ ภายใต้เงื่อนไขของกฎสโตกส์ ถ้า $\rho_s&lt;\rho_f$ วัตถุมีแนวโน้มลอยขึ้นและต้องกำหนดทิศแรงใหม่<span class="en bi-en">This equation describes a downward-falling sphere when $\rho_s&gt;\rho_f$ under the conditions for Stokes’ law. If $\rho_s&lt;\rho_f$, the object tends to rise, so the force directions must be defined again.</span></div></div>
-<div class="footer"><span>Surface Tension &amp; Viscosity — Fully Bilingual v5</span><span>4</span></div>
-</section>
+</div> </div> <div class="proof-card"> <b> ลำดับการคำนวณเมื่อใช้คานสมดุล <span class="en">Calculation sequence when using a lever balance</span> </b> <div style="text-align:center; margin-top:2mm; line-height:1.9;"> สมดุลโมเมนต์ $\longrightarrow$ หา $F_\gamma$ $\longrightarrow$ นับแนวสัมผัสเพื่อหา $l_{\text{total}}$ $\longrightarrow$ หา $\gamma$ <span class="en"> Torque balance $\longrightarrow$ determine $F_\gamma$ $\longrightarrow$ count the contact boundaries to obtain $l_{\text{total}}$ $\longrightarrow$ calculate $\gamma$ </span> </div> </div> <div class="formula" style="font-size:15px;"> <div> สำหรับห่วงลวดวงกลมบาง <span class="en">For a thin circular wire ring</span> </div> = \underbrace{2\pi r}_{\text{ด้านใน / inner}} + \underbrace{2\pi r}_{\text{ด้านนอก / outer}} = 4\pi r$$ $$\boxed{\gamma=\frac{F_\gamma}{4\pi r}}$$ </div> <div class="pitfall"> <b>ข้อควรระวัง:</b> ตัวคูณ $2$ ไม่ได้เกิดขึ้นในโจทย์ความตึงผิวทุกข้อ แต่เกิดเมื่อมีแนวสัมผัส สองแนวหรือมีฟิล์มสองผิวจริง ๆ <span class="en"> <b>Important:</b> A factor of $2$ is not used in every surface-tension problem. It appears only when the physical situation contains two contact boundaries or two film surfaces. </span> </div>
+    <div class="footer"><span>Surface Tension & Viscosity</span><span>Page 1</span></div>
+  </section>
+
+  <!-- Page 2: Viscosity, Stokes' Law & Proof of Terminal Velocity -->
+  <section class="page">
+    <div class="part-head">
+      <div>
+        <div class="part-no">Physics Learning Module</div>
+        <h2>ความหนืดและการพิสูจน์ความเร็วสุดท้าย<br><span class="en">Viscosity, Stokes' Law & Terminal Velocity Proof</span></h2>
+      </div>
+    </div>
+
+    <h3>3. ความหนืดและกฎของสโตกส์ <span class="inline-en">(Viscosity & Stokes' Law)</span></h3>
+    <p>
+      <b>ความหนืด ($\eta$):</b> แรงเสียดทานภายในของไหลที่ต้านการเคลื่อนที่ของวัตถุ
+      <ul>
+        <li><b>ของเหลว:</b> เกิดจากแรงดึงดูดระหว่างโมเลกุล อุณหภูมิสูงขึ้น $\rightarrow$ ความหนืด<b>ลดลง</b></li>
+        <li><b>แก๊ส:</b> เกิดจากการชนและการถ่ายทอดโมเมนตัม อุณหภูมิสูงขึ้น $\rightarrow$ ความหนืด<b>เพิ่มขึ้น</b></li>
+      </ul>
+      <b>กฎของสโตกส์ (Stokes' Law):</b> วัตถุทรงกลมรัศมี $r$ เคลื่อนที่ด้วยความเร็ว $v$ ในของไหลที่มีความหนืด $\eta$ จะเผชิญแรงหนืด ($F_v$):
+    </p>
+
+    <div class="formula">
+      $$F_v = 6\pi \eta v r$$
+    </div>
+
+    <div class="two-col" style="margin-top:3mm;">
+      <div class="visual-card">
+        <img src="https://www.schoolphysics.co.uk/age16-19/Properties%20of%20matter/Viscosity/text/Stokes_law/images/2.png" alt="Stokes Law Viscosity Free Body Diagram">
+        <div class="caption">
+          <b>Free Body Diagram สภาวะความเร็วสุดท้าย ($v_T$):</b> สมดุลของ 3 แรงในแนวดิ่ง $\implies F_B + F_v = mg$
+        </div>
+      </div>
+
+      <div class="proof-card">
+        <b style="color:#16a34a; font-size:15px;">📐 การพิสูจน์สูตรความเร็วสุดท้าย ($v_T$):</b>
+        <p style="font-size:13px; line-height:1.4; margin:1mm 0;">
+          เมื่อปล่อยลูกกลมเหล็กตกในของเหลวหนืด ความเร็วจะเพิ่มขึ้นส่งผลให้แรงหนืด ($F_v$) เพิ่มขึ้น จนกระทั่งแรงลัพธ์เป็นศูนย์ ($\sum F = 0, a = 0$) วัตถุจะเคลื่อนที่ต่อด้วยความเร็วคงตัวเรียกว่า <b>ความเร็วสุดท้าย ($v_T$)</b>
+        </p>
+      </div>
+    </div>
+
+    <!-- Step-by-Step Proof Derivation -->
+    <div class="proof-card">
+      <b>ขั้นตอนการพิสูจน์สูตรบรรทัดต่อบรรทัด (Step-by-Step Derivation):</b>
+      <p style="font-size:13.5px;">
+        1. ตั้งสมดุลแรงแนวตั้ง ณ สภาวะความเร็วสุดท้าย:
+        $$\text{แรงรวมทิศขึ้น} = \text{แรงรวมทิศลง} \implies F_B + F_v = mg$$
+
+        2. แทนสูตรแรงพยุง ($F_B = \rho_f V g$), แรงหนืดสโตกส์ ($F_v = 6\pi\eta v_T r$) และน้ำหนัก ($mg = \rho_s V g$):
+        $$\rho_f V g + 6\pi \eta v_T r = \rho_s V g$$
+
+        3. ย้ายข้างจัดรูปหาแรงหนืด $6\pi \eta v_T r$:
+        $$6\pi \eta v_T r = \rho_s V g - \rho_f V g = (\rho_s - \rho_f) V g$$
+
+        4. แทนปริมาตรของทรงกลม $V = \frac{4}{3}\pi r^3$:
+        $$6\pi \eta v_T r = (\rho_s - \rho_f) \left( \frac{4}{3}\pi r^3 \right) g$$
+
+        5. ตัดทอนตัวแปร $\pi$ และ $r$ ทั้งสองข้าง แล้วย้าย $6\eta$ ไปหารฝั่งขวา:
+        $$v_T = \frac{\frac{4}{3} r^2 g (\rho_s - \rho_f)}{6 \eta} = \frac{4}{3 \times 6} \cdot \frac{r^2 g (\rho_s - \rho_f)}{\eta}$$
+      </p>
+
+      <div class="formula" style="background:#eef7ef; border:1px solid #16a34a; color:#14532d; font-size:17px; margin-top:2mm;">
+        $$v_T = \frac{2 r^2 g (\rho_s - \rho_f)}{9 \eta}$$
+      </div>
+    </div>
+
+    <div class="footer"><span>Surface Tension & Viscosity</span><span>Page 2</span></div>
+  </section>
+
 <!-- Q1 -->
 <section class="page">
 <header class="page-header"><div><div class="kicker">Original L17 • Surface Tension</div><h2>ข้อ 1 — คานวัดความตึงผิวของปรอท<span class="en bi-en">Question 1 — Lever Measurement of Mercury Surface Tension</span></h2></div><div class="tag">Torque + Contact Lines</div></header>
