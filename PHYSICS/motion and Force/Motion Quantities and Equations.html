@@ -172,23 +172,193 @@ svg text{font-family:"K2D",sans-serif}
 .print-sheet-title{border-bottom:2px solid #111827;padding-bottom:3mm;margin-bottom:4mm}.print-sheet-title h1{margin:0;font-size:22px}.student-line{display:grid;grid-template-columns:2fr 1fr 1fr;gap:5mm;margin-top:4mm;font-size:11px}.student-line span{border-bottom:1px solid #111827;min-height:6mm}
 @media(max-width:760px){body{font-size:14.5px}.page{padding:8mm 7mm 12mm}.page-head{align-items:flex-start;flex-direction:column}.tag{max-width:none}.two-col,.three-col,.four-col,.metric-grid,.controls,.sim-output,.formula-map{grid-template-columns:1fr}.options{grid-template-columns:1fr}.footer{left:7mm;right:7mm}.hero h1{font-size:25px}}
 @media print{
-  @page{size:A4 portrait;margin:9mm 10mm 10mm}
-  html,body{background:#fff!important;font-size:9.5pt!important}
-  .toolbar,.qtools,.feedback,.hint-box,.solution,.footer{display:none!important}
-  .page{width:auto!important;min-height:0!important;margin:0!important;padding:0!important;box-shadow:none!important;position:static!important;break-after:page!important;page-break-after:always!important}
-  .page:last-of-type{break-after:auto!important;page-break-after:auto!important}
-  .question-card{box-shadow:none!important;border:1px solid #111827!important;margin:3mm 0!important;padding:3.5mm!important}
-  .option-btn{border:0!important;padding:1mm 0!important;background:#fff!important}.option-btn::before{content:"○ ";font-weight:900}.option-btn.selected{outline:0!important}
-  .print-response{display:block!important}
-  .details-proof:not([open]) .details-body{display:none!important}
-  .details-proof{break-inside:avoid}
-  body.print-questions-only .page{display:none!important}
-  body.print-questions-only #printQuestionSheet{display:block!important}
-  body.print-questions-only #printQuestionSheet .question-card{break-inside:avoid;page-break-inside:avoid}
-  body.print-questions-only #printQuestionSheet .solution,body.print-questions-only #printQuestionSheet .feedback,body.print-questions-only #printQuestionSheet .hint-box{display:none!important}
-  body.print-questions-only #printQuestionSheet .qtools{display:none!important}
-  body.print-with-answers .solution{display:block!important;background:#eef7ef!important;border:1px solid #15803d!important;padding:3mm!important;margin-top:2.5mm!important}
+  @page{size:A4 portrait;margin:8mm 8mm 9mm}
+
+  html,body{
+    background:#fff!important;
+    color:#111827!important;
+    font-size:8.65pt!important;
+    line-height:1.34!important;
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+  }
+
+  .toolbar,.qtools,.feedback,.hint-box,.footer,#printQuestionSheet{display:none!important}
+
+  main{display:block!important}
+
+  /* ให้แต่ละหัวข้อใหญ่เริ่มหน้าใหม่ แต่ไม่บังคับหน้าว่างหลังเนื้อหาที่ล้น */
+  .page{
+    width:auto!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0!important;
+    box-shadow:none!important;
+    position:static!important;
+    break-before:page!important;
+    page-break-before:always!important;
+    break-after:auto!important;
+    page-break-after:auto!important;
+  }
+  .page:first-child{break-before:auto!important;page-break-before:auto!important}
+
+  /* แก้ responsive บนหน้าพิมพ์: คงหลายคอลัมน์ ไม่ยุบเป็นคอลัมน์เดียว */
+  .overview-grid,.two-col,.formula-map{display:grid!important;grid-template-columns:1fr 1fr!important;gap:2.6mm!important}
+  .overview-focus,.three-col,.controls,.sim-output{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:2mm!important}
+  .four-col{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:1.8mm!important}
+  .checklist-groups{display:grid!important;grid-template-columns:1fr 1fr!important;gap:2mm 2.8mm!important;align-items:start!important}
+  .check-column{display:grid!important;gap:2mm!important}
+  .options{display:grid!important;grid-template-columns:1fr 1fr!important;gap:.7mm 3mm!important}
+
+  /* ส่วนหัวและกล่องทั่วไป */
+  .hero{margin:0 0 3mm!important;padding:3.5mm 4mm!important;border-radius:8px!important}
+  .hero::after{opacity:.5!important}
+  .hero h1{font-size:20.5pt!important;line-height:1.12!important;margin:0 0 1mm!important}
+  .hero .subtitle{font-size:9.5pt!important;line-height:1.3!important}
+  .kicker{font-size:7.5pt!important}
+
+  .page-head{
+    margin:0 0 3mm!important;
+    padding:2.4mm 3mm!important;
+    gap:3mm!important;
+    border-radius:7px!important;
+    align-items:center!important;
+  }
+  .page-head h1,.page-head h2{font-size:16.5pt!important;line-height:1.16!important;margin:.3mm 0 0!important}
+  .tag{max-width:50mm!important;padding:1mm 2mm!important;font-size:7.4pt!important}
+
+  h2.section-title{font-size:15.5pt!important;margin:3mm 0 1.5mm!important;padding-bottom:1.2mm!important}
+  h3{font-size:12.5pt!important;margin:2.5mm 0 1mm!important}
+  h4{font-size:10.5pt!important;margin:2mm 0 1mm!important}
+  h1,h2,h3,h4,.card-title,.qhead{break-after:avoid!important;page-break-after:avoid!important}
+  p{margin:1mm 0!important}
+  .en{font-size:.82em!important;line-height:1.28!important;margin-top:.25mm!important}
+  .small{font-size:7.5pt!important}
+
+  .story-card,.key,.formula,.pitfall,.proof-card,.example,.summary-card,
+  .overview-note,.checklist-intro,.checklist-footer-note{
+    margin:2mm 0!important;
+    padding:2.4mm 3mm!important;
+    border-radius:6px!important;
+  }
+  .story-card,.key,.formula,.pitfall,.proof-card,.example,.summary-card,
+  .overview-note,.checklist-intro,.checklist-footer-note,
+  .overview-grid,.two-col,.three-col,.formula-map{
+    break-inside:auto!important;
+    page-break-inside:auto!important;
+  }
+  .card-title{font-size:11.5pt!important;margin-bottom:.7mm!important}
+  .card-title .en{font-size:7.5pt!important}
+  .formula{font-size:10.5pt!important;padding:2.2mm!important}
+
+  /* หน้าเป้าหมายและเช็กลิสต์ */
+  .overview-page .learning-list,.overview-page .outcome-list{padding-left:4.5mm!important}
+  .overview-page .learning-list li,.overview-page .outcome-list li{
+    font-size:7.9pt!important;
+    line-height:1.22!important;
+    margin:.75mm 0!important;
+    break-inside:avoid!important;
+  }
+  .overview-focus{margin-top:2mm!important}
+  .focus-chip{padding:1.8mm!important;font-size:7.4pt!important;line-height:1.22!important;border-radius:6px!important}
+  .focus-chip strong{font-size:8.6pt!important;margin-bottom:.3mm!important}
+
+  .checklist-page .page-head{margin-bottom:2mm!important}
+  .checklist-intro{font-size:7.7pt!important;line-height:1.25!important;margin-bottom:2mm!important}
+  .check-group{border-radius:6px!important;break-inside:avoid!important;page-break-inside:avoid!important}
+  .check-group-title{padding:1.4mm 2mm!important;font-size:8.6pt!important;line-height:1.18!important}
+  .skill-check{gap:1.4mm!important;padding:1.25mm 1.8mm!important;font-size:7.35pt!important;line-height:1.18!important}
+  .skill-check .en{font-size:.78em!important;line-height:1.15!important}
+  .skill-check input{
+    appearance:none!important;
+    -webkit-appearance:none!important;
+    width:3.6mm!important;
+    height:3.6mm!important;
+    margin:.2mm 0 0!important;
+    border:1px solid #111827!important;
+    border-radius:.7mm!important;
+    background:#fff!important;
+  }
+  .skill-check input:checked::after{content:"✓";display:block;font-size:8pt;line-height:3.1mm;text-align:center;font-weight:800}
+  .checklist-footer-note{font-size:7.4pt!important;margin-top:2mm!important}
+
+  /* ภาพ ตาราง และกราฟ */
+  .visual-card{padding:2mm!important;border-radius:6px!important;margin:1.8mm 0!important;break-inside:avoid!important;page-break-inside:avoid!important}
+  .visual-card svg{max-height:51mm!important}
+  .caption{font-size:7.4pt!important;line-height:1.2!important;margin-top:1mm!important}
+  .caption .en{font-size:6.8pt!important}
+
+  table{font-size:7.7pt!important;line-height:1.2!important;margin:2mm 0!important;break-inside:auto!important;page-break-inside:auto!important}
+  thead{display:table-header-group!important}
+  tr{break-inside:avoid!important;page-break-inside:avoid!important}
+  th,td{padding:1.25mm 1.5mm!important}
+
+  .metric-grid{gap:1.5mm!important;margin:1.5mm 0!important}
+  .metric{padding:1.7mm!important;border-radius:5px!important}
+  .metric strong{font-size:10.5pt!important}
+  .timeline{gap:1mm!important;margin:1.5mm 0!important}
+  .timeline .step{padding:1.5mm!important;font-size:7.2pt!important;border-radius:5px!important}
+
+  /* Simulator ใช้บนจอ ไม่พิมพ์ตัวควบคุมที่กินพื้นที่ */
+  .explore-card{display:none!important}
+
+  /* การพิสูจน์ต้องติดออกมาครบ แม้บนจอจะพับอยู่ */
+  .details-proof{
+    margin:2mm 0!important;
+    border-radius:6px!important;
+    break-inside:auto!important;
+    page-break-inside:auto!important;
+  }
+  .details-proof summary{padding:1.8mm 2.5mm!important;font-size:9pt!important;list-style:none!important}
+  .details-proof summary::-webkit-details-marker{display:none!important}
+  .details-proof .details-body,.details-proof:not([open]) .details-body{display:block!important;padding:2mm 2.6mm!important}
+  .derive-line{grid-template-columns:23mm 1fr!important;gap:2mm!important;margin:1.1mm 0!important;break-inside:avoid!important;page-break-inside:avoid!important}
+  .derive-line .why{font-size:7.1pt!important;padding-right:1.5mm!important}
+  .derive-line .math{font-size:9.5pt!important}
+
+  .formula-chip{padding:1.8mm 2mm!important;border-radius:5px!important;font-size:7.6pt!important;break-inside:avoid!important}
+  .condition{font-size:6.8pt!important}
+
+  /* คำถามพิมพ์เป็นกล่องกระชับ ไม่สร้างหน้าว่าง */
+  .question-card{
+    box-shadow:none!important;
+    border:1px solid #111827!important;
+    margin:2.5mm 0!important;
+    padding:2.5mm 3mm!important;
+    border-radius:7px!important;
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+  .qhead{padding-bottom:1mm!important;margin-bottom:1.2mm!important;gap:2mm!important}
+  .qtitle{font-size:10.5pt!important}
+  .qtype{font-size:6.8pt!important;padding:.6mm 1.4mm!important}
+  .option-btn{
+    border:0!important;
+    padding:.45mm 0!important;
+    background:#fff!important;
+    font-size:8.1pt!important;
+    line-height:1.22!important;
+  }
+  .option-btn::before{content:"○ ";font-weight:900}
+  .option-btn.selected{outline:0!important}
+  .print-response{display:block!important;min-height:10mm!important;margin-top:1.5mm!important;padding:1.6mm!important;font-size:7.5pt!important}
+
+  .solution{display:none!important}
+  body.print-with-answers .solution{
+    display:block!important;
+    background:#eef7ef!important;
+    border:1px solid #15803d!important;
+    padding:2mm 2.5mm!important;
+    margin-top:1.5mm!important;
+    font-size:8pt!important;
+    break-inside:avoid!important;
+  }
   body.print-with-answers .print-response{display:none!important}
+
+  /* MathJax และองค์ประกอบย่อย */
+  mjx-container{max-width:100%!important;overflow:visible!important}
+  mjx-container[display="true"]{margin:1.5mm 0!important}
+  a[href]::after{content:none!important}
 }
 </style>
 </head>
