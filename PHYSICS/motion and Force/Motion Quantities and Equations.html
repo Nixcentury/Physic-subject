@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ปริมาณและสมการการเคลื่อนที่ | Motion Quantities and Equations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=K2D:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']]
+    },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<style>
+:root{
+  --ink:#111827;
+  --muted:#526174;
+  --line:#9ca3af;
+  --paper:#ffffff;
+  --screen:#e5e7eb;
+  --accent:#17324d;
+  --accent-2:#315b7d;
+  --accent-soft:#eaf0f5;
+  --blue-soft:#eef6ff;
+  --green:#15803d;
+  --green-soft:#eef7ef;
+  --amber:#b45309;
+  --amber-soft:#fff8e8;
+  --red:#b91c1c;
+  --red-soft:#fff1f2;
+  --ice:#f8fafc;
+  --a4w:210mm;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--screen);
+  color:var(--ink);
+  font-family:"K2D",sans-serif;
+  font-size:15.5px;
+  line-height:1.58;
+}
+button,input,select,textarea{font-family:"K2D",sans-serif}
+.toolbar{
+  position:sticky;top:0;z-index:1000;
+  display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;
+  padding:9px 12px;background:#111827;color:#fff;
+  box-shadow:0 2px 14px rgba(0,0,0,.2)
+}
+.toolbar button,.toolbar a{
+  border:0;border-radius:8px;padding:8px 12px;background:#fff;color:#111827;
+  font-weight:800;font-size:12.5px;cursor:pointer;text-decoration:none
+}
+.toolbar .primary{background:#dbeafe}
+.toolbar .secondary{background:#dcfce7}
+.toolbar .status{flex-basis:100%;text-align:center;font-size:11.5px;opacity:.86}
+.page{
+  width:min(var(--a4w),calc(100vw - 18px));
+  min-height:297mm;
+  margin:16px auto;
+  padding:13mm 14mm 15mm;
+  background:var(--paper);
+  box-shadow:0 10px 30px rgba(15,23,42,.18);
+  position:relative;
+  break-after:page;
+  page-break-after:always;
+}
+.page:last-of-type{break-after:auto;page-break-after:auto}
+.page-head{
+  display:flex;justify-content:space-between;align-items:flex-end;gap:6mm;
+  margin:0 0 5mm;padding:3.4mm 4mm 3mm;
+  border:1px solid #cbd5e1;border-left:6px solid var(--accent);border-bottom:2px solid var(--accent);
+  border-radius:10px;background:linear-gradient(135deg,#f8fafc 0%,#fff 74%);
+  break-inside:avoid
+}
+.kicker{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:900}
+.page-head h1,.page-head h2{margin:.7mm 0 0;color:#0f172a;line-height:1.18}
+.page-head h1{font-size:27px}.page-head h2{font-size:21px}
+.tag{
+  flex:0 0 auto;max-width:62mm;padding:1.4mm 2.8mm;border:1px solid #94a3b8;border-radius:999px;
+  background:#fff;color:#334155;font-size:10px;font-weight:800;text-align:center;line-height:1.3
+}
+h1,h2,h3,h4{line-height:1.25;color:#0f172a}
+h2.section-title{font-size:22px;margin:4mm 0 2mm;border-bottom:2px solid var(--accent);padding-bottom:2mm}
+h3{font-size:17px;margin:4mm 0 2mm}h4{font-size:15px;margin:3mm 0 1.5mm}
+p{margin:1.8mm 0}.th{font-weight:500}.en{display:block;color:var(--muted);font-size:.87em;line-height:1.42;margin-top:.5mm}.inline-en{color:var(--muted);font-size:.9em}
+.lead{font-size:17px;line-height:1.65}.small{font-size:12px;color:var(--muted)}
+
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:4mm;margin:4mm 0}
+.learning-list,.outcome-list{margin:0;padding-left:5.5mm}
+.learning-list li,.outcome-list li{margin:2mm 0;break-inside:avoid}
+.checklist{display:grid;grid-template-columns:1fr 1fr;gap:2.5mm 4mm;margin-top:3mm}
+.check-item{display:flex;align-items:flex-start;gap:2.5mm;border:1px solid #94a3b8;border-radius:8px;padding:2.8mm 3mm;background:#fff;break-inside:avoid}
+.check-item input{width:17px;height:17px;margin-top:1mm;flex:0 0 auto;accent-color:#17324d}
+.check-item label{cursor:pointer;line-height:1.4}
+.overview-note{border:1px solid #64748b;border-left:6px solid #7c3aed;border-radius:9px;background:#faf7ff;padding:3.5mm 4mm;margin-top:4mm}
+
+.overview-page .key,.overview-page .summary-card{margin-top:0}
+.overview-page .learning-list li,.overview-page .outcome-list li{font-size:13px;line-height:1.42;margin:1.7mm 0}
+.overview-focus{display:grid;grid-template-columns:repeat(3,1fr);gap:3mm;margin-top:4mm}
+.focus-chip{border:1px solid #94a3b8;border-radius:9px;padding:3mm;background:#fff;text-align:center;font-size:12px;line-height:1.35;break-inside:avoid}
+.focus-chip strong{display:block;color:var(--accent);font-size:14px;margin-bottom:1mm}
+.checklist-page .page-head{margin-bottom:3mm}
+.checklist-intro{border:1px solid #64748b;border-left:6px solid #0891b2;border-radius:9px;background:#f0fbfd;padding:3mm 4mm;margin-bottom:3mm;font-size:12.5px}
+.checklist-groups{display:grid;grid-template-columns:1fr 1fr;gap:3mm 4mm;align-items:start}
+.check-column{display:grid;gap:3mm}
+.check-group{border:1px solid #94a3b8;border-radius:9px;background:#fff;overflow:hidden;break-inside:avoid}
+.check-group-title{padding:2.2mm 3mm;background:#eaf0f5;border-bottom:1px solid #94a3b8;font-weight:900;color:var(--accent);font-size:13px;line-height:1.3}
+.check-group-list{display:grid}
+.skill-check{display:flex;align-items:flex-start;gap:2.2mm;padding:2.2mm 2.8mm;border-bottom:1px solid #e5e7eb;font-size:11.5px;line-height:1.32}
+.skill-check:last-child{border-bottom:0}
+.skill-check input{width:16px;height:16px;margin:.4mm 0 0;flex:0 0 auto;accent-color:#17324d}
+.skill-check label{cursor:pointer}
+.skill-check .en{font-size:.8em;line-height:1.28;margin-top:.25mm}
+.checklist-footer-note{margin-top:3mm;border:1px solid #64748b;border-radius:8px;padding:2.5mm 3mm;background:#fafafa;font-size:11.5px}
+@media(max-width:760px){.overview-grid,.overview-focus,.checklist-groups{grid-template-columns:1fr}}
+@media print{
+  .check-item input{appearance:none;-webkit-appearance:none;width:4.5mm;height:4.5mm;border:1.2px solid #111827;border-radius:1mm;background:#fff}
+  .check-item input:checked::after{content:"✓";display:block;font-size:11pt;line-height:4mm;text-align:center;font-weight:800}
+}
+
+.hero{
+  border:1px solid #64748b;border-radius:14px;padding:6mm;margin:4mm 0 5mm;
+  background:linear-gradient(135deg,#edf4fa 0%,#fff 62%);overflow:hidden;position:relative
+}
+.hero::after{content:"";position:absolute;right:-30mm;top:-30mm;width:85mm;height:85mm;border-radius:50%;border:15mm solid rgba(23,50,77,.045)}
+.hero h1{font-size:31px;margin:0 0 2mm;position:relative;z-index:1}.hero .subtitle{font-size:16px;color:var(--muted);position:relative;z-index:1}
+.story-card,.key,.formula,.pitfall,.proof-card,.example,.summary-card,.explore-card{
+  border:1px solid var(--ink);padding:4mm 4.5mm;margin:3.5mm 0;break-inside:avoid;border-radius:9px;background:#fff
+}
+.story-card{border-left:6px solid var(--accent);background:var(--accent-soft)}
+.key{border-left:6px solid var(--accent-2);background:#f4f8fb}
+.formula{text-align:center;font-size:16px;font-weight:700;padding:4mm;background:#fff}
+.pitfall{border-left:6px solid #d97706;background:var(--amber-soft)}
+.proof-card{border-left:6px solid #16a34a;background:#fafafa}
+.example{border-left:6px solid #7c3aed;background:#faf7ff}
+.summary-card{border-left:6px solid #2563eb;background:#f8fafc}
+.explore-card{border-left:6px solid #0891b2;background:#f0fbfd}
+.card-title{font-size:16px;font-weight:900;color:var(--accent);margin-bottom:1.5mm}.card-title .en{font-size:11.5px;font-weight:700}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:4mm}.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:3mm}.four-col{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm}
+.visual-card{border:1px solid #64748b;padding:3mm;border-radius:9px;break-inside:avoid;background:#fff;text-align:center}
+.visual-card svg{display:block;width:100%;height:auto;max-height:67mm;margin:0 auto}
+.caption{font-size:11.5px;text-align:left;margin-top:2mm;color:#334155}.caption .en{font-size:10.5px}
+svg text{font-family:"K2D",sans-serif}
+.metric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3mm;margin:3mm 0}.metric{border:1px solid #94a3b8;border-radius:8px;padding:3mm;background:#fff;text-align:center}.metric strong{display:block;font-size:18px;color:var(--accent)}
+.timeline{display:flex;gap:2mm;align-items:stretch;margin:3mm 0}.timeline .step{flex:1;border:1px solid #94a3b8;border-radius:8px;padding:2.7mm;background:#fff;text-align:center;font-size:12px}.timeline .arrow{display:flex;align-items:center;color:var(--accent);font-weight:900}
+.question-card{
+  margin:4mm 0;padding:4.5mm 5mm;border:1.4px solid #64748b;border-radius:12px;background:#fff;
+  box-shadow:0 4px 14px rgba(15,23,42,.065);break-inside:avoid
+}
+.qhead{display:flex;justify-content:space-between;align-items:flex-start;gap:4mm;padding-bottom:2mm;margin-bottom:2.5mm;border-bottom:1px solid #cbd5e1}
+.qtitle{font-weight:900;color:var(--accent);font-size:15.5px}.qtype{font-size:10px;padding:1mm 2mm;border:1px solid #94a3b8;border-radius:999px;background:#f8fafc;color:#334155;font-weight:800;white-space:nowrap}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:2mm;margin:3mm 0}.option-btn{border:1px solid #94a3b8;border-radius:8px;background:#fff;padding:2.7mm 3mm;text-align:left;cursor:pointer;font-size:13.5px;line-height:1.4}.option-btn:hover{border-color:var(--accent);background:#f8fafc}.option-btn.selected{outline:2px solid var(--accent);background:#edf4fa}
+.feedback,.hint-box,.solution{display:none;margin-top:2.5mm;padding:3mm 3.5mm;border-radius:8px;border:1px solid #94a3b8;font-size:13px}.feedback.show,.hint-box.show,.solution.open{display:block}.feedback.hot{background:#ecfdf5;border-color:#22c55e}.feedback.warm{background:#fff7ed;border-color:#fb923c}.feedback.cold{background:#eff6ff;border-color:#60a5fa}.hint-box{background:#fffbeb;border-color:#f59e0b}.solution{background:var(--green-soft);border-color:#4ade80}.solution-title{font-weight:900;color:var(--green);margin-bottom:1mm}
+.qtools{display:flex;flex-wrap:wrap;gap:6px;margin-top:2.5mm}.qtools button{border:1px solid var(--ink);background:#fff;border-radius:7px;padding:6px 10px;font-weight:800;font-size:12px;cursor:pointer}.qtools button[aria-expanded="true"]{background:var(--accent);color:#fff}
+.print-response{display:none;margin-top:3mm;border:1px dashed #64748b;border-radius:7px;padding:2.5mm;min-height:18mm;font-size:11px}
+.details-proof{margin:3mm 0;border:1px solid #64748b;border-left:6px solid #16a34a;border-radius:9px;background:#fafafa;break-inside:avoid}.details-proof summary{cursor:pointer;padding:3mm 4mm;font-weight:900;color:#166534}.details-proof[open] summary{border-bottom:1px solid #cbd5e1}.details-body{padding:3.5mm 4.5mm}.derive-line{display:grid;grid-template-columns:28mm 1fr;gap:3mm;align-items:start;margin:2.2mm 0}.derive-line .why{font-size:11.5px;color:var(--muted);border-right:2px solid #bbf7d0;padding-right:2mm}.derive-line .math{font-size:15px}
+.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;margin:3mm 0;break-inside:avoid}th,td{border:1px solid var(--ink);padding:2.3mm;vertical-align:top;text-align:left}th{background:#f3f4f6;font-weight:800}
+.controls{display:grid;grid-template-columns:repeat(3,1fr);gap:3mm;margin:3mm 0}.control{border:1px solid #94a3b8;border-radius:8px;background:#fff;padding:2.5mm}.control label{display:block;font-size:11px;font-weight:800;margin-bottom:1.5mm}.control input[type="range"]{width:100%}.value-pill{display:inline-block;margin-top:1mm;padding:.5mm 1.8mm;border-radius:999px;background:var(--accent);color:#fff;font-size:11px;font-weight:800}
+.sim-output{display:grid;grid-template-columns:repeat(3,1fr);gap:2mm;margin-top:3mm}.sim-output .out{border:1px solid #94a3b8;border-radius:8px;background:#fff;padding:2.5mm;text-align:center}.sim-output strong{display:block;color:var(--accent);font-size:17px}
+.formula-map{display:grid;grid-template-columns:1fr 1fr;gap:3mm}.formula-chip{border:1px solid #64748b;border-radius:8px;padding:3mm;background:#fff}.formula-chip strong{display:block;color:var(--accent);margin-bottom:1mm}.condition{font-size:11px;color:var(--muted)}
+.sign-table td:first-child{font-weight:800;text-align:center}.sign-plus{color:#15803d;font-weight:900}.sign-minus{color:#b91c1c;font-weight:900}
+.footer{position:absolute;left:14mm;right:14mm;bottom:6mm;border-top:1px solid #d1d5db;padding-top:1.5mm;display:flex;justify-content:space-between;gap:4mm;color:#6b7280;font-size:9.5px}
+#printQuestionSheet{display:none}
+.print-sheet-title{border-bottom:2px solid #111827;padding-bottom:3mm;margin-bottom:4mm}.print-sheet-title h1{margin:0;font-size:22px}.student-line{display:grid;grid-template-columns:2fr 1fr 1fr;gap:5mm;margin-top:4mm;font-size:11px}.student-line span{border-bottom:1px solid #111827;min-height:6mm}
+@media(max-width:760px){body{font-size:14.5px}.page{padding:8mm 7mm 12mm}.page-head{align-items:flex-start;flex-direction:column}.tag{max-width:none}.two-col,.three-col,.four-col,.metric-grid,.controls,.sim-output,.formula-map{grid-template-columns:1fr}.options{grid-template-columns:1fr}.footer{left:7mm;right:7mm}.hero h1{font-size:25px}}
+@media print{
+  @page{size:A4 portrait;margin:9mm 10mm 10mm}
+  html,body{background:#fff!important;font-size:9.5pt!important}
+  .toolbar,.qtools,.feedback,.hint-box,.solution,.footer{display:none!important}
+  .page{width:auto!important;min-height:0!important;margin:0!important;padding:0!important;box-shadow:none!important;position:static!important;break-after:page!important;page-break-after:always!important}
+  .page:last-of-type{break-after:auto!important;page-break-after:auto!important}
+  .question-card{box-shadow:none!important;border:1px solid #111827!important;margin:3mm 0!important;padding:3.5mm!important}
+  .option-btn{border:0!important;padding:1mm 0!important;background:#fff!important}.option-btn::before{content:"○ ";font-weight:900}.option-btn.selected{outline:0!important}
+  .print-response{display:block!important}
+  .details-proof:not([open]) .details-body{display:none!important}
+  .details-proof{break-inside:avoid}
+  body.print-questions-only .page{display:none!important}
+  body.print-questions-only #printQuestionSheet{display:block!important}
+  body.print-questions-only #printQuestionSheet .question-card{break-inside:avoid;page-break-inside:avoid}
+  body.print-questions-only #printQuestionSheet .solution,body.print-questions-only #printQuestionSheet .feedback,body.print-questions-only #printQuestionSheet .hint-box{display:none!important}
+  body.print-questions-only #printQuestionSheet .qtools{display:none!important}
+  body.print-with-answers .solution{display:block!important;background:#eef7ef!important;border:1px solid #15803d!important;padding:3mm!important;margin-top:2.5mm!important}
+  body.print-with-answers .print-response{display:none!important}
+}
+</style>
+</head>
+<body>
+<nav class="toolbar" aria-label="แถบเครื่องมือ / Toolbar">
+  <button class="primary" type="button" onclick="printLesson()">พิมพ์ / Print</button>
+  <button class="secondary" type="button" onclick="printWithAnswers()">พิมพ์พร้อมเฉลย / Print with answers</button>
+  <button id="toggleAnswersBtn" type="button" onclick="toggleAllAnswers(this)" aria-expanded="false">เปิดเฉลย / Show answers</button>
+</nav>
+
+<main id="top">
+
+<section class="page overview-page">
+  <div class="hero">
+    <div class="kicker">Interactive Physics Teaching Sheet</div>
+    <h1>ปริมาณและสมการการเคลื่อนที่<span class="en">Motion Quantities and Equations</span></h1>
+    <div class="subtitle">สาระการเรียนรู้และผลการเรียนรู้ที่คาดหวัง<br><span class="en">Learning content and expected learning outcomes</span></div>
+  </div>
+
+  <div class="overview-grid">
+    <div class="key">
+      <div class="card-title">สาระการเรียนรู้<span class="en">Learning Content</span></div>
+      <ul class="learning-list">
+        <li>การบรรยายการเคลื่อนที่โดยอาศัยตำแหน่ง จุดอ้างอิง ระบบพิกัด และทิศบวก<span class="en">Describing motion using position, a reference point, a coordinate system, and a positive direction</span></li>
+        <li>ความหมายและความแตกต่างของปริมาณสเกลาร์กับปริมาณเวกเตอร์<span class="en">Meanings and differences between scalar and vector quantities</span></li>
+        <li>ระยะทาง $d$ และการกระจัด $\Delta x$ หรือ $\Delta y$ ตามแกนของสถานการณ์<span class="en">Distance $d$ and displacement $\Delta x$ or $\Delta y$, selected to match the axis of the situation</span></li>
+        <li>อัตราเร็วเฉลี่ยจากระยะทางทั้งหมด และความเร็วเฉลี่ยจากการกระจัด<span class="en">Average speed from total distance and average velocity from displacement</span></li>
+        <li>ความเร่งในฐานะอัตราการเปลี่ยนความเร็ว และความหมายของหน่วย $\mathrm{m/s^2}$<span class="en">Acceleration as the rate of change of velocity and the meaning of the unit $\mathrm{m/s^2}$</span></li>
+        <li>ความสัมพันธ์ระหว่างทิศทางและเครื่องหมายของความเร็วกับความเร่ง<span class="en">Relationships between the directions and signs of velocity and acceleration</span></li>
+        <li>การเคลื่อนที่แนวตรงด้วยความเร็วคงที่และสมการตำแหน่ง<span class="en">Straight-line motion with constant velocity and the position equation</span></li>
+        <li>การเคลื่อนที่แนวตรงด้วยความเร่งคงที่ และความหมายของ $u$, $v$, $a$, $t$ และการกระจัด<span class="en">Straight-line motion with constant acceleration and the meanings of $u$, $v$, $a$, $t$, and displacement</span></li>
+        <li>สมการความเร่งคงที่ทั้งสี่สมการ พร้อมเงื่อนไขในการเลือกใช้<span class="en">The four constant-acceleration equations and the conditions for selecting each one</span></li>
+        <li>ที่มาของสมการจากนิยามความเร่ง ความเร็วเฉลี่ย และพื้นที่ใต้กราฟความเร็ว–เวลา<span class="en">Derivations from the definition of acceleration, average velocity, and the area under a velocity–time graph</span></li>
+      </ul>
+    </div>
+
+    <div class="summary-card">
+      <div class="card-title">ผลการเรียนรู้ที่คาดหวัง<span class="en">Expected Learning Outcomes</span></div>
+      <p>เมื่อเรียนจบหัวข้อนี้ นักเรียนสามารถ</p>
+      <span class="en">By the end of this topic, students will be able to:</span>
+      <ul class="outcome-list">
+        <li>ระบุจุดอ้างอิง กำหนดแกน และเลือกทิศบวกให้เหมาะกับสถานการณ์<span class="en">identify a reference point, set an axis, and choose an appropriate positive direction;</span></li>
+        <li>จำแนกปริมาณเป็นสเกลาร์หรือเวกเตอร์ พร้อมให้เหตุผล<span class="en">classify quantities as scalars or vectors and justify the classification;</span></li>
+        <li>แยกระยะทางออกจากการกระจัด และคำนวณ $\Delta x$ หรือ $\Delta y$ พร้อมเครื่องหมายได้<span class="en">distinguish distance from displacement and calculate signed $\Delta x$ or $\Delta y$;</span></li>
+        <li>คำนวณและแปลความหมายของอัตราเร็วเฉลี่ยกับความเร็วเฉลี่ยได้ถูกต้อง<span class="en">calculate and interpret average speed and average velocity correctly;</span></li>
+        <li>คำนวณความเร่งและอธิบายความหมายของค่าบวก ค่าลบ และหน่วยได้<span class="en">calculate acceleration and explain the meanings of its sign and unit;</span></li>
+        <li>ใช้เครื่องหมายของ $v$ และ $a$ เพื่อพิจารณาว่าวัตถุเร็วขึ้นหรือช้าลง<span class="en">use the signs of $v$ and $a$ to determine whether an object speeds up or slows down;</span></li>
+        <li>ใช้สมการความเร็วคงที่เพื่อหาตำแหน่งหรือการกระจัดตามแกนที่เลือก<span class="en">use constant-velocity equations to determine position or displacement along a chosen axis;</span></li>
+        <li>อธิบายภาพทางกายภาพของวัตถุที่มีความเร็วต้น ถูกแรงภายนอกกระทำ เกิดความเร่ง และมีความเร็วปลายหลังเวลา $t$<span class="en">explain the physical picture of an object with an initial velocity, an external force, acceleration, and a final velocity after time $t$;</span></li>
+        <li>เลือกและใช้สมการความเร่งคงที่จากข้อมูลที่โจทย์กำหนด โดยรักษาเครื่องหมายและหน่วย<span class="en">select and apply a constant-acceleration equation from the given data while preserving signs and units;</span></li>
+        <li>ติดตามและอธิบายที่มาของสมการหลักจากนิยามหรือกราฟได้<span class="en">follow and explain the derivation of the main equations from definitions or graphs.</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="overview-focus">
+    <div class="focus-chip"><strong>อ่านสถานการณ์ก่อน<span class="en">Read the situation first</span></strong>ระบุสิ่งที่เคลื่อนที่ จุดเริ่มต้น จุดสุดท้าย และช่วงเวลาที่พิจารณา<span class="en">Identify the moving object, initial point, final point, and time interval.</span></div>
+    <div class="focus-chip"><strong>กำหนดแกนก่อนแทนค่า<span class="en">Set the axis before substitution</span></strong>เลือกใช้ $x$ หรือ $y$ และกำหนดเครื่องหมายจากทิศบวก<span class="en">Choose $x$ or $y$ and assign signs from the positive direction.</span></div>
+    <div class="focus-chip"><strong>ตรวจเงื่อนไขของสูตร<span class="en">Check equation conditions</span></strong>แยกให้ออกว่าเป็นความเร็วคงที่หรือความเร่งคงที่<span class="en">Decide whether velocity or acceleration is constant.</span></div>
+  </div>
+
+  <div class="overview-note">
+    <strong>แนวทางใช้ชีท / How to use this sheet</strong>
+    <p>เริ่มจากสถานการณ์และภาพ แล้วจึงเชื่อมไปสู่นิยาม สูตร และที่มาของสมการ คำถาม Interactive ใช้เฉพาะจุดที่ต้องการอภิปรายหรือแก้ความเข้าใจคลาดเคลื่อน</p>
+    <span class="en">Begin with the situation and diagram, then connect them to definitions, equations, and derivations. Interactive questions are used only where discussion or misconception correction is valuable.</span>
+  </div>
+
+  <div class="footer"><span>สาระการเรียนรู้และผลการเรียนรู้ที่คาดหวัง</span><span>Learning content and expected learning outcomes</span></div>
+</section>
+
+<section class="page checklist-page">
+  <header class="page-head"><div><div class="kicker">Student Self-Check</div><h2>เช็กลิสต์นักเรียน<span class="en">Student Checklist</span></h2></div><div class="tag">ตรวจสอบความพร้อมของตนเอง<br>Check your own readiness</div></header>
+
+  <div class="checklist-intro">
+    <strong>วิธีใช้ / How to use:</strong> ทำเครื่องหมายเมื่อสามารถอธิบายหรือทำทักษะนั้นได้ด้วยตนเองโดยไม่ดูเฉลย หากยังไม่มั่นใจ ให้กลับไปยังหัวข้อที่เกี่ยวข้องแล้วทดลองอีกครั้ง
+    <span class="en">Tick a box only when you can explain or perform the skill independently without looking at the answer. If you are not yet confident, return to the relevant section and try again.</span>
+  </div>
+
+  <div class="checklist-groups">
+    <div class="check-column">
+      <div class="check-group">
+        <div class="check-group-title">จุดอ้างอิง ตำแหน่ง และแกน<span class="en">Reference point, position, and axes</span></div>
+        <div class="check-group-list">
+          <div class="skill-check"><input type="checkbox" id="sc1"><label for="sc1">ฉันระบุวัตถุที่กำลังพิจารณาและจุดอ้างอิงได้<span class="en">I can identify the object being studied and the reference point.</span></label></div>
+          <div class="skill-check"><input type="checkbox" id="sc2"><label for="sc2">ฉันกำหนดจุดกำเนิดและทิศบวกได้อย่างชัดเจน<span class="en">I can define an origin and a positive direction clearly.</span></label></div>
+          <div class="skill-check"><input type="checkbox" id="sc3"><label for="sc3">ฉันอ่านและเขียนตำแหน่งต้น $x_i,y_i$ กับตำแหน่งปลาย $x_f,y_f$ ได้<span class="en">I can read and write initial positions $x_i,y_i$ and final positions $x_f,y_f$.</span></label></div>
+          <div class="skill-check"><input type="checkbox" id="sc4"><label for="sc4">ฉันเลือกใช้แกน $x$ หรือแกน $y$ ให้ตรงกับสถานการณ์ได้<span class="en">I can choose the $x$- or $y$-axis to match the situation.</span></label></div>
+        </div>
+      </div>
+
+      <div class="check-group">
+        <div class="check-group-title">ระยะทางและการกระจัด<span class="en">Distance and displacement</span></div>
+        <div class="check-group-list">
+          <div class="skill-check"><input type="checkbox" id="sc5"><label for="sc5">ฉันอธิบายได้ว่าระยะทางขึ้นกับเส้นทางทั้งหมด<span class="en">I can explain that distance depends on the complete path.</span></label></div>
+          <div class="skill-check"><input type="checkbox" id="sc6"><label for="sc6">ฉันอธิบายได้ว่าการกระจัดขึ้นกับตำแหน่งต้นและปลาย<span class="en">I can explain that displacement depends on the initial and final positions.</span></label></div>
+          <div class="skill-check"><input type="checkbox" id="sc7"><label for="sc7">ฉันคำนวณ $\Delta x=x_f-x_i$ หรือ $\Delta y=y_f-y_i$ พร้อมเครื่องหมายได้<span class="en">I can calculate signed $\Delta x=x_f-x_i$ or $\Delta y=y_f-y_i$.</span></label></div>
+          <div class="skill-check"><input type="checkbox" id="sc8"><label for="sc8">ฉันอธิบายกรณีกลับมาจุดเดิมได้ว่า $d&gt;0$ แต่การกระจัดเป็นศูนย์<span class="en">I can explain why returning to the start gives $d&gt;0$ but zero displacement.</span></label></div>
+        </div>
+      </div>
+
+      <div class="check-group">
+        <div class="check-group-title">อัตราเร็ว ความเร็ว และความเร่ง<span class="en">Speed, velocity, and acceleration</span></div>
+        <div class="check-group-list">
+          <div class="skill-check"><input type="checkbox" id="sc9"><label for="sc9">ฉันคำนวณอัตราเร็วเฉลี่ยจากระยะทางทั้งหมดและเวลารวมได้<span class="en">I can calculate average speed from total distance and total time.</span></label></div>
+          <div class="skill-check"><input type="checkbox" id="sc10"><label for="sc10">ฉันคำนวณความเร็วเฉลี่ยจากการกระจัดและระบุทิศทางได้<span class="en">I can calculate average velocity from displacement and state its direction.</span></label></div>
+          <div class="skill-check"><input type="checkbox" id="sc11"><label for="sc11">ฉันคำนวณความเร่งจากการเปลี่ยนความเร็วต่อเวลาได้<span class="en">I can calculate acceleration from the change in velocity per time.</span></label></div>
+          <div class="skill-check"><input type="checkbox" id="sc12"><label for="sc12">ฉันอธิบายหน่วย $\mathrm{m/s^2}$ ว่าความเร็วเปลี่ยนกี่ $\mathrm{m/s}$ ในแต่ละวินาทีได้<span class="en">I can explain $\mathrm{m/s^2}$ as the change in velocity, in $\mathrm{m/s}$, each second.</span></label></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="check-column">
+      <div class="check-group">
+        <div class="check-group-title">ทิศทาง เครื่องหมาย และการแปลความหมาย<span class="en">Direction, signs, and interpretation</span></div>
+        <div class="check-group-list">
+          <div class="skill-check"><input type="checkbox" id="sc13"><label for="sc13">ฉันใช้เครื่องหมายของ $v$ บอกทิศการเคลื่อนที่ได้<span class="en">I can use the sign of $v$ to identify the direction of motion.</span></label></div>
+          <div class="skill-check"><input type="checkbox" id="sc14"><label for="sc14">ฉันใช้เครื่องหมายของ $a$ บอกทิศของการเปลี่ยนความเร็วได้<span class="en">I can use the sign of $a$ to identify the direction of velocity change.</span></label></div>
+          <div class="skill-check"><input type="checkbox" id="sc15"><label for="sc15">ฉันบอกได้ว่าวัตถุเร็วขึ้นเมื่อ $v$ และ $a$ มีเครื่องหมายเดียวกัน<span class="en">I can identify speeding up when $v$ and $a$ have the same sign.</span></label></div>
+          <div class="skill-check"><input type="checkbox" id="sc16"><label for="sc16">ฉันบอกได้ว่าวัตถุช้าลงเมื่อ $v$ และ $a$ มีเครื่องหมายตรงข้ามกัน<span class="en">I can identify slowing down when $v$ and $a$ have opposite signs.</span></label></div>
+        </div>
+      </div>
+
+      <div class="check-group">
+        <div class="check-group-title">ความเร็วคงที่และความเร่งคงที่<span class="en">Constant velocity and constant acceleration</span></div>
+        <div class="check-group-list">
+          <div class="skill-check"><input type="checkbox" id="sc17"><label for="sc17">ฉันตรวจได้ว่าเมื่อความเร็วคงที่ ความเร่งต้องเป็นศูนย์<span class="en">I can verify that constant velocity requires zero acceleration.</span></label></div>
+          <div class="skill-check"><input type="checkbox" id="sc18"><label for="sc18">ฉันใช้ $\Delta x=v_xt$ หรือ $x=x_0+v_xt$ และรูปแกน $y$ ได้<span class="en">I can use $\Delta x=v_xt$ or $x=x_0+v_xt$, including the corresponding $y$ forms.</span></label></div>
+          <div class="skill-check"><input type="checkbox" id="sc19"><label for="sc19">ฉันอธิบายความหมายทางกายภาพของ $u$, $v$, $a$, $t$ และ $\Delta x$ หรือ $\Delta y$ ได้<span class="en">I can explain the physical meanings of $u$, $v$, $a$, $t$, and $\Delta x$ or $\Delta y$.</span></label></div>
+          <div class="skill-check"><input type="checkbox" id="sc20"><label for="sc20">ฉันเลือกสมการความเร่งคงที่จากตัวแปรที่รู้และตัวแปรที่ต้องหาได้<span class="en">I can choose a constant-acceleration equation from the known and required variables.</span></label></div>
+        </div>
+      </div>
+
+      <div class="check-group">
+        <div class="check-group-title">ที่มาของสมการและการตรวจคำตอบ<span class="en">Derivations and answer checking</span></div>
+        <div class="check-group-list">
+          <div class="skill-check"><input type="checkbox" id="sc21"><label for="sc21">ฉันอธิบายที่มาของ $v=u+at$ จากนิยามความเร่งได้<span class="en">I can derive $v=u+at$ from the definition of acceleration.</span></label></div>
+          <div class="skill-check"><input type="checkbox" id="sc22"><label for="sc22">ฉันอธิบายได้ว่าเมื่อ $a$ คงที่ ความเร็วเฉลี่ยคือ $(u+v)/2$<span class="en">I can explain why average velocity is $(u+v)/2$ when $a$ is constant.</span></label></div>
+          <div class="skill-check"><input type="checkbox" id="sc23"><label for="sc23">ฉันเชื่อมพื้นที่ใต้กราฟ $v$–$t$ กับการกระจัด และแยกพื้นที่ $ut$ กับ $\frac12at^2$ ได้<span class="en">I can connect area under a $v$–$t$ graph to displacement and separate the areas $ut$ and $\frac12at^2$.</span></label></div>
+          <div class="skill-check"><input type="checkbox" id="sc24"><label for="sc24">ฉันตรวจหน่วย เครื่องหมาย ทิศทาง และความสมเหตุสมผลของคำตอบก่อนสรุปได้<span class="en">I can check units, signs, direction, and reasonableness before stating a final answer.</span></label></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="checklist-footer-note">
+    <strong>เป้าหมายหลังเรียน / End-of-topic goal:</strong> ไม่จำเป็นต้องทำเครื่องหมายครบทุกช่องในครั้งแรก แต่ควรกลับมาตรวจซ้ำจนสามารถอธิบายแนวคิด เลือกสมการ และตรวจคำตอบได้ด้วยตนเอง
+    <span class="en">You do not need to tick every box on the first attempt. Return to this page until you can explain the concepts, select equations, and check answers independently.</span>
+  </div>
+
+  <div class="footer"><span>เช็กลิสต์นักเรียน</span><span>Student Checklist</span></div>
+</section>
+
+<section class="page">
+  <div class="hero">
+    <div class="kicker">Interactive Physics Teaching Sheet</div>
+    <h1>ปริมาณและสมการการเคลื่อนที่<span class="en">Motion Quantities and Equations</span></h1>
+    <div class="subtitle">เล่าเรื่องจากสถานการณ์จริง → สังเกต → นิยาม → สูตร → ที่มาของสูตร → ตรวจสอบความเข้าใจ<br><span class="en">Real situations → observation → definitions → equations → derivations → concept checks</span></div>
+  </div>
+
+  <div class="story-card">
+    <div class="card-title">เรื่องเริ่มต้น: เช้าวันหนึ่งระหว่างเดินทางมาโรงเรียน<span class="en">Opening story: A morning journey to school</span></div>
+    <p>นักเรียนคนหนึ่งนั่งอยู่บนรถโดยสาร เขามองเพื่อนที่นั่งข้าง ๆ แล้วบอกว่า “เพื่อนไม่ได้เคลื่อนที่” แต่คนที่ยืนอยู่ริมถนนกลับเห็นว่าทั้งสองคนกำลังเคลื่อนที่ไปพร้อมกับรถ</p>
+    <span class="en">A student is sitting on a bus. Looking at the friend beside him, he says, “My friend is not moving.” A person standing by the road, however, sees both students moving with the bus.</span>
+  </div>
+
+  <div class="two-col">
+    <div class="visual-card">
+      <svg viewBox="0 0 760 330" role="img" aria-label="ผู้โดยสารบนรถและผู้สังเกตริมถนน">
+        <defs>
+          <marker id="arrA" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#17324d"/></marker>
+        </defs>
+        <rect x="25" y="240" width="710" height="18" rx="9" fill="#64748b"/>
+        <rect x="115" y="105" width="420" height="125" rx="20" fill="#dbeafe" stroke="#17324d" stroke-width="4"/>
+        <rect x="150" y="130" width="90" height="58" rx="8" fill="#fff" stroke="#315b7d" stroke-width="3"/>
+        <rect x="260" y="130" width="90" height="58" rx="8" fill="#fff" stroke="#315b7d" stroke-width="3"/>
+        <circle cx="195" cy="215" r="30" fill="#111827"/><circle cx="455" cy="215" r="30" fill="#111827"/>
+        <circle cx="195" cy="215" r="13" fill="#cbd5e1"/><circle cx="455" cy="215" r="13" fill="#cbd5e1"/>
+        <circle cx="192" cy="147" r="13" fill="#f59e0b"/><rect x="183" y="160" width="18" height="32" rx="7" fill="#2563eb"/>
+        <circle cx="300" cy="147" r="13" fill="#fb7185"/><rect x="291" y="160" width="18" height="32" rx="7" fill="#7c3aed"/>
+        <circle cx="650" cy="180" r="14" fill="#f59e0b"/><rect x="639" y="194" width="22" height="44" rx="8" fill="#16a34a"/>
+        <line x1="555" y1="80" x2="690" y2="80" stroke="#17324d" stroke-width="6" marker-end="url(#arrA)"/>
+        <text x="622" y="57" text-anchor="middle" font-size="22" font-weight="800" fill="#17324d">ทิศการเคลื่อนที่ / Direction</text>
+        <text x="220" y="292" text-anchor="middle" font-size="20" font-weight="700" fill="#111827">ผู้โดยสาร / Passengers</text>
+        <text x="650" y="292" text-anchor="middle" font-size="20" font-weight="700" fill="#111827">ริมถนน / Roadside</text>
+      </svg>
+      <div class="caption">ผู้สังเกตแต่ละคนเปรียบเทียบตำแหน่งกับสิ่งที่ต่างกัน<span class="en">Each observer compares position with a different reference.</span></div>
+    </div>
+    <div>
+      <div class="key">
+        <div class="card-title">เส้นทางการเรียนรู้<span class="en">Learning route</span></div>
+        <div class="timeline">
+          <div class="step">ตำแหน่งและจุดอ้างอิง<span class="en">Position & reference point</span></div><div class="arrow">→</div>
+          <div class="step">ระยะทางและการกระจัด<span class="en">Distance & displacement</span></div><div class="arrow">→</div>
+          <div class="step">อัตราเร็ว ความเร็ว ความเร่ง<span class="en">Speed, velocity & acceleration</span></div>
+        </div>
+        <div class="timeline">
+          <div class="step">ความเร็วคงที่<span class="en">Constant velocity</span></div><div class="arrow">→</div>
+          <div class="step">ความเร่งคงที่<span class="en">Constant acceleration</span></div><div class="arrow">→</div>
+          <div class="step">เลือกสมการให้ตรงสถานการณ์<span class="en">Choose equations by situation</span></div>
+        </div>
+      </div>
+      <div class="pitfall">
+        <strong>ข้อตกลงเรื่องสัญลักษณ์ / Symbol convention</strong>
+        <p>ระยะทางใช้ $d$ ส่วนการกระจัดใช้ $\Delta x$ หรือ $\Delta y$ ตามแกนของสถานการณ์ ไม่ใช้ $s$ แทนการกระจัดในชีทนี้</p>
+        <span class="en">Distance is written as $d$. Displacement is written as $\Delta x$ or $\Delta y$, depending on the axis in the situation. This sheet does not use $s$ for displacement.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="question-card" data-print-title="จุดอ้างอิง / Reference point">
+    <div class="qhead"><div class="qtitle">ลองคิดก่อน: ใครพูดถูก?<span class="en">Think first: Who is correct?</span></div><div class="qtype">Discuss / อภิปราย</div></div>
+    <p>ผู้โดยสารบอกว่าเพื่อนข้าง ๆ หยุดนิ่ง แต่คนริมถนนบอกว่าเพื่อนคนนั้นกำลังเคลื่อนที่ ข้อใดอธิบายได้ดีที่สุด?</p>
+    <span class="en">The passenger says the friend beside him is at rest, while the roadside observer says the friend is moving. Which statement explains this best?</span>
+    <div class="options">
+      <button class="option-btn" data-q="qref" data-level="warm" data-th="มองจากในรถได้ถูกส่วนหนึ่ง แต่ยังไม่ได้พิจารณาจุดอ้างอิงของคนริมถนน" data-en="This is partly correct from inside the bus, but it ignores the roadside reference point.">ผู้โดยสารพูดถูกเพียงคนเดียว<span class="en">Only the passenger is correct</span></button>
+      <button class="option-btn" data-q="qref" data-level="warm" data-th="มองจากริมถนนได้ถูกส่วนหนึ่ง แต่ยังไม่ได้พิจารณาจุดอ้างอิงภายในรถ" data-en="This is partly correct from the roadside, but it ignores the reference point inside the bus.">คนริมถนนพูดถูกเพียงคนเดียว<span class="en">Only the roadside observer is correct</span></button>
+      <button class="option-btn" data-q="qref" data-level="hot" data-th="ถูกต้อง ทั้งสองคนใช้จุดอ้างอิงต่างกัน จึงบรรยายการเคลื่อนที่ต่างกันได้" data-en="Correct. They use different reference points, so both descriptions can be valid.">ทั้งสองคนพูดถูก<span class="en">Both are correct</span></button>
+      <button class="option-btn" data-q="qref" data-level="cold" data-th="ลองถามว่าแต่ละคนกำลังเปรียบเทียบตำแหน่งของผู้โดยสารกับสิ่งใด" data-en="Ask what each observer compares the passenger's position with.">ทั้งสองคนพูดผิด<span class="en">Both are incorrect</span></button>
+    </div>
+    <div class="feedback" id="qref-feedback" aria-live="polite"></div>
+    <div class="solution" id="qref-solution"><div class="solution-title">เฉลย / Answer</div>ทั้งสองคนพูดถูก เพราะการบอกว่าหยุดนิ่งหรือเคลื่อนที่ต้องระบุจุดอ้างอิง ผู้โดยสารคงตำแหน่งเมื่อเทียบกับรถ แต่เปลี่ยนตำแหน่งเมื่อเทียบกับถนน<span class="en">Both are correct because motion must be described relative to a reference point. The passenger's position is unchanged relative to the bus but changes relative to the road.</span></div>
+    <div class="print-response">คำตอบและเหตุผล / Answer and reasoning:<br><br></div>
+  </div>
+  <div class="footer"><span>ปริมาณและสมการการเคลื่อนที่</span><span>Motion Quantities and Equations</span></div>
+</section>
+
+<section class="page">
+  <header class="page-head"><div><div class="kicker">Position and Reference</div><h2>ตำแหน่งเริ่มมีความหมายเมื่อเราระบุจุดอ้างอิง<span class="en">Position becomes meaningful when a reference point is specified</span></h2></div><div class="tag">From observation to coordinates<br>จากการสังเกตสู่พิกัด</div></header>
+
+  <div class="story-card">
+    <div class="card-title">สถานการณ์: นัดพบกันที่หน้าห้องทดลอง<span class="en">Situation: Meeting in front of the laboratory</span></div>
+    <p>คำว่า “ฉันอยู่ห่างออกไป 5 เมตร” ยังไม่ครบ เพราะต้องตอบต่อว่า ห่างจากจุดใดและอยู่ด้านไหนของจุดนั้น การกำหนดจุดอ้างอิงและทิศบวกทำให้ตำแหน่งเขียนเป็นตัวเลขที่ตีความตรงกันได้</p>
+    <span class="en">The statement “I am 5 metres away” is incomplete. We must also ask: away from which point, and on which side? A reference point and a positive direction allow position to be represented unambiguously by a number.</span>
+  </div>
+
+  <div class="two-col">
+    <div class="visual-card">
+      <svg viewBox="0 0 780 280" role="img" aria-label="เส้นจำนวนแสดงตำแหน่ง">
+        <defs><marker id="arrB" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#17324d"/></marker></defs>
+        <line x1="70" y1="150" x2="720" y2="150" stroke="#17324d" stroke-width="4" marker-end="url(#arrB)"/>
+        <g fill="#111827" font-size="19" text-anchor="middle">
+          <line x1="150" y1="135" x2="150" y2="165" stroke="#111827" stroke-width="3"/><text x="150" y="195">−4 m</text>
+          <line x1="390" y1="128" x2="390" y2="172" stroke="#111827" stroke-width="4"/><text x="390" y="205" font-weight="800">0</text>
+          <line x1="630" y1="135" x2="630" y2="165" stroke="#111827" stroke-width="3"/><text x="630" y="195">+4 m</text>
+        </g>
+        <rect x="337" y="42" width="106" height="65" rx="8" fill="#dbeafe" stroke="#17324d" stroke-width="3"/><text x="390" y="70" text-anchor="middle" font-size="20" font-weight="800">ห้องทดลอง</text><text x="390" y="94" text-anchor="middle" font-size="16">Laboratory</text>
+        <circle cx="630" cy="107" r="14" fill="#f59e0b"/><rect x="619" y="121" width="22" height="43" rx="8" fill="#2563eb"/>
+        <text x="630" y="35" text-anchor="middle" font-size="19" font-weight="800" fill="#17324d">ตำแหน่งของนักเรียน / Student position</text>
+        <text x="684" y="126" text-anchor="middle" font-size="17" fill="#17324d">ทิศบวก / Positive</text>
+      </svg>
+      <div class="caption">กำหนดหน้าห้องทดลองเป็น $x=0$ และกำหนดทางขวาเป็นทิศบวก นักเรียนจึงอยู่ที่ $x=+4\ \mathrm{m}$<span class="en">Let the laboratory entrance be $x=0$ and take right as positive. The student is therefore at $x=+4\ \mathrm{m}$.</span></div>
+    </div>
+    <div>
+      <div class="key"><div class="card-title">นิยามสำคัญ<span class="en">Key definition</span></div>
+        <p><strong>ตำแหน่ง (position)</strong> คือค่าที่บอกว่าวัตถุอยู่ที่ใดเมื่อเทียบกับจุดอ้างอิงและระบบแกนที่เลือก</p>
+        <span class="en"><strong>Position</strong> is a value that specifies where an object is relative to a chosen reference point and coordinate axis.</span>
+      </div>
+      <div class="formula">แนวแกน $x$: ตำแหน่งเริ่มต้น $x_i$ และตำแหน่งสุดท้าย $x_f$<span class="en">Along the $x$-axis: initial position $x_i$ and final position $x_f$</span></div>
+      <div class="pitfall"><strong>อย่าข้ามการกำหนดแกน / Do not skip the axis convention</strong><p>เครื่องหมายบวกและลบไม่ได้แปลว่า “ดี–ไม่ดี” หรือ “เร็ว–ช้า” แต่บอกว่าปริมาณนั้นชี้ไปทางเดียวหรือตรงข้ามกับทิศบวกที่เราเลือก</p><span class="en">Positive and negative signs do not mean “good–bad” or “fast–slow.” They indicate whether a quantity points along or opposite the chosen positive direction.</span></div>
+    </div>
+  </div>
+
+  <h2 class="section-title">สเกลาร์และเวกเตอร์<span class="en">Scalars and vectors</span></h2>
+  <div class="two-col">
+    <div class="key"><div class="card-title">ปริมาณสเกลาร์<span class="en">Scalar quantity</span></div><p>มีขนาดเพียงอย่างเดียว เช่น ระยะทาง อัตราเร็ว เวลา และมวล</p><span class="en">Has magnitude only, such as distance, speed, time, and mass.</span></div>
+    <div class="key"><div class="card-title">ปริมาณเวกเตอร์<span class="en">Vector quantity</span></div><p>มีทั้งขนาดและทิศทาง เช่น การกระจัด ความเร็ว และความเร่ง</p><span class="en">Has both magnitude and direction, such as displacement, velocity, and acceleration.</span></div>
+  </div>
+  <div class="summary-card"><strong>คำถามประจำตัว / Identity question</strong><p>เมื่อพบปริมาณใหม่ ให้ถามว่า “การบอกตัวเลขอย่างเดียวเพียงพอหรือยัง?” ถ้ายังต้องบอกทิศทาง ปริมาณนั้นเป็นเวกเตอร์</p><span class="en">When meeting a new quantity, ask: “Is a number alone sufficient?” If a direction is also required, the quantity is a vector.</span></div>
+  <div class="footer"><span>ตำแหน่ง จุดอ้างอิง และชนิดของปริมาณ</span><span>Position, reference point, and quantity type</span></div>
+</section>
+
+<section class="page">
+  <header class="page-head"><div><div class="kicker">Distance and Displacement</div><h2>เส้นทางที่เดินจริง กับการเปลี่ยนตำแหน่ง ไม่ใช่สิ่งเดียวกัน<span class="en">The path travelled and the change in position are not the same</span></h2></div><div class="tag">Path versus endpoint<br>เส้นทางเทียบกับจุดปลาย</div></header>
+
+  <div class="story-card"><div class="card-title">สถานการณ์: เดินไปหยิบหนังสือแล้วเดินย้อนกลับ<span class="en">Situation: Walking to collect a book and then returning partway</span></div><p>นักเรียนเริ่มที่หน้าโต๊ะ เดินไปทางขวา 8 เมตรเพื่อหยิบหนังสือ แล้วเดินย้อนกลับทางซ้าย 3 เมตร แม้เดินจริงรวม 11 เมตร แต่ตำแหน่งสุดท้ายอยู่ทางขวาจากจุดเริ่มต้นเพียง 5 เมตร</p><span class="en">A student starts at a desk, walks 8 m to the right to collect a book, and then walks 3 m back to the left. The total path is 11 m, but the final position is only 5 m to the right of the starting point.</span></div>
+
+  <div class="two-col">
+    <div class="visual-card">
+      <svg viewBox="0 0 800 310" role="img" aria-label="ระยะทางและการกระจัดบนเส้นจำนวน">
+        <defs><marker id="arrC1" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#2563eb"/></marker><marker id="arrC2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#b91c1c"/></marker><marker id="arrC3" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#15803d"/></marker></defs>
+        <line x1="70" y1="205" x2="730" y2="205" stroke="#111827" stroke-width="4"/>
+        <line x1="130" y1="190" x2="130" y2="220" stroke="#111827" stroke-width="3"/><line x1="610" y1="190" x2="610" y2="220" stroke="#111827" stroke-width="3"/><line x1="430" y1="190" x2="430" y2="220" stroke="#111827" stroke-width="3"/>
+        <text x="130" y="250" text-anchor="middle" font-size="18" font-weight="800">เริ่ม / Start</text><text x="610" y="250" text-anchor="middle" font-size="18">+8 m</text><text x="430" y="250" text-anchor="middle" font-size="18" font-weight="800">สุดท้าย / Final</text>
+        <line x1="130" y1="92" x2="610" y2="92" stroke="#2563eb" stroke-width="8" marker-end="url(#arrC1)"/><text x="370" y="68" text-anchor="middle" font-size="19" font-weight="800" fill="#2563eb">ไป 8 m / Move 8 m</text>
+        <line x1="610" y1="137" x2="430" y2="137" stroke="#b91c1c" stroke-width="8" marker-end="url(#arrC2)"/><text x="520" y="123" text-anchor="middle" font-size="18" font-weight="800" fill="#b91c1c">กลับ 3 m / Return 3 m</text>
+        <line x1="130" y1="180" x2="430" y2="180" stroke="#15803d" stroke-width="7" marker-end="url(#arrC3)"/><text x="280" y="167" text-anchor="middle" font-size="18" font-weight="800" fill="#15803d">$\Delta x=+5\ \mathrm{m}$</text>
+      </svg>
+      <div class="caption">ระยะทางนับทุกช่วงของเส้นทาง ส่วนการกระจัดเปรียบเทียบจุดเริ่มต้นกับจุดสุดท้าย<span class="en">Distance counts every section of the path. Displacement compares only the initial and final positions.</span></div>
+    </div>
+    <div>
+      <div class="key"><div class="card-title">ระยะทาง $d$<span class="en">Distance $d$</span></div><p>ความยาวรวมของเส้นทางที่วัตถุเคลื่อนที่จริง เป็นสเกลาร์ และมีค่าไม่ติดลบ</p><span class="en">The total length of the actual path travelled. It is a scalar and is never negative.</span></div>
+      <div class="key"><div class="card-title">การกระจัด $\Delta x$ หรือ $\Delta y$<span class="en">Displacement $\Delta x$ or $\Delta y$</span></div><p>การเปลี่ยนตำแหน่งจากจุดเริ่มต้นไปยังจุดสุดท้าย เป็นเวกเตอร์ จึงมีเครื่องหมายหรือทิศทาง</p><span class="en">The change in position from the initial point to the final point. It is a vector, so it carries a sign or direction.</span></div>
+      <div class="formula">$\Delta x=x_f-x_i$ &nbsp;&nbsp; หรือ / or &nbsp;&nbsp; $\Delta y=y_f-y_i$</div>
+    </div>
+  </div>
+
+  <div class="explore-card">
+    <div class="card-title">สำรวจด้วยตัวเลื่อน: เดินไปแล้วเดินย้อนกลับ<span class="en">Explore with sliders: Move out and return</span></div>
+    <div class="controls">
+      <div class="control"><label for="outRange">ระยะที่ไปทางขวา / Distance moved right</label><input id="outRange" type="range" min="0" max="12" value="8" step="1" oninput="updatePathExplorer()"><span class="value-pill" id="outVal">8 m</span></div>
+      <div class="control"><label for="backRange">ระยะที่ย้อนกลับ / Return distance</label><input id="backRange" type="range" min="0" max="12" value="3" step="1" oninput="updatePathExplorer()"><span class="value-pill" id="backVal">3 m</span></div>
+      <div class="control"><label>ข้อตกลงทิศ / Direction convention</label><div class="small">ขวาเป็นบวก / Right is positive<br>จุดเริ่มต้น $x_i=0$ / Start at $x_i=0$</div></div>
+    </div>
+    <svg id="pathExplorerSvg" viewBox="0 0 900 190" style="width:100%;max-height:48mm;background:#fff;border:1px solid #94a3b8;border-radius:8px" role="img" aria-label="ตัวสำรวจระยะทางและการกระจัด">
+      <defs><marker id="arrPE" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#17324d"/></marker></defs>
+      <line x1="70" y1="125" x2="830" y2="125" stroke="#111827" stroke-width="3" marker-end="url(#arrPE)"/>
+      <line x1="100" y1="110" x2="100" y2="140" stroke="#111827" stroke-width="4"/><text x="100" y="165" text-anchor="middle" font-size="17">0</text>
+      <polyline id="pathPolyline" points="100,80 580,80 400,80" fill="none" stroke="#2563eb" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle id="pathFinalDot" cx="400" cy="80" r="12" fill="#f59e0b" stroke="#111827" stroke-width="2"/>
+      <line id="dispLine" x1="100" y1="105" x2="400" y2="105" stroke="#15803d" stroke-width="6"/>
+      <text id="pathText" x="450" y="35" text-anchor="middle" font-size="18" font-weight="800" fill="#17324d"></text>
+    </svg>
+    <div class="sim-output"><div class="out">ระยะทาง / Distance<strong id="pathDistance">11 m</strong></div><div class="out">การกระจัด / Displacement<strong id="pathDisplacement">+5 m</strong></div><div class="out">ตำแหน่งสุดท้าย / Final position<strong id="pathFinal">+5 m</strong></div></div>
+  </div>
+
+  <div class="question-card" data-print-title="ระยะทางและการกระจัด / Distance and displacement">
+    <div class="qhead"><div class="qtitle">ตรวจแนวคิด: นักเรียนเดินไปทางขวา 8 m แล้วกลับซ้าย 3 m<span class="en">Concept check: A student moves 8 m right, then 3 m left</span></div><div class="qtype">Hot–Cold</div></div>
+    <p>ข้อใดระบุระยะทางและการกระจัดได้ถูกต้อง?</p><span class="en">Which option correctly gives the distance and displacement?</span>
+    <div class="options">
+      <button class="option-btn" data-q="qdisp" data-level="cold" data-th="ค่านี้สลับบทบาทกัน ระยะทางต้องนับทั้ง 8 m และ 3 m" data-en="The roles are reversed. Distance must include both 8 m and 3 m.">$d=5\ \mathrm{m},\ \Delta x=+11\ \mathrm{m}$</button>
+      <button class="option-btn" data-q="qdisp" data-level="warm" data-th="ระยะทางถูกแล้ว แต่การกระจัดต้องมีเครื่องหมายหรือทิศทาง" data-en="The distance is correct, but displacement must include a sign or direction.">$d=11\ \mathrm{m},\ \Delta x=5\ \mathrm{m}$</button>
+      <button class="option-btn" data-q="qdisp" data-level="hot" data-th="ถูกต้อง เดินจริงรวม 11 m และจบทางขวาจากจุดเริ่มต้น 5 m" data-en="Correct. The total path is 11 m, and the final point is 5 m to the right of the start.">$d=11\ \mathrm{m},\ \Delta x=+5\ \mathrm{m}$</button>
+      <button class="option-btn" data-q="qdisp" data-level="cold" data-th="การเดินย้อนกลับไม่ได้ทำให้ระยะทางหายไป แต่มีผลต่อการกระจัด" data-en="Returning does not erase travelled distance, but it changes displacement.">$d=8\ \mathrm{m},\ \Delta x=+3\ \mathrm{m}$</button>
+    </div>
+    <div class="feedback" id="qdisp-feedback"></div>
+    <div class="solution" id="qdisp-solution"><div class="solution-title">เฉลย / Answer</div>$d=8+3=11\ \mathrm{m}$ และ $\Delta x=+8-3=+5\ \mathrm{m}$ โดยเครื่องหมายบวกหมายถึงทางขวา<span class="en">$d=8+3=11\ \mathrm{m}$ and $\Delta x=+8-3=+5\ \mathrm{m}$. The positive sign indicates the rightward direction.</span></div>
+    <div class="print-response">แสดงคำตอบและอธิบายความแตกต่าง / Give the answer and explain the difference:<br><br></div>
+  </div>
+  <div class="footer"><span>ระยะทางและการกระจัด</span><span>Distance and displacement</span></div>
+</section>
+
+<section class="page">
+  <header class="page-head"><div><div class="kicker">Speed and Velocity</div><h2>เดินทางเร็วเพียงใด กับเปลี่ยนตำแหน่งเร็วเพียงใด<span class="en">How fast the path is covered versus how fast position changes</span></h2></div><div class="tag">Scalar rate & vector rate<br>อัตราแบบสเกลาร์และเวกเตอร์</div></header>
+
+  <div class="story-card"><div class="card-title">สถานการณ์: วิ่งครบหนึ่งรอบสนาม<span class="en">Situation: Completing one lap of a track</span></div><p>นักวิ่งออกจากเส้นเริ่มต้น วิ่งครบหนึ่งรอบ และกลับมาที่จุดเดิม เขาเดินทางเป็นระยะทางหนึ่งรอบเต็ม แต่การกระจัดตลอดช่วงเท่ากับศูนย์</p><span class="en">A runner starts at the line, completes one lap, and returns to the same point. The runner covers a full-lap distance, but the displacement over the interval is zero.</span></div>
+
+  <div class="two-col">
+    <div class="visual-card">
+      <svg viewBox="0 0 760 330" role="img" aria-label="สนามวิ่งและการกระจัดเป็นศูนย์">
+        <ellipse cx="380" cy="165" rx="260" ry="110" fill="#e0f2fe" stroke="#17324d" stroke-width="5"/>
+        <ellipse cx="380" cy="165" rx="205" ry="70" fill="#fff" stroke="#94a3b8" stroke-width="3"/>
+        <line x1="640" y1="112" x2="640" y2="218" stroke="#b91c1c" stroke-width="8"/>
+        <circle cx="640" cy="165" r="14" fill="#f59e0b" stroke="#111827" stroke-width="2"/>
+        <path d="M640 165 C640 60,120 60,120 165 C120 270,640 270,640 165" fill="none" stroke="#2563eb" stroke-width="8" stroke-dasharray="13 10"/>
+        <text x="380" y="158" text-anchor="middle" font-size="24" font-weight="800" fill="#17324d">ระยะทาง = หนึ่งรอบ</text><text x="380" y="188" text-anchor="middle" font-size="19" fill="#526174">Distance = one lap</text>
+        <text x="626" y="80" text-anchor="end" font-size="19" font-weight="800" fill="#b91c1c">เริ่ม = จบ / Start = Finish</text>
+        <text x="380" y="310" text-anchor="middle" font-size="20" font-weight="800" fill="#15803d">$\Delta x=0$ และ $\Delta y=0$ / zero displacement</text>
+      </svg>
+      <div class="caption">กลับมาจุดเดิมไม่ได้แปลว่า “ไม่ได้เคลื่อนที่” แต่แปลว่าการเปลี่ยนตำแหน่งสุทธิเป็นศูนย์<span class="en">Returning to the starting point does not mean “no motion.” It means the net change in position is zero.</span></div>
+    </div>
+    <div>
+      <div class="key"><div class="card-title">อัตราเร็วเฉลี่ย<span class="en">Average speed</span></div><p>ระยะทางทั้งหมดต่อเวลารวม เป็นปริมาณสเกลาร์</p><span class="en">Total distance divided by total time. It is a scalar.</span></div>
+      <div class="formula">$\text{average speed}=\dfrac{d_{\mathrm{total}}}{\Delta t}$</div>
+      <div class="key"><div class="card-title">ความเร็วเฉลี่ย<span class="en">Average velocity</span></div><p>การกระจัดต่อช่วงเวลา เป็นปริมาณเวกเตอร์</p><span class="en">Displacement divided by the time interval. It is a vector.</span></div>
+      <div class="formula">$v_{x,\mathrm{avg}}=\dfrac{\Delta x}{\Delta t}$ &nbsp;&nbsp; หรือ / or &nbsp;&nbsp; $v_{y,\mathrm{avg}}=\dfrac{\Delta y}{\Delta t}$</div>
+    </div>
+  </div>
+
+  <div class="pitfall"><strong>คำว่า “เฉลี่ย” หมายถึงทั้งช่วง / “Average” describes the whole interval</strong><p>ความเร็วเฉลี่ยไม่ได้หมายถึงความเร็ว ณ กึ่งกลางเวลา แต่คำนวณจากการกระจัดสุทธิหารด้วยเวลารวม</p><span class="en">Average velocity is not the velocity at the midpoint in time. It is calculated from net displacement divided by total elapsed time.</span></div>
+
+  <div class="question-card" data-print-title="อัตราเร็วเฉลี่ยและความเร็วเฉลี่ย / Average speed and average velocity">
+    <div class="qhead"><div class="qtitle">ลองอธิบายการวิ่งครบหนึ่งรอบ<span class="en">Explain a completed lap</span></div><div class="qtype">Concept Check</div></div>
+    <p>นักวิ่งกลับมาจุดเดิมหลังวิ่งหนึ่งรอบในเวลา 80 s ข้อใดถูกต้อง?</p><span class="en">A runner returns to the starting point after one lap in 80 s. Which statement is correct?</span>
+    <div class="options">
+      <button class="option-btn" data-q="qspeed" data-level="cold" data-th="การกระจัดเป็นศูนย์ แต่ระยะทางไม่เป็นศูนย์" data-en="Displacement is zero, but distance is not zero.">อัตราเร็วเฉลี่ยและความเร็วเฉลี่ยเป็นศูนย์ทั้งคู่<span class="en">Both average speed and average velocity are zero</span></button>
+      <button class="option-btn" data-q="qspeed" data-level="hot" data-th="ถูกต้อง ระยะทางหนึ่งรอบไม่เป็นศูนย์ แต่การกระจัดเป็นศูนย์" data-en="Correct. One-lap distance is non-zero, while displacement is zero.">อัตราเร็วเฉลี่ยไม่เป็นศูนย์ แต่ความเร็วเฉลี่ยเป็นศูนย์<span class="en">Average speed is non-zero, but average velocity is zero</span></button>
+      <button class="option-btn" data-q="qspeed" data-level="warm" data-th="ย้อนดูว่าปริมาณใดใช้ระยะทาง และปริมาณใดใช้การกระจัด" data-en="Recheck which quantity uses distance and which uses displacement.">อัตราเร็วเฉลี่ยเป็นศูนย์ แต่ความเร็วเฉลี่ยไม่เป็นศูนย์<span class="en">Average speed is zero, but average velocity is non-zero</span></button>
+      <button class="option-btn" data-q="qspeed" data-level="cold" data-th="แม้ใช้เวลาเท่ากัน ตัวเศษของสองสูตรต่างกัน" data-en="Although the time is the same, the numerators in the two formulas are different.">ทั้งสองปริมาณต้องมีค่าเท่ากันเสมอ<span class="en">The two quantities must always be equal</span></button>
+    </div>
+    <div class="feedback" id="qspeed-feedback"></div>
+    <div class="solution" id="qspeed-solution"><div class="solution-title">เฉลย / Answer</div>อัตราเร็วเฉลี่ยไม่เป็นศูนย์ เพราะระยะทางหนึ่งรอบไม่เป็นศูนย์ ส่วนความเร็วเฉลี่ยเป็นศูนย์ เพราะการกระจัดสุทธิเป็นศูนย์<span class="en">Average speed is non-zero because the lap distance is non-zero. Average velocity is zero because net displacement is zero.</span></div>
+    <div class="print-response">อธิบายโดยอ้างถึงนิยามของทั้งสองปริมาณ / Explain using both definitions:<br><br></div>
+  </div>
+
+  <div class="summary-card"><strong>เมื่อใดค่าตัวเลขอาจเท่ากัน? / When can the numerical values be equal?</strong><p>ถ้าวัตถุเคลื่อนที่เป็นเส้นตรงไปทิศเดียวโดยไม่ย้อนกลับ ระยะทางจะเท่ากับขนาดการกระจัด ดังนั้นอัตราเร็วเฉลี่ยจะเท่ากับขนาดของความเร็วเฉลี่ย</p><span class="en">For straight-line motion in one direction with no reversal, distance equals the magnitude of displacement. Therefore average speed equals the magnitude of average velocity.</span></div>
+  <div class="footer"><span>อัตราเร็วและความเร็ว</span><span>Speed and velocity</span></div>
+</section>
+
+<section class="page">
+  <header class="page-head"><div><div class="kicker">Acceleration</div><h2>ความเร่งบอกว่า “ความเร็วเปลี่ยนเร็วเพียงใด”<span class="en">Acceleration describes how quickly velocity changes</span></h2></div><div class="tag">Change of velocity<br>การเปลี่ยนความเร็ว</div></header>
+
+  <div class="story-card"><div class="card-title">สถานการณ์: รถออกจากสัญญาณไฟ<span class="en">Situation: A car leaving a traffic light</span></div><p>รถเริ่มจากหยุดนิ่ง และในแต่ละวินาทีความเร็วเพิ่มขึ้น 3 m/s ลำดับความเร็วจึงเป็น 0, 3, 6, 9 m/s การเปลี่ยนที่สม่ำเสมอนี้อธิบายด้วยความเร่งคงที่ $3\ \mathrm{m/s^2}$</p><span class="en">A car starts from rest, and its velocity increases by 3 m/s every second: 0, 3, 6, 9 m/s. This uniform change is described by a constant acceleration of $3\ \mathrm{m/s^2}$.</span></div>
+
+  <div class="visual-card">
+    <svg viewBox="0 0 980 300" role="img" aria-label="รถที่มีลูกศรความเร็วยาวขึ้น">
+      <defs><marker id="arrD" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#2563eb"/></marker></defs>
+      <line x1="50" y1="220" x2="930" y2="220" stroke="#64748b" stroke-width="6"/>
+      <g transform="translate(90,0)"><rect x="0" y="145" width="115" height="45" rx="10" fill="#dbeafe" stroke="#17324d" stroke-width="3"/><circle cx="25" cy="195" r="13" fill="#111827"/><circle cx="90" cy="195" r="13" fill="#111827"/><text x="58" y="260" text-anchor="middle" font-size="18">$t=0$ s</text><line x1="5" y1="118" x2="35" y2="118" stroke="#2563eb" stroke-width="6" marker-end="url(#arrD)"/><text x="58" y="94" text-anchor="middle" font-size="17">0 m/s</text></g>
+      <g transform="translate(310,0)"><rect x="0" y="145" width="115" height="45" rx="10" fill="#dbeafe" stroke="#17324d" stroke-width="3"/><circle cx="25" cy="195" r="13" fill="#111827"/><circle cx="90" cy="195" r="13" fill="#111827"/><text x="58" y="260" text-anchor="middle" font-size="18">$t=1$ s</text><line x1="5" y1="118" x2="85" y2="118" stroke="#2563eb" stroke-width="6" marker-end="url(#arrD)"/><text x="58" y="94" text-anchor="middle" font-size="17">3 m/s</text></g>
+      <g transform="translate(530,0)"><rect x="0" y="145" width="115" height="45" rx="10" fill="#dbeafe" stroke="#17324d" stroke-width="3"/><circle cx="25" cy="195" r="13" fill="#111827"/><circle cx="90" cy="195" r="13" fill="#111827"/><text x="58" y="260" text-anchor="middle" font-size="18">$t=2$ s</text><line x1="5" y1="118" x2="135" y2="118" stroke="#2563eb" stroke-width="6" marker-end="url(#arrD)"/><text x="72" y="94" text-anchor="middle" font-size="17">6 m/s</text></g>
+      <g transform="translate(750,0)"><rect x="0" y="145" width="115" height="45" rx="10" fill="#dbeafe" stroke="#17324d" stroke-width="3"/><circle cx="25" cy="195" r="13" fill="#111827"/><circle cx="90" cy="195" r="13" fill="#111827"/><text x="58" y="260" text-anchor="middle" font-size="18">$t=3$ s</text><line x1="5" y1="118" x2="185" y2="118" stroke="#2563eb" stroke-width="6" marker-end="url(#arrD)"/><text x="92" y="94" text-anchor="middle" font-size="17">9 m/s</text></g>
+    </svg>
+    <div class="caption">ในช่วงเวลาเท่ากัน ความเร็วเพิ่มขึ้นเท่ากัน จึงเป็นความเร่งคงที่<span class="en">Equal changes in velocity occur during equal time intervals, so the acceleration is constant.</span></div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <div class="key"><div class="card-title">นิยามความเร่งเฉลี่ย<span class="en">Definition of average acceleration</span></div><p>ความเร่งเฉลี่ยคือการเปลี่ยนความเร็วต่อช่วงเวลา</p><span class="en">Average acceleration is the change in velocity divided by the time interval.</span></div>
+      <div class="formula">$a_x=\dfrac{\Delta v_x}{\Delta t}=\dfrac{v_x-u_x}{\Delta t}$</div>
+      <div class="formula">$a_y=\dfrac{\Delta v_y}{\Delta t}=\dfrac{v_y-u_y}{\Delta t}$</div>
+    </div>
+    <div>
+      <div class="key"><div class="card-title">ความหมายของหน่วย $\mathrm{m/s^2}$<span class="en">Meaning of the unit $\mathrm{m/s^2}$</span></div><p>$3\ \mathrm{m/s^2}$ หมายถึง ในทุก 1 s ความเร็วเปลี่ยนไป $3\ \mathrm{m/s}$</p><span class="en">$3\ \mathrm{m/s^2}$ means that velocity changes by $3\ \mathrm{m/s}$ every 1 s.</span></div>
+      <div class="pitfall"><strong>คำศัพท์ / Terminology</strong><p>ในฟิสิกส์มาตรฐานใช้คำว่า <strong>ความเร่ง (acceleration)</strong> ซึ่งเป็นเวกเตอร์ คำว่า “อัตราเร่ง” อาจพบในภาษาทั่วไป แต่ไม่แยกเป็นปริมาณพื้นฐานอีกชนิดหนึ่งในชีทนี้</p><span class="en">Standard physics uses <strong>acceleration</strong>, a vector quantity. The informal Thai term “อัตราเร่ง” may appear in everyday language, but it is not treated here as a separate fundamental quantity.</span></div>
+    </div>
+  </div>
+
+  <h2 class="section-title">เครื่องหมายของความเร็วและความเร่ง<span class="en">Signs of velocity and acceleration</span></h2>
+  <div class="table-wrap"><table class="sign-table"><thead><tr><th>$v_x$</th><th>$a_x$</th><th>สิ่งที่เกิดขึ้น<span class="en">What happens</span></th></tr></thead><tbody>
+    <tr><td class="sign-plus">+</td><td class="sign-plus">+</td><td>เคลื่อนไปทางบวกและเร็วขึ้น<span class="en">Moves in the positive direction and speeds up</span></td></tr>
+    <tr><td class="sign-plus">+</td><td class="sign-minus">−</td><td>เคลื่อนไปทางบวกแต่ช้าลง<span class="en">Moves in the positive direction and slows down</span></td></tr>
+    <tr><td class="sign-minus">−</td><td class="sign-minus">−</td><td>เคลื่อนไปทางลบและเร็วขึ้น<span class="en">Moves in the negative direction and speeds up</span></td></tr>
+    <tr><td class="sign-minus">−</td><td class="sign-plus">+</td><td>เคลื่อนไปทางลบแต่ช้าลง<span class="en">Moves in the negative direction and slows down</span></td></tr>
+  </tbody></table></div>
+  <div class="summary-card"><strong>หลักจำที่ไม่หลอกเรา / Reliable rule</strong><p>$v$ และ $a$ เครื่องหมายเดียวกัน → ขนาดความเร็วเพิ่มขึ้น; เครื่องหมายตรงข้ามกัน → ขนาดความเร็วลดลง</p><span class="en">Same signs for $v$ and $a$ → speed increases; opposite signs → speed decreases.</span></div>
+
+  <div class="question-card" data-print-title="เครื่องหมายของความเร็วและความเร่ง / Signs of velocity and acceleration">
+    <div class="qhead"><div class="qtitle">รถเคลื่อนไปทางซ้ายและกำลังเร็วขึ้น<span class="en">A car moves left and is speeding up</span></div><div class="qtype">Hot–Cold</div></div>
+    <p>กำหนดทางขวาเป็นทิศบวก เครื่องหมายของ $v_x$ และ $a_x$ ควรเป็นอย่างไร?</p><span class="en">Take right as positive. What are the signs of $v_x$ and $a_x$?</span>
+    <div class="options">
+      <button class="option-btn" data-q="qsign" data-level="cold" data-th="รถเคลื่อนไปทางซ้าย จึงไม่ควรมีความเร็วเป็นบวก" data-en="The car moves left, so its velocity should not be positive.">$v_x&gt;0,\ a_x&gt;0$</button>
+      <button class="option-btn" data-q="qsign" data-level="cold" data-th="ทิศของความเร็วไม่ตรงกับการเคลื่อนที่ไปทางซ้าย" data-en="The velocity sign does not match leftward motion.">$v_x&gt;0,\ a_x&lt;0$</button>
+      <button class="option-btn" data-q="qsign" data-level="warm" data-th="ความเร็วติดลบถูกแล้ว แต่ถ้า $a_x$ ตรงข้ามกับ $v_x$ รถจะช้าลง" data-en="The velocity sign is correct, but opposite signs for $a_x$ and $v_x$ would make the car slow down.">$v_x&lt;0,\ a_x&gt;0$</button>
+      <button class="option-btn" data-q="qsign" data-level="hot" data-th="ถูกต้อง ทั้งความเร็วและความเร่งชี้ไปทางซ้าย ขนาดความเร็วจึงเพิ่มขึ้น" data-en="Correct. Both velocity and acceleration point left, so the speed increases.">$v_x&lt;0,\ a_x&lt;0$</button>
+    </div>
+    <div class="feedback" id="qsign-feedback"></div>
+    <div class="solution" id="qsign-solution"><div class="solution-title">เฉลย / Answer</div>$v_x&lt;0$ และ $a_x&lt;0$ เพราะทั้งสองเวกเตอร์ชี้ไปทางซ้าย<span class="en">$v_x&lt;0$ and $a_x&lt;0$ because both vectors point to the left.</span></div>
+    <div class="print-response">ระบุเครื่องหมายและอธิบาย / State the signs and explain:<br><br></div>
+  </div>
+  <div class="footer"><span>ความเร่งและเครื่องหมาย</span><span>Acceleration and signs</span></div>
+</section>
+
+<section class="page">
+  <header class="page-head"><div><div class="kicker">Constant Velocity</div><h2>การเคลื่อนที่ด้วยความเร็วคงที่<span class="en">Motion with constant velocity</span></h2></div><div class="tag">Equal displacement in equal time<br>การกระจัดเท่ากันในเวลาเท่ากัน</div></header>
+
+  <div class="story-card"><div class="card-title">สถานการณ์: รถส่งเอกสารบนถนนตรง<span class="en">Situation: A delivery vehicle on a straight road</span></div><p>รถเคลื่อนที่ไปทางขวาด้วยความเร็วคงที่ $4\ \mathrm{m/s}$ ทุก ๆ 1 s ตำแหน่งเพิ่มขึ้น 4 m ลูกศรความเร็วมีทั้งขนาดและทิศทางเหมือนเดิมตลอด</p><span class="en">A vehicle moves right at a constant velocity of $4\ \mathrm{m/s}$. Every second its position increases by 4 m. The velocity arrow keeps the same magnitude and direction.</span></div>
+
+  <div class="visual-card">
+    <svg viewBox="0 0 1000 300" role="img" aria-label="ตำแหน่งเท่ากันในช่วงเวลาเท่ากัน">
+      <defs><marker id="arrE" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#2563eb"/></marker></defs>
+      <line x1="45" y1="220" x2="955" y2="220" stroke="#64748b" stroke-width="6"/>
+      <g transform="translate(70,0)"><rect x="0" y="145" width="105" height="43" rx="9" fill="#dbeafe" stroke="#17324d" stroke-width="3"/><circle cx="23" cy="193" r="12" fill="#111827"/><circle cx="83" cy="193" r="12" fill="#111827"/><line x1="5" y1="116" x2="110" y2="116" stroke="#2563eb" stroke-width="6" marker-end="url(#arrE)"/><text x="54" y="92" text-anchor="middle" font-size="17">4 m/s</text><text x="54" y="260" text-anchor="middle" font-size="17">$t=0$ s</text></g>
+      <g transform="translate(300,0)"><rect x="0" y="145" width="105" height="43" rx="9" fill="#dbeafe" stroke="#17324d" stroke-width="3"/><circle cx="23" cy="193" r="12" fill="#111827"/><circle cx="83" cy="193" r="12" fill="#111827"/><line x1="5" y1="116" x2="110" y2="116" stroke="#2563eb" stroke-width="6" marker-end="url(#arrE)"/><text x="54" y="92" text-anchor="middle" font-size="17">4 m/s</text><text x="54" y="260" text-anchor="middle" font-size="17">$t=1$ s</text></g>
+      <g transform="translate(530,0)"><rect x="0" y="145" width="105" height="43" rx="9" fill="#dbeafe" stroke="#17324d" stroke-width="3"/><circle cx="23" cy="193" r="12" fill="#111827"/><circle cx="83" cy="193" r="12" fill="#111827"/><line x1="5" y1="116" x2="110" y2="116" stroke="#2563eb" stroke-width="6" marker-end="url(#arrE)"/><text x="54" y="92" text-anchor="middle" font-size="17">4 m/s</text><text x="54" y="260" text-anchor="middle" font-size="17">$t=2$ s</text></g>
+      <g transform="translate(760,0)"><rect x="0" y="145" width="105" height="43" rx="9" fill="#dbeafe" stroke="#17324d" stroke-width="3"/><circle cx="23" cy="193" r="12" fill="#111827"/><circle cx="83" cy="193" r="12" fill="#111827"/><line x1="5" y1="116" x2="110" y2="116" stroke="#2563eb" stroke-width="6" marker-end="url(#arrE)"/><text x="54" y="92" text-anchor="middle" font-size="17">4 m/s</text><text x="54" y="260" text-anchor="middle" font-size="17">$t=3$ s</text></g>
+      <text x="500" y="35" text-anchor="middle" font-size="21" font-weight="800" fill="#17324d">ช่วงเวลาเท่ากัน → การกระจัดเท่ากัน / Equal times → equal displacements</text>
+    </svg>
+  </div>
+
+  <div class="two-col">
+    <div class="key"><div class="card-title">เงื่อนไข<span class="en">Condition</span></div><p>ความเร็วคงที่หมายถึงทั้งขนาดและทิศทางคงที่ ดังนั้นความเร่งเป็นศูนย์</p><span class="en">Constant velocity means both magnitude and direction remain constant. Therefore acceleration is zero.</span></div>
+    <div class="pitfall"><strong>อัตราเร็วคงที่ไม่รับประกันความเร็วคงที่ / Constant speed does not guarantee constant velocity</strong><p>การเคลื่อนที่เป็นวงกลมด้วยอัตราเร็วคงที่ยังมีทิศความเร็วเปลี่ยนตลอด จึงมีความเร่ง</p><span class="en">In uniform circular motion, speed is constant but velocity direction changes continuously, so acceleration is present.</span></div>
+  </div>
+
+  <h2 class="section-title">สมการจากนิยาม<span class="en">Equation from the definition</span></h2>
+  <div class="formula">แนวถนน / Along a road: &nbsp; $\Delta x=v_x t$ &nbsp;&nbsp; และ / and &nbsp;&nbsp; $x=x_0+v_x t$</div>
+  <div class="formula">แนวดิ่ง / Vertical motion: &nbsp; $\Delta y=v_y t$ &nbsp;&nbsp; และ / and &nbsp;&nbsp; $y=y_0+v_y t$</div>
+
+  <details class="details-proof">
+    <summary>เปิด–ปิดที่มาของสมการ $x=x_0+v_x t$ / Toggle derivation of $x=x_0+v_x t$</summary>
+    <div class="details-body">
+      <div class="derive-line"><div class="why">เริ่มจากนิยามความเร็วคงที่<br><span class="en">Start from the definition</span></div><div class="math">$v_x=\dfrac{\Delta x}{t}$</div></div>
+      <div class="derive-line"><div class="why">คูณทั้งสองข้างด้วย $t$<br><span class="en">Multiply by $t$</span></div><div class="math">$\Delta x=v_x t$</div></div>
+      <div class="derive-line"><div class="why">การกระจัดคือผลต่างของตำแหน่ง<br><span class="en">Displacement is a position difference</span></div><div class="math">$\Delta x=x-x_0$</div></div>
+      <div class="derive-line"><div class="why">แทนค่าแล้วจัดรูป<br><span class="en">Substitute and rearrange</span></div><div class="math">$x-x_0=v_x t\ \Rightarrow\ \boxed{x=x_0+v_x t}$</div></div>
+      <p class="small">เครื่องหมายของ $v_x$ เป็นตัวกำหนดว่าตำแหน่งเพิ่มหรือลด / The sign of $v_x$ determines whether position increases or decreases.</p>
+    </div>
+  </details>
+
+  <div class="explore-card">
+    <div class="card-title">เครื่องจำลองตำแหน่งเมื่อความเร็วคงที่<span class="en">Constant-velocity position simulator</span></div>
+    <div class="controls">
+      <div class="control"><label for="cvX0">ตำแหน่งเริ่มต้น $x_0$ / Initial position</label><input id="cvX0" type="range" min="-10" max="10" value="-2" step="1" oninput="updateCV()"><span class="value-pill" id="cvX0Val">−2 m</span></div>
+      <div class="control"><label for="cvV">ความเร็ว $v_x$ / Velocity</label><input id="cvV" type="range" min="-5" max="5" value="4" step="1" oninput="updateCV()"><span class="value-pill" id="cvVVal">+4 m/s</span></div>
+      <div class="control"><label for="cvT">เวลา $t$ / Time</label><input id="cvT" type="range" min="0" max="8" value="3" step="1" oninput="updateCV()"><span class="value-pill" id="cvTVal">3 s</span></div>
+    </div>
+    <svg viewBox="0 0 900 175" style="width:100%;max-height:45mm;background:#fff;border:1px solid #94a3b8;border-radius:8px" role="img" aria-label="ตำแหน่งรถบนเส้นจำนวน">
+      <defs><marker id="arrCV" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#17324d"/></marker></defs>
+      <line x1="60" y1="112" x2="840" y2="112" stroke="#111827" stroke-width="3" marker-end="url(#arrCV)"/>
+      <text x="70" y="150" font-size="15">−20 m</text><text x="810" y="150" font-size="15">+20 m</text>
+      <circle id="cvStartDot" cx="411" cy="112" r="8" fill="#64748b"/><circle id="cvEndDot" cx="645" cy="112" r="12" fill="#f59e0b" stroke="#111827" stroke-width="2"/>
+      <line id="cvDispLine" x1="411" y1="82" x2="645" y2="82" stroke="#15803d" stroke-width="6"/>
+      <text id="cvSvgText" x="450" y="45" text-anchor="middle" font-size="18" font-weight="800" fill="#17324d"></text>
+    </svg>
+    <div class="sim-output"><div class="out">การกระจัด / Displacement<strong id="cvDx">+12 m</strong></div><div class="out">ตำแหน่งสุดท้าย / Final position<strong id="cvX">+10 m</strong></div><div class="out">ความเร่ง / Acceleration<strong>$0\ \mathrm{m/s^2}$</strong></div></div>
+  </div>
+
+  <div class="question-card" data-print-title="ความเร็วคงที่ / Constant velocity">
+    <div class="qhead"><div class="qtitle">ความสัมพันธ์แบบแปรผันตรง<span class="en">A direct proportionality</span></div><div class="qtype">Predict / ทำนาย</div></div>
+    <p>เมื่อ $v_x$ คงที่และเพิ่มเวลาเป็นสองเท่า การกระจัด $\Delta x$ จะเปลี่ยนอย่างไร?</p><span class="en">With constant $v_x$, what happens to $\Delta x$ when time is doubled?</span>
+    <div class="options">
+      <button class="option-btn" data-q="qcv" data-level="cold" data-th="สูตรมี $t$ กำลังหนึ่ง ไม่ใช่กำลังสอง" data-en="The equation contains $t$ to the first power, not squared.">เพิ่มเป็นสี่เท่า<span class="en">Quadruples</span></button>
+      <button class="option-btn" data-q="qcv" data-level="hot" data-th="ถูกต้อง เพราะ $\Delta x=v_xt$ และ $v_x$ คงที่" data-en="Correct, because $\Delta x=v_xt$ with constant $v_x$.">เพิ่มเป็นสองเท่า<span class="en">Doubles</span></button>
+      <button class="option-btn" data-q="qcv" data-level="cold" data-th="เวลามากขึ้นโดยความเร็วเดิม ทำให้วัตถุเคลื่อนไปได้ไกลขึ้น" data-en="More time at the same velocity produces more displacement.">ไม่เปลี่ยน<span class="en">Unchanged</span></button>
+      <button class="option-btn" data-q="qcv" data-level="cold" data-th="ลองแทน $2t$ ลงใน $\Delta x=v_xt$" data-en="Substitute $2t$ into $\Delta x=v_xt$.">ลดลงครึ่งหนึ่ง<span class="en">Halves</span></button>
+    </div>
+    <div class="feedback" id="qcv-feedback"></div>
+    <div class="solution" id="qcv-solution"><div class="solution-title">เฉลย / Answer</div>$\Delta x'=v_x(2t)=2v_xt=2\Delta x$ จึงเพิ่มเป็นสองเท่า<span class="en">$\Delta x'=v_x(2t)=2v_xt=2\Delta x$, so displacement doubles.</span></div>
+    <div class="print-response">อธิบายด้วยสมการ / Explain using an equation:<br><br></div>
+  </div>
+  <div class="footer"><span>การเคลื่อนที่ด้วยความเร็วคงที่</span><span>Motion with constant velocity</span></div>
+</section>
+
+<section class="page">
+  <header class="page-head"><div><div class="kicker">Constant Acceleration</div><h2>การเคลื่อนที่แนวตรงด้วยความเร่งคงที่<span class="en">Straight-line motion with constant acceleration</span></h2></div><div class="tag">Velocity changes uniformly<br>ความเร็วเปลี่ยนอย่างสม่ำเสมอ</div></header>
+
+  <div class="story-card"><div class="card-title">สถานการณ์: รถไฟเริ่มออกจากสถานี<span class="en">Situation: A train leaving a station</span></div><p>รถไฟมีความเร็วต้น $u_x$ และความเร็วเพิ่มขึ้นเท่า ๆ กันในทุกวินาที ถ้าความเร่ง $a_x$ คงที่ การเปลี่ยนความเร็วสะสมในเวลา $t$ คือ $a_xt$</p><span class="en">A train has initial velocity $u_x$, and its velocity increases by equal amounts every second. If $a_x$ is constant, the accumulated change in velocity over time $t$ is $a_xt$.</span></div>
+
+  <div class="two-col">
+    <div class="visual-card">
+      <svg viewBox="0 0 820 330" role="img" aria-label="วัตถุมีความเร็วต้น ถูกแรงภายนอกกระทำ และกลายเป็นความเร็วปลายหลังเวลา t">
+        <defs>
+          <marker id="arrU" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#17324d"/></marker>
+          <marker id="arrRed" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#b91c1c"/></marker>
+          <marker id="arrGreen" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#15803d"/></marker>
+        </defs>
+        <line x1="70" y1="260" x2="760" y2="260" stroke="#94a3b8" stroke-width="4" marker-end="url(#arrU)"/>
+        <circle cx="155" cy="220" r="28" fill="#60a5fa" stroke="#17324d" stroke-width="4"/>
+        <rect x="132" y="220" width="46" height="25" rx="8" fill="#93c5fd" stroke="#17324d" stroke-width="3"/>
+        <line x1="190" y1="210" x2="290" y2="210" stroke="#17324d" stroke-width="6" marker-end="url(#arrU)"/>
+        <text x="240" y="186" text-anchor="middle" font-size="22" font-weight="800" fill="#17324d">$u_x$</text>
+        <text x="155" y="302" text-anchor="middle" font-size="20" font-weight="700" fill="#111827">เริ่มต้น / Initial</text>
+
+        <circle cx="405" cy="220" r="28" fill="#fcd34d" stroke="#854d0e" stroke-width="4"/>
+        <rect x="382" y="220" width="46" height="25" rx="8" fill="#fde68a" stroke="#854d0e" stroke-width="3"/>
+        <line x1="355" y1="155" x2="455" y2="155" stroke="#b91c1c" stroke-width="6" marker-end="url(#arrRed)"/>
+        <text x="405" y="132" text-anchor="middle" font-size="19" font-weight="800" fill="#b91c1c">แรงภายนอก $F_{\mathrm{ext}}$</text>
+        <line x1="355" y1="92" x2="455" y2="92" stroke="#15803d" stroke-width="6" marker-end="url(#arrGreen)"/>
+        <text x="405" y="68" text-anchor="middle" font-size="19" font-weight="800" fill="#15803d">ความเร่ง $a_x$</text>
+        <text x="405" y="302" text-anchor="middle" font-size="20" font-weight="700" fill="#111827">ระหว่างถูกเร่ง / During acceleration</text>
+
+        <circle cx="660" cy="220" r="28" fill="#34d399" stroke="#065f46" stroke-width="4"/>
+        <rect x="637" y="220" width="46" height="25" rx="8" fill="#a7f3d0" stroke="#065f46" stroke-width="3"/>
+        <line x1="695" y1="210" x2="800" y2="210" stroke="#17324d" stroke-width="8" marker-end="url(#arrU)"/>
+        <text x="748" y="186" text-anchor="middle" font-size="22" font-weight="800" fill="#17324d">$v_x$</text>
+        <text x="660" y="302" text-anchor="middle" font-size="20" font-weight="700" fill="#111827">หลังเวลา $t$ / After time $t$</text>
+
+        <line x1="210" y1="46" x2="600" y2="46" stroke="#7c3aed" stroke-width="5" stroke-dasharray="12 9" marker-end="url(#arrU)"/>
+        <text x="405" y="24" text-anchor="middle" font-size="20" font-weight="800" fill="#6d28d9">ช่วงเวลาที่พิจารณา $t$ / Time interval $t$</text>
+
+        <line x1="155" y1="245" x2="660" y2="245" stroke="#2563eb" stroke-width="4" marker-end="url(#arrU)"/>
+        <text x="410" y="236" text-anchor="middle" font-size="18" font-weight="800" fill="#2563eb">การกระจัด $\Delta x$ / Displacement $\Delta x$</text>
+      </svg>
+      <div class="caption">ภาพเดียวสรุปความหมายของ $u_x$, $a_x$, $t$ และ $v_x$ : วัตถุเริ่มด้วยความเร็วต้น ถูกแรงภายนอกกระทำจนเกิดความเร่ง และหลังเวลาผ่านไป $t$ จะมีความเร็วปลาย $v_x$<span class="en">One diagram summarises the meanings of $u_x$, $a_x$, $t$, and $v_x$: the object starts with an initial velocity, experiences an external force that produces acceleration, and after time $t$ it reaches a final velocity $v_x$.</span></div>
+    </div>
+    <div>
+      <div class="key"><div class="card-title">ความหมายของสัญลักษณ์ในภาพ<span class="en">Meaning of the symbols in the diagram</span></div>
+        <div class="table-wrap"><table><thead><tr><th>สัญลักษณ์<span class="en">Symbol</span></th><th>ความหมาย<span class="en">Meaning</span></th></tr></thead><tbody>
+          <tr><td>$u_x$</td><td>ความเร็วต้นตามแกน $x$ ก่อนพิจารณาช่วงเวลา<span class="en">Initial velocity along the $x$-axis before the interval begins.</span></td></tr>
+          <tr><td>$a_x$</td><td>ความเร่งคงที่ตามแกน $x$ ซึ่งทำให้ความเร็วเปลี่ยน<span class="en">Constant acceleration along the $x$-axis that changes the velocity.</span></td></tr>
+          <tr><td>$t$</td><td>ช่วงเวลาที่วัตถุถูกเร่ง<span class="en">The time interval during which the object accelerates.</span></td></tr>
+          <tr><td>$v_x$</td><td>ความเร็วปลายตามแกน $x$ เมื่อสิ้นสุดเวลา $t$<span class="en">Final velocity along the $x$-axis at the end of time $t$.</span></td></tr>
+          <tr><td>$\Delta x$</td><td>การกระจัดในช่วงเวลาเดียวกัน<span class="en">Displacement during the same interval.</span></td></tr>
+        </tbody></table></div>
+      </div>
+      <div class="proof-card"><div class="card-title">ความหมายทางกายภาพของสมการแรก<span class="en">Physical meaning of the first equation</span></div>
+        <div class="formula">$v_x=u_x+a_xt$</div>
+        <p>สมการนี้อ่านได้ว่า <strong>ความเร็วปลาย = ความเร็วต้น + ความเร็วที่เพิ่มขึ้นจากการเร่ง</strong> โดยพจน์ $a_xt$ คือปริมาณที่บอกว่าในเวลา $t$ ความเร็วเปลี่ยนไปทั้งหมดเท่าใด</p>
+        <span class="en">This equation reads: <strong>final velocity = initial velocity + the velocity gained due to acceleration</strong>. The term $a_xt$ tells us the total change in velocity during time $t$.</span>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="formula-map">
+    <div class="formula-chip"><strong>$v_x=u_x+a_xt$</strong><div>เชื่อมความเร็วต้น–ปลายกับเวลา<span class="en">Links initial and final velocity with time</span></div><div class="condition">ไม่มี $\Delta x$ / No $\Delta x$</div></div>
+    <div class="formula-chip"><strong>$\Delta x=\dfrac{u_x+v_x}{2}t$</strong><div>ใช้ความเร็วเฉลี่ยเมื่อ $a_x$ คงที่<span class="en">Uses average velocity when $a_x$ is constant</span></div><div class="condition">ไม่มี $a_x$ / No $a_x$</div></div>
+    <div class="formula-chip"><strong>$\Delta x=u_xt+\dfrac12a_xt^2$</strong><div>หาการกระจัดจาก $u_x,a_x,t$<span class="en">Finds displacement from $u_x,a_x,t$</span></div><div class="condition">ไม่มี $v_x$ / No $v_x$</div></div>
+    <div class="formula-chip"><strong>$v_x^2=u_x^2+2a_x\Delta x$</strong><div>เชื่อมความเร็วกับการกระจัดโดยไม่ใช้เวลา<span class="en">Links velocity and displacement without time</span></div><div class="condition">ไม่มี $t$ / No $t$</div></div>
+  </div>
+
+  <div class="key"><div class="card-title">เปลี่ยนแกนตามสถานการณ์<span class="en">Change the axis to match the situation</span></div><p>ถ้าสถานการณ์เป็นแนวดิ่ง ให้เปลี่ยน $x$ เป็น $y$: $v_y=u_y+a_yt$, $\Delta y=u_yt+\frac12a_yt^2$ และสมการอื่นในรูปเดียวกัน</p><span class="en">For vertical motion, replace $x$ with $y$: $v_y=u_y+a_yt$, $\Delta y=u_yt+\frac12a_yt^2$, and the corresponding forms of the other equations.</span></div>
+
+  <div class="pitfall"><strong>เงื่อนไขต้องมาก่อนสูตร / Check the condition before using an equation</strong><p>สมการชุดนี้ใช้เมื่อการเคลื่อนที่เป็นหนึ่งมิติและความเร่งคงที่ตลอดช่วงที่พิจารณา</p><span class="en">These equations apply when motion is one-dimensional and acceleration remains constant throughout the interval considered.</span></div>
+
+  <div class="question-card" data-print-title="ความเร่งคงที่และความเร็ว / Constant acceleration and velocity">
+    <div class="qhead"><div class="qtitle">สร้างสูตรจากการนับทีละวินาที<span class="en">Build the equation by counting each second</span></div><div class="qtype">Think First</div></div>
+    <p>รถมี $u_x=4\ \mathrm{m/s}$ และ $a_x=2\ \mathrm{m/s^2}$ หลัง 3 s ความเร็วเป็นเท่าใด?</p><span class="en">A car has $u_x=4\ \mathrm{m/s}$ and $a_x=2\ \mathrm{m/s^2}$. What is its velocity after 3 s?</span>
+    <div class="options">
+      <button class="option-btn" data-q="qca" data-level="cold" data-th="ค่านี้ยังไม่ได้รวมความเร็วต้น 4 m/s" data-en="This value does not include the initial velocity of 4 m/s.">$6\ \mathrm{m/s}$</button>
+      <button class="option-btn" data-q="qca" data-level="hot" data-th="ถูกต้อง ความเร็วเพิ่ม 2 m/s จำนวน 3 ครั้ง แล้วบวกกับความเร็วต้น" data-en="Correct. Velocity increases by 2 m/s three times, then is added to the initial velocity.">$10\ \mathrm{m/s}$</button>
+      <button class="option-btn" data-q="qca" data-level="cold" data-th="ลองเขียนลำดับ 4 → 6 → 8 → 10" data-en="Write the sequence 4 → 6 → 8 → 10.">$12\ \mathrm{m/s}$</button>
+      <button class="option-btn" data-q="qca" data-level="warm" data-th="นี่คือผลคูณ $u_xt$ ซึ่งไม่ใช่ความเร็วปลาย" data-en="This is the product $u_xt$, not the final velocity.">$16\ \mathrm{m/s}$</button>
+    </div>
+    <div class="feedback" id="qca-feedback"></div>
+    <div class="solution" id="qca-solution"><div class="solution-title">เฉลย / Answer</div>$v_x=u_x+a_xt=4+(2)(3)=10\ \mathrm{m/s}$<span class="en">$v_x=u_x+a_xt=4+(2)(3)=10\ \mathrm{m/s}$.</span></div>
+    <div class="print-response">แสดงวิธีคิด / Show your reasoning:<br><br></div>
+  </div>
+
+  <div class="footer"><span>สมการความเร่งคงที่</span><span>Constant-acceleration equations</span></div>
+</section>
+
+<section class="page">
+  <header class="page-head"><div><div class="kicker">Derivations from Definition</div><h2>ที่มาของสมการความเร็วและการกระจัด<span class="en">Deriving the velocity and displacement equations</span></h2></div><div class="tag">Continuous reasoning<br>เหตุผลต่อเนื่อง ไม่มีคำถามแทรก</div></header>
+
+  <div class="proof-card"><div class="card-title">แนวคิดกลางของการพิสูจน์<span class="en">Central idea of the derivations</span></div><p>เราเริ่มจากนิยามความเร่งและความหมายของพื้นที่ใต้กราฟความเร็ว–เวลา การพิสูจน์ด้านล่างเปิด–ปิดได้เพื่อให้ครูควบคุมจังหวะการสอน โดยไม่มีคำถามแทรกระหว่างบรรทัด</p><span class="en">We start from the definition of acceleration and the meaning of area under a velocity–time graph. Each derivation can be opened or closed so the teacher can control the pace, without interrupting the logic with questions.</span></div>
+
+  <details class="details-proof" open>
+    <summary>ที่มาของ $v_x=u_x+a_xt$ / Derivation of $v_x=u_x+a_xt$</summary>
+    <div class="details-body">
+      <div class="derive-line"><div class="why">นิยามความเร่งคงที่<br><span class="en">Definition of constant acceleration</span></div><div class="math">$a_x=\dfrac{v_x-u_x}{t}$</div></div>
+      <div class="derive-line"><div class="why">คูณด้วย $t$<br><span class="en">Multiply by $t$</span></div><div class="math">$a_xt=v_x-u_x$</div></div>
+      <div class="derive-line"><div class="why">ย้าย $u_x$ ไปอีกข้าง<br><span class="en">Rearrange</span></div><div class="math">$\boxed{v_x=u_x+a_xt}$</div></div>
+      <p class="small">คำว่า $a_xt$ คือการเปลี่ยนความเร็วทั้งหมดในช่วงเวลา $t$ / The term $a_xt$ is the total change in velocity over time $t$.</p>
+    </div>
+  </details>
+
+  <details class="details-proof" open>
+    <summary>ที่มาของ $\Delta x=\dfrac{u_x+v_x}{2}t$ / Derivation of $\Delta x=\dfrac{u_x+v_x}{2}t$</summary>
+    <div class="details-body">
+      <div class="two-col">
+        <div>
+          <p>เมื่อความเร่งคงที่ ความเร็วเปลี่ยนเป็นเส้นตรงจาก $u_x$ ไป $v_x$ ดังนั้นความเร็วเฉลี่ยของทั้งช่วงคือค่าเฉลี่ยเลขคณิตของต้นและปลาย</p>
+          <span class="en">With constant acceleration, velocity changes linearly from $u_x$ to $v_x$. Therefore the average velocity over the interval is the arithmetic mean of the initial and final velocities.</span>
+          <div class="formula">$v_{x,\mathrm{avg}}=\dfrac{u_x+v_x}{2}$</div>
+          <p>และจากนิยามความเร็วเฉลี่ย</p><span class="en">From the definition of average velocity,</span>
+          <div class="formula">$\Delta x=v_{x,\mathrm{avg}}t=\boxed{\dfrac{u_x+v_x}{2}t}$</div>
+        </div>
+        <div class="visual-card">
+          <svg viewBox="0 0 560 330" role="img" aria-label="กราฟความเร็วเวลากับพื้นที่สี่เหลี่ยมคางหมู">
+            <defs><marker id="arrF" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#111827"/></marker></defs>
+            <line x1="70" y1="275" x2="510" y2="275" stroke="#111827" stroke-width="4" marker-end="url(#arrF)"/><line x1="70" y1="275" x2="70" y2="35" stroke="#111827" stroke-width="4" marker-end="url(#arrF)"/>
+            <polygon points="70,220 470,80 470,275 70,275" fill="#dbeafe" stroke="#2563eb" stroke-width="3"/>
+            <text x="285" y="235" text-anchor="middle" font-size="22" font-weight="800" fill="#17324d">พื้นที่ = $\Delta x$</text><text x="285" y="260" text-anchor="middle" font-size="16" fill="#526174">Area = displacement</text>
+            <text x="43" y="225" text-anchor="middle" font-size="18">$u_x$</text><text x="43" y="86" text-anchor="middle" font-size="18">$v_x$</text><text x="470" y="304" text-anchor="middle" font-size="18">$t$</text>
+            <text x="22" y="35" font-size="16">$v_x$</text><text x="520" y="299" font-size="16">$t$</text>
+          </svg>
+          <div class="caption">พื้นที่สี่เหลี่ยมคางหมู $=\frac12(u_x+v_x)t$<span class="en">Trapezium area $=\frac12(u_x+v_x)t$.</span></div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <details class="details-proof" open>
+    <summary>ที่มาของ $\Delta x=u_xt+\frac12a_xt^2$ / Derivation of $\Delta x=u_xt+\frac12a_xt^2$</summary>
+    <div class="details-body">
+      <div class="two-col">
+        <div class="visual-card">
+          <svg viewBox="0 0 560 330" role="img" aria-label="กราฟความเร็วเวลาแบ่งเป็นสี่เหลี่ยมและสามเหลี่ยม">
+            <defs><marker id="arrG" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#111827"/></marker></defs>
+            <line x1="70" y1="275" x2="510" y2="275" stroke="#111827" stroke-width="4" marker-end="url(#arrG)"/><line x1="70" y1="275" x2="70" y2="35" stroke="#111827" stroke-width="4" marker-end="url(#arrG)"/>
+            <rect x="70" y="210" width="400" height="65" fill="#dcfce7" stroke="#15803d" stroke-width="3"/>
+            <polygon points="70,210 470,80 470,210" fill="#ffedd5" stroke="#d97706" stroke-width="3"/>
+            <text x="270" y="249" text-anchor="middle" font-size="20" font-weight="800" fill="#166534">$u_xt$</text><text x="330" y="155" text-anchor="middle" font-size="19" font-weight="800" fill="#9a3412">$\frac12(a_xt)t$</text>
+            <text x="42" y="216" text-anchor="middle" font-size="18">$u_x$</text><text x="470" y="304" text-anchor="middle" font-size="18">$t$</text><text x="22" y="35" font-size="16">$v_x$</text><text x="520" y="299" font-size="16">$t$</text>
+          </svg>
+          <div class="caption">การกระจัดเท่ากับผลรวมของพื้นที่สี่เหลี่ยมและสามเหลี่ยม<span class="en">Displacement equals the sum of the rectangle and triangle areas.</span></div>
+        </div>
+        <div>
+          <div class="derive-line"><div class="why">พื้นที่สี่เหลี่ยม<br><span class="en">Rectangle area</span></div><div class="math">$u_xt$</div></div>
+          <div class="derive-line"><div class="why">ความสูงส่วนเพิ่มของสามเหลี่ยม<br><span class="en">Triangle height</span></div><div class="math">$v_x-u_x=a_xt$</div></div>
+          <div class="derive-line"><div class="why">พื้นที่สามเหลี่ยม<br><span class="en">Triangle area</span></div><div class="math">$\dfrac12(t)(a_xt)=\dfrac12a_xt^2$</div></div>
+          <div class="derive-line"><div class="why">รวมพื้นที่ทั้งหมด<br><span class="en">Add both areas</span></div><div class="math">$\boxed{\Delta x=u_xt+\dfrac12a_xt^2}$</div></div>
+        </div>
+      </div>
+    </div>
+  </details>
+  <div class="footer"><span>ที่มาของสมการจากนิยามและกราฟ</span><span>Derivations from definitions and graphs</span></div>
+</section>
+
+<section class="page">
+  <header class="page-head"><div><div class="kicker">Eliminating Time</div><h2>สมการที่ไม่ปรากฏเวลา และเครื่องจำลองความเร่งคงที่<span class="en">The time-free equation and a constant-acceleration simulator</span></h2></div><div class="tag">Connect velocity to displacement<br>เชื่อมความเร็วกับการกระจัด</div></header>
+
+  <details class="details-proof" open>
+    <summary>ที่มาของ $v_x^2=u_x^2+2a_x\Delta x$ / Derivation of $v_x^2=u_x^2+2a_x\Delta x$</summary>
+    <div class="details-body">
+      <p>เริ่มจากสมการความเร็วเพื่อเขียนเวลาในรูปของความเร็ว แล้วแทนลงในสมการการกระจัด</p><span class="en">Start with the velocity equation, express time in terms of velocity, and substitute into the displacement equation.</span>
+      <div class="derive-line"><div class="why">จาก $v_x=u_x+a_xt$<br><span class="en">From $v_x=u_x+a_xt$</span></div><div class="math">$t=\dfrac{v_x-u_x}{a_x}$</div></div>
+      <div class="derive-line"><div class="why">แทนใน $\Delta x=\frac{u_x+v_x}{2}t$<br><span class="en">Substitute into displacement</span></div><div class="math">$\Delta x=\dfrac{u_x+v_x}{2}\left(\dfrac{v_x-u_x}{a_x}\right)$</div></div>
+      <div class="derive-line"><div class="why">ใช้ผลต่างกำลังสอง<br><span class="en">Use difference of squares</span></div><div class="math">$2a_x\Delta x=(u_x+v_x)(v_x-u_x)=v_x^2-u_x^2$</div></div>
+      <div class="derive-line"><div class="why">จัดรูปสุดท้าย<br><span class="en">Final rearrangement</span></div><div class="math">$\boxed{v_x^2=u_x^2+2a_x\Delta x}$</div></div>
+      <p class="small">สมการนี้ไม่ได้ “ไม่มีเวลาเพราะเวลาเป็นศูนย์” แต่เวลาได้ถูกกำจัดทางพีชคณิตออกจากสมการ / This equation does not omit time because time is zero; time has been algebraically eliminated.</p>
+    </div>
+  </details>
+
+  <div class="explore-card">
+    <div class="card-title">เครื่องจำลองความเร่งคงที่<span class="en">Constant-acceleration simulator</span></div>
+    <div class="controls">
+      <div class="control"><label for="caU">ความเร็วต้น $u_x$ / Initial velocity</label><input id="caU" type="range" min="-10" max="10" value="2" step="1" oninput="updateCA()"><span class="value-pill" id="caUVal">+2 m/s</span></div>
+      <div class="control"><label for="caA">ความเร่ง $a_x$ / Acceleration</label><input id="caA" type="range" min="-5" max="5" value="3" step="1" oninput="updateCA()"><span class="value-pill" id="caAVal">+3 m/s²</span></div>
+      <div class="control"><label for="caT">เวลา $t$ / Time</label><input id="caT" type="range" min="0" max="6" value="4" step="0.5" oninput="updateCA()"><span class="value-pill" id="caTVal">4 s</span></div>
+    </div>
+    <svg viewBox="0 0 900 310" style="width:100%;max-height:70mm;background:#fff;border:1px solid #94a3b8;border-radius:8px" role="img" aria-label="กราฟความเร็วเวลาแบบปรับค่าได้">
+      <defs><marker id="arrCA" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#111827"/></marker></defs>
+      <line x1="90" y1="255" x2="830" y2="255" stroke="#111827" stroke-width="3" marker-end="url(#arrCA)"/><line x1="90" y1="255" x2="90" y2="35" stroke="#111827" stroke-width="3" marker-end="url(#arrCA)"/>
+      <line x1="90" y1="145" x2="830" y2="145" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="8 7"/>
+      <polygon id="caArea" points="90,233 650,80 650,255 90,255" fill="#dbeafe" opacity=".85" stroke="#2563eb" stroke-width="3"/>
+      <line id="caLine" x1="90" y1="233" x2="650" y2="80" stroke="#17324d" stroke-width="5"/>
+      <text id="caGraphText" x="470" y="42" text-anchor="middle" font-size="18" font-weight="800" fill="#17324d"></text>
+      <text x="48" y="43" font-size="17">$v_x$</text><text x="835" y="286" font-size="17">$t$</text>
+    </svg>
+    <div class="sim-output"><div class="out">ความเร็วปลาย / Final velocity<strong id="caV">+14 m/s</strong></div><div class="out">การกระจัด / Displacement<strong id="caDx">+32 m</strong></div><div class="out">พฤติกรรม / Behaviour<strong id="caBehaviour">เร็วขึ้น / Speeding up</strong></div></div>
+  </div>
+
+  <div class="question-card" data-print-title="การเลือกสมการ / Choosing an equation">
+    <div class="qhead"><div class="qtitle">โจทย์ไม่ให้เวลา และไม่ถามเวลา<span class="en">Time is neither given nor required</span></div><div class="qtype">Equation Choice</div></div>
+    <p>ถ้ารู้ $u_x$, $v_x$, $a_x$ และต้องการหา $\Delta x$ โดยไม่ต้องหา $t$ ก่อน สมการใดตรงที่สุด?</p><span class="en">If $u_x$, $v_x$, and $a_x$ are known and $\Delta x$ is required without first finding $t$, which equation is most direct?</span>
+    <div class="options">
+      <button class="option-btn" data-q="qformula" data-level="warm" data-th="สมการนี้ไม่มีการกระจัด จึงยังหา $\Delta x$ โดยตรงไม่ได้" data-en="This equation contains no displacement, so it does not directly give $\Delta x$.">$v_x=u_x+a_xt$</button>
+      <button class="option-btn" data-q="qformula" data-level="warm" data-th="สมการนี้ยังมีเวลา ซึ่งโจทย์ไม่ได้ให้" data-en="This equation still contains time, which is not given.">$\Delta x=\dfrac{u_x+v_x}{2}t$</button>
+      <button class="option-btn" data-q="qformula" data-level="cold" data-th="สมการนี้ต้องใช้เวลาเช่นกัน" data-en="This equation also requires time.">$\Delta x=u_xt+\dfrac12a_xt^2$</button>
+      <button class="option-btn" data-q="qformula" data-level="hot" data-th="ถูกต้อง สมการนี้เชื่อมตัวแปรที่มีทั้งหมดโดยไม่มีเวลา" data-en="Correct. This equation links all known variables without time.">$v_x^2=u_x^2+2a_x\Delta x$</button>
+    </div>
+    <div class="feedback" id="qformula-feedback"></div>
+    <div class="solution" id="qformula-solution"><div class="solution-title">เฉลย / Answer</div>$v_x^2=u_x^2+2a_x\Delta x$ เพราะมี $u_x,v_x,a_x,\Delta x$ และไม่มี $t$<span class="en">Use $v_x^2=u_x^2+2a_x\Delta x$ because it contains $u_x,v_x,a_x,\Delta x$ and no $t$.</span></div>
+    <div class="print-response">เลือกสมการและให้เหตุผล / Choose the equation and justify:<br><br></div>
+  </div>
+  <div class="footer"><span>การกำจัดเวลาและการเลือกสมการ</span><span>Eliminating time and choosing equations</span></div>
+</section>
+
+<section class="page">
+  <header class="page-head"><div><div class="kicker">Summary and Connections</div><h2>สรุปภาพรวม: อ่านสถานการณ์ก่อนเลือกสูตร<span class="en">Overview: Read the situation before choosing an equation</span></h2></div><div class="tag">Meaning before substitution<br>ความหมายก่อนแทนค่า</div></header>
+
+  <div class="table-wrap"><table><thead><tr><th>ปริมาณ<span class="en">Quantity</span></th><th>ความหมาย<span class="en">Meaning</span></th><th>ชนิด<span class="en">Type</span></th><th>สูตรพื้นฐาน<span class="en">Basic relation</span></th></tr></thead><tbody>
+    <tr><td>ระยะทาง $d$<span class="en">Distance</span></td><td>ความยาวรวมของเส้นทาง<span class="en">Total path length</span></td><td>สเกลาร์ / Scalar</td><td>$d\ge 0$</td></tr>
+    <tr><td>การกระจัด $\Delta x,\Delta y$<span class="en">Displacement</span></td><td>การเปลี่ยนตำแหน่ง<span class="en">Change in position</span></td><td>เวกเตอร์ / Vector</td><td>$\Delta x=x_f-x_i$, $\Delta y=y_f-y_i$</td></tr>
+    <tr><td>อัตราเร็วเฉลี่ย<span class="en">Average speed</span></td><td>ระยะทางต่อเวลา<span class="en">Distance per time</span></td><td>สเกลาร์ / Scalar</td><td>$d_{\mathrm{total}}/\Delta t$</td></tr>
+    <tr><td>ความเร็วเฉลี่ย<span class="en">Average velocity</span></td><td>การกระจัดต่อเวลา<span class="en">Displacement per time</span></td><td>เวกเตอร์ / Vector</td><td>$\Delta x/\Delta t$ หรือ / or $\Delta y/\Delta t$</td></tr>
+    <tr><td>ความเร่ง<span class="en">Acceleration</span></td><td>การเปลี่ยนความเร็วต่อเวลา<span class="en">Change in velocity per time</span></td><td>เวกเตอร์ / Vector</td><td>$(v-u)/\Delta t$ ตามแกน / along an axis</td></tr>
+  </tbody></table></div>
+
+  <h2 class="section-title">แผนที่เลือกสมการ<span class="en">Equation-selection map</span></h2>
+  <div class="two-col">
+    <div class="summary-card"><div class="card-title">ความเร็วคงที่<span class="en">Constant velocity</span></div><p>ตรวจว่า $a=0$ และทิศไม่เปลี่ยน</p><span class="en">Check that $a=0$ and direction does not change.</span><div class="formula">$\Delta x=v_xt$ หรือ / or $\Delta y=v_yt$</div></div>
+    <div class="summary-card"><div class="card-title">ความเร่งคงที่<span class="en">Constant acceleration</span></div><p>ตรวจว่า $a$ คงที่ และเลือกแกนก่อนแทนเครื่องหมาย</p><span class="en">Check that $a$ is constant, and choose the axis before assigning signs.</span><div class="formula">เลือกจาก 4 สมการ / Choose from the four equations</div></div>
+  </div>
+
+  <div class="three-col">
+    <div class="key"><strong>อ่านข้อความ / Read</strong><p>โจทย์กล่าวถึงเส้นทาง ตำแหน่ง หรือการเปลี่ยนความเร็ว?</p><span class="en">Does the situation involve path, position, or changing velocity?</span></div>
+    <div class="key"><strong>กำหนดแกน / Set an axis</strong><p>เลือกทิศบวกและใช้ $x$ หรือ $y$ ให้ตรงสถานการณ์</p><span class="en">Choose a positive direction and use $x$ or $y$ to match the situation.</span></div>
+    <div class="key"><strong>ตรวจเงื่อนไข / Check conditions</strong><p>ความเร็วคงที่ หรือความเร่งคงที่จริงหรือไม่?</p><span class="en">Is velocity constant, or is acceleration constant?</span></div>
+  </div>
+
+
+  <h2 class="section-title">สูตรสรุปทั้งหมดในหัวข้อนี้<span class="en">Complete formula summary for this topic</span></h2>
+  <div class="table-wrap"><table><thead><tr><th>กรณี<span class="en">Case</span></th><th>สูตร<span class="en">Equation(s)</span></th><th>ความหมาย / ใช้เมื่อ<span class="en">Meaning / Use when</span></th></tr></thead><tbody>
+    <tr><td>นิยามการกระจัด<span class="en">Definition of displacement</span></td><td>$\Delta x=x_f-x_i$, $\Delta y=y_f-y_i$</td><td>หาการเปลี่ยนตำแหน่งจากตำแหน่งต้นและปลาย<span class="en">Use to calculate change in position from initial and final coordinates.</span></td></tr>
+    <tr><td>อัตราเร็วเฉลี่ย<span class="en">Average speed</span></td><td>$\text{average speed}=\dfrac{d_{\mathrm{total}}}{\Delta t}$</td><td>ใช้เมื่อสนใจความยาวเส้นทางทั้งหมด<span class="en">Use when the total path length is required.</span></td></tr>
+    <tr><td>ความเร็วเฉลี่ย<span class="en">Average velocity</span></td><td>$\bar v_x=\dfrac{\Delta x}{\Delta t}$, $\bar v_y=\dfrac{\Delta y}{\Delta t}$</td><td>ใช้เมื่อสนใจการกระจัดต่อเวลา<span class="en">Use when displacement per time is required.</span></td></tr>
+    <tr><td>ความเร่ง<span class="en">Acceleration</span></td><td>$a_x=\dfrac{v_x-u_x}{t}$, $a_y=\dfrac{v_y-u_y}{t}$</td><td>นิยามการเปลี่ยนความเร็วต่อเวลา<span class="en">Definition of change in velocity per time.</span></td></tr>
+    <tr><td>ความเร็วคงที่<span class="en">Constant velocity</span></td><td>$\Delta x=v_xt$, $x=x_0+v_xt$<br>$\Delta y=v_yt$, $y=y_0+v_yt$</td><td>ใช้เมื่อความเร็วคงที่และความเร่งเป็นศูนย์<span class="en">Use when velocity is constant and acceleration is zero.</span></td></tr>
+    <tr><td rowspan="4">ความเร่งคงที่<span class="en">Constant acceleration</span></td><td>$v_x=u_x+a_xt$</td><td>ใช้เมื่อรู้ $u_x,a_x,t$ แล้วต้องการ $v_x$ หรือมีสามตัวนี้เกี่ยวข้อง<span class="en">Use when $u_x$, $a_x$, and $t$ are involved and $v_x$ is required.</span></td></tr>
+    <tr><td>$\Delta x=\dfrac{u_x+v_x}{2}t$</td><td>ใช้เมื่อรู้ความเร็วต้น–ปลายและเวลา หรือใช้ความเร็วเฉลี่ย<span class="en">Use when initial velocity, final velocity, and time are involved, or when using average velocity.</span></td></tr>
+    <tr><td>$\Delta x=u_xt+\dfrac12a_xt^2$</td><td>ใช้เมื่อรู้ $u_x,a_x,t$ และต้องการการกระจัด<span class="en">Use when $u_x$, $a_x$, and $t$ are known and displacement is required.</span></td></tr>
+    <tr><td>$v_x^2=u_x^2+2a_x\Delta x$</td><td>ใช้เมื่อไม่รู้เวลา หรือโจทย์ไม่ให้เวลา<span class="en">Use when time is unknown or not given.</span></td></tr>
+  </tbody></table></div>
+
+  <div class="question-card" data-print-title="สรุปการเลือกปริมาณ / Choosing the correct quantity">
+    <div class="qhead"><div class="qtitle">คำถามสรุป: เดินออกจากห้องแล้วกลับมาจุดเดิม<span class="en">Final check: Leave the room and return to the starting point</span></div><div class="qtype">Discuss</div></div>
+    <p>หลังกลับมาจุดเดิม ปริมาณพื้นฐานข้อใดต้องเป็นศูนย์ และทำให้ความเร็วเฉลี่ยตลอดช่วงเป็นศูนย์?</p><span class="en">After returning to the starting point, which fundamental quantity must be zero and therefore makes the average velocity over the interval zero?</span>
+    <div class="options">
+      <button class="option-btn" data-q="qfinal" data-level="cold" data-th="มีการเดินจริง ระยะทางจึงมากกว่าศูนย์" data-en="Actual motion occurred, so distance is greater than zero.">ระยะทาง / Distance</button>
+      <button class="option-btn" data-q="qfinal" data-level="hot" data-th="ถูกต้อง จุดเริ่มต้นและจุดสุดท้ายตรงกัน การเปลี่ยนตำแหน่งจึงเป็นศูนย์" data-en="Correct. Initial and final positions coincide, so the change in position is zero.">การกระจัด / Displacement</button>
+      <button class="option-btn" data-q="qfinal" data-level="warm" data-th="ถ้าใช้เวลาไม่เป็นศูนย์และระยะทางไม่เป็นศูนย์ อัตราเร็วเฉลี่ยไม่เป็นศูนย์" data-en="If elapsed time and distance are non-zero, average speed is non-zero.">อัตราเร็วเฉลี่ย / Average speed</button>
+      <button class="option-btn" data-q="qfinal" data-level="warm" data-th="เวลาที่ใช้มากกว่าศูนย์ เพราะนักเรียนใช้เวลาในการเดินทาง" data-en="Elapsed time is greater than zero because the journey takes time.">เวลาที่ใช้ / Elapsed time</button>
+    </div>
+    <div class="feedback" id="qfinal-feedback"></div>
+    <div class="solution" id="qfinal-solution"><div class="solution-title">เฉลย / Answer</div>การกระจัดเป็นศูนย์ เพราะจุดเริ่มต้นและจุดสุดท้ายตรงกัน และด้วยเหตุนี้ความเร็วเฉลี่ยตลอดช่วงจึงเป็นศูนย์ด้วย<span class="en">Displacement is zero because the initial and final positions coincide. Consequently, the average velocity over the interval is also zero.</span></div>
+    <div class="print-response">ตอบและอธิบาย / Answer and explain:<br><br></div>
+  </div>
+
+  <div class="pitfall"><strong>ก่อนจบบท / Before leaving the lesson</strong><p>สูตรไม่ได้เลือกจากคำว่า “รถ” “ลูกบอล” หรือ “ลิฟต์” แต่เลือกจากชนิดของปริมาณ เงื่อนไขการเคลื่อนที่ ตัวแปรที่รู้ และตัวแปรที่ต้องการหา</p><span class="en">Equations are not chosen from words such as “car,” “ball,” or “lift.” They are chosen from the physical quantities, motion conditions, known variables, and the required unknown.</span></div>
+  <div class="footer"><span>สรุปปริมาณและสมการการเคลื่อนที่</span><span>Summary of motion quantities and equations</span></div>
+</section>
+</main>
+
+<section id="printQuestionSheet" aria-hidden="true"></section>
+
+<script>
+function signText(n, digits=0){
+  const v=Number(n);
+  const txt=Number.isInteger(v)?String(v):v.toFixed(digits);
+  return v>0?`+${txt}`:txt;
+}
+
+document.querySelectorAll('.option-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const q=btn.dataset.q;
+    document.querySelectorAll(`.option-btn[data-q="${q}"]`).forEach(b=>b.classList.remove('selected'));
+    btn.classList.add('selected');
+    const box=document.getElementById(`${q}-feedback`);
+    box.className=`feedback show ${btn.dataset.level}`;
+    const label=btn.dataset.level==='hot'?'🔥 Hot':btn.dataset.level==='warm'?'🌤️ Warm':'❄️ Cold';
+    box.innerHTML=`<strong>${label}</strong> — ${btn.dataset.th}<span class="en">${btn.dataset.en}</span>`;
+  });
+});
+
+function toggleBox(id,button){
+  const el=document.getElementById(id);
+  const isSolution=el.classList.contains('solution');
+  const open=isSolution?el.classList.toggle('open'):el.classList.toggle('show');
+  button.setAttribute('aria-expanded',open?'true':'false');
+}
+
+let allAnswersOpen=false;
+function toggleAllAnswers(button){
+  allAnswersOpen=!allAnswersOpen;
+  document.querySelectorAll('.solution').forEach(el=>el.classList.toggle('open',allAnswersOpen));
+  button.setAttribute('aria-expanded',allAnswersOpen?'true':'false');
+  button.textContent=allAnswersOpen?'ปิดเฉลย / Hide answers':'เปิดเฉลย / Show answers';
+}
+
+function toggleAllProofs(open){
+  document.querySelectorAll('.details-proof').forEach(d=>d.open=open);
+}
+
+function updatePathExplorer(){
+  const out=Number(document.getElementById('outRange').value);
+  const back=Number(document.getElementById('backRange').value);
+  const final=out-back;
+  const distance=out+back;
+  document.getElementById('outVal').textContent=`${out} m`;
+  document.getElementById('backVal').textContent=`${back} m`;
+  const scale=50;
+  const x0=100;
+  const xOut=Math.max(60,Math.min(840,x0+out*scale));
+  const xFinal=Math.max(60,Math.min(840,x0+final*scale));
+  document.getElementById('pathPolyline').setAttribute('points',`${x0},80 ${xOut},80 ${xFinal},80`);
+  document.getElementById('pathFinalDot').setAttribute('cx',xFinal);
+  document.getElementById('dispLine').setAttribute('x1',x0);
+  document.getElementById('dispLine').setAttribute('x2',xFinal);
+  document.getElementById('pathText').textContent=`d = ${distance} m   |   Δx = ${signText(final)} m`;
+  document.getElementById('pathDistance').textContent=`${distance} m`;
+  document.getElementById('pathDisplacement').textContent=`${signText(final)} m`;
+  document.getElementById('pathFinal').textContent=`${signText(final)} m`;
+}
+
+function cvMap(x){return 60+((x+20)/40)*760}
+function updateCV(){
+  const x0=Number(document.getElementById('cvX0').value);
+  const v=Number(document.getElementById('cvV').value);
+  const t=Number(document.getElementById('cvT').value);
+  const dx=v*t;
+  const x=x0+dx;
+  document.getElementById('cvX0Val').textContent=`${signText(x0)} m`;
+  document.getElementById('cvVVal').textContent=`${signText(v)} m/s`;
+  document.getElementById('cvTVal').textContent=`${t} s`;
+  const sx=cvMap(Math.max(-20,Math.min(20,x0)));
+  const ex=cvMap(Math.max(-20,Math.min(20,x)));
+  document.getElementById('cvStartDot').setAttribute('cx',sx);
+  document.getElementById('cvEndDot').setAttribute('cx',ex);
+  document.getElementById('cvDispLine').setAttribute('x1',sx);
+  document.getElementById('cvDispLine').setAttribute('x2',ex);
+  document.getElementById('cvSvgText').textContent=`x = x₀ + vₓt = ${signText(x0)} + (${signText(v)})(${t}) = ${signText(x)} m`;
+  document.getElementById('cvDx').textContent=`${signText(dx)} m`;
+  document.getElementById('cvX').textContent=`${signText(x)} m`;
+}
+
+function updateCA(){
+  const u=Number(document.getElementById('caU').value);
+  const a=Number(document.getElementById('caA').value);
+  const t=Number(document.getElementById('caT').value);
+  const v=u+a*t;
+  const dx=u*t+0.5*a*t*t;
+  document.getElementById('caUVal').textContent=`${signText(u)} m/s`;
+  document.getElementById('caAVal').textContent=`${signText(a)} m/s²`;
+  document.getElementById('caTVal').textContent=`${t} s`;
+  document.getElementById('caV').textContent=`${signText(v,1)} m/s`;
+  document.getElementById('caDx').textContent=`${signText(dx,1)} m`;
+  let behaviour='คงอัตราเร็ว / Constant speed';
+  if(v===0){behaviour='หยุดชั่วขณะ / Instantaneously at rest'}
+  else if(u===0){behaviour=a===0?'หยุดนิ่ง / At rest':'เริ่มเคลื่อน / Starting motion'}
+  else if(Math.sign(u)===Math.sign(a)){behaviour='เร็วขึ้น / Speeding up'}
+  else{behaviour=Math.abs(v)<Math.abs(u)?'ช้าลง / Slowing down':'กลับทิศแล้วเร็วขึ้น / Reversed and speeding up'}
+  document.getElementById('caBehaviour').textContent=behaviour;
+  const x1=90,yZero=145;
+  const tMax=6;
+  const graphX=x1+(t/tMax)*650;
+  const mapV=(vel)=>yZero-(vel/20)*100;
+  const yU=Math.max(35,Math.min(255,mapV(u)));
+  const yV=Math.max(35,Math.min(255,mapV(v)));
+  document.getElementById('caLine').setAttribute('x1',x1);document.getElementById('caLine').setAttribute('y1',yU);document.getElementById('caLine').setAttribute('x2',graphX);document.getElementById('caLine').setAttribute('y2',yV);
+  document.getElementById('caArea').setAttribute('points',`${x1},${yU} ${graphX},${yV} ${graphX},${yZero} ${x1},${yZero}`);
+  document.getElementById('caGraphText').textContent=`uₓ=${signText(u)} m/s, aₓ=${signText(a)} m/s², t=${t} s`;
+}
+
+function resetInteractions(){
+  document.querySelectorAll('.option-btn').forEach(b=>b.classList.remove('selected'));
+  document.querySelectorAll('.feedback').forEach(b=>{b.className='feedback';b.innerHTML=''});
+  document.querySelectorAll('.solution').forEach(b=>b.classList.remove('open'));
+  allAnswersOpen=false;
+  const answerButton=document.getElementById('toggleAnswersBtn');
+  if(answerButton){answerButton.setAttribute('aria-expanded','false');answerButton.textContent='เปิดเฉลย / Show answers';}
+  document.getElementById('outRange').value=8;document.getElementById('backRange').value=3;
+  document.getElementById('cvX0').value=-2;document.getElementById('cvV').value=4;document.getElementById('cvT').value=3;
+  document.getElementById('caU').value=2;document.getElementById('caA').value=3;document.getElementById('caT').value=4;
+  updatePathExplorer();updateCV();updateCA();
+}
+
+function buildQuestionPrintSheet(){
+  const sheet=document.getElementById('printQuestionSheet');
+  sheet.innerHTML='';
+  const title=document.createElement('div');
+  title.className='print-sheet-title';
+  title.innerHTML='<h1>กล่องคำถามในคาบ: ปริมาณและสมการการเคลื่อนที่<span class="en">Classroom Question Boxes: Motion Quantities and Equations</span></h1><div class="student-line"><span>ชื่อ / Name</span><span>ชั้น / Class</span><span>วันที่ / Date</span></div>';
+  sheet.appendChild(title);
+  document.querySelectorAll('main .question-card').forEach((q,i)=>{
+    const clone=q.cloneNode(true);
+    clone.querySelectorAll('.feedback,.hint-box,.solution,.qtools').forEach(el=>el.remove());
+    clone.querySelectorAll('.option-btn').forEach(btn=>{btn.classList.remove('selected');btn.removeAttribute('data-q');btn.removeAttribute('data-level');btn.removeAttribute('data-th');btn.removeAttribute('data-en');});
+    const num=document.createElement('div');num.className='kicker';num.textContent=`คำถาม ${i+1} / Question ${i+1}`;clone.insertBefore(num,clone.firstChild);
+    sheet.appendChild(clone);
+  });
+}
+
+function printLesson(){
+  document.body.classList.remove('print-questions-only','print-with-answers');
+  window.print();
+}
+function printWithAnswers(){
+  document.body.classList.remove('print-questions-only');
+  document.body.classList.add('print-with-answers');
+  window.print();
+}
+window.addEventListener('afterprint',()=>document.body.classList.remove('print-questions-only','print-with-answers'));
+window.addEventListener('load',()=>{updatePathExplorer();updateCV();updateCA();});
+</script>
+</body>
+</html>
