@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ระยะทาง การกระจัด และเวกเตอร์ | Distance, Displacement and Vectors</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --paper-w: 210mm;
+  --paper-h: 297mm;
+  --pad-x: 14mm;
+  --pad-y: 10mm;
+  --ink: #111827;
+  --navy: #0f172a;
+  --slate: #475569;
+  --line: #cbd5e1;
+  --soft: #f8fafc;
+  --hot: #fff7ed;
+  --green: #166534;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: #e5e7eb;
+  color: var(--ink);
+  font-family: "K2D", Arial, sans-serif;
+  font-size: 12px;
+  line-height: 1.42;
+}
+button, input { font-family: inherit; }
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--navy);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(15,23,42,.25);
+}
+.toolbar button {
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: #fff;
+  color: var(--navy);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.toolbar .primary { background: #bae6fd; color: #082f49; }
+.toolbar .gold { background: #fde68a; color: #78350f; }
+.toolbar .status {
+  flex-basis: 100%;
+  text-align: center;
+  font-size: 11px;
+  opacity: .92;
+}
+.screen-guide {
+  width: min(var(--paper-w), calc(100vw - 24px));
+  margin: 14px auto 0;
+  padding: 10px 13px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(15,23,42,.12);
+  font-size: 11.5px;
+}
+.sheet {
+  width: min(var(--paper-w), calc(100vw - 24px));
+  min-height: var(--paper-h);
+  margin: 16px auto 28px;
+  padding: var(--pad-y) var(--pad-x);
+  background: #fff;
+  box-shadow: 0 16px 42px rgba(15,23,42,.22);
+  position: relative;
+  overflow: hidden;
+  page-break-after: always;
+  break-after: page;
+}
+.page-kicker {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--slate);
+  margin-bottom: 1.5mm;
+}
+.hero {
+  border: 1.6px solid var(--navy);
+  padding: 5mm;
+  margin-bottom: 4mm;
+  background: linear-gradient(135deg, #f8fafc 0%, #fff 70%);
+}
+.hero h1 {
+  margin: 0;
+  font-size: 23px;
+  line-height: 1.15;
+  font-weight: 800;
+}
+.hero .subtitle {
+  margin-top: 1.2mm;
+  font-size: 14px;
+  color: var(--slate);
+  font-weight: 600;
+}
+.hero .lead {
+  margin: 3mm 0 0;
+  font-size: 12.3px;
+}
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4mm;
+  margin: 0 0 3mm;
+  padding-bottom: 1.8mm;
+  border-bottom: 1.5px solid var(--navy);
+}
+.section-title h2 {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.2;
+}
+.section-title .tag {
+  border: 1px solid var(--navy);
+  border-radius: 999px;
+  padding: 1mm 2.5mm;
+  font-size: 9.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.en {
+  display: block;
+  color: #374151;
+  font-size: .89em;
+  font-weight: 400;
+  margin-top: .5mm;
+}
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3mm;
+}
+.card {
+  border: 1px solid var(--navy);
+  padding: 3.2mm;
+  background: #fff;
+  break-inside: avoid;
+}
+.card h3 {
+  margin: 0 0 1.6mm;
+  font-size: 13px;
+  line-height: 1.2;
+}
+.card p { margin: 1.2mm 0; }
+.clean-list {
+  margin: 0;
+  padding-left: 5mm;
+}
+.clean-list li { margin: 1.2mm 0; }
+.outcome-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  counter-reset: outcome;
+}
+.outcome-list li {
+  counter-increment: outcome;
+  position: relative;
+  padding-left: 9mm;
+  margin: 2mm 0;
+}
+.outcome-list li::before {
+  content: counter(outcome);
+  position: absolute;
+  left: 0;
+  top: .1mm;
+  width: 6mm;
+  height: 6mm;
+  border: 1px solid var(--navy);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 9px;
+  font-weight: 800;
+}
+.checklist {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.2mm 4mm;
+}
+.check-item {
+  display: grid;
+  grid-template-columns: 6mm 1fr;
+  gap: 2mm;
+  align-items: start;
+  border-bottom: 1px dotted #94a3b8;
+  padding: 1.6mm 0 2mm;
+}
+.check-item input {
+  width: 4.5mm;
+  height: 4.5mm;
+  margin: .7mm 0 0;
+  accent-color: var(--navy);
+}
+.check-item label { cursor: pointer; }
+.note-box, .misconception, .hot-card, .formula-box {
+  border: 1px solid var(--navy);
+  padding: 3mm;
+  margin: 2.5mm 0;
+  break-inside: avoid;
+}
+.note-box { background: var(--soft); }
+.misconception { background: #fef2f2; border-left-width: 4px; }
+.hot-card { background: var(--hot); border-left-width: 4px; }
+.formula-box { background: #f8fafc; text-align: center; font-weight: 700; }
+.hot-title, .box-title {
+  font-weight: 800;
+  margin-bottom: 1.2mm;
+}
+.concept-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 11px;
+  margin: 2mm 0;
+}
+.concept-table th, .concept-table td {
+  border: 1px solid var(--navy);
+  padding: 1.8mm 2mm;
+  vertical-align: top;
+}
+.concept-table th { background: #f1f5f9; }
+.diagram-card {
+  border: 1px solid var(--navy);
+  padding: 2mm;
+  background: #fff;
+  text-align: center;
+  break-inside: avoid;
+}
+.diagram-card svg { display: block; width: 100%; height: auto; max-height: 58mm; }
+.figure-stage {
+  width: 100%;
+  border: 1px solid #94a3b8;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin: 2mm auto;
+  padding: 3mm;
+  position: relative;
+}
+.figure-stage.small  { height: 32mm; }
+.figure-stage.medium { height: 48mm; }
+.figure-stage.wide   { height: 31mm; }
+.figure-stage.tall   { height: 52mm; }
+.figure-stage img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 90%;
+  max-height: 88%;
+  object-fit: contain;
+  object-position: center center;
+  margin: auto;
+  flex: 0 1 auto;
+}
+/* Image-specific fitting: keep every original crop fully inside its frame. */
+.figure-q1 img,
+.figure-q2 img { max-width: 76%; max-height: 84%; }
+.figure-q3 img,
+.figure-q4 img { max-width: 58%; max-height: 86%; }
+.figure-q5 img { max-width: 84%; max-height: 80%; }
+.figure-q6-stem img { max-width: 82%; max-height: 82%; }
+.figure-q6-choices img,
+.figure-q7 img { max-width: 95%; max-height: 78%; }
+.figure-q8 img { max-width: 72%; max-height: 88%; }
+@media (max-width: 760px) {
+  .figure-stage { padding: 10px; }
+  .figure-stage img { max-width: 94%; max-height: 88%; }
+}
+.image-fallback {
+  display: none;
+  position: absolute;
+  inset: 0;
+  place-items: center;
+  padding: 3mm;
+  text-align: center;
+  color: #64748b;
+  font-size: 10px;
+  background: repeating-linear-gradient(135deg,#fff,#fff 8px,#f8fafc 8px,#f8fafc 16px);
+}
+.question {
+  border: 1.2px solid var(--navy);
+  padding: 3.5mm;
+  margin: 0;
+  break-inside: avoid;
+}
+.question-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 3mm;
+  margin-bottom: 1.5mm;
+}
+.question-title {
+  font-weight: 800;
+  font-size: 13px;
+}
+.level {
+  border: 1px solid var(--navy);
+  border-radius: 999px;
+  padding: .8mm 2.2mm;
+  font-size: 9px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.problem-text { font-size: 11.7px; }
+.problem-text p { margin: 1.2mm 0; }
+.choice-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2mm 4mm;
+  margin: 2mm 0;
+}
+.choice {
+  border-bottom: 1px dotted #94a3b8;
+  padding: 1.1mm 0;
+}
+.response-frame {
+  position: relative;
+  border: 1px solid var(--navy);
+  margin-top: 3mm;
+  padding: 3mm;
+  overflow: hidden;
+  background: #fff;
+}
+.response-frame::before {
+  content: "พื้นที่แสดงวิธีทำ / Working area";
+  position: absolute;
+  top: -3.4mm;
+  left: 4mm;
+  padding: 0 2mm;
+  background: #fff;
+  font-size: 9.8px;
+  font-weight: 700;
+  z-index: 3;
+}
+.response-frame.sm { height: 52mm; }
+.response-frame.md { height: 68mm; }
+.response-frame.lg { height: 92mm; }
+.response-frame.xl { height: 114mm; }
+.work-lines, .answer-layer {
+  position: absolute;
+  inset: 3mm;
+}
+.work-lines {
+  background: repeating-linear-gradient(to bottom, transparent 0, transparent 8.6mm, #d1d5db 8.7mm, transparent 8.9mm);
+  opacity: 1;
+}
+.answer-layer {
+  visibility: hidden;
+  opacity: 0;
+  overflow: hidden;
+  font-size: 10.9px;
+  line-height: 1.37;
+}
+body.mode-solution .work-lines { visibility: hidden; opacity: 0; }
+body.mode-solution .answer-layer { visibility: visible; opacity: 1; }
+.answer-title {
+  font-weight: 800;
+  color: var(--green);
+  margin-bottom: 1.4mm;
+}
+.final-answer {
+  border-left: 3px solid var(--green);
+  background: #f0fdf4;
+  padding: 1.8mm 2mm;
+  margin-top: 1.7mm;
+  font-weight: 800;
+}
+.solution-svg {
+  width: 100%;
+  height: 54mm;
+  display: block;
+  margin: 1mm 0;
+  border: 1px solid #cbd5e1;
+  background: #fff;
+}
+.two-questions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3mm;
+}
+.mini-answer-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 2mm;
+}
+.mini-answer-table th, .mini-answer-table td {
+  border: 1px solid var(--navy);
+  padding: 1.5mm;
+  text-align: left;
+}
+.mini-answer-table th { background: #f1f5f9; }
+.page-footer {
+  position: absolute;
+  right: 12mm;
+  bottom: 5mm;
+  font-size: 9px;
+  color: #64748b;
+}
+.screen-only { display: block; }
+.solution-only { display: none; }
+body.mode-solution .solution-only { display: block; }
+body.mode-solution .student-only { display: none; }
+@page { size: A4 portrait; margin: 0; }
+@media print {
+  html, body { width: 210mm; background: #fff !important; }
+  .toolbar, .screen-guide { display: none !important; }
+  .sheet {
+    width: 210mm !important;
+    height: 297mm !important;
+    min-height: 297mm !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+    page-break-after: always !important;
+    break-after: page !important;
+  }
+  * {
+    color: #000 !important;
+    border-color: #000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  .hot-card, .note-box, .misconception, .formula-box, .final-answer, .hero, .card, .concept-table th {
+    background: #fff !important;
+  }
+}
+@media (max-width: 760px) {
+  body { font-size: 11px; }
+  .grid-2, .checklist, .two-questions { grid-template-columns: 1fr; }
+  .sheet { min-height: auto; }
+  .hero h1 { font-size: 19px; }
+}
+</style>
+</head>
+<body class="mode-student">
+<div class="toolbar">
+  <button class="primary" onclick="printStudent()">🖨️ พิมพ์โจทย์</button>
+  <button class="gold" onclick="printSolution()">✅ พิมพ์พร้อมเฉลย</button>
+  <button onclick="showSolutions()">👁️ เปิดเฉลย</button>
+  <button onclick="hideSolutions()">🙈 ปิดเฉลย</button>
+  <div class="status" id="statusText">โหมดนักเรียน: ช่องเฉลยเป็นพื้นที่ว่างสำหรับแสดงวิธีทำ</div>
+</div>
+<div class="screen-guide">
+  บทเรียนสองภาษา • ระยะทางใช้ $d$ • การกระจัดใช้ $\Delta x$, $\Delta y$ หรือ $\Delta\vec r$ • รูปต้นฉบับเชื่อมจาก GitHub • เฉลยเติมลงในพื้นที่เดิม
+</div>
+<main>
+
+<!-- PAGE 1 -->
+<section class="sheet">
+  <div class="page-kicker">Motion Learning Module 01</div>
+  <header class="hero">
+    <h1>ระยะทาง การกระจัด และเวกเตอร์</h1>
+    <div class="subtitle">Distance, Displacement and Vectors</div>
+    <p class="lead">การเคลื่อนที่ไม่ได้บอกเพียงว่า “ไปไกลเท่าไร” แต่ต้องบอกด้วยว่า “จุดสุดท้ายอยู่ที่ใดเมื่อเทียบกับจุดเริ่มต้น”<span class="en">Motion is not only about how far an object travels; it also describes where the final position is relative to the starting position.</span></p>
+  </header>
+  <div class="grid-2">
+    <article class="card">
+      <h3>สาระการเรียนรู้ <span class="en">Learning Content</span></h3>
+      <ul class="clean-list">
+        <li>ความหมายของระยะทางและการกระจัด<span class="en">Meanings of distance and displacement</span></li>
+        <li>ปริมาณสเกลาร์และปริมาณเวกเตอร์<span class="en">Scalar and vector quantities</span></li>
+        <li>การหาการกระจัดในหนึ่งและสองมิติ<span class="en">Displacement in one and two dimensions</span></li>
+        <li>ระยะทางตามส่วนโค้งและการกระจัดตามเส้นตรง<span class="en">Path length along a curve and straight-line displacement</span></li>
+        <li>การบวกและลบเวกเตอร์แบบหัวต่อหาง<span class="en">Head-to-tail vector addition and subtraction</span></li>
+        <li>การอ่านเวกเตอร์ลัพธ์จากแผนภาพ<span class="en">Interpreting resultant vectors from diagrams</span></li>
+      </ul>
+    </article>
+    <article class="card">
+      <h3>คำสำคัญของบท <span class="en">Key Vocabulary</span></h3>
+      <table class="concept-table">
+        <tr><th>ไทย</th><th>English</th><th>สัญลักษณ์</th></tr>
+        <tr><td>ระยะทาง</td><td>distance</td><td>$d$</td></tr>
+        <tr><td>การกระจัดแนวแกน $x$</td><td>$x$-displacement</td><td>$\Delta x$</td></tr>
+        <tr><td>การกระจัดแนวแกน $y$</td><td>$y$-displacement</td><td>$\Delta y$</td></tr>
+        <tr><td>เวกเตอร์การกระจัด</td><td>displacement vector</td><td>$\Delta\vec r$</td></tr>
+        <tr><td>เวกเตอร์ลัพธ์</td><td>resultant vector</td><td>$\vec R$</td></tr>
+      </table>
+    </article>
+  </div>
+  <article class="card" style="margin-top:3mm;">
+    <h3>ผลการเรียนรู้ที่คาดหวัง <span class="en">Expected Learning Outcomes</span></h3>
+    <ol class="outcome-list">
+      <li>อธิบายความแตกต่างระหว่างระยะทางกับการกระจัดได้<span class="en">Explain the difference between distance and displacement.</span></li>
+      <li>จำแนกปริมาณสเกลาร์และเวกเตอร์ได้<span class="en">Classify quantities as scalars or vectors.</span></li>
+      <li>คำนวณ $d$, $\Delta x$, $\Delta y$ และ $|\Delta\vec r|$ จากแผนภาพได้<span class="en">Calculate $d$, $\Delta x$, $\Delta y$, and $|\Delta\vec r|$ from diagrams.</span></li>
+      <li>ใช้ทฤษฎีพีทาโกรัสหาขนาดของการกระจัดสองมิติได้<span class="en">Use the Pythagorean theorem to find a two-dimensional displacement magnitude.</span></li>
+      <li>สร้างและตีความเวกเตอร์ลัพธ์ด้วยวิธีหัวต่อหางได้<span class="en">Construct and interpret resultants using the head-to-tail method.</span></li>
+      <li>ให้เหตุผลได้ว่าทำไมวัตถุอาจมีการกระจัดเป็นศูนย์แม้มีการเคลื่อนที่<span class="en">Explain why displacement may be zero even though motion has occurred.</span></li>
+    </ol>
+  </article>
+  <div class="page-footer">Distance, Displacement and Vectors • Overview</div>
+</section>
+
+<!-- PAGE 2 -->
+<section class="sheet">
+  <div class="section-title">
+    <h2>เช็กลิสต์นักเรียน <span class="en">Student Checklist</span></h2>
+    <span class="tag">ก่อนเรียน • ระหว่างเรียน • หลังเรียน</span>
+  </div>
+  <div class="note-box">
+    ทำเครื่องหมายเมื่อมั่นใจว่าทำได้ด้วยตนเอง ไม่จำเป็นต้องทำครบตั้งแต่ก่อนเรียน<span class="en">Tick an item when you can complete it independently. You are not expected to tick every item before learning.</span>
+  </div>
+  <div class="checklist">
+    <div class="check-item"><input id="c1" type="checkbox"><label for="c1">ฉันอธิบายความหมายของระยะทางได้<span class="en">I can explain the meaning of distance.</span></label></div>
+    <div class="check-item"><input id="c2" type="checkbox"><label for="c2">ฉันอธิบายความหมายของการกระจัดได้<span class="en">I can explain the meaning of displacement.</span></label></div>
+    <div class="check-item"><input id="c3" type="checkbox"><label for="c3">ฉันรู้ว่าระยะทางใช้สัญลักษณ์ $d$<span class="en">I know that distance is represented by $d$.</span></label></div>
+    <div class="check-item"><input id="c4" type="checkbox"><label for="c4">ฉันใช้ $\Delta x$ และ $\Delta y$ แทนการเปลี่ยนตำแหน่งตามแกนได้<span class="en">I can use $\Delta x$ and $\Delta y$ for changes along the coordinate axes.</span></label></div>
+    <div class="check-item"><input id="c5" type="checkbox"><label for="c5">ฉันแยกสเกลาร์ออกจากเวกเตอร์ได้<span class="en">I can distinguish scalars from vectors.</span></label></div>
+    <div class="check-item"><input id="c6" type="checkbox"><label for="c6">ฉันหาการกระจัดจากตำแหน่งต้นและตำแหน่งปลายได้<span class="en">I can find displacement from initial and final positions.</span></label></div>
+    <div class="check-item"><input id="c7" type="checkbox"><label for="c7">ฉันหาขนาด $|\Delta\vec r|$ จาก $\Delta x$ และ $\Delta y$ ได้<span class="en">I can find $|\Delta\vec r|$ from $\Delta x$ and $\Delta y$.</span></label></div>
+    <div class="check-item"><input id="c8" type="checkbox"><label for="c8">ฉันบอกทิศของการกระจัดได้<span class="en">I can state the direction of displacement.</span></label></div>
+    <div class="check-item"><input id="c9" type="checkbox"><label for="c9">ฉันแยกระยะทางตามส่วนโค้งออกจากการกระจัดตามเส้นตรงได้<span class="en">I can distinguish curved path length from straight-line displacement.</span></label></div>
+    <div class="check-item"><input id="c10" type="checkbox"><label for="c10">ฉันอธิบายได้ว่าทำไมครบหนึ่งรอบแล้วการกระจัดเป็นศูนย์<span class="en">I can explain why one complete lap gives zero displacement.</span></label></div>
+    <div class="check-item"><input id="c11" type="checkbox"><label for="c11">ฉันต่อเวกเตอร์แบบหัวต่อหางได้<span class="en">I can add vectors head to tail.</span></label></div>
+    <div class="check-item"><input id="c12" type="checkbox"><label for="c12">ฉันกลับทิศเวกเตอร์เพื่อทำการลบได้<span class="en">I can reverse a vector to perform subtraction.</span></label></div>
+    <div class="check-item"><input id="c13" type="checkbox"><label for="c13">ฉันอ่านทิศของเวกเตอร์ลัพธ์จากองค์ประกอบแนวนอนและแนวตั้งได้<span class="en">I can infer a resultant direction from horizontal and vertical components.</span></label></div>
+    <div class="check-item"><input id="c14" type="checkbox"><label for="c14">ฉันตรวจคำตอบด้วยเหตุผลทางกายภาพได้<span class="en">I can check an answer using physical reasoning.</span></label></div>
+  </div>
+  <div class="section-title" style="margin-top:5mm;">
+    <h2>แผนที่การเรียนรู้ <span class="en">Learning Roadmap</span></h2>
+  </div>
+  <div class="grid-2">
+    <div class="card"><h3>1. จากเส้นทางสู่ตำแหน่ง</h3><p>เปรียบเทียบความยาวของเส้นทางจริงกับเส้นตรงจากจุดเริ่มต้นถึงจุดสุดท้าย<span class="en">Compare the actual path length with the straight line from start to finish.</span></p></div>
+    <div class="card"><h3>2. จากจำนวนสู่ลูกศร</h3><p>แยกปริมาณที่มีเฉพาะขนาดออกจากปริมาณที่มีทั้งขนาดและทิศทาง<span class="en">Separate magnitude-only quantities from quantities with magnitude and direction.</span></p></div>
+    <div class="card"><h3>3. จากลูกศรหลายอันสู่ลัพธ์เดียว</h3><p>รวมเวกเตอร์หลายตัวด้วยการต่อหัว–หาง<span class="en">Combine several vectors using the head-to-tail method.</span></p></div>
+    <div class="card"><h3>4. จากภาพสู่เหตุผล</h3><p>ใช้รูป ทิศ และองค์ประกอบเพื่อตัดสินคำตอบ ไม่เดาจากความยาวเพียงอย่างเดียว<span class="en">Use diagrams, directions, and components rather than guessing from length alone.</span></p></div>
+  </div>
+  <div class="page-footer">Distance, Displacement and Vectors • Checklist</div>
+</section>
+
+<!-- PAGE 3 -->
+<section class="sheet">
+  <div class="section-title">
+    <h2>เกริ่นนำ: ไปไกลแค่ไหน และจบที่ไหน <span class="en">Introduction: How far, and where did you finish?</span></h2>
+    <span class="tag">Engage</span>
+  </div>
+  <div class="grid-2">
+    <div class="diagram-card">
+      <svg viewBox="0 0 520 250" aria-label="path and displacement introduction">
+        <defs><marker id="introArrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 Z" fill="#111827"/></marker></defs>
+        <rect x="1" y="1" width="518" height="248" fill="#fff" stroke="#111827" stroke-width="2"/>
+        <circle cx="75" cy="190" r="7" fill="#111827"/><text x="48" y="218" font-size="18">เริ่ม / Start</text>
+        <circle cx="445" cy="55" r="7" fill="#111827"/><text x="396" y="35" font-size="18">จบ / Finish</text>
+        <path d="M75 190 C125 60 190 220 260 120 S380 45 445 55" fill="none" stroke="#475569" stroke-width="5" stroke-dasharray="12 8"/>
+        <line x1="82" y1="186" x2="435" y2="60" stroke="#111827" stroke-width="4" marker-end="url(#introArrow)"/>
+        <text x="185" y="70" font-size="18">ระยะทาง $d$ ตามเส้นทางจริง</text>
+        <text x="177" y="172" font-size="18">การกระจัด $\Delta\vec r$</text>
+      </svg>
+    </div>
+    <div>
+      <div class="card">
+        <h3>สถานการณ์นำ <span class="en">Opening Situation</span></h3>
+        <p>นักเรียนเดินจากห้องเรียนไปโรงอาหาร แล้วเดินอ้อมเพื่อหลบพื้นเปียก จุดสุดท้ายอยู่ห่างจากห้องเรียนเป็นเส้นตรงเพียงช่วงหนึ่ง แต่เส้นทางที่เดินจริงยาวกว่านั้น</p>
+        <p class="en">A student walks from the classroom to the cafeteria and takes a detour around a wet floor. The straight-line separation is shorter than the actual path travelled.</p>
+      </div>
+      <div class="note-box">
+        <div class="box-title">คำถามนำ / Guiding Questions</div>
+        <p>1. ปริมาณใดสนใจเส้นทางทั้งหมด?</p>
+        <p>2. ปริมาณใดสนใจเฉพาะจุดเริ่มต้นและจุดสุดท้าย?</p>
+        <p>3. ปริมาณใดต้องระบุทิศทาง?</p>
+      </div>
+    </div>
+  </div>
+  <div class="hot-card">
+    <div class="hot-title">HOT Question 1 — วิ่งครบหนึ่งรอบ</div>
+    นักเรียนวิ่งรอบสนามหนึ่งรอบและกลับมาที่จุดเริ่มต้น ระยะทางและการกระจัดมีค่าเป็นอย่างไร เพราะเหตุใด?
+    <span class="en">A student runs one complete lap and returns to the starting point. What are the distance and displacement, and why?</span>
+    <div class="response-frame sm">
+      <div class="work-lines"></div>
+      <div class="answer-layer"><div class="answer-title">แนวคิด / Thinking Guide</div>ระยะทางไม่เป็นศูนย์ เพราะนักเรียนเคลื่อนที่ตามเส้นรอบสนามจริง แต่การกระจัดเป็นศูนย์ เพราะตำแหน่งสุดท้ายตรงกับตำแหน่งเริ่มต้น ดังนั้น $\Delta x=0$, $\Delta y=0$ และ $|\Delta\vec r|=0$<span class="en">Distance is not zero because a real path was travelled. Displacement is zero because the final and initial positions coincide.</span></div>
+    </div>
+  </div>
+  <div class="misconception">
+    <div class="box-title">จุดที่มักสับสน / Common Misconception</div>
+    “การกระจัดเป็นศูนย์” ไม่ได้แปลว่า “วัตถุไม่เคยเคลื่อนที่” แต่หมายความว่า “ตำแหน่งสุดท้ายตรงกับตำแหน่งเริ่มต้น”<span class="en">Zero displacement does not mean no motion occurred; it means the final position is the same as the initial position.</span>
+  </div>
+  <div class="page-footer">Distance, Displacement and Vectors • Introduction</div>
+</section>
+
+<!-- PAGE 4 -->
+<section class="sheet">
+  <div class="section-title">
+    <h2>ระยะทางและการกระจัด <span class="en">Distance and Displacement</span></h2>
+    <span class="tag">Core Concept 1</span>
+  </div>
+  <table class="concept-table">
+    <tr><th style="width:22%">ปริมาณ</th><th>ความหมาย</th><th style="width:23%">ลักษณะ</th><th style="width:16%">สัญลักษณ์</th></tr>
+    <tr><td><strong>ระยะทาง</strong><span class="en">Distance</span></td><td>ความยาวทั้งหมดตามเส้นทางที่เคลื่อนที่จริง<span class="en">Total length of the actual path travelled</span></td><td>สเกลาร์ มีเฉพาะขนาด<span class="en">Scalar; magnitude only</span></td><td>$d$</td></tr>
+    <tr><td><strong>การกระจัด</strong><span class="en">Displacement</span></td><td>การเปลี่ยนตำแหน่งจากจุดเริ่มต้นไปยังจุดสุดท้าย<span class="en">Change in position from initial to final point</span></td><td>เวกเตอร์ มีขนาดและทิศทาง<span class="en">Vector; magnitude and direction</span></td><td>$\Delta x,\ \Delta y,\ \Delta\vec r$</td></tr>
+  </table>
+  <div class="grid-2">
+    <div class="card">
+      <h3>หนึ่งมิติ / One Dimension</h3>
+      <div class="formula-box">$$\Delta x=x_f-x_i$$</div>
+      <p>เครื่องหมายของ $\Delta x$ บอกทิศตามแกนที่กำหนด เช่น ขวาเป็นบวกและซ้ายเป็นลบ<span class="en">The sign of $\Delta x$ indicates direction along the chosen axis.</span></p>
+    </div>
+    <div class="card">
+      <h3>สองมิติ / Two Dimensions</h3>
+      <div class="formula-box">$$\Delta\vec r=\Delta x\,\hat i+\Delta y\,\hat j$$</div>
+      <div class="formula-box">$$|\Delta\vec r|=\sqrt{(\Delta x)^2+(\Delta y)^2}$$</div>
+    </div>
+  </div>
+  <div class="note-box">
+    <div class="box-title">ข้อสังเกตสำคัญ / Important Observation</div>
+    สำหรับการเคลื่อนที่ระหว่างสองจุด ระยะทางจะไม่น้อยกว่าขนาดของการกระจัด
+    $$d\ge |\Delta\vec r|$$
+    และจะเท่ากันเมื่อวัตถุเคลื่อนที่เป็นเส้นตรงไปทางเดียวโดยไม่ย้อนกลับ<span class="en">Distance is never less than displacement magnitude. Equality occurs for straight-line motion in one direction without turning back.</span>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>เส้นทางมุมฉาก / Right-Angle Path</h3>
+      <p>ถ้า $\Delta x=4\ \mathrm{m}$ และ $\Delta y=3\ \mathrm{m}$</p>
+      $$|\Delta\vec r|=\sqrt{4^2+3^2}=5\ \mathrm{m}$$
+      <p>แต่ระยะทางตามเส้นทางคือ $d=4+3=7\ \mathrm{m}$</p>
+    </div>
+    <div class="card">
+      <h3>ส่วนโค้งและวงกลม / Arcs and Circles</h3>
+      <p>ระยะทางวัดตามส่วนโค้ง แต่การกระจัดเป็นเส้นตรงเชื่อมจุดต้นกับจุดปลาย<span class="en">Distance follows the arc; displacement is the straight line joining the endpoints.</span></p>
+      <p>ครึ่งวงกลม: $d=\pi R$, $|\Delta\vec r|=2R$</p>
+      <p>ครบหนึ่งรอบ: $d=2\pi R$, $|\Delta\vec r|=0$</p>
+    </div>
+  </div>
+  <div class="hot-card">
+    <div class="hot-title">HOT Question 2 — ระยะทางเท่ากัน การกระจัดต้องเท่ากันหรือไม่?</div>
+    วัตถุสองชิ้นเดินทางเป็นระยะทางเท่ากัน แต่ใช้เส้นทางและทิศทางต่างกัน การกระจัดของทั้งสองจำเป็นต้องเท่ากันหรือไม่?
+    <span class="en">Two objects travel equal distances using different paths and directions. Must their displacements be equal?</span>
+    <div class="response-frame sm"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">แนวคิด / Thinking Guide</div>ไม่จำเป็น ระยะทางขึ้นกับความยาวเส้นทางทั้งหมด แต่การกระจัดขึ้นกับตำแหน่งเริ่มต้นและตำแหน่งสุดท้าย รวมทั้งทิศทาง วัตถุจึงอาจเดินทางเท่ากันแต่จบคนละตำแหน่งและมีการกระจัดต่างกัน</div></div>
+  </div>
+  <div class="page-footer">Distance, Displacement and Vectors • Core Concept 1</div>
+</section>
+
+<!-- PAGE 5 -->
+<section class="sheet">
+  <div class="section-title">
+    <h2>เวกเตอร์และเวกเตอร์ลัพธ์ <span class="en">Vectors and Resultants</span></h2>
+    <span class="tag">Core Concept 2</span>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>เวกเตอร์แทนด้วยลูกศร <span class="en">A vector is represented by an arrow</span></h3>
+      <ul class="clean-list">
+        <li>ความยาวของลูกศรแทนขนาด<span class="en">Arrow length represents magnitude.</span></li>
+        <li>หัวลูกศรแทนทิศทาง<span class="en">The arrowhead represents direction.</span></li>
+        <li>การเลื่อนเวกเตอร์โดยไม่หมุนไม่เปลี่ยนเวกเตอร์<span class="en">Translating a vector without rotating it does not change the vector.</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>การลบเวกเตอร์ <span class="en">Vector Subtraction</span></h3>
+      $$\vec a-\vec b=\vec a+(-\vec b)$$
+      <p>$-\vec b$ มีขนาดเท่ากับ $\vec b$ แต่ชี้ทิศตรงข้าม<span class="en">$-\vec b$ has the same magnitude as $\vec b$ but points in the opposite direction.</span></p>
+    </div>
+  </div>
+  <div class="diagram-card" style="margin-top:3mm;">
+    <svg viewBox="0 0 780 260" aria-label="head to tail vector addition">
+      <defs><marker id="vecA" markerWidth="11" markerHeight="11" refX="9" refY="3" orient="auto"><path d="M0,0 L10,3 L0,6 Z" fill="#111827"/></marker></defs>
+      <rect x="1" y="1" width="778" height="258" fill="#fff" stroke="#111827" stroke-width="2"/>
+      <text x="25" y="30" font-size="20" font-weight="700">วิธีหัวต่อหาง / Head-to-tail method</text>
+      <line x1="90" y1="180" x2="315" y2="180" stroke="#111827" stroke-width="5" marker-end="url(#vecA)"/>
+      <text x="188" y="210" font-size="22">$\vec a$</text>
+      <line x1="315" y1="180" x2="520" y2="65" stroke="#111827" stroke-width="5" marker-end="url(#vecA)"/>
+      <text x="410" y="105" font-size="22">$\vec b$</text>
+      <line x1="90" y1="180" x2="520" y2="65" stroke="#111827" stroke-width="7" stroke-dasharray="12 7" marker-end="url(#vecA)"/>
+      <text x="265" y="85" font-size="22">$\vec R=\vec a+\vec b$</text>
+      <circle cx="90" cy="180" r="6" fill="#111827"/><circle cx="315" cy="180" r="6" fill="#111827"/>
+      <text x="545" y="72" font-size="17">หัวของเวกเตอร์สุดท้าย</text>
+      <text x="35" y="205" font-size="17">หางของเวกเตอร์แรก</text>
+    </svg>
+  </div>
+  <div class="note-box">
+    <div class="box-title">ขั้นตอน / Procedure</div>
+    <ol class="clean-list">
+      <li>วาดเวกเตอร์ตัวแรก</li>
+      <li>เลื่อนเวกเตอร์ตัวถัดไปให้หางต่อกับหัวของเวกเตอร์ก่อนหน้า โดยไม่หมุนหรือย่อ–ขยาย</li>
+      <li>ลากเวกเตอร์ลัพธ์จากหางของตัวแรกไปยังหัวของตัวสุดท้าย</li>
+    </ol>
+    <span class="en">Draw the first vector, translate the next vector so its tail meets the previous head, then draw the resultant from the first tail to the final head.</span>
+  </div>
+  <div class="hot-card">
+    <div class="hot-title">HOT Question 3 — ลำดับการบวกเปลี่ยนผลลัพธ์หรือไม่?</div>
+    ถ้าเปลี่ยนจาก $\vec a+\vec b$ เป็น $\vec b+\vec a$ เวกเตอร์ลัพธ์เปลี่ยนหรือไม่? แผนภาพอาจต่างกันอย่างไร?
+    <span class="en">Does changing $\vec a+\vec b$ to $\vec b+\vec a$ change the resultant? How might the construction diagram differ?</span>
+    <div class="response-frame sm"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">แนวคิด / Thinking Guide</div>เวกเตอร์ลัพธ์ไม่เปลี่ยน เพราะการบวกเวกเตอร์มีสมบัติสลับที่ $\vec a+\vec b=\vec b+\vec a$ ตำแหน่งของลูกศรระหว่างการต่อหัว–หางอาจต่างกัน แต่จุดเริ่มและจุดสุดท้ายของผลลัพธ์ให้ขนาดและทิศเดียวกัน</div></div>
+  </div>
+  <div class="page-footer">Distance, Displacement and Vectors • Core Concept 2</div>
+</section>
+
+<!-- PAGE 6: Q1-Q2 -->
+<section class="sheet">
+  <div class="section-title"><h2>โจทย์ฝึก 1–2 <span class="en">Practice Questions 1–2</span></h2><span class="tag">Distance & Displacement</span></div>
+  <div class="two-questions">
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 1 <span class="en">Question 1</span></div><span class="level">พื้นฐาน / Basic</span></div>
+      <div class="problem-text">จากรูป จงหาระยะทาง $d$ และขนาดของการกระจัด $|\Delta\vec r|$<span class="en">From the diagram, determine the distance $d$ and the displacement magnitude $|\Delta\vec r|$.</span></div>
+      <div class="figure-stage small figure-q1"><img data-file="1.png" alt="Question 1 path diagram"><div class="image-fallback">รูปข้อ 1 / Question 1 image<br>ไฟล์ 1.png</div></div>
+      <div class="response-frame md"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">เฉลย / Solution</div>เส้นทางจริงยาว $4+3$ เมตร ดังนั้น $$d=4+3=7\ \mathrm{m}$$ การกระจัดมีองค์ประกอบ $$\Delta x=4\ \mathrm{m},\qquad \Delta y=3\ \mathrm{m}$$ จึงได้ $$|\Delta\vec r|=\sqrt{4^2+3^2}=5\ \mathrm{m}$$<div class="final-answer">ตอบ / Answer: $d=7\ \mathrm{m}$ และ $|\Delta\vec r|=5\ \mathrm{m}$ เฉียงขึ้นทางขวา</div></div></div>
+    </article>
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 2 <span class="en">Question 2</span></div><span class="level">พื้นฐาน / Basic</span></div>
+      <div class="problem-text">จากรูป จงหาระยะทาง $d$ และการกระจัด $\Delta x$ โดยกำหนดให้ทิศไปทางขวาเป็นบวก<span class="en">Determine the distance $d$ and displacement $\Delta x$, taking rightward as positive.</span></div>
+      <div class="figure-stage small figure-q2"><img data-file="2.png" alt="Question 2 backtracking diagram"><div class="image-fallback">รูปข้อ 2 / Question 2 image<br>ไฟล์ 2.png</div></div>
+      <div class="response-frame md"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">เฉลย / Solution</div>วัตถุเคลื่อนที่ไปทางขวา $10\ \mathrm{m}$ แล้วกลับทางซ้าย $2\ \mathrm{m}$ ระยะทางรวมคือ $$d=10+2=12\ \mathrm{m}$$ การกระจัดคือ $$\Delta x=10-2=8\ \mathrm{m}$$<div class="final-answer">ตอบ / Answer: $d=12\ \mathrm{m}$ และ $\Delta x=+8\ \mathrm{m}$ หรือ 8 m ไปทางขวา</div></div></div>
+    </article>
+  </div>
+  <div class="page-footer">Distance, Displacement and Vectors • Questions 1–2</div>
+</section>
+
+<!-- PAGE 7: Q3-Q4 -->
+<section class="sheet">
+  <div class="section-title"><h2>โจทย์ฝึก 3–4 <span class="en">Practice Questions 3–4</span></h2><span class="tag">Circular Paths</span></div>
+  <div class="two-questions">
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 3 <span class="en">Question 3</span></div><span class="level">ประยุกต์ / Apply</span></div>
+      <div class="problem-text">วัตถุเคลื่อนที่ตามครึ่งวงกลมรัศมี $R=7\ \mathrm{m}$ จากจุดหนึ่งไปยังจุดตรงข้าม จงหา $d$ และ $|\Delta\vec r|$<span class="en">An object moves along a semicircle of radius $7\ \mathrm{m}$ to the opposite endpoint. Find $d$ and $|\Delta\vec r|$.</span></div>
+      <div class="figure-stage small figure-q3"><img data-file="3.png" alt="Question 3 semicircle"><div class="image-fallback">รูปข้อ 3 / Question 3 image<br>ไฟล์ 3.png</div></div>
+      <div class="response-frame md"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">เฉลย / Solution</div>ระยะทางเป็นความยาวครึ่งวงกลม $$d=\pi R=7\pi\ \mathrm{m}$$ ใช้ $\pi=\frac{22}{7}$ จะได้ $d=22\ \mathrm{m}$ ส่วนการกระจัดเป็นเส้นผ่านศูนย์กลาง $$|\Delta\vec r|=2R=14\ \mathrm{m}$$<div class="final-answer">ตอบ / Answer: $d=22\ \mathrm{m}$ และ $|\Delta\vec r|=14\ \mathrm{m}$</div></div></div>
+    </article>
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 4 <span class="en">Question 4</span></div><span class="level">แนวคิด / Concept</span></div>
+      <div class="problem-text">วัตถุเคลื่อนที่ครบหนึ่งรอบวงกลมรัศมี $R=7\ \mathrm{m}$ จงหา $d$ และ $|\Delta\vec r|$<span class="en">An object completes one full circle of radius $7\ \mathrm{m}$. Find $d$ and $|\Delta\vec r|$.</span></div>
+      <div class="figure-stage small figure-q4"><img data-file="4.png" alt="Question 4 complete circle"><div class="image-fallback">รูปข้อ 4 / Question 4 image<br>ไฟล์ 4.png</div></div>
+      <div class="response-frame md"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">เฉลย / Solution</div>ระยะทางเท่ากับเส้นรอบวง $$d=2\pi R=14\pi\ \mathrm{m}=44\ \mathrm{m}$$ จุดสุดท้ายตรงกับจุดเริ่มต้น ดังนั้น $$\Delta x=0,\quad \Delta y=0$$ $$|\Delta\vec r|=0$$<div class="final-answer">ตอบ / Answer: $d=44\ \mathrm{m}$ และ $|\Delta\vec r|=0\ \mathrm{m}$</div></div></div>
+    </article>
+  </div>
+  <div class="hot-card" style="margin-top:4mm;">
+    <div class="hot-title">ห้องเรียนคิดต่อ / Classroom HOT Prompt</div>
+    เปรียบเทียบข้อ 3 และข้อ 4: เหตุใดเส้นทางที่ยาวกว่าในข้อ 4 จึงให้การกระจัดที่น้อยกว่า?
+    <span class="en">Compare Questions 3 and 4. Why does the longer path in Question 4 produce the smaller displacement?</span>
+    <div class="response-frame sm"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">แนวคิด / Thinking Guide</div>การกระจัดไม่ขึ้นกับความยาวเส้นทาง แต่ขึ้นกับตำแหน่งต้นและตำแหน่งปลาย ข้อ 4 กลับมาที่จุดเดิมจึงมีการกระจัดเป็นศูนย์ แม้ระยะทางจะมากกว่าข้อ 3</div></div>
+  </div>
+  <div class="page-footer">Distance, Displacement and Vectors • Questions 3–4</div>
+</section>
+
+<!-- PAGE 8: Q5 -->
+<section class="sheet">
+  <div class="section-title"><h2>โจทย์ฝึก 5 <span class="en">Practice Question 5</span></h2><span class="tag">Graphical Vector Addition</span></div>
+  <article class="question">
+    <div class="question-head"><div class="question-title">ข้อ 5 — เวกเตอร์ลัพธ์ของ $\vec a$ และ $\vec b$ <span class="en">Resultant of $\vec a$ and $\vec b$</span></div><span class="level">วิเคราะห์ / Analyse</span></div>
+    <div class="problem-text">จากรูป จงสร้างเวกเตอร์ลัพธ์ $\vec R=\vec a+\vec b$ ด้วยวิธีหัวต่อหาง และระบุทิศโดยประมาณของเวกเตอร์ลัพธ์<span class="en">Construct $\vec R=\vec a+\vec b$ using the head-to-tail method and state its approximate direction.</span></div>
+    <div class="figure-stage medium figure-q5"><img data-file="5.png" alt="Question 5 vectors a and b"><div class="image-fallback">รูปข้อ 5 / Question 5 image<br>ไฟล์ 5.png</div></div>
+    <div class="response-frame xl">
+      <div class="work-lines"></div>
+      <div class="answer-layer">
+        <div class="answer-title">เฉลยด้วยแผนภาพ SVG / SVG Solution</div>
+        <svg class="solution-svg" viewBox="0 0 820 300" aria-label="head to tail solution for question 5">
+          <defs>
+            <marker id="q5Arrow" markerWidth="12" markerHeight="12" refX="10" refY="3" orient="auto"><path d="M0,0 L11,3 L0,6 Z" fill="#111827"/></marker>
+            <marker id="q5Result" markerWidth="12" markerHeight="12" refX="10" refY="3" orient="auto"><path d="M0,0 L11,3 L0,6 Z" fill="#166534"/></marker>
+          </defs>
+          <rect x="1" y="1" width="818" height="298" fill="#fff" stroke="#111827" stroke-width="2"/>
+          <text x="26" y="33" font-size="20" font-weight="700">1) เลื่อน $\vec b$ โดยไม่หมุน ให้หางของ $\vec b$ ต่อกับหัวของ $\vec a$</text>
+          <circle cx="110" cy="175" r="6" fill="#111827"/>
+          <line x1="110" y1="175" x2="320" y2="235" stroke="#111827" stroke-width="6" marker-end="url(#q5Arrow)"/>
+          <text x="205" y="238" font-size="24">$\vec a$</text>
+          <circle cx="320" cy="235" r="6" fill="#111827"/>
+          <line x1="320" y1="235" x2="625" y2="70" stroke="#111827" stroke-width="6" marker-end="url(#q5Arrow)"/>
+          <text x="470" y="135" font-size="24">$\vec b$ ที่เลื่อนแล้ว</text>
+          <line x1="110" y1="175" x2="625" y2="70" stroke="#166534" stroke-width="8" marker-end="url(#q5Result)"/>
+          <text x="310" y="92" font-size="27" font-weight="700" fill="#166534">$\vec R=\vec a+\vec b$</text>
+          <path d="M110 175 L320 235 L625 70" fill="none" stroke="#64748b" stroke-width="2" stroke-dasharray="8 7"/>
+          <text x="30" y="282" font-size="19">2) ลาก $\vec R$ จากหางของ $\vec a$ ไปยังหัวของ $\vec b$ → ลัพธ์ชี้เฉียงขึ้นทางขวา</text>
+        </svg>
+        <p>องค์ประกอบในแนวขวาของ $\vec a$ และ $\vec b$ รวมกัน ส่วนองค์ประกอบขึ้นของ $\vec b$ มีขนาดมากกว่าองค์ประกอบลงของ $\vec a$ จึงได้ลัพธ์เฉียงขึ้นทางขวา<span class="en">Both vectors contribute rightward components, while the upward component of $\vec b$ exceeds the downward component of $\vec a$.</span></p>
+        <div class="final-answer">ตอบ / Answer: $\vec R$ ชี้เฉียงขึ้นทางขวา / points upward to the right.</div>
+      </div>
+    </div>
+  </article>
+  <div class="page-footer">Distance, Displacement and Vectors • Question 5</div>
+</section>
+
+<!-- PAGE 9: Q6 -->
+<section class="sheet">
+  <div class="section-title"><h2>โจทย์ฝึก 6 <span class="en">Practice Question 6</span></h2><span class="tag">Multiple Vectors</span></div>
+  <article class="question">
+    <div class="question-head"><div class="question-title">ข้อ 6 — $\vec a+\vec b+\vec c$</div><span class="level">วิเคราะห์ทิศ / Direction Analysis</span></div>
+    <div class="problem-text">กำหนด $\vec a$, $\vec b$ และ $\vec c$ ดังรูป รูปใดเป็นเวกเตอร์ลัพธ์ของ $\vec a+\vec b+\vec c$?<span class="en">The vectors $\vec a$, $\vec b$, and $\vec c$ are shown. Which option represents the resultant $\vec a+\vec b+\vec c$?</span></div>
+    <div class="figure-stage wide figure-q6-stem"><img data-file="6.1.png" alt="Question 6 given vectors"><div class="image-fallback">รูปโจทย์ข้อ 6 / Question 6 stem<br>ไฟล์ 6.1.png</div></div>
+    <div class="figure-stage wide figure-q6-choices"><img data-file="6.2.png" alt="Question 6 answer choices"><div class="image-fallback">รูปตัวเลือกข้อ 6 / Question 6 choices<br>ไฟล์ 6.2.png</div></div>
+    <div class="response-frame lg"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">เฉลย / Solution</div>
+      <p>พิจารณาองค์ประกอบของเวกเตอร์:</p>
+      <ul class="clean-list">
+        <li>$\vec a$ ชี้ไปทางขวา</li>
+        <li>$\vec b$ ชี้ขึ้นทางขวา</li>
+        <li>$\vec c$ ชี้ขึ้นทางซ้าย</li>
+      </ul>
+      <p>องค์ประกอบแนวตั้งของ $\vec b$ และ $\vec c$ รวมกันชี้ขึ้น ส่วนองค์ประกอบแนวนอนเมื่อรวม $\vec a$ แล้วมีผลสุทธิชี้ขวา ดังนั้นลัพธ์ชี้ขึ้นทางขวา<span class="en">The vertical components add upward, while the net horizontal component remains rightward.</span></p>
+      <div class="final-answer">ตอบ / Answer: ตัวเลือก 2 / Option 2</div>
+    </div></div>
+  </article>
+  <div class="page-footer">Distance, Displacement and Vectors • Question 6</div>
+</section>
+
+<!-- PAGE 10: Q7 -->
+<section class="sheet">
+  <div class="section-title"><h2>โจทย์ฝึก 7 <span class="en">Practice Question 7</span></h2><span class="tag">Vector Subtraction</span></div>
+  <article class="question">
+    <div class="question-head"><div class="question-title">ข้อ 7 — $\vec a-\vec b-\vec c$</div><span class="level">กลับทิศ / Reverse Vectors</span></div>
+    <div class="problem-text">จากเวกเตอร์ในข้อ 6 รูปใดเป็นเวกเตอร์ลัพธ์ของ $\vec a-\vec b-\vec c$?<span class="en">Using the vectors from Question 6, which option represents $\vec a-\vec b-\vec c$?</span></div>
+    <div class="formula-box">$$\vec a-\vec b-\vec c=\vec a+(-\vec b)+(-\vec c)$$</div>
+    <div class="figure-stage wide figure-q7"><img data-file="7.png" alt="Question 7 choices"><div class="image-fallback">รูปตัวเลือกข้อ 7 / Question 7 choices<br>ไฟล์ 7.png</div></div>
+    <div class="response-frame xl"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">เฉลย / Solution</div>
+      <p>เปลี่ยนการลบให้เป็นการบวกเวกเตอร์ที่กลับทิศ:</p>
+      <ul class="clean-list">
+        <li>$\vec a$ ชี้ไปทางขวา</li>
+        <li>$-\vec b$ ชี้ลงทางซ้าย</li>
+        <li>$-\vec c$ ชี้ลงทางขวา</li>
+      </ul>
+      <p>องค์ประกอบแนวตั้งของ $-\vec b$ และ $-\vec c$ รวมกันชี้ลง ส่วนองค์ประกอบแนวนอนสุทธิชี้ขวา จึงได้เวกเตอร์ลัพธ์เฉียงลงทางขวา<span class="en">The vertical components combine downward, while the net horizontal component is rightward.</span></p>
+      <div class="final-answer">ตอบ / Answer: ตัวเลือก 3 / Option 3</div>
+    </div></div>
+  </article>
+  <div class="hot-card" style="margin-top:4mm;">
+    <div class="hot-title">ตรวจเหตุผล / Reasonableness Check</div>
+    เหตุใดคำตอบจึงไม่ควรชี้ขึ้น ทั้งที่ $\vec c$ เดิมชี้ขึ้นทางซ้าย?<span class="en">Why should the answer not point upward even though the original $\vec c$ points upward-left?</span>
+    <div class="response-frame sm"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">แนวคิด / Thinking Guide</div>ในนิพจน์มี $-\vec c$ ไม่ใช่ $\vec c$ จึงต้องกลับทิศของ $\vec c$ ให้ชี้ลงทางขวาก่อนนำไปรวม</div></div>
+  </div>
+  <div class="page-footer">Distance, Displacement and Vectors • Question 7</div>
+</section>
+
+<!-- PAGE 11: Q8 -->
+<section class="sheet">
+  <div class="section-title"><h2>โจทย์ฝึก 8 <span class="en">Practice Question 8</span></h2><span class="tag">Closed Vector Path</span></div>
+  <article class="question">
+    <div class="question-head"><div class="question-title">ข้อ 8 — ความสัมพันธ์ของ $\vec A,\vec B,\vec C,\vec D$</div><span class="level">ให้เหตุผล / Reasoning</span></div>
+    <div class="problem-text">กำหนด $\vec A$, $\vec B$, $\vec C$ และ $\vec D$ มีขนาดและทิศทางดังรูป ข้อความใดถูกต้อง?<span class="en">The magnitudes and directions of $\vec A$, $\vec B$, $\vec C$, and $\vec D$ are shown. Which statement is correct?</span></div>
+    <div class="figure-stage tall figure-q8"><img data-file="8.png" alt="Question 8 vector quadrilateral"><div class="image-fallback">รูปข้อ 8 / Question 8 image<br>ไฟล์ 8.png</div></div>
+    <div class="choice-grid">
+      <div class="choice">1. $\vec A+\vec B+\vec C+\vec D=\vec 0$</div>
+      <div class="choice">2. $\vec A+\vec B+\vec C=\vec D$</div>
+      <div class="choice">3. $\vec A+\vec B+\vec D=\vec C$</div>
+      <div class="choice">4. $\vec A+\vec B=\vec C+\vec D$</div>
+    </div>
+    <div class="response-frame lg"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">เฉลย / Solution</div>
+      <p>เริ่มจากมุมซ้ายบน แล้วเดินตามเวกเตอร์แบบหัวต่อหาง:</p>
+      $$\vec D\ \rightarrow\ \vec A\ \rightarrow\ \vec B$$
+      <p>เส้นทางนี้พาจากมุมซ้ายบนไปยังมุมขวาบน ซึ่งตรงกับเวกเตอร์ $\vec C$ ดังนั้น</p>
+      $$\vec D+\vec A+\vec B=\vec C$$
+      <p>ใช้สมบัติสลับที่ของการบวกเวกเตอร์ได้ว่า</p>
+      $$\boxed{\vec A+\vec B+\vec D=\vec C}$$
+      <div class="final-answer">ตอบ / Answer: ตัวเลือก 3 / Option 3</div>
+    </div></div>
+  </article>
+  <div class="page-footer">Distance, Displacement and Vectors • Question 8</div>
+</section>
+
+<!-- PAGE 12 -->
+<section class="sheet">
+  <div class="section-title"><h2>สรุปท้ายเรื่อง <span class="en">Lesson Summary</span></h2><span class="tag">Review & Exit Ticket</span></div>
+  <table class="concept-table">
+    <tr><th>แนวคิด</th><th>ความหมาย</th><th>สมการหรือสัญลักษณ์สำคัญ</th></tr>
+    <tr><td>ระยะทาง<span class="en">Distance</span></td><td>ความยาวตามเส้นทางจริง เป็นสเกลาร์<span class="en">Actual path length; scalar</span></td><td>$d$</td></tr>
+    <tr><td>การกระจัดหนึ่งมิติ<span class="en">1D displacement</span></td><td>ตำแหน่งสุดท้ายลบตำแหน่งเริ่มต้น<span class="en">Final position minus initial position</span></td><td>$\Delta x=x_f-x_i$</td></tr>
+    <tr><td>การกระจัดสองมิติ<span class="en">2D displacement</span></td><td>รวมองค์ประกอบตามแกน $x$ และ $y$<span class="en">Combines $x$ and $y$ components</span></td><td>$\Delta\vec r=\Delta x\hat i+\Delta y\hat j$</td></tr>
+    <tr><td>ขนาดการกระจัด<span class="en">Displacement magnitude</span></td><td>ระยะเส้นตรงจากจุดต้นถึงจุดปลาย<span class="en">Straight-line separation of endpoints</span></td><td>$|\Delta\vec r|=\sqrt{(\Delta x)^2+(\Delta y)^2}$</td></tr>
+    <tr><td>เวกเตอร์ลัพธ์<span class="en">Resultant vector</span></td><td>ผลรวมของเวกเตอร์หลายตัว<span class="en">Sum of multiple vectors</span></td><td>$\vec R=\vec a+\vec b+\cdots$</td></tr>
+    <tr><td>การลบเวกเตอร์<span class="en">Vector subtraction</span></td><td>บวกเวกเตอร์ที่กลับทิศ<span class="en">Add the reversed vector</span></td><td>$\vec a-\vec b=\vec a+(-\vec b)$</td></tr>
+  </table>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Exit Ticket</h3>
+      <ol class="clean-list">
+        <li>วัตถุเคลื่อนที่แล้วกลับจุดเดิม ปริมาณใดเป็นศูนย์?</li>
+        <li>เขียนสูตรหาขนาดการกระจัดจาก $\Delta x$ และ $\Delta y$</li>
+        <li>ก่อนคำนวณ $\vec a-\vec b$ ต้องทำอะไรกับ $\vec b$?</li>
+        <li>อธิบายวิธีหัวต่อหางในหนึ่งประโยค</li>
+      </ol>
+      <div class="response-frame md"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">คำตอบย่อ / Short Answers</div>1) การกระจัดเป็นศูนย์ 2) $|\Delta\vec r|=\sqrt{(\Delta x)^2+(\Delta y)^2}$ 3) กลับทิศให้เป็น $-\vec b$ 4) ต่อหางของเวกเตอร์ถัดไปเข้ากับหัวของเวกเตอร์ก่อนหน้า แล้วลากลัพธ์จากหางแรกถึงหัวสุดท้าย</div></div>
+    </div>
+    <div class="card student-only">
+      <h3>เช็กตนเองหลังเรียน <span class="en">Post-Lesson Self-Check</span></h3>
+      <p>กลับไปตรวจ Checklist หน้า 2 แล้วทำเครื่องหมายข้อที่ทำได้ด้วยตนเอง จากนั้นวงข้อที่ยังต้องฝึกเพิ่ม</p>
+      <p class="en">Return to the checklist on page 2. Tick the skills you can perform independently and circle those needing more practice.</p>
+      <div class="note-box"><strong>สิ่งที่ฉันยังสับสน / What I still find confusing</strong><div style="height:38mm;background:repeating-linear-gradient(to bottom,transparent 0,transparent 8.6mm,#d1d5db 8.7mm,transparent 8.9mm);"></div></div>
+    </div>
+    <div class="card solution-only">
+      <h3>คำตอบสุดท้ายข้อ 1–8 <span class="en">Final Answer Key</span></h3>
+      <table class="mini-answer-table">
+        <tr><th>ข้อ</th><th>คำตอบ</th></tr>
+        <tr><td>1</td><td>$d=7\ \mathrm{m}$, $|\Delta\vec r|=5\ \mathrm{m}$</td></tr>
+        <tr><td>2</td><td>$d=12\ \mathrm{m}$, $\Delta x=+8\ \mathrm{m}$</td></tr>
+        <tr><td>3</td><td>$d=22\ \mathrm{m}$, $|\Delta\vec r|=14\ \mathrm{m}$</td></tr>
+        <tr><td>4</td><td>$d=44\ \mathrm{m}$, $|\Delta\vec r|=0$</td></tr>
+        <tr><td>5</td><td>เฉียงขึ้นทางขวา</td></tr>
+        <tr><td>6</td><td>ตัวเลือก 2</td></tr>
+        <tr><td>7</td><td>ตัวเลือก 3</td></tr>
+        <tr><td>8</td><td>ตัวเลือก 3</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="misconception" style="margin-top:4mm;">
+    <div class="box-title">จำให้แม่น / Remember</div>
+    ระยะทางใช้ $d$ ส่วนการกระจัดใช้ $\Delta x$, $\Delta y$ หรือ $\Delta\vec r$ ตามมิติและบริบทของโจทย์ ไม่ใช้สัญลักษณ์เดียวกันปะปนกัน<span class="en">Use $d$ for distance and $\Delta x$, $\Delta y$, or $\Delta\vec r$ for displacement, depending on the dimensions and context.</span>
+  </div>
+  <div class="page-footer">Distance, Displacement and Vectors • Summary</div>
+</section>
+
+</main>
+<script>
+const IMAGE_BASE = 'https://nixcentury.github.io/Physic-subject/PDF%20TO%20HTML/PHYSIC/PEC9/%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%80%E0%B8%84%E0%B8%A5%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%99%E0%B8%97%E0%B8%B5%E0%B9%88/%E0%B8%A3%E0%B8%B9%E0%B8%9B/Distance%2C%20Displacement%20and%20Vectors/';
+
+document.querySelectorAll('img[data-file]').forEach(img => {
+  img.src = IMAGE_BASE + encodeURIComponent(img.dataset.file);
+  img.loading = 'eager';
+  img.decoding = 'async';
+  img.addEventListener('load', () => {
+    img.classList.add('image-loaded');
+    img.style.removeProperty('width');
+    img.style.removeProperty('height');
+  });
+  img.addEventListener('error', () => {
+    img.style.display = 'none';
+    const fallback = img.parentElement.querySelector('.image-fallback');
+    if (fallback) fallback.style.display = 'grid';
+  });
+});
+
+async function typesetReady() {
+  if (window.MathJax && MathJax.typesetPromise) {
+    try { await MathJax.typesetPromise(); } catch (err) { console.warn(err); }
+  }
+}
+async function setMode(mode) {
+  document.body.classList.remove('mode-student', 'mode-solution');
+  document.body.classList.add(mode);
+  const status = document.getElementById('statusText');
+  if (status) {
+    status.textContent = mode === 'mode-solution'
+      ? 'โหมดเฉลย: วิธีทำและคำตอบเติมลงในพื้นที่เดิม'
+      : 'โหมดนักเรียน: ช่องเฉลยเป็นพื้นที่ว่างสำหรับแสดงวิธีทำ';
+  }
+  await typesetReady();
+}
+async function showSolutions() { await setMode('mode-solution'); }
+async function hideSolutions() { await setMode('mode-student'); }
+async function printStudent() {
+  await setMode('mode-student');
+  setTimeout(() => window.print(), 300);
+}
+async function printSolution() {
+  await setMode('mode-solution');
+  setTimeout(() => window.print(), 300);
+}
+window.addEventListener('load', typesetReady);
+</script>
+</body>
+</html>
