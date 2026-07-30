@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>อัตราเร็วเฉลี่ย ความเร็วเฉลี่ย และความเร็วขณะหนึ่ง | Average Speed, Average Velocity and Instantaneous Velocity</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --paper-w: 210mm;
+  --paper-h: 297mm;
+  --pad-x: 14mm;
+  --pad-y: 10mm;
+  --ink: #111827;
+  --navy: #0f172a;
+  --slate: #475569;
+  --line: #cbd5e1;
+  --soft: #f8fafc;
+  --hot: #fff7ed;
+  --green: #166534;
+  --amber: #92400e;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: #e5e7eb;
+  color: var(--ink);
+  font-family: "K2D", Arial, sans-serif;
+  font-size: 12px;
+  line-height: 1.42;
+}
+button, input { font-family: inherit; }
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--navy);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(15,23,42,.25);
+}
+.toolbar button {
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: #fff;
+  color: var(--navy);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.toolbar .primary { background: #bae6fd; color: #082f49; }
+.toolbar .gold { background: #fde68a; color: #78350f; }
+.toolbar .status {
+  flex-basis: 100%;
+  text-align: center;
+  font-size: 11px;
+  opacity: .92;
+}
+.screen-guide {
+  width: min(var(--paper-w), calc(100vw - 24px));
+  margin: 14px auto 0;
+  padding: 10px 13px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(15,23,42,.12);
+  font-size: 11.5px;
+}
+.sheet {
+  width: min(var(--paper-w), calc(100vw - 24px));
+  min-height: var(--paper-h);
+  margin: 16px auto 28px;
+  padding: var(--pad-y) var(--pad-x);
+  background: #fff;
+  box-shadow: 0 16px 42px rgba(15,23,42,.22);
+  position: relative;
+  overflow: hidden;
+  page-break-after: always;
+  break-after: page;
+}
+.page-kicker {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--slate);
+  margin-bottom: 1.5mm;
+}
+.hero {
+  border: 1.6px solid var(--navy);
+  padding: 5mm;
+  margin-bottom: 4mm;
+  background: linear-gradient(135deg, #f8fafc 0%, #fff 70%);
+}
+.hero h1 {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.15;
+  font-weight: 800;
+}
+.hero .subtitle {
+  margin-top: 1.2mm;
+  font-size: 14px;
+  color: var(--slate);
+  font-weight: 600;
+}
+.hero .lead {
+  margin: 3mm 0 0;
+  font-size: 12.3px;
+}
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4mm;
+  margin: 0 0 3mm;
+  padding-bottom: 1.8mm;
+  border-bottom: 1.5px solid var(--navy);
+}
+.section-title h2 { margin: 0; font-size: 16px; line-height: 1.2; }
+.section-title .tag {
+  border: 1px solid var(--navy);
+  border-radius: 999px;
+  padding: 1mm 2.5mm;
+  font-size: 9.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.en {
+  display: block;
+  color: #374151;
+  font-size: .89em;
+  font-weight: 400;
+  margin-top: .5mm;
+}
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3mm; }
+.card {
+  border: 1px solid var(--navy);
+  padding: 3.2mm;
+  background: #fff;
+  break-inside: avoid;
+}
+.card h3 { margin: 0 0 1.6mm; font-size: 13px; line-height: 1.2; }
+.card p { margin: 1.2mm 0; }
+.clean-list { margin: 0; padding-left: 5mm; }
+.clean-list li { margin: 1.2mm 0; }
+.outcome-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  counter-reset: outcome;
+}
+.outcome-list li {
+  counter-increment: outcome;
+  position: relative;
+  padding-left: 9mm;
+  margin: 2mm 0;
+}
+.outcome-list li::before {
+  content: counter(outcome);
+  position: absolute;
+  left: 0;
+  top: .1mm;
+  width: 6mm;
+  height: 6mm;
+  border: 1px solid var(--navy);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 9px;
+  font-weight: 800;
+}
+.checklist { display: grid; grid-template-columns: 1fr 1fr; gap: 2.2mm 4mm; }
+.check-item {
+  display: grid;
+  grid-template-columns: 6mm 1fr;
+  gap: 2mm;
+  align-items: start;
+  border-bottom: 1px dotted #94a3b8;
+  padding: 1.6mm 0 2mm;
+}
+.check-item input { width: 4.5mm; height: 4.5mm; margin-top: .4mm; }
+.key-formula, .main-question {
+  border: 1.1px solid var(--navy);
+  background: #f8fafc;
+  padding: 2.2mm 2.6mm;
+  margin: 2mm 0;
+  font-weight: 700;
+}
+.hot-box {
+  border: 1.2px solid #f59e0b;
+  background: var(--hot);
+  padding: 3mm;
+}
+.hot-box h3 { margin: 0 0 1.3mm; font-size: 13px; color: var(--amber); }
+
+.hot-question-card {
+  border: 1.2px solid #f59e0b;
+  background: var(--hot);
+  padding: 3mm;
+  break-inside: avoid;
+}
+.hot-question-card h3 {
+  margin: 0 0 1.4mm;
+  font-size: 13px;
+  color: var(--amber);
+}
+.hot-question-text {
+  font-weight: 650;
+  line-height: 1.5;
+}
+.hot-toggle-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2.4mm;
+}
+.hot-toggle-btn {
+  border: 1px solid var(--navy);
+  border-radius: 999px;
+  padding: 1.5mm 3mm;
+  background: #fff;
+  color: var(--navy);
+  font-size: 10.5px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.hot-toggle-btn:hover { background: #f8fafc; }
+.hot-reveal {
+  display: none;
+  margin-top: 2.5mm;
+  border-top: 1px dashed #d97706;
+  padding-top: 2.5mm;
+}
+.hot-question-card.open .hot-reveal { display: block; }
+body.mode-solution .hot-reveal { display: block; }
+body.mode-solution .hot-toggle-btn { display: none; }
+.hot-guide-title {
+  font-weight: 800;
+  color: var(--green);
+  margin-bottom: 1.2mm;
+}
+
+.warn-box {
+  border-left: 4px solid #dc2626;
+  background: #fef2f2;
+  padding: 2.2mm 2.5mm;
+  margin-top: 2mm;
+}
+.note-box {
+  border-left: 4px solid #1d4ed8;
+  background: #eff6ff;
+  padding: 2.2mm 2.5mm;
+  margin-top: 2mm;
+}
+.concept-table, .summary-table, .mini-answer-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.concept-table th, .concept-table td,
+.summary-table th, .summary-table td,
+.mini-answer-table th, .mini-answer-table td {
+  border: 1px solid var(--navy);
+  padding: 1.8mm 2mm;
+  vertical-align: top;
+}
+.concept-table th, .summary-table th, .mini-answer-table th { background: #f1f5f9; }
+.diagram-card {
+  border: 1px solid var(--navy);
+  padding: 2mm;
+  background: #fff;
+  text-align: center;
+  break-inside: avoid;
+}
+.diagram-card svg { display: block; width: 100%; height: auto; max-height: 58mm; }
+.figure-stage {
+  width: 100%;
+  border: 1px solid #94a3b8;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  margin: 2mm auto;
+  position: relative;
+  padding: 2mm;
+}
+.figure-stage.small { height: 34mm; }
+.figure-stage.medium { height: 42mm; }
+.figure-stage.wide { height: 42mm; }
+.figure-stage.tall { height: 56mm; }
+.figure-stage.graph { height: 62mm; }
+.figure-stage img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center center;
+}
+.image-fallback {
+  display: none;
+  position: absolute;
+  inset: 0;
+  place-items: center;
+  padding: 3mm;
+  text-align: center;
+  color: #64748b;
+  font-size: 10px;
+  background: repeating-linear-gradient(135deg,#fff,#fff 8px,#f8fafc 8px,#f8fafc 16px);
+}
+.question {
+  border: 1.2px solid var(--navy);
+  padding: 3.5mm;
+  margin: 0;
+  break-inside: avoid;
+}
+.question-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 3mm;
+  margin-bottom: 1.5mm;
+}
+.question-title { font-weight: 800; font-size: 13px; }
+.level {
+  border: 1px solid var(--navy);
+  border-radius: 999px;
+  padding: .8mm 2.2mm;
+  font-size: 9px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.problem-text { font-size: 11.7px; }
+.problem-text p { margin: 1.2mm 0; }
+.choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2mm 4mm; margin: 2mm 0; }
+.choice { border-bottom: 1px dotted #94a3b8; padding: 1.1mm 0; }
+.response-frame {
+  position: relative;
+  border: 1px solid var(--navy);
+  margin-top: 3mm;
+  padding: 3mm;
+  overflow: hidden;
+  background: #fff;
+}
+.response-frame::before {
+  content: "พื้นที่แสดงวิธีทำ / Working area";
+  position: absolute;
+  top: -3.4mm;
+  left: 4mm;
+  padding: 0 2mm;
+  background: #fff;
+  font-size: 9.8px;
+  font-weight: 700;
+  z-index: 3;
+}
+.response-frame.sm { height: 52mm; }
+.response-frame.md { height: 68mm; }
+.response-frame.lg { height: 88mm; }
+.response-frame.xl { height: 112mm; }
+.work-lines, .answer-layer {
+  position: absolute;
+  inset: 3mm;
+}
+.work-lines {
+  background: repeating-linear-gradient(to bottom, transparent 0, transparent 8.6mm, #d1d5db 8.7mm, transparent 8.9mm);
+  opacity: 1;
+}
+.answer-layer {
+  visibility: hidden;
+  opacity: 0;
+  overflow: hidden;
+  font-size: 10.9px;
+  line-height: 1.37;
+}
+body.mode-solution .work-lines { visibility: hidden; opacity: 0; }
+body.mode-solution .answer-layer { visibility: visible; opacity: 1; }
+.answer-title { font-weight: 800; color: var(--green); margin-bottom: 1.4mm; }
+.final-answer {
+  border-left: 3px solid var(--green);
+  background: #f0fdf4;
+  padding: 1.8mm 2mm;
+  margin-top: 1.7mm;
+  font-weight: 800;
+}
+.solution-svg {
+  width: 100%;
+  height: 46mm;
+  display: block;
+  margin: 1mm 0;
+  border: 1px solid #cbd5e1;
+  background: #fff;
+}
+.two-questions { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; }
+.page-footer {
+  position: absolute;
+  right: 12mm;
+  bottom: 5mm;
+  font-size: 9px;
+  color: #64748b;
+}
+.formula-chip {
+  display: inline-block;
+  border: 1px solid var(--navy);
+  border-radius: 999px;
+  padding: 1mm 2.2mm;
+  margin: 1mm .6mm 0 0;
+  font-size: 10px;
+  font-weight: 700;
+}
+svg text { font-family: "K2D", Arial, sans-serif; }
+@page { size: A4 portrait; margin: 0; }
+@media print {
+  html, body { width: 210mm; background: #fff !important; }
+  .toolbar, .screen-guide { display: none !important; }
+  .sheet {
+    width: 210mm !important;
+    min-height: 297mm !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+    page-break-after: always !important;
+    break-after: page !important;
+  }
+  * {
+    color: #000 !important;
+    border-color: #000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+}
+</style>
+</head>
+<body class="mode-student">
+<div class="toolbar">
+  <button class="primary" onclick="printStudent()">🖨️ พิมพ์โจทย์</button>
+  <button class="gold" onclick="printSolution()">✅ พิมพ์พร้อมเฉลย</button>
+  <button onclick="showSolutions()">👁️ เปิดเฉลย</button>
+  <button onclick="hideSolutions()">🙈 ปิดเฉลย</button>
+  <div class="status" id="statusText">โหมดนักเรียน: ช่องเฉลยเป็นพื้นที่ว่างสำหรับแสดงวิธีทำ</div>
+</div>
+<div class="screen-guide">
+  บทเรียน A4 สองภาษาเรื่อง <strong>อัตราเร็วเฉลี่ย ความเร็วเฉลี่ย และความเร็วขณะหนึ่ง</strong> • มีหน้าเปิดเรื่อง, checklist, เนื้อหาหลัก, HOT questions, worked examples, โจทย์ข้อ 9–12 และเฉลยเปิด–ปิดได้ในพื้นที่เดิม
+</div>
+
+<section class="sheet">
+  <div class="page-kicker">PEC9 Physics • Motion • Part 2</div>
+  <div class="hero">
+    <h1>อัตราเร็วเฉลี่ย ความเร็วเฉลี่ย และความเร็วขณะหนึ่ง</h1>
+    <div class="subtitle">Average Speed, Average Velocity and Instantaneous Velocity</div>
+    <p class="lead">
+      ในการอธิบายการเคลื่อนที่ เราไม่ได้สนใจแค่ว่าวัตถุ “เคลื่อนที่เร็วเท่าไร” แต่ยังต้องแยกให้ได้ว่าเรากำลังพูดถึงระยะทางทั้งหมด การกระจัด และความเร็ว ณ ช่วงเวลาหนึ่ง<span class="en">To describe motion, we do not only ask how fast an object moves. We must also distinguish total distance, displacement, and the velocity at a particular instant.</span>
+    </p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="section-title"><h2>สาระการเรียนรู้</h2><span class="tag">Learning Content</span></div>
+      <ul class="clean-list">
+        <li>อัตราเร็วเฉลี่ยกับความเร็วเฉลี่ยแตกต่างกันอย่างไร<span class="en">How average speed differs from average velocity</span></li>
+        <li>การใชัระยะทางรวมและเวลารวมอย่างถูกต้อง<span class="en">How to use total distance and total time correctly</span></li>
+        <li>การใช้การกระจัดเพื่อหาความเร็วเฉลี่ย<span class="en">Using displacement to find average velocity</span></li>
+        <li>การเคลื่อนที่หลายช่วงและการหาเวลาของแต่ละช่วง<span class="en">Multi-stage motion and how to find time for each stage</span></li>
+        <li>ความเร็วขณะหนึ่งจากความชันของกราฟตำแหน่ง–เวลา<span class="en">Instantaneous velocity from the slope of a position–time graph</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="section-title"><h2>ผลการเรียนรู้ที่คาดหวัง</h2><span class="tag">Expected Outcomes</span></div>
+      <ol class="outcome-list">
+        <li>คำนวณอัตราเร็วเฉลี่ยจากระยะทางรวมและเวลารวมได้<span class="en">Calculate average speed from total distance and total time.</span></li>
+        <li>คำนวณความเร็วเฉลี่ยจากการกระจัดและเวลาได้<span class="en">Calculate average velocity from displacement and time.</span></li>
+        <li>อธิบายได้ว่าเมื่อใดที่ทั้งสองค่าจะเท่ากันหรือไม่เท่ากัน<span class="en">Explain when the two quantities are equal or different.</span></li>
+        <li>หาอัตราเร็วเฉลี่ยของการเคลื่อนที่หลายช่วงได้ถูกต้อง<span class="en">Determine the average speed of multi-stage motion correctly.</span></li>
+        <li>อ่านความเร็วขณะหนึ่งจากเส้นสัมผัสของกราฟได้<span class="en">Read instantaneous velocity from a tangent line on a graph.</span></li>
+      </ol>
+    </div>
+  </div>
+  <div class="page-footer">1</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Student Checklist</div>
+  <div class="section-title"><h2>เช็กลิสต์นักเรียน</h2><span class="tag">Student Checklist</span></div>
+  <div class="checklist">
+    <label class="check-item"><input type="checkbox"><span>ฉันรู้ว่าอัตราเร็วเฉลี่ยใช้ระยะทางรวม<span class="en">I know that average speed uses total distance.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันรู้ว่าความเร็วเฉลี่ยใช้การกระจัด<span class="en">I know that average velocity uses displacement.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันหาเวลาของแต่ละช่วงจาก $t=\dfrac{d}{v}$ ได้<span class="en">I can find the time for each segment using $t=\dfrac{d}{v}$.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันไม่เฉลี่ยอัตราเร็วด้วยการนำมาบวกแล้วหารสองโดยไม่ตรวจเวลา<span class="en">I do not simply average two speeds without checking the time spent in each part.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันอ่านความหมายของความชันบนกราฟตำแหน่ง–เวลาได้<span class="en">I can interpret the slope on a position–time graph.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันแยกความเร็วเฉลี่ยกับความเร็วขณะหนึ่งได้<span class="en">I can distinguish average velocity from instantaneous velocity.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันเลือกสองจุดบนเส้นสัมผัสได้ ไม่ใช่เลือกแบบสุ่มบนกราฟโค้ง<span class="en">I can choose two points on the tangent line, not random points on the curve.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันพร้อมอธิบายเหตุผลและหน่วยของคำตอบ<span class="en">I am ready to explain my reasoning and the unit of the answer.</span></span></label>
+  </div>
+  <div class="hot-question-card" style="margin-top:4mm;" id="hot-guiding">
+    <h3>คำถามตั้งต้น / Guiding Question</h3>
+    <div class="hot-question-text">ถ้านักเรียนสองคนเดินทางถึงโรงเรียนพร้อมกัน ทั้งสองคนจำเป็นต้องมีอัตราเร็วเฉลี่ยเท่ากันหรือไม่ เพราะเหตุใด<span class="en">If two students arrive at school at the same time, must they have the same average speed? Why or why not?</span></div>
+    <div class="hot-toggle-row"><button class="hot-toggle-btn" type="button" onclick="toggleHot('hot-guiding', this)">เปิดแนวคิดสำหรับอภิปราย</button></div>
+    <div class="hot-reveal">
+      <div class="hot-guide-title">แนวอภิปรายในห้อง / Discussion Guide</div>
+      ไม่จำเป็น เพราะแม้เวลารวมจะเท่ากัน แต่นักเรียนอาจใช้เส้นทางที่มีระยะทางรวมต่างกัน จึงมีอัตราเร็วเฉลี่ยต่างกันได้<span class="en">Not necessarily. Even if the total time is the same, the students may travel different total distances, so their average speeds may be different.</span>
+      <div class="key-formula">\[v_{\text{avg speed}}=\frac{d_{\text{total}}}{\Delta t}\]</div>
+    </div>
+  </div>
+  <div class="page-footer">2</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Core Concepts</div>
+  <div class="section-title"><h2>แนวคิดหลักของบท</h2><span class="tag">Core Ideas</span></div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>1) อัตราเร็วเฉลี่ย / Average Speed</h3>
+      <p>อัตราเร็วเฉลี่ยเป็นปริมาณสเกลาร์ ใช้ระยะทางรวมทั้งหมดหารด้วยเวลารวม<span class="en">Average speed is a scalar quantity. It is the total distance divided by the total time.</span></p>
+      <div class="key-formula">\[
+v_{\text{avg speed}}=\frac{d_{\text{total}}}{\Delta t}
+\]</div>
+      <p><span class="formula-chip">ใช้ $d$ แทน distance</span><span class="formula-chip">ใช้เมื่อไม่ต้องการทิศทาง</span></p>
+    </div>
+    <div class="card">
+      <h3>2) ความเร็วเฉลี่ย / Average Velocity</h3>
+      <p>ความเร็วเฉลี่ยเป็นปริมาณเวกเตอร์ ใช้การกระจัดหารด้วยเวลารวม<span class="en">Average velocity is a vector quantity. It uses displacement divided by total time.</span></p>
+      <div class="key-formula">\[
+\vec v_{\text{avg}}=\frac{\Delta x}{\Delta t}
+\]</div>
+      <p>โดย \(\Delta x=x_f-x_i\)<span class="en">where \(\Delta x=x_f-x_i\)</span></p>
+    </div>
+  </div>
+  <table class="concept-table" style="margin-top:3mm;">
+    <thead>
+      <tr><th>ปริมาณ</th><th>สูตร</th><th>ใช้ข้อมูลอะไร</th><th>มีทิศทางหรือไม่</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>อัตราเร็วเฉลี่ย<br><span class="en">Average speed</span></td><td>\(\dfrac{d_{\text{total}}}{\Delta t}\)</td><td>ระยะทางรวม<br><span class="en">Total distance</span></td><td>ไม่มี<br><span class="en">No</span></td></tr>
+      <tr><td>ความเร็วเฉลี่ย<br><span class="en">Average velocity</span></td><td>\(\dfrac{\Delta x}{\Delta t}\)</td><td>การกระจัด<br><span class="en">Displacement</span></td><td>มี<br><span class="en">Yes</span></td></tr>
+      <tr><td>ความเร็วขณะหนึ่ง<br><span class="en">Instantaneous velocity</span></td><td>ความชันของเส้นสัมผัส<br><span class="en">Slope of tangent line</span></td><td>กราฟตำแหน่ง–เวลา<br><span class="en">Position–time graph</span></td><td>มี<br><span class="en">Yes</span></td></tr>
+    </tbody>
+  </table>
+  <div class="warn-box">
+    <strong>จุดที่มักสับสน / Common Misconception:</strong> ห้ามใช้อัตราเร็วเฉลี่ยแทนความเร็วเฉลี่ย และห้ามใช้ระยะทางรวมไปหารเวลาเพื่อตอบคำถามเรื่องความเร็วขณะหนึ่ง<span class="en">Do not use average speed in place of average velocity, and do not divide total distance by total time when the question asks for instantaneous velocity.</span>
+  </div>
+  <div class="page-footer">3</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Intro • HOT Question</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="section-title"><h2>สถานการณ์นำเข้า</h2><span class="tag">Introduction</span></div>
+      <p>นักเรียนเดินทางจากบ้านไปโรงเรียนตามซอยคดเคี้ยว ระยะทางที่เดินจริงย่อมมากกว่าหรือเท่ากับเส้นตรงจากบ้านถึงโรงเรียนเสมอ<span class="en">A student travels from home to school through winding streets. The actual distance travelled is always greater than or equal to the straight-line displacement from home to school.</span></p>
+      <div class="diagram-card">
+        <svg viewBox="0 0 480 180" aria-label="intro path vs displacement">
+          <rect x="1" y="1" width="478" height="178" fill="#fff" stroke="#111" stroke-width="2"/>
+          <circle cx="80" cy="120" r="8" fill="#111"/>
+          <circle cx="400" cy="50" r="8" fill="#111"/>
+          <text x="54" y="142" font-size="15">บ้าน / Home</text>
+          <text x="355" y="36" font-size="15">โรงเรียน / School</text>
+          <path d="M80 120 C120 130 150 90 190 100 S260 165 315 112 S360 68 400 50" fill="none" stroke="#111" stroke-width="3" stroke-dasharray="6 5"/>
+          <line x1="80" y1="120" x2="400" y2="50" stroke="#2563eb" stroke-width="3"/>
+          <text x="175" y="156" font-size="14">distance path</text>
+          <text x="190" y="78" font-size="14" fill="#2563eb">displacement</text>
+        </svg>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-title"><h2>คำถาม HOT</h2><span class="tag">HOT Question</span></div>
+      <div class="hot-question-card" id="hot-average-speed">
+        <h3>คิดก่อนเรียน / Think Before Learning</h3>
+        <div class="hot-question-text">รถสองคันออกเดินทางและใช้เวลาเดินทางเท่ากันพอดี รถทั้งสองจำเป็นต้องมีอัตราเร็วเฉลี่ยเท่ากันหรือไม่ เพราะเหตุใด<span class="en">Two cars travel for exactly the same amount of time. Must they have the same average speed? Why or why not?</span></div>
+        <div class="hot-toggle-row"><button class="hot-toggle-btn" type="button" onclick="toggleHot('hot-average-speed', this)">เปิดแนวคิดสำหรับอภิปราย</button></div>
+        <div class="hot-reveal">
+          <div class="hot-guide-title">แนวอภิปรายในห้อง / Discussion Guide</div>
+          <div class="note-box">
+            ไม่จำเป็น เพราะอัตราเร็วเฉลี่ยขึ้นอยู่กับทั้ง <strong>ระยะทางรวม</strong> และ <strong>เวลารวม</strong> แม้เวลาจะเท่ากัน แต่ถ้าระยะทางรวมต่างกัน อัตราเร็วเฉลี่ยย่อมต่างกัน<span class="en">Not necessarily. Average speed depends on both <strong>total distance</strong> and <strong>total time</strong>. Equal travel times do not guarantee equal average speeds when the total distances differ.</span>
+          </div>
+          <div class="main-question" style="margin-top:2mm;">ความสัมพันธ์สำคัญ: \[|\vec v_{	ext{avg}}|\leq v_{	ext{avg speed}}\]<span class="en">Key relation: the magnitude of average velocity is always less than or equal to average speed.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="page-footer">4</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Worked Examples</div>
+  <div class="section-title"><h2>ตัวอย่างนำทาง</h2><span class="tag">Worked Examples</span></div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>ตัวอย่าง 1: เวลาเท่ากัน</h3>
+      <p>รถเคลื่อนที่ครึ่งชั่วโมงแรกได้ \(30\ \mathrm{km}\) และครึ่งชั่วโมงต่อมาได้ \(50\ \mathrm{km}\)<span class="en">A car travels \(30\ \mathrm{km}\) in the first half-hour and \(50\ \mathrm{km}\) in the next half-hour.</span></p>
+      <div class="diagram-card">
+        <svg viewBox="0 0 460 150" aria-label="equal time example">
+          <rect x="1" y="1" width="458" height="148" fill="#fff" stroke="#111" stroke-width="2"/>
+          <line x1="45" y1="88" x2="415" y2="88" stroke="#111" stroke-width="3"/>
+          <line x1="45" y1="70" x2="45" y2="106" stroke="#111" stroke-width="2"/>
+          <line x1="230" y1="70" x2="230" y2="106" stroke="#111" stroke-width="2"/>
+          <line x1="415" y1="70" x2="415" y2="106" stroke="#111" stroke-width="2"/>
+          <text x="85" y="62" font-size="16">0.5 h</text>
+          <text x="280" y="62" font-size="16">0.5 h</text>
+          <text x="105" y="120" font-size="16">30 km</text>
+          <text x="290" y="120" font-size="16">50 km</text>
+        </svg>
+      </div>
+      <p>\[d_{\text{total}}=30+50=80\ \mathrm{km}\]</p>
+      <p>\[\Delta t=1.0\ \mathrm{h}\]</p>
+      <p>\[v_{\text{avg speed}}=\frac{80}{1.0}=80\ \mathrm{km/h}\]</p>
+    </div>
+    <div class="card">
+      <h3>ตัวอย่าง 2: หลายช่วง ระยะไม่เท่ากัน</h3>
+      <p>ช่วงที่ 1: \(d_1=100\ \mathrm{m},\ v_1=5\ \mathrm{m/s}\) และช่วงที่ 2: \(d_2=50\ \mathrm{m},\ v_2=10\ \mathrm{m/s}\)<span class="en">Part 1: \(d_1=100\ \mathrm{m},\ v_1=5\ \mathrm{m/s}\). Part 2: \(d_2=50\ \mathrm{m},\ v_2=10\ \mathrm{m/s}\).</span></p>
+      <p>\[t_1=\frac{100}{5}=20\ \mathrm{s},\qquad t_2=\frac{50}{10}=5\ \mathrm{s}\]</p>
+      <p>\[d_{\text{total}}=150\ \mathrm{m},\qquad \Delta t=25\ \mathrm{s}\]</p>
+      <p>\[v_{\text{avg speed}}=\frac{150}{25}=6\ \mathrm{m/s}\]</p>
+      <div class="warn-box"><strong>ระวัง / Watch out:</strong> ห้ามคิดว่า \(\dfrac{5+10}{2}=7.5\ \mathrm{m/s}\) คือคำตอบ เพราะเวลาของแต่ละช่วงไม่เท่ากัน<span class="en">Do not assume \(\dfrac{5+10}{2}=7.5\ \mathrm{m/s}\) is the answer because the times are not equal.</span></div>
+    </div>
+  </div>
+  <div class="page-footer">5</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Practice • Questions 9–10</div>
+  <div class="two-questions">
+    <article class="question">
+      <div class="question-head">
+        <div class="question-title">ข้อ 9 / Question 9</div>
+        <div class="level">Average Speed vs Average Velocity</div>
+      </div>
+      <div class="problem-text">
+        วัตถุเคลื่อนที่ตามแนวครึ่งวงกลมรัศมี \(7\ \mathrm{m}\) จากซ้ายไปขวา ใช้เวลาทั้งหมด \(2\ \mathrm{s}\) จงหาอัตราเร็วเฉลี่ยและความเร็วเฉลี่ย<span class="en">An object moves along a semicircular path of radius \(7\ \mathrm{m}\) from left to right in \(2\ \mathrm{s}\). Find the average speed and the average velocity.</span>
+      </div>
+      <div class="diagram-card">
+        <svg viewBox="0 0 440 170" aria-label="semicircle for question 9">
+          <rect x="1" y="1" width="438" height="168" fill="#fff" stroke="#111" stroke-width="2"/>
+          <line x1="70" y1="120" x2="370" y2="120" stroke="#111" stroke-width="3"/>
+          <path d="M70 120 A150 150 0 0 1 370 120" fill="none" stroke="#111" stroke-width="3" stroke-dasharray="8 6"/>
+          <polygon points="366,110 384,120 366,130" fill="#111"/>
+          <circle cx="70" cy="120" r="6" fill="#111"/>
+          <circle cx="370" cy="120" r="6" fill="#111"/>
+          <text x="56" y="143" font-size="16">A</text>
+          <text x="372" y="143" font-size="16">B</text>
+          <text x="208" y="52" font-size="16">r = 7 m</text>
+          <text x="150" y="153" font-size="15">time = 2 s</text>
+        </svg>
+      </div>
+      <div class="response-frame md">
+        <div class="work-lines"></div>
+        <div class="answer-layer">
+          <div class="answer-title">แนวคิด / Solution Idea</div>
+          ระยะทางตามแนวครึ่งวงกลมคือ \(\pi r\) และการกระจัดเป็นเส้นตรงจากต้นถึงปลายเท่ากับเส้นผ่านศูนย์กลาง \(2r\)<span class="en">The distance along a semicircle is \(\pi r\), while the displacement is the straight diameter \(2r\).</span>
+          <p>\[d_{\text{total}}=\pi r=\pi(7)=7\pi=22\ \mathrm{m}\]</p>
+          <p>\[v_{\text{avg speed}}=\frac{22}{2}=11\ \mathrm{m/s}\]</p>
+          <p>\[\Delta x=2r=14\ \mathrm{m}\]</p>
+          <p>\[\vec v_{\text{avg}}=\frac{14}{2}=7\ \mathrm{m/s}\text{ ไปทางขวา}\]</p>
+          <div class="final-answer">ตอบ / Final Answer: \(v_{\text{avg speed}}=11\ \mathrm{m/s}\), \(\vec v_{\text{avg}}=7\ \mathrm{m/s}\) ไปทางขวา</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="question">
+      <div class="question-head">
+        <div class="question-title">ข้อ 10 / Question 10</div>
+        <div class="level">Equal Time Intervals</div>
+      </div>
+      <div class="problem-text">
+        รถยนต์คันหนึ่งเคลื่อนที่ได้ \(30\ \mathrm{km}\) ในครึ่งชั่วโมงแรก และ \(50\ \mathrm{km}\) ในครึ่งชั่วโมงต่อมา จงหาอัตราเร็วเฉลี่ยในเวลา \(1\ \mathrm{h}\)<span class="en">A car travels \(30\ \mathrm{km}\) in the first half-hour and \(50\ \mathrm{km}\) in the next half-hour. Find its average speed over \(1\ \mathrm{h}\).</span>
+      </div>
+      <div class="diagram-card">
+        <svg viewBox="0 0 440 170" aria-label="time strip for question 10">
+          <rect x="1" y="1" width="438" height="168" fill="#fff" stroke="#111" stroke-width="2"/>
+          <rect x="55" y="60" width="145" height="45" fill="#f8fafc" stroke="#111" stroke-width="2"/>
+          <rect x="200" y="60" width="185" height="45" fill="#fff" stroke="#111" stroke-width="2"/>
+          <text x="96" y="87" font-size="16">0.5 h, 30 km</text>
+          <text x="248" y="87" font-size="16">0.5 h, 50 km</text>
+          <text x="138" y="130" font-size="16">First half-hour</text>
+          <text x="275" y="130" font-size="16">Second half-hour</text>
+        </svg>
+      </div>
+      <div class="response-frame md">
+        <div class="work-lines"></div>
+        <div class="answer-layer">
+          <div class="answer-title">วิธีทำ / Solution</div>
+          <p>\[d_{\text{total}}=30+50=80\ \mathrm{km}\]</p>
+          <p>\[\Delta t=0.5+0.5=1.0\ \mathrm{h}\]</p>
+          <p>\[v_{\text{avg speed}}=\frac{80}{1.0}=80\ \mathrm{km/h}\]</p>
+          <div class="final-answer">ตอบ / Final Answer: \(\boxed{80\ \mathrm{km/h}}\)</div>
+        </div>
+      </div>
+    </article>
+  </div>
+  <div class="page-footer">6</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Practice • Question 11</div>
+  <article class="question">
+    <div class="question-head">
+      <div class="question-title">ข้อ 11 / Question 11</div>
+      <div class="level">Multi-stage Motion</div>
+    </div>
+    <div class="problem-text">
+      นายตี๋เคลื่อนที่เป็นเส้นตรงสองช่วง ช่วงแรกด้วยอัตราเร็ว \(5\ \mathrm{m/s}\) เป็นระยะ \(100\ \mathrm{m}\) และช่วงที่สองด้วยอัตราเร็ว \(10\ \mathrm{m/s}\) เป็นระยะ \(50\ \mathrm{m}\) จงหาอัตราเร็วเฉลี่ยทั้งหมด<span class="en">Mr. Tee moves in a straight line in two stages. In the first stage, he moves at \(5\ \mathrm{m/s}\) for \(100\ \mathrm{m}\). In the second stage, he moves at \(10\ \mathrm{m/s}\) for \(50\ \mathrm{m}\). Find the overall average speed.</span>
+    </div>
+    <div class="diagram-card" style="margin-top:2mm;">
+      <svg viewBox="0 0 740 180" aria-label="motion strip for question 11">
+        <rect x="1" y="1" width="738" height="178" fill="#fff" stroke="#111" stroke-width="2"/>
+        <line x1="70" y1="100" x2="660" y2="100" stroke="#111" stroke-width="3"/>
+        <rect x="80" y="70" width="320" height="40" fill="#f8fafc" stroke="#111" stroke-width="2"/>
+        <rect x="400" y="70" width="180" height="40" fill="#fff" stroke="#111" stroke-width="2"/>
+        <text x="155" y="95" font-size="18">100 m at 5 m/s</text>
+        <text x="430" y="95" font-size="18">50 m at 10 m/s</text>
+        <text x="75" y="140" font-size="16">Stage 1</text>
+        <text x="405" y="140" font-size="16">Stage 2</text>
+      </svg>
+    </div>
+    <div class="response-frame lg">
+      <div class="work-lines"></div>
+      <div class="answer-layer">
+        <div class="answer-title">วิธีทำ / Detailed Solution</div>
+        <p>หาเวลาของแต่ละช่วงก่อน<span class="en">First, find the time in each stage.</span></p>
+        <p>\[t_1=\frac{d_1}{v_1}=\frac{100}{5}=20\ \mathrm{s}\]</p>
+        <p>\[t_2=\frac{d_2}{v_2}=\frac{50}{10}=5\ \mathrm{s}\]</p>
+        <p>จากนั้นหาระยะทางรวมและเวลารวม<span class="en">Then find the total distance and total time.</span></p>
+        <p>\[d_{\text{total}}=100+50=150\ \mathrm{m}\]</p>
+        <p>\[\Delta t=20+5=25\ \mathrm{s}\]</p>
+        <p>\[v_{\text{avg speed}}=\frac{150}{25}=6\ \mathrm{m/s}\]</p>
+        <div class="warn-box" style="margin-top:1.5mm;">อย่านำ \(5\) กับ \(10\) มาบวกแล้วหาร \(2\) เพราะเวลาที่ใช้ในแต่ละช่วงไม่เท่ากัน<span class="en">Do not simply average \(5\) and \(10\) because the time spent in each stage is not equal.</span></div>
+        <div class="final-answer">ตอบ / Final Answer: \(\boxed{6\ \mathrm{m/s}}\)</div>
+      </div>
+    </div>
+  </article>
+  <div class="page-footer">7</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Concept to Graph</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="section-title"><h2>ความเร็วขณะหนึ่ง</h2><span class="tag">Instantaneous Velocity</span></div>
+      <p>ความเร็วขณะหนึ่งคือความเร็วของวัตถุ ณ ช่วงเวลาหนึ่งโดยเฉพาะ<span class="en">Instantaneous velocity is the velocity of an object at a particular instant.</span></p>
+      <div class="key-formula">\[
+v=\text{ความชันของเส้นสัมผัสบนกราฟตำแหน่ง–เวลา}
+\]</div>
+      <p>สำหรับระดับ ม.4 ให้มองว่าความเร็วขณะหนึ่งหาได้จากการลาก <strong>เส้นสัมผัส</strong> ที่จุดนั้น แล้วเลือกสองจุดบนเส้นสัมผัสมาหาความชัน<span class="en">At M.4 level, think of instantaneous velocity as the slope of the <strong>tangent line</strong> at that point. Choose two convenient points on the tangent line to calculate the slope.</span></p>
+      <div class="note-box"><strong>จำง่าย / Remember:</strong> ถ้ากราฟชันขึ้น ความเร็วเป็นบวก ถ้ากราฟชันลง ความเร็วเป็นลบ ถ้ากราฟราบ ความเร็วเป็นศูนย์<span class="en">If the graph slopes upward, the velocity is positive. If it slopes downward, the velocity is negative. If it is horizontal, the velocity is zero.</span></div>
+    </div>
+    <div class="card">
+      <div class="section-title"><h2>คำถาม HOT</h2><span class="tag">HOT Question</span></div>
+      <div class="hot-question-card" id="hot-tangent">
+        <h3>คิดเชิงวิเคราะห์ / Analyse</h3>
+        <div class="hot-question-text">ถ้าเราเลือกสองจุดบนกราฟโค้งเอง โดยไม่ใช้เส้นสัมผัส ผลที่ได้จะเป็นความเร็วขณะหนึ่งจริงหรือไม่ เพราะเหตุใด<span class="en">If we choose two points directly on the curved graph without using a tangent line, do we get the true instantaneous velocity? Why or why not?</span></div>
+        <div class="hot-toggle-row"><button class="hot-toggle-btn" type="button" onclick="toggleHot('hot-tangent', this)">เปิดแนวคิดและภาพอธิบาย</button></div>
+        <div class="hot-reveal">
+          <div class="hot-guide-title">แนวอภิปรายในห้อง / Discussion Guide</div>
+          ไม่ได้ความเร็วขณะหนึ่งโดยตรง เพราะความชันจากสองจุดบนกราฟโค้งให้ค่าเฉลี่ยในช่วงเวลาระหว่างสองจุด ส่วนความเร็วขณะหนึ่งต้องใช้ความชันของเส้นสัมผัส ณ เวลาที่สนใจ<span class="en">No. The slope between two points on the curve gives an average value over that time interval. Instantaneous velocity requires the slope of the tangent line at the instant of interest.</span>
+          <div class="diagram-card" style="margin-top:2.5mm;">
+            <svg viewBox="0 0 430 180" aria-label="tangent concept">
+              <rect x="1" y="1" width="428" height="178" fill="#fff" stroke="#111" stroke-width="2"/>
+              <line x1="50" y1="150" x2="390" y2="150" stroke="#111" stroke-width="2"/>
+              <line x1="50" y1="150" x2="50" y2="30" stroke="#111" stroke-width="2"/>
+              <path d="M60 145 C110 120 145 95 175 78 S245 58 315 40" fill="none" stroke="#111" stroke-width="3"/>
+              <line x1="115" y1="115" x2="310" y2="55" stroke="#2563eb" stroke-width="2.5"/>
+              <circle cx="185" cy="76" r="5" fill="#dc2626"/>
+              <text x="322" y="56" font-size="15" fill="#2563eb">tangent line</text>
+              <text x="195" y="73" font-size="15" fill="#dc2626">P</text>
+              <text x="14" y="34" font-size="14">x</text>
+              <text x="392" y="166" font-size="14">t</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="page-footer">8</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Practice • Question 12</div>
+  <article class="question">
+    <div class="question-head">
+      <div class="question-title">ข้อ 12 / Question 12</div>
+      <div class="level">Graph • Instantaneous Velocity</div>
+    </div>
+    <div class="problem-text">
+      กราฟแสดงความสัมพันธ์ระหว่างการกระจัดกับเวลา จงหาความเร็วของวัตถุ ณ เวลา \(t=15\ \mathrm{s}\)<span class="en">The graph shows displacement versus time. Determine the velocity of the object at \(t=15\ \mathrm{s}\).</span>
+    </div>
+    <div class="figure-stage graph"><img data-file="12.png" alt="Question 12 displacement-time graph"><div class="image-fallback">รูปข้อ 12 / Question 12 graph<br>ไฟล์ 12.png</div></div>
+    <div class="response-frame xl">
+      <div class="work-lines"></div>
+      <div class="answer-layer">
+        <div class="answer-title">เฉลยแบบ ม.4 / M.4-Level Solution</div>
+        โจทย์ถาม <strong>ความเร็วขณะหนึ่ง</strong> ณ \(t=15\ \mathrm{s}\) ดังนั้นไม่ใช้ระยะทางทั้งหมดหารเวลาทั้งหมด แต่ต้องใช้ <strong>ความชันของเส้นสัมผัส</strong> ที่จุดนั้น<span class="en">The question asks for the <strong>instantaneous velocity</strong> at \(t=15\ \mathrm{s}\), so we do not divide total distance by total time. We use the <strong>slope of the tangent line</strong> at that point.</span>
+        <p>จากรูป เส้นสัมผัสผ่านจุดที่อ่านค่าได้สะดวกประมาณสองจุด คือ<span class="en">From the graph, the tangent line passes through two convenient points approximately:</span></p>
+        <p>\[(t_1,x_1)=(3\ \mathrm{s},0\ \mathrm{m})\]</p>
+        <p>\[(t_2,x_2)=(15\ \mathrm{s},10\ \mathrm{m})\]</p>
+        <p>ใช้สูตรความชัน<span class="en">Use the slope formula:</span></p>
+        <p>\[v=\frac{x_2-x_1}{t_2-t_1}\]</p>
+        <p>\[v=\frac{10-0}{15-3}=\frac{10}{12}=0.83\ \mathrm{m/s}\]</p>
+        <div class="note-box" style="margin-top:1.5mm;">เลือกสองจุดบน <strong>เส้นสัมผัส</strong> ไม่ใช่เลือกแบบสุ่มบนเส้นกราฟโค้ง<span class="en">Choose two points on the <strong>tangent line</strong>, not random points on the curved graph.</span></div>
+        <div class="final-answer">ตอบ / Final Answer: ความเร็วของวัตถุ ณ \(t=15\ \mathrm{s}\) เท่ากับ \(\boxed{0.83\ \mathrm{m/s}}\) ในทิศบวก</div>
+      </div>
+    </div>
+  </article>
+  <div class="page-footer">9</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Summary</div>
+  <div class="section-title"><h2>สรุปท้ายเรื่อง</h2><span class="tag">Lesson Summary</span></div>
+  <table class="summary-table">
+    <thead>
+      <tr><th>แนวคิด</th><th>สูตร</th><th>ใจความสำคัญ</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>อัตราเร็วเฉลี่ย<br><span class="en">Average speed</span></td>
+        <td>\(\dfrac{d_{\text{total}}}{\Delta t}\)</td>
+        <td>ใช้ระยะทางรวม ไม่สนใจทิศทาง<span class="en">Uses total distance and ignores direction.</span></td>
+      </tr>
+      <tr>
+        <td>ความเร็วเฉลี่ย<br><span class="en">Average velocity</span></td>
+        <td>\(\dfrac{\Delta x}{\Delta t}\)</td>
+        <td>ใช้การกระจัด จึงต้องสนใจทิศทาง<span class="en">Uses displacement, so direction matters.</span></td>
+      </tr>
+      <tr>
+        <td>หลายช่วง<br><span class="en">Multi-stage motion</span></td>
+        <td>\(t_i=\dfrac{d_i}{v_i}\)</td>
+        <td>ต้องหาเวลาของแต่ละช่วงก่อนเสมอ<span class="en">Always find the time of each stage first.</span></td>
+      </tr>
+      <tr>
+        <td>ความเร็วขณะหนึ่ง<br><span class="en">Instantaneous velocity</span></td>
+        <td>ความชันของเส้นสัมผัส</td>
+        <td>ใช้กับกราฟตำแหน่ง–เวลา<span class="en">Use the slope of the tangent line on a position–time graph.</span></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="grid-2" style="margin-top:3mm;">
+    <div class="card">
+      <h3>Exit Ticket</h3>
+      <ol class="clean-list">
+        <li>อัตราเร็วเฉลี่ยกับความเร็วเฉลี่ยต่างกันตรงไหน</li>
+        <li>ถ้าวัตถุไปข้างหน้าแล้วถอยกลับ เหตุใด \(|\vec v_{\text{avg}}|\) จึงอาจน้อยกว่า \(v_{\text{avg speed}}\)</li>
+        <li>เพราะเหตุใดข้อ 12 จึงไม่ใช้ระยะทางทั้งหมดหารเวลาทั้งหมด</li>
+      </ol>
+      <span class="en">1) How do average speed and average velocity differ? 2) Why can \(|\vec v_{\text{avg}}|\) be smaller than \(v_{\text{avg speed}}\) when an object reverses direction? 3) Why does Question 12 not use total distance divided by total time?</span>
+    </div>
+    <div class="card">
+      <h3>Checklist หลังเรียน / Post-Lesson Checklist</h3>
+      <ul class="clean-list">
+        <li>ฉันหา \(v_{\text{avg speed}}\) ได้ถูกต้อง<span class="en">I can calculate average speed correctly.</span></li>
+        <li>ฉันหา \(\vec v_{\text{avg}}\) ได้ถูกต้อง<span class="en">I can calculate average velocity correctly.</span></li>
+        <li>ฉันไม่เฉลี่ยความเร็วอย่างผิดวิธี<span class="en">I do not average speeds incorrectly.</span></li>
+        <li>ฉันอ่านความชันของเส้นสัมผัสจากกราฟได้<span class="en">I can read the slope of a tangent line from a graph.</span></li>
+        <li>ฉันอธิบายคำตอบด้วยเหตุผลและหน่วยได้<span class="en">I can explain my answer with reasoning and units.</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="page-footer">10</div>
+</section>
+
+<script>
+const IMAGE_BASE = 'https://nixcentury.github.io/Physic-subject/PDF%20TO%20HTML/PHYSIC/PEC9/%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%80%E0%B8%84%E0%B8%A5%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%99%E0%B8%97%E0%B8%B5%E0%B9%88/%E0%B8%A3%E0%B8%B9%E0%B8%9B/Average%20Speed%2C%20Average%20Velocity%20and%20Instantaneous%20Velocity/';
+
+document.querySelectorAll('img[data-file]').forEach(img => {
+  img.src = IMAGE_BASE + encodeURIComponent(img.dataset.file);
+  img.loading = 'eager';
+  img.decoding = 'async';
+  img.addEventListener('load', () => {
+    img.classList.add('image-loaded');
+    img.style.removeProperty('width');
+    img.style.removeProperty('height');
+  });
+  img.addEventListener('error', () => {
+    img.style.display = 'none';
+    const fallback = img.parentElement.querySelector('.image-fallback');
+    if (fallback) fallback.style.display = 'grid';
+  });
+});
+
+
+function toggleHot(id, button) {
+  const card = document.getElementById(id);
+  if (!card) return;
+  const isOpen = card.classList.toggle('open');
+  if (button) {
+    const openLabel = button.dataset.openLabel || button.textContent;
+    if (!button.dataset.openLabel) button.dataset.openLabel = openLabel;
+    button.textContent = isOpen ? 'ปิดแนวคิด / Hide Guide' : button.dataset.openLabel;
+    button.setAttribute('aria-expanded', String(isOpen));
+  }
+  typesetReady();
+}
+
+async function typesetReady() {
+  if (window.MathJax && MathJax.typesetPromise) {
+    try { await MathJax.typesetPromise(); } catch (err) { console.warn(err); }
+  }
+}
+async function setMode(mode) {
+  document.body.classList.remove('mode-student', 'mode-solution');
+  document.body.classList.add(mode);
+  const status = document.getElementById('statusText');
+  if (status) {
+    status.textContent = mode === 'mode-solution'
+      ? 'โหมดเฉลย: วิธีทำและคำตอบเติมลงในพื้นที่เดิม'
+      : 'โหมดนักเรียน: ช่องเฉลยเป็นพื้นที่ว่างสำหรับแสดงวิธีทำ';
+  }
+  await typesetReady();
+}
+async function showSolutions() { await setMode('mode-solution'); }
+async function hideSolutions() { await setMode('mode-student'); }
+async function printStudent() {
+  await setMode('mode-student');
+  setTimeout(() => window.print(), 300);
+}
+async function printSolution() {
+  await setMode('mode-solution');
+  setTimeout(() => window.print(), 300);
+}
+window.addEventListener('load', typesetReady);
+</script>
+</body>
+</html>
