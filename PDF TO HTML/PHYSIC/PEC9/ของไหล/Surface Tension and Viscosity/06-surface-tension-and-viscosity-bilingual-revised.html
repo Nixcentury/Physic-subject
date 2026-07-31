@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ความตึงผิวและความหนืดของของเหลว | Surface Tension and Viscosity of Liquids</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --paper-w:210mm; --paper-h:297mm; --pad-x:14mm; --pad-y:10mm;
+  --ink:#111827; --navy:#0f172a; --slate:#475569; --line:#cbd5e1;
+  --soft:#f8fafc; --hot:#fff7ed; --green:#166534; --amber:#92400e;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:#e5e7eb;color:var(--ink);font-family:"K2D",Arial,sans-serif;font-size:12px;line-height:1.42}
+button,input{font-family:inherit}
+.toolbar{position:sticky;top:0;z-index:100;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;padding:10px 12px;background:var(--navy);color:#fff;box-shadow:0 4px 14px rgba(15,23,42,.25)}
+.toolbar button{border:0;border-radius:999px;padding:8px 14px;background:#fff;color:var(--navy);font-size:12px;font-weight:800;cursor:pointer}
+.toolbar .primary{background:#bae6fd;color:#082f49}.toolbar .gold{background:#fde68a;color:#78350f}
+.toolbar .status{flex-basis:100%;text-align:center;font-size:11px;opacity:.92}
+.screen-guide{width:min(var(--paper-w),calc(100vw - 24px));margin:14px auto 0;padding:10px 13px;border-radius:10px;background:#fff;box-shadow:0 10px 28px rgba(15,23,42,.12);font-size:11.5px}
+.sheet{width:min(var(--paper-w),calc(100vw - 24px));height:var(--paper-h);margin:16px auto 28px;padding:var(--pad-y) var(--pad-x);background:#fff;box-shadow:0 16px 42px rgba(15,23,42,.22);position:relative;overflow:hidden;page-break-after:always;break-after:page}
+.page-kicker{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--slate);margin-bottom:1.5mm}
+.hero{border:1.6px solid var(--navy);padding:5mm;margin-bottom:4mm;background:linear-gradient(135deg,#f8fafc 0%,#fff 70%)}
+.hero h1{margin:0;font-size:22px;line-height:1.15;font-weight:800}
+.hero .subtitle{margin-top:1.2mm;font-size:14px;color:var(--slate);font-weight:600}
+.hero .lead{margin:3mm 0 0;font-size:12.3px}
+.section-title{display:flex;align-items:center;justify-content:space-between;gap:4mm;margin:0 0 3mm;padding-bottom:1.8mm;border-bottom:1.5px solid var(--navy)}
+.section-title h2{margin:0;font-size:16px;line-height:1.2}.section-title .tag{border:1px solid var(--navy);border-radius:999px;padding:1mm 2.5mm;font-size:9.5px;font-weight:700;white-space:nowrap}
+.en{display:block;color:#374151;font-size:.89em;font-weight:400;margin-top:.5mm}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:3mm}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:3mm}
+.card{border:1px solid var(--navy);padding:3.2mm;background:#fff;break-inside:avoid}.card h3{margin:0 0 1.6mm;font-size:13px;line-height:1.2}.card p{margin:1.2mm 0}
+.clean-list{margin:0;padding-left:5mm}.clean-list li{margin:1.2mm 0}
+.outcome-list{list-style:none;padding:0;margin:0;counter-reset:outcome}.outcome-list li{counter-increment:outcome;position:relative;padding-left:9mm;margin:2mm 0}.outcome-list li::before{content:counter(outcome);position:absolute;left:0;top:.1mm;width:6mm;height:6mm;border:1px solid var(--navy);border-radius:50%;display:grid;place-items:center;font-size:9px;font-weight:800}
+.checklist{display:grid;grid-template-columns:1fr 1fr;gap:2.2mm 4mm}.check-item{display:grid;grid-template-columns:6mm 1fr;gap:2mm;align-items:start;border-bottom:1px dotted #94a3b8;padding:1.6mm 0 2mm}.check-item input{width:4.5mm;height:4.5mm;margin-top:.4mm}
+.hot-box{border:1.2px solid #f59e0b;background:var(--hot);padding:3mm}.hot-box h3{margin:0 0 1.3mm;font-size:13px;color:var(--amber)}
+.note-box{border-left:4px solid #1d4ed8;background:#eff6ff;padding:2.2mm 2.5mm;margin-top:2mm}.warn-box{border-left:4px solid #dc2626;background:#fef2f2;padding:2.2mm 2.5mm;margin-top:2mm}.success-box{border-left:4px solid #15803d;background:#f0fdf4;padding:2.2mm 2.5mm;margin-top:2mm}
+.key-formula,.main-question{border:1.1px solid var(--navy);background:#f8fafc;padding:2.2mm 2.6mm;margin:2mm 0;font-weight:700}
+.formula-chip{display:inline-block;border:1px solid var(--navy);border-radius:999px;padding:1mm 2.2mm;margin:1mm .6mm 0 0;font-size:10px;font-weight:700}
+.proof-chain{border:1.2px solid var(--navy);background:#fff;margin:2mm 0}.proof-row{display:grid;grid-template-columns:1fr 48mm;align-items:center;min-height:13mm;border-bottom:1px solid #cbd5e1}.proof-row:last-child{border-bottom:0}.proof-eq{padding:1.6mm 2.5mm;text-align:center;font-size:11.8px;font-weight:700}.proof-op{height:100%;padding:1.7mm 2.2mm;border-left:1px solid #cbd5e1;background:#f8fafc;font-size:9.3px;display:flex;align-items:center}.proof-final{background:#f0fdf4}.proof-final .proof-eq{font-size:13.2px;color:#166534}.identity-box{border:1px dashed var(--navy);padding:2mm 2.5mm;background:#fff;margin-top:2mm}
+.toggle-btn{display:inline-block;border:1px solid var(--navy);border-radius:999px;padding:1mm 3mm;margin-top:2mm;background:#fff;font-size:10.5px;font-weight:800;cursor:pointer}.hot-answer{display:none;margin-top:2mm;padding:2.4mm;border:1px dashed #c2410c;background:#fff}.hot-answer.open{display:block}
+.concept-table,.summary-table,.mini-answer-table{width:100%;border-collapse:collapse;table-layout:fixed}.concept-table th,.concept-table td,.summary-table th,.summary-table td,.mini-answer-table th,.mini-answer-table td{border:1px solid var(--navy);padding:1.8mm 2mm;vertical-align:top}.concept-table th,.summary-table th,.mini-answer-table th{background:#f1f5f9}
+.diagram-card{border:1px solid var(--navy);padding:2mm;background:#fff;text-align:center;break-inside:avoid}.diagram-card svg{display:block;width:100%;height:auto;max-height:74mm}.diagram-card.small svg{max-height:48mm}.diagram-card.medium svg{max-height:58mm}
+.figure-image{display:block;width:100%;max-height:68mm;object-fit:contain;border:1px solid var(--navy);background:#fff}.figure-image.compact{max-height:52mm}.optional-figure{margin:1.5mm 0 2mm;text-align:center}.optional-figure img{display:block;width:100%;max-height:46mm;object-fit:contain;margin:auto;border:1px solid var(--navy);background:#fff}.optional-figure .caption{margin-top:1mm}.image-placeholder{display:grid;place-items:center;min-height:44mm;border:1px dashed #64748b;background:#f8fafc;padding:4mm;text-align:center;color:#475569;font-size:10px}
+.caption{font-size:9.8px;color:#475569;margin-top:1.2mm;text-align:center}.source-note{font-size:8.8px;color:#64748b;margin-top:1mm}
+.video-card{border:1px solid var(--navy);padding:2.5mm;background:#fff}.video-wrap{position:relative;width:100%;padding-top:56.25%;background:#0f172a;overflow:hidden}.video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}.video-print-note{display:none;border:1px dashed var(--navy);padding:3mm;background:#f8fafc}.watch-link{display:inline-block;margin-top:2mm;border:1px solid var(--navy);border-radius:999px;padding:1.2mm 3mm;text-decoration:none;color:var(--navy);font-weight:800;font-size:10px}
+.question{border:1.2px solid var(--navy);padding:3.5mm;margin:0;break-inside:avoid}.question-head{display:flex;align-items:flex-start;justify-content:space-between;gap:3mm;margin-bottom:1.5mm}.question-title{font-weight:800;font-size:13px}.level{border:1px solid var(--navy);border-radius:999px;padding:.8mm 2.2mm;font-size:9px;font-weight:700;white-space:nowrap}.problem-text{font-size:11.7px}.problem-text p{margin:1.2mm 0}
+.response-frame{position:relative;border:1px solid var(--navy);margin-top:3mm;padding:3mm;overflow:hidden;background:#fff}.response-frame::before{content:"พื้นที่แสดงวิธีทำ / Working area";position:absolute;top:-3.4mm;left:4mm;padding:0 2mm;background:#fff;font-size:9.8px;font-weight:700;z-index:3}.response-frame.sm{height:48mm}.response-frame.md{height:62mm}.response-frame.lg{height:82mm}.response-frame.xl{height:105mm}.response-frame.xxl{height:130mm}.response-frame.xxxl{height:155mm}
+.work-lines,.answer-layer{position:absolute;inset:3mm}.work-lines{background:repeating-linear-gradient(to bottom,transparent 0,transparent 8.6mm,#d1d5db 8.7mm,transparent 8.9mm);opacity:1}.answer-layer{visibility:hidden;opacity:0;overflow:hidden;font-size:10.5px;line-height:1.33}.answer-layer p{margin:1.1mm 0}
+body.mode-solution .work-lines{visibility:hidden;opacity:0} body.mode-solution .answer-layer{visibility:visible;opacity:1}.answer-title{font-weight:800;color:var(--green);margin-bottom:1.4mm}.final-answer{border-left:3px solid var(--green);background:#f0fdf4;padding:1.8mm 2mm;margin-top:1.7mm;font-weight:800}
+.two-questions{display:grid;grid-template-columns:1fr 1fr;gap:3mm}.page-footer{position:absolute;right:12mm;bottom:5mm;font-size:9px;color:#64748b}.tight p{margin:.8mm 0}.tiny{font-size:9.5px}.center{text-align:center}
+svg text{font-family:"K2D",Arial,sans-serif}
+@page{size:A4 portrait;margin:0}
+@media print{
+ html,body{width:210mm;background:#fff!important}
+ .toolbar,.screen-guide{display:none!important}
+ .sheet{width:210mm!important;height:297mm!important;margin:0!important;box-shadow:none!important;overflow:hidden!important;page-break-after:always!important;break-after:page!important}
+ *{color:#000!important;border-color:#000!important;box-shadow:none!important;text-shadow:none!important}
+ .hot-answer{display:block!important}.video-wrap{display:none!important}.video-print-note{display:block!important}.watch-link{display:none!important}
+}
+</style>
+</head>
+<body class="mode-student">
+<div class="toolbar">
+  <button class="primary" onclick="printStudent()">🖨️ พิมพ์โจทย์</button>
+  <button class="gold" onclick="printSolution()">✅ พิมพ์พร้อมเฉลย</button>
+  <button onclick="showSolutions()">👁️ เปิดเฉลย</button>
+  <button onclick="hideSolutions()">🙈 ปิดเฉลย</button>
+  <div class="status" id="statusText">โหมดนักเรียน: ช่องเฉลยเป็นพื้นที่ว่างสำหรับแสดงวิธีทำ</div>
+</div>
+<div class="screen-guide">
+  บทเรียนสองภาษาแบบ A4: <strong>ความตึงผิวและความหนืดของของเหลว</strong> • ใช้รูปโจทย์สำคัญชื่อ <strong>47.png</strong> และ <strong>52.png</strong>, คลิปสังเกต 2 คลิป, การทดลองคานถ่วง, Inline SVG, การพิสูจน์สูตรทีละบรรทัด และเฉลยข้อ 47–55 ในพื้นที่เดิม
+</div>
+
+<section class="sheet">
+  <div class="page-kicker">PEC9 Physics • Fluids • Part 6</div>
+  <div class="hero">
+    <h1>ความตึงผิวและความหนืดของของเหลว</h1>
+    <div class="subtitle">Surface Tension and Viscosity of Liquids</div>
+    <p class="lead">เหตุใดคลิปหนีบกระดาษจึงวางอยู่บนผิวน้ำได้ เหตุใดน้ำผึ้งจึงไหลช้ากว่าน้ำ และเหตุใดลูกกลมที่ตกในของเหลวหนืดจึงเร็วขึ้นในตอนแรก แต่สุดท้ายเคลื่อนที่ด้วยความเร็วคงตัว บทนี้จะเชื่อมภาพสังเกต แรงระดับมหภาค และการจัดรูปสมการทีละขั้นเข้าด้วยกัน<span class="en">Why can a paper clip rest on water, why does honey flow more slowly than water, and why does a falling sphere initially speed up but eventually move at a constant speed in a viscous liquid? This lesson connects observations, macroscopic forces, and line-by-line algebraic derivations.</span></p>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="section-title"><h2>สาระการเรียนรู้</h2><span class="tag">Learning Content</span></div>
+      <ul class="clean-list">
+        <li>แรงตึงผิวและความตึงผิว <span class="en">Surface-tension force and surface-tension coefficient</span></li>
+        <li>ความยาวแนวสัมผัสของห่วงลวดและแผ่นวงกลม<span class="en">Contact-line length of a wire ring and a circular plate</span></li>
+        <li>แรงยึดติด แรงเชื่อมแน่น และการซึมตามรูเล็ก<span class="en">Adhesion, cohesion, and capillary action</span></li>
+        <li>ความหนืด แรงหนืด และผลของอุณหภูมิ<span class="en">Viscosity, viscous force, and temperature effects</span></li>
+        <li>กฎของสโตกส์และการเข้าสู่ความเร็วปลาย<span class="en">Stokes’ law and the approach to terminal velocity</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="section-title"><h2>ผลการเรียนรู้ที่คาดหวัง</h2><span class="tag">Expected Outcomes</span></div>
+      <ol class="outcome-list">
+        <li>อธิบายปรากฏการณ์แรงตึงผิวและการซึมตามรูเล็กได้<span class="en">Explain surface-tension and capillary phenomena.</span></li>
+        <li>นับแนวสัมผัสและคำนวณแรงตึงผิวได้ถูกต้อง<span class="en">Count contact lines and calculate surface-tension force correctly.</span></li>
+        <li>วิเคราะห์แรงบนลูกทรงกลมที่ตกในของเหลวได้<span class="en">Analyse the forces on a sphere falling through a liquid.</span></li>
+        <li>พิสูจน์และจัดรูปสมการความเร็วปลายได้ทีละขั้น<span class="en">Derive and rearrange the terminal-speed equation step by step.</span></li>
+      </ol>
+    </div>
+  </div>
+  <div class="page-footer">1</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Student Checklist</div>
+  <div class="section-title"><h2>เช็กลิสต์นักเรียน</h2><span class="tag">Student Checklist</span></div>
+  <div class="checklist">
+    <label class="check-item"><input type="checkbox"><span>ฉันแยกแรงตึงผิวจากความตึงผิวได้<span class="en">I can distinguish surface-tension force from surface-tension coefficient.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันบอกหน่วยของแรงตึงผิวและความตึงผิวได้<span class="en">I can state the units of force and surface tension.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันนับแนวสัมผัสด้านในและด้านนอกของห่วงลวดได้<span class="en">I can count the inner and outer contact lines of a wire ring.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันวาดแรงบนแผ่นวงกลมที่กำลังถูกดึงออกจากผิวน้ำได้<span class="en">I can draw the forces on a circular plate being pulled from water.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันแยก adhesion กับ cohesion ได้<span class="en">I can distinguish adhesion from cohesion.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันอธิบายผิวเว้า ผิวนูน และ capillary action ได้<span class="en">I can explain concave and convex menisci and capillary action.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันอธิบายว่าความหนืดมากทำให้การไหลและการตกเปลี่ยนอย่างไรได้<span class="en">I can explain how greater viscosity affects flow and falling motion.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันอธิบายผลของอุณหภูมิต่อความหนืดของของเหลวได้<span class="en">I can explain how temperature affects liquid viscosity.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันวาดแรงโน้มถ่วง แรงลอยตัว และแรงหนืดได้<span class="en">I can draw weight, buoyancy, and viscous force.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันเข้าใจว่าเมื่อถึงความเร็วปลาย วัตถุยังเคลื่อนที่อยู่<span class="en">I understand that an object still moves at terminal speed.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันใช้กฎของสโตกส์ได้<span class="en">I can use Stokes’ law.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันพิสูจน์สูตรความเร็วปลายโดยไม่ข้ามขั้นได้<span class="en">I can derive the terminal-speed formula without skipping algebraic steps.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันจัดรูปสูตรเพื่อหา <span style="white-space:nowrap">\(v_t\), \(\eta\) หรือ \(r\)</span> ได้<span class="en">I can rearrange the equation to find \(v_t\), \(\eta\), or \(r\).</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันแปลง \(\mathrm{mm}\), \(\mathrm{mPa\cdot s}\) และหน่วย SI ได้<span class="en">I can convert mm, mPa·s, and other SI units.</span></span></label>
+  </div>
+  <div class="page-footer">2</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Engage • Observe and Analyse Forces</div>
+  <div class="section-title"><h2>คลิปโลหะอยู่บนผิวน้ำได้อย่างไร?</h2><span class="tag">Why Can a Metal Clip Stay on Water?</span></div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>กิจกรรมสังเกตจริง / Direct Observation</h3>
+      <p>วางคลิปโลหะบนกระดาษทิชชูชิ้นเล็ก แล้วค่อย ๆ วางบนผิวน้ำ เมื่อกระดาษเปียกและจมลง คลิปอาจยังคงอยู่บนผิวน้ำได้<span class="en">Place a metal paper clip on a small piece of tissue and gently lower it onto the water. After the tissue becomes wet and sinks, the clip may remain on the surface.</span></p>
+      <ol class="clean-list">
+        <li>วางคลิปอย่างเบามือ ไม่กดให้ผิวน้ำแตก<span class="en">Place the clip gently without pushing through the surface.</span></li>
+        <li>สังเกตว่าผิวน้ำบริเวณรอบคลิปโค้งลงเล็กน้อย<span class="en">Observe the slight downward curvature of the water around the clip.</span></li>
+        <li>แตะผิวน้ำด้วยปลายช้อนหรือหยดน้ำสบู่ แล้วสังเกตการเปลี่ยนแปลง<span class="en">Touch the surface with a spoon tip or add a tiny drop of soapy water and observe the change.</span></li>
+      </ol>
+      <div class="hot-box" style="margin-top:2mm">
+        <h3>คำถามชวนคิด / Guiding Question</h3>
+        คลิปมีความหนาแน่นมากกว่าน้ำ เหตุใดจึงไม่จมทันทีเมื่อวางอย่างระมัดระวัง?
+        <span class="en">The clip is denser than water. Why does it not sink immediately when placed carefully?</span>
+        <button class="toggle-btn" onclick="toggleHot('hot-paperclip')">เปิดแนวคิด / Show Discussion</button>
+        <div class="hot-answer" id="hot-paperclip">ความหนาแน่นเพียงอย่างเดียวไม่ได้บอกทุกอย่างในสถานการณ์นี้ ผิวน้ำที่โค้งรอบคลิปทำให้แรงตึงผิวมีองค์ประกอบในแนวดิ่งขึ้น และแรงลอยตัวก็ช่วยพยุง เมื่อแรงขึ้นรวมสมดุลกับน้ำหนัก คลิปจึงอยู่นิ่งได้<span class="en">Density alone does not determine this surface-supported situation. The curved water surface gives the surface-tension forces upward vertical components, while buoyancy also contributes. The clip remains at rest when the total upward force balances its weight.</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>แรงที่กระทำต่อคลิป / Forces on the Clip</h3>
+      <div class="diagram-card medium">
+        <svg viewBox="0 0 520 315" aria-label="forces on a paper clip supported by water">
+          <rect x="1" y="1" width="518" height="313" fill="#fff" stroke="#111" stroke-width="2"/>
+          <path d="M45 195 C125 195 155 235 210 220 C245 210 275 210 310 220 C365 235 395 195 475 195" fill="none" stroke="#1d4ed8" stroke-width="5"/>
+          <rect x="190" y="160" width="140" height="24" rx="12" fill="#cbd5e1" stroke="#111" stroke-width="3"/>
+          <line x1="260" y1="176" x2="260" y2="268" stroke="#dc2626" stroke-width="5"/>
+          <polygon points="260,278 250,260 270,260" fill="#dc2626"/>
+          <text x="276" y="258" font-size="19" font-weight="700">น้ำหนัก / weight  mg</text>
+          <line x1="225" y1="214" x2="185" y2="145" stroke="#166534" stroke-width="5"/>
+          <polygon points="180,136 181,158 198,148" fill="#166534"/>
+          <line x1="295" y1="214" x2="335" y2="145" stroke="#166534" stroke-width="5"/>
+          <polygon points="340,136 322,148 339,158" fill="#166534"/>
+          <text x="42" y="103" font-size="18" font-weight="700">องค์ประกอบแนวดิ่งของแรงตึงผิว</text>
+          <text x="42" y="126" font-size="17">vertical components of surface tension</text>
+          <line x1="260" y1="205" x2="260" y2="135" stroke="#7c3aed" stroke-width="5"/>
+          <polygon points="260,126 250,144 270,144" fill="#7c3aed"/>
+          <text x="276" y="139" font-size="19" font-weight="700">แรงลอยตัว / buoyancy  F<tspan baseline-shift="sub" font-size="14">B</tspan></text>
+          <text x="54" y="292" font-size="17">แรงตึงผิวจริงกระทำตามแนวผิว; ลูกศรสีเขียวแสดงองค์ประกอบแนวดิ่งที่ช่วยพยุง</text>
+        </svg>
+      </div>
+      <p>แรงตึงผิวไม่ได้ชี้ขึ้นตรง ๆ เสมอ แต่กระทำตามแนวสัมผัสของผิวน้ำกับคลิป เมื่อผิวน้ำโค้ง แรงเหล่านี้จึงมีองค์ประกอบในแนวดิ่งขึ้น<span class="en">Surface tension does not always point straight upward. It acts tangentially along the contact line. Because the surface curves around the clip, these forces have upward vertical components.</span></p>
+      <div class="key-formula">\[F_B+\sum F_{\gamma,y}=mg\]</div>
+      <div class="note-box"><strong>เงื่อนไขสำคัญ:</strong> ถ้ากดคลิปให้ทะลุผิว หรือทำให้ความตึงผิวลดลงมาก สมดุลนี้จะหายไปและคลิปจม<span class="en"><strong>Key condition:</strong> If the clip is pushed through the surface or the surface tension is greatly reduced, this balance is lost and the clip sinks.</span></div>
+    </div>
+  </div>
+  <div class="page-footer">3</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Surface Tension • Measurement and Contact Length</div>
+  <div class="section-title"><h2>ทดลองวัดความตึงผิวและทำความเข้าใจ \(L\)</h2><span class="tag">Measure \(\gamma\) and Interpret \(L\)</span></div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>การทดลองด้วยคานถ่วง / Lever-Balance Experiment</h3>
+      <p>ใช้คานสมดุลเปลี่ยนแรงจากน้ำหนักถ่วงให้เป็นแรงดึงห่วงลวด ขณะห่วงกำลังจะหลุดจากผิวของเหลว คานอยู่ใกล้สมดุลและใช้หลักโมเมนต์หาแรง \(F\) ได้
+      <span class="en">A balanced lever converts a known counterweight into the upward pull on the wire ring. Just before the ring detaches, the lever is nearly in equilibrium, so the pull \(F\) can be found from moments.</span></p>
+
+      <div class="diagram-card medium">
+        <svg viewBox="0 0 620 330" aria-label="lever balance for measuring surface tension">
+          <defs>
+            <marker id="leverArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M0,0 L10,5 L0,10 Z" fill="#111"/>
+            </marker>
+          </defs>
+          <rect x="1" y="1" width="618" height="328" fill="#fff" stroke="#111" stroke-width="2"/>
+          <line x1="70" y1="110" x2="550" y2="110" stroke="#111" stroke-width="4"/>
+          <polygon points="245,110 275,285 215,285" fill="#f8fafc" stroke="#111" stroke-width="3"/>
+          <circle cx="245" cy="110" r="6" fill="#111"/>
+          <text x="215" y="307" font-size="17" font-weight="700">จุดหมุน / pivot</text>
+
+          <line x1="95" y1="110" x2="95" y2="185" stroke="#111" stroke-width="3" marker-end="url(#leverArrow)"/>
+          <text x="53" y="213" font-size="19" font-weight="700">1.1 N</text>
+
+          <line x1="245" y1="110" x2="500" y2="110" stroke="#111" stroke-width="4"/>
+          <line x1="500" y1="110" x2="500" y2="183" stroke="#111" stroke-width="3"/>
+          <text x="512" y="160" font-size="20" font-weight="700">F</text>
+
+          <line x1="95" y1="75" x2="245" y2="75" stroke="#475569" stroke-width="2"/>
+          <line x1="95" y1="66" x2="95" y2="84" stroke="#475569" stroke-width="2"/>
+          <line x1="245" y1="66" x2="245" y2="84" stroke="#475569" stroke-width="2"/>
+          <text x="145" y="58" font-size="18">2 cm</text>
+
+          <line x1="245" y1="75" x2="500" y2="75" stroke="#475569" stroke-width="2"/>
+          <line x1="500" y1="66" x2="500" y2="84" stroke="#475569" stroke-width="2"/>
+          <text x="350" y="58" font-size="18">8 cm</text>
+
+          <line x1="500" y1="183" x2="465" y2="237" stroke="#111" stroke-width="2.5"/>
+          <line x1="500" y1="183" x2="535" y2="237" stroke="#111" stroke-width="2.5"/>
+          <ellipse cx="500" cy="245" rx="45" ry="15" fill="none" stroke="#111" stroke-width="3"/>
+          <path d="M455 245 Q500 266 545 245" fill="none" stroke="#111" stroke-width="2"/>
+          <rect x="430" y="238" width="140" height="58" fill="none" stroke="#111" stroke-width="2"/>
+          <line x1="430" y1="260" x2="570" y2="260" stroke="#2563eb" stroke-width="3"/>
+          <text x="438" y="320" font-size="16">ห่วงแตะผิวของเหลว / ring at liquid surface</text>
+        </svg>
+      </div>
+
+      <ol class="clean-list">
+        <li>แขวนห่วงลวดที่แขนด้านขวา และปรับคานให้สมดุลขณะที่ห่วงยังไม่แตะของเหลว
+        <span class="en">Hang the ring from the right arm and zero the apparatus while the ring is clear of the liquid.</span></li>
+        <li>ยกภาชนะขึ้นจนห่วงแตะผิว แล้วเพิ่มน้ำหนักถ่วงหรือปรับตำแหน่งจนห่วงกำลังจะหลุด
+        <span class="en">Raise the liquid until the ring touches the surface, then adjust the counterweight until detachment is imminent.</span></li>
+        <li>อ่านน้ำหนักถ่วงและระยะแขนคาน แล้วใช้สมดุลโมเมนต์หาแรงดึง \(F\)
+        <span class="en">Read the counterweight and lever arms, then use moment balance to determine the pull \(F\).</span></li>
+      </ol>
+
+      <div class="proof-chain">
+        <div class="proof-row"><div class="proof-eq">\[W d_W=F d_F\]</div><div class="proof-op">โมเมนต์ทวนเข็ม = โมเมนต์ตามเข็ม<br><span class="en">anticlockwise moment = clockwise moment</span></div></div>
+        <div class="proof-row"><div class="proof-eq">\[(1.1)(2)=F(8)\]</div><div class="proof-op">แทนค่า โดยใช้หน่วยระยะเหมือนกัน<br><span class="en">Substitute using the same distance unit</span></div></div>
+        <div class="proof-row"><div class="proof-eq">\[F=\frac{(1.1)(2)}{8}\]</div><div class="proof-op">หารทั้งสองข้างด้วย \(8\)<br><span class="en">Divide both sides by \(8\)</span></div></div>
+        <div class="proof-row proof-final"><div class="proof-eq">\[\boxed{F=0.275\ \mathrm N}\]</div><div class="proof-op">แรงดึงขึ้นที่ห่วงขณะกำลังหลุด<br><span class="en">upward pull at imminent detachment</span></div></div>
+      </div>
+
+      <div class="key-formula">เมื่อปรับศูนย์น้ำหนักห่วงไว้แล้ว \(F=F_\gamma\)<br>
+      <span class="en">After taring the ring’s weight, \(F=F_\gamma\).</span>
+      \[\gamma=\frac{F_\gamma}{L}\]</div>
+
+      <div class="note-box"><strong>ข้อควรระวัง:</strong> ถ้าไม่ได้ปรับคานให้สมดุลก่อนแตะของเหลว แรงจากคานจะรวมทั้งน้ำหนักห่วงและแรงตึงผิว ต้องหักน้ำหนักห่วงออกก่อน
+      <span class="en"><strong>Caution:</strong> Without initial balancing, the lever force includes both the ring’s weight and surface-tension force, so the ring’s weight must be subtracted.</span></div>
+    </div>
+    <div class="card">
+      <h3>\(L\) หมายถึงอะไร? / What Does \(L\) Mean?</h3>
+      <p>ในสมการ \(\gamma=F_\gamma/L\), \(L\) คือ <strong>ความยาวรวมของแนวที่ผิวของเหลวสัมผัสกับวัตถุ</strong> ไม่ใช่ความยาวทั้งหมดของวัตถุ และไม่ใช่พื้นที่ผิว<span class="en">In \(\gamma=F_\gamma/L\), \(L\) is the <strong>total length of the contact line between the liquid surface and the object</strong>. It is neither the object’s total length nor an area.</span></p>
+      <div class="warn-box"><strong>วิธีคิด:</strong> ถามก่อนว่า “ผิวของเหลวแตะวัตถุตามแนวกี่เส้น?” แล้วจึงรวมความยาวของทุกแนว<span class="en"><strong>Method:</strong> First ask, “How many contact lines does the liquid surface make with the object?” Then add the lengths of all those lines.</span></div>
+      <table class="concept-table">
+        <thead><tr><th>วัตถุ / Object</th><th>แนวสัมผัส / Contact lines</th><th>ค่า \(L\)</th></tr></thead>
+        <tbody>
+          <tr><td>ห่วงลวดบาง<br><span class="en">Thin wire ring</span></td><td>ขอบนอก + ขอบใน<br><span class="en">outer + inner</span></td><td>\(2\pi r+2\pi r=4\pi r\)</td></tr>
+          <tr><td>แผ่นวงกลม<br><span class="en">Circular plate</span></td><td>ขอบนอกหนึ่งแนว<br><span class="en">one outer edge</span></td><td>\(2\pi r=\pi d\)</td></tr>
+        </tbody>
+      </table>
+      <div class="proof-chain">
+        <div class="proof-row"><div class="proof-eq">\[L=L_{\text{outer}}+L_{\text{inner}}\]</div><div class="proof-op">รวมทุกแนวสัมผัส<br><span class="en">Add all contact lines</span></div></div>
+        <div class="proof-row"><div class="proof-eq">\[L=2\pi r+2\pi r\]</div><div class="proof-op">แต่ละแนวเป็นเส้นรอบวง<br><span class="en">Each line is a circumference</span></div></div>
+        <div class="proof-row proof-final"><div class="proof-eq">\[\boxed{L=4\pi r}\]</div><div class="proof-op">รวมพจน์ที่เหมือนกัน<br><span class="en">Combine like terms</span></div></div>
+      </div>
+      <div class="identity-box"><strong>เชื่อมกับแรง:</strong> จาก \(\gamma=F_\gamma/L\), คูณทั้งสองข้างด้วย \(L\) จะได้ \(F_\gamma=\gamma L\) ดังนั้นสำหรับห่วงลวดบาง \[\boxed{F_\gamma=4\pi r\gamma}\]</div>
+    </div>
+  </div>
+  <div class="page-footer">4</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Adhesion • Cohesion • Capillary Action</div>
+  <div class="section-title"><h2>แรงยึดติด แรงเชื่อมแน่น และการซึมตามรูเล็ก</h2><span class="tag">Adhesion, Cohesion, Capillarity</span></div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Adhesion vs Cohesion</h3>
+      <table class="concept-table">
+        <thead><tr><th>แรง</th><th>เกิดระหว่าง</th><th>ผลที่สังเกตได้</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Adhesion</strong><span class="en">แรงยึดติด</span></td><td>ของเหลวกับวัสดุชนิดอื่น<span class="en">liquid and another material</span></td><td>ของเหลวเกาะหรือเปียกผนัง<span class="en">wetting or attachment to a wall</span></td></tr>
+          <tr><td><strong>Cohesion</strong><span class="en">แรงเชื่อมแน่น</span></td><td>โมเลกุลของเหลวชนิดเดียวกัน<span class="en">molecules of the same liquid</span></td><td>โมเลกุลของเหลวดึงกันเป็นมวลต่อเนื่อง<span class="en">the liquid remains a connected column or drop</span></td></tr>
+        </tbody>
+      </table>
+      <div class="note-box">น้ำเปียกแก้วได้ดี เพราะแรงยึดติดระหว่างน้ำกับแก้วมีบทบาทเด่นบริเวณผนัง ขณะที่แรงเชื่อมแน่นช่วยดึงโมเลกุลน้ำอื่น ๆ ตามกันมา<span class="en">Water wets glass because water–glass adhesion is strong at the wall, while cohesion helps neighbouring water molecules follow.</span></div>
+      <div class="hot-box" style="margin-top:3mm"><h3>คำถามชวนคิด / Guiding Question</h3>ถ้า adhesion ต่อผนังเด่นกว่า cohesion รูปร่างผิวของเหลวใกล้ผนังควรโค้งขึ้นหรือโค้งลง?<span class="en">If adhesion to the wall is stronger than cohesion, should the liquid surface near the wall curve upward or downward?</span><button class="toggle-btn" onclick="toggleHot('hot-meniscus')">เปิดแนวคิด / Show Discussion</button><div class="hot-answer" id="hot-meniscus">ของเหลวจะไต่ขึ้นตามผนัง ทำให้ผิวมีลักษณะเว้าเมื่อมองในหลอด เช่น น้ำในหลอดแก้ว<span class="en">The liquid climbs the wall, producing a concave meniscus, as water does in glass.</span></div></div>
+    </div>
+    <div class="card">
+      <h3>Capillary Action</h3>
+      <div class="diagram-card small">
+        <svg viewBox="0 0 520 250" aria-label="water and mercury menisci">
+          <rect x="1" y="1" width="518" height="248" fill="#fff" stroke="#111" stroke-width="2"/>
+          <rect x="55" y="70" width="150" height="145" fill="#fff" stroke="#111" stroke-width="5"/>
+          <path d="M65 125 Q130 175 195 125 L195 215 L65 215 Z" fill="#bfdbfe" stroke="#1d4ed8" stroke-width="3"/>
+          <rect x="315" y="70" width="150" height="145" fill="#fff" stroke="#111" stroke-width="5"/>
+          <path d="M325 155 Q390 105 455 155 L455 215 L325 215 Z" fill="#d1d5db" stroke="#374151" stroke-width="3"/>
+          <text x="85" y="45" font-size="19" font-weight="700">น้ำ / water</text>
+          <text x="340" y="45" font-size="19" font-weight="700">ปรอท / mercury</text>
+          <text x="80" y="238" font-size="16">ผิวเว้า / concave</text>
+          <text x="335" y="238" font-size="16">ผิวนูน / convex</text>
+        </svg>
+      </div>
+      <p>ในหลอดแคบ น้ำเกาะผนังแก้วและไต่ขึ้นตามผนัง ทำให้เกิดผิวเว้าและระดับน้ำในหลอดสูงขึ้น ส่วนปรอทไม่เปียกแก้วในลักษณะเดียวกัน จึงเกิดผิวนูนและระดับในหลอดต่ำลง<span class="en">In a narrow tube, water adheres to and climbs the glass wall, producing a concave meniscus and a rise in level. Mercury does not wet glass in the same way, so it forms a convex meniscus and is depressed.</span></p>
+      <div class="key-formula">Adhesion เด่นที่ผนัง + Cohesion ดึงโมเลกุลตามกันมา<br><span class="en">Adhesion acts at the wall + cohesion links neighbouring molecules.</span></div>
+      <div class="warn-box"><strong>สำหรับพืช:</strong> capillary action ช่วยในท่อเล็ก แต่การลำเลียงน้ำในพืชสูงยังอาศัยการคายน้ำและกลไก cohesion–tension อย่างสำคัญ<span class="en"><strong>For plants:</strong> capillarity assists in narrow tubes, but long-distance water transport also depends strongly on transpiration and the cohesion–tension mechanism.</span></div>
+    </div>
+  </div>
+  <div class="page-footer">5</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Worked Examples • Questions 47–48</div>
+  <div class="section-title"><h2>ตัวอย่างโจทย์แรงตึงผิว</h2><span class="tag">Surface-Tension Problems</span></div>
+  <div class="two-questions">
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 47 / Question 47</div><div class="level">Contact Lines</div></div>
+      <div class="optional-figure"><img src="./47.png" alt="รูปประกอบโจทย์ข้อ 47 — ไฟล์ 47.png / Question 47 figure — file 47.png" loading="eager" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://nixcentury.github.io/Physic-subject/PDF%20TO%20HTML/PHYSIC/PEC9/%E0%B8%82%E0%B8%AD%E0%B8%87%E0%B9%84%E0%B8%AB%E0%B8%A5/Surface%20Tension%20and%20Viscosity/47.png';}"><div class="caption">รูปประกอบโจทย์ข้อ 47 — ไฟล์ 47.png / Question 47 figure — file 47.png</div></div>
+      <div class="problem-text">ห่วงลวดรัศมี \(3.5\ \mathrm{cm}\) แตะผิวน้ำ จงหาแรงที่ต้องใช้เอาชนะแรงตึงผิว โดยไม่คิดน้ำหนักห่วง กำหนด \(\gamma=7.0\times10^{-2}\ \mathrm{N/m}\)<span class="en">A wire ring of radius \(3.5\ \mathrm{cm}\) touches water. Find the force needed to overcome surface tension, neglecting the ring’s weight. Let \(\gamma=7.0\times10^{-2}\ \mathrm{N/m}\).</span></div>
+      <div class="response-frame xl"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">วิธีทำ / Solution</div><p>แปลงหน่วย \(r=3.5\times10^{-2}\ \mathrm{m}\)</p><p>ห่วงมีแนวสัมผัสด้านในและด้านนอก</p><p>\[L=2(2\pi r)=4\pi r\]</p><p>\[F_\gamma=\gamma L=\gamma(4\pi r)\]</p><p>\[F_\gamma=(7.0\times10^{-2})4\pi(3.5\times10^{-2})\]</p><p>\[F_\gamma=3.08\times10^{-2}\ \mathrm{N}\]</p><div class="final-answer">ตอบ / Final Answer: \(\boxed{0.0308\ \mathrm{N}}\)</div></div></div>
+    </article>
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 48 / Question 48</div><div class="level">FBD + Weight</div></div>
+      
+      <div class="problem-text">แผ่นโลหะวงกลมเส้นผ่านศูนย์กลาง \(10\ \mathrm{cm}\) มวล \(25\ \mathrm{g}\) แตะผิวน้ำ จงหาแรงดึงที่ทำให้หลุดพอดี เมื่อ \(\gamma=7.0\times10^{-2}\ \mathrm{N/m}\) และ \(g=10\ \mathrm{m/s^2}\)<span class="en">A circular metal plate of diameter \(10\ \mathrm{cm}\) and mass \(25\ \mathrm{g}\) touches water. Find the pull required for detachment, given \(\gamma=7.0\times10^{-2}\ \mathrm{N/m}\) and \(g=10\ \mathrm{m/s^2}\).</span></div>
+      <div class="response-frame xl"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">วิธีทำ / Solution</div><p>แนวสัมผัสเป็นเส้นรอบวงหนึ่งเส้น</p><p>\[L=\pi d=\pi(0.10)\]</p><p>\[F_\gamma=\gamma L=(7.0\times10^{-2})\pi(0.10)=0.0220\ \mathrm{N}\]</p><p>\[W=mg=(0.025)(10)=0.250\ \mathrm{N}\]</p><p>ขณะกำลังหลุด แรงดึงต้องสมดุลกับน้ำหนักและแรงตึงผิว</p><p>\[F_{\text{pull}}=W+F_\gamma=0.250+0.0220\]</p><div class="final-answer">ตอบ / Final Answer: \(\boxed{0.272\ \mathrm{N}}\)</div></div></div>
+    </article>
+  </div>
+  <div class="page-footer">6</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Viscosity Comparison • Observe Before Calculating</div>
+  <div class="section-title"><h2>ความหนืด: ดูการเปรียบเทียบก่อน</h2><span class="tag">Viscosity Comparison</span></div>
+  <div class="grid-2">
+    <div class="video-card">
+      <h3>คลิปที่ 1: เปรียบเทียบความหนืด</h3>
+      <div class="video-wrap"><iframe src="https://www.youtube-nocookie.com/embed/_WaMi0_O-Os" title="Viscosity comparison video" loading="lazy" allowfullscreen></iframe></div>
+      <div class="video-print-note"><strong>กิจกรรมคลิป:</strong> เปิดคลิป Viscosity Comparison จากลิงก์ในไฟล์ออนไลน์ แล้วเปรียบเทียบการเคลื่อนที่ในของเหลวต่างชนิด<span class="en"><strong>Video activity:</strong> Open the viscosity-comparison clip in the online file and compare motion in different liquids.</span></div>
+      <a class="watch-link" href="https://www.youtube.com/watch?v=_WaMi0_O-Os" target="_blank" rel="noopener">เปิดคลิปใน YouTube / Open video</a>
+    </div>
+    <div class="card">
+      <h3>สิ่งที่ต้องสังเกต / What to Observe</h3>
+      <ol class="clean-list">
+        <li>วัตถุเดียวกันเคลื่อนที่เร็วเท่ากันในของเหลวทุกชนิดหรือไม่?<span class="en">Does the same object move equally fast in every liquid?</span></li>
+        <li>ของเหลวใดต้านการเคลื่อนที่มากกว่า?<span class="en">Which liquid provides greater resistance?</span></li>
+        <li>การสังเกตใดเป็นหลักฐานว่าความหนืดต่างกัน?<span class="en">What observation is evidence of different viscosities?</span></li>
+      </ol>
+      <div class="key-formula">ความหนืดมาก \(\Rightarrow\) การไหลช้าลงและแรงต้านมากขึ้น<span class="en">Greater viscosity \(\Rightarrow\) slower flow and greater resistance.</span></div>
+      <table class="concept-table">
+        <thead><tr><th>ปริมาณ</th><th>ความหมาย</th></tr></thead>
+        <tbody>
+          <tr><td>ความหนืด \(\eta\)</td><td>สมบัติของของไหลที่บอกความต้านทานต่อการไหลหรือการเฉือน<span class="en">A fluid property describing resistance to flow or shear.</span></td></tr>
+          <tr><td>แรงหนืด \(F_v\)</td><td>แรงที่ต้านการเคลื่อนที่สัมพัทธ์ของวัตถุกับของไหล<span class="en">A force opposing relative motion between an object and the fluid.</span></td></tr>
+        </tbody>
+      </table>
+      <div class="warn-box">\(\eta\) ไม่ใช่แรง ส่วน \(F_v\) คือแรงจริงที่กระทำต่อวัตถุ<span class="en">\(\eta\) is not a force; \(F_v\) is the actual force on the object.</span></div>
+    </div>
+  </div>
+  <div class="grid-2" style="margin-top:3mm">
+    <div class="card"><h3>ผลของอุณหภูมิสำหรับของเหลว</h3><p>โดยทั่วไป เมื่ออุณหภูมิสูงขึ้น โมเลกุลเคลื่อนที่ได้คล่องขึ้นและความหนืดของของเหลวลดลง<span class="en">For liquids, increasing temperature generally reduces viscosity because molecular rearrangement becomes easier.</span></p><div class="main-question">\[T\uparrow\ \Rightarrow\ \eta\downarrow\ \Rightarrow\ F_v\downarrow\ \Rightarrow\ v_t\uparrow\]</div></div>
+    <div class="hot-box"><h3>อย่าสรุปเกินข้อมูล / Do Not Overgeneralise</h3>ความสัมพันธ์นี้กล่าวถึง “ของเหลว” ในช่วงอุณหภูมิทั่วไป สำหรับแก๊ส แนวโน้มของความหนืดกับอุณหภูมิอาจต่างออกไป<span class="en">This trend refers to liquids over ordinary temperature ranges. Gas viscosity can show a different temperature dependence.</span></div>
+  </div>
+  <div class="page-footer">7</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Terminal Velocity • Force Balance</div>
+  <div class="section-title"><h2>ลูกกลมเร็วขึ้น แล้วเหตุใดจึงหยุดเร่ง?</h2><span class="tag">Approaching Terminal Speed</span></div>
+  <div class="grid-2">
+    <div class="video-card">
+      <h3>คลิปที่ 2: Terminal Velocity</h3>
+      <div class="video-wrap"><iframe src="https://www.youtube-nocookie.com/embed/K389Fw2U5sk" title="Terminal velocity in a viscous liquid" loading="lazy" allowfullscreen></iframe></div>
+      <div class="video-print-note"><strong>กิจกรรมคลิป:</strong> สังเกตลูกกลมตกในของเหลวหนืด เปรียบเทียบระยะทางที่เคลื่อนที่ได้ในช่วงเวลาเท่า ๆ กัน<span class="en"><strong>Video activity:</strong> Observe a sphere falling through a viscous liquid and compare distances travelled in equal time intervals.</span></div>
+      <a class="watch-link" href="https://www.youtube.com/watch?v=K389Fw2U5sk" target="_blank" rel="noopener">เปิดคลิปใน YouTube / Open video</a>
+      <div class="note-box">คำอธิบายที่แม่น: ลูกกลมไม่ได้ “ช้าลงจนมีความเร็วปลาย” แต่เริ่มจากหยุดนิ่ง เร็วขึ้น และเพิ่มช้าลงเรื่อย ๆ จนความเร็วคงตัว<span class="en">Precise description: the sphere does not “slow down to terminal speed.” It starts from rest, speeds up, and its speed increases more slowly until becoming constant.</span></div>
+    </div>
+    <div class="card">
+      <h3>แผนภาพแรง / Free-Body Diagram</h3>
+      <div class="diagram-card medium">
+        <svg viewBox="0 0 520 360" aria-label="forces on a falling sphere in liquid">
+          <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#111"/></marker></defs>
+          <rect x="1" y="1" width="518" height="358" fill="#fff" stroke="#111" stroke-width="2"/>
+          <rect x="75" y="38" width="370" height="285" fill="#eff6ff" stroke="#1d4ed8" stroke-width="3"/>
+          <circle cx="260" cy="185" r="42" fill="#94a3b8" stroke="#111" stroke-width="3"/>
+          <line x1="260" y1="185" x2="260" y2="300" stroke="#111" stroke-width="4" marker-end="url(#arr)"/>
+          <line x1="225" y1="170" x2="225" y2="72" stroke="#111" stroke-width="4" marker-end="url(#arr)"/>
+          <line x1="295" y1="170" x2="295" y2="72" stroke="#111" stroke-width="4" marker-end="url(#arr)"/>
+          <line x1="385" y1="90" x2="385" y2="250" stroke="#2563eb" stroke-width="4" marker-end="url(#arr)"/>
+          <text x="272" y="308" font-size="20" font-weight="700">mg</text>
+          <text x="185" y="66" font-size="19" font-weight="700">F_B</text>
+          <text x="302" y="66" font-size="19" font-weight="700">F_v</text>
+          <text x="398" y="176" font-size="19" font-weight="700">v</text>
+          <text x="92" y="344" font-size="17">Viscous force always opposes the relative motion.</text>
+        </svg>
+      </div>
+      <table class="concept-table">
+        <thead><tr><th>ช่วง</th><th>แรงและการเคลื่อนที่</th></tr></thead>
+        <tbody>
+          <tr><td>เริ่มปล่อย</td><td>\(v=0\), \(F_v\approx0\), ดังนั้น \(mg&gt;F_B+F_v\) และวัตถุเร่งลง</td></tr>
+          <tr><td>กำลังเร็วขึ้น</td><td>\(v\uparrow\Rightarrow F_v\uparrow\), แรงลัพธ์และความเร่งจึงลดลง</td></tr>
+          <tr><td>ความเร็วปลาย</td><td>\(mg=F_B+F_v\), จึง \(a=0\) แต่ \(v=v_t\neq0\)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="hot-box" style="margin-top:3mm"><h3>HOT Question</h3>เมื่อแรงลัพธ์เป็นศูนย์ เหตุใดลูกกลมจึงไม่หยุด?<span class="en">If the net force is zero, why does the sphere not stop?</span><button class="toggle-btn" onclick="toggleHot('hot-terminal')">เปิดแนวคิด / Show Discussion</button><div class="hot-answer" id="hot-terminal">แรงลัพธ์เป็นศูนย์ทำให้ความเร่งเป็นศูนย์ ไม่ได้ทำให้ความเร็วเป็นศูนย์ ตามกฎข้อที่หนึ่งของนิวตัน วัตถุจึงเคลื่อนที่ต่อด้วยความเร็วคงตัว<span class="en">Zero net force means zero acceleration, not zero velocity. By Newton’s first law, the sphere continues at constant velocity.</span></div></div>
+  <div class="page-footer">8</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Stokes’ Law • Full Derivation</div>
+  <div class="section-title"><h2>พิสูจน์สูตรความเร็วปลายทีละบรรทัด</h2><span class="tag">Derive Terminal Speed</span></div>
+  <div class="grid-2">
+    <div class="card tight">
+      <h3>สมการของแรงแต่ละแรง</h3>
+      <p>กฎของสโตกส์สำหรับลูกทรงกลมขนาดเล็กในการไหลแบบราบเรียบ:</p>
+      <div class="key-formula">\[F_v=6\pi\eta rv\]</div>
+      <p>น้ำหนักของลูกทรงกลม:</p>
+      <div class="key-formula">\[mg=\rho_sVg\]</div>
+      <p>แรงลอยตัว:</p>
+      <div class="key-formula">\[F_B=\rho_fVg\]</div>
+      <p>ปริมาตรทรงกลม:</p>
+      <div class="key-formula">\[V=\frac{4}{3}\pi r^3\]</div>
+      <div class="warn-box"><strong>เงื่อนไขสำคัญ:</strong> ลูกทรงกลมเล็ก ของไหลแบบนิวโทเนียน การไหลราบเรียบ ค่า Reynolds ต่ำ และผลของผนังภาชนะน้อย<span class="en"><strong>Important conditions:</strong> a small sphere, a Newtonian fluid, laminar low-Reynolds-number flow, and negligible wall effects.</span></div>
+      <div class="identity-box"><strong>สัญลักษณ์:</strong> \(\rho_s\) = ความหนาแน่นของทรงกลม, \(\rho_f\) = ความหนาแน่นของของไหล, \(\eta\) = ความหนืด, \(r\) = รัศมี</div>
+    </div>
+    <div class="card">
+      <h3>จัดรูปทีละบรรทัด / Line-by-Line Algebra</h3>
+      <div class="proof-chain">
+        <div class="proof-row"><div class="proof-eq">\[mg-F_B-F_v=0\]</div><div class="proof-op">ที่ความเร็วปลาย \(a=0\)<br><span class="en">At terminal speed, \(a=0\)</span></div></div>
+        <div class="proof-row"><div class="proof-eq">\[mg=F_B+F_v\]</div><div class="proof-op">บวก \(F_B+F_v\) ทั้งสองข้าง<br><span class="en">Add upward forces</span></div></div>
+        <div class="proof-row"><div class="proof-eq">\[\rho_sVg=\rho_fVg+6\pi\eta rv_t\]</div><div class="proof-op">แทนแรงทั้งสาม<br><span class="en">Substitute the three forces</span></div></div>
+        <div class="proof-row"><div class="proof-eq">\[\rho_sVg-\rho_fVg=6\pi\eta rv_t\]</div><div class="proof-op">ลบ \(\rho_fVg\) ทั้งสองข้าง<br><span class="en">Subtract buoyancy term</span></div></div>
+        <div class="proof-row"><div class="proof-eq">\[(\rho_s-\rho_f)Vg=6\pi\eta rv_t\]</div><div class="proof-op">ดึง \(Vg\) เป็นตัวประกอบร่วม<br><span class="en">Factor out \(Vg\)</span></div></div>
+        <div class="proof-row"><div class="proof-eq">\[(\rho_s-\rho_f)\left(\frac43\pi r^3\right)g=6\pi\eta rv_t\]</div><div class="proof-op">แทน \(V=\frac43\pi r^3\)<br><span class="en">Substitute sphere volume</span></div></div>
+        <div class="proof-row"><div class="proof-eq">\[v_t=\frac{(\rho_s-\rho_f)(\frac43\pi r^3)g}{6\pi\eta r}\]</div><div class="proof-op">หารทั้งสองข้างด้วย \(6\pi\eta r\)<br><span class="en">Divide by \(6\pi\eta r\)</span></div></div>
+        <div class="proof-row"><div class="proof-eq">\[v_t=\frac{4r^2g(\rho_s-\rho_f)}{18\eta}\]</div><div class="proof-op">ตัด \(\pi\), ใช้ \(r^3/r=r^2\)<br><span class="en">Cancel and reduce powers</span></div></div>
+        <div class="proof-row proof-final"><div class="proof-eq">\[\boxed{v_t=\frac{2r^2g(\rho_s-\rho_f)}{9\eta}}\]</div><div class="proof-op">ย่อ \(4/18=2/9\)<br><span class="en">Simplify the fraction</span></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="page-footer">9</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Formula Meaning + Rearrangement</div>
+  <div class="section-title"><h2>อ่านความสัมพันธ์และจัดรูปหาตัวแปรอื่น</h2><span class="tag">Interpret and Rearrange</span></div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>อ่านจากสูตร / Read the Formula</h3>
+      <div class="key-formula">\[v_t=\frac{2r^2g(\rho_s-\rho_f)}{9\eta}\]</div>
+      <table class="concept-table">
+        <thead><tr><th>การเปลี่ยนแปลง</th><th>ผลต่อ \(v_t\)</th></tr></thead>
+        <tbody>
+          <tr><td>\(r\) เพิ่ม</td><td>\(v_t\propto r^2\): รัศมีเพิ่ม 2 เท่า ความเร็วปลายเพิ่ม 4 เท่า</td></tr>
+          <tr><td>\(\rho_s-\rho_f\) เพิ่ม</td><td>แรงขับสุทธิจากน้ำหนักลบแรงลอยตัวมากขึ้น</td></tr>
+          <tr><td>\(\eta\) เพิ่ม</td><td>\(v_t\propto1/\eta\): ของเหลวหนืดมากทำให้ความเร็วปลายลดลง</td></tr>
+        </tbody>
+      </table>
+      <div class="note-box">สูตรนี้ไม่เพียงใช้แทนค่า แต่บอกแนวโน้มของการทดลองได้ทันที<span class="en">The equation predicts experimental trends, not merely numerical answers.</span></div>
+    </div>
+    <div class="card">
+      <h3>จัดรูปหา \(\eta\) / Rearrange for Viscosity</h3>
+      <div class="proof-chain">
+        <div class="proof-row"><div class="proof-eq">\[v_t=\frac{2r^2g(\rho_s-\rho_f)}{9\eta}\]</div><div class="proof-op">สมการตั้งต้น<br><span class="en">Starting equation</span></div></div>
+        <div class="proof-row"><div class="proof-eq">\[9\eta v_t=2r^2g(\rho_s-\rho_f)\]</div><div class="proof-op">คูณทั้งสองข้างด้วย \(9\eta\)<br><span class="en">Multiply by \(9\eta\)</span></div></div>
+        <div class="proof-row proof-final"><div class="proof-eq">\[\boxed{\eta=\frac{2r^2g(\rho_s-\rho_f)}{9v_t}}\]</div><div class="proof-op">หารทั้งสองข้างด้วย \(9v_t\)<br><span class="en">Divide by \(9v_t\)</span></div></div>
+      </div>
+      <h3 style="margin-top:3mm">จัดรูปหา \(r\) / Rearrange for Radius</h3>
+      <div class="proof-chain">
+        <div class="proof-row"><div class="proof-eq">\[9\eta v_t=2r^2g(\rho_s-\rho_f)\]</div><div class="proof-op">เริ่มจากรูปที่คูณไขว้แล้ว<br><span class="en">Start from cross-multiplied form</span></div></div>
+        <div class="proof-row"><div class="proof-eq">\[r^2=\frac{9\eta v_t}{2g(\rho_s-\rho_f)}\]</div><div class="proof-op">หารด้วย \(2g(\rho_s-\rho_f)\)<br><span class="en">Divide by the coefficient</span></div></div>
+        <div class="proof-row proof-final"><div class="proof-eq">\[\boxed{r=\sqrt{\frac{9\eta v_t}{2g(\rho_s-\rho_f)}}}\]</div><div class="proof-op">ถอดรากที่เป็นบวก เพราะรัศมีเป็นบวก<br><span class="en">Take the positive square root</span></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="page-footer">10</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Concept Questions • 49–51</div>
+  <div class="section-title"><h2>คำถามแนวคิดเรื่องการซึมตามรูเล็กและความหนืด</h2><span class="tag">Questions 49–51</span></div>
+  <div class="two-questions">
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 49 / Question 49</div><div class="level">Adhesion–Cohesion</div></div>
+      <div class="problem-text">ในท่อส่งน้ำของลำต้นพืช น้ำสามารถเคลื่อนจากพื้นดินขึ้นด้านบนได้ ตามแนวคิดการซึมตามรูเล็ก แรงยึดติดและแรงเชื่อมแน่นมีบทบาทอย่างไร?<span class="en">In a plant’s narrow water-conducting tubes, water can move upward. In the capillary model, what roles do adhesion and cohesion play?</span></div>
+      <div class="response-frame lg"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">คำอธิบาย / Explanation</div><p>แรงยึดติดระหว่างน้ำกับผนังช่วยดึงน้ำขึ้นตามผนัง ส่วนแรงเชื่อมแน่นช่วยให้โมเลกุลน้ำดึงกันต่อเป็นคอลัมน์</p><p>ในกรอบโจทย์ capillary action กล่าวได้ว่า adhesion ที่ผนังเด่นพอให้น้ำเปียกแก้วและเกิดผิวเว้า</p><p class="tiny">ในพืชจริง การคายน้ำและ cohesion–tension เป็นกลไกสำคัญเพิ่มเติม จึงไม่ควรอธิบายการลำเลียงทั้งหมดด้วย capillarity เพียงอย่างเดียว</p><div class="final-answer">สรุป: adhesion ช่วยยึดกับผนัง และ cohesion ช่วยรักษาคอลัมน์น้ำ</div></div></div>
+    </article>
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 50 / Question 50</div><div class="level">Compare \(v_t\)</div></div>
+      <div class="problem-text">ลูกกลมโลหะเหมือนกันตกในของเหลวที่มีความหนืดต่างกัน ความเร็วปลายต่างกันหรือไม่?<span class="en">Identical metal spheres fall through liquids of different viscosities. Are their terminal speeds different?</span></div>
+      <div class="response-frame lg"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">คำอธิบาย / Explanation</div><p>จากสูตร</p><p>\[v_t=\frac{2r^2g(\rho_s-\rho_f)}{9\eta}\]</p><p>ถ้าปริมาณอื่นเหมือนกัน จะได้ \(v_t\propto1/\eta\)</p><p>ดังนั้นของเหลวที่มีความหนืดมากกว่าจะให้ความเร็วปลายน้อยกว่า</p><div class="final-answer">ตอบ: ต่างกัน; \(\eta\) มาก \(\Rightarrow v_t\) น้อย</div></div></div>
+    </article>
+  </div>
+  <article class="question" style="margin-top:3mm">
+    <div class="question-head"><div class="question-title">ข้อ 51 / Question 51</div><div class="level">Temperature Effect</div></div>
+    <div class="problem-text">ปล่อยลูกเหล็กขนาดเท่ากันลงในน้ำที่ \(10^\circ\mathrm C\) และ \(20^\circ\mathrm C\) ลูกใดถึงก้นหลอดก่อน?<span class="en">Identical steel spheres are released into water at \(10^\circ\mathrm C\) and \(20^\circ\mathrm C\). Which reaches the bottom first?</span></div>
+    <div class="response-frame md"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">คำอธิบาย / Explanation</div><p>สำหรับน้ำ เมื่ออุณหภูมิสูงขึ้น ความหนืดลดลง</p><p>\[20^\circ\mathrm C\Rightarrow\eta\text{ น้อยกว่า}\Rightarrow F_v\text{ น้อยกว่า}\Rightarrow v_t\text{ มากกว่า}\]</p><div class="final-answer">ตอบ: ลูกเหล็กในน้ำ \(20^\circ\mathrm C\) ถึงก้นหลอดก่อน</div></div></div>
+  </article>
+  <div class="page-footer">11</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Motion Analysis • Questions 52–53</div>
+  <div class="section-title"><h2>วิเคราะห์การเข้าสู่ความเร็วปลาย</h2><span class="tag">Questions 52–53</span></div>
+  <div class="two-questions">
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 52 / Question 52</div><div class="level">Stages of Motion</div></div>
+      <div class="optional-figure"><img src="./52.png" alt="รูปประกอบโจทย์ข้อ 52 — ไฟล์ 52.png / Question 52 figure — file 52.png" loading="eager" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://nixcentury.github.io/Physic-subject/PDF%20TO%20HTML/PHYSIC/PEC9/%E0%B8%82%E0%B8%AD%E0%B8%87%E0%B9%84%E0%B8%AB%E0%B8%A5/Surface%20Tension%20and%20Viscosity/52.png';}"><div class="caption">รูปประกอบโจทย์ข้อ 52 — ไฟล์ 52.png / Question 52 figure — file 52.png</div></div>
+      <div class="problem-text">ปล่อยลูกโลหะทรงกลมลงในน้ำมัน โดย \(ab=bc=cd\) ข้อใดอธิบายการเคลื่อนที่ได้ถูกต้อง?<span class="en">A small metal sphere is released into oil, with \(ab=bc=cd\). Which statement correctly describes its motion?</span></div>
+      <div class="response-frame xl"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">วิเคราะห์ / Analysis</div><p>เมื่อเพิ่งปล่อย \(v=0\) จึง \(F_v\approx0\) และมีแรงลัพธ์ลง ลูกกลมจึงมีความเร่ง</p><p>เมื่อเร็วขึ้น \(F_v=6\pi\eta rv\) เพิ่ม ทำให้แรงลัพธ์และความเร่งลดลง</p><p>เมื่อ \(mg=F_B+F_v\) จะได้ \(a=0\) และเคลื่อนที่ด้วยความเร็วคงตัว</p><div class="final-answer">ตอบ: ตัวเลือก 1 — ช่วงแรกมีความเร่ง จากนั้นมีความเร็วคงตัว</div></div></div>
+    </article>
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 53 / Question 53</div><div class="level">True Statements</div></div>
+      
+      <div class="problem-text">พิจารณาข้อความ: (1) แรงหนืดลดลงจนเป็นศูนย์ (2) แรงหนืดเพิ่มจนคงที่ (3) ความเร็วลดลงจนเป็นศูนย์ (4) ความเร่งลดลงจนเป็นศูนย์ ข้อความใดถูก?<span class="en">Consider: (1) viscous force falls to zero; (2) viscous force rises and becomes constant; (3) speed falls to zero; (4) acceleration falls to zero. Which are correct?</span></div>
+      <div class="response-frame xl"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">วิเคราะห์ / Analysis</div><p><strong>(1) ผิด:</strong> แรงหนืดเพิ่มตามความเร็ว ไม่ได้ลดเป็นศูนย์</p><p><strong>(2) ถูก:</strong> เมื่อความเร็วถึง \(v_t\), \(F_v\) คงที่</p><p><strong>(3) ผิด:</strong> วัตถุเริ่มจากหยุดแล้วเร็วขึ้น ไม่ได้ช้าจนหยุด</p><p><strong>(4) ถูก:</strong> แรงลัพธ์ลดลงจนศูนย์ จึง \(a\to0\)</p><div class="final-answer">ตอบ: ข้อความ 2 และ 4 ถูก → ตัวเลือก 4</div></div></div>
+    </article>
+  </div>
+  <div class="grid-2" style="margin-top:3mm">
+    <div class="diagram-card small"><svg viewBox="0 0 520 240" aria-label="velocity-time terminal speed graph"><rect x="1" y="1" width="518" height="238" fill="#fff" stroke="#111" stroke-width="2"/><line x1="70" y1="190" x2="470" y2="190" stroke="#111" stroke-width="2"/><line x1="70" y1="190" x2="70" y2="35" stroke="#111" stroke-width="2"/><path d="M70 190 C150 80 270 62 455 62" fill="none" stroke="#2563eb" stroke-width="4"/><line x1="70" y1="62" x2="455" y2="62" stroke="#64748b" stroke-width="1.5" stroke-dasharray="7 5"/><text x="18" y="44" font-size="16">v</text><text x="473" y="207" font-size="16">t</text><text x="410" y="52" font-size="16">vₜ</text><text x="125" y="220" font-size="16">speed rises, then approaches a constant value</text></svg><div class="caption">กราฟความเร็ว–เวลา / Velocity–time graph</div></div>
+    <div class="diagram-card small"><svg viewBox="0 0 520 240" aria-label="acceleration-time terminal speed graph"><rect x="1" y="1" width="518" height="238" fill="#fff" stroke="#111" stroke-width="2"/><line x1="70" y1="190" x2="470" y2="190" stroke="#111" stroke-width="2"/><line x1="70" y1="190" x2="70" y2="35" stroke="#111" stroke-width="2"/><path d="M70 55 C150 120 260 172 455 188" fill="none" stroke="#dc2626" stroke-width="4"/><text x="18" y="44" font-size="16">a</text><text x="473" y="207" font-size="16">t</text><text x="155" y="220" font-size="16">acceleration decreases toward zero</text></svg><div class="caption">กราฟความเร่ง–เวลา / Acceleration–time graph</div></div>
+  </div>
+  <div class="page-footer">12</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Calculation • Question 54</div>
+  <div class="section-title"><h2>ข้อ 54: ลูกเหล็กตกในน้ำ</h2><span class="tag">Stokes Model + Validity Check</span></div>
+  <article class="question">
+    <div class="question-head"><div class="question-title">ข้อ 54 / Question 54</div><div class="level">Full Substitution</div></div>
+    <div class="grid-2">
+      
+      <div class="problem-text">ลูกเหล็กรัศมี \(1\ \mathrm{mm}\) ตกในน้ำ กำหนด \(g=9.8\ \mathrm{m/s^2}\), \(\rho_s=7.8\times10^3\ \mathrm{kg/m^3}\), \(\rho_f=1.0\times10^3\ \mathrm{kg/m^3}\), \(\eta=1.0\times10^{-3}\ \mathrm{Pa\cdot s}\) จงหาความเร็วปลายตามแบบจำลองของสโตกส์<span class="en">A steel sphere of radius \(1\ \mathrm{mm}\) falls in water. Using the given data, find its terminal speed according to the Stokes model.</span></div>
+    </div>
+    <div class="response-frame xxxl"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">วิธีทำ / Solution</div><p><strong>1) แปลงรัศมี</strong></p><p>\[r=1\ \mathrm{mm}=1.0\times10^{-3}\ \mathrm{m}\]</p><p><strong>2) หาผลต่างความหนาแน่น</strong></p><p>\[\rho_s-\rho_f=(7.8-1.0)\times10^3=6.8\times10^3\ \mathrm{kg/m^3}\]</p><p><strong>3) ใช้สูตรความเร็วปลาย</strong></p><p>\[v_t=\frac{2r^2g(\rho_s-\rho_f)}{9\eta}\]</p><p>\[v_t=\frac{2(1.0\times10^{-3})^2(9.8)(6.8\times10^3)}{9(1.0\times10^{-3})}\]</p><p>\[v_t=\frac{0.13328}{0.009}=14.8\ \mathrm{m/s}\]</p><div class="warn-box"><strong>ตรวจความสมเหตุสมผล:</strong> ค่านี้สูงมากสำหรับลูกเหล็กในน้ำ จึงมีแนวโน้มว่าการไหลไม่ได้อยู่ในขอบเขต Reynolds ต่ำที่กฎของสโตกส์ใช้ได้ ผลลัพธ์นี้เป็นคำตอบจากแบบจำลองตามข้อมูลโจทย์ ไม่ใช่การยืนยันค่าจริงของการทดลอง<span class="en"><strong>Validity check:</strong> This is very large for a steel sphere in water, so the low-Reynolds-number Stokes regime is unlikely to remain valid. It is the model result for the stated data, not necessarily a realistic experimental value.</span></div><div class="final-answer">ตอบตามแบบจำลอง / Model Answer: \(\boxed{14.8\ \mathrm{m/s}}\)</div></div></div>
+  </article>
+  <div class="page-footer">13</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Calculation • Question 55</div>
+  <div class="section-title"><h2>ข้อ 55: ลูกเหล็กตกในน้ำเชื่อม</h2><span class="tag">Unit Conversion</span></div>
+  <article class="question">
+    <div class="question-head"><div class="question-title">ข้อ 55 / Question 55</div><div class="level">mPa·s → Pa·s</div></div>
+    <div class="grid-2">
+      
+      <div class="problem-text">ลูกเหล็กรัศมี \(1\ \mathrm{mm}\) ตกในน้ำเชื่อม โดย \(\rho_s=7800\ \mathrm{kg/m^3}\), \(\rho_f=1600\ \mathrm{kg/m^3}\), \(\eta=100\ \mathrm{mPa\cdot s}\) และใช้ \(g=10\ \mathrm{m/s^2}\) จงหาความเร็วปลาย<span class="en">A steel sphere of radius \(1\ \mathrm{mm}\) falls in syrup. Given \(\rho_s=7800\ \mathrm{kg/m^3}\), \(\rho_f=1600\ \mathrm{kg/m^3}\), \(\eta=100\ \mathrm{mPa\cdot s}\), and \(g=10\ \mathrm{m/s^2}\), find the terminal speed.</span></div>
+    </div>
+    <div class="response-frame xxxl"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">วิธีทำ / Solution</div><p><strong>1) แปลงหน่วย</strong></p><p>\[r=1\ \mathrm{mm}=1.0\times10^{-3}\ \mathrm{m}\]</p><p>เนื่องจาก \(1\ \mathrm{mPa\cdot s}=10^{-3}\ \mathrm{Pa\cdot s}\)</p><p>\[\eta=100\times10^{-3}=0.100\ \mathrm{Pa\cdot s}\]</p><p><strong>2) ผลต่างความหนาแน่น</strong></p><p>\[\rho_s-\rho_f=7800-1600=6200\ \mathrm{kg/m^3}\]</p><p><strong>3) แทนค่า</strong></p><p>\[v_t=\frac{2(1.0\times10^{-3})^2(10)(6200)}{9(0.100)}\]</p><p>\[v_t=\frac{0.124}{0.900}=0.1378\ \mathrm{m/s}\]</p><div class="final-answer">ตอบ / Final Answer: \(\boxed{v_t\approx0.138\ \mathrm{m/s}}\)</div></div></div>
+  </article>
+  <div class="success-box">ค่าที่ได้ต่ำกว่าข้อ 54 มาก สอดคล้องกับน้ำเชื่อมที่มีความหนืดสูงกว่าและให้แรงต้านมากกว่า<span class="en">This value is much smaller than in Question 54, consistent with syrup’s much greater viscosity and resistance.</span></div>
+  <div class="page-footer">14</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Final Summary</div>
+  <div class="section-title"><h2>สรุปท้ายเรื่อง</h2><span class="tag">Final Summary</span></div>
+  <table class="summary-table">
+    <thead><tr><th>แนวคิด</th><th>สมการหรือข้อสรุป</th><th>จุดที่มักสับสน</th></tr></thead>
+    <tbody>
+      <tr><td>ความตึงผิว</td><td>\(\gamma=F_\gamma/L\), \(F_\gamma=\gamma L\)</td><td>\(F_\gamma\) หน่วย N แต่ \(\gamma\) หน่วย N/m</td></tr>
+      <tr><td>ห่วงลวดบาง</td><td>\(L=4\pi r\)</td><td>ต้องนับแนวสัมผัสด้านในและด้านนอก</td></tr>
+      <tr><td>คานวัดความตึงผิว</td><td>\(W d_W=F d_F\), แล้วใช้ \(\gamma=F_\gamma/L\)</td><td>ต้องปรับศูนย์น้ำหนักห่วงก่อน หรือหักน้ำหนักห่วงออก</td></tr>
+      <tr><td>Capillary action</td><td>adhesion + cohesion + meniscus</td><td>การลำเลียงน้ำในพืชจริงไม่ได้เกิดจาก capillarity เพียงอย่างเดียว</td></tr>
+      <tr><td>กฎของสโตกส์</td><td>\(F_v=6\pi\eta rv\)</td><td>ใช้ภายใต้การไหลราบเรียบและ Reynolds ต่ำ</td></tr>
+      <tr><td>ความเร็วปลาย</td><td>\(mg=F_B+F_v\)</td><td>\(a=0\) แต่ \(v=v_t\neq0\)</td></tr>
+      <tr><td>สูตรความเร็วปลาย</td><td>\(v_t=\dfrac{2r^2g(\rho_s-\rho_f)}{9\eta}\)</td><td>\(v_t\propto r^2\), \(v_t\propto1/\eta\)</td></tr>
+    </tbody>
+  </table>
+  <div class="grid-2" style="margin-top:3mm">
+    <div class="card">
+      <h3>Exit Ticket</h3>
+      <ol class="clean-list">
+        <li>เหตุใดข้อ 47 จึงใช้ \(L=4\pi r\) ไม่ใช่ \(2\pi r\)?</li>
+        <li>แรงใดเพิ่มขึ้นเมื่อลูกกลมเร็วขึ้น?</li>
+        <li>ที่ความเร็วปลาย แรงสามแรงสัมพันธ์กันอย่างไร?</li>
+        <li>ถ้าเพิ่มรัศมีลูกกลมเป็น 2 เท่า \(v_t\) เปลี่ยนกี่เท่าในขอบเขตกฎของสโตกส์?</li>
+        <li>เหตุใดคำตอบข้อ 54 จึงต้องตรวจเงื่อนไขการใช้แบบจำลอง?</li>
+      </ol>
+      <span class="en">1) Why does Question 47 use \(L=4\pi r\)? 2) Which force increases with speed? 3) How do the three forces relate at terminal speed? 4) What happens to \(v_t\) if the radius doubles? 5) Why must the model assumptions be checked in Question 54?</span>
+    </div>
+    <div class="card">
+      <h3>คำตอบย่อข้อ 47–55 / Final Answers</h3>
+      <table class="mini-answer-table">
+        <thead><tr><th>ข้อ</th><th>คำตอบ</th></tr></thead>
+        <tbody>
+          <tr><td>47</td><td>\(0.0308\ \mathrm{N}\)</td></tr>
+          <tr><td>48</td><td>\(0.272\ \mathrm{N}\)</td></tr>
+          <tr><td>49</td><td>Adhesion ยึดผนัง; cohesion รักษาคอลัมน์น้ำ</td></tr>
+          <tr><td>50</td><td>\(\eta\) มาก → \(v_t\) น้อย</td></tr>
+          <tr><td>51</td><td>ลูกในน้ำ \(20^\circ\mathrm C\) ถึงก่อน</td></tr>
+          <tr><td>52</td><td>ตัวเลือก 1</td></tr>
+          <tr><td>53</td><td>ข้อความ 2 และ 4 → ตัวเลือก 4</td></tr>
+          <tr><td>54</td><td>\(14.8\ \mathrm{m/s}\) ตามแบบจำลอง</td></tr>
+          <tr><td>55</td><td>\(0.138\ \mathrm{m/s}\)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="warn-box"><strong>จำให้แม่น:</strong> ความเร็วปลายคือ “ความเร็วคงตัว” ไม่ใช่ “ความเร็วสุดท้ายก่อนหยุด”<span class="en"><strong>Remember:</strong> Terminal velocity is a constant limiting speed, not the final speed before stopping.</span></div>
+  <div class="page-footer">15</div>
+</section>
+
+<script>
+
+async function typesetReady(){ if(window.MathJax && MathJax.typesetPromise){ try{ await MathJax.typesetPromise(); }catch(err){ console.warn(err);} } }
+async function setMode(mode){ document.body.classList.remove('mode-student','mode-solution'); document.body.classList.add(mode); const status=document.getElementById('statusText'); if(status){ status.textContent = mode==='mode-solution' ? 'โหมดเฉลย: วิธีทำและคำตอบเติมลงในพื้นที่เดิม' : 'โหมดนักเรียน: ช่องเฉลยเป็นพื้นที่ว่างสำหรับแสดงวิธีทำ'; } await typesetReady(); }
+async function showSolutions(){ await setMode('mode-solution'); }
+async function hideSolutions(){ await setMode('mode-student'); }
+async function printStudent(){ await setMode('mode-student'); setTimeout(()=>window.print(),300); }
+async function printSolution(){ await setMode('mode-solution'); setTimeout(()=>window.print(),300); }
+function toggleHot(id){ const el=document.getElementById(id); if(el){ el.classList.toggle('open'); } }
+window.addEventListener('load', typesetReady);
+</script>
+</body>
+</html>
