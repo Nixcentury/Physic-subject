@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ความเร่งและเครื่องเคาะสัญญาณเวลา | Acceleration and Ticker-Tape Motion</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --paper-w:210mm;--paper-h:297mm;--pad-x:14mm;--pad-y:10mm;
+  --ink:#111827;--navy:#0f172a;--slate:#475569;--line:#cbd5e1;
+  --soft:#f8fafc;--hot:#fff7ed;--green:#166534;--amber:#92400e;
+}
+*{box-sizing:border-box}html,body{margin:0;padding:0}body{background:#e5e7eb;color:var(--ink);font-family:"K2D",Arial,sans-serif;font-size:12px;line-height:1.42}button,input{font-family:inherit}
+.toolbar{position:sticky;top:0;z-index:100;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;padding:10px 12px;background:var(--navy);color:#fff;box-shadow:0 4px 14px rgba(15,23,42,.25)}
+.toolbar button{border:0;border-radius:999px;padding:8px 14px;background:#fff;color:var(--navy);font-size:12px;font-weight:800;cursor:pointer}.toolbar .primary{background:#bae6fd;color:#082f49}.toolbar .gold{background:#fde68a;color:#78350f}.toolbar .status{flex-basis:100%;text-align:center;font-size:11px;opacity:.92}
+.screen-guide{width:min(var(--paper-w),calc(100vw - 24px));margin:14px auto 0;padding:10px 13px;border-radius:10px;background:#fff;box-shadow:0 10px 28px rgba(15,23,42,.12);font-size:11.5px}
+.sheet{width:min(var(--paper-w),calc(100vw - 24px));min-height:var(--paper-h);margin:16px auto 28px;padding:var(--pad-y) var(--pad-x);background:#fff;box-shadow:0 16px 42px rgba(15,23,42,.22);position:relative;overflow:hidden;page-break-after:always;break-after:page}
+.page-kicker{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--slate);margin-bottom:1.5mm}.page-footer{position:absolute;right:12mm;bottom:5mm;font-size:9px;color:#64748b}
+.hero{border:1.6px solid var(--navy);padding:5mm;margin-bottom:4mm;background:linear-gradient(135deg,#f8fafc 0%,#fff 70%)}.hero h1{margin:0;font-size:22px;line-height:1.15;font-weight:800}.hero .subtitle{margin-top:1.2mm;font-size:14px;color:var(--slate);font-weight:600}.hero .lead{margin:3mm 0 0;font-size:12.3px}
+.section-title{display:flex;align-items:center;justify-content:space-between;gap:4mm;margin:0 0 3mm;padding-bottom:1.8mm;border-bottom:1.5px solid var(--navy)}.section-title h2{margin:0;font-size:16px;line-height:1.2}.section-title .tag{border:1px solid var(--navy);border-radius:999px;padding:1mm 2.5mm;font-size:9.5px;font-weight:700;white-space:nowrap}
+.en{display:block;color:#374151;font-size:.89em;font-weight:400;margin-top:.5mm}.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:3mm}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:3mm}.two-questions{display:grid;grid-template-columns:1fr 1fr;gap:3mm}
+.card{border:1px solid var(--navy);padding:3.2mm;background:#fff;break-inside:avoid}.card h3{margin:0 0 1.6mm;font-size:13px;line-height:1.2}.card p{margin:1.2mm 0}.clean-list{margin:0;padding-left:5mm}.clean-list li{margin:1.2mm 0}
+.outcome-list{list-style:none;padding:0;margin:0;counter-reset:outcome}.outcome-list li{counter-increment:outcome;position:relative;padding-left:9mm;margin:2mm 0}.outcome-list li::before{content:counter(outcome);position:absolute;left:0;top:.1mm;width:6mm;height:6mm;border:1px solid var(--navy);border-radius:50%;display:grid;place-items:center;font-size:9px;font-weight:800}
+.checklist{display:grid;grid-template-columns:1fr 1fr;gap:2.2mm 4mm}.check-item{display:grid;grid-template-columns:6mm 1fr;gap:2mm;align-items:start;border-bottom:1px dotted #94a3b8;padding:1.6mm 0 2mm}.check-item input{width:4.5mm;height:4.5mm;margin-top:.4mm}
+.key-formula,.main-question{border:1.1px solid var(--navy);background:#f8fafc;padding:2.2mm 2.6mm;margin:2mm 0;font-weight:700}.hot-box{border:1.2px solid #f59e0b;background:var(--hot);padding:3mm}.hot-box h3{margin:0 0 1.3mm;font-size:13px;color:var(--amber)}.warn-box{border-left:4px solid #dc2626;background:#fef2f2;padding:2.2mm 2.5mm;margin-top:2mm}.note-box{border-left:4px solid #1d4ed8;background:#eff6ff;padding:2.2mm 2.5mm;margin-top:2mm}.success-box{border-left:4px solid #15803d;background:#f0fdf4;padding:2.2mm 2.5mm;margin-top:2mm}
+.hot-question{border:1.2px solid #f59e0b;background:#fffaf0;padding:3mm;margin:2.5mm 0;break-inside:avoid}.hot-question .hot-head{display:flex;justify-content:space-between;align-items:flex-start;gap:3mm}.hot-question h3{margin:0;font-size:13px;color:var(--amber)}.hot-toggle{border:1px solid #92400e;border-radius:999px;background:#fff;padding:1mm 2.5mm;font-size:9.5px;font-weight:800;cursor:pointer}.hot-answer{display:none;margin-top:2.5mm;border-top:1px dashed #d97706;padding-top:2.5mm}.hot-question.open .hot-answer{display:block}body.mode-solution .hot-answer{display:block}.vote-row{display:grid;grid-template-columns:1fr 1fr;gap:1.5mm 3mm;margin-top:2mm}.vote-option{border:1px solid #cbd5e1;padding:1.5mm 2mm;background:#fff}
+.concept-table,.summary-table,.data-table,.mini-answer-table{width:100%;border-collapse:collapse;table-layout:fixed}.concept-table th,.concept-table td,.summary-table th,.summary-table td,.data-table th,.data-table td,.mini-answer-table th,.mini-answer-table td{border:1px solid var(--navy);padding:1.7mm 2mm;vertical-align:top}.concept-table th,.summary-table th,.data-table th,.mini-answer-table th{background:#f1f5f9}.data-table{text-align:center;font-size:10.5px}.data-table td:first-child,.data-table th:first-child{font-weight:700}
+.diagram-card{border:1px solid var(--navy);padding:2mm;background:#fff;text-align:center;break-inside:avoid}.diagram-card svg{display:block;width:100%;height:auto;max-height:62mm}svg text{font-family:"K2D",Arial,sans-serif}
+.figure-stage{width:100%;border:1px solid #94a3b8;background:#fff;display:grid;place-items:center;overflow:hidden;margin:2mm auto;position:relative;padding:2mm}.figure-stage.small{height:32mm}.figure-stage.medium{height:44mm}.figure-stage.wide{height:51mm}.figure-stage.tall{height:63mm}.figure-stage img{display:block;width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;object-position:center center}.image-fallback{display:none;position:absolute;inset:0;place-items:center;padding:3mm;text-align:center;color:#64748b;font-size:10px;background:repeating-linear-gradient(135deg,#fff,#fff 8px,#f8fafc 8px,#f8fafc 16px)}
+.question{border:1.2px solid var(--navy);padding:3.5mm;margin:0;break-inside:avoid}.question-head{display:flex;align-items:flex-start;justify-content:space-between;gap:3mm;margin-bottom:1.5mm}.question-title{font-weight:800;font-size:13px}.level{border:1px solid var(--navy);border-radius:999px;padding:.8mm 2.2mm;font-size:9px;font-weight:700;white-space:nowrap}.problem-text{font-size:11.7px}.problem-text p{margin:1.2mm 0}.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2mm 4mm;margin:2mm 0}.choice{border-bottom:1px dotted #94a3b8;padding:1.1mm 0}
+.response-frame{position:relative;border:1px solid var(--navy);margin-top:3mm;padding:3mm;overflow:hidden;background:#fff}.response-frame::before{content:"พื้นที่แสดงวิธีทำ / Working area";position:absolute;top:-3.4mm;left:4mm;padding:0 2mm;background:#fff;font-size:9.8px;font-weight:700;z-index:3}.response-frame.xs{height:40mm}.response-frame.sm{height:50mm}.response-frame.md{height:66mm}.response-frame.lg{height:86mm}.response-frame.xl{height:108mm}.work-lines,.answer-layer{position:absolute;inset:3mm}.work-lines{background:repeating-linear-gradient(to bottom,transparent 0,transparent 8.6mm,#d1d5db 8.7mm,transparent 8.9mm);opacity:1}.answer-layer{visibility:hidden;opacity:0;overflow:hidden;font-size:10.7px;line-height:1.35}body.mode-solution .work-lines{visibility:hidden;opacity:0}body.mode-solution .answer-layer{visibility:visible;opacity:1}.answer-title{font-weight:800;color:var(--green);margin-bottom:1.4mm}.final-answer{border-left:3px solid var(--green);background:#f0fdf4;padding:1.6mm 2mm;margin-top:1.5mm;font-weight:800}
+.formula-chip{display:inline-block;border:1px solid var(--navy);border-radius:999px;padding:1mm 2.2mm;margin:1mm .6mm 0 0;font-size:10px;font-weight:700}.shared-note{font-size:10px;background:#f8fafc;border:1px dashed #64748b;padding:1.5mm 2mm;margin:2mm 0}
+@page{size:A4 portrait;margin:0}@media print{html,body{width:210mm;background:#fff!important}.toolbar,.screen-guide,.hot-toggle{display:none!important}.sheet{width:210mm!important;min-height:297mm!important;margin:0!important;box-shadow:none!important;overflow:hidden!important;page-break-after:always!important;break-after:page!important}*{color:#000!important;border-color:#000!important;box-shadow:none!important;text-shadow:none!important}body.mode-student .hot-answer{display:none!important}body.mode-solution .hot-answer{display:block!important}}
+</style>
+</head>
+<body class="mode-student">
+<div class="toolbar">
+  <button class="primary" onclick="printStudent()">🖨️ พิมพ์โจทย์</button>
+  <button class="gold" onclick="printSolution()">✅ พิมพ์พร้อมเฉลย</button>
+  <button onclick="showSolutions()">👁️ เปิดเฉลย</button>
+  <button onclick="hideSolutions()">🙈 ปิดเฉลย</button>
+  <div class="status" id="statusText">โหมดนักเรียน: ช่องเฉลยและแนวอภิปรายถูกซ่อน</div>
+</div>
+<div class="screen-guide">บทเรียน A4 สองภาษาเรื่อง <strong>ความเร่งและเครื่องเคาะสัญญาณเวลา</strong> • เน้นนิยามความเร่ง, อัตราเร็วคงที่แต่มีความเร่ง, HOT questions สำหรับถามในห้อง, เครื่องเคาะ 50 Hz, ตัวอย่างจำลองค่า $g$, และโจทย์ข้อ 13–23</div>
+
+<!-- PAGE 1 -->
+<section class="sheet">
+  <div class="page-kicker">PEC9 Physics • Motion • Part 3</div>
+  <div class="hero">
+    <h1>ความเร่งและเครื่องเคาะสัญญาณเวลา</h1>
+    <div class="subtitle">Acceleration and Ticker-Tape Motion</div>
+    <p class="lead">วัตถุมีความเร่งเมื่อเวกเตอร์ความเร็วเปลี่ยน ไม่ว่าจะเปลี่ยนขนาด เปลี่ยนทิศทาง หรือเปลี่ยนทั้งสองอย่าง<span class="en">An object accelerates whenever its velocity vector changes in magnitude, direction, or both.</span></p>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="section-title"><h2>สาระการเรียนรู้</h2><span class="tag">Learning Content</span></div>
+      <ul class="clean-list">
+        <li>นิยามของความเร่งและหน่วย<span class="en">Definition and unit of acceleration</span></li>
+        <li>การเปลี่ยนขนาดและทิศทางของความเร็ว<span class="en">Changes in velocity magnitude and direction</span></li>
+        <li>ทิศของ $\vec v$ และ $\vec a$ กับการเร็วขึ้น–ช้าลง<span class="en">Directions of $\vec v$ and $\vec a$ in speeding up and slowing down</span></li>
+        <li>อัตราเร็วคงที่แต่ยังมีความเร่ง<span class="en">Constant speed with nonzero acceleration</span></li>
+        <li>หลักการเครื่องเคาะสัญญาณเวลา 50 Hz<span class="en">The 50 Hz ticker-timer principle</span></li>
+        <li>การอ่านความเร็วและความเร่งจากแถบกระดาษ<span class="en">Reading speed and acceleration from ticker tape</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="section-title"><h2>ผลการเรียนรู้ที่คาดหวัง</h2><span class="tag">Expected Outcomes</span></div>
+      <ol class="outcome-list">
+        <li>ให้นิยามความเร่งได้ถูกต้อง<span class="en">Define acceleration correctly.</span></li>
+        <li>อธิบายได้ว่าอัตราเร็วคงที่ยังมีความเร่งได้<span class="en">Explain how constant speed can coexist with acceleration.</span></li>
+        <li>ตัดสินการเร็วขึ้นหรือช้าลงจากทิศ $\vec v$ และ $\vec a$ ได้<span class="en">Decide whether an object speeds up or slows down from $\vec v$ and $\vec a$.</span></li>
+        <li>คำนวณความเร่งเฉลี่ยได้<span class="en">Calculate average acceleration.</span></li>
+        <li>นับช่วงเวลาบนแถบกระดาษและอ่านการเคลื่อนที่ได้<span class="en">Count time intervals and interpret ticker-tape motion.</span></li>
+      </ol>
+    </div>
+  </div>
+  <div class="page-footer">1</div>
+</section>
+
+<!-- PAGE 2 -->
+<section class="sheet">
+  <div class="page-kicker">Student Checklist</div>
+  <div class="section-title"><h2>เช็กลิสต์นักเรียน</h2><span class="tag">Student Checklist</span></div>
+  <div class="checklist">
+    <label class="check-item"><input type="checkbox"><span>ฉันรู้ว่าความเร่งคือการเปลี่ยนแปลงของความเร็วต่อเวลา<span class="en">I know that acceleration is the rate of change of velocity.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันรู้ว่าความเร็วเป็นเวกเตอร์<span class="en">I know that velocity is a vector.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันไม่คิดว่า $a>0$ หมายถึงเร็วขึ้นเสมอ<span class="en">I do not assume that $a>0$ always means speeding up.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันไม่คิดว่า $a<0$ หมายถึงช้าลงเสมอ<span class="en">I do not assume that $a<0$ always means slowing down.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันอธิบายวงกลมที่อัตราเร็วคงที่แต่มีความเร่งได้<span class="en">I can explain circular motion with constant speed but nonzero acceleration.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันรู้ว่า 50 Hz หมายถึง 50 จุดต่อวินาที<span class="en">I know that 50 Hz means 50 dots per second.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันนับช่องระหว่างจุด ไม่ใช่นับจำนวนจุดตรง ๆ<span class="en">I count intervals between dots, not simply the number of dots.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันอ่านเทปว่าเร็วคงที่ เร็วขึ้น หรือช้าลงได้<span class="en">I can identify constant speed, speeding up, and slowing down from ticker tape.</span></span></label>
+  </div>
+  <div class="hot-question" id="hot-start">
+    <div class="hot-head"><h3>คำถามนำ / Opening Question</h3><button class="hot-toggle" onclick="toggleHot('hot-start',this)">เปิดแนวอภิปราย</button></div>
+    <p>คำว่า “มีความเร่ง” หมายความว่าวัตถุต้องเคลื่อนที่เร็วขึ้นเสมอหรือไม่?<span class="en">Does “having acceleration” always mean that an object must be speeding up?</span></p>
+    <div class="hot-answer"><strong>แนวอภิปราย:</strong> ไม่เสมอ วัตถุอาจช้าลง หรืออาจคงอัตราเร็วแต่เปลี่ยนทิศทางได้ ทั้งหมดนี้ทำให้เวกเตอร์ความเร็วเปลี่ยน<span class="en"><strong>Discussion:</strong> Not always. An object may slow down, or it may keep the same speed while changing direction. In all cases, the velocity vector changes.</span></div>
+  </div>
+  <div class="page-footer">2</div>
+</section>
+
+<!-- PAGE 3 -->
+<section class="sheet">
+  <div class="page-kicker">Core Concept</div>
+  <div class="section-title"><h2>ความเร็วเปลี่ยนได้อย่างไร</h2><span class="tag">How Velocity Changes</span></div>
+  <div class="grid-3">
+    <div class="card"><h3>1. ขนาดเปลี่ยน ทิศเดิม</h3><p>เช่น รถวิ่งตรงแล้วเร็วขึ้นหรือช้าลง<span class="en">A car moves straight and changes speed.</span></p></div>
+    <div class="card"><h3>2. ขนาดเดิม ทิศเปลี่ยน</h3><p>เช่น การเคลื่อนที่เป็นวงกลมด้วยอัตราเร็วคงที่<span class="en">Uniform circular motion at constant speed.</span></p></div>
+    <div class="card"><h3>3. ทั้งขนาดและทิศเปลี่ยน</h3><p>เช่น รถเลี้ยวโค้งพร้อมเร่งเครื่อง<span class="en">A car turns while increasing speed.</span></p></div>
+  </div>
+  <div class="key-formula" style="margin-top:3mm;">\[
+\vec a_{\text{avg}}=\frac{\Delta\vec v}{\Delta t}=\frac{\vec v_f-\vec v_i}{\Delta t}
+\]</div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>นิยาม / Definition</h3>
+      <p>ความเร่งคืออัตราการเปลี่ยนแปลงของเวกเตอร์ความเร็วต่อเวลา<span class="en">Acceleration is the rate of change of the velocity vector with time.</span></p>
+      <p><strong>หน่วย SI:</strong> $\mathrm{m/s^2}$</p>
+    </div>
+    <div class="card">
+      <h3>ความหมายของหน่วย</h3>
+      <p>$3\ \mathrm{m/s^2}$ หมายถึงความเร็วเปลี่ยนไป $3\ \mathrm{m/s}$ ในทุก ๆ $1\ \mathrm{s}$ เมื่อความเร่งคงที่<span class="en">$3\ \mathrm{m/s^2}$ means velocity changes by $3\ \mathrm{m/s}$ every second when acceleration is constant.</span></p>
+    </div>
+  </div>
+  <div class="warn-box"><strong>แก้ความเข้าใจผิด:</strong> ความเร่งไม่ใช่เพียง “อัตราที่อัตราเร็วเพิ่มขึ้น” แต่คือการเปลี่ยนของ <strong>เวกเตอร์ความเร็ว</strong><span class="en"><strong>Correction:</strong> Acceleration is not merely “how quickly speed increases”; it is the change of the <strong>velocity vector</strong>.</span></div>
+  <div class="page-footer">3</div>
+</section>
+
+<!-- PAGE 4 -->
+<section class="sheet">
+  <div class="page-kicker">HOT Question • Circular Motion</div>
+  <div class="hot-question" id="hot-circle">
+    <div class="hot-head"><h3>HOT 1 — อัตราเร็วคงที่ แต่มีความเร่งหรือไม่?</h3><button class="hot-toggle" onclick="toggleHot('hot-circle',this)">เปิดแนวอภิปราย</button></div>
+    <p>รถเคลื่อนที่รอบวงกลมด้วยอัตราเร็วคงที่ รถมีความเร่งหรือไม่?<span class="en">A car travels around a circle at constant speed. Does it have acceleration?</span></p>
+    <div class="vote-row">
+      <div class="vote-option">1. ไม่มี เพราะอัตราเร็วคงที่</div><div class="vote-option">2. มี เพราะทิศของความเร็วเปลี่ยน</div>
+      <div class="vote-option">3. มีเฉพาะตอนเริ่มและหยุด</div><div class="vote-option">4. ข้อมูลไม่เพียงพอ</div>
+    </div>
+    <div class="hot-answer">
+      <div class="diagram-card">
+        <svg viewBox="0 0 700 300" aria-label="constant speed circular motion with changing velocity direction">
+          <defs><marker id="arrC" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><polygon points="0,0 8,4 0,8" fill="#111"/></marker><marker id="arrB" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><polygon points="0,0 8,4 0,8" fill="#2563eb"/></marker></defs>
+          <circle cx="350" cy="155" r="105" fill="none" stroke="#111" stroke-width="3"/>
+          <circle cx="350" cy="155" r="5" fill="#111"/><text x="360" y="160" font-size="17">ศูนย์กลาง</text>
+          <circle cx="260" cy="100" r="8" fill="#111"/><circle cx="430" cy="95" r="8" fill="#111"/>
+          <line x1="260" y1="100" x2="310" y2="35" stroke="#111" stroke-width="4" marker-end="url(#arrC)"/><text x="255" y="38" font-size="19">$\\vec v_1$</text>
+          <line x1="430" y1="95" x2="490" y2="145" stroke="#111" stroke-width="4" marker-end="url(#arrC)"/><text x="494" y="150" font-size="19">$\\vec v_2$</text>
+          <line x1="260" y1="100" x2="342" y2="151" stroke="#2563eb" stroke-width="4" marker-end="url(#arrB)"/><text x="274" y="148" font-size="18" fill="#2563eb">$\\vec a$</text>
+          <line x1="430" y1="95" x2="358" y2="150" stroke="#2563eb" stroke-width="4" marker-end="url(#arrB)"/>
+        </svg>
+      </div>
+      <p>$|\vec v_1|=|\vec v_2|$ แต่อยู่คนละทิศ จึงมี $\Delta\vec v\neq0$ และมีความเร่งชี้เข้าสู่ศูนย์กลาง<span class="en">The speeds are equal, but the velocity directions differ. Therefore $\Delta\vec v\neq0$, and the acceleration points toward the centre.</span></p>
+      <div class="final-answer">สรุป / Conclusion: $\boxed{\text{อัตราเร็วคงที่ ไม่ได้แปลว่า ความเร็วคงที่}}$</div>
+    </div>
+  </div>
+  <div class="note-box">ช่วงนี้เน้นแนวคิด ยังไม่ต้องใช้สูตรความเร่งสู่ศูนย์กลาง<span class="en">This section focuses on the concept; the centripetal-acceleration formula is not required yet.</span></div>
+  <div class="page-footer">4</div>
+</section>
+
+<!-- PAGE 5 -->
+<section class="sheet">
+  <div class="page-kicker">Direction of Velocity and Acceleration</div>
+  <div class="section-title"><h2>ทิศของ $\vec v$ และ $\vec a$</h2><span class="tag">Direction Check</span></div>
+  <table class="concept-table">
+    <thead><tr><th>ความเร็ว</th><th>ความเร่ง</th><th>การเคลื่อนที่</th></tr></thead>
+    <tbody>
+      <tr><td>$v>0$</td><td>$a>0$</td><td>ไปทางบวกและเร็วขึ้น<span class="en">Moves in the positive direction and speeds up.</span></td></tr>
+      <tr><td>$v>0$</td><td>$a<0$</td><td>ไปทางบวกแต่ช้าลง<span class="en">Moves in the positive direction but slows down.</span></td></tr>
+      <tr><td>$v<0$</td><td>$a<0$</td><td>ไปทางลบและเร็วขึ้น<span class="en">Moves in the negative direction and speeds up.</span></td></tr>
+      <tr><td>$v<0$</td><td>$a>0$</td><td>ไปทางลบแต่ช้าลง<span class="en">Moves in the negative direction but slows down.</span></td></tr>
+    </tbody>
+  </table>
+  <div class="grid-2" style="margin-top:3mm;">
+    <div class="success-box"><strong>ทิศเดียวกัน:</strong> $\vec v$ และ $\vec a$ ทิศเดียวกัน $\Rightarrow$ อัตราเร็วเพิ่ม<span class="en">Same direction $\Rightarrow$ speed increases.</span></div>
+    <div class="warn-box"><strong>ทิศตรงข้าม:</strong> $\vec v$ และ $\vec a$ ทิศตรงข้าม $\Rightarrow$ อัตราเร็วลด<span class="en">Opposite directions $\Rightarrow$ speed decreases.</span></div>
+  </div>
+  <div class="hot-question" id="hot-elevator">
+    <div class="hot-head"><h3>HOT 2 — ลิฟต์ขึ้นแต่ช้าลง</h3><button class="hot-toggle" onclick="toggleHot('hot-elevator',this)">เปิดแนวอภิปราย</button></div>
+    <p>ลิฟต์กำลังเคลื่อนที่ขึ้น แต่ช้าลงอย่างสม่ำเสมอ ความเร็วและความเร่งชี้ทิศใด?<span class="en">An elevator is moving upward but slowing down uniformly. In which directions do velocity and acceleration point?</span></p>
+    <div class="hot-answer">
+      <div class="diagram-card">
+        <svg viewBox="0 0 650 230" aria-label="elevator moving upward and accelerating downward">
+          <defs><marker id="arrE1" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><polygon points="0,0 8,4 0,8" fill="#111"/></marker><marker id="arrE2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><polygon points="0,0 8,4 0,8" fill="#2563eb"/></marker></defs>
+          <rect x="250" y="45" width="150" height="140" fill="#fff" stroke="#111" stroke-width="3"/><line x1="325" y1="45" x2="325" y2="185" stroke="#111" stroke-width="2"/>
+          <line x1="185" y1="150" x2="185" y2="50" stroke="#111" stroke-width="4" marker-end="url(#arrE1)"/><text x="120" y="110" font-size="20">$\\vec v$ ขึ้น</text>
+          <line x1="465" y1="70" x2="465" y2="175" stroke="#2563eb" stroke-width="4" marker-end="url(#arrE2)"/><text x="480" y="125" font-size="20" fill="#2563eb">$\\vec a$ ลง</text>
+        </svg>
+      </div>
+      <p>กำหนดขึ้นเป็นบวก จะได้ $v>0$ แต่ $a<0$ เพราะความเร่งสวนทางกับความเร็ว วัตถุจึงช้าลง<span class="en">Taking upward as positive gives $v>0$ but $a<0$. The acceleration opposes the velocity, so the elevator slows down.</span></p>
+    </div>
+  </div>
+  <div class="page-footer">5</div>
+</section>
+
+<!-- PAGE 6 -->
+<section class="sheet">
+  <div class="page-kicker">Practice • Questions 13–14</div>
+  <div class="two-questions">
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 13 / Question 13</div><div class="level">Average Acceleration</div></div>
+      <div class="problem-text">รถวิ่งในแนวเส้นตรงด้วยความเร็ว $10\ \mathrm{m/s}$ แล้วเพิ่มเป็น $15\ \mathrm{m/s}$ ในเวลา $1.5\ \mathrm{s}$ จงหาความเร่งเฉลี่ย<span class="en">A car moves in a straight line. Its velocity increases from $10\ \mathrm{m/s}$ to $15\ \mathrm{m/s}$ in $1.5\ \mathrm{s}$. Find its average acceleration.</span></div>
+      <div class="response-frame md"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">วิธีทำ / Solution</div><p>\[a_{\text{avg}}=\frac{v_f-v_i}{\Delta t}\]</p><p>\[a_{\text{avg}}=\frac{15-10}{1.5}=3.33\ \mathrm{m/s^2}\]</p><div class="final-answer">$\boxed{a_{\text{avg}}\approx3.3\ \mathrm{m/s^2}}$</div></div></div>
+    </article>
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 14 / Question 14</div><div class="level">Find Time</div></div>
+      <div class="problem-text">วัตถุมีความเร่ง $10\ \mathrm{m/s^2}$ ต้องใช้เวลานานเท่าใดในการเปลี่ยนความเร็วจาก $20\ \mathrm{m/s}$ เป็น $50\ \mathrm{m/s}$<span class="en">An object accelerates at $10\ \mathrm{m/s^2}$. How long does it take to change velocity from $20\ \mathrm{m/s}$ to $50\ \mathrm{m/s}$?</span></div>
+      <div class="choice-grid"><div class="choice">ก. $2\ \mathrm{s}$</div><div class="choice">ข. $3\ \mathrm{s}$</div><div class="choice">ค. $5\ \mathrm{s}$</div><div class="choice">ง. $7\ \mathrm{s}$</div></div>
+      <div class="response-frame md"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">วิธีทำ / Solution</div><p>\[\Delta t=\frac{v_f-v_i}{a}=\frac{50-20}{10}=3\ \mathrm{s}\]</p><div class="final-answer">ตอบ ข. / Choice B: $\boxed{3\ \mathrm{s}}$</div></div></div>
+    </article>
+  </div>
+  <div class="page-footer">6</div>
+</section>
+
+<!-- PAGE 7 -->
+<section class="sheet">
+  <div class="page-kicker">Practice • Questions 15–16</div>
+  <div class="two-questions">
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 15 / Question 15</div><div class="level">Table Data</div></div>
+      <div class="problem-text">จักรยานมีอัตราเร็วดังตาราง จงหาความเร่ง<span class="en">A bicycle has the speeds shown in the table. Find its acceleration.</span></div>
+      <table class="data-table"><tr><th>อัตราเร็ว (m/s)</th><td>10</td><td>8</td><td>6</td><td>4</td><td>2</td><td>0</td></tr><tr><th>เวลา (s)</th><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td></tr></table>
+      <div class="response-frame md"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">วิธีทำ / Solution</div><p>\[a=\frac{v_f-v_i}{\Delta t}=\frac{0-10}{5-0}\]</p><p>\[a=-2\ \mathrm{m/s^2}\]</p><p>เครื่องหมายลบแสดงว่าความเร่งชี้สวนทางกับทิศบวกที่กำหนด และในกรณีนี้ทำให้อัตราเร็วลดลง<span class="en">The negative sign indicates acceleration opposite to the positive direction; here, the speed decreases.</span></p><div class="final-answer">$\boxed{-2\ \mathrm{m/s^2}}$</div></div></div>
+    </article>
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 16 / Question 16</div><div class="level">Direction Reasoning</div></div>
+      <div class="problem-text">ลิฟต์กำลังเคลื่อนที่ขึ้นด้วยความเร็วที่ลดลงอย่างสม่ำเสมอ ความเร่งเป็นอย่างไร พร้อมให้เหตุผล<span class="en">An elevator is moving upward while its speed decreases uniformly. Describe its acceleration and explain.</span></div>
+      <div class="response-frame md"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">แนวตอบ / Explanation</div><p>ความเร็วของลิฟต์ชี้ขึ้น แต่เพราะลิฟต์ช้าลง ความเร่งต้องชี้สวนทางกับความเร็ว จึงชี้ลง<span class="en">The elevator's velocity points upward. Since it is slowing down, acceleration must oppose the velocity and therefore points downward.</span></p><div class="final-answer">$\boxed{\vec a\text{ ชี้ลง / points downward}}$</div></div></div>
+    </article>
+  </div>
+  <div class="page-footer">7</div>
+</section>
+
+<!-- PAGE 8 -->
+<section class="sheet">
+  <div class="page-kicker">Laboratory Tool</div>
+  <div class="section-title"><h2>รู้จักเครื่องเคาะสัญญาณเวลา</h2><span class="tag">Ticker Timer</span></div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="figure-stage tall"><img data-files="ticker-timer.png,Ticker Timer.png,ticker timer.png,เครื่องเคาะสัญญาณเวลา.png" data-fallback-url="https://quizizz.com/media/resource/gs/quizizz-media/quizzes/a28a2312-fd44-4de1-863e-21b8f8becf1c" alt="เครื่องเคาะสัญญาณเวลา / ticker timer"><div class="image-fallback">รูปเครื่องเคาะสัญญาณเวลา<br>Ticker timer image</div></div>
+    </div>
+    <div class="card">
+      <h3>หลักการทำงาน / Principle</h3>
+      <p>เครื่องทำจุดบนแถบกระดาษในช่วงเวลาเท่ากัน ขณะที่วัตถุดึงเทปผ่านเครื่อง<span class="en">The timer makes dots at equal time intervals while a moving object pulls the tape through the device.</span></p>
+      <div class="key-formula">\[
+f=50\ \mathrm{Hz}\Rightarrow \Delta t_{\text{dot}}=\frac{1}{50}=0.02\ \mathrm{s}
+\]</div>
+      <p><span class="formula-chip">50 จุดต่อวินาที</span><span class="formula-chip">0.02 s ต่อหนึ่งช่อง</span></p>
+    </div>
+  </div>
+  <div class="diagram-card" style="margin-top:3mm;">
+    <svg viewBox="0 0 820 170" aria-label="six dots equal five time intervals">
+      <line x1="90" y1="70" x2="730" y2="70" stroke="#111" stroke-width="2"/>
+      <circle cx="110" cy="70" r="8" fill="#111"/><circle cx="230" cy="70" r="8" fill="#111"/><circle cx="350" cy="70" r="8" fill="#111"/><circle cx="470" cy="70" r="8" fill="#111"/><circle cx="590" cy="70" r="8" fill="#111"/><circle cx="710" cy="70" r="8" fill="#111"/>
+      <text x="150" y="112" font-size="18">1</text><text x="270" y="112" font-size="18">2</text><text x="390" y="112" font-size="18">3</text><text x="510" y="112" font-size="18">4</text><text x="630" y="112" font-size="18">5</text>
+      <text x="260" y="145" font-size="20">6 จุด = 5 ช่องเวลา = 5(0.02) = 0.10 s</text>
+    </svg>
+  </div>
+  <div class="warn-box"><strong>จุดที่เด็กชอบพลาด:</strong> ต้องนับจำนวน <strong>ช่องระหว่างจุด</strong> ไม่ใช่นับจำนวนจุดตรง ๆ<span class="en"><strong>Common mistake:</strong> Count the <strong>intervals between dots</strong>, not the dots themselves.</span></div>
+  <div class="page-footer">8</div>
+</section>
+
+<!-- PAGE 9 -->
+<section class="sheet">
+  <div class="page-kicker">Reading Ticker Tape</div>
+  <div class="section-title"><h2>อ่านลักษณะการเคลื่อนที่จากแถบกระดาษ</h2><span class="tag">Motion Patterns</span></div>
+  <div class="grid-3">
+    <div class="card"><h3>A. ระยะเท่ากัน</h3><div class="diagram-card"><svg viewBox="0 0 300 100"><circle cx="35" cy="50" r="7"/><circle cx="90" cy="50" r="7"/><circle cx="145" cy="50" r="7"/><circle cx="200" cy="50" r="7"/><circle cx="255" cy="50" r="7"/></svg></div><p><strong>อัตราเร็วคงที่</strong><span class="en">Constant speed</span></p></div>
+    <div class="card"><h3>B. ระยะเพิ่มขึ้น</h3><div class="diagram-card"><svg viewBox="0 0 300 100"><circle cx="28" cy="50" r="7"/><circle cx="62" cy="50" r="7"/><circle cx="112" cy="50" r="7"/><circle cx="180" cy="50" r="7"/><circle cx="270" cy="50" r="7"/></svg></div><p><strong>อัตราเร็วเพิ่มขึ้น</strong><span class="en">Speeding up</span></p></div>
+    <div class="card"><h3>C. ระยะลดลง</h3><div class="diagram-card"><svg viewBox="0 0 300 100"><circle cx="28" cy="50" r="7"/><circle cx="118" cy="50" r="7"/><circle cx="186" cy="50" r="7"/><circle cx="236" cy="50" r="7"/><circle cx="270" cy="50" r="7"/></svg></div><p><strong>อัตราเร็วลดลง</strong><span class="en">Slowing down</span></p></div>
+  </div>
+  <div class="hot-question" id="hot-tape">
+    <div class="hot-head"><h3>HOT 3 — ระยะห่างเท่ากัน แต่ทิศต่างกัน</h3><button class="hot-toggle" onclick="toggleHot('hot-tape',this)">เปิดแนวอภิปราย</button></div>
+    <p>แถบกระดาษสองเส้นมีระยะห่างระหว่างจุดเท่ากันทุกช่อง แต่แถบหนึ่งเคลื่อนไปขวา อีกแถบเคลื่อนไปซ้าย วัตถุทั้งสองมีความเร็วเท่ากันหรือไม่?<span class="en">Two tapes have equal spacing, but one object moves right and the other moves left. Do they have equal velocities?</span></p>
+    <div class="hot-answer"><p>อัตราเร็วอาจเท่ากัน เพราะขนาดการเคลื่อนที่ต่อเวลาเท่ากัน แต่ความเร็วไม่เท่ากัน เพราะทิศทางต่างกัน<span class="en">Their speeds may be equal, but their velocities are not equal because the directions differ.</span></p></div>
+  </div>
+  <div class="page-footer">9</div>
+</section>
+
+<!-- PAGE 10 -->
+<section class="sheet">
+  <div class="page-kicker">Classroom Example • Simulated g Experiment</div>
+  <div class="section-title"><h2>ตัวอย่างผลการทดลองจำลองเพื่อหาค่า $g$</h2><span class="tag">Simulated Results</span></div>
+  <p>เครื่องเคาะมีความถี่ $50\ \mathrm{Hz}$ จึงมีเวลา $0.02\ \mathrm{s}$ ต่อหนึ่งช่อง ถ้าแบ่งเทปเป็นช่วงละ 5 ช่อง จะได้เวลาในแต่ละช่วงเท่ากับ $0.10\ \mathrm{s}$<span class="en">A 50 Hz timer gives $0.02\ \mathrm{s}$ per interval. Grouping five intervals gives $0.10\ \mathrm{s}$ per section.</span></p>
+  <table class="data-table">
+    <thead><tr><th>ช่วง</th><th>เวลากึ่งกลาง (s)</th><th>ระยะใน 0.10 s (m)</th><th>ความเร็วเฉลี่ย (m/s)</th></tr></thead>
+    <tbody><tr><td>1</td><td>0.05</td><td>0.049</td><td>0.49</td></tr><tr><td>2</td><td>0.15</td><td>0.147</td><td>1.47</td></tr><tr><td>3</td><td>0.25</td><td>0.245</td><td>2.45</td></tr><tr><td>4</td><td>0.35</td><td>0.343</td><td>3.43</td></tr><tr><td>5</td><td>0.45</td><td>0.441</td><td>4.41</td></tr></tbody>
+  </table>
+  <div class="hot-question" id="hot-g">
+    <div class="hot-head"><h3>ตรวจความเข้าใจจากตาราง</h3><button class="hot-toggle" onclick="toggleHot('hot-g',this)">เปิดเฉลยตัวอย่าง</button></div>
+    <ol class="clean-list"><li>ระยะในแต่ละช่วงเปลี่ยนอย่างไร?</li><li>ความเร็วเฉลี่ยเปลี่ยนอย่างไร?</li><li>ความเร็วเพิ่มขึ้นเท่ากันทุก $0.10\ \mathrm{s}$ หรือไม่?</li><li>ประมาณค่า $g$ ได้เท่าใด?</li></ol>
+    <div class="hot-answer">
+      <p>ผลต่างของความเร็วแต่ละคู่ติดกันคือ</p>
+      <p>\[1.47-0.49=2.45-1.47=3.43-2.45=4.41-3.43=0.98\ \mathrm{m/s}\]</p>
+      <p>ความเร็วเพิ่มขึ้น $0.98\ \mathrm{m/s}$ ทุก $0.10\ \mathrm{s}$ ดังนั้น</p>
+      <p>\[g\approx\frac{0.98}{0.10}=9.8\ \mathrm{m/s^2}\]</p>
+      <div class="final-answer">$\boxed{g\approx9.8\ \mathrm{m/s^2}}$</div>
+    </div>
+  </div>
+  <div class="note-box">นี่เป็นตัวอย่างเสริมในห้องเรียน เพื่อเชื่อม “ระยะบนเทป” ไปสู่ “ความเร็ว” และ “ความเร่ง” ก่อนเข้าสู่การทดลองจริง<span class="en">This classroom example connects tape distances to velocity and acceleration before a real experiment.</span></div>
+  <div class="page-footer">10</div>
+</section>
+
+<!-- PAGE 11 -->
+<section class="sheet">
+  <div class="page-kicker">Practice • Question 17</div>
+  <article class="question">
+    <div class="question-head"><div class="question-title">ข้อ 17 / Question 17</div><div class="level">Average Speed from Tape</div></div>
+    <div class="problem-text">ลากแถบกระดาษผ่านเครื่องเคาะสัญญาณเวลาชนิด 50 ครั้งต่อวินาที ได้จุดดังรูป จงหาอัตราเร็วเฉลี่ยระหว่าง $A$ ถึง $B$<span class="en">A tape passes through a 50 Hz ticker timer. Find the average speed between $A$ and $B$.</span></div>
+    <div class="figure-stage wide"><img data-files="17.png,Q17.png,q17.png" alt="Ticker tape for Question 17"><div class="image-fallback">รูปข้อ 17 / Question 17 image<br>ไฟล์ 17.png</div></div>
+    <div class="response-frame lg"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">วิธีทำ / Detailed Solution</div><p>ระยะ $A$ ถึง $B$ เท่ากับ $8\ \mathrm{cm}=0.08\ \mathrm{m}$ และจากรูปมี 5 ช่องเวลา</p><p>\[\Delta t=5\left(\frac{1}{50}\right)=5(0.02)=0.10\ \mathrm{s}\]</p><p>\[v_{\text{avg}}=\frac{d}{\Delta t}=\frac{0.08}{0.10}=0.8\ \mathrm{m/s}\]</p><div class="final-answer">$\boxed{0.8\ \mathrm{m/s}}$</div></div></div>
+  </article>
+  <div class="page-footer">11</div>
+</section>
+
+<!-- PAGE 12 -->
+<section class="sheet">
+  <div class="page-kicker">Shared Data • Questions 18–20</div>
+  <div class="section-title"><h2>รูปข้อมูลร่วมสำหรับข้อ 18–22</h2><span class="tag">Shared Diagram</span></div>
+  <div class="figure-stage wide"><img data-files="18.png,Q18.png,q18.png,18-22.png" alt="Shared ticker tape for Questions 18 to 22"><div class="image-fallback">รูปข้อมูลร่วมข้อ 18–22<br>Shared image 18.png</div></div>
+  <div class="shared-note">เครื่องเคาะ 50 ครั้งต่อวินาที: หนึ่งช่องเวลา $=0.02\ \mathrm{s}$ • ตำแหน่ง $x_A=1.2\ \mathrm{cm}$, $x_B=2.5\ \mathrm{cm}$, $x_C=6.2\ \mathrm{cm}$, $x_D=12.0\ \mathrm{cm}$</div>
+  <div class="grid-3">
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 18</div><div class="level">A to D</div></div>
+      <div class="problem-text">อัตราเร็วเฉลี่ยระหว่าง $A$ และ $D$ เป็นเท่าใด?<span class="en">Find the average speed from $A$ to $D$.</span></div>
+      <div class="choice-grid"><div class="choice">1. 0.3</div><div class="choice">2. 0.6</div><div class="choice">3. 0.9</div><div class="choice">4. 1.2</div></div>
+      <div class="response-frame sm"><div class="work-lines"></div><div class="answer-layer"><p>\[d=12.0-1.2=10.8\ \mathrm{cm}=0.108\ \mathrm{m}\]</p><p>6 ช่อง $\Rightarrow \Delta t=0.12\ \mathrm{s}$</p><p>\[v=\frac{0.108}{0.12}=0.90\ \mathrm{m/s}\]</p><div class="final-answer">ข้อ 3</div></div></div>
+    </article>
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 19</div><div class="level">Speed at B</div></div>
+      <div class="problem-text">อัตราเร็วที่จุด $B$ เป็นเท่าใด?<span class="en">Find the speed at point $B$.</span></div>
+      <div class="choice-grid"><div class="choice">1. 0.625</div><div class="choice">2. 0.75</div><div class="choice">3. 0.90</div><div class="choice">4. 1.25</div></div>
+      <div class="response-frame sm"><div class="work-lines"></div><div class="answer-layer"><p>ใช้ช่วงคร่อม $B$ จาก $A$ ถึง $C$</p><p>\[d=6.2-1.2=5.0\ \mathrm{cm}=0.050\ \mathrm{m}\]</p><p>4 ช่อง $\Rightarrow \Delta t=0.08\ \mathrm{s}$</p><p>\[v_B\approx\frac{0.050}{0.08}=0.625\ \mathrm{m/s}\]</p><div class="final-answer">ข้อ 1</div></div></div>
+    </article>
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 20</div><div class="level">Speed at C</div></div>
+      <div class="problem-text">อัตราเร็วที่จุด $C$ เป็นเท่าใด?<span class="en">Find the speed at point $C$.</span></div>
+      <div class="choice-grid"><div class="choice">1. 0.3</div><div class="choice">2. 0.6</div><div class="choice">3. 0.9</div><div class="choice">4. 1.2</div></div>
+      <div class="response-frame sm"><div class="work-lines"></div><div class="answer-layer"><p>ใช้ช่วงคร่อม $C$ จาก $B$ ถึง $D$</p><p>\[d=12.0-2.5=9.5\ \mathrm{cm}=0.095\ \mathrm{m}\]</p><p>4 ช่อง $\Rightarrow \Delta t=0.08\ \mathrm{s}$</p><p>\[v_C\approx\frac{0.095}{0.08}=1.19\approx1.2\ \mathrm{m/s}\]</p><div class="final-answer">ข้อ 4</div></div></div>
+    </article>
+  </div>
+  <div class="page-footer">12</div>
+</section>
+
+<!-- PAGE 13 -->
+<section class="sheet">
+  <div class="page-kicker">Shared Data • Questions 21–22</div>
+  <div class="section-title"><h2>ใช้รูปข้อมูลร่วมข้อ 18–22</h2><span class="tag">Same Image File</span></div>
+  <div class="figure-stage medium"><img data-files="18.png,Q18.png,q18.png,18-22.png" alt="Shared ticker tape for Questions 18 to 22"><div class="image-fallback">รูปข้อมูลร่วมข้อ 18–22<br>Shared image 18.png</div></div>
+  <div class="two-questions">
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 21 / Question 21</div><div class="level">Acceleration at X</div></div>
+      <div class="problem-text">ความเร่งที่จุด $X$ เป็นกี่ $\mathrm{m/s^2}$?<span class="en">Find the acceleration at point $X$.</span></div>
+      <div class="choice-grid"><div class="choice">1. 12</div><div class="choice">2. 14</div><div class="choice">3. 16</div><div class="choice">4. 18</div></div>
+      <div class="response-frame lg"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">ใช้ผลจากข้อ 19 และ 20</div><p>$v_B=0.625\ \mathrm{m/s}$ และ $v_C\approx1.1875\ \mathrm{m/s}$</p><p>จาก $B$ ถึง $C$ มี 2 ช่องเวลา</p><p>\[\Delta t=2(0.02)=0.04\ \mathrm{s}\]</p><p>\[a_X\approx\frac{v_C-v_B}{\Delta t}=\frac{1.1875-0.625}{0.04}=14.06\ \mathrm{m/s^2}\]</p><div class="final-answer">$\boxed{14\ \mathrm{m/s^2}}$ ข้อ 2</div></div></div>
+    </article>
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 22 / Question 22</div><div class="level">Interpretation</div></div>
+      <div class="problem-text">จากแถบกระดาษ วัตถุมีการเคลื่อนที่อย่างไร?<span class="en">What type of motion is shown by the tape?</span></div>
+      <div class="choice-grid"><div class="choice">1. ความเร็วคงที่</div><div class="choice">2. ความเร็วลดลง</div><div class="choice">3. ความเร็วเพิ่มขึ้น</div><div class="choice">4. ลดลงแล้วเพิ่ม</div></div>
+      <div class="response-frame lg"><div class="work-lines"></div><div class="answer-layer"><p>เครื่องทำจุดทุกช่วงเวลาเท่ากัน แต่ระยะห่างระหว่างจุดเพิ่มขึ้น แสดงว่าในเวลาเท่ากันวัตถุเคลื่อนที่ได้ไกลขึ้น อัตราเร็วจึงเพิ่มขึ้น<span class="en">Equal time intervals with increasing spacing mean the object covers more distance in the same time, so its speed increases.</span></p><div class="final-answer">ตอบ ข้อ 3 — ความเร็วเพิ่มขึ้น</div></div></div>
+    </article>
+  </div>
+  <div class="page-footer">13</div>
+</section>
+
+<!-- PAGE 14 -->
+<section class="sheet">
+  <div class="page-kicker">Practice • Question 23</div>
+  <article class="question">
+    <div class="question-head"><div class="question-title">ข้อ 23 / Question 23</div><div class="level">Free-Fall Tape</div></div>
+    <div class="problem-text">แถบกระดาษได้จากการทดลองการตกอย่างอิสระ ระยะระหว่างจุดติดกันบนกระดาษแทนปริมาณใดของวัตถุ?<span class="en">A tape is produced by a free-fall experiment. What quantity is represented by the distance between adjacent dots?</span></div>
+    <div class="choice-grid"><div class="choice">1. การกระจัด / Displacement</div><div class="choice">2. เวลา / Time</div><div class="choice">3. ความเร็ว / Velocity</div><div class="choice">4. ความเร่ง / Acceleration</div></div>
+    <div class="figure-stage medium"><img data-files="23.png,Q23.png,q23.png" alt="Free-fall ticker tape for Question 23"><div class="image-fallback">รูปข้อ 23 / Question 23 image<br>ไฟล์ 23.png</div></div>
+    <div class="response-frame md"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">แนวคิด / Reasoning</div><p>เครื่องทำจุดทุกช่วงเวลาเท่ากัน ระยะจากจุดหนึ่งไปยังจุดถัดไปจึงเป็นการเปลี่ยนตำแหน่งของวัตถุในช่วงเวลานั้น หรือคือ <strong>การกระจัดในหนึ่งช่วงเวลา</strong><span class="en">Because the timer marks equal time intervals, the distance from one dot to the next is the object's change in position during that interval: its <strong>displacement</strong>.</span></p><div class="final-answer">ตอบ ข้อ 1 — $\boxed{\text{การกระจัด / Displacement}}$</div></div></div>
+  </article>
+  <div class="page-footer">14</div>
+</section>
+
+<!-- PAGE 15 -->
+<section class="sheet">
+  <div class="page-kicker">Summary • Exit Ticket</div>
+  <div class="section-title"><h2>สรุปท้ายเรื่อง</h2><span class="tag">Lesson Summary</span></div>
+  <table class="summary-table">
+    <thead><tr><th>แนวคิด</th><th>ข้อสรุป</th></tr></thead>
+    <tbody>
+      <tr><td>ความเร่ง</td><td>อัตราการเปลี่ยนแปลงของเวกเตอร์ความเร็วต่อเวลา<span class="en">Rate of change of velocity with time</span></td></tr>
+      <tr><td>อัตราเร็วคงที่</td><td>ยังมีความเร่งได้ หากทิศของความเร็วเปลี่ยน<span class="en">Can still involve acceleration if velocity direction changes</span></td></tr>
+      <tr><td>เร็วขึ้น</td><td>$\vec v$ และ $\vec a$ ทิศเดียวกัน</td></tr>
+      <tr><td>ช้าลง</td><td>$\vec v$ และ $\vec a$ ทิศตรงข้าม</td></tr>
+      <tr><td>50 Hz</td><td>หนึ่งช่องเวลา $=0.02\ \mathrm{s}$</td></tr>
+      <tr><td>จุดห่างเท่ากัน</td><td>อัตราเร็วคงที่</td></tr>
+      <tr><td>จุดห่างเพิ่มขึ้น</td><td>อัตราเร็วเพิ่มขึ้น</td></tr>
+      <tr><td>การตกอิสระ</td><td>$g\approx9.8\ \mathrm{m/s^2}$ ใกล้ผิวโลก</td></tr>
+    </tbody>
+  </table>
+  <div class="grid-2" style="margin-top:3mm;">
+    <div class="card"><h3>Exit Ticket</h3><ol class="clean-list"><li>อัตราเร็วคงที่แต่มีความเร่งได้อย่างไร?</li><li>ลิฟต์ขึ้นแต่ช้าลง $\vec v$ และ $\vec a$ ชี้ทิศใด?</li><li>จุด 6 จุดมีทั้งหมดกี่ช่องเวลา?</li><li>จุดห่างขึ้นเรื่อย ๆ บอกอะไร?</li><li>เพราะเหตุใดต้องดูทิศของ $\vec v$ และ $\vec a$ ร่วมกัน?</li></ol></div>
+    <div class="card"><h3>Post-Lesson Checklist</h3><ul class="clean-list"><li>ฉันนิยามความเร่งได้<span class="en">I can define acceleration.</span></li><li>ฉันอธิบายวงกลมได้<span class="en">I can explain circular motion.</span></li><li>ฉันอ่านเครื่องหมาย $v,a$ ได้<span class="en">I can interpret signs of $v$ and $a$.</span></li><li>ฉันนับช่องบนเทปได้<span class="en">I can count ticker intervals.</span></li><li>ฉันทำข้อ 13–23 ได้<span class="en">I can solve Questions 13–23.</span></li></ul></div>
+  </div>
+  <div class="page-footer">15</div>
+</section>
+
+<script>
+const IMAGE_BASE='https://nixcentury.github.io/Physic-subject/PDF%20TO%20HTML/PHYSIC/PEC9/%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%80%E0%B8%84%E0%B8%A5%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%99%E0%B8%97%E0%B8%B5%E0%B9%88/%E0%B8%A3%E0%B8%B9%E0%B8%9B/Acceleration%20and%20Ticker-Tape%20Motion/';
+function tryImage(img){
+  const names=(img.dataset.files||'').split(',').map(s=>s.trim()).filter(Boolean);
+  const urls=names.map(n=>IMAGE_BASE+encodeURIComponent(n));
+  if(img.dataset.fallbackUrl) urls.push(img.dataset.fallbackUrl);
+  let i=0;
+  const next=()=>{
+    if(i>=urls.length){img.style.display='none';const f=img.parentElement.querySelector('.image-fallback');if(f)f.style.display='grid';return;}
+    img.src=urls[i++];
+  };
+  img.onload=()=>{img.style.display='block';};
+  img.onerror=next;
+  next();
+}
+document.querySelectorAll('img[data-files]').forEach(tryImage);
+async function typesetReady(){if(window.MathJax&&MathJax.typesetPromise){try{await MathJax.typesetPromise()}catch(e){console.warn(e)}}}
+function toggleHot(id,btn){const box=document.getElementById(id);if(!box)return;box.classList.toggle('open');const opened=box.classList.contains('open');btn.textContent=opened?'ปิดแนวอภิปราย':'เปิดแนวอภิปราย';btn.setAttribute('aria-expanded',opened?'true':'false');typesetReady();}
+async function setMode(mode){document.body.classList.remove('mode-student','mode-solution');document.body.classList.add(mode);const s=document.getElementById('statusText');if(s)s.textContent=mode==='mode-solution'?'โหมดเฉลย: แสดงวิธีทำและแนวอภิปรายทั้งหมด':'โหมดนักเรียน: ช่องเฉลยและแนวอภิปรายถูกซ่อน';await typesetReady()}
+async function showSolutions(){await setMode('mode-solution')}
+async function hideSolutions(){await setMode('mode-student')}
+async function printStudent(){await setMode('mode-student');setTimeout(()=>window.print(),350)}
+async function printSolution(){await setMode('mode-solution');setTimeout(()=>window.print(),350)}
+window.addEventListener('load',typesetReady);
+</script>
+</body>
+</html>
