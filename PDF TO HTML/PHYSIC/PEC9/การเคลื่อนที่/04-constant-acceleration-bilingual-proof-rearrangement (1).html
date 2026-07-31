@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>สมการการเคลื่อนที่แนวตรงด้วยความเร่งคงที่ | Linear Motion with Constant Acceleration</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --paper-w:210mm; --paper-h:297mm; --pad-x:14mm; --pad-y:10mm;
+  --ink:#111827; --navy:#0f172a; --slate:#475569; --line:#cbd5e1;
+  --soft:#f8fafc; --hot:#fff7ed; --green:#166534; --amber:#92400e;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:#e5e7eb;color:var(--ink);font-family:"K2D",Arial,sans-serif;font-size:12px;line-height:1.42}
+button,input{font-family:inherit}
+.toolbar{position:sticky;top:0;z-index:100;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;padding:10px 12px;background:var(--navy);color:#fff;box-shadow:0 4px 14px rgba(15,23,42,.25)}
+.toolbar button{border:0;border-radius:999px;padding:8px 14px;background:#fff;color:var(--navy);font-size:12px;font-weight:800;cursor:pointer}
+.toolbar .primary{background:#bae6fd;color:#082f49}.toolbar .gold{background:#fde68a;color:#78350f}
+.toolbar .status{flex-basis:100%;text-align:center;font-size:11px;opacity:.92}
+.screen-guide{width:min(var(--paper-w),calc(100vw - 24px));margin:14px auto 0;padding:10px 13px;border-radius:10px;background:#fff;box-shadow:0 10px 28px rgba(15,23,42,.12);font-size:11.5px}
+.sheet{width:min(var(--paper-w),calc(100vw - 24px));min-height:var(--paper-h);margin:16px auto 28px;padding:var(--pad-y) var(--pad-x);background:#fff;box-shadow:0 16px 42px rgba(15,23,42,.22);position:relative;overflow:hidden;page-break-after:always;break-after:page}
+.page-kicker{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--slate);margin-bottom:1.5mm}
+.hero{border:1.6px solid var(--navy);padding:5mm;margin-bottom:4mm;background:linear-gradient(135deg,#f8fafc 0%,#fff 70%)}
+.hero h1{margin:0;font-size:22px;line-height:1.15;font-weight:800}
+.hero .subtitle{margin-top:1.2mm;font-size:14px;color:var(--slate);font-weight:600}
+.hero .lead{margin:3mm 0 0;font-size:12.3px}
+.section-title{display:flex;align-items:center;justify-content:space-between;gap:4mm;margin:0 0 3mm;padding-bottom:1.8mm;border-bottom:1.5px solid var(--navy)}
+.section-title h2{margin:0;font-size:16px;line-height:1.2}
+.section-title .tag{border:1px solid var(--navy);border-radius:999px;padding:1mm 2.5mm;font-size:9.5px;font-weight:700;white-space:nowrap}
+.en{display:block;color:#374151;font-size:.89em;font-weight:400;margin-top:.5mm}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:3mm}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:3mm}
+.card{border:1px solid var(--navy);padding:3.2mm;background:#fff;break-inside:avoid}.card h3{margin:0 0 1.6mm;font-size:13px;line-height:1.2}.card p{margin:1.2mm 0}
+.clean-list{margin:0;padding-left:5mm}.clean-list li{margin:1.2mm 0}
+.outcome-list{list-style:none;padding:0;margin:0;counter-reset:outcome}.outcome-list li{counter-increment:outcome;position:relative;padding-left:9mm;margin:2mm 0}.outcome-list li::before{content:counter(outcome);position:absolute;left:0;top:.1mm;width:6mm;height:6mm;border:1px solid var(--navy);border-radius:50%;display:grid;place-items:center;font-size:9px;font-weight:800}
+.checklist{display:grid;grid-template-columns:1fr 1fr;gap:2.2mm 4mm}.check-item{display:grid;grid-template-columns:6mm 1fr;gap:2mm;align-items:start;border-bottom:1px dotted #94a3b8;padding:1.6mm 0 2mm}.check-item input{width:4.5mm;height:4.5mm;margin-top:.4mm}
+.hot-box{border:1.2px solid #f59e0b;background:var(--hot);padding:3mm}.hot-box h3{margin:0 0 1.3mm;font-size:13px;color:var(--amber)}
+.note-box{border-left:4px solid #1d4ed8;background:#eff6ff;padding:2.2mm 2.5mm;margin-top:2mm}.warn-box{border-left:4px solid #dc2626;background:#fef2f2;padding:2.2mm 2.5mm;margin-top:2mm}
+.key-formula,.main-question{border:1.1px solid var(--navy);background:#f8fafc;padding:2.2mm 2.6mm;margin:2mm 0;font-weight:700}
+.formula-chip{display:inline-block;border:1px solid var(--navy);border-radius:999px;padding:1mm 2.2mm;margin:1mm .6mm 0 0;font-size:10px;font-weight:700}
+.proof-chain{border:1.2px solid var(--navy);background:#fff;margin:2mm 0}.proof-row{display:grid;grid-template-columns:1fr 46mm;align-items:center;min-height:15mm;border-bottom:1px solid #cbd5e1}.proof-row:last-child{border-bottom:0}.proof-eq{padding:2mm 3mm;text-align:center;font-size:12.5px;font-weight:700}.proof-op{height:100%;padding:2mm 2.5mm;border-left:1px solid #cbd5e1;background:#f8fafc;font-size:9.8px;display:flex;align-items:center}.proof-final{background:#f0fdf4}.proof-final .proof-eq{font-size:14px;color:#166534}.identity-box{border:1px dashed var(--navy);padding:2mm 2.5mm;background:#fff;margin-top:2mm}
+.toggle-btn{display:inline-block;border:1px solid var(--navy);border-radius:999px;padding:1mm 3mm;margin-top:2mm;background:#fff;font-size:10.5px;font-weight:800;cursor:pointer}
+.hot-answer{display:none;margin-top:2mm;padding:2.4mm;border:1px dashed #c2410c;background:#fff}.hot-answer.open{display:block}
+.concept-table,.summary-table,.mini-answer-table{width:100%;border-collapse:collapse;table-layout:fixed}.concept-table th,.concept-table td,.summary-table th,.summary-table td,.mini-answer-table th,.mini-answer-table td{border:1px solid var(--navy);padding:1.8mm 2mm;vertical-align:top}.concept-table th,.summary-table th,.mini-answer-table th{background:#f1f5f9}
+.diagram-card{border:1px solid var(--navy);padding:2mm;background:#fff;text-align:center;break-inside:avoid}.diagram-card svg{display:block;width:100%;height:auto;max-height:74mm}.diagram-card.small svg{max-height:48mm}.diagram-card.medium svg{max-height:58mm}
+.question{border:1.2px solid var(--navy);padding:3.5mm;margin:0;break-inside:avoid}.question-head{display:flex;align-items:flex-start;justify-content:space-between;gap:3mm;margin-bottom:1.5mm}.question-title{font-weight:800;font-size:13px}.level{border:1px solid var(--navy);border-radius:999px;padding:.8mm 2.2mm;font-size:9px;font-weight:700;white-space:nowrap}
+.problem-text{font-size:11.7px}.problem-text p{margin:1.2mm 0}
+.response-frame{position:relative;border:1px solid var(--navy);margin-top:3mm;padding:3mm;overflow:hidden;background:#fff}.response-frame::before{content:"พื้นที่แสดงวิธีทำ / Working area";position:absolute;top:-3.4mm;left:4mm;padding:0 2mm;background:#fff;font-size:9.8px;font-weight:700;z-index:3}.response-frame.sm{height:48mm}.response-frame.md{height:62mm}.response-frame.lg{height:82mm}.response-frame.xl{height:105mm}.response-frame.xxl{height:130mm}
+.work-lines,.answer-layer{position:absolute;inset:3mm}.work-lines{background:repeating-linear-gradient(to bottom,transparent 0,transparent 8.6mm,#d1d5db 8.7mm,transparent 8.9mm);opacity:1}.answer-layer{visibility:hidden;opacity:0;overflow:hidden;font-size:10.8px;line-height:1.35}
+body.mode-solution .work-lines{visibility:hidden;opacity:0} body.mode-solution .answer-layer{visibility:visible;opacity:1}
+.answer-title{font-weight:800;color:var(--green);margin-bottom:1.4mm}.final-answer{border-left:3px solid var(--green);background:#f0fdf4;padding:1.8mm 2mm;margin-top:1.7mm;font-weight:800}
+.two-questions{display:grid;grid-template-columns:1fr 1fr;gap:3mm}
+.page-footer{position:absolute;right:12mm;bottom:5mm;font-size:9px;color:#64748b}
+svg text{font-family:"K2D",Arial,sans-serif}
+@page{size:A4 portrait;margin:0}
+@media print{
+ html,body{width:210mm;background:#fff!important}
+ .toolbar,.screen-guide{display:none!important}
+ .sheet{width:210mm!important;min-height:297mm!important;margin:0!important;box-shadow:none!important;overflow:hidden!important;page-break-after:always!important;break-after:page!important}
+ *{color:#000!important;border-color:#000!important;box-shadow:none!important;text-shadow:none!important}
+ .hot-answer{display:block!important}
+}
+</style>
+</head>
+<body class="mode-student">
+<div class="toolbar">
+  <button class="primary" onclick="printStudent()">🖨️ พิมพ์โจทย์</button>
+  <button class="gold" onclick="printSolution()">✅ พิมพ์พร้อมเฉลย</button>
+  <button onclick="showSolutions()">👁️ เปิดเฉลย</button>
+  <button onclick="hideSolutions()">🙈 ปิดเฉลย</button>
+  <div class="status" id="statusText">โหมดนักเรียน: ช่องเฉลยเป็นพื้นที่ว่างสำหรับแสดงวิธีทำ</div>
+</div>
+<div class="screen-guide">
+  ไฟล์สุดท้ายของวันนี้: <strong>สมการการเคลื่อนที่แนวตรงด้วยความเร่งคงที่</strong> • เน้นแยก <strong>ความเร็วคงที่</strong> ออกจาก <strong>ความเร่งคงที่</strong> • มี SVG ก่อนพิสูจน์สูตร และเฉลยโจทย์ข้อ 24–35 ในพื้นที่เดิม
+</div>
+
+<section class="sheet">
+  <div class="page-kicker">PEC9 Physics • Motion • Part 4</div>
+  <div class="hero">
+    <h1>สมการการเคลื่อนที่แนวตรงด้วยความเร่งคงที่</h1>
+    <div class="subtitle">Linear Motion with Constant Acceleration</div>
+    <p class="lead">บทนี้เน้นให้เห็นที่มาของสูตร ไม่ใช่เพียงการแทนค่าลงสมการ เราจะเริ่มจากการแยกให้ชัดว่า “ความเร็วคงที่” และ “ความเร่งคงที่” ไม่เหมือนกัน จากนั้นจึงใช้กราฟเป็นภาพนำ และเน้นการจัดรูปสมการทีละบรรทัดเพื่อพิสูจน์สมการการเคลื่อนที่<span class="en">This chapter emphasizes where the formulas come from, not just substitution. We first distinguish clearly between <strong>constant velocity</strong> and <strong>constant acceleration</strong>, then use graphs as visual guides and emphasize line-by-line algebraic rearrangement to derive the equations of motion.</span></p>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="section-title"><h2>สาระการเรียนรู้</h2><span class="tag">Learning Content</span></div>
+      <ul class="clean-list">
+        <li>แยกความหมายของความเร็วคงที่และความเร่งคงที่<span class="en">Distinguishing constant velocity from constant acceleration</span></li>
+        <li>ตีความกราฟ \(v-t\) และพื้นที่ใต้กราฟ<span class="en">Interpreting the \(v-t\) graph and the area under it</span></li>
+        <li>พิสูจน์สมการ \(v=u+at\)<span class="en">Deriving \(v=u+at\)</span></li>
+        <li>พิสูจน์สมการ \(\Delta x=\dfrac{u+v}{2}t\)<span class="en">Deriving \(\Delta x=\dfrac{u+v}{2}t\)</span></li>
+        <li>พิสูจน์สมการ \(\Delta x=ut+\dfrac12at^2\)<span class="en">Deriving \(\Delta x=ut+\dfrac12at^2\)</span></li>
+        <li>พิสูจน์สมการ \(v^2=u^2+2a\Delta x\)<span class="en">Deriving \(v^2=u^2+2a\Delta x\)</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="section-title"><h2>ผลการเรียนรู้ที่คาดหวัง</h2><span class="tag">Expected Outcomes</span></div>
+      <ol class="outcome-list">
+        <li>อธิบายได้ว่าเมื่อใดควรใช้สูตรใด<span class="en">Explain when each equation should be used.</span></li>
+        <li>เชื่อมสูตรกับกราฟและแนวคิดทางฟิสิกส์ได้<span class="en">Connect the equations with graphs and physical ideas.</span></li>
+        <li>แยกการเคลื่อนที่ช่วงความเร็วคงที่และช่วงความเร่งคงที่ได้<span class="en">Separate constant-velocity motion from constant-acceleration motion.</span></li>
+        <li>คำนวณโจทย์หลายขั้น เช่น ระยะตอบสนองและระยะเบรกได้<span class="en">Solve multi-step problems such as reaction distance and braking distance.</span></li>
+      </ol>
+    </div>
+  </div>
+  <div class="page-footer">1</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Student Checklist</div>
+  <div class="section-title"><h2>เช็กลิสต์นักเรียน</h2><span class="tag">Student Checklist</span></div>
+  <div class="checklist">
+    <label class="check-item"><input type="checkbox"><span>ฉันรู้ว่า \(u\) คือความเร็วต้น และ \(v\) คือความเร็วปลาย<span class="en">I know that \(u\) is initial velocity and \(v\) is final velocity.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันรู้ว่า \(\Delta x\) ใช้แทนการกระจัดในแนวตรง<span class="en">I know that \(\Delta x\) represents displacement in straight-line motion.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันแยกได้ว่าช่วงใดเป็นความเร็วคงที่ และช่วงใดเป็นความเร่งคงที่<span class="en">I can distinguish constant velocity from constant acceleration motion.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันเข้าใจว่าพื้นที่ใต้กราฟ \(v-t\) คือการกระจัด<span class="en">I understand that the area under the \(v-t\) graph gives displacement.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันรู้ที่มาของ \(v=u+at\)<span class="en">I know where \(v=u+at\) comes from.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันรู้ที่มาของ \(\Delta x=ut+\dfrac12at^2\)<span class="en">I know where \(\Delta x=ut+\dfrac12at^2\) comes from.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันจัดโจทย์ระยะตอบสนองและระยะเบรกเป็นสองช่วงได้<span class="en">I can split reaction-distance and braking-distance problems into two stages.</span></span></label>
+    <label class="check-item"><input type="checkbox"><span>ฉันตรวจหน่วยและเครื่องหมายของคำตอบได้<span class="en">I can check the units and signs of my answers.</span></span></label>
+  </div>
+  <div class="page-footer">2</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Core Idea • Separate the Cases</div>
+  <div class="section-title"><h2>แยกสองสถานการณ์ก่อนพิสูจน์สูตร</h2><span class="tag">Separate the Cases First</span></div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>กรณีที่ 1: ความเร็วคงที่</h3>
+      <p>ถ้าความเร็วไม่เปลี่ยนเลย แปลว่า<span class="en">If the velocity does not change at all, then</span></p>
+      <div class="key-formula">\[a=0\]</div>
+      <p>ในช่วงเวลาเท่า ๆ กัน วัตถุจะเคลื่อนที่ได้ระยะเท่า ๆ กัน<span class="en">In equal time intervals, the object covers equal distances.</span></p>
+      <div class="diagram-card medium">
+        <svg viewBox="0 0 520 220" aria-label="constant velocity svg">
+          <rect x="1" y="1" width="518" height="218" fill="#fff" stroke="#111" stroke-width="2"/>
+          <line x1="50" y1="145" x2="470" y2="145" stroke="#111" stroke-width="3"/>
+          <circle cx="90" cy="145" r="7" fill="#111"/>
+          <circle cx="190" cy="145" r="7" fill="#111"/>
+          <circle cx="290" cy="145" r="7" fill="#111"/>
+          <circle cx="390" cy="145" r="7" fill="#111"/>
+          <text x="80" y="175" font-size="15">0 s</text>
+          <text x="180" y="175" font-size="15">1 s</text>
+          <text x="280" y="175" font-size="15">2 s</text>
+          <text x="380" y="175" font-size="15">3 s</text>
+          <line x1="90" y1="95" x2="150" y2="95" stroke="#2563eb" stroke-width="4"/>
+          <polygon points="150,95 135,88 135,102" fill="#2563eb"/>
+          <line x1="190" y1="95" x2="250" y2="95" stroke="#2563eb" stroke-width="4"/>
+          <polygon points="250,95 235,88 235,102" fill="#2563eb"/>
+          <line x1="290" y1="95" x2="350" y2="95" stroke="#2563eb" stroke-width="4"/>
+          <polygon points="350,95 335,88 335,102" fill="#2563eb"/>
+          <text x="165" y="55" font-size="16">equal distances in equal times</text>
+          <text x="210" y="205" font-size="16">\(v\) คงที่ / constant</text>
+        </svg>
+      </div>
+      <div class="main-question">ผลที่ตามมา: \[\Delta x=vt\]<span class="en">Result: \(\Delta x=vt\)</span></div>
+    </div>
+    <div class="card">
+      <h3>กรณีที่ 2: ความเร่งคงที่</h3>
+      <p>ถ้าความเร่งคงที่ ความเร็วจะเปลี่ยนทีละเท่า ๆ กันในช่วงเวลาเท่ากัน<span class="en">If the acceleration is constant, the velocity changes by equal amounts in equal time intervals.</span></p>
+      <div class="diagram-card medium">
+        <svg viewBox="0 0 520 220" aria-label="constant acceleration svg">
+          <rect x="1" y="1" width="518" height="218" fill="#fff" stroke="#111" stroke-width="2"/>
+          <line x1="50" y1="145" x2="470" y2="145" stroke="#111" stroke-width="3"/>
+          <circle cx="90" cy="145" r="7" fill="#111"/>
+          <circle cx="160" cy="145" r="7" fill="#111"/>
+          <circle cx="265" cy="145" r="7" fill="#111"/>
+          <circle cx="415" cy="145" r="7" fill="#111"/>
+          <text x="80" y="175" font-size="15">0 s</text>
+          <text x="150" y="175" font-size="15">1 s</text>
+          <text x="255" y="175" font-size="15">2 s</text>
+          <text x="405" y="175" font-size="15">3 s</text>
+          <line x1="90" y1="95" x2="125" y2="95" stroke="#2563eb" stroke-width="4"/>
+          <polygon points="125,95 110,88 110,102" fill="#2563eb"/>
+          <line x1="160" y1="85" x2="215" y2="85" stroke="#2563eb" stroke-width="4"/>
+          <polygon points="215,85 200,78 200,92" fill="#2563eb"/>
+          <line x1="265" y1="75" x2="345" y2="75" stroke="#2563eb" stroke-width="4"/>
+          <polygon points="345,75 330,68 330,82" fill="#2563eb"/>
+          <text x="140" y="45" font-size="16">speed increases uniformly</text>
+          <text x="150" y="205" font-size="16">\(a\) คงที่ / constant</text>
+        </svg>
+      </div>
+      <div class="main-question">ผลที่ตามมา: กราฟ \(v-t\) เป็นเส้นตรง<span class="en">Result: the \(v-t\) graph is a straight line.</span></div>
+    </div>
+  </div>
+  <div class="warn-box"><strong>สรุปให้ชัด / Key distinction:</strong> ความเร็วคงที่หมายถึง \(a=0\) แต่ความเร่งคงที่หมายถึงความเร็วกำลังเปลี่ยนอย่างสม่ำเสมอ ไม่ได้แปลว่าความเร็วคงที่<span class="en">Constant velocity means \(a=0\), while constant acceleration means the velocity is changing uniformly. It does <em>not</em> mean the velocity is constant.</span></div>
+  <div class="page-footer">3</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Derivation 1 • Algebraic Rearrangement</div>
+  <div class="section-title"><h2>พิสูจน์สมการที่ 1: \(v=u+at\)</h2><span class="tag">จัดรูปจากนิยามความเร่ง</span></div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>ภาพนำ: ความชันของกราฟ \(v-t\)</h3>
+      <div class="diagram-card medium">
+        <svg viewBox="0 0 520 240" aria-label="vt graph linear">
+          <rect x="1" y="1" width="518" height="238" fill="#fff" stroke="#111" stroke-width="2"/>
+          <line x1="70" y1="190" x2="470" y2="190" stroke="#111" stroke-width="2"/>
+          <line x1="70" y1="190" x2="70" y2="40" stroke="#111" stroke-width="2"/>
+          <line x1="70" y1="150" x2="430" y2="70" stroke="#2563eb" stroke-width="3"/>
+          <line x1="70" y1="150" x2="430" y2="150" stroke="#64748b" stroke-width="1.5" stroke-dasharray="6 4"/>
+          <line x1="430" y1="70" x2="430" y2="190" stroke="#64748b" stroke-width="1.5" stroke-dasharray="6 4"/>
+          <text x="18" y="47" font-size="15">velocity</text><text x="472" y="206" font-size="15">time</text>
+          <text x="48" y="155" font-size="15">u</text><text x="46" y="75" font-size="15">v</text><text x="424" y="207" font-size="15">t</text>
+          <text x="265" y="114" font-size="16">slope = (v-u)/t = a</text>
+        </svg>
+      </div>
+      <div class="note-box">ความเร่งคงที่ทำให้ความชันของกราฟคงที่ จึงเริ่มพิสูจน์จากนิยาม \(a=\dfrac{v-u}{t}\)<span class="en">Constant acceleration gives a constant graph slope, so the derivation starts from \(a=\dfrac{v-u}{t}\).</span></div>
+    </div>
+    <div class="card">
+      <h3>จัดรูปทีละบรรทัด / Rearrange line by line</h3>
+      <div class="proof-chain">
+        <div class="proof-row"><div class="proof-eq">\[a=\frac{v-u}{t}\]</div><div class="proof-op">เริ่มจากนิยามความเร่ง<br><span class="en">Definition of acceleration</span></div></div>
+        <div class="proof-row"><div class="proof-eq">\[at=v-u\]</div><div class="proof-op">คูณทั้งสองข้างด้วย \(t\)<br><span class="en">Multiply both sides by \(t\)</span></div></div>
+        <div class="proof-row"><div class="proof-eq">\[at+u=v-u+u\]</div><div class="proof-op">บวก \(u\) ทั้งสองข้าง<br><span class="en">Add \(u\) to both sides</span></div></div>
+        <div class="proof-row"><div class="proof-eq">\[u+at=v\]</div><div class="proof-op">ตัด \(-u+u=0\) และสลับลำดับพจน์<br><span class="en">Cancel and reorder terms</span></div></div>
+        <div class="proof-row proof-final"><div class="proof-eq">\[\boxed{v=u+at}\]</div><div class="proof-op">เขียนให้ตัวแปรที่ต้องการอยู่ด้านซ้าย<br><span class="en">Write the required variable on the left</span></div></div>
+      </div>
+      <div class="identity-box"><strong>ตรวจย้อนกลับ:</strong> นำ \(v=u+at\) ลบ \(u\) ทั้งสองข้าง จะได้ \(v-u=at\) และหารด้วย \(t\) จะกลับไปเป็น \(a=\dfrac{v-u}{t}\)</div>
+    </div>
+  </div>
+  <div class="page-footer">4</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Derivation 2 • Area + Substitution</div>
+  <div class="section-title"><h2>พิสูจน์สมการที่ 2: \(\Delta x=\dfrac{u+v}{2}t\)</h2><span class="tag">จัดรูปจากความเร็วเฉลี่ย</span></div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>ภาพนำ: พื้นที่ใต้กราฟ \(v-t\)</h3>
+      <div class="diagram-card medium">
+        <svg viewBox="0 0 520 240" aria-label="area under vt graph trapezium">
+          <rect x="1" y="1" width="518" height="238" fill="#fff" stroke="#111" stroke-width="2"/>
+          <line x1="70" y1="190" x2="470" y2="190" stroke="#111" stroke-width="2"/>
+          <line x1="70" y1="190" x2="70" y2="40" stroke="#111" stroke-width="2"/>
+          <polygon points="70,150 430,70 430,190 70,190" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+          <text x="18" y="47" font-size="15">velocity</text><text x="472" y="206" font-size="15">time</text>
+          <text x="48" y="155" font-size="15">u</text><text x="46" y="75" font-size="15">v</text><text x="424" y="207" font-size="15">t</text>
+          <text x="174" y="138" font-size="16">area = displacement</text>
+        </svg>
+      </div>
+      <p>เมื่อความเร่งคงที่ ความเร็วเปลี่ยนเป็นเส้นตรงจาก \(u\) ไป \(v\) ความเร็วเฉลี่ยจึงเป็นค่าเฉลี่ยเลขคณิต<span class="en">For constant acceleration, velocity changes linearly from \(u\) to \(v\), so the average velocity is their arithmetic mean.</span></p>
+    </div>
+    <div class="card">
+      <h3>จัดรูปทีละบรรทัด / Rearrange line by line</h3>
+      <div class="proof-chain">
+        <div class="proof-row"><div class="proof-eq">\[v_{\text{avg}}=\frac{u+v}{2}\]</div><div class="proof-op">ความเร็วเฉลี่ยเมื่อ \(a\) คงที่<br><span class="en">Average velocity for constant \(a\)</span></div></div>
+        <div class="proof-row"><div class="proof-eq">\[\Delta x=v_{\text{avg}}t\]</div><div class="proof-op">นิยามการกระจัดจากความเร็วเฉลี่ย<br><span class="en">Displacement from average velocity</span></div></div>
+        <div class="proof-row"><div class="proof-eq">\[\Delta x=\left(\frac{u+v}{2}\right)t\]</div><div class="proof-op">แทน \(v_{\text{avg}}=\dfrac{u+v}{2}\)<br><span class="en">Substitute for \(v_{\text{avg}}\)</span></div></div>
+        <div class="proof-row proof-final"><div class="proof-eq">\[\boxed{\Delta x=\frac{u+v}{2}t}\]</div><div class="proof-op">จัดวงเล็บและเขียนให้อยู่ในรูปมาตรฐาน<br><span class="en">Write in standard form</span></div></div>
+      </div>
+      <div class="identity-box"><strong>พิสูจน์อีกทางจากพื้นที่สี่เหลี่ยมคางหมู:</strong> \[\Delta x=\frac12(\text{ด้านคู่ขนานรวมกัน})(\text{ความสูง})=\frac12(u+v)t\]</div>
+    </div>
+  </div>
+  <div class="page-footer">5</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Derivation 3 • Substitute and Simplify</div>
+  <div class="section-title"><h2>พิสูจน์สมการที่ 3: \(\Delta x=ut+\dfrac12at^2\)</h2><span class="tag">แทนค่าแล้วจัดรูป</span></div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>ภาพนำ: พื้นที่สี่เหลี่ยม + พื้นที่สามเหลี่ยม</h3>
+      <div class="diagram-card medium">
+        <svg viewBox="0 0 520 240" aria-label="rectangle plus triangle under vt graph">
+          <rect x="1" y="1" width="518" height="238" fill="#fff" stroke="#111" stroke-width="2"/>
+          <line x1="70" y1="190" x2="470" y2="190" stroke="#111" stroke-width="2"/>
+          <line x1="70" y1="190" x2="70" y2="40" stroke="#111" stroke-width="2"/>
+          <rect x="70" y="150" width="360" height="40" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+          <polygon points="70,150 430,70 430,150" fill="#fde68a" stroke="#d97706" stroke-width="2"/>
+          <text x="18" y="47" font-size="15">velocity</text><text x="472" y="206" font-size="15">time</text>
+          <text x="48" y="155" font-size="15">u</text><text x="46" y="75" font-size="15">v</text><text x="424" y="207" font-size="15">t</text>
+          <text x="205" y="176" font-size="16">rectangle = ut</text><text x="240" y="124" font-size="15">triangle = 1/2(v-u)t</text>
+        </svg>
+      </div>
+      <div class="note-box">สูตรนี้พิสูจน์ได้สองแบบ: จากพื้นที่ใต้กราฟ หรือแทน \(v=u+at\) ลงในสมการที่ 2 แล้วจัดรูป ทั้งสองวิธีต้องได้คำตอบเดียวกัน<span class="en">This equation can be derived either from graph area or by substituting \(v=u+at\) into Equation 2. Both methods must give the same result.</span></div>
+    </div>
+    <div class="card">
+      <h3>วิธีหลัก: แทนค่าแล้วจัดรูปทีละบรรทัด</h3>
+      <div class="proof-chain">
+        <div class="proof-row"><div class="proof-eq">\[\Delta x=\frac{u+v}{2}t\]</div><div class="proof-op">เริ่มจากสมการที่ 2<br><span class="en">Start from Equation 2</span></div></div>
+        <div class="proof-row"><div class="proof-eq">\[\Delta x=\frac{u+(u+at)}{2}t\]</div><div class="proof-op">แทน \(v=u+at\)<br><span class="en">Substitute \(v=u+at\)</span></div></div>
+        <div class="proof-row"><div class="proof-eq">\[\Delta x=\frac{2u+at}{2}t\]</div><div class="proof-op">รวมพจน์ \(u+u=2u\)<br><span class="en">Combine like terms</span></div></div>
+        <div class="proof-row"><div class="proof-eq">\[\Delta x=\left(u+\frac12at\right)t\]</div><div class="proof-op">แจกส่วน \(2\) ให้แต่ละพจน์<br><span class="en">Divide each term by \(2\)</span></div></div>
+        <div class="proof-row"><div class="proof-eq">\[\Delta x=ut+\frac12at\cdot t\]</div><div class="proof-op">แจกแจง \(t\) เข้าวงเล็บ<br><span class="en">Distribute \(t\)</span></div></div>
+        <div class="proof-row proof-final"><div class="proof-eq">\[\boxed{\Delta x=ut+\frac12at^2}\]</div><div class="proof-op">ใช้ \(t\cdot t=t^2\)<br><span class="en">Use \(t\cdot t=t^2\)</span></div></div>
+      </div>
+      <div class="identity-box"><strong>ผลพลอยได้:</strong> ถ้าแทน \(u=v-at\) ลงในสมการที่ 2 จะพิสูจน์ได้อีกสูตรหนึ่ง \[\boxed{\Delta x=vt-\frac12at^2}\]</div>
+    </div>
+  </div>
+  <div class="page-footer">6</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Derivation 4 • Eliminate Time</div>
+  <div class="section-title"><h2>พิสูจน์สมการที่ 4: \(v^2=u^2+2a\Delta x\)</h2><span class="tag">กำจัดตัวแปรเวลา</span></div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>แนวคิดก่อนจัดรูป</h3>
+      <p>สมการนี้ไม่มีตัวแปรเวลา จึงต้องใช้สมการสองสมการร่วมกันแล้วกำจัด \(t\) ออก<span class="en">This equation contains no time, so we combine two equations and eliminate \(t\).</span></p>
+      <div class="main-question">\[v=u+at\qquad\text{และ}\qquad\Delta x=\frac{u+v}{2}t\]</div>
+      <div class="hot-box">
+        <h3>ตรวจความเข้าใจก่อน</h3>
+        จาก \(v=u+at\) จะจัดรูปให้ \(t\) อยู่ตัวเดียวได้อย่างไร
+        <button class="toggle-btn" onclick="toggleHot('hot-eliminate')">เปิดคำตอบ / Show</button>
+        <div class="hot-answer" id="hot-eliminate">\[v-u=at\] \[\boxed{t=\frac{v-u}{a}}\]</div>
+      </div>
+      <div class="identity-box"><strong>เอกลักษณ์พีชคณิตที่ใช้:</strong> \[(u+v)(v-u)=v^2-u^2\] เรียกว่า “ผลต่างกำลังสอง”<span class="en">This is the difference-of-squares identity.</span></div>
+    </div>
+    <div class="card">
+      <h3>จัดรูปทีละบรรทัด / Rearrange line by line</h3>
+      <div class="proof-chain">
+        <div class="proof-row"><div class="proof-eq">\[v=u+at\]</div><div class="proof-op">เริ่มจากสมการที่ 1<br><span class="en">Start from Equation 1</span></div></div>
+        <div class="proof-row"><div class="proof-eq">\[v-u=at\]</div><div class="proof-op">ลบ \(u\) ทั้งสองข้าง<br><span class="en">Subtract \(u\)</span></div></div>
+        <div class="proof-row"><div class="proof-eq">\[t=\frac{v-u}{a}\]</div><div class="proof-op">หารทั้งสองข้างด้วย \(a\)<br><span class="en">Divide by \(a\)</span></div></div>
+        <div class="proof-row"><div class="proof-eq">\[\Delta x=\frac{u+v}{2}\left(\frac{v-u}{a}\right)\]</div><div class="proof-op">แทน \(t\) ลงในสมการที่ 2<br><span class="en">Substitute into Equation 2</span></div></div>
+        <div class="proof-row"><div class="proof-eq">\[2a\Delta x=(u+v)(v-u)\]</div><div class="proof-op">คูณทั้งสองข้างด้วย \(2a\)<br><span class="en">Multiply by \(2a\)</span></div></div>
+        <div class="proof-row"><div class="proof-eq">\[2a\Delta x=v^2-u^2\]</div><div class="proof-op">ใช้ผลต่างกำลังสอง<br><span class="en">Use difference of squares</span></div></div>
+        <div class="proof-row"><div class="proof-eq">\[u^2+2a\Delta x=v^2\]</div><div class="proof-op">บวก \(u^2\) ทั้งสองข้าง<br><span class="en">Add \(u^2\)</span></div></div>
+        <div class="proof-row proof-final"><div class="proof-eq">\[\boxed{v^2=u^2+2a\Delta x}\]</div><div class="proof-op">สลับข้างให้อยู่ในรูปมาตรฐาน<br><span class="en">Write in standard form</span></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="page-footer">7</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Formula Map + Worked Example</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="section-title"><h2>แผนที่การเลือกสูตร</h2><span class="tag">Formula Selection Map</span></div>
+      <table class="concept-table">
+        <thead><tr><th>สูตร</th><th>เหมาะเมื่อ</th></tr></thead>
+        <tbody>
+          <tr><td>\(v=u+at\)</td><td>รู้ \(u,a,t\) แล้วต้องการหา \(v\) หรือหา \(t\)</td></tr>
+          <tr><td>\(\Delta x=\dfrac{u+v}{2}t\)</td><td>รู้ \(u,v,t\) หรือใช้ความเร็วเฉลี่ย</td></tr>
+          <tr><td>\(\Delta x=ut+\dfrac12at^2\)</td><td>รู้ \(u,a,t\) แล้วต้องการหา \(\Delta x\)</td></tr>
+          <tr><td>\(v^2=u^2+2a\Delta x\)</td><td>ไม่มีเวลา \(t\) อยู่ในโจทย์</td></tr>
+        </tbody>
+      </table>
+      <div class="warn-box">ทุกสูตรในบทนี้ใช้ได้เมื่อ <strong>ความเร่งคงที่</strong> เท่านั้น<span class="en">Every equation in this chapter is valid only when the acceleration is constant.</span></div>
+    </div>
+    <div class="card">
+      <div class="section-title"><h2>ตัวอย่างนำทาง</h2><span class="tag">Worked Example</span></div>
+      <p>รถเคลื่อนที่ด้วยความเร็วต้น \(10\ \mathrm{m/s}\) และมีความเร่ง \(5\ \mathrm{m/s^2}\) เป็นเวลา \(20\ \mathrm{s}\) จงหาความเร็วปลาย<span class="en">A car starts with \(10\ \mathrm{m/s}\) and accelerates at \(5\ \mathrm{m/s^2}\) for \(20\ \mathrm{s}\). Find the final velocity.</span></p>
+      <p>เลือกใช้ \(v=u+at\) เพราะโจทย์ให้ \(u, a, t\) ครบ<span class="en">Choose \(v=u+at\) because the problem provides \(u, a, t\).</span></p>
+      <p>\[v=10+(5)(20)=110\ \mathrm{m/s}\]</p>
+      <div class="final-answer">ตอบ / Final Answer: \(\boxed{110\ \mathrm{m/s}}\)</div>
+    </div>
+  </div>
+  <div class="page-footer">8</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Practice • Questions 24–27</div>
+  <div class="two-questions">
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 24 / Question 24</div><div class="level">Use \(v=u+at\)</div></div>
+      <div class="problem-text">รถมีความเร็วต้น \(10\ \mathrm{m/s}\) และมีความเร่ง \(5\ \mathrm{m/s^2}\) เป็นเวลา \(20\ \mathrm{s}\) จงหาความเร็วปลาย<span class="en">A car starts at \(10\ \mathrm{m/s}\) and accelerates at \(5\ \mathrm{m/s^2}\) for \(20\ \mathrm{s}\). Find the final velocity.</span></div>
+      <div class="response-frame md"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">วิธีทำ / Solution</div><p>ใช้ \(v=u+at\)</p><p>\[v=10+(5)(20)=110\ \mathrm{m/s}\]</p><div class="final-answer">ตอบ: \(\boxed{110\ \mathrm{m/s}}\)</div></div></div>
+    </article>
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 25 / Question 25</div><div class="level">Use \(v=u+at\)</div></div>
+      <div class="problem-text">กำหนด \(u=5\ \mathrm{m/s},\ a=8\ \mathrm{m/s^2},\ t=10\ \mathrm{s}\) จงหา \(v\)<span class="en">Given \(u=5\ \mathrm{m/s},\ a=8\ \mathrm{m/s^2},\ t=10\ \mathrm{s}\), find \(v\).</span></div>
+      <div class="response-frame md"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">วิธีทำ / Solution</div><p>\[v=u+at=5+(8)(10)=85\ \mathrm{m/s}\]</p><div class="final-answer">ตอบ: \(\boxed{85\ \mathrm{m/s}}\)</div></div></div>
+    </article>
+  </div>
+  <div class="two-questions" style="margin-top:3mm;">
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 26 / Question 26</div><div class="level">Average Velocity</div></div>
+      <div class="problem-text">รถมีความเร็วลดจาก \(25\ \mathrm{m/s}\) เหลือ \(5\ \mathrm{m/s}\) ในเวลา \(2\ \mathrm{s}\) จงหาระยะทางที่รถเคลื่อนที่ได้<span class="en">A car slows from \(25\ \mathrm{m/s}\) to \(5\ \mathrm{m/s}\) in \(2\ \mathrm{s}\). Find the distance travelled.</span></div>
+      <div class="response-frame lg"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">วิธีทำ / Solution</div><p>ความเร็วเฉลี่ยเมื่อความเร่งคงที่คือ</p><p>\[v_{\text{avg}}=\frac{u+v}{2}=\frac{25+5}{2}=15\ \mathrm{m/s}\]</p><p>\[\Delta x=v_{\text{avg}}t=(15)(2)=30\ \mathrm{m}\]</p><div class="final-answer">ตอบ: \(\boxed{30\ \mathrm{m}}\)</div></div></div>
+    </article>
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 27 / Question 27</div><div class="level">Find \(v\) from \(\Delta x\)</div></div>
+      <div class="problem-text">เครื่องบินเริ่มจากหยุดนิ่ง เคลื่อนที่ได้ \(400\ \mathrm{m}\) ในเวลา \(20\ \mathrm{s}\) จงหาความเร็วปลาย<span class="en">A plane starts from rest and moves \(400\ \mathrm{m}\) in \(20\ \mathrm{s}\). Find the final velocity.</span></div>
+      <div class="response-frame lg"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">วิธีทำ / Solution</div><p>ใช้ \(\Delta x=\dfrac{u+v}{2}t\)</p><p>\[400=\frac{0+v}{2}(20)=10v\]</p><p>\[v=40\ \mathrm{m/s}\]</p><div class="final-answer">ตอบ: \(\boxed{40\ \mathrm{m/s}}\)</div></div></div>
+    </article>
+  </div>
+  <div class="page-footer">9</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Practice • Questions 28–32</div>
+  <div class="two-questions">
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 28 / Question 28</div><div class="level">Use \(\Delta x=ut+\tfrac12at^2\)</div></div>
+      <div class="problem-text">วัตถุเริ่มจากหยุดนิ่ง มีความเร่ง \(5\ \mathrm{m/s^2}\) เป็นเวลา \(2\ \mathrm{s}\) จงหาระยะทางที่เคลื่อนที่ได้<span class="en">An object starts from rest, accelerates at \(5\ \mathrm{m/s^2}\) for \(2\ \mathrm{s}\). Find the distance travelled.</span></div>
+      <div class="response-frame md"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">วิธีทำ / Solution</div><p>\[\Delta x=ut+\frac12at^2=(0)(2)+\frac12(5)(2)^2=10\ \mathrm{m}\]</p><div class="final-answer">ตอบ: \(\boxed{10\ \mathrm{m}}\)</div></div></div>
+    </article>
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 29 / Question 29</div><div class="level">Solve for \(a\)</div></div>
+      <div class="problem-text">รถออกจากหยุดนิ่งและเคลื่อนที่ได้ \(75\ \mathrm{m}\) ในเวลา \(5\ \mathrm{s}\) จงหาความเร่ง<span class="en">A car starts from rest and travels \(75\ \mathrm{m}\) in \(5\ \mathrm{s}\). Find the acceleration.</span></div>
+      <div class="response-frame lg"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">วิธีทำ / Solution</div><p>\[75=(0)(5)+\frac12a(5)^2\]</p><p>\[75=12.5a\Rightarrow a=6\ \mathrm{m/s^2}\]</p><div class="final-answer">ตอบ: \(\boxed{6\ \mathrm{m/s^2}}\)</div></div></div>
+    </article>
+  </div>
+  <div class="two-questions" style="margin-top:3mm;">
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 30 / Question 30</div><div class="level">Quadratic in \(t\)</div></div>
+      <div class="problem-text">กำหนด \(u=5\ \mathrm{m/s},\ a=2\ \mathrm{m/s^2},\ \Delta x=24\ \mathrm{m}\) จงหาเวลา<span class="en">Given \(u=5\ \mathrm{m/s},\ a=2\ \mathrm{m/s^2},\ \Delta x=24\ \mathrm{m}\), find the time.</span></div>
+      <div class="response-frame lg"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">วิธีทำ / Solution</div><p>\[24=5t+\frac12(2)t^2=5t+t^2\]</p><p>\[t^2+5t-24=0\]</p><p>\[(t+8)(t-3)=0\]</p><p>ได้ \(t=-8\ \mathrm{s}\) หรือ \(t=3\ \mathrm{s}\) แต่เวลาต้องเป็นบวก</p><div class="final-answer">ตอบ: \(\boxed{3\ \mathrm{s}}\)</div></div></div>
+    </article>
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 31 / Question 31</div><div class="level">Use \(v^2=u^2+2a\Delta x\)</div></div>
+      <div class="problem-text">วัตถุเริ่มจากหยุดนิ่ง มีความเร่ง \(5\ \mathrm{m/s^2}\) และเคลื่อนที่ได้ \(10\ \mathrm{m}\) จงหาความเร็วปลาย<span class="en">An object starts from rest, accelerates at \(5\ \mathrm{m/s^2}\), and moves \(10\ \mathrm{m}\). Find the final velocity.</span></div>
+      <div class="response-frame md"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">วิธีทำ / Solution</div><p>\[v^2=0^2+2(5)(10)=100\]</p><p>\[v=10\ \mathrm{m/s}\]</p><div class="final-answer">ตอบ: \(\boxed{10\ \mathrm{m/s}}\)</div></div></div>
+    </article>
+  </div>
+  <article class="question" style="margin-top:3mm;">
+    <div class="question-head"><div class="question-title">ข้อ 32 / Question 32</div><div class="level">Unit Conversion + No Time</div></div>
+    <div class="problem-text">รถมีความเร็วต้น \(36\ \mathrm{km/h}\) มีความเร่ง \(3\ \mathrm{m/s^2}\) และเคลื่อนที่ได้ \(50\ \mathrm{m}\) จงหาความเร็วปลาย<span class="en">A car starts at \(36\ \mathrm{km/h}\), accelerates at \(3\ \mathrm{m/s^2}\), and moves \(50\ \mathrm{m}\). Find the final velocity.</span></div>
+    <div class="response-frame lg"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">วิธีทำ / Solution</div><p>แปลงหน่วยก่อน \(36\ \mathrm{km/h}=10\ \mathrm{m/s}\)</p><p>\[v^2=u^2+2a\Delta x=(10)^2+2(3)(50)=400\]</p><p>\[v=20\ \mathrm{m/s}\]</p><div class="final-answer">ตอบ: \(\boxed{20\ \mathrm{m/s}}\)</div></div></div>
+  </article>
+  <div class="page-footer">10</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Reaction Distance and Braking Distance</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="section-title"><h2>แนวคิดก่อนทำข้อ 33–35</h2><span class="tag">Before Questions 33–35</span></div>
+      <p>โจทย์ช่วงนี้ต้องแยกการเคลื่อนที่ออกเป็นสองตอน<span class="en">These problems must be split into two stages.</span></p>
+      <ol class="clean-list">
+        <li><strong>ช่วงตอบสนอง</strong> รถยังไม่เบรก จึงเคลื่อนที่ด้วยความเร็วคงที่<span class="en"><strong>Reaction stage:</strong> the car has not started braking, so it moves with constant velocity.</span></li>
+        <li><strong>ช่วงเบรก</strong> รถมีความเร่งคงที่เป็นลบจนชะลอหรือหยุด<span class="en"><strong>Braking stage:</strong> the car undergoes constant negative acceleration until it slows or stops.</span></li>
+      </ol>
+      <div class="main-question">\[\text{Stopping distance}=\text{Reaction distance}+\text{Braking distance}\]</div>
+      <div class="diagram-card small">
+        <svg viewBox="0 0 520 220" aria-label="reaction and braking stages">
+          <rect x="1" y="1" width="518" height="218" fill="#fff" stroke="#111" stroke-width="2"/>
+          <line x1="45" y1="160" x2="475" y2="160" stroke="#111" stroke-width="3"/>
+          <line x1="120" y1="70" x2="190" y2="70" stroke="#2563eb" stroke-width="4"/>
+          <polygon points="190,70 175,63 175,77" fill="#2563eb"/>
+          <line x1="260" y1="70" x2="330" y2="70" stroke="#2563eb" stroke-width="4"/>
+          <polygon points="330,70 315,63 315,77" fill="#2563eb"/>
+          <line x1="260" y1="50" x2="225" y2="50" stroke="#dc2626" stroke-width="4"/>
+          <polygon points="225,50 240,43 240,57" fill="#dc2626"/>
+          <text x="84" y="190" font-size="15">เห็นสิ่งกีดขวาง</text>
+          <text x="220" y="190" font-size="15">เริ่มเบรก</text>
+          <text x="365" y="190" font-size="15">หยุด</text>
+          <text x="88" y="35" font-size="15">constant velocity</text>
+          <text x="220" y="27" font-size="15">constant negative acceleration</text>
+        </svg>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-title"><h2>คำถาม HOT</h2><span class="tag">HOT Question</span></div>
+      <div class="hot-box">
+        <h3>ถามในห้องก่อน</h3>
+        ถ้ารถยังไม่เริ่มเบรก ทำไมรถจึงยังเคลื่อนที่ต่อไปได้อีก แม้คนขับมองเห็นสิ่งกีดขวางแล้ว<span class="en">If the car has not started braking yet, why does it continue to move even after the driver sees the obstacle?</span>
+        <button class="toggle-btn" onclick="toggleHot('hot3')">เปิดแนวคิด / Show Discussion</button>
+        <div class="hot-answer" id="hot3">เพราะคนขับต้องใช้เวลาตอบสนองก่อนกดเบรก ในช่วงนี้รถยังมีความเร็วเดิมและยังไม่มีความเร่งจากการเบรก<span class="en">Because the driver needs reaction time before pressing the brake. During this interval, the car still moves with its original velocity and has not yet begun braking.</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="page-footer">11</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Practice • Questions 33–35</div>
+  <div class="two-questions">
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 33 / Question 33</div><div class="level">Reaction Distance</div></div>
+      <div class="problem-text">เวลาตอบสนองของคนขับคือ \(\dfrac15\ \mathrm{s}\) รถกำลังวิ่งด้วยความเร็ว \(25\ \mathrm{m/s}\) จงหาระยะตอบสนอง<span class="en">The driver's reaction time is \(\dfrac15\ \mathrm{s}\). The car is moving at \(25\ \mathrm{m/s}\). Find the reaction distance.</span></div>
+      <div class="response-frame md"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">วิธีทำ / Solution</div><p>ในช่วงตอบสนอง รถยังเคลื่อนที่ด้วยความเร็วคงที่</p><p>\[t_r=\frac15=0.2\ \mathrm{s}\]</p><p>\[\Delta x_r=vt=(25)(0.2)=5\ \mathrm{m}\]</p><div class="final-answer">ตอบ: \(\boxed{5\ \mathrm{m}}\)</div></div></div>
+    </article>
+    <article class="question">
+      <div class="question-head"><div class="question-title">ข้อ 34 / Question 34</div><div class="level">Stopping Distance</div></div>
+      <div class="problem-text">รถวิ่งด้วยความเร็ว \(30\ \mathrm{m/s}\) คนขับมีเวลาตอบสนอง \(1.0\ \mathrm{s}\) แล้วจึงเบรกด้วยความเร่ง \(-2\ \mathrm{m/s^2}\) จงหาระยะทางอย่างน้อยที่รถควรอยู่ห่างจากสัญญาณไฟเพื่อหยุดได้พอดี<span class="en">A car is moving at \(30\ \mathrm{m/s}\). The driver has a reaction time of \(1.0\ \mathrm{s}\) and then brakes with acceleration \(-2\ \mathrm{m/s^2}\). Find the minimum distance from a traffic light needed to stop safely.</span></div>
+      <div class="response-frame xxl"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">วิธีทำ / Solution</div><p><strong>ช่วงที่ 1: ระยะตอบสนอง</strong></p><p>\[\Delta x_r=ut=(30)(1.0)=30\ \mathrm{m}\]</p><p><strong>ช่วงที่ 2: ระยะเบรก</strong></p><p>\[v^2=u^2+2a\Delta x_b\]</p><p>\[0=(30)^2+2(-2)\Delta x_b\]</p><p>\[0=900-4\Delta x_b\Rightarrow \Delta x_b=225\ \mathrm{m}\]</p><p>รวมระยะหยุดทั้งหมด</p><p>\[\Delta x_{\text{stop}}=30+225=255\ \mathrm{m}\]</p><div class="final-answer">ตอบ: \(\boxed{255\ \mathrm{m}}\)</div></div></div>
+    </article>
+  </div>
+  <article class="question" style="margin-top:3mm;">
+    <div class="question-head"><div class="question-title">ข้อ 35 / Question 35</div><div class="level">Required Deceleration</div></div>
+    <div class="problem-text">รถอยู่ห่างสิ่งกีดขวาง \(35\ \mathrm{m}\) และเคลื่อนที่ด้วยความเร็วคงที่ \(10\ \mathrm{m/s}\) คนขับมีเวลาตอบสนอง \(1\ \mathrm{s}\) จงหาว่ารถต้องลดความเร็วในอัตราเท่าใดจึงจะหยุดพอดี<span class="en">A car is \(35\ \mathrm{m}\) from an obstacle and travels at \(10\ \mathrm{m/s}\). The driver has a reaction time of \(1\ \mathrm{s}\). Find the required deceleration to stop just in time.</span></div>
+    <div class="response-frame xxl"><div class="work-lines"></div><div class="answer-layer"><div class="answer-title">วิธีทำ / Solution</div><p><strong>ช่วงที่ 1: ระยะตอบสนอง</strong></p><p>\[\Delta x_r=ut=(10)(1)=10\ \mathrm{m}\]</p><p>ดังนั้นระยะที่เหลือสำหรับเบรกคือ</p><p>\[\Delta x_b=35-10=25\ \mathrm{m}\]</p><p><strong>ช่วงที่ 2: ระยะเบรก</strong></p><p>\[0=(10)^2+2a(25)\]</p><p>\[0=100+50a\Rightarrow a=-2.0\ \mathrm{m/s^2}\]</p><p>โจทย์ถาม “อัตรา” การลดความเร็ว จึงตอบเป็นขนาด</p><div class="final-answer">ตอบ: \(\boxed{2.0\ \mathrm{m/s^2}}\)</div></div></div>
+  </article>
+  <div class="page-footer">12</div>
+</section>
+
+<section class="sheet">
+  <div class="page-kicker">Final Summary</div>
+  <div class="section-title"><h2>สรุปท้ายเรื่อง</h2><span class="tag">Final Summary</span></div>
+  <table class="summary-table">
+    <thead><tr><th>แนวคิด</th><th>ข้อสรุป</th></tr></thead>
+    <tbody>
+      <tr><td>ความเร็วคงที่</td><td>\(a=0\) และ \(\Delta x=vt\)</td></tr>
+      <tr><td>ความเร่งคงที่</td><td>ความเร็วเปลี่ยนสม่ำเสมอ กราฟ \(v-t\) เป็นเส้นตรง</td></tr>
+      <tr><td>สมการที่ 1</td><td>\(v=u+at\)</td></tr>
+      <tr><td>สมการที่ 2</td><td>\(\Delta x=\dfrac{u+v}{2}t\)</td></tr>
+      <tr><td>สมการที่ 3</td><td>\(\Delta x=ut+\dfrac12at^2\)</td></tr>
+      <tr><td>สมการที่ 4</td><td>\(v^2=u^2+2a\Delta x\)</td></tr>
+      <tr><td>ระยะหยุด</td><td>ระยะตอบสนอง + ระยะเบรก</td></tr>
+    </tbody>
+  </table>
+  <div class="grid-2" style="margin-top:3mm;">
+    <div class="card">
+      <h3>Exit Ticket</h3>
+      <ol class="clean-list">
+        <li>สูตรใดเกิดจากความชันของกราฟ \(v-t\)?</li>
+        <li>สูตรใดเกิดจากพื้นที่ใต้กราฟ \(v-t\)?</li>
+        <li>ถ้า \(a=0\) สูตร \(\Delta x=ut+\dfrac12at^2\) จะเหลืออะไร?</li>
+        <li>เหตุใดข้อ 34 และ 35 จึงต้องแบ่งการเคลื่อนที่เป็นสองช่วง?</li>
+      </ol>
+      <span class="en">1) Which equation comes from the slope of the \(v-t\) graph? 2) Which equations come from the area under the \(v-t\) graph? 3) What does \(\Delta x=ut+\dfrac12at^2\) become when \(a=0\)? 4) Why must Questions 34 and 35 be split into two stages?</span>
+    </div>
+    <div class="card">
+      <h3>คำตอบย่อข้อ 24–35 / Final Answers</h3>
+      <table class="mini-answer-table">
+        <thead><tr><th>ข้อ</th><th>คำตอบ</th></tr></thead>
+        <tbody>
+          <tr><td>24</td><td>\(110\ \mathrm{m/s}\)</td></tr>
+          <tr><td>25</td><td>\(85\ \mathrm{m/s}\)</td></tr>
+          <tr><td>26</td><td>\(30\ \mathrm{m}\)</td></tr>
+          <tr><td>27</td><td>\(40\ \mathrm{m/s}\)</td></tr>
+          <tr><td>28</td><td>\(10\ \mathrm{m}\)</td></tr>
+          <tr><td>29</td><td>\(6\ \mathrm{m/s^2}\)</td></tr>
+          <tr><td>30</td><td>\(3\ \mathrm{s}\)</td></tr>
+          <tr><td>31</td><td>\(10\ \mathrm{m/s}\)</td></tr>
+          <tr><td>32</td><td>\(20\ \mathrm{m/s}\)</td></tr>
+          <tr><td>33</td><td>\(5\ \mathrm{m}\)</td></tr>
+          <tr><td>34</td><td>\(255\ \mathrm{m}\)</td></tr>
+          <tr><td>35</td><td>\(2.0\ \mathrm{m/s^2}\)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="page-footer">13</div>
+</section>
+
+<script>
+async function typesetReady(){ if(window.MathJax && MathJax.typesetPromise){ try{ await MathJax.typesetPromise(); }catch(err){ console.warn(err);} } }
+async function setMode(mode){ document.body.classList.remove('mode-student','mode-solution'); document.body.classList.add(mode); const status=document.getElementById('statusText'); if(status){ status.textContent = mode==='mode-solution' ? 'โหมดเฉลย: วิธีทำและคำตอบเติมลงในพื้นที่เดิม' : 'โหมดนักเรียน: ช่องเฉลยเป็นพื้นที่ว่างสำหรับแสดงวิธีทำ'; } await typesetReady(); }
+async function showSolutions(){ await setMode('mode-solution'); }
+async function hideSolutions(){ await setMode('mode-student'); }
+async function printStudent(){ await setMode('mode-student'); setTimeout(()=>window.print(),300); }
+async function printSolution(){ await setMode('mode-solution'); setTimeout(()=>window.print(),300); }
+function toggleHot(id){ const el=document.getElementById(id); if(el){ el.classList.toggle('open'); } }
+window.addEventListener('load', typesetReady);
+</script>
+</body>
+</html>
