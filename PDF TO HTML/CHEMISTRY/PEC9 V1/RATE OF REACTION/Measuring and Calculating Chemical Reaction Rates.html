@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+
+<html lang="th">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>แบบฝึกหัดการวัดและคำนวณอัตราการเกิดปฏิกิริยาเคมี ข้อ 1–16 | Chemical Reaction Rate Practice Questions 1–16</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+};
+</script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --paper-w: 210mm;
+  --paper-h: 297mm;
+  --pad-x: 14mm;
+  --pad-y: 10mm;
+  --ink: #111827;
+  --navy: #0f172a;
+  --slate: #475569;
+  --line: #cbd5e1;
+  --soft: #f8fafc;
+  --hot: #fff7ed;
+  --green: #166534;
+  --amber: #92400e;
+  --red: #991b1b;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: #e5e7eb;
+  color: var(--ink);
+  font-family: "K2D", Arial, sans-serif;
+  font-size: 11.7px;
+  line-height: 1.42;
+}
+button, input { font-family: inherit; }
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--navy);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(15,23,42,.25);
+}
+.toolbar button {
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: #fff;
+  color: var(--navy);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.toolbar .primary { background: #bae6fd; color: #082f49; }
+.toolbar .gold { background: #fde68a; color: #78350f; }
+.toolbar .status {
+  flex-basis: 100%;
+  text-align: center;
+  font-size: 11px;
+  opacity: .92;
+}
+.screen-guide {
+  width: min(var(--paper-w), calc(100vw - 24px));
+  margin: 14px auto 0;
+  padding: 10px 13px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(15,23,42,.12);
+  font-size: 11.5px;
+}
+.sheet {
+  width: min(var(--paper-w), calc(100vw - 24px));
+  min-height: var(--paper-h);
+  height: var(--paper-h);
+  margin: 16px auto 28px;
+  padding: var(--pad-y) var(--pad-x);
+  background: #fff;
+  box-shadow: 0 16px 42px rgba(15,23,42,.22);
+  position: relative;
+  overflow: hidden;
+  page-break-after: always;
+  break-after: page;
+}
+.page-kicker {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--slate);
+  margin-bottom: 1.5mm;
+}
+.hero {
+  border: 1.6px solid var(--navy);
+  padding: 5mm;
+  margin-bottom: 4mm;
+  background: linear-gradient(135deg, #f8fafc 0%, #fff 70%);
+}
+.hero h1 { margin: 0; font-size: 22px; line-height: 1.15; font-weight: 800; }
+.hero .subtitle { margin-top: 1.2mm; font-size: 14px; color: var(--slate); font-weight: 600; }
+.hero .lead { margin: 3mm 0 0; font-size: 12.3px; }
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4mm;
+  margin: 0 0 3mm;
+  padding-bottom: 1.8mm;
+  border-bottom: 1.5px solid var(--navy);
+}
+.section-title h2 { margin: 0; font-size: 16px; line-height: 1.2; }
+.section-title .tag {
+  border: 1px solid var(--navy);
+  border-radius: 999px;
+  padding: 1mm 2.5mm;
+  font-size: 9.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.en {
+  display: block;
+  color: #374151;
+  font-size: .89em;
+  font-weight: 400;
+  margin-top: .5mm;
+}
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3mm; }
+.card {
+  border: 1px solid var(--navy);
+  padding: 3.2mm;
+  background: #fff;
+  break-inside: avoid;
+}
+.card h3 { margin: 0 0 1.6mm; font-size: 13px; line-height: 1.2; }
+.card p { margin: 1.2mm 0; }
+.clean-list { margin: 0; padding-left: 5mm; }
+.clean-list li { margin: 1.2mm 0; }
+.outcome-list { list-style: none; padding: 0; margin: 0; counter-reset: outcome; }
+.outcome-list li { counter-increment: outcome; position: relative; padding-left: 9mm; margin: 2mm 0; }
+.outcome-list li::before {
+  content: counter(outcome);
+  position: absolute;
+  left: 0;
+  top: .1mm;
+  width: 6mm;
+  height: 6mm;
+  border: 1px solid var(--navy);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 9px;
+  font-weight: 800;
+}
+.checklist { display: grid; grid-template-columns: 1fr 1fr; gap: 2.2mm 4mm; }
+.check-item {
+  display: grid;
+  grid-template-columns: 6mm 1fr;
+  gap: 2mm;
+  align-items: start;
+  border-bottom: 1px dotted #94a3b8;
+  padding: 1.6mm 0 2mm;
+}
+.check-item input { width: 4.5mm; height: 4.5mm; margin-top: .4mm; }
+.key-formula, .main-question {
+  border: 1.1px solid var(--navy);
+  background: #f8fafc;
+  padding: 2.2mm 2.6mm;
+  margin: 2mm 0;
+  font-weight: 700;
+}
+.hot-question-card {
+  border: 1.2px solid #f59e0b;
+  background: var(--hot);
+  padding: 3mm;
+  break-inside: avoid;
+}
+.hot-question-card h3 { margin: 0 0 1.4mm; font-size: 13px; color: var(--amber); }
+.hot-question-text { font-weight: 650; line-height: 1.5; }
+.hot-toggle-row { display: flex; justify-content: flex-end; margin-top: 2.4mm; }
+.hot-toggle-btn {
+  border: 1px solid var(--navy);
+  border-radius: 999px;
+  padding: 1.5mm 3mm;
+  background: #fff;
+  color: var(--navy);
+  font-size: 10.5px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.hot-response-frame {
+  position: relative;
+  height: 25mm;
+  margin-top: 2.4mm;
+  border: 1px solid #d97706;
+  background: #fff;
+  overflow: hidden;
+}
+.hot-response-frame.sm { height: 22mm; }
+.hot-response-frame.md { height: 27mm; }
+.hot-response-frame.lg { height: 32mm; }
+.hot-response-frame::before {
+  content: "เขียนคำตอบสั้น ๆ / Write a short answer";
+  position: absolute;
+  top: -3.2mm;
+  left: 3mm;
+  z-index: 3;
+  padding: 0 1.5mm;
+  background: #fff;
+  color: var(--amber);
+  font-size: 9.3px;
+  font-weight: 800;
+}
+.hot-work-lines,
+.hot-answer-layer {
+  position: absolute;
+  inset: 2.8mm;
+}
+.hot-work-lines {
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 7.2mm,
+    #d1d5db 7.3mm,
+    transparent 7.5mm
+  );
+  opacity: 1;
+}
+.hot-answer-layer {
+  visibility: hidden;
+  opacity: 0;
+  overflow: hidden;
+  font-size: 10.4px;
+  line-height: 1.34;
+}
+.hot-question-card.open .hot-work-lines,
+body.mode-solution .hot-work-lines {
+  visibility: hidden;
+  opacity: 0;
+}
+.hot-question-card.open .hot-answer-layer,
+body.mode-solution .hot-answer-layer {
+  visibility: visible;
+  opacity: 1;
+}
+body.mode-solution .hot-toggle-btn { display: none; }
+.hot-guide-title { font-weight: 800; color: var(--green); margin-bottom: 1.2mm; }
+.warn-box { border-left: 4px solid #dc2626; background: #fef2f2; padding: 2.2mm 2.5mm; margin-top: 2mm; }
+.note-box { border-left: 4px solid #1d4ed8; background: #eff6ff; padding: 2.2mm 2.5mm; margin-top: 2mm; }
+.success-box { border-left: 4px solid #15803d; background: #f0fdf4; padding: 2.2mm 2.5mm; margin-top: 2mm; }
+.teacher-note { border: 1px dashed var(--slate); background: #f8fafc; padding: 2.3mm 2.7mm; margin-top: 2.5mm; font-size: 10.5px; }
+.concept-table, .summary-table, .mini-answer-table, .data-table {
+  width: 100%; border-collapse: collapse; table-layout: fixed;
+}
+.concept-table th, .concept-table td,
+.summary-table th, .summary-table td,
+.mini-answer-table th, .mini-answer-table td,
+.data-table th, .data-table td {
+  border: 1px solid var(--navy); padding: 1.7mm 1.8mm; vertical-align: top;
+}
+.concept-table th, .summary-table th, .mini-answer-table th, .data-table th { background: #f1f5f9; }
+.question { border: 1.2px solid var(--navy); padding: 3.5mm; margin: 0; break-inside: avoid; }
+.question-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 3mm; margin-bottom: 1.5mm; }
+.question-title { font-weight: 800; font-size: 13px; }
+.level { border: 1px solid var(--navy); border-radius: 999px; padding: .8mm 2.2mm; font-size: 9px; font-weight: 700; white-space: nowrap; }
+.problem-text { font-size: 11.5px; }
+.problem-text p { margin: 1.2mm 0; }
+.choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1mm 4mm; margin: 2mm 0; }
+.choice { border-bottom: 1px dotted #94a3b8; padding: 1mm 0; }
+.response-frame {
+  position: relative;
+  border: 1px solid var(--navy);
+  margin-top: 3mm;
+  padding: 3mm;
+  overflow: hidden;
+  background: #fff;
+}
+.response-frame::before {
+  content: "พื้นที่แสดงวิธีทำ / Working area";
+  position: absolute;
+  top: -3.4mm;
+  left: 4mm;
+  padding: 0 2mm;
+  background: #fff;
+  font-size: 9.8px;
+  font-weight: 700;
+  z-index: 3;
+}
+.response-frame.sm { height: 48mm; }
+.response-frame.md { height: 66mm; }
+.response-frame.lg { height: 88mm; }
+.response-frame.xl { height: 112mm; }
+.response-frame.xxl { height: 136mm; }
+.work-lines, .answer-layer { position: absolute; inset: 3mm; }
+.work-lines { background: repeating-linear-gradient(to bottom, transparent 0, transparent 8.6mm, #d1d5db 8.7mm, transparent 8.9mm); opacity: 1; }
+.answer-layer { visibility: hidden; opacity: 0; overflow: hidden; font-size: 10.55px; line-height: 1.34; }
+.answer-layer p { margin: .8mm 0; }
+body.mode-solution .work-lines { visibility: hidden; opacity: 0; }
+body.mode-solution .answer-layer { visibility: visible; opacity: 1; }
+.answer-title { font-weight: 800; color: var(--green); margin-bottom: 1.2mm; }
+.final-answer { border-left: 3px solid var(--green); background: #f0fdf4; padding: 1.7mm 2mm; margin-top: 1.5mm; font-weight: 800; }
+.source-alert { border-left: 4px solid var(--red); background: #fff1f2; padding: 1.8mm 2.2mm; margin: 1.4mm 0; }
+.page-footer { position: absolute; right: 12mm; bottom: 5mm; font-size: 9px; color: #64748b; }
+.formula-chip { display: inline-block; border: 1px solid var(--navy); border-radius: 999px; padding: 1mm 2.2mm; margin: 1mm .6mm 0 0; font-size: 10px; font-weight: 700; }
+.rate-step { border: 1px solid #94a3b8; background: #fff; padding: 2.2mm; margin: 2mm 0; }
+.rate-step b { color: var(--navy); }
+.compact-eq mjx-container[display="true"] { margin: .4em 0 !important; }
+.graph-wrap { border: 1px solid var(--navy); background: #fff; padding: 2mm; margin-top: 2mm; }
+.graph-wrap svg { width: 100%; height: auto; display: block; max-height: 88mm; }
+svg text { font-family: "K2D", Arial, sans-serif; }
+.solution-only { display: none; }
+body.mode-solution .solution-only { display: inline; }
+body.mode-solution g.solution-only { display: block; }
+.teacher-only { display: none; }
+body.mode-solution .teacher-only { display: block; }
+.small { font-size: 10px; }
+.center { text-align: center; }
+.two-col-text { columns: 2; column-gap: 8mm; }
+.no-break { break-inside: avoid; }
+@page { size: A4 portrait; margin: 0; }
+@media print {
+  html, body { width: 210mm; background: #fff !important; }
+  .toolbar, .screen-guide { display: none !important; }
+  .sheet {
+    width: 210mm !important;
+    height: 297mm !important;
+    min-height: 297mm !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+    page-break-after: always !important;
+    break-after: page !important;
+  }
+  .hot-toggle-btn { display: none !important; }
+  * { color: #000 !important; border-color: #000 !important; box-shadow: none !important; text-shadow: none !important; }
+}
+
+.story-bridge {
+  border-left: 4px solid var(--navy);
+  background: #f8fafc;
+  padding: 2.5mm 3mm;
+  margin: 2.5mm 0;
+  font-weight: 650;
+}
+.story-bridge .en { font-weight: 400; }
+.story-definition {
+  border: 1.5px solid var(--navy);
+  background: #fff;
+  padding: 3mm;
+  margin: 2.5mm 0;
+  text-align: center;
+}
+.story-definition strong { font-size: 13px; }
+.memory-article {
+  border: 1.4px solid var(--navy);
+  background: #f8fafc;
+  padding: 3.2mm;
+  line-height: 1.58;
+}
+.cloze-box {
+  border: 1.4px solid var(--navy);
+  padding: 3.2mm;
+  margin-top: 3mm;
+  background: #fff;
+  line-height: 1.75;
+}
+.blank {
+  display: inline-flex;
+  width: 31mm;
+  min-width: 31mm;
+  height: 5.3mm;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1.2px solid var(--navy);
+  vertical-align: -1.2mm;
+  line-height: 1;
+  overflow: hidden;
+}
+.blank-answer {
+  visibility: hidden;
+  opacity: 0;
+  font-weight: 800;
+  color: var(--green);
+  white-space: nowrap;
+  transition: opacity .15s ease;
+}
+.recall-section.open .blank-answer,
+body.mode-solution .blank-answer {
+  visibility: visible;
+  opacity: 1;
+}
+.recall-section.open .blank,
+body.mode-solution .blank {
+  background: #f0fdf4;
+  border-bottom-color: var(--green);
+}
+.word-bank {
+  border: 1px dashed var(--navy);
+  background: #f8fafc;
+  padding: 2.2mm 2.6mm;
+  margin-top: 2.5mm;
+}
+.recall-response-frame {
+  position: relative;
+  height: 20mm;
+  margin-top: 2mm;
+  border: 1px solid var(--navy);
+  background: #fff;
+  overflow: hidden;
+}
+.recall-work-lines,
+.recall-answer-layer {
+  position: absolute;
+  inset: 2.5mm 3mm;
+}
+.recall-work-lines {
+  background: repeating-linear-gradient(to bottom, transparent 0, transparent 7mm, #d1d5db 7.1mm, transparent 7.3mm);
+}
+.recall-answer-layer {
+  visibility: hidden;
+  opacity: 0;
+  font-size: 10.5px;
+  line-height: 1.35;
+  overflow: hidden;
+}
+.recall-section.open .recall-work-lines,
+body.mode-solution .recall-work-lines {
+  visibility: hidden;
+  opacity: 0;
+}
+.recall-section.open .recall-answer-layer,
+body.mode-solution .recall-answer-layer {
+  visibility: visible;
+  opacity: 1;
+}
+.story-question {
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.35;
+  margin: 1.5mm 0;
+}
+.rate-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2mm;
+  margin: 2.5mm 0;
+}
+.rate-strip > div {
+  border: 1px solid var(--navy);
+  padding: 2.2mm;
+  background: #fff;
+  text-align: center;
+}
+.compact-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.compact-table th, .compact-table td { border: 1px solid var(--navy); padding: 1.6mm 1.8mm; vertical-align: top; }
+.compact-table th { background: #f1f5f9; }
+@media print {
+  .memory-article, .cloze-box, .story-definition, .story-bridge, .word-bank,
+  .rate-strip > div { background: #fff !important; }
+}
+</style>
+</head>
+<body class="mode-student"><div class="toolbar">
+<button class="primary" onclick="printStudent()">🖨️ พิมพ์โจทย์</button>
+<button class="gold" onclick="printSolution()">✅ พิมพ์พร้อมเฉลย</button>
+<button onclick="showSolutions()">👁️ เปิดเฉลย</button>
+<button onclick="hideSolutions()">🙈 ปิดเฉลย</button>
+<div class="status" id="statusText">โหมดนักเรียน: ช่องเฉลยเป็นพื้นที่ว่างสำหรับแสดงวิธีทำ</div>
+</div><div class="screen-guide">
+          แบบฝึกหัด A4 สองภาษาเรื่อง
+          <strong>การวัดและคำนวณอัตราการเกิดปฏิกิริยาเคมี ข้อ 1–16</strong>
+          • แยกจากไฟล์เนื้อหา
+          • มีพื้นที่แสดงวิธีทำคงที่
+          • เปิด–ปิดเฉลยละเอียดและเส้นช่วยอ่านกราฟได้ในพื้นที่เดิม
+          <span class="en">
+            A standalone bilingual A4 practice set on
+            <strong>measuring and calculating chemical reaction rates, Questions 1–16</strong>.
+            It is separated from the lesson file and includes fixed working spaces,
+            in-place detailed solutions, and solution-only graph guides.
+          </span>
+</div><section class="sheet">
+<div class="page-kicker">Practice • Question 1</div>
+<article class="question">
+<div class="question-head">
+<div class="question-title">ข้อ 1 / Question 1</div>
+<div class="level">Initial &amp; Average Rate</div>
+</div>
+<div class="problem-text">
+<p>ทดลองละลาย Mg ด้วย HCl และวัดปริมาตรแก๊ส \(H_2\) ตามตาราง ข้อใดแสดงอัตราเริ่มต้นและอัตราเฉลี่ยของการเกิด \(H_2\) ตามลำดับ<span class="en">Magnesium reacts with hydrochloric acid, and the volume of \(H_2\) is measured as shown. Which option gives the initial and average rates of \(H_2\) formation, respectively?</span></p>
+<div class="main-question">\[\mathrm{Mg(s)+2HCl(aq)\rightarrow MgCl_2(aq)+H_2(g)}\]</div>
+<table class="data-table"><tr><th>เวลา / Time (s)</th><td>4</td><td>10</td><td>18</td><td>28</td><td>40</td><td>58</td><td>80</td><td>124</td></tr><tr><th>ปริมาตร \(H_2\) / Volume (cm³)</th><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td></tr></table>
+<div class="choice-grid"><div class="choice">1. 0.167 และ 0.064</div><div class="choice">2. 0.20 และ 0.064</div><div class="choice">3. 0.250 และ 0.087</div><div class="choice">4. 0.25 และ 0.064</div></div>
+</div>
+<div class="response-frame lg">
+<div class="work-lines"></div>
+<div class="answer-layer">
+<div class="answer-title">วิธีทำ / Detailed Solution</div>
+<p><strong>อัตราเริ่มต้น / Initial rate:</strong> ใช้ช่วงแรกจาก \(0\) ถึง \(1\ \mathrm{cm^3}\)</p>
+\[
+r_{\mathrm{initial}}=\frac{1-0}{4-0}=0.25\ \mathrm{cm^3\,s^{-1}}
+\]
+<p><strong>อัตราเฉลี่ยทั้งหมด / Overall average rate:</strong></p>
+\[
+r_{\mathrm{avg}}=\frac{8-0}{124-0}=0.0645\approx0.064\ \mathrm{cm^3\,s^{-1}}
+\]
+<div class="final-answer">ตอบ / Final Answer: ข้อ 4 — \(0.25\) และ \(0.064\ \mathrm{cm^3\,s^{-1}}\)</div>
+</div>
+</div>
+</article>
+<div class="page-footer">1</div>
+</section><section class="sheet">
+<div class="page-kicker">Practice • Question 2</div>
+<article class="question">
+<div class="question-head">
+<div class="question-title">ข้อ 2 / Question 2</div>
+<div class="level">Overall &amp; Interval Rate</div>
+</div>
+<div class="problem-text">
+<p>การเกิดแก๊สไฮโดรเจนจากลวด Mg กับ HCl ให้ข้อมูลตามตาราง ถ้าอัตราเฉลี่ยทั้งหมดเท่ากับ \(X\) และอัตราในช่วงที่ปริมาตรเพิ่มจาก 3 เป็น 4 cm³ เท่ากับ \(Y\) จงหา \(X+Y\)<span class="en">The formation of hydrogen from Mg wire and HCl gives the data shown. If the overall average rate is \(X\) and the rate while the volume rises from 3 to 4 cm³ is \(Y\), find \(X+Y\).</span></p>
+<table class="data-table"><tr><th>ช่วงปริมาตร \(H_2\) / Volume interval (cm³)</th><th>เวลา / Time (s)</th></tr><tr><td>0–1</td><td>3</td></tr><tr><td>1–2</td><td>5</td></tr><tr><td>2–3</td><td>12</td></tr><tr><td>3–4</td><td>20</td></tr></table>
+</div>
+<div class="response-frame lg">
+<div class="work-lines"></div>
+<div class="answer-layer">
+<div class="answer-title">วิธีทำ / Detailed Solution</div>
+<p>แก๊สเกิดทั้งหมด \(4\ \mathrm{cm^3}\) และเวลารวมคือ</p><span class="en">A total of \(4\ \mathrm{cm^3}\) forms, and the total time is</span>
+\[
+t_{\mathrm{total}}=3+5+12+20=40\ \mathrm s
+\]
+\[
+X=r_{\mathrm{avg}}=\frac{4}{40}=0.10\ \mathrm{cm^3\,s^{-1}}
+\]
+<p>ช่วง \(3\text{–}4\ \mathrm{cm^3}\) มี \(\Delta V=1\ \mathrm{cm^3}\) ใช้เวลา 20 s</p>
+\[
+Y=\frac{1}{20}=0.05\ \mathrm{cm^3\,s^{-1}}
+\]
+\[
+X+Y=0.10+0.05=0.15\ \mathrm{cm^3\,s^{-1}}
+\]
+<div class="final-answer">ตอบ / Final Answer: \(\boxed{0.15\ \mathrm{cm^3\,s^{-1}}}\)</div>
+</div>
+</div>
+</article>
+<div class="page-footer">2</div>
+</section><section class="sheet">
+<div class="page-kicker">Practice • Question 3</div>
+<article class="question">
+<div class="question-head">
+<div class="question-title">ข้อ 3 / Question 3</div>
+<div class="level">Compare Two Intervals</div>
+</div>
+<div class="problem-text">
+<p>ปฏิกิริยาเกิดในภาชนะ 10 dm³ และวัดจำนวนโมลของ HCl ได้ตามตาราง อัตราการลดลงของ HCl ช่วงต้นและช่วงท้ายต่างกันกี่เท่า<span class="en">The reaction occurs in a 10 dm³ vessel. Using the HCl amounts shown, by what factor do the early and late disappearance rates differ?</span></p>
+<div class="main-question">\[\mathrm{CH_3OH+HCl\rightarrow CH_3Cl+H_2O}\]</div><table class="data-table"><tr><th>เวลา / Time (s)</th><td>0</td><td>10</td><td>20</td><td>25</td></tr><tr><th>จำนวนโมล HCl / Moles of HCl (mol)</th><td>18.6</td><td>16.6</td><td>15.5</td><td>15.0</td></tr></table>
+</div>
+<div class="response-frame lg">
+<div class="work-lines"></div>
+<div class="answer-layer">
+<div class="answer-title">วิธีทำ / Detailed Solution</div>
+<p><strong>ช่วงต้น 0–10 s / Initial interval:</strong></p>
+\[
+r_{\mathrm{early}}=\frac{18.6-16.6}{10-0}=0.20\ \mathrm{mol\,s^{-1}}
+\]
+<p><strong>ช่วงท้าย 20–25 s / Final interval:</strong></p>
+\[
+r_{\mathrm{late}}=\frac{15.5-15.0}{25-20}=0.10\ \mathrm{mol\,s^{-1}}
+\]
+<p>ภาชนะมีปริมาตรเดียวกัน 10 dm³ การหารด้วยปริมาตรจะเกิดกับทั้งสองอัตราและตัดกันเมื่อหาอัตราส่วน</p>
+<span class="en">The same 10 dm³ volume applies to both rates, so it cancels in the ratio.</span>
+\[
+\frac{r_{\mathrm{early}}}{r_{\mathrm{late}}}=\frac{0.20}{0.10}=2
+\]
+<div class="final-answer">ตอบ / Final Answer: ช่วงต้นเร็วเป็น \(\boxed{2}\) เท่าของช่วงท้าย</div>
+</div>
+</div>
+</article>
+<div class="page-footer">3</div>
+</section><section class="sheet">
+<div class="page-kicker">Practice • Question 4</div>
+<article class="question">
+<div class="question-head">
+<div class="question-title">ข้อ 4 / Question 4</div>
+<div class="level">Compare Interval Rates</div>
+</div>
+<div class="problem-text">
+<p>จากข้อมูลการเกิดแก๊ส \(Y\) ข้อสรุปใดถูกต้อง<span class="en">Which conclusion about the formation rate of gas \(Y\) is correct?</span></p>
+<div class="main-question">\[\mathrm{A(s)+2B(aq)\rightarrow X(aq)+Y(g)}\]</div><table class="data-table"><tr><th>เวลา / Time (s)</th><td>20</td><td>40</td><td>70</td><td>90</td><td>120</td></tr><tr><th>ปริมาตร \(Y\) / Volume of \(Y\) (cm³)</th><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td></tr></table>
+<div class="choice-grid"><div class="choice">1. อัตราช่วง 2–3 cm³ น้อยกว่าช่วง 3–4 cm³<span class="en">Rate over 2–3 cm³ is less than over 3–4 cm³.</span></div><div class="choice">2. อัตราเฉลี่ยมากกว่าช่วง 1–2 cm³<span class="en">Overall average rate is greater than the 1–2 cm³ interval rate.</span></div><div class="choice">3. อัตราเฉลี่ยน้อยกว่าช่วง 4–5 cm³<span class="en">Overall average rate is less than the 4–5 cm³ interval rate.</span></div><div class="choice">4. ช่วง 4–5 cm³ เท่ากับช่วง 3–4 cm³<span class="en">The 4–5 and 3–4 cm³ interval rates are equal.</span></div></div>
+</div>
+<div class="response-frame lg">
+<div class="work-lines"></div>
+<div class="answer-layer">
+<div class="answer-title">วิธีทำ / Detailed Solution</div>
+<p>ทุกช่วงมี \(\Delta V=1\ \mathrm{cm^3}\) จึงเปรียบเทียบจากเวลาที่ใช้ได้โดยตรง</p><span class="en">Every interval has \(\Delta V=1\ \mathrm{cm^3}\), so compare the times directly.</span>
+\[
+r_{2\to3}=\frac{1}{70-40}=\frac1{30}=0.033
+\]
+\[
+r_{3\to4}=\frac{1}{90-70}=\frac1{20}=0.050\ \mathrm{cm^3\,s^{-1}}
+\]
+ดังนั้น \(r_{2\to3}<r_{3\to4}\)
+<span class="en">Therefore \(r_{2\to3}<r_{3\to4}\).</span>
+<div class="final-answer">ตอบ / Final Answer: ข้อ 1</div>
+</div>
+</div>
+</article>
+<div class="page-footer">4</div>
+</section><section class="sheet">
+<div class="page-kicker">Practice • Question 5</div>
+<article class="question">
+<div class="question-head">
+<div class="question-title">ข้อ 5 / Question 5</div>
+<div class="level">Relative Rate from Time</div>
+</div>
+<div class="problem-text">
+<p>อัตราการเกิดปฏิกิริยาในหลอด B เป็นกี่เท่าของหลอด A<span class="en">How many times faster is the reaction in tube B than in tube A?</span></p>
+<p>หลอด A และ B มีกรดออกซาลิก 0.5 mol dm⁻³ ปริมาตร 2 cm³ เติมกรดซัลฟิวริก 1.0 mol dm⁻³ ปริมาตร 1 cm³ และ \(KMnO_4\) 0.05 mol dm⁻³ ปริมาตร 2 cm³ เท่ากัน หลอด A อยู่ที่ 40°C และสีหายใน 1800 s ส่วนหลอด B อยู่ที่ 60°C และสีหายเร็วกว่าหลอด A 1200 s</p><span class="en">Tubes A and B contain identical amounts: 2 cm³ of 0.5 mol dm⁻³ oxalic acid, 1 cm³ of 1.0 mol dm⁻³ sulfuric acid, and 2 cm³ of 0.05 mol dm⁻³ \(KMnO_4\). Tube A is at 40°C and decolourises in 1800 s; tube B is at 60°C and decolourises 1200 s sooner.</span>
+<div class="choice-grid"><div class="choice">1. 3.0</div><div class="choice">2. 2.5</div><div class="choice">3. 1.5</div><div class="choice">4. 0.33</div></div>
+</div>
+<div class="response-frame xl">
+<div class="work-lines"></div>
+<div class="answer-layer">
+<div class="answer-title">วิธีทำ / Detailed Solution</div>
+<p>ทั้งสองหลอดเริ่มด้วยปริมาณเท่ากันและจับเวลาจนสีหายถึงจุดเดียวกัน ให้การเปลี่ยนแปลงเท่ากันเป็น \(\Delta X\)</p>
+<span class="en">Both tubes start with the same quantities and are timed to the same endpoint, so let the common change be \(\Delta X\).</span>
+\[
+t_A=1800\ \mathrm s,\qquad t_B=1800-1200=600\ \mathrm s
+\]
+\[
+r_A=\frac{\Delta X}{1800},\qquad r_B=\frac{\Delta X}{600}
+\]
+\[
+\frac{r_B}{r_A}=\frac{\Delta X/600}{\Delta X/1800}=\frac{1800}{600}=3.0
+\]
+<div class="final-answer">ตอบ / Final Answer: ข้อ 1 — \(\boxed{r_B=3.0r_A}\)</div>
+</div>
+</div>
+</article>
+<div class="page-footer">5</div>
+</section><section class="sheet">
+<div class="page-kicker">Practice • Question 6</div>
+<article class="question">
+<div class="question-head">
+<div class="question-title">ข้อ 6 / Question 6</div>
+<div class="level">Compare Rates at Equal Time</div>
+</div>
+<div class="problem-text">
+<p>การเกิดตะกอนกำมะถันจากปฏิกิริยาระหว่าง HCl และ sodium thiosulfate ให้ข้อมูลตามตาราง ที่ 60°C ปฏิกิริยาเร็วเป็นกี่เท่าของที่ 45°C<span class="en">The formation of sulfur precipitate from HCl and sodium thiosulfate gives the data shown. How many times faster is the reaction at 60°C than at 45°C?</span></p>
+<table class="data-table"><tr><th rowspan="2">เวลา / Time (s)</th><th colspan="2">มวลตะกอนกำมะถัน / Sulfur precipitate (mg)</th></tr><tr><th>45°C</th><th>60°C</th></tr><tr><td>0</td><td>0.0</td><td>0.0</td></tr><tr><td>60</td><td>0.1</td><td>0.6</td></tr><tr><td>120</td><td>0.2</td><td>1.2</td></tr><tr><td>180</td><td>0.6</td><td>1.8</td></tr><tr><td>240</td><td>0.8</td><td>2.4</td></tr><tr><td>300</td><td>1.0</td><td>3.0</td></tr><tr><td>360</td><td>1.2</td><td>3.0</td></tr><tr><td>420</td><td>1.4</td><td>3.0</td></tr></table>
+</div>
+<div class="response-frame lg">
+<div class="work-lines"></div>
+<div class="answer-layer">
+<div class="answer-title">วิธีทำ / Detailed Solution</div>
+<p>เลือกเวลาเดียวกันที่ทั้งสองชุดยังมีข้อมูลเปรียบเทียบได้ เช่น 300 s</p><span class="en">Choose the same time for both trials, for example 300 s.</span>
+\[
+r_{45}=\frac{1.0-0}{300}=3.33\times10^{-3}\ \mathrm{mg\,s^{-1}}
+\]
+\[
+r_{60}=\frac{3.0-0}{300}=1.00\times10^{-2}\ \mathrm{mg\,s^{-1}}
+\]
+\[
+\frac{r_{60}}{r_{45}}=\frac{3.0}{1.0}=3.00
+\]
+<div class="note-box">การใช้เวลาเดียวกันทำให้ \(\Delta t\) ตัดกัน จึงเทียบจากมวลที่เกิดได้โดยตรง<span class="en">At the same time, \(\Delta t\) cancels, so the product masses can be compared directly.</span></div>
+<div class="final-answer">ตอบ / Final Answer: \(\boxed{3.00\text{ เท่า / times}}\)</div>
+</div>
+</div>
+</article>
+<div class="page-footer">6</div>
+</section><section class="sheet">
+<div class="page-kicker">Practice • Question 7</div>
+<article class="question">
+<div class="question-head">
+<div class="question-title">ข้อ 7 / Question 7</div>
+<div class="level">Reactant Exhaustion Check</div>
+</div>
+<div class="problem-text">
+<p>การสลายตัว \(R\rightarrow P\) เกิดขั้นตอนเดียว และ \([R]\) เปลี่ยนตามตาราง จงหา \([P]\) เมื่อเวลาผ่านไป 20 s<span class="en">The one-step decomposition \(R\rightarrow P\) gives the concentration data shown. Find \([P]\) after 20 s.</span></p>
+<div class="main-question">\[\mathrm{R\rightarrow P}\]</div><table class="data-table"><tr><th>เวลา / Time (s)</th><td>0.0</td><td>1.0</td><td>2.0</td><td>3.0</td></tr><tr><th>\([R]\) (mol dm⁻³)</th><td>0.400</td><td>0.360</td><td>0.320</td><td>0.280</td></tr></table>
+<div class="choice-grid"><div class="choice">1. 0.000</div><div class="choice">2. 0.200</div><div class="choice">3. 0.400</div><div class="choice">4. 0.800</div></div>
+</div>
+<div class="response-frame xxl">
+<div class="work-lines"></div>
+<div class="answer-layer">
+<div class="answer-title">วิธีทำ / Detailed Solution</div>
+<p>เริ่มต้นมีสารตั้งต้นเพียง \([R]_0=0.400\ \mathrm{mol\,dm^{-3}}\) และสมมติว่าเริ่มต้นไม่มี \(P\)</p>
+<span class="en">Initially, only \([R]_0=0.400\ \mathrm{mol\,dm^{-3}}\) is available, and assume \([P]_0=0\).</span>
+\[
+r_R=-\frac{\Delta[R]}{\Delta t}=-\frac{0.360-0.400}{1-0}=0.040\ \mathrm{mol\,dm^{-3}\,s^{-1}}
+\]
+<p>ถ้าอัตรานี้คงที่ เวลาที่ \(R\) ถูกใช้หมดคือ</p><span class="en">If this rate remains constant, \(R\) is exhausted at</span>
+\[
+t_{\mathrm{exhaust}}=\frac{0.400}{0.040}=10\ \mathrm s
+\]
+<p>ปฏิกิริยาสิ้นสุดที่ 10 s เพราะ \(R\) ถูกใช้หมด จึงสร้าง \(P\) ต่อไม่ได้ แม้โจทย์ถามที่ 20 s</p>
+<span class="en">The reaction ends at 10 s because \(R\) is exhausted; no further \(P\) can form even though the question asks about 20 s.</span>
+\[
+[P]_{20\mathrm s}=[P]_{\max}=0.400\ \mathrm{mol\,dm^{-3}}
+\]
+<div class="source-alert"><strong>ตรวจต้นฉบับ / Source check:</strong> เฉลยเดิมเลือก 0.800 M จาก \(0.040\times20\) แต่เกินปริมาณ \(R\) ที่มีอยู่ จึงขัดกับการอนุรักษ์สสาร<span class="en">The original key gives 0.800 M by multiplying by 20 s, but this exceeds the available \(R\) and violates conservation of matter.</span></div>
+<div class="final-answer">ตอบที่ถูกต้อง / Correct Answer: ข้อ 3 — \(\boxed{0.400\ \mathrm{mol\,dm^{-3}}}\)</div>
+</div>
+</div>
+</article>
+<div class="page-footer">7</div>
+</section><section class="sheet">
+<div class="page-kicker">Practice • Question 8</div>
+<article class="question">
+<div class="question-head">
+<div class="question-title">ข้อ 8 / Question 8</div>
+<div class="level">Stoichiometric Rate Relationship</div>
+</div>
+<div class="problem-text">
+<p>การรวมตัวของไนโตรเจนและไฮโดรเจนเป็นแอมโมเนียเป็นดังสมการ จงตอบทั้งสองข้อ<span class="en">Nitrogen and hydrogen combine to form ammonia as shown. Answer both parts.</span></p>
+<div class="main-question">\[\mathrm{N_2(g)+3H_2(g)\rightarrow2NH_3(g)}\]</div><p>กำหนดให้อัตราการลดลงของ \(N_2\) เท่ากับ \(1.5\times10^{-2}\ \mathrm{mol\,dm^{-3}\,s^{-1}}\)</p><span class="en">The disappearance rate of \(N_2\) is \(1.5\times10^{-2}\ \mathrm{mol\,dm^{-3}\,s^{-1}}\).</span><ol class="clean-list"><li>หาอัตราการเกิด \(NH_3\) / Find the formation rate of \(NH_3\).</li><li>หาอัตราการลดลงของ \(H_2\) / Find the disappearance rate of \(H_2\).</li></ol>
+</div>
+<div class="response-frame xxl">
+<div class="work-lines"></div>
+<div class="answer-layer">
+<div class="answer-title">วิธีทำ / Detailed Solution</div>
+<p><strong>ตั้งความสัมพันธ์ของ \(r\) / Write the rate relationship</strong></p>
+\[
+r=-\frac{\Delta[N_2]}{\Delta t}=-\frac13\frac{\Delta[H_2]}{\Delta t}=+\frac12\frac{\Delta[NH_3]}{\Delta t}
+\]
+<p>จากข้อมูล \(-\Delta[N_2]/\Delta t=1.5\times10^{-2}\) จึงได้</p>
+\[
+r=1.5\times10^{-2}\ \mathrm{mol\,dm^{-3}\,s^{-1}}
+\]
+<p><strong>ก. อัตราการเกิด \(NH_3\) / Formation of \(NH_3\)</strong></p>
+\[
+r=\frac12\frac{\Delta[NH_3]}{\Delta t}\quad\Rightarrow\quad \frac{\Delta[NH_3]}{\Delta t}=2r
+\]
+\[
+=2(1.5\times10^{-2})=3.0\times10^{-2}
+\]
+<p><strong>ข. อัตราการลดลงของ \(H_2\) / Disappearance of \(H_2\)</strong></p>
+\[
+r=-\frac13\frac{\Delta[H_2]}{\Delta t}\quad\Rightarrow\quad -\frac{\Delta[H_2]}{\Delta t}=3r
+\]
+\[
+=3(1.5\times10^{-2})=4.5\times10^{-2}
+\]
+<div class="final-answer">ตอบ / Final Answer: \(\boxed{3.0\times10^{-2}}\) และ \(\boxed{4.5\times10^{-2}\ \mathrm{mol\,dm^{-3}\,s^{-1}}}\)</div>
+</div>
+</div>
+</article>
+<div class="page-footer">8</div>
+</section><section class="sheet">
+<div class="page-kicker">Practice • Question 9</div>
+<article class="question">
+<div class="question-head">
+<div class="question-title">ข้อ 9 / Question 9</div>
+<div class="level">Rate from Product Formation</div>
+</div>
+<div class="problem-text">
+<p>ปฏิกิริยาสังเคราะห์แอมโมเนียมีอัตราการเกิดผลิตภัณฑ์ตามกำหนด จงเลือกคำตอบที่ถูกต้อง<span class="en">The ammonia synthesis reaction has the stated product formation rate. Select the correct answer.</span></p>
+<div class="main-question">\[\mathrm{N_2(g)+3H_2(g)\rightarrow2NH_3(g)}\]</div><p>อัตราการเกิด \(NH_3\) เท่ากับ \(0.80\ \mathrm{mol\,dm^{-3}\,s^{-1}}\) จงหาอัตราการลดลงของ \(H_2\) และ \(N_2\) ตามลำดับ</p><span class="en">The formation rate of \(NH_3\) is \(0.80\ \mathrm{mol\,dm^{-3}\,s^{-1}}\). Find the disappearance rates of \(H_2\) and \(N_2\), respectively.</span>
+<div class="choice-grid"><div class="choice">ก. 1.20 และ 0.40</div><div class="choice">ข. 2.40 และ 0.80</div><div class="choice">ค. 1.20 และ 0.80</div><div class="choice">ง. 0.80 และ 0.80</div></div>
+</div>
+<div class="response-frame xl">
+<div class="work-lines"></div>
+<div class="answer-layer">
+<div class="answer-title">วิธีทำ / Detailed Solution</div>
+      
+\[
+r=-\frac{\Delta[N_2]}{\Delta t}=-\frac13\frac{\Delta[H_2]}{\Delta t}=+\frac12\frac{\Delta[NH_3]}{\Delta t}
+\]
+\[
+r=\frac12(0.80)=0.40\ \mathrm{mol\,dm^{-3}\,s^{-1}}
+\]
+<p>สำหรับ \(H_2\)</p><span class="en">For \(H_2\):</span>
+\[
+-\frac{\Delta[H_2]}{\Delta t}=3r=3(0.40)=1.20
+\]
+<p>สำหรับ \(N_2\)</p><span class="en">For \(N_2\):</span>
+\[
+-\frac{\Delta[N_2]}{\Delta t}=r=0.40
+\]
+<div class="final-answer">ตอบ / Final Answer: ก. \(\boxed{1.20\text{ และ }0.40\ \mathrm{mol\,dm^{-3}\,s^{-1}}}\)</div>
+</div>
+</div>
+</article>
+<div class="page-footer">9</div>
+</section><section class="sheet">
+<div class="page-kicker">Practice • Question 10</div>
+<article class="question">
+<div class="question-head">
+<div class="question-title">ข้อ 10 / Question 10</div>
+<div class="level">Source Data Audit</div>
+</div>
+<div class="problem-text">
+<p>พิจารณาข้อมูลจากต้นฉบับอย่างระมัดระวัง แล้วคำนวณอัตราการเกิด \(N_2\)<span class="en">Examine the source statement carefully and calculate the formation rate of \(N_2\).</span></p>
+<div class="main-question">\[\mathrm{2NH_3\rightarrow N_2+3H_2}\]</div><p>ที่ 300°C พบว่า “ความเข้มข้นของ \(NH_3\) ลดลงจาก \(0.0150\ \mathrm{mol\,L^{-1}}\) ในเวลา 100 s” จงคำนวณอัตราการเกิด \(N_2\)</p><span class="en">At 300°C, the source states that “the concentration of \(NH_3\) decreased from \(0.0150\ \mathrm{mol\,L^{-1}}\) in 100 s.” Calculate the formation rate of \(N_2\).</span>
+<div class="choice-grid"><div class="choice">1. \(1.3\times10^{-4}\)</div><div class="choice">2. \(2.6\times10^{-4}\)</div><div class="choice">3. \(4.3\times10^{-5}\)</div><div class="choice">4. \(6.5\times10^{-5}\)</div></div><p class="small">หน่วยทุกตัวเลือก / Unit for all choices: \(\mathrm{mol\,L^{-1}\,s^{-1}}\)</p>
+</div>
+<div class="response-frame xxl">
+<div class="work-lines"></div>
+<div class="answer-layer">
+<div class="answer-title">วิธีทำ / Detailed Solution</div>
+<p><strong>ปัญหาของข้อมูล / Data issue:</strong> คำว่า “ลดลงจาก 0.0150” ให้ค่าเริ่มต้น แต่ไม่ให้ค่าความเข้มข้นสุดท้าย จึงหา \(\Delta[NH_3]\) ไม่ได้อย่างแน่นอน</p>
+<span class="en">The phrase gives an initial concentration but no final concentration, so \(\Delta[NH_3]\) cannot be determined uniquely.</span>
+<p>ถ้าตีความว่า “ลดลงเป็นจำนวน 0.0150 M”</p><span class="en">If interpreted as a decrease of 0.0150 M:</span>
+\[
+-\frac{\Delta[NH_3]}{\Delta t}=\frac{0.0150}{100}=1.50\times10^{-4}
+\]
+\[
+r=\frac12\left(1.50\times10^{-4}\right)=7.50\times10^{-5}\ \mathrm{mol\,L^{-1}\,s^{-1}}
+\]
+<p>ค่านี้ไม่มีในตัวเลือก ส่วนคำตอบเดิม \(6.5\times10^{-5}\) จะได้เมื่อ \(NH_3\) ลดลง 0.0130 M เช่น จาก 0.0150 เหลือ 0.0020 M ซึ่งข้อมูลนี้ไม่ได้ปรากฏในโจทย์</p>
+<span class="en">This value is absent from the choices. The original \(6.5\times10^{-5}\) would require a 0.0130 M decrease, for example from 0.0150 to 0.0020 M, but that final value is missing.</span>
+<div class="source-alert"><strong>สรุป / Conclusion:</strong> ข้อมูลต้นฉบับไม่ครบ จึงไม่มีคำตอบที่ยืนยันได้จากข้อความที่ให้มา<span class="en">The source data are incomplete; no option can be justified uniquely.</span></div>
+<div class="final-answer">คำตอบเมื่อสมมติว่าลดลง 0.0150 M: \(\boxed{7.50\times10^{-5}\ \mathrm{mol\,L^{-1}\,s^{-1}}}\) — ไม่มีตัวเลือกตรง</div>
+</div>
+</div>
+</article>
+<div class="page-footer">10</div>
+</section><section class="sheet">
+<div class="page-kicker">Practice • Question 11</div>
+<article class="question">
+<div class="question-head">
+<div class="question-title">ข้อ 11 / Question 11</div>
+<div class="level">Balance Before Rate Relation</div>
+</div>
+<div class="problem-text">
+<p>สมการที่ให้มายังไม่ดุล จงดุลสมการและหา \(y\)<span class="en">The given equation is unbalanced. Balance it and determine \(y\).</span></p>
+<div class="main-question">\[\mathrm{NO_2(g)\rightarrow NO(g)+O_2(g)}\quad\text{(ยังไม่ดุล / unbalanced)}\]</div><p>เริ่มต้น \([NO_2]=0.1520\ \mathrm{mol\,dm^{-3}}\) หลัง 60 s เหลือ \(0.1493\ \mathrm{mol\,dm^{-3}}\) ถ้าอัตราการเกิด \(O_2=y\times10^{-5}\ \mathrm{mol\,dm^{-3}\,s^{-1}}\) จงหา \(y\)</p><span class="en">Initially \([NO_2]=0.1520\ \mathrm{mol\,dm^{-3}}\). After 60 s, \([NO_2]=0.1493\ \mathrm{mol\,dm^{-3}}\). If the formation rate of \(O_2\) is \(y\times10^{-5}\ \mathrm{mol\,dm^{-3}\,s^{-1}}\), find \(y\).</span>
+</div>
+<div class="response-frame xl">
+<div class="work-lines"></div>
+<div class="answer-layer">
+<div class="answer-title">วิธีทำ / Detailed Solution</div>
+<p><strong>ดุลสมการก่อน / Balance first</strong></p>
+\[
+\mathrm{2NO_2\rightarrow2NO+O_2}
+\]
+\[
+r=-\frac12\frac{\Delta[NO_2]}{\Delta t}=+\frac{\Delta[O_2]}{\Delta t}
+\]
+\[
+-\frac{\Delta[NO_2]}{\Delta t}=\frac{0.1520-0.1493}{60}=\frac{0.0027}{60}=4.50\times10^{-5}
+\]
+\[
+\frac{\Delta[O_2]}{\Delta t}=r=\frac12(4.50\times10^{-5})=2.25\times10^{-5}
+\]
+ดังนั้น \(y=2.25\)<span class="en">Therefore \(y=2.25\).</span>
+<div class="final-answer">ตอบ / Final Answer: \(\boxed{y=2.25}\)</div>
+</div>
+</div>
+</article>
+<div class="page-footer">11</div>
+</section><section class="sheet">
+<div class="page-kicker">Practice • Question 12</div>
+<article class="question">
+<div class="question-head">
+<div class="question-title">ข้อ 12 / Question 12</div>
+<div class="level">Rate Relation &amp; Unit Conversion</div>
+</div>
+<div class="problem-text">
+<p>คำนวณอัตราการเกิดน้ำและเลือกหน่วยให้ถูกต้อง<span class="en">Calculate the formation rate of water and select the correct unit.</span></p>
+<div class="main-question">\[\mathrm{4NH_3+5O_2\rightarrow4NO+6H_2O}\]</div><p>ถ้าแอมโมเนียถูกเผาไหม้ด้วยอัตราการหายไป \(0.24\ \mathrm{mol\,L^{-1}\,s^{-1}}\) จงหาอัตราการเกิดน้ำ</p><span class="en">If ammonia is consumed at \(0.24\ \mathrm{mol\,L^{-1}\,s^{-1}}\), find the formation rate of water.</span>
+<div class="choice-grid"><div class="choice">1. \(9.6\ \mathrm{mol\,L^{-1}\,min^{-1}}\)</div><div class="choice">2. \(9.6\ \mathrm{mol\,L^{-1}\,s^{-1}}\)</div><div class="choice">3. \(22\ \mathrm{mol\,L^{-1}\,min^{-1}}\)</div><div class="choice">4. \(22\ \mathrm{mol\,L^{-1}\,s^{-1}}\)</div></div>
+</div>
+<div class="response-frame xl">
+<div class="work-lines"></div>
+<div class="answer-layer">
+<div class="answer-title">วิธีทำ / Detailed Solution</div>
+      
+\[
+r=-\frac14\frac{\Delta[NH_3]}{\Delta t}=+\frac16\frac{\Delta[H_2O]}{\Delta t}
+\]
+จากข้อมูล<span class="en">From the given disappearance rate:</span>
+\[
+r=\frac14(0.24)=0.060\ \mathrm{mol\,L^{-1}\,s^{-1}}
+\]
+\[
+\frac{\Delta[H_2O]}{\Delta t}=6r=6(0.060)=0.36\ \mathrm{mol\,L^{-1}\,s^{-1}}
+\]
+แปลงเป็นต่อนาที<span class="en">Convert to per minute:</span>
+\[
+0.36\times60=21.6\approx22\ \mathrm{mol\,L^{-1}\,min^{-1}}
+\]
+<div class="final-answer">ตอบ / Final Answer: ข้อ 3 — \(\boxed{22\ \mathrm{mol\,L^{-1}\,min^{-1}}}\)</div>
+</div>
+</div>
+</article>
+<div class="page-footer">12</div>
+</section><section class="sheet">
+<div class="page-kicker">Practice • Question 13</div>
+<article class="question">
+<div class="question-head">
+<div class="question-title">ข้อ 13 / Question 13</div>
+<div class="level">Rate Relation &amp; Time Units</div>
+</div>
+<div class="problem-text">
+<p>ตั้งความสัมพันธ์ของ \(r\) แล้วแปลงหน่วยจากวินาทีเป็นนาที<span class="en">Write the \(r\) relationship and convert the time unit from seconds to minutes.</span></p>
+<div class="main-question">\[\mathrm{N_2(g)+3H_2(g)\rightarrow2NH_3(g)}\]</div><p>ถ้าอัตราการเกิด \(NH_3\) เท่ากับ \(0.2\ \mathrm{mol\,dm^{-3}\,s^{-1}}\) อัตราการหายไปของ \(H_2\) เป็นกี่ \(\mathrm{mol\,dm^{-3}\,min^{-1}}\)</p><span class="en">If \(NH_3\) forms at \(0.2\ \mathrm{mol\,dm^{-3}\,s^{-1}}\), what is the disappearance rate of \(H_2\) in \(\mathrm{mol\,dm^{-3}\,min^{-1}}\)?</span>
+<div class="choice-grid"><div class="choice">1. 0.2</div><div class="choice">2. 0.3</div><div class="choice">3. 0.9</div><div class="choice">4. 1.8</div></div>
+</div>
+<div class="response-frame xl">
+<div class="work-lines"></div>
+<div class="answer-layer">
+<div class="answer-title">วิธีทำ / Detailed Solution</div>
+      
+\[
+r=-\frac13\frac{\Delta[H_2]}{\Delta t}=+\frac12\frac{\Delta[NH_3]}{\Delta t}
+\]
+\[
+r=\frac12(0.2)=0.10\ \mathrm{mol\,dm^{-3}\,s^{-1}}
+\]
+\[
+-\frac{\Delta[H_2]}{\Delta t}=3r=3(0.10)=0.30\ \mathrm{mol\,dm^{-3}\,s^{-1}}
+\]
+แปลงเป็นต่อนาที<span class="en">Convert to per minute:</span>
+\[
+0.30\times60=18\ \mathrm{mol\,dm^{-3}\,min^{-1}}
+\]
+<div class="source-alert"><strong>ตรวจตัวเลือก / Choice check:</strong> คำตอบที่ถูกคือ 18 แต่ไม่มีในตัวเลือก ต้นฉบับระบุไว้เช่นกันว่าไม่มีคำตอบ<span class="en">The correct value is 18, but no option matches; the source itself also notes that no answer is available.</span></div>
+<div class="final-answer">ตอบ / Final Answer: \(\boxed{18\ \mathrm{mol\,dm^{-3}\,min^{-1}}}\) — ไม่มีตัวเลือกถูก</div>
+</div>
+</div>
+</article>
+<div class="page-footer">13</div>
+</section><section class="sheet">
+<div class="page-kicker">Practice • Question 14</div>
+<article class="question">
+<div class="question-head">
+<div class="question-title">ข้อ 14 / Question 14</div>
+<div class="level">Balanced Equation &amp; Δ Notation</div>
+</div>
+<div class="problem-text">
+<p>พิจารณาปฏิกิริยาที่ยังไม่ดุล แล้วเลือกนิพจน์อัตราการเกิดปฏิกิริยาที่ถูกต้อง<span class="en">Balance the reaction and select the correct average-rate expression.</span></p>
+<div class="main-question">\[\mathrm{Al+HCl\rightarrow AlCl_3+H_2}\quad\text{(ยังไม่ดุล / unbalanced)}\]</div>
+<div class="choice-grid compact-eq"><div class="choice">1. \(\frac12\frac{\Delta[Al]}{\Delta t}\ ,\ -\frac16\frac{\Delta[HCl]}{\Delta t}\)</div><div class="choice">2. \(-\frac{\Delta[Al]}{\Delta t}\ ,\ -\frac{\Delta[HCl]}{\Delta t}\)</div><div class="choice">3. \(\frac12\frac{\Delta[AlCl_3]}{\Delta t}\ ,\ -\frac13\frac{\Delta[H_2]}{\Delta t}\)</div><div class="choice">4. \(-\frac12\frac{\Delta[Al]}{\Delta t}\ ,\ +\frac13\frac{\Delta[H_2]}{\Delta t}\)</div></div>
+</div>
+<div class="response-frame xl">
+<div class="work-lines"></div>
+<div class="answer-layer">
+<div class="answer-title">วิธีทำ / Detailed Solution</div>
+<p><strong>ดุลสมการ / Balance the equation</strong></p>
+\[
+\mathrm{2Al+6HCl\rightarrow2AlCl_3+3H_2}
+\]
+<p><strong>เขียนความสัมพันธ์ของอัตราเฉลี่ยด้วย \(\Delta\) / Write the average-rate relationship using \(\Delta\)</strong></p>
+\[
+r=-\frac12\frac{\Delta[Al]}{\Delta t}=-\frac16\frac{\Delta[HCl]}{\Delta t}=+\frac12\frac{\Delta[AlCl_3]}{\Delta t}=+\frac13\frac{\Delta[H_2]}{\Delta t}
+\]
+<p>คู่ที่ปรากฏถูกต้องคือ</p><span class="en">The correctly matched pair is</span>
+\[
+-\frac12\frac{\Delta[Al]}{\Delta t}=+\frac13\frac{\Delta[H_2]}{\Delta t}
+\]
+<div class="final-answer">ตอบ / Final Answer: ข้อ 4</div>
+</div>
+</div>
+</article>
+<div class="page-footer">14</div>
+</section><section class="sheet">
+<div class="page-kicker">Practice • Question 15</div>
+<article class="question">
+<div class="question-head">
+<div class="question-title">ข้อ 15 / Question 15</div>
+<div class="level">Graph • Instantaneous Rate</div>
+</div>
+<div class="problem-text">
+<p>ในการสลายตัวของ NOCl ที่ 50°C ความเข้มข้นเปลี่ยนตามตารางและกราฟ จงหาอัตราการหายไปของ NOCl ณ เวลา 10 min<span class="en">During the decomposition of NOCl at 50°C, the concentration changes as shown. Find the instantaneous disappearance rate of NOCl at 10 min.</span></p>
+<table class="data-table"><tr><th>เวลา / Time (min)</th><td>0</td><td>5</td><td>10</td><td>15</td><td>20</td><td>25</td><td>30</td></tr><tr><th>\([NOCl]\) (mol dm⁻³)</th><td>5.00</td><td>3.50</td><td>2.50</td><td>1.80</td><td>1.20</td><td>0.90</td><td>0.60</td></tr></table><div class="graph-wrap"><svg aria-label="NOCl concentration versus time graph" role="img" viewbox="0 0 760 360">
+<rect fill="#fff" height="360" width="760" x="0" y="0"></rect>
+<line stroke="#111827" stroke-width="2" x1="80" x2="710" y1="300" y2="300"></line>
+<line stroke="#111827" stroke-width="2" x1="80" x2="80" y1="300" y2="35"></line>
+<text font-size="17" text-anchor="middle" x="395" y="345">เวลา / Time (min)</text>
+<text font-size="17" text-anchor="middle" transform="rotate(-90 18 170)" x="18" y="170">[NOCl] (mol dm⁻³)</text>
+<g fill="#111827" font-size="13">
+<text text-anchor="middle" x="80" y="320">0</text><text text-anchor="middle" x="185" y="320">5</text><text text-anchor="middle" x="290" y="320">10</text><text text-anchor="middle" x="395" y="320">15</text><text text-anchor="middle" x="500" y="320">20</text><text text-anchor="middle" x="605" y="320">25</text><text text-anchor="middle" x="710" y="320">30</text>
+<text text-anchor="end" x="68" y="304">0</text><text text-anchor="end" x="68" y="254">1</text><text text-anchor="end" x="68" y="204">2</text><text text-anchor="end" x="68" y="154">3</text><text text-anchor="end" x="68" y="104">4</text><text text-anchor="end" x="68" y="54">5</text>
+</g>
+<g stroke="#cbd5e1" stroke-width="1">
+<line x1="80" x2="710" y1="250" y2="250"></line><line x1="80" x2="710" y1="200" y2="200"></line><line x1="80" x2="710" y1="150" y2="150"></line><line x1="80" x2="710" y1="100" y2="100"></line><line x1="80" x2="710" y1="50" y2="50"></line>
+<line x1="185" x2="185" y1="35" y2="300"></line><line x1="290" x2="290" y1="35" y2="300"></line><line x1="395" x2="395" y1="35" y2="300"></line><line x1="500" x2="500" y1="35" y2="300"></line><line x1="605" x2="605" y1="35" y2="300"></line>
+</g>
+<path d="M80 50 C125 92,155 112,185 125 C222 144,255 162,290 175 C330 192,360 205,395 210 C438 224,470 235,500 240 C540 251,570 258,605 255 C640 266,675 270,710 270" fill="none" stroke="#111827" stroke-width="3"></path>
+<g fill="#111827">
+<circle cx="80" cy="50" r="4"></circle><circle cx="185" cy="125" r="4"></circle><circle cx="290" cy="175" r="4"></circle><circle cx="395" cy="210" r="4"></circle><circle cx="500" cy="240" r="4"></circle><circle cx="605" cy="255" r="4"></circle><circle cx="710" cy="270" r="4"></circle>
+</g>
+<g class="solution-only">
+<line stroke="#991b1b" stroke-width="3" x1="185" x2="395" y1="135" y2="215"></line>
+<circle cx="290" cy="175" fill="#fff" r="7" stroke="#991b1b" stroke-width="3"></circle>
+<line stroke="#991b1b" stroke-dasharray="7 5" stroke-width="2" x1="185" x2="395" y1="135" y2="135"></line>
+<line stroke="#991b1b" stroke-dasharray="7 5" stroke-width="2" x1="395" x2="395" y1="135" y2="215"></line>
+<text fill="#991b1b" font-size="14" text-anchor="middle" x="290" y="126">Δt = 10 min</text>
+<text fill="#991b1b" font-size="14" x="408" y="177">Δ[NOCl] = −1.6</text>
+<text fill="#991b1b" font-size="14" x="330" y="155">tangent / เส้นสัมผัส</text>
+</g>
+</svg></div>
+<div class="choice-grid"><div class="choice">1. 0.16</div><div class="choice">2. 0.25</div><div class="choice">3. 4.0</div><div class="choice">4. 6.25</div></div><p class="small">หน่วยทุกตัวเลือก / Unit: \(\mathrm{mol\,dm^{-3}\,min^{-1}}\)</p>
+</div>
+<div class="response-frame lg">
+<div class="work-lines"></div>
+<div class="answer-layer">
+<div class="answer-title">วิธีทำ / Detailed Solution</div>
+<p>โจทย์ถามอัตราที่เวลา 10 min จึงใช้ความชันของเส้นสัมผัส ไม่ใช่ความชันตลอดการทดลอง</p><span class="en">The rate at 10 min requires the tangent slope, not the slope over the whole experiment.</span>
+<p>จากเส้นสัมผัสในกราฟ เลือกจุดประมาณ \((5,3.3)\) และ \((15,1.7)\)</p>
+\[
+\text{slope}=\frac{1.7-3.3}{15-5}=\frac{-1.6}{10}=-0.16\ \mathrm{mol\,dm^{-3}\,min^{-1}}
+\]
+<p>ความชันเป็นลบเพราะ \([NOCl]\) ลดลง แต่อัตราการหายไปรายงานเป็นค่าบวก</p><span class="en">The slope is negative because \([NOCl]\) decreases, but the disappearance rate is reported as a positive magnitude.</span>
+\[
+r_{\mathrm{disappearance\ of\ NOCl}}=-\text{slope}=0.16
+\]
+<div class="final-answer">ตอบ / Final Answer: ข้อ 1 — \(\boxed{0.16\ \mathrm{mol\,dm^{-3}\,min^{-1}}}\)</div>
+</div>
+</div>
+</article>
+<div class="page-footer">15</div>
+</section><section class="sheet">
+<div class="page-kicker">Practice • Question 16</div>
+<article class="question">
+<div class="question-head">
+<div class="question-title">ข้อ 16 / Question 16</div>
+<div class="level">Graph • Stoichiometry</div>
+</div>
+<div class="problem-text">
+<p>อ่านจำนวนโมลของแก๊สจากกราฟ แล้วใช้สมการเคมีหามวล Mg ที่เหลือ<span class="en">Read the moles of gas from the graph, then use stoichiometry to find the remaining Mg mass.</span></p>
+<p>นำลวด Mg มวล 0.1000 g ใส่ในสารละลาย HCl แล้ววัดจำนวนโมลของ \(H_2\) ตามกราฟ จงหามวล Mg ที่เหลือเมื่อผ่านไป 175 s</p><span class="en">A 0.1000 g magnesium wire is placed in HCl solution. The moles of \(H_2\) are measured as shown. Find the mass of Mg remaining after 175 s.</span><div class="graph-wrap"><svg aria-label="moles of hydrogen versus time graph" role="img" viewbox="0 0 760 360">
+<rect fill="#fff" height="360" width="760" x="0" y="0"></rect>
+<line stroke="#111827" stroke-width="2" x1="85" x2="710" y1="300" y2="300"></line>
+<line stroke="#111827" stroke-width="2" x1="85" x2="85" y1="300" y2="35"></line>
+<text font-size="17" text-anchor="middle" x="400" y="345">เวลา / Time (s)</text>
+<text font-size="17" text-anchor="middle" transform="rotate(-90 18 170)" x="18" y="170">n(H₂) (mol)</text>
+<g fill="#111827" font-size="13">
+<text text-anchor="middle" x="85" y="320">0</text><text text-anchor="middle" x="189" y="320">50</text><text text-anchor="middle" x="293" y="320">100</text><text text-anchor="middle" x="397" y="320">150</text><text text-anchor="middle" x="501" y="320">200</text><text text-anchor="middle" x="605" y="320">250</text><text text-anchor="middle" x="710" y="320">300</text>
+<text text-anchor="end" x="72" y="304">0</text><text text-anchor="end" x="72" y="274">0.1×10⁻³</text><text text-anchor="end" x="72" y="244">0.2×10⁻³</text><text text-anchor="end" x="72" y="214">0.3×10⁻³</text><text text-anchor="end" x="72" y="184">0.4×10⁻³</text><text text-anchor="end" x="72" y="154">0.5×10⁻³</text><text text-anchor="end" x="72" y="124">0.6×10⁻³</text><text text-anchor="end" x="72" y="94">0.7×10⁻³</text><text text-anchor="end" x="72" y="64">0.8×10⁻³</text>
+</g>
+<g stroke="#cbd5e1" stroke-width="1">
+<line x1="85" x2="710" y1="270" y2="270"></line><line x1="85" x2="710" y1="240" y2="240"></line><line x1="85" x2="710" y1="210" y2="210"></line><line x1="85" x2="710" y1="180" y2="180"></line><line x1="85" x2="710" y1="150" y2="150"></line><line x1="85" x2="710" y1="120" y2="120"></line><line x1="85" x2="710" y1="90" y2="90"></line><line x1="85" x2="710" y1="60" y2="60"></line>
+<line x1="189" x2="189" y1="35" y2="300"></line><line x1="293" x2="293" y1="35" y2="300"></line><line x1="397" x2="397" y1="35" y2="300"></line><line x1="501" x2="501" y1="35" y2="300"></line><line x1="605" x2="605" y1="35" y2="300"></line>
+</g>
+<path d="M85 300 C140 260,165 225,189 210 C225 180,260 160,293 150 C333 125,366 102,397 90 C438 78,468 68,501 60 C548 56,580 58,605 60 C647 60,680 60,710 60" fill="none" stroke="#111827" stroke-width="3"></path>
+<g fill="#111827"><circle cx="85" cy="300" r="4"></circle><circle cx="189" cy="210" r="4"></circle><circle cx="293" cy="150" r="4"></circle><circle cx="397" cy="90" r="4"></circle><circle cx="501" cy="60" r="4"></circle><circle cx="605" cy="60" r="4"></circle></g>
+<g class="solution-only">
+<line stroke="#991b1b" stroke-dasharray="7 5" stroke-width="2.5" x1="449" x2="449" y1="300" y2="75"></line>
+<line stroke="#991b1b" stroke-dasharray="7 5" stroke-width="2.5" x1="85" x2="449" y1="75" y2="75"></line>
+<circle cx="449" cy="75" fill="#fff" r="7" stroke="#991b1b" stroke-width="3"></circle>
+<text fill="#991b1b" font-size="14" text-anchor="middle" x="449" y="326">175 s</text>
+<text fill="#991b1b" font-size="14" x="93" y="70">≈0.75×10⁻³ mol</text>
+</g>
+</svg></div>
+<div class="choice-grid"><div class="choice">1. 0.076 g</div><div class="choice">2. 0.098 g</div><div class="choice">3. 0.064 g</div><div class="choice">4. 0.082 g</div></div>
+</div>
+<div class="response-frame lg">
+<div class="work-lines"></div>
+<div class="answer-layer">
+<div class="answer-title">วิธีทำ / Detailed Solution</div>
+<p>จากเส้นช่วยอ่านกราฟที่ 175 s</p><span class="en">From the guide lines at 175 s:</span>
+\[
+n(H_2)\approx0.75\times10^{-3}\ \mathrm{mol}
+\]
+\[
+\mathrm{Mg+2HCl\rightarrow MgCl_2+H_2}
+\]
+อัตราส่วนโมล \(Mg:H_2=1:1\)<span class="en">The mole ratio \(Mg:H_2=1:1\).</span>
+\[
+n(Mg\text{ used})=0.75\times10^{-3}\ \mathrm{mol}
+\]
+\[
+m(Mg\text{ used})=nM=(0.75\times10^{-3})(24.3)=0.0182\ \mathrm g
+\]
+\[
+m(Mg\text{ remaining})=0.1000-0.0182=0.0818\approx0.082\ \mathrm g
+\]
+<div class="final-answer">ตอบ / Final Answer: ข้อ 4 — \(\boxed{0.082\ \mathrm g}\)</div>
+</div>
+</div>
+</article>
+<div class="page-footer">16</div>
+</section><script>
+async function typesetReady() {
+  if (window.MathJax && MathJax.typesetPromise) {
+    try { await MathJax.typesetPromise(); } catch (err) { console.warn(err); }
+  }
+}
+async function setMode(mode) {
+  document.body.classList.remove('mode-student', 'mode-solution');
+  document.body.classList.add(mode);
+  const status = document.getElementById('statusText');
+  if (status) {
+    status.textContent = mode === 'mode-solution'
+      ? 'โหมดเฉลย: วิธีทำ คำตอบ และเส้นช่วยอ่านกราฟแสดงในพื้นที่เดิม'
+      : 'โหมดนักเรียน: ช่องเฉลยเป็นพื้นที่ว่างสำหรับแสดงวิธีทำ';
+  }
+  await typesetReady();
+}
+async function showSolutions() { await setMode('mode-solution'); }
+async function hideSolutions() { await setMode('mode-student'); }
+async function printStudent() {
+  await setMode('mode-student');
+  setTimeout(() => window.print(), 350);
+}
+async function printSolution() {
+  await setMode('mode-solution');
+  setTimeout(() => window.print(), 350);
+}
+window.addEventListener('load', typesetReady);
+</script></body>
+</html>

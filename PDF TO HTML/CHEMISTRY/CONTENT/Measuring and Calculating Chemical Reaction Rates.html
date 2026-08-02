@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+
+<html lang="th">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>บทเรียนการวัดและคำนวณอัตราการเกิดปฏิกิริยาเคมี | Chemical Reaction Rate Lesson and Recall</title>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+};
+</script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --paper-w: 210mm;
+  --paper-h: 297mm;
+  --pad-x: 14mm;
+  --pad-y: 10mm;
+  --ink: #111827;
+  --navy: #0f172a;
+  --slate: #475569;
+  --line: #cbd5e1;
+  --soft: #f8fafc;
+  --hot: #fff7ed;
+  --green: #166534;
+  --amber: #92400e;
+  --red: #991b1b;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: #e5e7eb;
+  color: var(--ink);
+  font-family: "K2D", Arial, sans-serif;
+  font-size: 11.7px;
+  line-height: 1.42;
+}
+button, input { font-family: inherit; }
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--navy);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(15,23,42,.25);
+}
+.toolbar button {
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: #fff;
+  color: var(--navy);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.toolbar .primary { background: #bae6fd; color: #082f49; }
+.toolbar .gold { background: #fde68a; color: #78350f; }
+.toolbar .status {
+  flex-basis: 100%;
+  text-align: center;
+  font-size: 11px;
+  opacity: .92;
+}
+.screen-guide {
+  width: min(var(--paper-w), calc(100vw - 24px));
+  margin: 14px auto 0;
+  padding: 10px 13px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(15,23,42,.12);
+  font-size: 11.5px;
+}
+.sheet {
+  width: min(var(--paper-w), calc(100vw - 24px));
+  min-height: var(--paper-h);
+  height: var(--paper-h);
+  margin: 16px auto 28px;
+  padding: var(--pad-y) var(--pad-x);
+  background: #fff;
+  box-shadow: 0 16px 42px rgba(15,23,42,.22);
+  position: relative;
+  overflow: hidden;
+  page-break-after: always;
+  break-after: page;
+}
+.page-kicker {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--slate);
+  margin-bottom: 1.5mm;
+}
+.hero {
+  border: 1.6px solid var(--navy);
+  padding: 5mm;
+  margin-bottom: 4mm;
+  background: linear-gradient(135deg, #f8fafc 0%, #fff 70%);
+}
+.hero h1 { margin: 0; font-size: 22px; line-height: 1.15; font-weight: 800; }
+.hero .subtitle { margin-top: 1.2mm; font-size: 14px; color: var(--slate); font-weight: 600; }
+.hero .lead { margin: 3mm 0 0; font-size: 12.3px; }
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4mm;
+  margin: 0 0 3mm;
+  padding-bottom: 1.8mm;
+  border-bottom: 1.5px solid var(--navy);
+}
+.section-title h2 { margin: 0; font-size: 16px; line-height: 1.2; }
+.section-title .tag {
+  border: 1px solid var(--navy);
+  border-radius: 999px;
+  padding: 1mm 2.5mm;
+  font-size: 9.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.en {
+  display: block;
+  color: #374151;
+  font-size: .89em;
+  font-weight: 400;
+  margin-top: .5mm;
+}
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3mm; }
+.card {
+  border: 1px solid var(--navy);
+  padding: 3.2mm;
+  background: #fff;
+  break-inside: avoid;
+}
+.card h3 { margin: 0 0 1.6mm; font-size: 13px; line-height: 1.2; }
+.card p { margin: 1.2mm 0; }
+.clean-list { margin: 0; padding-left: 5mm; }
+.clean-list li { margin: 1.2mm 0; }
+.outcome-list { list-style: none; padding: 0; margin: 0; counter-reset: outcome; }
+.outcome-list li { counter-increment: outcome; position: relative; padding-left: 9mm; margin: 2mm 0; }
+.outcome-list li::before {
+  content: counter(outcome);
+  position: absolute;
+  left: 0;
+  top: .1mm;
+  width: 6mm;
+  height: 6mm;
+  border: 1px solid var(--navy);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 9px;
+  font-weight: 800;
+}
+.checklist { display: grid; grid-template-columns: 1fr 1fr; gap: 2.2mm 4mm; }
+.check-item {
+  display: grid;
+  grid-template-columns: 6mm 1fr;
+  gap: 2mm;
+  align-items: start;
+  border-bottom: 1px dotted #94a3b8;
+  padding: 1.6mm 0 2mm;
+}
+.check-item input { width: 4.5mm; height: 4.5mm; margin-top: .4mm; }
+.key-formula, .main-question {
+  border: 1.1px solid var(--navy);
+  background: #f8fafc;
+  padding: 2.2mm 2.6mm;
+  margin: 2mm 0;
+  font-weight: 700;
+}
+.hot-question-card {
+  border: 1.2px solid #f59e0b;
+  background: var(--hot);
+  padding: 3mm;
+  break-inside: avoid;
+}
+.hot-question-card h3 { margin: 0 0 1.4mm; font-size: 13px; color: var(--amber); }
+.hot-question-text { font-weight: 650; line-height: 1.5; }
+.hot-toggle-row { display: flex; justify-content: flex-end; margin-top: 2.4mm; }
+.hot-toggle-btn {
+  border: 1px solid var(--navy);
+  border-radius: 999px;
+  padding: 1.5mm 3mm;
+  background: #fff;
+  color: var(--navy);
+  font-size: 10.5px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.hot-response-frame {
+  position: relative;
+  height: 25mm;
+  margin-top: 2.4mm;
+  border: 1px solid #d97706;
+  background: #fff;
+  overflow: hidden;
+}
+.hot-response-frame.sm { height: 22mm; }
+.hot-response-frame.md { height: 27mm; }
+.hot-response-frame.lg { height: 32mm; }
+.hot-response-frame::before {
+  content: "เขียนคำตอบสั้น ๆ / Write a short answer";
+  position: absolute;
+  top: -3.2mm;
+  left: 3mm;
+  z-index: 3;
+  padding: 0 1.5mm;
+  background: #fff;
+  color: var(--amber);
+  font-size: 9.3px;
+  font-weight: 800;
+}
+.hot-work-lines,
+.hot-answer-layer {
+  position: absolute;
+  inset: 2.8mm;
+}
+.hot-work-lines {
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 7.2mm,
+    #d1d5db 7.3mm,
+    transparent 7.5mm
+  );
+  opacity: 1;
+}
+.hot-answer-layer {
+  visibility: hidden;
+  opacity: 0;
+  overflow: hidden;
+  font-size: 10.4px;
+  line-height: 1.34;
+}
+.hot-question-card.open .hot-work-lines,
+body.mode-solution .hot-work-lines {
+  visibility: hidden;
+  opacity: 0;
+}
+.hot-question-card.open .hot-answer-layer,
+body.mode-solution .hot-answer-layer {
+  visibility: visible;
+  opacity: 1;
+}
+body.mode-solution .hot-toggle-btn { display: none; }
+.hot-guide-title { font-weight: 800; color: var(--green); margin-bottom: 1.2mm; }
+.warn-box { border-left: 4px solid #dc2626; background: #fef2f2; padding: 2.2mm 2.5mm; margin-top: 2mm; }
+.note-box { border-left: 4px solid #1d4ed8; background: #eff6ff; padding: 2.2mm 2.5mm; margin-top: 2mm; }
+.success-box { border-left: 4px solid #15803d; background: #f0fdf4; padding: 2.2mm 2.5mm; margin-top: 2mm; }
+.teacher-note { border: 1px dashed var(--slate); background: #f8fafc; padding: 2.3mm 2.7mm; margin-top: 2.5mm; font-size: 10.5px; }
+.concept-table, .summary-table, .mini-answer-table, .data-table {
+  width: 100%; border-collapse: collapse; table-layout: fixed;
+}
+.concept-table th, .concept-table td,
+.summary-table th, .summary-table td,
+.mini-answer-table th, .mini-answer-table td,
+.data-table th, .data-table td {
+  border: 1px solid var(--navy); padding: 1.7mm 1.8mm; vertical-align: top;
+}
+.concept-table th, .summary-table th, .mini-answer-table th, .data-table th { background: #f1f5f9; }
+.question { border: 1.2px solid var(--navy); padding: 3.5mm; margin: 0; break-inside: avoid; }
+.question-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 3mm; margin-bottom: 1.5mm; }
+.question-title { font-weight: 800; font-size: 13px; }
+.level { border: 1px solid var(--navy); border-radius: 999px; padding: .8mm 2.2mm; font-size: 9px; font-weight: 700; white-space: nowrap; }
+.problem-text { font-size: 11.5px; }
+.problem-text p { margin: 1.2mm 0; }
+.choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1mm 4mm; margin: 2mm 0; }
+.choice { border-bottom: 1px dotted #94a3b8; padding: 1mm 0; }
+.response-frame {
+  position: relative;
+  border: 1px solid var(--navy);
+  margin-top: 3mm;
+  padding: 3mm;
+  overflow: hidden;
+  background: #fff;
+}
+.response-frame::before {
+  content: "พื้นที่แสดงวิธีทำ / Working area";
+  position: absolute;
+  top: -3.4mm;
+  left: 4mm;
+  padding: 0 2mm;
+  background: #fff;
+  font-size: 9.8px;
+  font-weight: 700;
+  z-index: 3;
+}
+.response-frame.sm { height: 48mm; }
+.response-frame.md { height: 66mm; }
+.response-frame.lg { height: 88mm; }
+.response-frame.xl { height: 112mm; }
+.response-frame.xxl { height: 136mm; }
+.work-lines, .answer-layer { position: absolute; inset: 3mm; }
+.work-lines { background: repeating-linear-gradient(to bottom, transparent 0, transparent 8.6mm, #d1d5db 8.7mm, transparent 8.9mm); opacity: 1; }
+.answer-layer { visibility: hidden; opacity: 0; overflow: hidden; font-size: 10.55px; line-height: 1.34; }
+.answer-layer p { margin: .8mm 0; }
+body.mode-solution .work-lines { visibility: hidden; opacity: 0; }
+body.mode-solution .answer-layer { visibility: visible; opacity: 1; }
+.answer-title { font-weight: 800; color: var(--green); margin-bottom: 1.2mm; }
+.final-answer { border-left: 3px solid var(--green); background: #f0fdf4; padding: 1.7mm 2mm; margin-top: 1.5mm; font-weight: 800; }
+.source-alert { border-left: 4px solid var(--red); background: #fff1f2; padding: 1.8mm 2.2mm; margin: 1.4mm 0; }
+.page-footer { position: absolute; right: 12mm; bottom: 5mm; font-size: 9px; color: #64748b; }
+.formula-chip { display: inline-block; border: 1px solid var(--navy); border-radius: 999px; padding: 1mm 2.2mm; margin: 1mm .6mm 0 0; font-size: 10px; font-weight: 700; }
+.rate-step { border: 1px solid #94a3b8; background: #fff; padding: 2.2mm; margin: 2mm 0; }
+.rate-step b { color: var(--navy); }
+.compact-eq mjx-container[display="true"] { margin: .4em 0 !important; }
+.graph-wrap { border: 1px solid var(--navy); background: #fff; padding: 2mm; margin-top: 2mm; }
+.graph-wrap svg { width: 100%; height: auto; display: block; max-height: 88mm; }
+svg text { font-family: "K2D", Arial, sans-serif; }
+.solution-only { display: none; }
+body.mode-solution .solution-only { display: inline; }
+body.mode-solution g.solution-only { display: block; }
+.teacher-only { display: none; }
+body.mode-solution .teacher-only { display: block; }
+.small { font-size: 10px; }
+.center { text-align: center; }
+.two-col-text { columns: 2; column-gap: 8mm; }
+.no-break { break-inside: avoid; }
+@page { size: A4 portrait; margin: 0; }
+@media print {
+  html, body { width: 210mm; background: #fff !important; }
+  .toolbar, .screen-guide { display: none !important; }
+  .sheet {
+    width: 210mm !important;
+    height: 297mm !important;
+    min-height: 297mm !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+    page-break-after: always !important;
+    break-after: page !important;
+  }
+  .hot-toggle-btn { display: none !important; }
+  * { color: #000 !important; border-color: #000 !important; box-shadow: none !important; text-shadow: none !important; }
+}
+
+.story-bridge {
+  border-left: 4px solid var(--navy);
+  background: #f8fafc;
+  padding: 2.5mm 3mm;
+  margin: 2.5mm 0;
+  font-weight: 650;
+}
+.story-bridge .en { font-weight: 400; }
+.story-definition {
+  border: 1.5px solid var(--navy);
+  background: #fff;
+  padding: 3mm;
+  margin: 2.5mm 0;
+  text-align: center;
+}
+.story-definition strong { font-size: 13px; }
+.memory-article {
+  border: 1.4px solid var(--navy);
+  background: #f8fafc;
+  padding: 3.2mm;
+  line-height: 1.58;
+}
+.cloze-box {
+  border: 1.4px solid var(--navy);
+  padding: 3.2mm;
+  margin-top: 3mm;
+  background: #fff;
+  line-height: 1.75;
+}
+.blank {
+  display: inline-flex;
+  width: 31mm;
+  min-width: 31mm;
+  height: 5.3mm;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1.2px solid var(--navy);
+  vertical-align: -1.2mm;
+  line-height: 1;
+  overflow: hidden;
+}
+.blank-answer {
+  visibility: hidden;
+  opacity: 0;
+  font-weight: 800;
+  color: var(--green);
+  white-space: nowrap;
+  transition: opacity .15s ease;
+}
+.recall-section.open .blank-answer,
+body.mode-solution .blank-answer {
+  visibility: visible;
+  opacity: 1;
+}
+.recall-section.open .blank,
+body.mode-solution .blank {
+  background: #f0fdf4;
+  border-bottom-color: var(--green);
+}
+.word-bank {
+  border: 1px dashed var(--navy);
+  background: #f8fafc;
+  padding: 2.2mm 2.6mm;
+  margin-top: 2.5mm;
+}
+.recall-response-frame {
+  position: relative;
+  height: 20mm;
+  margin-top: 2mm;
+  border: 1px solid var(--navy);
+  background: #fff;
+  overflow: hidden;
+}
+.recall-work-lines,
+.recall-answer-layer {
+  position: absolute;
+  inset: 2.5mm 3mm;
+}
+.recall-work-lines {
+  background: repeating-linear-gradient(to bottom, transparent 0, transparent 7mm, #d1d5db 7.1mm, transparent 7.3mm);
+}
+.recall-answer-layer {
+  visibility: hidden;
+  opacity: 0;
+  font-size: 10.5px;
+  line-height: 1.35;
+  overflow: hidden;
+}
+.recall-section.open .recall-work-lines,
+body.mode-solution .recall-work-lines {
+  visibility: hidden;
+  opacity: 0;
+}
+.recall-section.open .recall-answer-layer,
+body.mode-solution .recall-answer-layer {
+  visibility: visible;
+  opacity: 1;
+}
+.story-question {
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.35;
+  margin: 1.5mm 0;
+}
+.rate-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2mm;
+  margin: 2.5mm 0;
+}
+.rate-strip > div {
+  border: 1px solid var(--navy);
+  padding: 2.2mm;
+  background: #fff;
+  text-align: center;
+}
+.compact-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.compact-table th, .compact-table td { border: 1px solid var(--navy); padding: 1.6mm 1.8mm; vertical-align: top; }
+.compact-table th { background: #f1f5f9; }
+@media print {
+  .memory-article, .cloze-box, .story-definition, .story-bridge, .word-bank,
+  .rate-strip > div { background: #fff !important; }
+}
+</style>
+</head>
+<body class="mode-student">
+<div class="toolbar">
+<button class="primary" onclick="printStudent()">🖨️ พิมพ์เนื้อหา</button>
+<button class="gold" onclick="printSolution()">✅ พิมพ์พร้อมเฉลย</button>
+<button onclick="showSolutions()">👁️ เปิดเฉลย</button>
+<button onclick="hideSolutions()">🙈 ปิดเฉลย</button>
+<div class="status" id="statusText">โหมดนักเรียน: คำถาม HOT และแบบเติมคำพร้อมพื้นที่เขียน</div>
+</div>
+<div class="screen-guide">
+          บทเรียน A4 สองภาษาเรื่อง
+          <strong>การวัดและคำนวณอัตราการเกิดปฏิกิริยาเคมี</strong>
+          • แยกจากไฟล์แบบฝึกหัดข้อ 1–16
+          • เนื้อหาเล่าเป็นเรื่องเดียวต่อเนื่อง
+          • สูตรเกิดจากนิยามและการพิสูจน์
+          • คำถาม HOT และบทความเติมคำมีพื้นที่เขียนพร้อมเฉลยในตำแหน่งเดิม
+          <span class="en">
+            A standalone bilingual A4 lesson on
+            <strong>measuring and calculating chemical reaction rates</strong>.
+            It is separated from the Questions 1–16 practice file and retains the continuous narrative,
+            derivations, HOT-question writing spaces, recall article, cloze activity, and lesson summary.
+          </span>
+</div>
+<section class="sheet">
+<div class="page-kicker">Chemistry • Chemical Reaction Rate</div>
+<div class="hero">
+<h1>การวัดและคำนวณอัตราการเกิดปฏิกิริยาเคมี</h1>
+<div class="subtitle">Measuring and Calculating Chemical Reaction Rates</div>
+<p class="lead">บทเรียนนี้เริ่มจากคำถามเดียวว่า “เราจะบอกได้อย่างไรว่าปฏิกิริยาใดเกิดเร็วกว่า” แล้วค่อย ๆ เชื่อมการสังเกต การคำนวณจากตารางและกราฟ และอัตราส่วนในสมการเคมี จนสร้างความสัมพันธ์ของอัตราการเกิดปฏิกิริยา \(r\) ได้ด้วยเหตุผลของตนเอง<span class="en">This lesson begins with one question: “How can we tell which reaction is faster?” Observation, calculations from tables and graphs, and stoichiometric ratios are then connected into one continuous explanation that leads to the reaction-rate relationship \(r\).</span></p>
+</div>
+<div class="section-title"><h2>สาระการเรียนรู้</h2><span class="tag">Learning Content</span></div>
+<div class="grid-2">
+<div class="card">
+<ul class="clean-list">
+<li>ความหมายของอัตราการเกิดปฏิกิริยาในฐานะการเปลี่ยนแปลงต่อหน่วยเวลา<span class="en">Reaction rate as a change in a measurable quantity per unit time</span></li>
+<li>การเลือกมวล ปริมาตรแก๊ส จำนวนโมล หรือความเข้มข้นเพื่อใช้ติดตามปฏิกิริยา<span class="en">Selecting mass, gas volume, amount in moles, or concentration to monitor a reaction</span></li>
+<li>การคำนวณอัตราเริ่มต้น อัตราในช่วง และอัตราเฉลี่ยจากข้อมูลชุดเดียวกัน<span class="en">Calculating initial, interval, and overall average rates from one data set</span></li>
+</ul>
+</div>
+<div class="card">
+<ul class="clean-list">
+<li>การเชื่อมอัตรากับความชันของกราฟและการหาอัตรา ณ ขณะหนึ่ง<span class="en">Connecting rate with graph slope and determining an instantaneous rate</span></li>
+<li>การพิสูจน์ว่าเหตุใดอัตราของสารแต่ละชนิดจึงต้องหารด้วยสัมประสิทธิ์<span class="en">Deriving why each species rate must be divided by its stoichiometric coefficient</span></li>
+<li>การใช้ความสัมพันธ์ของ \(r\) แก้โจทย์ อ่านสมการย้อนกลับ และตรวจความเป็นไปได้ของคำตอบ<span class="en">Using \(r\) to solve problems, reconstruct an equation, and check whether an answer is physically possible</span></li>
+</ul>
+</div>
+</div>
+<div class="page-footer">1</div>
+</section><section class="sheet">
+<div class="page-kicker">Expected Learning Outcomes</div>
+<div class="section-title"><h2>ผลการเรียนรู้ที่คาดหวัง</h2><span class="tag">Expected Learning Outcomes</span></div>
+<ol class="outcome-list">
+<li>อธิบายอัตราการเกิดปฏิกิริยาเป็นการเปลี่ยนแปลงของปริมาณที่วัดได้ต่อหน่วยเวลาได้<span class="en">Explain reaction rate as the change in a measurable quantity per unit time.</span></li>
+<li>เลือกปริมาณและหน่วยที่เหมาะสมสำหรับติดตามปฏิกิริยาในสถานการณ์ต่าง ๆ ได้<span class="en">Select a suitable measured quantity and unit for monitoring a reaction.</span></li>
+<li>คำนวณอัตราเริ่มต้น อัตราในช่วง และอัตราเฉลี่ยจากตารางข้อมูลได้ โดยเข้าใจว่าทั้งหมดมาจากแนวคิดเดียวกัน<span class="en">Calculate initial, interval, and overall average rates from a table and recognise that they arise from the same idea.</span></li>
+<li>อธิบายได้ว่า \(\Delta X/\Delta t\) คือความชันของกราฟปริมาณ–เวลา และใช้อัตรา ณ ขณะหนึ่งจากเส้นสัมผัสได้<span class="en">Explain that \(\Delta X/\Delta t\) is the slope of a quantity–time graph and determine an instantaneous rate from a tangent.</span></li>
+<li>แยกอัตราการเปลี่ยนแปลงของสารแต่ละชนิดออกจากอัตราการเกิดปฏิกิริยา \(r\) ได้<span class="en">Distinguish the rate of change of an individual species from the reaction rate \(r\).</span></li>
+<li>พิสูจน์จากอัตราส่วนโมลได้ว่าเหตุใดต้องหารอัตราของสารด้วยสัมประสิทธิ์ในสมการเคมี<span class="en">Derive from mole ratios why each species rate is divided by its coefficient.</span></li>
+<li>เขียน จัดรูป และใช้ความสัมพันธ์ของ \(r\) สำหรับสมการเคมีที่ดุลแล้วได้<span class="en">Write, rearrange, and use the \(r\) relationship for a balanced chemical equation.</span></li>
+<li>หาสมการเคมีจากความสัมพันธ์ของอัตรา โดยใช้เครื่องหมายและตัวส่วนอย่างมีเหตุผลได้<span class="en">Reconstruct a chemical equation from a rate relationship using the signs and denominators logically.</span></li>
+<li>ตรวจได้ว่าสารตั้งต้นหมดเมื่อใด และคำตอบเกินผลิตภัณฑ์สูงสุดที่เป็นไปได้หรือไม่<span class="en">Determine when a reactant is exhausted and whether an answer exceeds the maximum possible product.</span></li>
+<li>อธิบายวิธีคิด เครื่องหมาย หน่วย และเหตุผลของคำตอบได้ ไม่ใช่เพียงเลือกสูตรแทนค่า<span class="en">Explain the method, signs, units, and reasoning rather than merely selecting and substituting into a formula.</span></li>
+</ol>
+<div class="page-footer">2</div>
+</section><section class="sheet">
+<div class="page-kicker">Student Checklist</div>
+<div class="section-title"><h2>เช็กลิสต์นักเรียน</h2><span class="tag">Student Checklist</span></div>
+<p class="note-box">ทำเครื่องหมายเมื่อคุณอธิบายหรือทำสิ่งนั้นได้ด้วยตนเองโดยไม่เปิดเฉลย<span class="en">Tick an item only when you can explain or perform it independently without viewing the solution.</span></p>
+<div class="checklist">
+<label class="check-item"><input type="checkbox"/><span>ฉันอธิบายได้ว่าอัตราคือการเปลี่ยนแปลงต่อหน่วยเวลา<span class="en">I can explain rate as change per unit time.</span></span></label>
+<label class="check-item"><input type="checkbox"/><span>ฉันเลือกได้ว่าจะติดตามปฏิกิริยาจากมวล ปริมาตรแก๊ส โมล หรือความเข้มข้น<span class="en">I can choose mass, gas volume, moles, or concentration to monitor a reaction.</span></span></label>
+<label class="check-item"><input type="checkbox"/><span>ฉันใช้ \(\Delta X=X_{\mathrm f}-X_{\mathrm i}\) และ \(\Delta t=t_{\mathrm f}-t_{\mathrm i}\) ได้ถูกต้อง<span class="en">I can correctly use \(\Delta X=X_{\mathrm f}-X_{\mathrm i}\) and \(\Delta t=t_{\mathrm f}-t_{\mathrm i}\).</span></span></label>
+<label class="check-item"><input type="checkbox"/><span>ฉันเลือกช่วงเวลาเพื่อหาอัตราเริ่มต้น อัตราในช่วง หรืออัตราเฉลี่ยได้<span class="en">I can select the interval for an initial, interval, or overall average rate.</span></span></label>
+<label class="check-item"><input type="checkbox"/><span>ฉันเชื่อม \(\Delta X/\Delta t\) กับความชันของกราฟได้<span class="en">I can connect \(\Delta X/\Delta t\) with graph slope.</span></span></label>
+<label class="check-item"><input type="checkbox"/><span>ฉันหาอัตรา ณ ขณะหนึ่งจากเส้นสัมผัส ไม่ใช่จากจุดสุ่มบนเส้นโค้ง<span class="en">I can find an instantaneous rate from a tangent, not from random points on the curve.</span></span></label>
+<label class="check-item"><input type="checkbox"/><span>ฉันอธิบายได้ว่าเหตุใดอัตราของสารต่างชนิดในปฏิกิริยาเดียวกันจึงไม่เท่ากัน<span class="en">I can explain why different species in one reaction have different rates of change.</span></span></label>
+<label class="check-item"><input type="checkbox"/><span>ฉันพิสูจน์ได้ว่าเหตุใดต้องหารด้วยสัมประสิทธิ์เพื่อให้ได้ \(r\) ค่าเดียวกัน<span class="en">I can derive why division by coefficients gives one common \(r\).</span></span></label>
+<label class="check-item"><input type="checkbox"/><span>ฉันดุลสมการและเขียนความสัมพันธ์ของ \(r\) ก่อนแทนตัวเลข<span class="en">I balance the equation and write the \(r\) relationship before substituting values.</span></span></label>
+<label class="check-item"><input type="checkbox"/><span>ฉันจัดรูปจาก \(r\) ไปหาอัตราของสารที่โจทย์ถามได้<span class="en">I can rearrange from \(r\) to the requested species rate.</span></span></label>
+<label class="check-item"><input type="checkbox"/><span>ฉันอ่านสมการเคมีจากเครื่องหมายและตัวส่วนในความสัมพันธ์ของอัตราได้<span class="en">I can read a chemical equation from the signs and denominators in a rate relationship.</span></span></label>
+<label class="check-item"><input type="checkbox"/><span>ฉันใช้ \(r\propto1/t\) เฉพาะเมื่อการเปลี่ยนแปลงที่เปรียบเทียบเท่ากัน<span class="en">I use \(r\propto1/t\) only when the compared changes are equal.</span></span></label>
+<label class="check-item"><input type="checkbox"/><span>ฉันตรวจว่าสารตั้งต้นหมดก่อนเวลาที่โจทย์ถามหรือไม่<span class="en">I check whether a reactant is exhausted before the stated time.</span></span></label>
+<label class="check-item"><input type="checkbox"/><span>ฉันตรวจหน่วย เครื่องหมาย และความสมเหตุสมผลของคำตอบได้<span class="en">I can check units, signs, and the physical reasonableness of an answer.</span></span></label>
+</div>
+<div class="page-footer">3</div>
+</section><section class="sheet">
+<div class="page-kicker">The Story Begins</div>
+<div class="section-title"><h2>เราจะบอกได้อย่างไรว่าปฏิกิริยาใดเกิดเร็วกว่า</h2><span class="tag">Which Reaction Is Faster?</span></div>
+<div class="story-bridge">ปฏิกิริยาสองชุดให้แก๊สสุดท้ายเท่ากัน \(18\ \mathrm{cm^3}\) ชุด A ใช้เวลา \(20\ \mathrm{s}\) ส่วนชุด B ใช้เวลา \(60\ \mathrm{s}\)<span class="en">Two reactions produce the same final gas volume, \(18\ \mathrm{cm^3}\). Trial A takes \(20\ \mathrm{s}\), whereas Trial B takes \(60\ \mathrm{s}\).</span></div>
+<div class="hot-question-card" id="hot-story-1">
+<h3>คำถาม HOT / HOT Question</h3>
+<div class="hot-question-text">ชุดใดเกิดเร็วกว่า และคุณใช้ข้อมูลใดเป็นหลักฐาน?<span class="en">Which trial is faster, and what evidence supports your answer?</span></div>
+<div class="hot-toggle-row"><button class="hot-toggle-btn" onclick="toggleHot('hot-story-1', this)" type="button">เปิดเฉลยคำถาม / Show Answer</button></div>
+<div class="hot-response-frame sm"><div class="hot-work-lines"></div><div class="hot-answer-layer"><div class="hot-guide-title">แนวอภิปราย / Discussion Guide</div>ชุด A เร็วกว่า เพราะให้การเปลี่ยนแปลงสุดท้ายเท่ากันแต่ใช้เวลาน้อยกว่า<span class="en">Trial A is faster because it reaches the same final change in less time.</span></div></div>
+</div>
+<div class="story-definition">
+<strong>นิยาม / Definition</strong>
+<p>อัตราการเกิดปฏิกิริยา คือ การเปลี่ยนแปลงของปริมาณที่ใช้ติดตามปฏิกิริยาต่อหนึ่งหน่วยเวลา<span class="en">Reaction rate is the change in a quantity used to monitor a reaction per unit time.</span></p>
+<div class="key-formula">\[\text{อัตราการเปลี่ยนแปลงของ }X=\frac{\Delta X}{\Delta t}\]</div>
+</div>
+<div class="grid-2">
+<div class="card">
+<h3>สิ่งที่อาจใช้ติดตาม / Possible measurements</h3>
+<ul class="clean-list">
+<li>ปริมาตรแก๊สที่เพิ่มขึ้น<span class="en">Increase in gas volume</span></li>
+<li>มวลที่ลดลงเมื่อแก๊สออกจากระบบ<span class="en">Decrease in mass as gas leaves the system</span></li>
+<li>ความเข้มข้นของสารตั้งต้นที่ลดลง<span class="en">Decrease in reactant concentration</span></li>
+<li>จำนวนโมลหรือความเข้มข้นของผลิตภัณฑ์ที่เพิ่มขึ้น<span class="en">Increase in product amount or concentration</span></li>
+</ul>
+</div>
+<div class="card">
+<h3>การเปลี่ยนแปลงมาจากไหน / Where the change comes from</h3>
+<p>ค่าที่เปลี่ยนแปลงคือค่าหลังลบค่าก่อน<span class="en">A change is the final value minus the initial value.</span></p>
+<div class="key-formula">\[\Delta X=X_{\mathrm f}-X_{\mathrm i}\]</div>
+<div class="key-formula">\[\Delta t=t_{\mathrm f}-t_{\mathrm i}\]</div>
+<p>ดังนั้นสูตรอัตราไม่ได้เป็นสูตรที่ต้องท่อง แต่เกิดจาก “การเปลี่ยนแปลงหารด้วยเวลาที่เปลี่ยนไป”<span class="en">The rate expression is therefore not an isolated formula to memorise; it comes from “change divided by elapsed time.”</span></p>
+</div>
+</div>
+<div class="page-footer">4</div>
+</section><section class="sheet">
+<div class="page-kicker">One Data Set, Different Intervals</div>
+<div class="section-title"><h2>ปฏิกิริยาเดียวกันอาจมีอัตราหลายค่า</h2><span class="tag">One Reaction, Several Rates</span></div>
+<p class="story-bridge">เมื่อเราเลือกช่วงเวลาต่างกัน ปริมาณที่เปลี่ยนแปลงและเวลาที่ใช้ก็ต่างกัน จึงอาจได้อัตราไม่เท่ากัน<span class="en">Different time intervals contain different changes and elapsed times, so their calculated rates may differ.</span></p>
+<table class="concept-table">
+<tr><th>เวลา / Time \((\mathrm{s})\)</th><th>0</th><th>10</th><th>20</th><th>30</th><th>40</th></tr>
+<tr><th>ปริมาตรแก๊ส / Gas volume \((\mathrm{cm^3})\)</th><td>0</td><td>8</td><td>13</td><td>16</td><td>18</td></tr>
+</table>
+<div class="rate-strip">
+<div><strong>ช่วงเริ่มต้น / Initial interval</strong>\[\frac{8-0}{10-0}=0.80\ \mathrm{cm^3\,s^{-1}}\]</div>
+<div><strong>ช่วง 10–30 s / Interval 10–30 s</strong>\[\frac{16-8}{30-10}=0.40\ \mathrm{cm^3\,s^{-1}}\]</div>
+<div><strong>ตลอดการทดลอง / Overall run</strong>\[\frac{18-0}{40-0}=0.45\ \mathrm{cm^3\,s^{-1}}\]</div>
+</div>
+<div class="hot-question-card" id="hot-story-2">
+<h3>คำถาม HOT / HOT Question</h3>
+<div class="hot-question-text">ได้คำตอบสามค่าไม่เท่ากัน แสดงว่ามีคนคำนวณผิดหรือไม่?<span class="en">The three answers are different. Does this mean that one calculation is wrong?</span></div>
+<div class="hot-toggle-row"><button class="hot-toggle-btn" onclick="toggleHot('hot-story-2', this)" type="button">เปิดเฉลยคำถาม / Show Answer</button></div>
+<div class="hot-response-frame sm"><div class="hot-work-lines"></div><div class="hot-answer-layer"><div class="hot-guide-title">แนวอภิปราย / Discussion Guide</div>ไม่มีใครผิด เพราะแต่ละค่าบอกอัตราเฉลี่ยของคนละช่วงเวลา<span class="en">None is necessarily wrong; each value is the average rate over a different interval.</span></div></div>
+</div>
+<div class="grid-3" style="margin-top:3mm;">
+<div class="card"><h3>อัตราเริ่มต้นโดยประมาณ<br/><span class="en">Approximate initial rate</span></h3><p>ใช้ช่วงแรกที่อยู่ใกล้ \(t=0\) มากที่สุด<span class="en">Use the earliest interval nearest to \(t=0\).</span></p></div>
+<div class="card"><h3>อัตราในช่วง<br/><span class="en">Interval rate</span></h3><p>ใช้ค่าที่ปลายทั้งสองของช่วงที่กำหนด<span class="en">Use the two endpoints of the stated interval.</span></p></div>
+<div class="card"><h3>อัตราเฉลี่ยทั้งหมด<br/><span class="en">Overall average rate</span></h3><p>ใช้การเปลี่ยนแปลงทั้งหมดหารด้วยเวลาทั้งหมด<span class="en">Use the total change divided by the total elapsed time.</span></p></div>
+</div>
+<div class="page-footer">5</div>
+</section><section class="sheet">
+<div class="page-kicker">The Same Idea Becomes a Graph</div>
+<div class="section-title"><h2>เมื่อนำข้อมูลไปวาดกราฟ อัตราก็คือความชัน</h2><span class="tag">Rate Is Slope</span></div>
+<p class="story-bridge">ข้อมูลในตารางเดิมสามารถวางเป็นจุดบนกราฟปริมาณ–เวลาได้ เศษส่วนที่เราใช้คำนวณอัตราจึงมีความหมายเดียวกับความชันของกราฟ<span class="en">The same table can be plotted on a quantity–time graph. The fraction used to calculate rate is therefore the graph slope.</span></p>
+<div class="story-definition">
+    \[\text{อัตรา}=\frac{\Delta X}{\Delta t}=\frac{X_2-X_1}{t_2-t_1}=\text{ความชันของกราฟ}\]
+    <span class="en">Rate equals the change in the vertical quantity divided by the change in time, which is the graph slope.</span>
+</div>
+<div class="grid-2">
+<div class="card">
+<h3>เลือกสองเวลา: เส้นตัด / Two times: secant line</h3>
+<p>เมื่อเลือกจุดต้นและจุดปลายของช่วง เราหาความชันของเส้นตัด จึงได้อัตราเฉลี่ยในช่วงนั้น<span class="en">Using the two endpoints gives the slope of a secant line and therefore the average rate over that interval.</span></p>
+<div class="key-formula">\[\text{slope}_{\mathrm{secant}}=\frac{X_2-X_1}{t_2-t_1}\]</div>
+</div>
+<div class="card">
+<h3>ต้องการเวลาเดียว: เส้นสัมผัส / One instant: tangent line</h3>
+<p>ถ้าลดช่วงเวลาให้แคบลงเรื่อย ๆ รอบเวลาที่สนใจ เส้นตัดจะเข้าใกล้เส้นสัมผัส ความชันของเส้นสัมผัสจึงแทนอัตรา ณ ขณะหนึ่ง<span class="en">As the interval around the chosen time becomes narrower, the secant approaches a tangent. The tangent slope therefore represents the instantaneous rate.</span></p>
+<div class="key-formula">\[r_t=\text{ความชันของเส้นสัมผัสที่เวลา }t\]</div>
+</div>
+</div>
+<div class="hot-question-card" id="hot-story-3" style="margin-top:3mm;">
+<h3>คำถาม HOT / HOT Question</h3>
+<div class="hot-question-text">ถ้าต้องการอัตราที่ \(10\ \mathrm{min}\) แต่ใช้ข้อมูลที่ \(0\) และ \(20\ \mathrm{min}\) ค่าที่ได้เป็นอัตรา ณ นาทีที่ 10 จริงหรือไม่?<span class="en">To find the rate at \(10\ \mathrm{min}\), a student uses data at \(0\) and \(20\ \mathrm{min}\). Is the result truly the instantaneous rate at 10 min?</span></div>
+<div class="hot-toggle-row"><button class="hot-toggle-btn" onclick="toggleHot('hot-story-3', this)" type="button">เปิดเฉลยคำถาม / Show Answer</button></div>
+<div class="hot-response-frame lg"><div class="hot-work-lines"></div><div class="hot-answer-layer"><div class="hot-guide-title">แนวอภิปราย / Discussion Guide</div>ยังไม่ใช่โดยตรง เพราะเป็นความชันของเส้นตัดตลอดช่วง 0–20 min ส่วนอัตราที่ 10 min ต้องใช้ความชันเส้นสัมผัส หรือใช้ข้อมูลที่อยู่ใกล้ 10 min มากขึ้นเพื่อประมาณ<span class="en">Not directly. It is the secant slope over 0–20 min. The rate at 10 min requires the tangent slope, or a closer pair of surrounding points for an approximation.</span></div></div>
+</div>
+<div class="note-box"><strong>การอ่านเครื่องหมาย / Reading the sign:</strong> กราฟของสารตั้งต้นมักลาดลงจึงมีความชันลบ ส่วน “อัตราการหายไป” มักรายงานเป็นขนาดบวกโดยใส่เครื่องหมายลบด้านหน้า<span class="en">A reactant graph usually slopes downward, giving a negative slope. Its disappearance rate is usually reported as a positive magnitude by placing a negative sign in front.</span></div>
+<div class="page-footer">6</div>
+</section><section class="sheet">
+<div class="page-kicker">A New Problem Appears</div>
+<div class="section-title"><h2>สารแต่ละชนิดในปฏิกิริยาเดียวกันเปลี่ยนไม่เท่ากัน</h2><span class="tag">Species Rates Are Different</span></div>
+<p class="story-bridge">จนถึงตอนนี้ เราหาอัตราจากสิ่งที่วัดเพียงชนิดเดียว แต่ในสมการเคมีเดียวกัน สารแต่ละชนิดเปลี่ยนแปลงตามอัตราส่วนโมล จึงให้ตัวเลขอัตราไม่เท่ากัน<span class="en">So far, rate has been calculated from one measured quantity. In a chemical equation, however, different species change according to their mole ratio, so their numerical rates are not equal.</span></p>
+<div class="story-definition">\[\mathrm{N_2(g)+3H_2(g)\rightarrow2NH_3(g)}\]</div>
+<p>กำหนดให้ในช่วงเวลาหนึ่ง \(N_2\) ถูกใช้ไปเป็นปริมาณ \(x\). จากสัมประสิทธิ์ในสมการ \(H_2\) ต้องถูกใช้ไป \(3x\) และ \(NH_3\) ต้องเกิดขึ้น \(2x\)<span class="en">Suppose \(N_2\) is consumed by an amount \(x\) during an interval. The coefficients require \(3x\) of \(H_2\) to be consumed and \(2x\) of \(NH_3\) to be formed.</span></p>
+<table class="concept-table">
+<tr><th>สาร / Species</th><th>การเปลี่ยนแปลง / Change</th><th>อัตราการเปลี่ยนแปลง / Rate of change</th></tr>
+<tr><td>\(N_2\)</td><td>\(\Delta[N_2]=-x\)</td><td>\(-x/\Delta t\)</td></tr>
+<tr><td>\(H_2\)</td><td>\(\Delta[H_2]=-3x\)</td><td>\(-3x/\Delta t\)</td></tr>
+<tr><td>\(NH_3\)</td><td>\(\Delta[NH_3]=+2x\)</td><td>\(+2x/\Delta t\)</td></tr>
+</table>
+<div class="hot-question-card" id="hot-story-4" style="margin-top:3mm;">
+<h3>คำถาม HOT / HOT Question</h3>
+<div class="hot-question-text">กลุ่มหนึ่งรายงานว่า \(-\Delta[N_2]/\Delta t=0.10\ \mathrm{M\,s^{-1}}\) อีกกลุ่มรายงานว่า \(-\Delta[H_2]/\Delta t=0.30\ \mathrm{M\,s^{-1}}\) กลุ่มใดผิด?<span class="en">One group reports \(-\Delta[N_2]/\Delta t=0.10\ \mathrm{M\,s^{-1}}\), while another reports \(-\Delta[H_2]/\Delta t=0.30\ \mathrm{M\,s^{-1}}\). Which group is wrong?</span></div>
+<div class="hot-toggle-row"><button class="hot-toggle-btn" onclick="toggleHot('hot-story-4', this)" type="button">เปิดเฉลยคำถาม / Show Answer</button></div>
+<div class="hot-response-frame md"><div class="hot-work-lines"></div><div class="hot-answer-layer"><div class="hot-guide-title">แนวอภิปราย / Discussion Guide</div>ทั้งสองกลุ่มอาจถูก เพราะอัตราการหายไปของ \(H_2\) เป็น 3 เท่าของอัตราการหายไปของ \(N_2\) ตามสัมประสิทธิ์ 3:1<span class="en">Both may be correct because the disappearance rate of \(H_2\) is three times that of \(N_2\), matching the 3:1 coefficient ratio.</span></div></div>
+</div>
+<div class="main-question">ปัญหาจึงไม่ใช่ว่าใครคำนวณผิด แต่คือเราจะทำให้อัตราที่วัดจากสารต่างชนิดบอก “ความก้าวหน้าของปฏิกิริยา” เป็นค่าเดียวกันได้อย่างไร<span class="en">The problem is not which calculation is wrong, but how rates measured from different species can describe the same reaction progress with one common value.</span></div>
+<div class="page-footer">7</div>
+</section><section class="sheet">
+<div class="page-kicker">Building the Common Rate</div>
+<div class="section-title"><h2>พิสูจน์ว่าเหตุใดต้องหารด้วยสัมประสิทธิ์</h2><span class="tag">Deriving the Common Reaction Rate</span></div>
+<div class="story-definition">\[\mathrm{N_2+3H_2\rightarrow2NH_3}\]</div>
+<p><strong>1. เขียนการเปลี่ยนแปลงตามอัตราส่วนโมล / Write the stoichiometric changes</strong></p>
+  \[\Delta[N_2]=-x,\qquad \Delta[H_2]=-3x,\qquad \Delta[NH_3]=+2x\]
+  <p><strong>2. จัดแต่ละสมการให้เหลือ \(x\) เดียวกัน / Rearrange every expression to the same \(x\)</strong></p>
+  \[\Delta[N_2]=-x\quad\Rightarrow\quad x=-\Delta[N_2]\]
+  \[\Delta[H_2]=-3x\quad\Rightarrow\quad x=-\frac13\Delta[H_2]\]
+  \[\Delta[NH_3]=2x\quad\Rightarrow\quad x=+\frac12\Delta[NH_3]\]
+  <p><strong>3. เนื่องจากทุกพจน์เท่ากับ \(x\) เดียวกัน จึงเท่ากันเอง / Since every expression equals the same \(x\), they are equal to one another</strong></p>
+  \[-\Delta[N_2]=-\frac13\Delta[H_2]=+\frac12\Delta[NH_3]=x\]
+  <p><strong>4. หารทุกพจน์ด้วยช่วงเวลา \(\Delta t\) / Divide every term by the same time interval \(\Delta t\)</strong></p>
+  \[-\frac{\Delta[N_2]}{\Delta t}=-\frac13\frac{\Delta[H_2]}{\Delta t}=+\frac12\frac{\Delta[NH_3]}{\Delta t}=\frac{x}{\Delta t}\]
+  <p>เราเรียกค่าร่วม \(x/\Delta t\) ว่าอัตราการเกิดปฏิกิริยา \(r\)<span class="en">The common value \(x/\Delta t\) is defined as the reaction rate \(r\).</span></p>
+<div class="key-formula">\[\boxed{r=-\frac{\Delta[N_2]}{\Delta t}=-\frac13\frac{\Delta[H_2]}{\Delta t}=+\frac12\frac{\Delta[NH_3]}{\Delta t}}\]</div>
+<div class="hot-question-card" id="hot-story-5" style="margin-top:2.5mm;">
+<h3>คำถาม HOT / HOT Question</h3>
+<div class="hot-question-text">ทำไม \(H_2\) ต้องหาร 3 และ \(NH_3\) ต้องหาร 2?<span class="en">Why is the \(H_2\) rate divided by 3 and the \(NH_3\) rate divided by 2?</span></div>
+<div class="hot-toggle-row"><button class="hot-toggle-btn" onclick="toggleHot('hot-story-5', this)" type="button">เปิดเฉลยคำถาม / Show Answer</button></div>
+<div class="hot-response-frame lg"><div class="hot-work-lines"></div><div class="hot-answer-layer"><div class="hot-guide-title">แนวอภิปราย / Discussion Guide</div>เพราะอัตราของ \(H_2\) มีขนาด \(3x/\Delta t\) และอัตราของ \(NH_3\) มีขนาด \(2x/\Delta t\) การหารด้วยสัมประสิทธิ์จึงทำให้ทั้งสองกลับมาเป็น \(x/\Delta t\) ค่าเดียวกัน<span class="en">Their rates have magnitudes \(3x/\Delta t\) and \(2x/\Delta t\). Dividing by the coefficients returns both to the same value, \(x/\Delta t\).</span></div></div>
+</div>
+<div class="page-footer">8</div>
+</section><section class="sheet">
+<div class="page-kicker">From One Reaction to Every Reaction</div>
+<div class="section-title"><h2>เรื่องเดิมเขียนในรูปทั่วไป</h2><span class="tag">General Stoichiometric Form</span></div>
+<div class="story-definition">\[aA+bB\rightarrow cC+dD\]</div>
+<p>ถ้าปฏิกิริยาดำเนินไปเป็นปริมาณ \(x\) การเปลี่ยนแปลงต้องเป็นไปตามสัมประสิทธิ์<span class="en">If the reaction advances by an amount \(x\), each species changes according to its coefficient.</span></p>
+  \[\Delta[A]=-ax,\qquad \Delta[B]=-bx,\qquad \Delta[C]=+cx,\qquad \Delta[D]=+dx\]
+  <p>จัดรูปให้ทุกพจน์เท่ากับ \(x\)<span class="en">Rearrange each expression so that it equals \(x\).</span></p>
+  \[x=-\frac1a\Delta[A]=-\frac1b\Delta[B]=+\frac1c\Delta[C]=+\frac1d\Delta[D]\]
+  <p>หารด้วย \(\Delta t\) จึงได้ความสัมพันธ์ทั่วไป<span class="en">Dividing by \(\Delta t\) gives the general relationship.</span></p>
+<div class="key-formula">\[\boxed{r=-\frac1a\frac{\Delta[A]}{\Delta t}=-\frac1b\frac{\Delta[B]}{\Delta t}=+\frac1c\frac{\Delta[C]}{\Delta t}=+\frac1d\frac{\Delta[D]}{\Delta t}}\]</div>
+<div class="grid-2" style="margin-top:3mm;">
+<div class="card">
+<h3>เครื่องหมาย / Signs</h3>
+<p>สารตั้งต้นลดลง จึงมี \(\Delta[A]&lt;0\) และใส่เครื่องหมายลบด้านหน้าเพื่อให้ \(r\) เป็นบวก<span class="en">A reactant decreases, so \(\Delta[A]&lt;0\). A leading negative sign makes \(r\) positive.</span></p>
+<p>ผลิตภัณฑ์เพิ่มขึ้น จึงมี \(\Delta[C]&gt;0\) และใช้เครื่องหมายบวก<span class="en">A product increases, so \(\Delta[C]&gt;0\), and a positive sign is used.</span></p>
+</div>
+<div class="card">
+<h3>หน่วย / Units</h3>
+<p>หน่วยขึ้นกับปริมาณที่วัด เช่น<span class="en">The unit depends on the measured quantity, for example:</span></p>
+<p>\(\mathrm{cm^3\,s^{-1}}\), \(\mathrm{g\,s^{-1}}\), \(\mathrm{mol\,s^{-1}}\), \(\mathrm{mol\,dm^{-3}\,s^{-1}}\)</p>
+<p>ก่อนเปรียบเทียบอัตรา ต้องทำหน่วยเวลาให้เหมือนกัน<span class="en">Time units must be made consistent before rates are compared.</span></p>
+</div>
+</div>
+<div class="warn-box"><strong>จุดสำคัญ / Key point:</strong> สัมประสิทธิ์ต้องมาจากสมการที่ดุลแล้ว และใช้จำนวนเต็มอย่างต่ำสุด<span class="en">Coefficients must come from a balanced equation written in the lowest whole-number ratio.</span></div>
+<div class="page-footer">9</div>
+</section><section class="sheet">
+<div class="page-kicker">Using the Relationship Forward</div>
+<div class="section-title"><h2>ให้สมการเคมี แล้วหาอัตราของสารอื่น</h2><span class="tag">Chemical Equation → Species Rate</span></div>
+<div class="card">
+<p><strong>โจทย์ / Problem</strong></p>
+<p>แก๊ส \(O_2\) เกิดจากปฏิกิริยา<span class="en">Oxygen gas is formed by the reaction</span></p>
+    \[\mathrm{2N_2O_5(g)\rightarrow4NO_2(g)+O_2(g)}\]
+    <p>ถ้า \(O_2\) เกิดด้วยอัตรา \(2.0\times10^{-3}\ \mathrm{mol\,dm^{-3}\,s^{-1}}\) จงหาอัตราการเกิด \(NO_2\)<span class="en">If \(O_2\) forms at \(2.0\times10^{-3}\ \mathrm{mol\,dm^{-3}\,s^{-1}}\), determine the formation rate of \(NO_2\).</span></p>
+</div>
+<div class="story-bridge">เราไม่เริ่มจากการคูณสัมประสิทธิ์ทันที แต่เขียนความสัมพันธ์ของ \(r\) เพื่อให้เห็นว่าสิ่งใดเป็นอัตราของสารและสิ่งใดเป็นอัตราปฏิกิริยา<span class="en">Do not begin by multiplying coefficients immediately. Write the \(r\) relationship first so that the species rate and reaction rate remain distinct.</span></div>
+<p><strong>1. เขียนความสัมพันธ์ / Write the relationship</strong></p>
+  \[r=-\frac12\frac{\Delta[N_2O_5]}{\Delta t}=+\frac14\frac{\Delta[NO_2]}{\Delta t}=+\frac{\Delta[O_2]}{\Delta t}\]
+  <p><strong>2. เชื่อมข้อมูลที่โจทย์ให้กับ \(r\) / Connect the given rate to \(r\)</strong></p>
+  \[r=\frac{\Delta[O_2]}{\Delta t}=2.0\times10^{-3}\]
+  <p><strong>3. จัดรูปหาอัตราการเกิด \(NO_2\) / Rearrange for the \(NO_2\) formation rate</strong></p>
+  \[r=\frac14\frac{\Delta[NO_2]}{\Delta t}\]
+  <p>คูณทั้งสองข้างด้วย 4<span class="en">Multiply both sides by 4.</span></p>
+  \[\frac{\Delta[NO_2]}{\Delta t}=4r=4(2.0\times10^{-3})\]
+  <div class="final-answer">ตอบ / Final Answer: \(\boxed{8.0\times10^{-3}\ \mathrm{mol\,dm^{-3}\,s^{-1}}}\)</div>
+<div class="page-footer">10</div>
+</section><section class="sheet">
+<div class="page-kicker">Using the Relationship Backward</div>
+<div class="section-title"><h2>ให้ความสัมพันธ์ของอัตรา แล้วหาสมการเคมี</h2><span class="tag">Rate Relationship → Chemical Equation</span></div>
+<div class="card">
+<p><strong>โจทย์ / Problem</strong></p>
+    \[r=-\frac14\frac{\Delta[NH_3]}{\Delta t}=-\frac15\frac{\Delta[O_2]}{\Delta t}=+\frac14\frac{\Delta[NO]}{\Delta t}=+\frac16\frac{\Delta[H_2O]}{\Delta t}\]
+    <p>จงเขียนสมการเคมีที่ดุลแล้ว<span class="en">Write the balanced chemical equation.</span></p>
+</div>
+<div class="grid-2" style="margin-top:3mm;">
+<div class="card">
+<h3>1. อ่านด้านของสมการจากเครื่องหมาย<br/><span class="en">Use signs to identify each side</span></h3>
+<p>เครื่องหมายลบหมายถึงสารตั้งต้นที่ลดลง เครื่องหมายบวกหมายถึงผลิตภัณฑ์ที่เพิ่มขึ้น<span class="en">Negative terms are decreasing reactants; positive terms are increasing products.</span></p>
+      \[\mathrm{Reactants:}\ NH_3,\ O_2\]
+      \[\mathrm{Products:}\ NO,\ H_2O\]
+    </div>
+<div class="card">
+<h3>2. อ่านสัมประสิทธิ์จากตัวส่วน<br/><span class="en">Read coefficients from denominators</span></h3>
+      \[NH_3:O_2:NO:H_2O=4:5:4:6\]
+      <p>ตัวส่วนไม่ได้เป็นตัวเลขสุ่ม แต่เป็นสัมประสิทธิ์ที่ใช้ปรับอัตราของสารให้กลับมาเป็น \(r\) เดียวกัน<span class="en">The denominators are not arbitrary; they are the coefficients used to normalise each species rate to the same \(r\).</span></p>
+</div>
+</div>
+<p><strong>3. เขียนสมการและตรวจจำนวนอะตอม / Write the equation and check atom counts</strong></p>
+<div class="key-formula">\[\boxed{\mathrm{4NH_3+5O_2\rightarrow4NO+6H_2O}}\]</div>
+<table class="compact-table" style="margin-top:3mm;">
+<tr><th>ธาตุ / Element</th><th>ด้านซ้าย / Left</th><th>ด้านขวา / Right</th></tr>
+<tr><td>N</td><td>4</td><td>4</td></tr>
+<tr><td>H</td><td>12</td><td>12</td></tr>
+<tr><td>O</td><td>10</td><td>10</td></tr>
+</table>
+<div class="page-footer">11</div>
+</section><section class="sheet">
+<div class="page-kicker">Two Checks Before the Practice Set</div>
+<div class="section-title"><h2>เมื่อโจทย์เปลี่ยนสถานการณ์ แนวคิดเดิมยังใช้ต่อได้</h2><span class="tag">Two Useful Checks</span></div>
+<div class="grid-2">
+<div class="card">
+<h3>ถึงจุดสังเกตเดียวกัน / Same endpoint</h3>
+<p>ถ้าการทดลองสองชุดมีการเปลี่ยนแปลงเท่ากัน \(\Delta X\) จะเป็นตัวเดียวกัน<span class="en">If two trials reach the same change, they share the same \(\Delta X\).</span></p>
+      \[r_A=\frac{\Delta X}{t_A},\qquad r_B=\frac{\Delta X}{t_B}\]
+      \[\frac{r_B}{r_A}=\frac{\Delta X/t_B}{\Delta X/t_A}=\frac{t_A}{t_B}\]
+      <div class="key-formula">\[r\propto\frac1t\quad\text{เมื่อ }\Delta X\text{ เท่ากัน}\]</div>
+<p>นี่เป็นผลที่พิสูจน์จากนิยาม ไม่ใช่สูตรที่ใช้ได้ทุกสถานการณ์<span class="en">This result is derived from the definition and is not a universal formula for every situation.</span></p>
+</div>
+<div class="card">
+<h3>สารตั้งต้นอาจหมดก่อน / A reactant may be exhausted</h3>
+<p>สำหรับ \(R\rightarrow P\), ถ้า \([R]_0=0.400\ \mathrm M\) และ \(R\) ลดลงคงที่ \(0.040\ \mathrm{M\,s^{-1}}\)<span class="en">For \(R\rightarrow P\), let \([R]_0=0.400\ \mathrm M\) and let \(R\) decrease at a constant \(0.040\ \mathrm{M\,s^{-1}}\).</span></p>
+      \[t_{\mathrm{exhaust}}=\frac{0.400}{0.040}=10\ \mathrm s\]
+      <p>ปฏิกิริยาสิ้นสุดที่ 10 s เพราะ \(R\) หมด หลังจากนั้นจึงสร้าง \(P\) เพิ่มไม่ได้<span class="en">The reaction stops at 10 s because \(R\) is exhausted; no additional \(P\) can then be formed.</span></p>
+<div class="key-formula">\[[P]_{\max}=0.400\ \mathrm M\quad\text{เมื่อเริ่มต้นไม่มี }P\]</div>
+</div>
+</div>
+<div class="hot-question-card" id="hot-story-6" style="margin-top:3mm;">
+<h3>คำถาม HOT / HOT Question</h3>
+<div class="hot-question-text">นักเรียนคำนวณ \([P]=(0.040)(20)=0.800\ \mathrm M\) คำตอบนี้ผิดเพราะอะไร?<span class="en">A student calculates \([P]=(0.040)(20)=0.800\ \mathrm M\). Why is this answer impossible?</span></div>
+<div class="hot-toggle-row"><button class="hot-toggle-btn" onclick="toggleHot('hot-story-6', this)" type="button">เปิดเฉลยคำถาม / Show Answer</button></div>
+<div class="hot-response-frame lg"><div class="hot-work-lines"></div><div class="hot-answer-layer"><div class="hot-guide-title">แนวอภิปราย / Discussion Guide</div>การคูณต่อถึง 20 s สมมติว่า \(R\) ยังมีอยู่ตลอด แต่จริง ๆ \(R\) หมดตั้งแต่ 10 s และเริ่มต้นมีเพียง 0.400 M จึงเกิด \(P\) ได้สูงสุด 0.400 M<span class="en">Multiplying to 20 s assumes that \(R\) remains available, but it is exhausted at 10 s. Since only 0.400 M of \(R\) was initially present, at most 0.400 M of \(P\) can form.</span></div></div>
+</div>
+<div class="page-footer">12</div>
+</section><section class="sheet recall-section" id="recall-article">
+<div class="page-kicker">Read, Recall and Complete</div>
+<div class="section-title"><h2>บทความสรุปเรื่องเดียวกัน</h2><span class="tag">Read the Story Again</span></div>
+<div class="memory-article">
+<strong>บทความสรุป / Summary Article</strong>
+<p>ปฏิกิริยาเคมีทำให้ปริมาณสารเปลี่ยนแปลงตามเวลา เราจึงหาอัตราได้จากปริมาณที่เปลี่ยนแปลงหารด้วยเวลาที่ใช้ เมื่อเลือกช่วงเวลาต่างกัน เราอาจได้อัตราเริ่มต้น อัตราในช่วง หรืออัตราเฉลี่ยที่มีค่าต่างกัน และเมื่อนำข้อมูลไปวาดกราฟ อัตราก็คือความชันของกราฟ ปฏิกิริยาเดียวกันอาจทำให้อัตราการเปลี่ยนแปลงของสารแต่ละชนิดไม่เท่ากัน เพราะสารเปลี่ยนแปลงตามสัมประสิทธิ์ในสมการเคมี เราจึงหารอัตราของแต่ละสารด้วยสัมประสิทธิ์ เพื่อให้ได้อัตราการเกิดปฏิกิริยา \(r\) ค่าเดียวกัน ก่อนตอบต้องตรวจหน่วย ช่วงเวลา และปริมาณสารตั้งต้นว่ายังเพียงพอหรือไม่</p>
+<p class="en">A chemical reaction changes the amounts of substances over time, so its rate is found by dividing a measured change by the elapsed time. Different intervals may give different initial, interval, or overall average rates. When the data are plotted, rate is the graph slope. In one reaction, different species may have different rates of change because they change according to the coefficients in the balanced equation. Dividing each species rate by its coefficient gives one common reaction rate \(r\). Before accepting an answer, the units, time interval, and available reactant amount must be checked.</p>
+</div>
+<div class="cloze-box">
+<strong>เติมคำจากบทความ / Complete Using the Article</strong>
+<p>ปฏิกิริยาเคมีทำให้ปริมาณสารเปลี่ยนแปลงตาม <span class="blank"><span class="blank-answer">เวลา</span></span> เราจึงหาอัตราได้จากปริมาณที่ <span class="blank"><span class="blank-answer">เปลี่ยนแปลง</span></span> หารด้วยเวลาที่ใช้ เมื่อเลือก <span class="blank"><span class="blank-answer">ช่วงเวลา</span></span> ต่างกัน เราอาจได้อัตราที่มีค่าต่างกัน และเมื่อนำข้อมูลไปวาดกราฟ อัตราก็คือ <span class="blank"><span class="blank-answer">ความชัน</span></span> ของกราฟ อัตราของสารแต่ละชนิดไม่เท่ากันเพราะสารเปลี่ยนแปลงตาม <span class="blank"><span class="blank-answer">สัมประสิทธิ์</span></span> ในสมการเคมี เราจึงหารอัตราของสารด้วยสัมประสิทธิ์เพื่อให้ได้อัตราการเกิดปฏิกิริยา <span class="blank"><span class="blank-answer">\(r\)</span></span> ค่าเดียวกัน</p>
+<p class="en">A chemical reaction changes substance quantities over <span class="blank"><span class="blank-answer">time</span></span>. Rate is found by dividing the measured <span class="blank"><span class="blank-answer">change</span></span> by the elapsed time. Choosing different <span class="blank"><span class="blank-answer">intervals</span></span> may give different rates, and on a graph the rate is the <span class="blank"><span class="blank-answer">slope</span></span>. Species rates differ because substances change according to the equation’s <span class="blank"><span class="blank-answer">coefficients</span></span>. Dividing by those coefficients gives one common reaction rate <span class="blank"><span class="blank-answer">\(r\)</span></span>.</p>
+<div class="word-bank"><strong>คลังคำ / Word Bank:</strong> ความชัน / slope • \(r\) • ช่วงเวลา / intervals • สัมประสิทธิ์ / coefficients • การเปลี่ยนแปลง / change • เวลา / time</div>
+<div class="hot-toggle-row"><button class="hot-toggle-btn" onclick="toggleRecall('recall-article', this)" type="button">เปิดเฉลยบทความ / Show Article Answers</button></div>
+</div>
+<div class="main-question">เขียนหนึ่งประโยคด้วยภาษาของตนเองว่าเหตุใดต้องหารอัตราของสารด้วยสัมประสิทธิ์<span class="en">In one sentence, explain in your own words why a species rate is divided by its coefficient.</span></div>
+<div class="recall-response-frame">
+<div class="recall-work-lines"></div>
+<div class="recall-answer-layer">
+<strong>แนวคำตอบ / Model Answer:</strong> เพราะอัตราการเปลี่ยนแปลงของสารแต่ละชนิดมากหรือน้อยตามสัมประสิทธิ์ การหารด้วยสัมประสิทธิ์จึงทำให้อัตราของทุกสารแสดงความก้าวหน้าของปฏิกิริยาเป็นค่า \(r\) เดียวกัน
+    <span class="en">Each species changes in proportion to its coefficient. Dividing by that coefficient normalises every species rate to the same reaction progress, giving one common value of \(r\).</span>
+</div>
+</div>
+<div class="page-footer">13</div>
+</section><section class="sheet">
+<div class="page-kicker">Summary</div>
+<div class="section-title"><h2>สรุปท้ายเรื่อง</h2><span class="tag">Lesson Summary</span></div>
+<table class="summary-table">
+<tr><th>แนวคิด<br/><span class="en">Concept</span></th><th>สมการหรือวิธี<br/><span class="en">Equation or Method</span></th><th>จุดตรวจ<br/><span class="en">What to Check</span></th></tr>
+<tr><td>อัตราการเปลี่ยนแปลง<span class="en">Rate of change</span></td><td>\(\Delta X/\Delta t\)</td><td>ใช้ค่าหลังลบค่าก่อน และเลือกหน่วยให้ตรงกับสิ่งที่วัด<span class="en">Use final minus initial and match the unit to the measured quantity.</span></td></tr>
+<tr><td>อัตราเริ่มต้น<span class="en">Initial rate</span></td><td>ช่วงแรกใกล้ \(t=0\)<span class="en">Earliest interval near \(t=0\)</span></td><td>อย่าใช้ช่วงกลางแทนช่วงเริ่มต้น<span class="en">Do not replace the initial interval with a middle interval.</span></td></tr>
+<tr><td>อัตราเฉลี่ยหรืออัตราในช่วง<span class="en">Average or interval rate</span></td><td>ความชันเส้นตัด<span class="en">Secant slope</span></td><td>เลือกสองปลายของช่วงที่โจทย์ระบุ<span class="en">Use the two endpoints of the stated interval.</span></td></tr>
+<tr><td>อัตรา ณ ขณะหนึ่ง<span class="en">Instantaneous rate</span></td><td>ความชันเส้นสัมผัส<span class="en">Tangent slope</span></td><td>เลือกสองจุดบนเส้นสัมผัส ไม่ใช่จุดสุ่มบนกราฟโค้ง<span class="en">Choose two points on the tangent, not random points on the curve.</span></td></tr>
+<tr><td>อัตราสัมพัทธ์จากเวลา<span class="en">Relative rate from time</span></td><td>\(r\propto1/t\)</td><td>ใช้ได้เมื่อการเปลี่ยนแปลง \(\Delta X\) เท่ากัน<span class="en">Use only when the compared change \(\Delta X\) is the same.</span></td></tr>
+<tr><td>อัตราการเกิดปฏิกิริยา<span class="en">Reaction rate</span></td><td>\(r=-\frac1a\frac{\Delta[A]}{\Delta t}=\cdots\)</td><td>ดุลสมการและหารอัตราของสารด้วยสัมประสิทธิ์<span class="en">Balance the equation and divide each species rate by its coefficient.</span></td></tr>
+<tr><td>ตรวจความเป็นไปได้<span class="en">Feasibility check</span></td><td>\(t_{\mathrm{exhaust}}=[R]_0/r_R\)</td><td>ปฏิกิริยาหยุดเมื่อสารที่จำเป็นหมด<span class="en">The reaction stops when a required reactant is exhausted.</span></td></tr>
+</table>
+<div class="card" style="margin-top:3mm;">
+<h3>ขั้นตอนแก้โจทย์ / Problem-Solving Routine</h3>
+<ol class="clean-list">
+<li>ระบุสิ่งที่วัดและช่วงเวลาที่ใช้<span class="en">Identify the measured quantity and time interval.</span></li>
+<li>ดุลสมการเมื่อโจทย์เชื่อมอัตราของสารหลายชนิด<span class="en">Balance the equation when several species rates are connected.</span></li>
+<li>เขียนนิยามหรือความสัมพันธ์ของ \(r\) ก่อนแทนค่า<span class="en">Write the definition or \(r\) relationship before substitution.</span></li>
+<li>จัดรูปสมการให้เหลือปริมาณที่โจทย์ถาม<span class="en">Rearrange the equation for the required quantity.</span></li>
+<li>ตรวจหน่วย เครื่องหมาย ช่วงเวลา และขีดจำกัดของสารตั้งต้น<span class="en">Check units, signs, the time interval, and reactant limits.</span></li>
+</ol>
+</div>
+<div class="page-footer">14</div>
+</section><script>
+function toggleHot(id, button) {
+  const card = document.getElementById(id);
+  if (!card) return;
+  const isOpen = card.classList.toggle('open');
+  if (button) {
+    if (!button.dataset.openLabel) button.dataset.openLabel = button.textContent;
+    button.textContent = isOpen ? 'ปิดเฉลย / Hide Answer' : button.dataset.openLabel;
+    button.setAttribute('aria-expanded', String(isOpen));
+  }
+  typesetReady();
+}
+function toggleRecall(id, button) {
+  const section = document.getElementById(id);
+  if (!section) return;
+  const isOpen = section.classList.toggle('open');
+  if (button) {
+    if (!button.dataset.openLabel) button.dataset.openLabel = button.textContent;
+    button.textContent = isOpen ? 'ปิดเฉลยบทความ / Hide Article Answers' : button.dataset.openLabel;
+    button.setAttribute('aria-expanded', String(isOpen));
+  }
+  typesetReady();
+}
+function closeLocalReveals() {
+  document.querySelectorAll('.hot-question-card.open, .recall-section.open').forEach(item => {
+    item.classList.remove('open');
+    const button = item.querySelector('.hot-toggle-btn');
+    if (button && button.dataset.openLabel) {
+      button.textContent = button.dataset.openLabel;
+      button.setAttribute('aria-expanded', 'false');
+    }
+  });
+}
+async function typesetReady() {
+  if (window.MathJax && MathJax.typesetPromise) {
+    try { await MathJax.typesetPromise(); } catch (err) { console.warn(err); }
+  }
+}
+async function setMode(mode) {
+  document.body.classList.remove('mode-student', 'mode-solution');
+  document.body.classList.add(mode);
+  const status = document.getElementById('statusText');
+  if (status) {
+    status.textContent = mode === 'mode-solution'
+      ? 'โหมดเฉลย: คำตอบ HOT และคำตอบบทความแสดงในพื้นที่เดิม'
+      : 'โหมดนักเรียน: คำถาม HOT และแบบเติมคำพร้อมพื้นที่เขียน';
+  }
+  await typesetReady();
+}
+async function showSolutions() { await setMode('mode-solution'); }
+async function hideSolutions() {
+  closeLocalReveals();
+  await setMode('mode-student');
+}
+async function printStudent() {
+  closeLocalReveals();
+  await setMode('mode-student');
+  setTimeout(() => window.print(), 350);
+}
+async function printSolution() {
+  await setMode('mode-solution');
+  setTimeout(() => window.print(), 350);
+}
+window.addEventListener('load', typesetReady);
+</script>
+</body>
+</html>
