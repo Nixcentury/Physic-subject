@@ -17,7 +17,7 @@
   <style>
     :root{--paper-w:210mm;--paper-h:297mm;--ink:#111827;--navy:#0f172a;--slate:#475569;--line:#cbd5e1;--soft:#f8fafc}
     *{box-sizing:border-box}html,body{margin:0;padding:0}body{background:#e5e7eb;color:var(--ink);font-family:"K2D",Arial,sans-serif;font-size:12px;line-height:1.48}
-    .toolbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:10px;background:var(--navy);box-shadow:0 4px 14px #0f172a40}.toolbar button{border:0;border-radius:999px;padding:9px 18px;background:#fff;color:var(--navy);font:800 12px "K2D";cursor:pointer}.toolbar .primary{background:#bae6fd;color:#082f49}.toolbar .gold{background:#fde68a;color:#78350f}
+    .toolbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:10px;background:var(--navy);box-shadow:0 4px 14px #0f172a40}.toolbar button{border:0;border-radius:999px;padding:9px 18px;background:#fff;color:var(--navy);font:800 12px "K2D";cursor:pointer}.toolbar .primary{background:#bae6fd;color:#082f49}.toolbar .gold{background:#fde68a;color:#78350f}.toolbar-toggle{display:none!important}.toolbar-toggle-icon{display:inline-block;transition:transform .2s ease}
     .sheet{width:min(var(--paper-w),calc(100vw - 24px));height:var(--paper-h);margin:16px auto 28px;padding:10mm 14mm 9mm;background:#fff;box-shadow:0 16px 42px #0f172a38;position:relative;overflow:hidden;break-after:page;page-break-after:always;display:grid;grid-template-rows:auto auto auto minmax(0,1fr) auto;gap:3mm}
     .sheet:last-child{break-after:auto;page-break-after:auto}.topline{display:flex;justify-content:space-between;align-items:center;border-bottom:1.4px solid var(--navy);padding-bottom:2mm}.topic{font-weight:700;color:var(--slate);font-size:10.5px}.qno{font-weight:800;font-size:13px;color:var(--navy)}
     .question-card{border:1.4px solid var(--navy);background:#fff;padding:4mm;break-inside:avoid}.question-card h1{margin:0 0 2mm;font-size:18px;line-height:1.15}.th{font-weight:500;font-size:12.6px}.en{display:block;margin-top:2mm;padding-top:2mm;border-top:1px dotted #94a3b8;color:#374151;font-size:11.2px;font-weight:400}.subparts{margin:2mm 0 0;padding-left:6mm}.subparts li{margin:1.3mm 0}.choices{display:grid;grid-template-columns:1fr 1fr;gap:1.5mm 4mm;margin-top:2.5mm;padding:2.5mm;border:1px solid var(--line);background:var(--soft)}.choice{font-size:11.5px}.shared-note{margin-top:2mm;color:var(--slate);font-size:10.5px;font-weight:600}
@@ -26,7 +26,7 @@
     .work-area{min-height:0;border:1.1px solid var(--navy);position:relative;overflow:hidden;background:repeating-linear-gradient(to bottom,#fff 0,#fff 8.4mm,#cbd5e1 8.6mm,#fff 8.8mm)}.work-label{position:absolute;top:0;left:0;padding:1.2mm 2.2mm;background:#fff;border-right:1px solid var(--line);border-bottom:1px solid var(--line);font-size:9.5px;font-weight:700;color:var(--slate)}
     .answer-layer{position:absolute;inset:0;display:none;padding:4mm 5mm;background:#fff;overflow:auto}.answer-title{margin-bottom:1.8mm;padding-bottom:1.2mm;border-bottom:1.4px solid var(--navy);font-size:12px;font-weight:800;color:var(--navy)}.final-answer{border:1.3px solid var(--navy);background:var(--soft);padding:4mm;font-size:13px;font-weight:650;line-height:1.65}.detailed-solution{font-size:10px;line-height:1.35}.solution-step{margin:0 0 1.4mm;padding:1.4mm 1.8mm;border:1px solid var(--line);background:#fff}.solution-label{font-weight:800;color:var(--navy)}.solution-th{margin-top:.5mm;font-weight:550}.solution-en{margin-top:.6mm;padding-top:.6mm;border-top:1px dotted #94a3b8;color:#475569;font-size:9px}.solution-equation{margin:1mm 0;padding:1.2mm 1.6mm;border-left:3px solid var(--navy);background:var(--soft);text-align:center}.solution-final{margin-top:1.2mm;padding:1.5mm 2mm;border:1.3px solid var(--navy);background:#f1f5f9;font-weight:800}.source-correction{margin-top:1mm;padding:1.2mm 1.6mm;border-left:3px solid #b45309;background:#fffbeb;color:#78350f;font-size:9.2px}.show-answers .work-area{background:#fff}.show-answers .work-label{display:none}.show-answers .answer-layer{display:block}
     .footer{display:flex;justify-content:space-between;color:#64748b;font-size:9.5px}.mjx-container{max-width:100%;overflow-x:auto;overflow-y:hidden}
-    @media(max-width:720px){.sheet{height:auto;min-height:297mm}.choices,.resistor-samples{grid-template-columns:1fr}.work-area{min-height:75mm}}
+    @media(max-width:720px){.toolbar{position:relative;top:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:7px 8px}.toolbar .toolbar-toggle{display:flex!important;grid-column:1/-1;align-items:center;justify-content:space-between;width:100%;padding:8px 14px}.toolbar:not(.is-open)>button:not(.toolbar-toggle){display:none}.toolbar.is-open .toolbar-toggle-icon{transform:rotate(180deg)}.toolbar button{width:100%;min-width:0;padding:8px 6px;font-size:10.5px;line-height:1.25}.sheet{height:auto;min-height:297mm}.choices,.resistor-samples{grid-template-columns:1fr}.work-area{min-height:75mm}}
     @page{size:A4 portrait;margin:0}
     @media print{body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}.toolbar{display:none!important}.sheet{width:210mm;height:297mm;margin:0;padding:10mm 14mm 9mm;box-shadow:none}.figure-stage img{filter:none}.work-area{background:repeating-linear-gradient(to bottom,#fff 0,#fff 8.4mm,#d1d5db 8.6mm,#fff 8.8mm)}body.print-answers .work-area{background:#fff}body.print-answers .work-label{display:none}body.print-answers .answer-layer{display:block}body.print-questions .answer-layer{display:none!important}}
 
@@ -56,6 +56,7 @@
 </head>
 <body>
   <div class="toolbar">
+    <button class="toolbar-toggle" id="toolbarToggleBtn" type="button" aria-expanded="false"><span>เครื่องมือ / Tools</span><span class="toolbar-toggle-icon" aria-hidden="true">▼</span></button>
     <button class="primary" id="printQuestionsBtn" type="button">พิมพ์โจทย์ / Print Questions</button>
     <button class="gold" id="printAnswersBtn" type="button">พิมพ์พร้อมคำตอบ / Print with Answers</button>
     <button id="showAnswersBtn" type="button">เปิดคำตอบ / Show Answers</button>
@@ -338,6 +339,12 @@
     return `<section class="sheet" id="q${String(q.n).padStart(3,'0')}"><div class="topline"><div class="topic">${topicOf(q.n)}</div><div class="qno">ข้อ ${q.n} / Question ${q.n}</div></div><div class="question-card"><h1>แบบฝึกหัด / Exercise</h1><div class="th">${esc(q.th)}${subTh}</div><div class="en">${esc(q.en)}${subEn}</div>${choices}${note}</div><div class="visual-block">${fig}${samples}</div><div class="work-area"><div class="work-label">พื้นที่ทำโจทย์ / Working space</div><div class="answer-layer"><div class="answer-title">${detailed?'เฉลยละเอียด / Detailed Solution':'คำตอบสั้น / Final Answer'}</div><div class="${detailed?'detailed-solution':'final-answer'}">${detailed||A[q.n]}</div></div></div><div class="footer"><span>PEC9 Electricity • Bilingual Practice</span><span>${i+1} / ${Q.length}</span></div></section>`;
   }
   document.getElementById('book').innerHTML=Q.map(render).join('');
+  const toolbar=document.querySelector('.toolbar');
+  const toolbarToggle=document.getElementById('toolbarToggleBtn');
+  toolbarToggle.addEventListener('click',()=>{
+    const isOpen=toolbar.classList.toggle('is-open');
+    toolbarToggle.setAttribute('aria-expanded',String(isOpen));
+  });
   const showAnswers=()=>document.body.classList.add('show-answers');
   const hideAnswers=()=>document.body.classList.remove('show-answers');
   async function printMode(mode){
