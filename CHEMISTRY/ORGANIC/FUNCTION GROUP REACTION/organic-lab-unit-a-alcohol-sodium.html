@@ -1,0 +1,794 @@
+<div id="organic-unit-a-root" class="ola-shell">
+  <style>
+    #organic-unit-a-root{
+      --ink:#172033;--muted:#64748b;--line:#cbd5e1;--paper:#ffffff;
+      --bg:#eef5ff;--navy:#172554;--blue:#2563eb;--green:#059669;
+      --green-soft:#ecfdf5;--amber:#d97706;--amber-soft:#fffbeb;
+      --red:#dc2626;--red-soft:#fff1f2;--violet:#7c3aed;
+      max-width:1120px;margin:0 auto;padding:18px;
+      font-family:"Noto Sans Thai","Google Sans","Segoe UI",Tahoma,sans-serif;
+      color:var(--ink);background:linear-gradient(180deg,#f8fbff 0%,var(--bg) 100%);
+      border:1px solid #dbeafe;border-radius:24px;box-sizing:border-box;
+    }
+    #organic-unit-a-root *{box-sizing:border-box}
+    #organic-unit-a-root button,#organic-unit-a-root select{font:inherit}
+    .ola-hero{
+      padding:24px;border-radius:20px;color:#fff;
+      background:
+        radial-gradient(circle at 88% 20%,rgba(255,255,255,.18),transparent 28%),
+        linear-gradient(135deg,#172554,#1d4ed8 62%,#0f766e);
+      box-shadow:0 14px 34px rgba(30,64,175,.18);
+    }
+    .ola-kicker{
+      display:inline-flex;align-items:center;gap:8px;padding:7px 12px;
+      border:1px solid rgba(255,255,255,.35);border-radius:999px;
+      background:rgba(255,255,255,.12);font-size:13px;font-weight:900;letter-spacing:.03em;
+    }
+    .ola-hero h2{margin:14px 0 4px;font-size:clamp(27px,4vw,44px);line-height:1.1}
+    .ola-en{display:block;font-size:.55em;font-weight:700;opacity:.86;margin-top:6px}
+    .ola-hero p{margin:12px 0 0;line-height:1.75;font-weight:650}
+    .ola-status-grid{
+      display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:18px
+    }
+    .ola-status{
+      min-height:86px;padding:13px 15px;border:1px solid rgba(255,255,255,.28);
+      border-radius:16px;background:rgba(255,255,255,.11);backdrop-filter:blur(4px)
+    }
+    .ola-status small{display:block;opacity:.78;font-weight:800}
+    .ola-status strong{display:block;font-size:23px;margin-top:7px}
+    .ola-progress{height:12px;background:rgba(255,255,255,.18);border-radius:999px;overflow:hidden;margin-top:15px}
+    .ola-progress>div{height:100%;width:0;background:#86efac;transition:width .35s ease}
+    .ola-progress-meta{display:flex;justify-content:space-between;gap:12px;margin-top:7px;font-size:13px;font-weight:800}
+    .ola-role{
+      display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;
+      margin:16px 0;padding:16px;border:2px solid #bae6fd;border-radius:18px;background:#f0f9ff
+    }
+    .ola-avatar{
+      width:54px;height:54px;display:grid;place-items:center;border-radius:16px;
+      background:#fff;border:2px solid #7dd3fc;font-size:30px
+    }
+    .ola-role h3{margin:0 0 4px;font-size:19px}
+    .ola-role p{margin:0;line-height:1.65;color:#334155}
+    .ola-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0}
+    .ola-tab{
+      position:relative;padding:14px 12px;border:2px solid #cbd5e1;border-radius:16px;
+      background:#fff;color:#334155;font-weight:900;cursor:pointer;text-align:left;
+      box-shadow:0 5px 0 #e2e8f0;transition:.18s ease
+    }
+    .ola-tab:hover:not(:disabled),.ola-tab:focus-visible:not(:disabled){transform:translateY(-2px);outline:none;border-color:#60a5fa}
+    .ola-tab.active{border-color:#2563eb;background:#eff6ff;box-shadow:0 5px 0 #bfdbfe}
+    .ola-tab.done{border-color:#34d399;background:#ecfdf5;box-shadow:0 5px 0 #a7f3d0}
+    .ola-tab:disabled{cursor:not-allowed;opacity:.48}
+    .ola-tab span{display:block;font-size:12px;color:#64748b;margin-bottom:5px}
+    .ola-tab b{display:block}
+    .ola-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(300px,.95fr);gap:16px}
+    .ola-card{background:#fff;border:1px solid #dbe3ef;border-radius:20px;padding:18px;box-shadow:0 10px 26px rgba(15,23,42,.07)}
+    .ola-card h3{margin:0 0 6px;font-size:22px}
+    .ola-sub{margin:0 0 14px;color:#64748b;line-height:1.55}
+    .ola-step-list{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 17px}
+    .ola-step-chip{
+      padding:6px 9px;border-radius:999px;background:#f1f5f9;color:#64748b;
+      font-size:12px;font-weight:900;border:1px solid #e2e8f0
+    }
+    .ola-step-chip.on{background:#dbeafe;color:#1d4ed8;border-color:#93c5fd}
+    .ola-step-chip.done{background:#dcfce7;color:#047857;border-color:#86efac}
+    .ola-mission{padding:14px;border-left:5px solid #7c3aed;border-radius:13px;background:#f5f3ff;line-height:1.7}
+    .ola-mission strong{color:#5b21b6}
+    .ola-form{display:grid;gap:13px;margin-top:16px}
+    .ola-field label{display:block;font-weight:900;margin-bottom:6px}
+    .ola-field small{display:block;color:#64748b;margin-top:5px;line-height:1.45}
+    .ola-select{
+      width:100%;min-height:50px;padding:10px 12px;border:2px solid #cbd5e1;
+      border-radius:13px;background:#fff;color:#111827;font-weight:750;cursor:pointer
+    }
+    .ola-select:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 4px #dbeafe}
+    .ola-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+    .ola-btn{
+      border:2px solid #172033;border-radius:13px;padding:10px 15px;background:#fff;
+      color:#172033;font-weight:900;cursor:pointer;box-shadow:0 4px 0 #cbd5e1
+    }
+    .ola-btn:hover:not(:disabled),.ola-btn:focus-visible:not(:disabled){transform:translateY(-1px);outline:none}
+    .ola-btn.primary{background:#2563eb;color:#fff;border-color:#1e3a8a;box-shadow:0 4px 0 #1e40af}
+    .ola-btn.green{background:#10b981;color:#052e2b;border-color:#065f46;box-shadow:0 4px 0 #047857}
+    .ola-btn.amber{background:#fbbf24;color:#422006;border-color:#92400e;box-shadow:0 4px 0 #d97706}
+    .ola-btn:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+    .ola-officer{
+      margin-top:15px;padding:14px;border:2px solid #cbd5e1;border-radius:15px;background:#f8fafc;line-height:1.65
+    }
+    .ola-officer.good{border-color:#6ee7b7;background:#ecfdf5;color:#065f46}
+    .ola-officer.bad{border-color:#fda4af;background:#fff1f2;color:#9f1239}
+    .ola-officer.info{border-color:#93c5fd;background:#eff6ff;color:#1e3a8a}
+    .ola-labbench{
+      position:relative;min-height:360px;border:2px solid #94a3b8;border-radius:20px;
+      overflow:hidden;background:
+        linear-gradient(#f8fafc 0 68%,#d6b88f 68% 72%,#b98b5f 72% 100%);
+    }
+    .ola-lab-label{
+      position:absolute;left:14px;top:12px;padding:7px 10px;border-radius:10px;
+      background:#172554;color:#fff;font-size:12px;font-weight:900;z-index:4
+    }
+    .ola-tube{
+      position:absolute;left:50%;top:64px;transform:translateX(-50%);
+      width:118px;height:220px;border:5px solid #64748b;border-top:0;
+      border-radius:0 0 54px 54px;background:rgba(255,255,255,.55);overflow:hidden;
+      box-shadow:inset 10px 0 16px rgba(255,255,255,.7),0 10px 20px rgba(15,23,42,.12)
+    }
+    .ola-tube:before{
+      content:"";position:absolute;left:-10px;right:-10px;top:-4px;height:14px;
+      border:5px solid #64748b;border-radius:999px;background:#f8fafc
+    }
+    .ola-liquid{
+      position:absolute;left:0;right:0;bottom:0;height:58%;background:linear-gradient(180deg,#dbeafe,#93c5fd);
+      transition:background .35s ease
+    }
+    .ola-na{
+      position:absolute;left:50%;top:122px;transform:translateX(-50%) rotate(-7deg);
+      width:42px;height:20px;border-radius:7px;background:linear-gradient(135deg,#f8fafc,#94a3b8);
+      border:2px solid #64748b;opacity:0
+    }
+    .ola-run .ola-na{opacity:1;animation:olaNaShrink 3.3s ease forwards}
+    .ola-bubble{
+      position:absolute;bottom:64px;width:12px;height:12px;border:2px solid #e0f2fe;border-radius:50%;
+      background:rgba(255,255,255,.25);opacity:0
+    }
+    .ola-run .ola-bubble{opacity:1;animation:olaBubble 2.4s ease-in infinite}
+    .ola-b1{left:37%;animation-delay:.05s!important}.ola-b2{left:53%;width:9px;height:9px;animation-delay:.55s!important}
+    .ola-b3{left:45%;width:15px;height:15px;animation-delay:1.05s!important}.ola-b4{left:60%;width:8px;height:8px;animation-delay:1.4s!important}
+    .ola-gas{
+      position:absolute;right:20px;top:75px;width:92px;padding:12px 8px;border:2px dashed #38bdf8;
+      border-radius:15px;background:#f0f9ff;text-align:center;font-weight:900;color:#0369a1;opacity:0;transform:translateY(8px)
+    }
+    .ola-run .ola-gas{animation:olaGas .45s 2.7s forwards}
+    .ola-observation{
+      position:absolute;left:15px;right:15px;bottom:15px;padding:11px;border-radius:13px;
+      background:rgba(255,255,255,.94);border:1px solid #cbd5e1;font-weight:800;line-height:1.45
+    }
+    @keyframes olaBubble{0%{transform:translateY(0) scale(.7);opacity:0}20%{opacity:1}100%{transform:translateY(-145px) scale(1.25);opacity:0}}
+    @keyframes olaNaShrink{0%{transform:translateX(-50%) rotate(-7deg) scale(1)}100%{transform:translateX(-50%) rotate(18deg) scale(.12);opacity:.2}}
+    @keyframes olaGas{to{opacity:1;transform:translateY(0)}}
+    .ola-equation{
+      margin:14px 0;padding:15px;border-radius:15px;background:#f8fafc;border:1px solid #cbd5e1;
+      text-align:center;font-family:Cambria,"Times New Roman",serif;font-size:clamp(17px,2.4vw,23px);font-weight:700;overflow:auto
+    }
+    .ola-explain{
+      display:grid;gap:12px;margin-top:14px
+    }
+    .ola-explain>div{padding:13px;border-radius:14px;background:#f8fafc;border:1px solid #e2e8f0;line-height:1.65}
+    .ola-explain b{color:#1d4ed8}
+    .ola-bond-map{
+      text-align:center;font-family:Cambria,"Times New Roman",serif;font-size:20px;
+      padding:14px;border-radius:14px;background:#fff7ed;border:1px solid #fdba74
+    }
+    .ola-exit{margin-top:16px;padding:15px;border:2px solid #a78bfa;border-radius:16px;background:#faf5ff}
+    .ola-exit h4{margin:0 0 10px;font-size:18px}
+    .ola-complete{
+      text-align:center;padding:24px;border:2px solid #34d399;border-radius:20px;background:#ecfdf5
+    }
+    .ola-complete .badge{font-size:58px}
+    .ola-complete h3{color:#065f46;margin:8px 0}
+    .ola-summary-table{width:100%;border-collapse:collapse;margin-top:14px;background:#fff}
+    .ola-summary-table th,.ola-summary-table td{border:1px solid #cbd5e1;padding:10px;text-align:left;vertical-align:top}
+    .ola-summary-table th{background:#eff6ff}
+    .ola-footer-actions{display:flex;justify-content:space-between;gap:10px;margin-top:16px}
+    @media(max-width:820px){
+      .ola-status-grid,.ola-tabs,.ola-grid{grid-template-columns:1fr}
+      .ola-tab{text-align:center}
+      .ola-labbench{min-height:330px}
+      .ola-gas{right:8px;top:60px;width:82px}
+    }
+    @media print{
+      #organic-unit-a-root{background:#fff;border:0;padding:0}
+      .ola-actions,.ola-tabs,.ola-footer-actions{display:none!important}
+      .ola-card,.ola-hero{box-shadow:none}
+    }
+  </style>
+
+  <section class="ola-hero">
+    <span class="ola-kicker">🧪 ORGANIC LAB ASSISTANT · UNIT A</span>
+    <h2>แอลกอฮอล์กับโลหะโซเดียม<span class="ola-en">Alcohols with Sodium Metal</span></h2>
+    <p>
+      ฝึกเป็นผู้ช่วยเจ้าหน้าที่ห้องปฏิบัติการ เลือกโครงสร้างสาร เตรียมรีเอเจนต์
+      สังเกตการเปลี่ยนแปลง และสรุปผลให้ผ่านทั้ง 3 ด่าน<br>
+      Train as a laboratory assistant: select structures, prepare reagents, observe changes,
+      and complete all three stations.
+    </p>
+
+    <div class="ola-status-grid">
+      <div class="ola-status"><small>ด่านปัจจุบัน / Current station</small><strong id="ola-current-station">A1 / 3</strong></div>
+      <div class="ola-status"><small>ผ่านแล้ว / Completed</small><strong id="ola-completed-count">0 / 3</strong></div>
+      <div class="ola-status"><small>ความก้าวหน้า / Progress</small><strong id="ola-percent">0%</strong></div>
+    </div>
+    <div class="ola-progress"><div id="ola-progress-bar"></div></div>
+    <div class="ola-progress-meta"><span id="ola-progress-text">กำลังเริ่ม Unit A / Starting Unit A</span><span>3 ด่าน / 3 stations</span></div>
+  </section>
+
+  <section class="ola-role">
+    <div class="ola-avatar">🧑‍🔬</div>
+    <div>
+      <h3>บทบาทของคุณ: ผู้ช่วยเจ้าหน้าที่แล็บ / Your role: Laboratory Assistant</h3>
+      <p>
+        คุณมีหน้าที่เตรียมสารให้ตรงตามใบงาน เจ้าหน้าที่จะไม่ดำเนินการทดลองเมื่อเลือกสารหรือสภาวะไม่ถูกต้อง<br>
+        Your duty is to prepare the correct materials. The laboratory officer will not proceed when the selected substance or condition is incorrect.<br>
+        กิจกรรมนี้เป็นการจำลองเท่านั้น—โลหะโซเดียมจริงต้องอยู่ภายใต้การดูแลของผู้เชี่ยวชาญ<br>
+        This is a simulation only. Real sodium metal must be handled under expert supervision.
+      </p>
+    </div>
+  </section>
+
+  <nav class="ola-tabs" id="ola-station-tabs" aria-label="Unit A stations"></nav>
+
+  <main id="ola-main"></main>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var ROOT_ID = "organic-unit-a-root";
+  var LAB_TYPE = "ORGANIC_LAB_UNIT_A_ALCOHOL_SODIUM";
+  var VERSION = "1.0.0";
+  var root = document.getElementById(ROOT_ID);
+  if (!root || root.dataset.olaReady === "1") return;
+  root.dataset.olaReady = "1";
+
+  var STATIONS = [
+    {
+      id:"A1",
+      classTh:"แอลกอฮอล์ปฐมภูมิ",
+      classEn:"Primary alcohol",
+      targetName:"ethanol",
+      targetStructure:"ethanol",
+      missionTh:"เตรียม ethanol ให้ตรงกับชื่อบนใบงาน แล้วทดลองกับโลหะโซเดียม",
+      missionEn:"Prepare the structure of ethanol and react it with sodium metal.",
+      structures:[
+        ["ethanol","CH₃–CH₂–OH"],
+        ["ethanoic_acid","CH₃–C(=O)–OH"],
+        ["ethanal","CH₃–C(=O)–H"],
+        ["dimethyl_ether","CH₃–O–CH₃"]
+      ],
+      product:"sodium ethoxide",
+      productTh:"โซเดียมเอทอกไซด์",
+      equation:"2CH₃CH₂OH + 2Na → 2CH₃CH₂ONa + H₂↑",
+      transform:"CH₃–CH₂–O–H  →  CH₃–CH₂–O⁻Na⁺",
+      specialSummary:"เป็นแอลกอฮอล์ปฐมภูมิ แต่ปฏิกิริยากับ Na พิจารณาที่พันธะ O–H",
+      specialSummaryEn:"It is a primary alcohol, but its reaction with Na is determined by the presence of the O–H bond."
+    },
+    {
+      id:"A2",
+      classTh:"แอลกอฮอล์ทุติยภูมิ",
+      classEn:"Secondary alcohol",
+      targetName:"propan-2-ol",
+      targetStructure:"propan_2_ol",
+      missionTh:"เตรียม propan-2-ol แล้วตรวจสอบว่ายังให้แก๊สไฮโดรเจนกับโลหะโซเดียมหรือไม่",
+      missionEn:"Prepare propan-2-ol and investigate its reaction with sodium metal.",
+      structures:[
+        ["propan_2_ol","CH₃–CH(OH)–CH₃"],
+        ["propan_1_ol","CH₃–CH₂–CH₂–OH"],
+        ["propanone","CH₃–C(=O)–CH₃"],
+        ["propanoic_acid","CH₃–CH₂–C(=O)–OH"]
+      ],
+      product:"sodium propan-2-olate",
+      productTh:"โซเดียมโพรเพน-2-โอเลต",
+      equation:"2(CH₃)₂CHOH + 2Na → 2(CH₃)₂CHONa + H₂↑",
+      transform:"(CH₃)₂CH–O–H  →  (CH₃)₂CH–O⁻Na⁺",
+      specialSummary:"แอลกอฮอล์ทุติยภูมิก็มีพันธะ O–H จึงให้ H₂ กับ Na",
+      specialSummaryEn:"A secondary alcohol still contains an O–H bond, so it produces H₂ with Na."
+    },
+    {
+      id:"A3",
+      classTh:"แอลกอฮอล์ตติยภูมิ",
+      classEn:"Tertiary alcohol",
+      targetName:"2-methylpropan-2-ol",
+      targetStructure:"tert_butanol",
+      missionTh:"เตรียม 2-methylpropan-2-ol และพิสูจน์ว่าการเป็นแอลกอฮอล์ตติยภูมิไม่ได้ทำให้พันธะ O–H หายไป",
+      missionEn:"Prepare 2-methylpropan-2-ol and examine its O–H reaction with sodium.",
+      structures:[
+        ["tert_butanol","(CH₃)₃C–OH"],
+        ["isobutanol","(CH₃)₂CH–CH₂–OH"],
+        ["butan_2_ol","CH₃–CH(OH)–CH₂–CH₃"],
+        ["tert_butyl_ether","(CH₃)₃C–O–CH₃"]
+      ],
+      product:"sodium 2-methylpropan-2-olate",
+      productTh:"โซเดียม 2-เมทิลโพรเพน-2-โอเลต",
+      equation:"2(CH₃)₃COH + 2Na → 2(CH₃)₃CONa + H₂↑",
+      transform:"(CH₃)₃C–O–H  →  (CH₃)₃C–O⁻Na⁺",
+      specialSummary:"แม้เป็นแอลกอฮอล์ตติยภูมิ ก็ยังทำปฏิกิริยากับ Na เพราะยังมี O–H",
+      specialSummaryEn:"Although it is a tertiary alcohol, it still reacts with Na because it still contains an O–H bond."
+    }
+  ];
+
+  function blankStation() {
+    return {
+      selectedStructure:"",
+      selectedReagent:"",
+      selectedCondition:"",
+      approved:false,
+      experimentViewed:false,
+      explanationViewed:false,
+      exitAnswers:{bond:"",product:"",gas:"",reason:""},
+      completed:false,
+      selectionAttempts:0,
+      exitAttempts:0
+    };
+  }
+
+  function blankState() {
+    return {
+      currentStationIndex:0,
+      stations:{A1:blankStation(),A2:blankStation(),A3:blankStation()},
+      completed:false,
+      savedAt:null
+    };
+  }
+
+  var state = blankState();
+  var experimentTimer = null;
+
+  function esc(value) {
+    return String(value == null ? "" : value)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+  }
+
+  function clone(value) {
+    return JSON.parse(JSON.stringify(value));
+  }
+
+  function currentDef() {
+    return STATIONS[state.currentStationIndex];
+  }
+
+  function currentStationState() {
+    return state.stations[currentDef().id];
+  }
+
+  function stationStep(s) {
+    if (s.completed) return 6;
+    if (s.explanationViewed) return 5;
+    if (s.experimentViewed) return 4;
+    if (s.approved) return 3;
+    if (s.selectedStructure && s.selectedReagent && s.selectedCondition) return 2;
+    if (s.selectedStructure) return 1;
+    return 0;
+  }
+
+  function completedCount() {
+    return STATIONS.filter(function (d) { return !!state.stations[d.id].completed; }).length;
+  }
+
+  function totalStepPoints() {
+    return STATIONS.reduce(function (sum,d) { return sum + stationStep(state.stations[d.id]); },0);
+  }
+
+  function getPercent() {
+    return Math.round(totalStepPoints() / (STATIONS.length * 6) * 100);
+  }
+
+  function notifyChange() {
+    state.savedAt = new Date().toISOString();
+    try {
+      document.dispatchEvent(new CustomEvent("examate-lab-change", {
+        detail:{
+          labType:LAB_TYPE,
+          version:VERSION,
+          unitId:"A",
+          currentStation:currentDef().id,
+          percent:getPercent(),
+          completed:state.completed,
+          completedStations:completedCount()
+        }
+      }));
+    } catch (error) {}
+  }
+
+  function renderTabs() {
+    var tabs = document.getElementById("ola-station-tabs");
+    tabs.innerHTML = STATIONS.map(function (d,index) {
+      var s = state.stations[d.id];
+      var locked = index > 0 && !state.stations[STATIONS[index-1].id].completed;
+      var cls = "ola-tab" + (index === state.currentStationIndex ? " active" : "") + (s.completed ? " done" : "");
+      return '<button type="button" class="' + cls + '" data-station-index="' + index + '"' + (locked ? " disabled" : "") + '>' +
+        '<span>' + esc(d.id) + (s.completed ? " · ผ่านแล้ว / Completed" : locked ? " · ล็อก / Locked" : " · พร้อมทำ / Available") + '</span>' +
+        '<b>' + esc(d.classTh) + '<br><small>' + esc(d.classEn) + '</small></b></button>';
+    }).join("");
+
+    tabs.querySelectorAll("[data-station-index]").forEach(function (btn) {
+      btn.addEventListener("click",function () {
+        var index = Number(btn.dataset.stationIndex);
+        if (!Number.isFinite(index)) return;
+        state.currentStationIndex = index;
+        render();
+        notifyChange();
+      });
+    });
+  }
+
+  function stepChips(step) {
+    var labels = [
+      "1 รับภารกิจ / Briefing","2 เลือกโครงสร้าง / Select structure","3 เตรียมสาร / Prepare materials","4 อนุมัติ / Approval",
+      "5 ทดลอง / Experiment","6 อธิบาย / Explanation","7 บัตรสรุป / Exit card"
+    ];
+    return '<div class="ola-step-list">' + labels.map(function (label,index) {
+      var point = index === 0 ? 0 : index;
+      var cls = "ola-step-chip" + (step > point ? " done" : step === point ? " on" : "");
+      return '<span class="' + cls + '">' + label + '</span>';
+    }).join("") + '</div>';
+  }
+
+  function optionsHtml(list,selected,placeholder) {
+    return '<option value="">' + esc(placeholder) + '</option>' +
+      list.map(function (item) {
+        return '<option value="' + esc(item[0]) + '"' + (item[0] === selected ? " selected" : "") + '>' + esc(item[1]) + '</option>';
+      }).join("");
+  }
+
+  function renderLabBench(d,s) {
+    var cls = "ola-labbench" + (s.experimentViewed ? " ola-run" : "");
+    var observation = s.experimentViewed
+      ? "สังเกตเห็นชิ้น Na เล็กลงและเกิดฟองแก๊ส โดยไม่เกิดตะกอนสี / The sodium piece becomes smaller, gas bubbles are produced, and no coloured precipitate appears."
+      : "รอเจ้าหน้าที่อนุมัติและเริ่มการทดลอง / Awaiting officer approval.";
+    return '<div class="' + cls + '" id="ola-labbench">' +
+      '<div class="ola-lab-label">VIRTUAL TEST TUBE · ' + esc(d.id) + '</div>' +
+      '<div class="ola-tube"><div class="ola-liquid"></div><div class="ola-na"></div>' +
+      '<i class="ola-bubble ola-b1"></i><i class="ola-bubble ola-b2"></i><i class="ola-bubble ola-b3"></i><i class="ola-bubble ola-b4"></i></div>' +
+      '<div class="ola-gas">H₂<br><small>hydrogen gas</small></div>' +
+      '<div class="ola-observation">' + observation + '</div></div>';
+  }
+
+  function officerMessage(s) {
+    if (s.completed) return '<div class="ola-officer good">✅ เจ้าหน้าที่รับรองบันทึกผลแล้ว ด่านนี้เสร็จสมบูรณ์ / The laboratory officer has certified the record. This station is complete.</div>';
+    if (s.explanationViewed) return '<div class="ola-officer info">📋 อ่านคำอธิบายแล้ว กรุณากรอกบัตรสรุปก่อนเปลี่ยนด่าน / You have reviewed the explanation. Complete the exit card before moving to the next station.</div>';
+    if (s.experimentViewed) return '<div class="ola-officer good">🔎 การทดลองเสร็จแล้ว เปิดคำอธิบายเพื่อวิเคราะห์การเปลี่ยนแปลง / The experiment is complete. Open the explanation to analyse the changes.</div>';
+    if (s.approved) return '<div class="ola-officer good">✅ สารและสภาวะถูกต้อง เจ้าหน้าที่อนุมัติให้เริ่มการทดลอง / The materials and conditions are correct. The officer approves the experiment.</div>';
+    return '<div class="ola-officer info">🧑‍🔬 เลือกโครงสร้าง รีเอเจนต์ และสภาวะ แล้วส่งให้เจ้าหน้าที่ตรวจ / Select the structure, reagent, and condition, then submit them for inspection.</div>';
+  }
+
+  function renderExitCard(d,s) {
+    if (!s.explanationViewed) return "";
+    var a = s.exitAnswers || {};
+    return '<section class="ola-exit">' +
+      '<h4>บัตรสรุปเปลี่ยนด่าน / Station Exit Card</h4>' +
+      '<div class="ola-form">' +
+        '<div class="ola-field"><label>1. พันธะที่เกิดการเปลี่ยนแปลงหลัก / Main bond involved</label>' +
+          '<select class="ola-select" id="ola-exit-bond">' +
+            optionsHtml([["oh","พันธะ O–H / O–H bond"],["co","พันธะ C–O / C–O bond"],["cc","พันธะ C–C / C–C bond"],["ch","พันธะ C–H / C–H bond"]],a.bond,"เลือกคำตอบ / Select") +
+          '</select></div>' +
+        '<div class="ola-field"><label>2. ผลิตภัณฑ์อินทรีย์ / Organic product</label>' +
+          '<select class="ola-select" id="ola-exit-product">' +
+            optionsHtml([["alkoxide","เกลือโซเดียมแอลคอกไซด์ / Sodium alkoxide salt"],["ketone","คีโตน / Ketone"],["carboxylate","เกลือคาร์บอกซิเลต / Carboxylate salt"],["ester","เอสเทอร์ / Ester"]],a.product,"เลือกคำตอบ / Select") +
+          '</select></div>' +
+        '<div class="ola-field"><label>3. แก๊สที่เกิด / Gas produced</label>' +
+          '<select class="ola-select" id="ola-exit-gas">' +
+            optionsHtml([["h2","H₂"],["co2","CO₂"],["nh3","NH₃"],["o2","O₂"]],a.gas,"เลือกคำตอบ / Select") +
+          '</select></div>' +
+        '<div class="ola-field"><label>4. เหตุผลที่ alcohol ชนิดนี้เกิดปฏิกิริยากับ Na / Why it reacts</label>' +
+          '<select class="ola-select" id="ola-exit-reason">' +
+            optionsHtml([["has_oh","มีพันธะ O–H / It contains an O–H bond"],["has_carbonyl","มีหมู่ C=O / It contains a C=O group"],["has_cc","มีพันธะ C–C / It contains a C–C bond"],["is_primary_only","เฉพาะแอลกอฮอล์ปฐมภูมิเท่านั้น / Only primary alcohols react"]],a.reason,"เลือกคำตอบ / Select") +
+          '</select></div>' +
+      '</div>' +
+      '<div class="ola-actions"><button class="ola-btn green" type="button" id="ola-check-exit">✅ ส่งบันทึกผล / Submit record</button></div>' +
+    '</section>';
+  }
+
+  function renderStation() {
+    var d = currentDef();
+    var s = currentStationState();
+    var step = stationStep(s);
+
+    var structureOptions = optionsHtml(d.structures,s.selectedStructure,"เลือกโครงสร้าง / Select structure");
+    var reagentOptions = optionsHtml([
+      ["sodium","Na · โลหะโซเดียม / Sodium metal"],
+      ["nahco3","NaHCO₃ · โซเดียมไฮโดรเจนคาร์บอเนต / Sodium hydrogen carbonate · เบกกิ้งโซดา / Baking soda"],
+      ["naoh","NaOH · โซเดียมไฮดรอกไซด์ / Sodium hydroxide · โซดาไฟ / Caustic soda"],
+      ["kmno4","KMnO₄ · โพแทสเซียมเปอร์แมงกาเนต / Potassium permanganate"]
+    ],s.selectedReagent,"เลือกรีเอเจนต์ / Select reagent");
+    var conditionOptions = optionsHtml([
+      ["dry_room","อุณหภูมิห้องและสภาวะแห้ง / Room temperature, dry conditions"],
+      ["heat","ให้ความร้อน / Heat"],
+      ["acid_heat","กรดเป็นตัวเร่งและให้ความร้อน / Acid catalyst and heat"],
+      ["aqueous","สารละลายในน้ำ / Aqueous conditions"]
+    ],s.selectedCondition,"เลือกสภาวะ / Select condition");
+
+    var explanation = "";
+    if (s.experimentViewed) {
+      explanation += '<div class="ola-equation">' + esc(d.equation) + '</div>';
+    }
+    if (s.explanationViewed) {
+      explanation += '<div class="ola-explain">' +
+        '<div><b>คำช่วยจำ / Memory bridge:</b> Na เข้าแทนที่ H ในหมู่ O–H และไฮโดรเจนสองอะตอมรวมกันเป็น H₂<br>Na replaces H in the O–H group, and two hydrogen atoms combine to form H₂.</div>' +
+        '<div><b>คำอธิบายระดับมัธยมปลาย / Upper-secondary explanation:</b> ไฮโดรเจนในพันธะ O–H ถูกนำออก ส่วนออกซิเจนอยู่ในรูป alkoxide และจับกับ Na⁺ เกิด sodium alkoxide<br>The hydrogen in the O–H bond is removed. The oxygen remains as an alkoxide ion and associates with Na⁺ to form a sodium alkoxide.</div>' +
+        '<div><b>ข้อสรุปเฉพาะด่าน / Station-specific conclusion:</b> ' + esc(d.specialSummary) + '<br>' + esc(d.specialSummaryEn) + '</div>' +
+      '</div><div class="ola-bond-map">' + esc(d.transform) + '</div>';
+    }
+
+    return '<div class="ola-grid">' +
+      '<section class="ola-card">' +
+        '<h3>' + esc(d.id) + ' · ' + esc(d.classTh) + '<span class="ola-en">' + esc(d.classEn) + '</span></h3>' +
+        '<p class="ola-sub">สารเป้าหมาย / Target compound: <b>' + esc(d.targetName) + '</b></p>' +
+        stepChips(step) +
+        '<div class="ola-mission"><strong>ใบมอบหมายงาน / Briefing</strong><br>' + esc(d.missionTh) + '<br><small>' + esc(d.missionEn) + '</small></div>' +
+
+        '<div class="ola-form">' +
+          '<div class="ola-field"><label for="ola-structure">สารตัวอย่างจากชื่อที่กำหนด / Sample structure</label>' +
+            '<select class="ola-select" id="ola-structure"' + (s.approved ? " disabled" : "") + '>' + structureOptions + '</select>' +
+            '<small>ตัวเลือกแสดงสูตรโครงสร้างแบบย่อและพันธะสำคัญ ไม่แสดงชื่อสารตรง ๆ / Choices show condensed structures and important bonds without displaying the compound names directly.</small></div>' +
+          '<div class="ola-field"><label for="ola-reagent">รีเอเจนต์ / Reagent</label>' +
+            '<select class="ola-select" id="ola-reagent"' + (s.approved ? " disabled" : "") + '>' + reagentOptions + '</select></div>' +
+          '<div class="ola-field"><label for="ola-condition">สภาวะ / Conditions</label>' +
+            '<select class="ola-select" id="ola-condition"' + (s.approved ? " disabled" : "") + '>' + conditionOptions + '</select></div>' +
+        '</div>' +
+
+        '<div class="ola-actions">' +
+          '<button class="ola-btn primary" type="button" id="ola-approve"' + (s.approved ? " disabled" : "") + '>🧑‍🔬 ส่งให้เจ้าหน้าที่ตรวจ / Request approval</button>' +
+          '<button class="ola-btn amber" type="button" id="ola-run"' + (!s.approved || s.experimentViewed ? " disabled" : "") + '>▶ เริ่มการทดลอง / Begin experiment</button>' +
+          '<button class="ola-btn" type="button" id="ola-explain"' + (!s.experimentViewed || s.explanationViewed ? " disabled" : "") + '>🔍 วิเคราะห์ผล / Explain results</button>' +
+        '</div>' +
+        officerMessage(s) +
+        explanation +
+        renderExitCard(d,s) +
+      '</section>' +
+
+      '<aside class="ola-card">' +
+        renderLabBench(d,s) +
+        '<div class="ola-footer-actions">' +
+          '<button class="ola-btn" type="button" id="ola-reset-station"' + (s.completed ? " disabled" : "") + '>↻ ล้างด่านนี้ / Reset station</button>' +
+          '<button class="ola-btn green" type="button" id="ola-next-station"' + (!s.completed || state.currentStationIndex >= STATIONS.length-1 ? " disabled" : "") + '>ด่านถัดไป / Next station →</button>' +
+        '</div>' +
+      '</aside>' +
+    '</div>';
+  }
+
+  function renderUnitComplete() {
+    return '<section class="ola-card ola-complete">' +
+      '<div class="badge">🏅</div>' +
+      '<h3>ผ่าน Unit A แล้ว / Unit A Completed</h3>' +
+      '<p>คุณช่วยเจ้าหน้าที่แล็บทำการทดลองแอลกอฮอล์ทั้งสามชนิดกับโลหะโซเดียม และสรุปหลักร่วมได้ถูกต้อง<br>You have assisted the laboratory officer with all three alcohol–sodium experiments and correctly identified their common principle.</p>' +
+      '<div class="ola-equation">Alcohol containing O–H + Na → Sodium alkoxide + H₂↑</div>' +
+      '<table class="ola-summary-table">' +
+        '<thead><tr><th>ชนิดแอลกอฮอล์<br>Alcohol class</th><th>ตัวอย่าง<br>Example</th><th>ผลกับ Na<br>Result with Na</th></tr></thead>' +
+        '<tbody>' +
+          '<tr><td>1° Alcohol</td><td>CH₃–CH₂–OH</td><td>เกิด sodium alkoxide และ H₂<br>Forms a sodium alkoxide and H₂</td></tr>' +
+          '<tr><td>2° Alcohol</td><td>CH₃–CH(OH)–CH₃</td><td>เกิด sodium alkoxide และ H₂<br>Forms a sodium alkoxide and H₂</td></tr>' +
+          '<tr><td>3° Alcohol</td><td>(CH₃)₃C–OH</td><td>เกิด sodium alkoxide และ H₂<br>Forms a sodium alkoxide and H₂</td></tr>' +
+        '</tbody>' +
+      '</table>' +
+      '<p><b>กฎสรุป / Summary rule:</b> การแบ่ง 1°, 2°, 3° บอกสภาพแวดล้อมของคาร์บอนที่จับกับ OH แต่ทั้งสามยังมีพันธะ O–H จึงทำปฏิกิริยากับ Na ได้<br>The 1°, 2°, and 3° labels describe the carbon bonded to OH, but all three classes still contain an O–H bond and therefore react with Na.</p>' +
+      '<div class="ola-actions" style="justify-content:center"><button class="ola-btn" type="button" id="ola-review-a1">ทบทวนตั้งแต่ A1 / Review from A1</button><button class="ola-btn primary" type="button" id="ola-reset-all">เริ่ม Unit A ใหม่ / Restart Unit A</button></div>' +
+    '</section>';
+  }
+
+  function renderStatus() {
+    var percent = getPercent();
+    document.getElementById("ola-current-station").textContent = currentDef().id + " / 3";
+    document.getElementById("ola-completed-count").textContent = completedCount() + " / 3";
+    document.getElementById("ola-percent").textContent = percent + "%";
+    document.getElementById("ola-progress-bar").style.width = percent + "%";
+    document.getElementById("ola-progress-text").textContent =
+      state.completed ? "ผ่าน Unit A แล้ว / Unit A completed" : "กำลังทำ / Working on " + currentDef().id + " · " + currentDef().classTh + " / " + currentDef().classEn;
+  }
+
+  function bindStationEvents() {
+    var s = currentStationState();
+
+    ["ola-structure","ola-reagent","ola-condition"].forEach(function (id) {
+      var node = document.getElementById(id);
+      if (!node) return;
+      node.addEventListener("change",function () {
+        if (id === "ola-structure") s.selectedStructure = node.value;
+        if (id === "ola-reagent") s.selectedReagent = node.value;
+        if (id === "ola-condition") s.selectedCondition = node.value;
+        render();
+        notifyChange();
+      });
+    });
+
+    var approve = document.getElementById("ola-approve");
+    if (approve) approve.addEventListener("click",function () {
+      var d = currentDef();
+      if (!s.selectedStructure || !s.selectedReagent || !s.selectedCondition) {
+        setOfficer("bad","⚠️ เจ้าหน้าที่ไม่อนุมัติ: กรุณาเตรียมรายการให้ครบทุกช่อง / Approval denied: complete every preparation field.");
+        return;
+      }
+      var correct = s.selectedStructure === d.targetStructure &&
+                    s.selectedReagent === "sodium" &&
+                    s.selectedCondition === "dry_room";
+      if (!correct) {
+        s.selectionAttempts += 1;
+        setOfficer("bad","⚠️ เจ้าหน้าที่ไม่ดำเนินการทดลองชุดนี้ สารหรือสภาวะไม่ตรงกับใบงาน กรุณาตรวจฉลากอีกครั้ง / The officer will not run this experiment because the selected material or condition does not match the work order. Check the labels again.");
+        notifyChange();
+        return;
+      }
+      s.approved = true;
+      render();
+      notifyChange();
+    });
+
+    var run = document.getElementById("ola-run");
+    if (run) run.addEventListener("click",function () {
+      if (!s.approved || s.experimentViewed) return;
+      var bench = document.getElementById("ola-labbench");
+      if (bench) bench.classList.add("ola-run");
+      run.disabled = true;
+      setOfficer("info","⏳ เจ้าหน้าที่กำลังดำเนินการทดลอง กรุณาสังเกตชิ้น Na และฟองแก๊ส / The officer is running the experiment. Observe the sodium piece and the gas bubbles.");
+      clearTimeout(experimentTimer);
+      experimentTimer = setTimeout(function () {
+        s.experimentViewed = true;
+        render();
+        notifyChange();
+      },3600);
+    });
+
+    var explain = document.getElementById("ola-explain");
+    if (explain) explain.addEventListener("click",function () {
+      if (!s.experimentViewed) return;
+      s.explanationViewed = true;
+      render();
+      notifyChange();
+    });
+
+    var resetStation = document.getElementById("ola-reset-station");
+    if (resetStation) resetStation.addEventListener("click",function () {
+      if (s.completed) return;
+      if (!window.confirm("ล้างการทำงานของด่านนี้และเริ่มใหม่? / Reset this station and start again?")) return;
+      state.stations[currentDef().id] = blankStation();
+      render();
+      notifyChange();
+    });
+
+    var next = document.getElementById("ola-next-station");
+    if (next) next.addEventListener("click",function () {
+      if (!s.completed || state.currentStationIndex >= STATIONS.length - 1) return;
+      state.currentStationIndex += 1;
+      render();
+      notifyChange();
+    });
+
+    var checkExit = document.getElementById("ola-check-exit");
+    if (checkExit) {
+      ["bond","product","gas","reason"].forEach(function (key) {
+        var node = document.getElementById("ola-exit-" + key);
+        if (node) node.addEventListener("change",function () {
+          s.exitAnswers[key] = node.value;
+          notifyChange();
+        });
+      });
+
+      checkExit.addEventListener("click",function () {
+        s.exitAttempts += 1;
+        var a = s.exitAnswers;
+        var correct = a.bond === "oh" && a.product === "alkoxide" && a.gas === "h2" && a.reason === "has_oh";
+        if (!correct) {
+          setOfficer("bad","❌ บันทึกยังไม่ผ่าน กรุณากลับไปดูภาพการทดลอง สมการ และตำแหน่ง O–H อีกครั้ง / The record is not yet approved. Review the experiment, equation, and O–H position.");
+          notifyChange();
+          return;
+        }
+        s.completed = true;
+        if (completedCount() === STATIONS.length) state.completed = true;
+        render();
+        notifyChange();
+      });
+    }
+  }
+
+  function setOfficer(tone,message) {
+    var box = root.querySelector(".ola-officer");
+    if (!box) return;
+    box.className = "ola-officer " + tone;
+    box.textContent = message;
+  }
+
+  function bindCompleteEvents() {
+    var review = document.getElementById("ola-review-a1");
+    if (review) review.addEventListener("click",function () {
+      state.currentStationIndex = 0;
+      render();
+      notifyChange();
+    });
+    var reset = document.getElementById("ola-reset-all");
+    if (reset) reset.addEventListener("click",function () {
+      if (window.confirm("เริ่ม Unit A ใหม่ทั้งหมด? / Restart the entire Unit A?")) {
+        state = blankState();
+        render();
+        notifyChange();
+      }
+    });
+  }
+
+  function render() {
+    renderTabs();
+    renderStatus();
+    document.getElementById("ola-main").innerHTML = state.completed ? renderUnitComplete() : renderStation();
+    if (state.completed) bindCompleteEvents();
+    else bindStationEvents();
+  }
+
+  function getSavePayload() {
+    return {
+      type:"LAB",
+      labType:LAB_TYPE,
+      version:VERSION,
+      unitId:"A",
+      currentStation:currentDef().id,
+      currentStationIndex:state.currentStationIndex,
+      currentStep:totalStepPoints(),
+      totalSteps:STATIONS.length * 6,
+      percent:getPercent(),
+      completedStations:completedCount(),
+      totalStations:STATIONS.length,
+      completed:state.completed,
+      stations:clone(state.stations),
+      savedAt:new Date().toISOString()
+    };
+  }
+
+  function restore(data) {
+    if (!data) return false;
+    if (typeof data === "string") {
+      try { data = JSON.parse(data); } catch (error) { return false; }
+    }
+    if (data.labType && data.labType !== LAB_TYPE) return false;
+    if (!data.stations || typeof data.stations !== "object") return false;
+
+    var next = blankState();
+    STATIONS.forEach(function (d) {
+      if (data.stations[d.id] && typeof data.stations[d.id] === "object") {
+        next.stations[d.id] = Object.assign(blankStation(),clone(data.stations[d.id]));
+        next.stations[d.id].exitAnswers = Object.assign(
+          {bond:"",product:"",gas:"",reason:""},
+          clone((data.stations[d.id] || {}).exitAnswers || {})
+        );
+      }
+    });
+    next.currentStationIndex = Math.max(0,Math.min(STATIONS.length-1,Number(data.currentStationIndex) || 0));
+    next.completed = !!data.completed || STATIONS.every(function (d) { return !!next.stations[d.id].completed; });
+    state = next;
+    render();
+    return true;
+  }
+
+  window.ExamateLab = {
+    version:VERSION,
+    labType:LAB_TYPE,
+    config:{totalSteps:STATIONS.length * 6,maxScore:100},
+    init:function () { render(); return true; },
+    getPercent:getPercent,
+    getScore:function () { return getPercent(); },
+    getSavePayload:getSavePayload,
+    restore:restore,
+    resetAll:function () {
+      if (!window.confirm("เริ่ม Unit A ใหม่ทั้งหมด? / Restart the entire Unit A?")) return false;
+      state = blankState();
+      render();
+      notifyChange();
+      return true;
+    }
+  };
+
+  function consumePendingSave() {
+    if (!window.pendingLabSave) return false;
+    var incoming = window.pendingLabSave;
+    if (incoming.labType && incoming.labType !== LAB_TYPE) return false;
+    var ok = restore(incoming);
+    if (ok) window.pendingLabSave = null;
+    return ok;
+  }
+
+  function handleRestoreRequest(event) {
+    var detail = event && event.detail ? event.detail : {};
+    var incoming = detail.data || null;
+    if (!incoming) return;
+    window.pendingLabSave = incoming;
+    consumePendingSave();
+  }
+
+  render();
+  consumePendingSave();
+  document.addEventListener("examate-lab-restore-request",handleRestoreRequest);
+
+  try {
+    document.dispatchEvent(new CustomEvent("examate-lab-ready", {
+      detail:{labType:LAB_TYPE,version:VERSION,unitId:"A"}
+    }));
+  } catch (error) {}
+})();
+</script>
