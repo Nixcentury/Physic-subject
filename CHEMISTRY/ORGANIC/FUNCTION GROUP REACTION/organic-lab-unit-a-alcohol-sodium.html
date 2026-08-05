@@ -226,7 +226,7 @@
 
   var ROOT_ID = "organic-unit-a-root";
   var LAB_TYPE = "ORGANIC_LAB_UNIT_A_ALCOHOL_SODIUM";
-  var VERSION = "1.0.0";
+  var VERSION = "1.0.1";
   var root = document.getElementById(ROOT_ID);
   if (!root || root.dataset.olaReady === "1") return;
   root.dataset.olaReady = "1";
@@ -712,9 +712,9 @@
       currentStationIndex:state.currentStationIndex,
       currentStep:totalStepPoints(),
       totalSteps:STATIONS.length * 6,
-      percent:getPercent(),
       score:getPercent(),
       maxScore:100,
+      percent:getPercent(),
       completedStations:completedCount(),
       totalStations:STATIONS.length,
       completed:state.completed,
@@ -741,8 +741,53 @@
         );
       }
     });
-    next.currentStationIndex = Math.max(0,Math.min(STATIONS.length-1,Number(data.currentStationIndex) || 0));
-    next.completed = !!data.completed || STATIONS.every(function (d) { return !!next.stations[d.id].completed; });
+
+    next.completed = !!data.completed || STATIONS.every(function (d) {
+      return !!next.stations[d.id].completed;
+    });
+
+    var requestedIndex = Number.isFinite(Number(data.currentStationIndex))
+      ? Number(data.currentStationIndex)
+      : 0;
+
+    if (data.currentStation) {
+      var stationIndexFromId = STATIONS.findIndex(function (d) {
+        return d.id === data.currentStation;
+      });
+
+      if (stationIndexFromId >= 0) {
+        requestedIndex = stationIndexFromId;
+      }
+    }
+
+    requestedIndex = Math.max(
+      0,
+      Math.min(STATIONS.length - 1, requestedIndex)
+    );
+
+    if (!next.completed) {
+      var firstIncompleteIndex = STATIONS.findIndex(function (d) {
+        return !next.stations[d.id].completed;
+      });
+
+      var requestedStation = STATIONS[requestedIndex];
+      var requestedIsIncomplete =
+        requestedStation &&
+        !next.stations[requestedStation.id].completed;
+
+      var requestedIsAccessible =
+        requestedIndex === 0 ||
+        !!next.stations[STATIONS[requestedIndex - 1].id].completed;
+
+      if (
+        firstIncompleteIndex >= 0 &&
+        (!requestedIsIncomplete || !requestedIsAccessible)
+      ) {
+        requestedIndex = firstIncompleteIndex;
+      }
+    }
+
+    next.currentStationIndex = requestedIndex;
     state = next;
     render();
     return true;
