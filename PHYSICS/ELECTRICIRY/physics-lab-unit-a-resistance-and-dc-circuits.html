@@ -1,0 +1,1126 @@
+<div id="physics-unit-a-resistance-root" class="pdc-shell">
+  <style>
+    #physics-unit-a-resistance-root{
+      --ink:#172033;--muted:#64748b;--line:#cbd5e1;--paper:#ffffff;
+      --bg:#eef5ff;--navy:#172554;--blue:#2563eb;--blue-soft:#eff6ff;
+      --cyan:#0891b2;--green:#059669;--green-soft:#ecfdf5;
+      --amber:#d97706;--amber-soft:#fffbeb;--red:#dc2626;--red-soft:#fff1f2;
+      --violet:#7c3aed;--violet-soft:#f5f3ff;
+      max-width:1180px;margin:0 auto;padding:18px;
+      font-family:"Noto Sans Thai","Google Sans","Segoe UI",Tahoma,sans-serif;
+      color:var(--ink);background:linear-gradient(180deg,#f8fbff 0%,var(--bg) 100%);
+      border:1px solid #dbeafe;border-radius:24px;box-sizing:border-box;
+    }
+    #physics-unit-a-resistance-root *{box-sizing:border-box}
+    #physics-unit-a-resistance-root button,
+    #physics-unit-a-resistance-root select,
+    #physics-unit-a-resistance-root input{font:inherit}
+    #physics-unit-a-resistance-root button{touch-action:manipulation}
+    .pdc-hero{
+      padding:24px;border:2px solid #bfdbfe;border-radius:20px;
+      color:#172554 !important;
+      background:
+        radial-gradient(circle at 88% 18%,rgba(14,165,233,.14),transparent 30%),
+        linear-gradient(135deg,#ffffff 0%,#eff6ff 58%,#ecfeff 100%);
+      box-shadow:0 14px 34px rgba(30,64,175,.12);
+    }
+    #physics-unit-a-resistance-root .pdc-hero,
+    #physics-unit-a-resistance-root .pdc-hero h2,
+    #physics-unit-a-resistance-root .pdc-hero p,
+    #physics-unit-a-resistance-root .pdc-hero small,
+    #physics-unit-a-resistance-root .pdc-hero strong,
+    #physics-unit-a-resistance-root .pdc-hero span{
+      color:#172554 !important;text-shadow:none !important;
+    }
+    .pdc-kicker{
+      display:inline-flex;align-items:center;gap:8px;padding:7px 12px;
+      border:1px solid #93c5fd;border-radius:999px;background:#dbeafe;
+      font-size:13px;font-weight:900;letter-spacing:.03em;
+    }
+    .pdc-hero h2{
+      margin:14px 0 4px;font-size:clamp(27px,4vw,44px);line-height:1.12;
+      color:#0f172a !important;
+    }
+    .pdc-en{display:block;font-size:.56em;font-weight:700;opacity:.88;margin-top:6px;color:#1d4ed8 !important}
+    .pdc-hero p{margin:12px 0 0;line-height:1.78;font-weight:700;color:#334155 !important}
+    .pdc-status-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:18px}
+    .pdc-status{
+      min-height:86px;padding:13px 15px;border:1px solid #bfdbfe;border-radius:16px;
+      background:rgba(255,255,255,.86);box-shadow:0 5px 14px rgba(30,64,175,.07)
+    }
+    .pdc-status small{display:block;opacity:.8;font-weight:800;color:#475569 !important}
+    .pdc-status strong{display:block;font-size:23px;margin-top:7px;color:#172554 !important}
+    .pdc-progress{height:12px;background:#cbd5e1;border-radius:999px;overflow:hidden;margin-top:15px}
+    .pdc-progress>div{height:100%;width:0;background:linear-gradient(90deg,#22c55e,#14b8a6);transition:width .35s ease}
+    .pdc-progress-meta{display:flex;justify-content:space-between;gap:12px;margin-top:7px;font-size:13px;font-weight:800;color:#334155 !important}
+    .pdc-role{
+      display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;
+      margin:16px 0;padding:16px;border:2px solid #bae6fd;border-radius:18px;background:#f0f9ff
+    }
+    .pdc-avatar{width:54px;height:54px;display:grid;place-items:center;border-radius:16px;background:#fff;border:2px solid #7dd3fc;font-size:30px}
+    .pdc-role h3{margin:0 0 4px;font-size:19px}.pdc-role p{margin:0;line-height:1.68;color:#334155}
+    .pdc-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0}
+    .pdc-tab{
+      position:relative;min-height:92px;padding:13px 11px;border:2px solid #cbd5e1;border-radius:16px;
+      background:#fff;color:#334155;font-weight:900;cursor:pointer;text-align:left;
+      box-shadow:0 5px 0 #e2e8f0;transition:.18s ease
+    }
+    .pdc-tab:hover:not(:disabled),.pdc-tab:focus-visible:not(:disabled){transform:translateY(-2px);outline:none;border-color:#60a5fa}
+    .pdc-tab.active{border-color:#2563eb;background:#eff6ff;box-shadow:0 5px 0 #bfdbfe}
+    .pdc-tab.done{border-color:#34d399;background:#ecfdf5;box-shadow:0 5px 0 #a7f3d0}
+    .pdc-tab:disabled{cursor:not-allowed;opacity:.48}.pdc-tab span{display:block;font-size:12px;color:#64748b;margin-bottom:5px}.pdc-tab b{display:block;line-height:1.35}
+    .pdc-layout{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(330px,.98fr);gap:16px}
+    .pdc-card{background:#fff;border:1px solid #dbe3ef;border-radius:20px;padding:18px;box-shadow:0 10px 26px rgba(15,23,42,.07)}
+    .pdc-card h3{margin:0 0 6px;font-size:22px}.pdc-card h4{margin:0 0 8px}.pdc-sub{margin:0 0 14px;color:#64748b;line-height:1.58}
+    .pdc-step-list{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 17px}
+    .pdc-step-chip{padding:6px 9px;border-radius:999px;background:#f1f5f9;color:#64748b;font-size:12px;font-weight:900;border:1px solid #e2e8f0}
+    .pdc-step-chip.on{background:#dbeafe;color:#1d4ed8;border-color:#93c5fd}.pdc-step-chip.done{background:#dcfce7;color:#047857;border-color:#86efac}
+    .pdc-mission{padding:14px;border-left:5px solid #7c3aed;border-radius:13px;background:#f5f3ff;line-height:1.72}.pdc-mission strong{color:#5b21b6}
+    .pdc-form{display:grid;gap:13px;margin-top:16px}.pdc-field label{display:block;font-weight:900;margin-bottom:6px}.pdc-field small{display:block;color:#64748b;margin-top:5px;line-height:1.48}
+    .pdc-select,.pdc-input{
+      width:100%;min-height:50px;padding:10px 12px;border:2px solid #cbd5e1;border-radius:13px;
+      background:#fff;color:#111827;font-weight:750
+    }
+    .pdc-select{cursor:pointer}.pdc-select:focus,.pdc-input:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 4px #dbeafe}
+    .pdc-input.invalid{border-color:#e11d48;background:#fff1f2}.pdc-input.valid{border-color:#10b981;background:#ecfdf5}
+    .pdc-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+    .pdc-btn{
+      min-height:44px;border:2px solid #172033;border-radius:13px;padding:10px 15px;background:#fff;
+      color:#172033;font-weight:900;cursor:pointer;box-shadow:0 4px 0 #cbd5e1
+    }
+    .pdc-btn:hover:not(:disabled),.pdc-btn:focus-visible:not(:disabled){transform:translateY(-1px);outline:none}.pdc-btn:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+    .pdc-btn.primary{background:#2563eb;color:#fff;border-color:#1e3a8a;box-shadow:0 4px 0 #1e40af}
+    .pdc-btn.green{background:#10b981;color:#052e2b;border-color:#065f46;box-shadow:0 4px 0 #047857}
+    .pdc-btn.amber{background:#fbbf24;color:#422006;border-color:#92400e;box-shadow:0 4px 0 #d97706}
+    .pdc-btn.violet{background:#ede9fe;color:#4c1d95;border-color:#7c3aed;box-shadow:0 4px 0 #c4b5fd}
+    .pdc-feedback{margin-top:15px;padding:14px;border:2px solid #cbd5e1;border-radius:15px;background:#f8fafc;line-height:1.68;white-space:pre-line}
+    .pdc-feedback.good{border-color:#6ee7b7;background:#ecfdf5;color:#065f46}.pdc-feedback.bad{border-color:#fda4af;background:#fff1f2;color:#9f1239}.pdc-feedback.info{border-color:#93c5fd;background:#eff6ff;color:#1e3a8a}
+    .pdc-formula{
+      display:block;margin:12px 0;padding:13px;border-radius:14px;background:#f8fafc;border:1px solid #cbd5e1;
+      text-align:center;font-family:Cambria,"Times New Roman",serif;font-size:clamp(18px,2.5vw,25px);font-weight:800;overflow:auto
+    }
+    .pdc-unit-note{padding:11px 12px;border-radius:12px;background:#fff7ed;border:1px solid #fdba74;line-height:1.58;color:#7c2d12}
+    .pdc-sim{
+      min-height:360px;border:2px solid #94a3b8;border-radius:20px;overflow:hidden;
+      background:linear-gradient(180deg,#f8fafc 0 72%,#e2e8f0 72% 74%,#cbd5e1 74% 100%);position:relative
+    }
+    .pdc-sim-label{position:absolute;left:14px;top:12px;padding:7px 10px;border-radius:10px;background:#172554;color:#fff;font-size:12px;font-weight:900;z-index:4}
+    .pdc-sim-body{padding:50px 12px 14px;min-height:360px}.pdc-svg{display:block;width:100%;height:auto;max-height:355px}
+    .pdc-svg text{font-family:"Noto Sans Thai","Segoe UI",sans-serif;fill:#172033}.pdc-wire-line{stroke:#334155;stroke-width:6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+    .pdc-current-path{stroke:#2563eb;stroke-width:4;fill:none;stroke-linecap:round;stroke-dasharray:5 15;animation:pdcFlow 1.5s linear infinite}
+    .pdc-current-path.off{animation:none;opacity:.18}.pdc-hotspot{cursor:pointer;transition:transform .15s ease,opacity .2s ease}.pdc-hotspot circle,.pdc-hotspot rect{fill:#fff;stroke:#7c3aed;stroke-width:3}.pdc-hotspot.done circle,.pdc-hotspot.done rect{fill:#dcfce7;stroke:#059669}.pdc-hotspot.ready circle,.pdc-hotspot.ready rect{fill:#eff6ff;stroke:#2563eb;stroke-width:4;animation:pdcPulse 1.15s ease-in-out infinite}.pdc-hotspot.dim{opacity:.35}.pdc-hotspot:hover circle,.pdc-hotspot:focus circle{stroke:#2563eb;stroke-width:5}.pdc-hotspot.ready:hover{transform:scale(1.04)}
+    .pdc-meter-screen{margin:10px 0 0;padding:12px;border:2px solid #64748b;border-radius:14px;background:#0f172a;color:#86efac;text-align:center;font-family:Consolas,monospace;font-size:23px;font-weight:800;transition:box-shadow .2s ease,border-color .2s ease,opacity .2s ease}.pdc-meter-screen.ready{border-color:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.16),0 0 22px rgba(34,197,94,.18)}.pdc-meter-screen.off{opacity:.75}
+    .pdc-meter-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.pdc-meter-choice.active{background:#dbeafe;border-color:#2563eb;box-shadow:0 4px 0 #93c5fd}.pdc-measure-status{margin-top:10px;padding:12px;border:1px solid #bfdbfe;border-radius:14px;background:#eff6ff;display:grid;gap:10px}.pdc-status-pills{display:flex;gap:8px;flex-wrap:wrap}.pdc-status-pill{display:inline-flex;align-items:center;gap:7px;padding:6px 10px;border-radius:999px;border:1px solid #cbd5e1;background:#fff;font-size:12px;font-weight:900}.pdc-status-pill.on{background:#dcfce7;border-color:#86efac;color:#166534}.pdc-status-pill.off{background:#fff1f2;border-color:#fda4af;color:#9f1239}.pdc-status-pill.meter{background:#eef2ff;border-color:#c7d2fe;color:#3730a3}.pdc-pulse-dot{width:10px;height:10px;border-radius:999px;background:#ef4444;display:inline-block}.pdc-status-pill.on .pdc-pulse-dot{background:#22c55e;animation:pdcPulse 1.15s ease-in-out infinite}.pdc-measure-hint{font-size:13px;line-height:1.6;color:#1e3a8a}.pdc-measure-guide{display:flex;gap:8px;flex-wrap:wrap}.pdc-measure-guide span{padding:6px 9px;border-radius:999px;background:#fff;border:1px solid #dbeafe;font-size:12px;font-weight:800}
+    .pdc-trial-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}.pdc-trial-card{padding:13px;border:1px solid #cbd5e1;border-radius:15px;background:#f8fafc}.pdc-trial-card.done{border-color:#6ee7b7;background:#ecfdf5}.pdc-trial-card h4{font-size:16px}.pdc-trial-card p{margin:6px 0;line-height:1.5;color:#475569}
+    .pdc-result-box{margin-top:10px;padding:10px;border-radius:11px;background:#fff;border:1px solid #cbd5e1;font-weight:800;line-height:1.55}
+    .pdc-table-wrap{overflow:auto;margin-top:12px;border-radius:14px;border:1px solid #cbd5e1}.pdc-table{width:100%;border-collapse:collapse;min-width:520px;background:#fff}.pdc-table th,.pdc-table td{border-bottom:1px solid #e2e8f0;padding:10px;text-align:center;vertical-align:middle}.pdc-table th{background:#eff6ff;color:#1e3a8a}.pdc-table tr:last-child td{border-bottom:0}
+    .pdc-analysis{display:grid;gap:12px;margin-top:14px}.pdc-analysis>div{padding:13px;border-radius:14px;background:#f8fafc;border:1px solid #e2e8f0;line-height:1.68}.pdc-analysis b{color:#1d4ed8}
+    .pdc-pass-card{margin-top:17px;padding:16px;border:2px solid #a78bfa;border-radius:17px;background:#faf5ff}.pdc-pass-card.passed{border-color:#34d399;background:#ecfdf5}.pdc-pass-card h4{font-size:19px;color:#4c1d95}.pdc-pass-card.passed h4{color:#065f46}
+    .pdc-question{padding:12px;margin-top:10px;border-radius:13px;background:#fff;border:1px solid #ddd6fe}.pdc-question label{display:block;font-weight:900;line-height:1.55;margin-bottom:7px}.pdc-calc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .pdc-pass-badge{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:999px;background:#dcfce7;color:#065f46;border:1px solid #86efac;font-weight:900}
+    .pdc-summary{text-align:center;padding:24px;border:2px solid #34d399;border-radius:20px;background:#ecfdf5}.pdc-summary .badge{font-size:58px}.pdc-summary h3{color:#065f46;margin:8px 0}.pdc-summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:16px}.pdc-summary-item{padding:13px;border:1px solid #a7f3d0;border-radius:14px;background:#fff;text-align:left;line-height:1.58}.pdc-summary-item b{display:block;color:#065f46;margin-bottom:5px}
+    .pdc-footer-actions{display:flex;justify-content:space-between;gap:10px;margin-top:16px;flex-wrap:wrap}
+    .pdc-small{font-size:13px;color:#64748b;line-height:1.55}.pdc-two-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.pdc-callout{padding:12px;border-radius:13px;background:#eff6ff;border:1px solid #93c5fd;line-height:1.6}.pdc-callout strong{color:#1e3a8a}
+    .pdc-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.pdc-legend span{padding:5px 8px;border-radius:999px;background:#fff;border:1px solid #cbd5e1;font-size:12px;font-weight:800}
+    @keyframes pdcFlow{to{stroke-dashoffset:-40}}
+    @keyframes pdcPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.08);opacity:.76}}
+    @media(prefers-reduced-motion:reduce){.pdc-current-path{animation:none!important}.pdc-tab,.pdc-btn,.pdc-progress>div{transition:none!important}}
+    @media(max-width:900px){.pdc-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.pdc-layout{grid-template-columns:1fr}.pdc-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:620px){
+      #physics-unit-a-resistance-root{padding:10px;border-radius:16px}.pdc-hero{padding:18px}.pdc-status-grid{grid-template-columns:1fr}.pdc-tabs{display:flex;overflow-x:auto;padding-bottom:7px}.pdc-tab{min-width:235px}.pdc-trial-grid,.pdc-two-col,.pdc-calc-grid,.pdc-summary-grid{grid-template-columns:1fr}.pdc-progress-meta{flex-direction:column}.pdc-card{padding:14px}.pdc-sim{min-height:310px}.pdc-sim-body{min-height:310px;padding-left:4px;padding-right:4px}
+    }
+    @media print{#physics-unit-a-resistance-root{background:#fff;border:0;padding:0}.pdc-actions,.pdc-tabs,.pdc-footer-actions,.pdc-meter-toolbar{display:none!important}.pdc-card,.pdc-hero{box-shadow:none}.pdc-layout{display:block}.pdc-card{margin-bottom:12px}}
+  </style>
+
+  <section class="pdc-hero">
+    <span class="pdc-kicker">⚡ VIRTUAL PHYSICS LAB · UNIT A</span>
+    <h2>ตัวต้านทาน กฎของโอห์ม และวงจรตัวต้านทาน<span class="pdc-en">Resistance, Ohm’s Law, and Resistor Networks</span></h2>
+    <p>
+      สำรวจว่าความต้านทานขึ้นอยู่กับชนิดวัสดุ ความยาว และพื้นที่หน้าตัดอย่างไร จากนั้นใช้มิเตอร์จำลองพิสูจน์กฎของโอห์ม วงจรอนุกรม และวงจรขนาน<br>
+      Investigate how material, length, and cross-sectional area determine resistance, then use simulated meters to verify Ohm’s law, series circuits, and parallel circuits.
+    </p>
+    <div class="pdc-status-grid">
+      <div class="pdc-status"><small>ด่านปัจจุบัน / Current station</small><strong id="pdc-current-station">A1 / 4</strong></div>
+      <div class="pdc-status"><small>ผ่านแล้ว / Completed</small><strong id="pdc-completed-count">0 / 4</strong></div>
+      <div class="pdc-status"><small>ความก้าวหน้า / Progress</small><strong id="pdc-percent">0%</strong></div>
+    </div>
+    <div class="pdc-progress"><div id="pdc-progress-bar"></div></div>
+    <div class="pdc-progress-meta"><span id="pdc-progress-text">กำลังเริ่ม Unit A / Starting Unit A</span><span>4 ด่าน · 24 ขั้น / 4 stations · 24 steps</span></div>
+  </section>
+
+  <section class="pdc-role">
+    <div class="pdc-avatar">🧑‍🔧</div>
+    <div>
+      <h3>บทบาทของคุณ: วิศวกรทดสอบวงจร / Your role: Circuit Test Engineer</h3>
+      <p>
+        เตรียมระบบให้ถูกต้อง ใช้เครื่องมือวัดอย่างเหมาะสม บันทึกผล แล้วเชื่อมค่าที่เห็นกับสมการทางฟิสิกส์ ทุกด่านมี “บัตรผ่านด่าน” ซึ่งต้องตอบแนวคิดและคำนวณอย่างน้อยหนึ่งข้อ<br>
+        Prepare each system correctly, use the appropriate meter, record observations, and connect the readings to physics equations. Every station ends with a pass card containing conceptual and numerical questions.<br>
+        แบบจำลองใช้แหล่งจ่าย ตัวต้านทาน และมิเตอร์อุดมคติ / The simulation uses ideal sources, resistors, and meters.
+      </p>
+    </div>
+  </section>
+
+  <nav class="pdc-tabs" id="pdc-station-tabs" aria-label="Unit A stations"></nav>
+  <main id="pdc-main"></main>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var ROOT_ID = "physics-unit-a-resistance-root";
+  var LAB_TYPE = "PHYSICS_LAB_UNIT_A_RESISTANCE_AND_DC_CIRCUITS";
+  var VERSION = "1.0.0";
+  var UNIT_ID = "A";
+  var root = document.getElementById(ROOT_ID);
+  if (!root || root.dataset.pdcReady === "1") return;
+  root.dataset.pdcReady = "1";
+
+  var MATERIALS = {
+    copper:{nameTh:"ทองแดง",nameEn:"Copper",rho:1.68e-8,color:"#d97706"},
+    constantan:{nameTh:"คอนสแตนแทน",nameEn:"Constantan",rho:4.90e-7,color:"#64748b"},
+    nichrome:{nameTh:"นิโครม",nameEn:"Nichrome",rho:1.10e-6,color:"#7c3aed"}
+  };
+
+  var STATIONS = [
+    {id:"A1",titleTh:"ปัจจัยที่กำหนดความต้านทาน",titleEn:"Factors Affecting Resistance",icon:"🧵"},
+    {id:"A2",titleTh:"กฎของโอห์ม",titleEn:"Ohm’s Law",icon:"📈"},
+    {id:"A3",titleTh:"ตัวต้านทานอนุกรม",titleEn:"Resistors in Series",icon:"🔗"},
+    {id:"A4",titleTh:"ตัวต้านทานขนานและ G",titleEn:"Parallel Resistors and Conductance",icon:"🛤️"}
+  ];
+
+  function baseStationState() {
+    return {
+      approved:false,experimentViewed:false,explanationViewed:false,completed:false,
+      selectionAttempts:0,exitAttempts:0,
+      feedbackTone:"info",feedbackMessage:"อ่านภารกิจและเตรียมระบบก่อนส่งให้เจ้าหน้าที่ตรวจ / Read the mission and prepare the system before requesting approval.",
+      exitFeedback:""
+    };
+  }
+
+  function createA1State() {
+    var s = baseStationState();
+    s.selectedFormula = "";
+    s.selectedAreaConversion = "";
+    s.experiments = {length:false,area:false,material:false};
+    s.lastExperiment = "";
+    s.exitAnswers = {lengthRule:"",areaRule:"",materialRule:"",calculation:""};
+    return s;
+  }
+
+  function createA2State() {
+    var s = baseStationState();
+    s.ammeterConnection = "";
+    s.voltmeterConnection = "";
+    s.simulationStarted = false;
+    s.voltageChoice = "3";
+    s.resistanceChoice = "3";
+    s.varyVTrials = [];
+    s.varyRTrials = [];
+    s.exitAnswers = {voltageRule:"",resistanceRule:"",graphRule:"",calculation:""};
+    return s;
+  }
+
+  function emptyMeasured(points) {
+    var out = {};
+    points.forEach(function (point) { out[point] = false; });
+    return out;
+  }
+
+  function createA3State() {
+    var s = baseStationState();
+    s.connectionType = "";
+    s.ammeterRule = "";
+    s.voltmeterRule = "";
+    s.supplyVoltageV = "12";
+    s.resistance1Ohm = "2";
+    s.resistance2Ohm = "4";
+    s.simulationStarted = false;
+    s.measureMode = false;
+    s.meterType = "ammeter";
+    s.measuredPoints = emptyMeasured(["iBefore","iBetween","iAfter","vSource","vR1","vR2"]);
+    s.lastMeasurement = null;
+    s.exitAnswers = {currentRule:"",voltageRule:"",totalResistance:"",totalCurrent:"",voltage1:"",voltage2:""};
+    return s;
+  }
+
+  function createA4State() {
+    var s = baseStationState();
+    s.connectionType = "";
+    s.ammeterRule = "";
+    s.voltmeterRule = "";
+    s.supplyVoltageV = "12";
+    s.resistance1Ohm = "6";
+    s.resistance2Ohm = "3";
+    s.simulationStarted = false;
+    s.measureMode = false;
+    s.meterType = "ammeter";
+    s.measuredPoints = emptyMeasured(["vSource","vBranch1","vBranch2","iTotalBefore","iBranch1","iBranch2","iTotalAfter"]);
+    s.lastMeasurement = null;
+    s.exitAnswers = {voltageRule:"",currentRule:"",largerCurrent:"",totalConductance:"",totalResistance:"",current1:"",current2:"",totalCurrent:""};
+    return s;
+  }
+
+  function blankState() {
+    return {
+      currentStationIndex:0,
+      showSummary:false,
+      completed:false,
+      stations:{A1:createA1State(),A2:createA2State(),A3:createA3State(),A4:createA4State()},
+      savedAt:null
+    };
+  }
+
+  var state = blankState();
+  var saveDebounceTimer = null;
+  var activeTimers = [];
+
+  function esc(value) {
+    return String(value == null ? "" : value)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+  }
+  function clone(value) { return JSON.parse(JSON.stringify(value)); }
+  function clamp(value,min,max) { return Math.max(min,Math.min(max,value)); }
+  function asNumber(value,fallback) { var n = Number(value); return Number.isFinite(n) ? n : fallback; }
+  function currentDef() { return STATIONS[state.currentStationIndex]; }
+  function currentStationState() { return state.stations[currentDef().id]; }
+  function allTrue(object) { return Object.keys(object).every(function (key) { return object[key] === true; }); }
+  function uniqueNumbers(values) {
+    var seen = {};
+    return values.filter(function (value) {
+      var key = String(value);
+      if (seen[key]) return false;
+      seen[key] = true;
+      return true;
+    });
+  }
+
+  function areaMm2ToM2(areaMm2) { return areaMm2 * 1e-6; }
+  function wireResistance(rho,lengthM,areaMm2) { return rho * lengthM / areaMm2ToM2(areaMm2); }
+  function ohmCurrent(voltageV,resistanceOhm) { return resistanceOhm > 0 ? voltageV / resistanceOhm : 0; }
+  function seriesModel(voltageV,r1,r2) {
+    var rt = r1 + r2;
+    var current = ohmCurrent(voltageV,rt);
+    return {voltageV:voltageV,r1:r1,r2:r2,rt:rt,current:current,v1:current*r1,v2:current*r2};
+  }
+  function parallelModel(voltageV,r1,r2) {
+    var g1 = 1/r1;
+    var g2 = 1/r2;
+    var gt = g1 + g2;
+    var rt = 1/gt;
+    var i1 = voltageV*g1;
+    var i2 = voltageV*g2;
+    return {voltageV:voltageV,r1:r1,r2:r2,g1:g1,g2:g2,gt:gt,rt:rt,i1:i1,i2:i2,it:i1+i2};
+  }
+
+  function formatNumber(value,digits) {
+    if (!Number.isFinite(value)) return "—";
+    var abs = Math.abs(value);
+    if ((abs > 0 && abs < 0.001) || abs >= 10000) return value.toExponential(digits == null ? 2 : digits);
+    var text = value.toFixed(digits == null ? 3 : digits);
+    return text.replace(/\.0+$/," ").replace(/(\.\d*?)0+$/,"$1").trim();
+  }
+  function formatOhm(value) { return formatNumber(value,3) + " Ω"; }
+  function formatAmp(value) { return formatNumber(value,3) + " A"; }
+  function formatVolt(value) { return formatNumber(value,3) + " V"; }
+  function formatSiemens(value) { return formatNumber(value,4) + " S"; }
+
+  function parseNumericAnswer(rawValue) {
+    var cleaned = String(rawValue == null ? "" : rawValue)
+      .replace(/,/g,"")
+      .replace(/−/g,"-")
+      .replace(/[ΩΩ]/g,"")
+      .replace(/ohms?/ig,"")
+      .replace(/siemens/ig,"")
+      .replace(/volts?/ig,"")
+      .replace(/amps?|amperes?/ig,"")
+      .replace(/\s*S\s*$/i,"")
+      .replace(/\s*V\s*$/i,"")
+      .replace(/\s*A\s*$/i,"")
+      .trim();
+    var fraction = cleaned.match(/^(-?\d+(?:\.\d+)?)\s*\/\s*(-?\d+(?:\.\d+)?)$/);
+    if (fraction) {
+      var denominator = Number(fraction[2]);
+      return denominator !== 0 ? Number(fraction[1])/denominator : null;
+    }
+    var scientific = cleaned.match(/^(-?\d+(?:\.\d+)?)\s*[x×]\s*10\s*\^?\s*(-?\d+)$/i);
+    if (scientific) return Number(scientific[1]) * Math.pow(10,Number(scientific[2]));
+    var number = Number(cleaned);
+    return Number.isFinite(number) ? number : null;
+  }
+  function nearlyEqual(actual,expected,relativeTolerance,absoluteTolerance) {
+    if (!Number.isFinite(actual)) return false;
+    var allowed = Math.max(absoluteTolerance || 1e-6,Math.abs(expected)*(relativeTolerance || 0.015));
+    return Math.abs(actual-expected) <= allowed;
+  }
+
+  function a1Started(s) { return !!(s.selectedFormula || s.selectedAreaConversion); }
+  function a1Prepared(s) { return !!(s.selectedFormula && s.selectedAreaConversion); }
+  function a2Started(s) { return !!(s.ammeterConnection || s.voltmeterConnection); }
+  function a2Prepared(s) { return !!(s.ammeterConnection && s.voltmeterConnection); }
+  function a3Started(s) { return !!(s.connectionType || s.ammeterRule || s.voltmeterRule); }
+  function a3Prepared(s) { return !!(s.connectionType && s.ammeterRule && s.voltmeterRule && s.supplyVoltageV && s.resistance1Ohm && s.resistance2Ohm); }
+  function a4Started(s) { return !!(s.connectionType || s.ammeterRule || s.voltmeterRule); }
+  function a4Prepared(s) { return !!(s.connectionType && s.ammeterRule && s.voltmeterRule && s.supplyVoltageV && s.resistance1Ohm && s.resistance2Ohm); }
+
+  var STATION_ADAPTERS = {
+    A1:{started:a1Started,prepared:a1Prepared},
+    A2:{started:a2Started,prepared:a2Prepared},
+    A3:{started:a3Started,prepared:a3Prepared},
+    A4:{started:a4Started,prepared:a4Prepared}
+  };
+
+  function stationStepById(id) {
+    var s = state.stations[id];
+    var adapter = STATION_ADAPTERS[id];
+    if (s.completed) return 6;
+    if (s.explanationViewed) return 5;
+    if (s.experimentViewed) return 4;
+    if (s.approved) return 3;
+    if (adapter.prepared(s)) return 2;
+    if (adapter.started(s)) return 1;
+    return 0;
+  }
+  function completedCount() { return STATIONS.filter(function (d) { return !!state.stations[d.id].completed; }).length; }
+  function totalStepPoints() { return STATIONS.reduce(function (sum,d) { return sum + stationStepById(d.id); },0); }
+  function getPercent() { return Math.round(totalStepPoints()/(STATIONS.length*6)*100); }
+
+  function getSavePayload() {
+    return {
+      type:"LAB",labType:LAB_TYPE,version:VERSION,unitId:UNIT_ID,
+      currentStation:currentDef().id,currentStationIndex:state.currentStationIndex,
+      currentStep:totalStepPoints(),totalSteps:STATIONS.length*6,
+      score:getPercent(),maxScore:100,percent:getPercent(),
+      completedStations:completedCount(),totalStations:STATIONS.length,
+      completed:state.completed,showSummary:state.showSummary,
+      stations:clone(state.stations),savedAt:new Date().toISOString()
+    };
+  }
+  function notifyChange() {
+    state.savedAt = new Date().toISOString();
+    try { document.dispatchEvent(new CustomEvent("examate-lab-change",{detail:getSavePayload()})); } catch (error) {}
+  }
+  function scheduleNotifyChange() {
+    clearTimeout(saveDebounceTimer);
+    saveDebounceTimer = setTimeout(notifyChange,450);
+  }
+
+  function stepChips(step) {
+    var labels = [
+      "1 ตั้งระบบ / Setup","2 เตรียมค่าครบ / Parameters","3 อนุมัติ / Approval",
+      "4 ทดลอง / Simulation","5 วิเคราะห์ / Analysis","6 บัตรผ่าน / Pass card"
+    ];
+    return '<div class="pdc-step-list">' + labels.map(function (label,index) {
+      var point = index+1;
+      var cls = "pdc-step-chip" + (step > point ? " done" : step === point ? " on" : "");
+      return '<span class="' + cls + '">' + label + '</span>';
+    }).join("") + '</div>';
+  }
+  function selectOptions(items,selected,placeholder) {
+    return '<option value="">' + esc(placeholder) + '</option>' + items.map(function (item) {
+      return '<option value="' + esc(item[0]) + '"' + (String(item[0]) === String(selected) ? " selected" : "") + '>' + esc(item[1]) + '</option>';
+    }).join("");
+  }
+  function feedbackHtml(s) {
+    return '<div class="pdc-feedback ' + esc(s.feedbackTone || "info") + '" aria-live="polite">' + esc(s.feedbackMessage || "") + '</div>';
+  }
+  function setFeedback(s,tone,message) { s.feedbackTone = tone; s.feedbackMessage = message; }
+  function setExitFeedback(s,message) { s.exitFeedback = message || ""; }
+  function passCardHeader(s,titleTh,titleEn) {
+    return '<div class="pdc-pass-card' + (s.completed ? ' passed' : '') + '">' +
+      '<h4>🎫 ' + esc(titleTh) + ' <span class="pdc-small">/ ' + esc(titleEn) + '</span></h4>' +
+      (s.completed ? '<span class="pdc-pass-badge">✓ ผ่านด่านแล้ว / Station passed</span>' : '<p class="pdc-small">ตอบคำถามแนวคิดและข้อคำนวณให้ครบ ตอบผิดแก้ได้ / Complete the conceptual and numerical questions. Incorrect answers can be revised.</p>');
+  }
+  function passCardFooter(s) {
+    return (s.exitFeedback ? '<div class="pdc-feedback ' + (s.completed ? 'good' : 'bad') + '">' + esc(s.exitFeedback) + '</div>' : '') +
+      '<div class="pdc-actions"><button type="button" class="pdc-btn green" data-action="check-pass"' + (s.completed ? ' disabled' : '') + '>ตรวจบัตรผ่าน / Check pass card</button></div></div>';
+  }
+
+  function wireSvg(materialKey,lengthM,areaMm2,label) {
+    var material = MATERIALS[materialKey] || MATERIALS.nichrome;
+    var x1 = 55;
+    var x2 = 55 + clamp(lengthM/2*300,80,300);
+    var thickness = clamp(4 + areaMm2*10,6,20);
+    var r = wireResistance(material.rho,lengthM,areaMm2);
+    return '<svg class="pdc-svg" viewBox="0 0 430 210" role="img" aria-label="Wire resistance model">' +
+      '<defs><linearGradient id="pdcWireGrad" x1="0" x2="1"><stop offset="0" stop-color="' + material.color + '"/><stop offset=".5" stop-color="#f8fafc"/><stop offset="1" stop-color="' + material.color + '"/></linearGradient></defs>' +
+      '<line x1="' + x1 + '" y1="105" x2="' + x2 + '" y2="105" stroke="url(#pdcWireGrad)" stroke-width="' + thickness + '" stroke-linecap="round"/>' +
+      '<line x1="' + x1 + '" y1="55" x2="' + x2 + '" y2="55" stroke="#2563eb" stroke-width="2"/>' +
+      '<polygon points="' + x1 + ',55 ' + (x1+9) + ',50 ' + (x1+9) + ',60" fill="#2563eb"/>' +
+      '<polygon points="' + x2 + ',55 ' + (x2-9) + ',50 ' + (x2-9) + ',60" fill="#2563eb"/>' +
+      '<text x="' + ((x1+x2)/2) + '" y="43" text-anchor="middle" font-weight="800">L = ' + formatNumber(lengthM,2) + ' m</text>' +
+      '<text x="215" y="145" text-anchor="middle" font-weight="800">A = ' + formatNumber(areaMm2,2) + ' mm²</text>' +
+      '<text x="215" y="170" text-anchor="middle">' + esc(material.nameTh) + ' / ' + esc(material.nameEn) + '</text>' +
+      '<text x="215" y="197" text-anchor="middle" font-size="18" font-weight="900">' + esc(label || "R") + ' = ' + formatOhm(r) + '</text>' +
+    '</svg>';
+  }
+
+  function a1ExperimentResult(key) {
+    if (key === "length") {
+      var lengths = [0.5,1.0,1.5];
+      return {title:"เปลี่ยนความยาว โดยคงวัสดุและพื้นที่หน้าตัด / Vary length while material and area stay constant",headers:["L (m)","A (mm²)","R (Ω)"],rows:lengths.map(function (l) { return [formatNumber(l,1),"0.50",formatNumber(wireResistance(MATERIALS.nichrome.rho,l,0.5),2)]; })};
+    }
+    if (key === "area") {
+      var areas = [0.25,0.50,1.00];
+      return {title:"เปลี่ยนพื้นที่หน้าตัด โดยคงวัสดุและความยาว / Vary area while material and length stay constant",headers:["L (m)","A (mm²)","R (Ω)"],rows:areas.map(function (a) { return ["1.00",formatNumber(a,2),formatNumber(wireResistance(MATERIALS.nichrome.rho,1,a),2)]; })};
+    }
+    var keys = ["copper","constantan","nichrome"];
+    return {title:"เปลี่ยนชนิดวัสดุ โดยคงความยาวและพื้นที่หน้าตัด / Vary material while length and area stay constant",headers:["Material","ρ (Ω·m)","R (Ω)"],rows:keys.map(function (materialKey) {
+      var m = MATERIALS[materialKey];
+      return [m.nameTh + " / " + m.nameEn,m.rho.toExponential(2),formatNumber(wireResistance(m.rho,1,0.5),3)];
+    })};
+  }
+
+  function resultTable(result) {
+    return '<div class="pdc-table-wrap"><table class="pdc-table"><caption class="pdc-small" style="padding:10px;font-weight:900">' + esc(result.title) + '</caption><thead><tr>' + result.headers.map(function (h) { return '<th>' + esc(h) + '</th>'; }).join("") + '</tr></thead><tbody>' + result.rows.map(function (row) {
+      return '<tr>' + row.map(function (cell) { return '<td>' + esc(cell) + '</td>'; }).join("") + '</tr>';
+    }).join("") + '</tbody></table></div>';
+  }
+
+  function renderA1(s) {
+    var step = stationStepById("A1");
+    var last = s.lastExperiment || "length";
+    var visual = last === "area" ? wireSvg("nichrome",1,1,"R") : last === "material" ? wireSvg("copper",1,0.5,"R") : wireSvg("nichrome",1.5,0.5,"R");
+    var experiments = [
+      ["length","① ความยาว / Length","คง ρ และ A แล้วเปลี่ยน L / Keep ρ and A fixed, then change L."],
+      ["area","② พื้นที่หน้าตัด / Area","คง ρ และ L แล้วเปลี่ยน A / Keep ρ and L fixed, then change A."],
+      ["material","③ ชนิดวัสดุ / Material","คง L และ A แล้วเปลี่ยน ρ / Keep L and A fixed, then change ρ."]
+    ];
+    var trialCards = '<div class="pdc-trial-grid">' + experiments.map(function (item) {
+      var done = s.experiments[item[0]];
+      return '<div class="pdc-trial-card' + (done ? ' done' : '') + '"><h4>' + item[1] + '</h4><p>' + item[2] + '</p><button type="button" class="pdc-btn ' + (done ? '' : 'amber') + '" data-action="run-a1-experiment" data-experiment="' + item[0] + '"' + (!s.approved ? ' disabled' : '') + '>' + (done ? '✓ ดูผลอีกครั้ง / View again' : '▶ ทดลอง / Run') + '</button></div>';
+    }).join("") + '</div>';
+    var latestTable = s.experiments[last] ? resultTable(a1ExperimentResult(last)) : '<div class="pdc-callout"><strong>ยังไม่มีข้อมูล / No data yet:</strong> เริ่มการทดลองย่อยอย่างน้อยหนึ่งชุด / Run at least one investigation.</div>';
+    var analysis = s.explanationViewed ? '<div class="pdc-analysis">' +
+      '<div><b>ความยาว / Length:</b> เมื่อ ρ และ A คงที่ ค่า R เพิ่มเป็นสัดส่วนตรงกับ L ดังนั้นลวดยาวขึ้น 2 เท่า มี R เพิ่ม 2 เท่า<br>With ρ and A fixed, R is directly proportional to L.</div>' +
+      '<div><b>พื้นที่หน้าตัด / Cross-sectional area:</b> เมื่อ ρ และ L คงที่ ค่า R แปรผกผันกับ A ลวดหนาขึ้นจึงมีความต้านทานลดลง<br>With ρ and L fixed, R is inversely proportional to A.</div>' +
+      '<div><b>ชนิดวัสดุ / Material:</b> วัสดุแต่ละชนิดมีสภาพต้านทาน ρ ต่างกันที่อุณหภูมิเดียวกัน จึงให้ R ต่างกันแม้ L และ A เท่ากัน<br>Different materials have different resistivity ρ at the same temperature.</div>' +
+      '<span class="pdc-formula">R = ρL/A</span><div class="pdc-unit-note"><b>การแปลงหน่วย / Unit conversion:</b> 1 mm² = 10<sup>−6</sup> m² ดังนั้นต้องแปลง A เป็น m² เมื่อใช้ ρ หน่วย Ω·m</div>' +
+    '</div>' : '';
+    var pass = s.explanationViewed ? passCardHeader(s,"บัตรผ่าน A1: ปัจจัยของความต้านทาน","A1 Pass Card: Resistance Factors") +
+      '<div class="pdc-question"><label>1) เมื่อลวดชนิดเดิมและพื้นที่หน้าตัดเดิมยาวขึ้น 2 เท่า R จะเป็นอย่างไร? / If the same wire doubles in length while area stays fixed, what happens to R?</label><select class="pdc-select" data-exit="lengthRule"' + (s.completed ? ' disabled' : '') + '>' + selectOptions([["double","เพิ่มเป็น 2 เท่า / Doubles"],["half","ลดครึ่งหนึ่ง / Halves"],["same","เท่าเดิม / Unchanged"]],s.exitAnswers.lengthRule,"เลือกคำตอบ / Select") + '</select></div>' +
+      '<div class="pdc-question"><label>2) เมื่อลวดชนิดเดิมและความยาวเดิมมี A เพิ่มเป็น 2 เท่า R จะเป็นอย่างไร? / If cross-sectional area doubles while material and length stay fixed, what happens to R?</label><select class="pdc-select" data-exit="areaRule"' + (s.completed ? ' disabled' : '') + '>' + selectOptions([["double","เพิ่มเป็น 2 เท่า / Doubles"],["half","ลดครึ่งหนึ่ง / Halves"],["same","เท่าเดิม / Unchanged"]],s.exitAnswers.areaRule,"เลือกคำตอบ / Select") + '</select></div>' +
+      '<div class="pdc-question"><label>3) เหตุใดลวดขนาดเท่ากันแต่ต่างวัสดุจึงมี R ต่างกัน? / Why can equal-sized wires made from different materials have different R?</label><select class="pdc-select" data-exit="materialRule"' + (s.completed ? ' disabled' : '') + '>' + selectOptions([["rho","เพราะ ρ ต่างกัน / Their resistivities ρ differ"],["voltage","เพราะแรงดันต้องต่างกัน / Voltage must differ"],["charge","เพราะประจุอิเล็กตรอนต่างกัน / Electron charge differs"]],s.exitAnswers.materialRule,"เลือกคำตอบ / Select") + '</select></div>' +
+      '<div class="pdc-question"><label>4) คำนวณ: ρ = 1.0×10<sup>−6</sup> Ω·m, L = 1.5 m, A = 0.50 mm² จงหา R / Calculate R.</label><input class="pdc-input" inputmode="decimal" data-exit="calculation" value="' + esc(s.exitAnswers.calculation) + '" placeholder="เช่น 3 Ω / e.g. 3 Ω"' + (s.completed ? ' disabled' : '') + '><small class="pdc-small">ใช้ A = 0.50×10<sup>−6</sup> m² / Use A = 0.50×10<sup>−6</sup> m².</small></div>' + passCardFooter(s) : '';
+
+    return '<div class="pdc-layout"><section class="pdc-card"><h3>A1 · ปัจจัยที่กำหนดความต้านทาน<span class="pdc-en">Factors Affecting Resistance</span></h3><p class="pdc-sub">ค้นหาความสัมพันธ์ระหว่าง R กับ ρ, L และ A โดยเปลี่ยนทีละตัวแปร / Isolate ρ, L, and A one at a time.</p>' + stepChips(step) +
+      '<div class="pdc-mission"><strong>ภารกิจ / Mission</strong><br>เลือกสมการและการแปลงหน่วยให้ถูกต้อง จากนั้นทำการทดลองย่อยครบทั้งสามชุด<br>Select the correct equation and unit conversion, then complete all three investigations.</div>' +
+      '<div class="pdc-form"><div class="pdc-field"><label>สมการความต้านทานของลวดสม่ำเสมอ / Resistance equation for a uniform wire</label><select class="pdc-select" data-field="selectedFormula"' + (s.approved ? ' disabled' : '') + '>' + selectOptions([["rhoL_over_A","R = ρL/A"],["rhoA_over_L","R = ρA/L"],["LA_over_rho","R = LA/ρ"]],s.selectedFormula,"เลือกสมการ / Select equation") + '</select></div>' +
+      '<div class="pdc-field"><label>การแปลงพื้นที่ / Area conversion</label><select class="pdc-select" data-field="selectedAreaConversion"' + (s.approved ? ' disabled' : '') + '>' + selectOptions([["mm2_to_m2","1 mm² = 10⁻⁶ m²"],["mm2_to_m2_wrong1","1 mm² = 10⁻³ m²"],["mm2_to_m2_wrong2","1 mm² = 10⁶ m²"]],s.selectedAreaConversion,"เลือกการแปลง / Select conversion") + '</select></div></div>' +
+      '<div class="pdc-actions"><button type="button" class="pdc-btn primary" data-action="approve"' + (s.approved ? ' disabled' : '') + '>🧑‍🔬 ขออนุมัติ / Request approval</button><button type="button" class="pdc-btn violet" data-action="explain"' + (!s.experimentViewed || s.explanationViewed ? ' disabled' : '') + '>🔍 วิเคราะห์ความสัมพันธ์ / Analyse relationships</button></div>' + feedbackHtml(s) + trialCards + latestTable + analysis + pass + '</section>' +
+      '<aside class="pdc-card"><div class="pdc-sim"><div class="pdc-sim-label">WIRE MODEL · A1</div><div class="pdc-sim-body">' + visual + '<div class="pdc-legend"><span>ρ: สภาพต้านทาน / Resistivity</span><span>L: ความยาว / Length</span><span>A: พื้นที่หน้าตัด / Area</span></div></div></div>' + footerActions(s) + '</aside></div>';
+  }
+
+  function simpleCircuitSvg(voltage,resistance,current,active) {
+    var duration = clamp(2.2-current*0.22,0.55,2.2);
+    return '<svg class="pdc-svg" viewBox="0 0 500 300" role="img" aria-label="Simple DC circuit">' +
+      '<path class="pdc-wire-line" d="M90 70 H410 V230 H90 V70"/>' +
+      '<path class="pdc-current-path' + (active ? '' : ' off') + '" style="animation-duration:' + duration + 's" d="M90 70 H410 V230 H90 V70"/>' +
+      '<line x1="90" y1="125" x2="90" y2="175" stroke="#fff" stroke-width="15"/><line x1="82" y1="135" x2="98" y2="135" stroke="#dc2626" stroke-width="5"/><line x1="76" y1="165" x2="104" y2="165" stroke="#dc2626" stroke-width="5"/>' +
+      '<text x="45" y="154" font-weight="900">' + formatVolt(voltage) + '</text>' +
+      '<rect x="230" y="52" width="120" height="36" rx="8" fill="#fff7ed" stroke="#d97706" stroke-width="3"/><text x="290" y="76" text-anchor="middle" font-weight="900">R = ' + formatOhm(resistance) + '</text>' +
+      '<circle cx="190" cy="70" r="24" fill="#eff6ff" stroke="#2563eb" stroke-width="3"/><text x="190" y="77" text-anchor="middle" font-weight="900">A</text>' +
+      '<path d="M230 70 H210" stroke="#334155" stroke-width="6"/><path d="M166 70 H90" stroke="#334155" stroke-width="6"/>' +
+      '<circle cx="290" cy="155" r="25" fill="#f5f3ff" stroke="#7c3aed" stroke-width="3"/><text x="290" y="163" text-anchor="middle" font-weight="900">V</text><line x1="265" y1="155" x2="245" y2="88" stroke="#7c3aed" stroke-width="3"/><line x1="315" y1="155" x2="335" y2="88" stroke="#7c3aed" stroke-width="3"/>' +
+      '<text x="250" y="275" font-weight="900">I = ' + formatAmp(current) + '</text>' +
+    '</svg>';
+  }
+
+  function lineGraph(points) {
+    var width = 460,height = 280,left = 58,right = 20,top = 24,bottom = 50;
+    var maxX = Math.max(12,Math.max.apply(null,points.map(function (p) { return p.x; }).concat([0])));
+    var maxY = Math.max(2,Math.max.apply(null,points.map(function (p) { return p.y; }).concat([0])));
+    var plotW = width-left-right,plotH = height-top-bottom;
+    function xScale(x) { return left + x/maxX*plotW; }
+    function yScale(y) { return top + plotH - y/maxY*plotH; }
+    var grid = "";
+    for (var i=0;i<=4;i++) {
+      var gx = left + plotW*i/4,gy = top + plotH*i/4;
+      grid += '<line x1="' + gx + '" y1="' + top + '" x2="' + gx + '" y2="' + (top+plotH) + '" stroke="#e2e8f0"/><line x1="' + left + '" y1="' + gy + '" x2="' + (left+plotW) + '" y2="' + gy + '" stroke="#e2e8f0"/>';
+      grid += '<text x="' + gx + '" y="' + (top+plotH+22) + '" text-anchor="middle" font-size="11">' + formatNumber(maxX*i/4,1) + '</text>';
+      grid += '<text x="' + (left-10) + '" y="' + (gy+4) + '" text-anchor="end" font-size="11">' + formatNumber(maxY*(4-i)/4,1) + '</text>';
+    }
+    var sorted = points.slice().sort(function (a,b) { return a.x-b.x; });
+    var poly = sorted.length ? sorted.map(function (p) { return xScale(p.x) + ',' + yScale(p.y); }).join(' ') : '';
+    return '<svg class="pdc-svg" viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="Current versus voltage graph">' + grid +
+      '<line x1="' + left + '" y1="' + (top+plotH) + '" x2="' + (left+plotW) + '" y2="' + (top+plotH) + '" stroke="#172033" stroke-width="2"/><line x1="' + left + '" y1="' + top + '" x2="' + left + '" y2="' + (top+plotH) + '" stroke="#172033" stroke-width="2"/>' +
+      (poly ? '<polyline points="' + poly + '" fill="none" stroke="#2563eb" stroke-width="4"/>' : '') +
+      sorted.map(function (p) { return '<circle cx="' + xScale(p.x) + '" cy="' + yScale(p.y) + '" r="6" fill="#fff" stroke="#2563eb" stroke-width="3"/>'; }).join('') +
+      '<text x="' + (left+plotW/2) + '" y="' + (height-8) + '" text-anchor="middle" font-weight="900">Voltage V (V)</text><text transform="translate(15 ' + (top+plotH/2) + ') rotate(-90)" text-anchor="middle" font-weight="900">Current I (A)</text>' +
+    '</svg>';
+  }
+
+  function renderA2(s) {
+    var step = stationStepById("A2");
+    var voltage = asNumber(s.voltageChoice,3);
+    var resistance = asNumber(s.resistanceChoice,3);
+    var current = ohmCurrent(voltage,resistance);
+    var requiredVoltages = [3,6,9,12];
+    var requiredResistances = [3,6,12,24];
+    var varyVRows = s.varyVTrials.slice().sort(function (a,b) { return a-b; }).map(function (v) { return [formatNumber(v,0),"6",formatNumber(ohmCurrent(v,6),3)]; });
+    var varyRRows = s.varyRTrials.slice().sort(function (a,b) { return a-b; }).map(function (r) { return ["12",formatNumber(r,0),formatNumber(ohmCurrent(12,r),3)]; });
+    var tables = '<div class="pdc-two-col"><div><h4>ชุดที่ 1: คง R = 6 Ω / Keep R = 6 Ω</h4>' + (varyVRows.length ? resultTable({title:"Vary V",headers:["V (V)","R (Ω)","I (A)"],rows:varyVRows}) : '<div class="pdc-callout">ยังไม่มีจุดข้อมูล / No data points yet.</div>') + '</div><div><h4>ชุดที่ 2: คง V = 12 V / Keep V = 12 V</h4>' + (varyRRows.length ? resultTable({title:"Vary R",headers:["V (V)","R (Ω)","I (A)"],rows:varyRRows}) : '<div class="pdc-callout">ยังไม่มีจุดข้อมูล / No data points yet.</div>') + '</div></div>';
+    var points = s.varyVTrials.map(function (v) { return {x:v,y:ohmCurrent(v,6)}; });
+    var analysis = s.explanationViewed ? '<div class="pdc-analysis"><div><b>คง R / Fixed R:</b> เมื่อ V เพิ่ม กระแส I เพิ่มเป็นสัดส่วนตรง เพราะ I = V/R<br>When R is fixed, I is directly proportional to V.</div><div><b>คง V / Fixed V:</b> เมื่อ R เพิ่ม กระแสลดลง เพราะ I แปรผกผันกับ R<br>When V is fixed, I decreases as R increases.</div><span class="pdc-formula">I = V/R &nbsp;&nbsp; และ / and &nbsp;&nbsp; G = I/V = 1/R</span><div><b>กราฟ / Graph:</b> สำหรับตัวต้านทานโอห์มที่อุณหภูมิคงที่ กราฟ I–V เป็นเส้นตรงผ่านจุดกำเนิด และความชัน I/V เท่ากับ G<br>For an ohmic resistor at constant temperature, the I–V graph is a straight line through the origin, with slope I/V = G.</div></div>' : '';
+    var pass = s.explanationViewed ? passCardHeader(s,"บัตรผ่าน A2: กฎของโอห์ม","A2 Pass Card: Ohm’s Law") +
+      '<div class="pdc-question"><label>1) ถ้า R คงที่และ V เพิ่มเป็น 2 เท่า I จะเป็นอย่างไร? / If R is fixed and V doubles, what happens to I?</label><select class="pdc-select" data-exit="voltageRule"' + (s.completed ? ' disabled' : '') + '>' + selectOptions([["double","เพิ่มเป็น 2 เท่า / Doubles"],["half","ลดครึ่งหนึ่ง / Halves"],["same","เท่าเดิม / Unchanged"]],s.exitAnswers.voltageRule,"เลือกคำตอบ / Select") + '</select></div>' +
+      '<div class="pdc-question"><label>2) ถ้า V คงที่และ R เพิ่มเป็น 2 เท่า I จะเป็นอย่างไร? / If V is fixed and R doubles, what happens to I?</label><select class="pdc-select" data-exit="resistanceRule"' + (s.completed ? ' disabled' : '') + '>' + selectOptions([["double","เพิ่มเป็น 2 เท่า / Doubles"],["half","ลดครึ่งหนึ่ง / Halves"],["same","เท่าเดิม / Unchanged"]],s.exitAnswers.resistanceRule,"เลือกคำตอบ / Select") + '</select></div>' +
+      '<div class="pdc-question"><label>3) กราฟ I–V ของตัวต้านทานโอห์มที่อุณหภูมิคงที่มีลักษณะใด? / What is the I–V graph of an ohmic resistor at constant temperature?</label><select class="pdc-select" data-exit="graphRule"' + (s.completed ? ' disabled' : '') + '>' + selectOptions([["origin_line","เส้นตรงผ่านจุดกำเนิด / Straight line through origin"],["horizontal","เส้นแนวนอน / Horizontal line"],["curve","เส้นโค้งเสมอ / Always curved"]],s.exitAnswers.graphRule,"เลือกคำตอบ / Select") + '</select></div>' +
+      '<div class="pdc-question"><label>4) คำนวณ: ตัวต้านทาน 8 Ω ต่อกับ 12 V จงหา I / Calculate I for R = 8 Ω and V = 12 V.</label><input class="pdc-input" inputmode="decimal" data-exit="calculation" value="' + esc(s.exitAnswers.calculation) + '" placeholder="A"' + (s.completed ? ' disabled' : '') + '></div>' + passCardFooter(s) : '';
+
+    return '<div class="pdc-layout"><section class="pdc-card"><h3>A2 · กฎของโอห์ม<span class="pdc-en">Ohm’s Law</span></h3><p class="pdc-sub">พิสูจน์ว่า I ขึ้นอยู่กับ V และ R ตามสมการ I = V/R / Verify how I depends on V and R.</p>' + stepChips(step) +
+      '<div class="pdc-mission"><strong>ภารกิจ / Mission</strong><br>จัดตำแหน่งแอมมิเตอร์และโวลต์มิเตอร์ให้ถูก จากนั้นบันทึกข้อมูลสองชุด: เปลี่ยน V และเปลี่ยน R<br>Connect the ammeter and voltmeter correctly, then record two data sets: varying V and varying R.</div>' +
+      '<div class="pdc-form"><div class="pdc-field"><label>แอมมิเตอร์ควรต่ออย่างไร? / How should the ammeter be connected?</label><select class="pdc-select" data-field="ammeterConnection"' + (s.approved ? ' disabled' : '') + '>' + selectOptions([["series","ต่ออนุกรมกับทางเดินกระแส / In series with the current path"],["parallel","ต่อคร่อมตัวต้านทาน / In parallel across the resistor"]],s.ammeterConnection,"เลือก / Select") + '</select></div><div class="pdc-field"><label>โวลต์มิเตอร์ควรต่ออย่างไร? / How should the voltmeter be connected?</label><select class="pdc-select" data-field="voltmeterConnection"' + (s.approved ? ' disabled' : '') + '>' + selectOptions([["parallel","ต่อคร่อมตัวต้านทาน / In parallel across the resistor"],["series","ต่ออนุกรมในวงจร / In series in the circuit"]],s.voltmeterConnection,"เลือก / Select") + '</select></div></div>' +
+      '<div class="pdc-actions"><button type="button" class="pdc-btn primary" data-action="approve"' + (s.approved ? ' disabled' : '') + '>🧑‍🔬 ขออนุมัติ / Request approval</button><button type="button" class="pdc-btn amber" data-action="start-simulation"' + (!s.approved || s.simulationStarted ? ' disabled' : '') + '>▶ เปิดวงจร / Start circuit</button><button type="button" class="pdc-btn violet" data-action="explain"' + (!s.experimentViewed || s.explanationViewed ? ' disabled' : '') + '>🔍 วิเคราะห์กราฟ / Analyse graph</button></div>' + feedbackHtml(s) +
+      '<div class="pdc-two-col" style="margin-top:14px"><div class="pdc-trial-card"><h4>ชุดที่ 1: เปลี่ยน V / Vary V</h4><p>ใช้ R = 6 Ω แล้วบันทึก V = 3, 6, 9, 12 V</p><select class="pdc-select" data-field="voltageChoice"' + (!s.simulationStarted ? ' disabled' : '') + '>' + selectOptions(requiredVoltages.map(function (v) { return [String(v),v + " V"]; }),s.voltageChoice,"เลือก V / Select V") + '</select><button type="button" class="pdc-btn amber" style="margin-top:8px" data-action="record-v-trial"' + (!s.simulationStarted ? ' disabled' : '') + '>บันทึกจุดข้อมูล / Record point</button><div class="pdc-result-box">บันทึกแล้ว / Recorded: ' + s.varyVTrials.length + ' / 4</div></div>' +
+      '<div class="pdc-trial-card"><h4>ชุดที่ 2: เปลี่ยน R / Vary R</h4><p>ใช้ V = 12 V แล้วบันทึก R = 3, 6, 12, 24 Ω</p><select class="pdc-select" data-field="resistanceChoice"' + (!s.simulationStarted ? ' disabled' : '') + '>' + selectOptions(requiredResistances.map(function (r) { return [String(r),r + " Ω"]; }),s.resistanceChoice,"เลือก R / Select R") + '</select><button type="button" class="pdc-btn amber" style="margin-top:8px" data-action="record-r-trial"' + (!s.simulationStarted ? ' disabled' : '') + '>บันทึกจุดข้อมูล / Record point</button><div class="pdc-result-box">บันทึกแล้ว / Recorded: ' + s.varyRTrials.length + ' / 4</div></div></div>' + tables + analysis + pass + '</section>' +
+      '<aside class="pdc-card"><div class="pdc-sim"><div class="pdc-sim-label">OHM’S LAW · A2</div><div class="pdc-sim-body">' + simpleCircuitSvg(voltage,resistance,current,s.simulationStarted) + '<div class="pdc-meter-screen">A: ' + formatAmp(current) + ' &nbsp; | &nbsp; V: ' + formatVolt(voltage) + '</div></div></div><div style="margin-top:12px">' + lineGraph(points) + '</div>' + footerActions(s) + '</aside></div>';
+  }
+
+  function resistorSymbol(x,y,label) {
+    return '<rect x="' + x + '" y="' + y + '" width="110" height="38" rx="8" fill="#fff7ed" stroke="#d97706" stroke-width="3"/><text x="' + (x+55) + '" y="' + (y+25) + '" text-anchor="middle" font-weight="900">' + esc(label) + '</text>';
+  }
+  function hotspotCircle(x,y,label,point,requiredMeter,done,currentMeter,measureMode,simulationStarted) {
+    var isReady = simulationStarted && measureMode && currentMeter === requiredMeter && !done;
+    var isDim = !simulationStarted || !measureMode || currentMeter !== requiredMeter;
+    return '<g tabindex="0" role="button" class="pdc-hotspot' + (done ? ' done' : '') + (isReady ? ' ready' : '') + (isDim && !done ? ' dim' : '') + '" data-action="measure-point" data-point="' + esc(point) + '" data-required-meter="' + esc(requiredMeter) + '"><circle cx="' + x + '" cy="' + y + '" r="18"/><text x="' + x + '" y="' + (y+5) + '" text-anchor="middle" font-size="12" font-weight="900">' + esc(label) + '</text></g>';
+  }
+
+  function seriesCircuitSvg(model,s) {
+    var speed = clamp(2.1-model.current*0.25,0.55,2.1);
+    return '<svg class="pdc-svg" viewBox="0 0 540 340" role="img" aria-label="Series resistor circuit with measurement points">' +
+      '<path class="pdc-wire-line" d="M70 80 H470 V260 H70 V80"/><path class="pdc-current-path' + (s.simulationStarted ? '' : ' off') + '" style="animation-duration:' + speed + 's" d="M70 80 H470 V260 H70 V80"/>' +
+      '<line x1="70" y1="130" x2="70" y2="205" stroke="#fff" stroke-width="15"/><line x1="61" y1="145" x2="79" y2="145" stroke="#dc2626" stroke-width="5"/><line x1="54" y1="190" x2="86" y2="190" stroke="#dc2626" stroke-width="5"/><text x="17" y="173" font-weight="900">' + formatVolt(model.voltageV) + '</text>' +
+      resistorSymbol(170,61,"R₁ = " + formatNumber(model.r1,2) + " Ω") + resistorSymbol(320,61,"R₂ = " + formatNumber(model.r2,2) + " Ω") +
+      hotspotCircle(120,80,"A1","iBefore","ammeter",s.measuredPoints.iBefore,s.meterType,s.measureMode,s.simulationStarted) + hotspotCircle(300,80,"A2","iBetween","ammeter",s.measuredPoints.iBetween,s.meterType,s.measureMode,s.simulationStarted) + hotspotCircle(470,170,"A3","iAfter","ammeter",s.measuredPoints.iAfter,s.meterType,s.measureMode,s.simulationStarted) +
+      hotspotCircle(70,235,"Vs","vSource","voltmeter",s.measuredPoints.vSource,s.meterType,s.measureMode,s.simulationStarted) + hotspotCircle(225,130,"V1","vR1","voltmeter",s.measuredPoints.vR1,s.meterType,s.measureMode,s.simulationStarted) + hotspotCircle(375,130,"V2","vR2","voltmeter",s.measuredPoints.vR2,s.meterType,s.measureMode,s.simulationStarted) +
+      '<text x="270" y="310" text-anchor="middle" font-weight="900">เลือกมิเตอร์ → เปิดโหมดวัด → แตะจุดที่กำลังกะพริบ / Select meter → turn measurement ON → tap the glowing points</text>' +
+    '</svg>';
+  }
+
+  function parallelCircuitSvg(model,s) {
+    var speedTotal = clamp(2.2-model.it*0.16,0.55,2.2);
+    var speed1 = clamp(2.2-model.i1*0.22,0.55,2.2);
+    var speed2 = clamp(2.2-model.i2*0.22,0.55,2.2);
+    return '<svg class="pdc-svg" viewBox="0 0 560 370" role="img" aria-label="Parallel resistor circuit with measurement points">' +
+      '<path class="pdc-wire-line" d="M70 70 H490 V300 H70 V70"/><path class="pdc-wire-line" d="M190 70 V300 M390 70 V300"/><path class="pdc-wire-line" d="M190 145 H390 M190 230 H390"/>' +
+      '<path class="pdc-current-path' + (s.simulationStarted ? '' : ' off') + '" style="animation-duration:' + speedTotal + 's" d="M70 70 H190 M390 70 H490 V300 H390 M190 300 H70 V70"/>' +
+      '<path class="pdc-current-path' + (s.simulationStarted ? '' : ' off') + '" style="animation-duration:' + speed1 + 's" d="M190 70 V145 H390 V70"/><path class="pdc-current-path' + (s.simulationStarted ? '' : ' off') + '" style="animation-duration:' + speed2 + 's" d="M190 300 V230 H390 V300"/>' +
+      '<line x1="70" y1="135" x2="70" y2="215" stroke="#fff" stroke-width="15"/><line x1="61" y1="150" x2="79" y2="150" stroke="#dc2626" stroke-width="5"/><line x1="54" y1="198" x2="86" y2="198" stroke="#dc2626" stroke-width="5"/><text x="17" y="180" font-weight="900">' + formatVolt(model.voltageV) + '</text>' +
+      resistorSymbol(225,126,"R₁ = " + formatNumber(model.r1,2) + " Ω") + resistorSymbol(225,211,"R₂ = " + formatNumber(model.r2,2) + " Ω") +
+      hotspotCircle(125,70,"At","iTotalBefore","ammeter",s.measuredPoints.iTotalBefore,s.meterType,s.measureMode,s.simulationStarted) + hotspotCircle(205,145,"A1","iBranch1","ammeter",s.measuredPoints.iBranch1,s.meterType,s.measureMode,s.simulationStarted) + hotspotCircle(205,230,"A2","iBranch2","ammeter",s.measuredPoints.iBranch2,s.meterType,s.measureMode,s.simulationStarted) + hotspotCircle(490,180,"At'","iTotalAfter","ammeter",s.measuredPoints.iTotalAfter,s.meterType,s.measureMode,s.simulationStarted) +
+      hotspotCircle(70,260,"Vs","vSource","voltmeter",s.measuredPoints.vSource,s.meterType,s.measureMode,s.simulationStarted) + hotspotCircle(365,110,"V1","vBranch1","voltmeter",s.measuredPoints.vBranch1,s.meterType,s.measureMode,s.simulationStarted) + hotspotCircle(365,265,"V2","vBranch2","voltmeter",s.measuredPoints.vBranch2,s.meterType,s.measureMode,s.simulationStarted) +
+      '<text x="280" y="348" text-anchor="middle" font-weight="900">จุดดำที่ทางแยกคือโหนดที่ต่อถึงกันจริง / Filled junctions indicate electrically connected nodes</text><circle cx="190" cy="70" r="6" fill="#172033"/><circle cx="390" cy="70" r="6" fill="#172033"/><circle cx="190" cy="300" r="6" fill="#172033"/><circle cx="390" cy="300" r="6" fill="#172033"/>' +
+    '</svg>';
+  }
+
+  function meterPanel(s) {
+    var reading = s.lastMeasurement ? s.lastMeasurement.label + ': ' + s.lastMeasurement.reading : '—';
+    var meterLabel = s.meterType === 'voltmeter' ? 'V · โวลต์มิเตอร์ / Voltmeter' : 'A · แอมมิเตอร์ / Ammeter';
+    return '<div class="pdc-meter-toolbar"><button type="button" class="pdc-btn pdc-meter-choice' + (s.meterType === 'ammeter' ? ' active' : '') + '" data-action="select-meter" data-meter="ammeter">A · แอมมิเตอร์ / Ammeter</button><button type="button" class="pdc-btn pdc-meter-choice' + (s.meterType === 'voltmeter' ? ' active' : '') + '" data-action="select-meter" data-meter="voltmeter">V · โวลต์มิเตอร์ / Voltmeter</button><button type="button" class="pdc-btn ' + (s.measureMode ? 'green' : '') + '" data-action="toggle-measure-mode"' + (!s.simulationStarted ? ' disabled' : '') + '>' + (s.measureMode ? '🟢 ปิดโหมดวัด / Stop measuring' : '🔴 เปิดโหมดวัด / Start measuring') + '</button></div><div class="pdc-measure-status"><div class="pdc-status-pills"><span class="pdc-status-pill ' + (s.measureMode ? 'on' : 'off') + '"><span class="pdc-pulse-dot"></span>' + (s.measureMode ? 'โหมดวัด: เปิด / Measurement ON' : 'โหมดวัด: ปิด / Measurement OFF') + '</span><span class="pdc-status-pill meter">🎛️ ' + meterLabel + '</span></div><div class="pdc-measure-hint">1) เลือกมิเตอร์ 2) กดปุ่มเปิดโหมดวัด 3) แตะจุดที่กะพริบสีม่วง/น้ำเงิน<br>1) Choose a meter 2) turn measurement mode on 3) tap the glowing purple/blue points.</div><div class="pdc-measure-guide"><span>🟣 ยังไม่วัด / Not yet measured</span><span>🔵 กำลังพร้อมวัด / Ready now</span><span>🟢 วัดแล้ว / Measured</span></div></div><div class="pdc-meter-screen' + (s.measureMode ? ' ready' : ' off') + '">' + esc(reading) + '</div>';
+  }
+
+  function seriesMeasurement(point,model) {
+    var map = {
+      iBefore:{label:"I ก่อน R₁ / before R₁",reading:formatAmp(model.current)},
+      iBetween:{label:"I ระหว่าง R₁–R₂ / between R₁–R₂",reading:formatAmp(model.current)},
+      iAfter:{label:"I หลัง R₂ / after R₂",reading:formatAmp(model.current)},
+      vSource:{label:"V แหล่งจ่าย / source",reading:formatVolt(model.voltageV)},
+      vR1:{label:"V₁ คร่อม R₁ / across R₁",reading:formatVolt(model.v1)},
+      vR2:{label:"V₂ คร่อม R₂ / across R₂",reading:formatVolt(model.v2)}
+    };
+    return map[point] || null;
+  }
+  function parallelMeasurement(point,model) {
+    var map = {
+      vSource:{label:"V แหล่งจ่าย / source",reading:formatVolt(model.voltageV)},
+      vBranch1:{label:"V₁ แขนง 1 / branch 1",reading:formatVolt(model.voltageV)},
+      vBranch2:{label:"V₂ แขนง 2 / branch 2",reading:formatVolt(model.voltageV)},
+      iTotalBefore:{label:"Iₜ ก่อนแยก / before split",reading:formatAmp(model.it)},
+      iBranch1:{label:"I₁ แขนง 1 / branch 1",reading:formatAmp(model.i1)},
+      iBranch2:{label:"I₂ แขนง 2 / branch 2",reading:formatAmp(model.i2)},
+      iTotalAfter:{label:"Iₜ หลังรวม / after merge",reading:formatAmp(model.it)}
+    };
+    return map[point] || null;
+  }
+
+  function measuredCount(s) { return Object.keys(s.measuredPoints).filter(function (key) { return s.measuredPoints[key]; }).length; }
+  function measurementTableSeries(model,s) {
+    var rows = [
+      ["I ก่อน R₁ / before R₁",s.measuredPoints.iBefore ? formatAmp(model.current) : "—"],
+      ["I ระหว่าง R₁–R₂ / between",s.measuredPoints.iBetween ? formatAmp(model.current) : "—"],
+      ["I หลัง R₂ / after R₂",s.measuredPoints.iAfter ? formatAmp(model.current) : "—"],
+      ["Vₜ แหล่งจ่าย / source",s.measuredPoints.vSource ? formatVolt(model.voltageV) : "—"],
+      ["V₁ คร่อม R₁ / across R₁",s.measuredPoints.vR1 ? formatVolt(model.v1) : "—"],
+      ["V₂ คร่อม R₂ / across R₂",s.measuredPoints.vR2 ? formatVolt(model.v2) : "—"]
+    ];
+    return resultTable({title:"บันทึกมิเตอร์ / Meter record",headers:["ตำแหน่ง / Position","ค่าที่อ่าน / Reading"],rows:rows});
+  }
+  function measurementTableParallel(model,s) {
+    var rows = [
+      ["Vₜ แหล่งจ่าย / source",s.measuredPoints.vSource ? formatVolt(model.voltageV) : "—"],
+      ["V₁ แขนง 1 / branch 1",s.measuredPoints.vBranch1 ? formatVolt(model.voltageV) : "—"],
+      ["V₂ แขนง 2 / branch 2",s.measuredPoints.vBranch2 ? formatVolt(model.voltageV) : "—"],
+      ["Iₜ ก่อนแยก / before split",s.measuredPoints.iTotalBefore ? formatAmp(model.it) : "—"],
+      ["I₁ แขนง 1 / branch 1",s.measuredPoints.iBranch1 ? formatAmp(model.i1) : "—"],
+      ["I₂ แขนง 2 / branch 2",s.measuredPoints.iBranch2 ? formatAmp(model.i2) : "—"],
+      ["Iₜ หลังรวม / after merge",s.measuredPoints.iTotalAfter ? formatAmp(model.it) : "—"]
+    ];
+    return resultTable({title:"บันทึกมิเตอร์ / Meter record",headers:["ตำแหน่ง / Position","ค่าที่อ่าน / Reading"],rows:rows});
+  }
+
+  function renderA3(s) {
+    var step = stationStepById("A3");
+    var model = seriesModel(asNumber(s.supplyVoltageV,12),asNumber(s.resistance1Ohm,2),asNumber(s.resistance2Ohm,4));
+    var analysis = s.explanationViewed ? '<div class="pdc-analysis"><div><b>กระแส / Current:</b> วงจรมีทางเดินเดียว ประจุจึงผ่านทุกตำแหน่งในอัตราเท่ากัน: Iₜ = I₁ = I₂<br>There is only one path, so the current is the same everywhere.</div><div><b>แรงดัน / Voltage:</b> พลังงานต่อประจุที่แหล่งจ่ายให้ ถูกแบ่งตามตัวต้านทาน: Vₜ = V₁ + V₂<br>The source voltage is shared across the resistors.</div><div><b>พิสูจน์ R รวม / Derive equivalent R:</b><span class="pdc-formula">Vₜ = V₁ + V₂<br>I Rₜ = I R₁ + I R₂<br>Rₜ = R₁ + R₂</span></div><div><b>กฎแบ่งแรงดัน / Voltage divider:</b><span class="pdc-formula">V₁ = (R₁/Rₜ)Vₜ &nbsp;&nbsp; V₂ = (R₂/Rₜ)Vₜ</span>ตัวต้านทานมากรับแรงดันมาก เมื่อกระแสเท่ากัน / The larger resistance receives the larger voltage when current is common.</div></div>' : '';
+    var pass = s.explanationViewed ? passCardHeader(s,"บัตรผ่าน A3: วงจรอนุกรม","A3 Pass Card: Series Circuit") +
+      '<div class="pdc-question"><label>1) ข้อใดถูกต้องสำหรับวงจรอนุกรม? / Which statement is correct for a series circuit?</label><select class="pdc-select" data-exit="currentRule"' + (s.completed ? ' disabled' : '') + '>' + selectOptions([["same","กระแสเท่ากันทุกตำแหน่ง / Current is the same everywhere"],["divide","กระแสแบ่งตามแขนง / Current divides among branches"]],s.exitAnswers.currentRule,"เลือก / Select") + '</select></div>' +
+      '<div class="pdc-question"><label>2) แรงดันรวมสัมพันธ์กับแรงดันย่อยอย่างไร? / How is total voltage related to the voltage drops?</label><select class="pdc-select" data-exit="voltageRule"' + (s.completed ? ' disabled' : '') + '>' + selectOptions([["sum","Vₜ = V₁ + V₂"],["same","Vₜ = V₁ = V₂"]],s.exitAnswers.voltageRule,"เลือก / Select") + '</select></div>' +
+      '<div class="pdc-question"><label>3) คำนวณ: Vₜ = 18 V, R₁ = 3 Ω, R₂ = 6 Ω / Calculate for a series circuit.</label><div class="pdc-calc-grid"><div><small>Rₜ (Ω)</small><input class="pdc-input" inputmode="decimal" data-exit="totalResistance" value="' + esc(s.exitAnswers.totalResistance) + '"' + (s.completed ? ' disabled' : '') + '></div><div><small>Iₜ (A)</small><input class="pdc-input" inputmode="decimal" data-exit="totalCurrent" value="' + esc(s.exitAnswers.totalCurrent) + '"' + (s.completed ? ' disabled' : '') + '></div><div><small>V₁ (V)</small><input class="pdc-input" inputmode="decimal" data-exit="voltage1" value="' + esc(s.exitAnswers.voltage1) + '"' + (s.completed ? ' disabled' : '') + '></div><div><small>V₂ (V)</small><input class="pdc-input" inputmode="decimal" data-exit="voltage2" value="' + esc(s.exitAnswers.voltage2) + '"' + (s.completed ? ' disabled' : '') + '></div></div></div>' + passCardFooter(s) : '';
+
+    return '<div class="pdc-layout"><section class="pdc-card"><h3>A3 · ตัวต้านทานอนุกรม<span class="pdc-en">Resistors in Series</span></h3><p class="pdc-sub">ใช้มิเตอร์พิสูจน์ว่า I เท่ากันและ V แบ่งกัน / Use meters to verify equal current and divided voltage.</p>' + stepChips(step) + '<div class="pdc-mission"><strong>ภารกิจ / Mission</strong><br>เลือกการต่อวงจรและหลักการต่อมิเตอร์ให้ถูก เปิดวงจร แล้ววัดครบ 6 จุด<br>Select the correct circuit and meter rules, start the circuit, and measure all six points.</div>' +
+      '<div class="pdc-form"><div class="pdc-field"><label>รูปแบบวงจร / Circuit arrangement</label><select class="pdc-select" data-field="connectionType"' + (s.approved ? ' disabled' : '') + '>' + selectOptions([["series","ตัวต้านทานต่อปลายชนปลาย เป็นทางเดินเดียว / End-to-end, one path"],["parallel","ตัวต้านทานต่อคร่อมโหนดเดียวกัน / Across the same two nodes"]],s.connectionType,"เลือก / Select") + '</select></div><div class="pdc-two-col"><div class="pdc-field"><label>กฎแอมมิเตอร์ / Ammeter rule</label><select class="pdc-select" data-field="ammeterRule"' + (s.approved ? ' disabled' : '') + '>' + selectOptions([["series","ต่ออนุกรม ณ จุดที่ต้องการวัด / Insert in series at the measurement point"],["parallel","ต่อคร่อมอุปกรณ์ / Connect across a component"]],s.ammeterRule,"เลือก / Select") + '</select></div><div class="pdc-field"><label>กฎโวลต์มิเตอร์ / Voltmeter rule</label><select class="pdc-select" data-field="voltmeterRule"' + (s.approved ? ' disabled' : '') + '>' + selectOptions([["parallel","ต่อคร่อมสองจุด / Connect across two points"],["series","แทรกในทางเดินกระแส / Insert in current path"]],s.voltmeterRule,"เลือก / Select") + '</select></div></div><div class="pdc-two-col"><div class="pdc-field"><label>แหล่งจ่าย Vₜ / Supply</label><select class="pdc-select" data-field="supplyVoltageV"' + (s.approved ? ' disabled' : '') + '>' + selectOptions([["6","6 V"],["9","9 V"],["12","12 V"]],s.supplyVoltageV,"เลือก / Select") + '</select></div><div class="pdc-field"><label>R₁ และ R₂ / Resistors</label><div class="pdc-two-col"><select class="pdc-select" data-field="resistance1Ohm"' + (s.approved ? ' disabled' : '') + '>' + selectOptions([["2","2 Ω"],["3","3 Ω"],["4","4 Ω"]],s.resistance1Ohm,"R₁") + '</select><select class="pdc-select" data-field="resistance2Ohm"' + (s.approved ? ' disabled' : '') + '>' + selectOptions([["4","4 Ω"],["6","6 Ω"],["8","8 Ω"]],s.resistance2Ohm,"R₂") + '</select></div></div></div></div>' +
+      '<div class="pdc-actions"><button type="button" class="pdc-btn primary" data-action="approve"' + (s.approved ? ' disabled' : '') + '>🧑‍🔬 ขออนุมัติ / Request approval</button><button type="button" class="pdc-btn amber" data-action="start-simulation"' + (!s.approved || s.simulationStarted ? ' disabled' : '') + '>▶ เปิดวงจร / Start circuit</button><button type="button" class="pdc-btn violet" data-action="explain"' + (!s.experimentViewed || s.explanationViewed ? ' disabled' : '') + '>🔍 พิสูจน์สูตร / Derive equations</button></div>' + feedbackHtml(s) + meterPanel(s) + '<div class="pdc-result-box">วัดแล้ว / Measured: ' + measuredCount(s) + ' / 6</div>' + measurementTableSeries(model,s) + analysis + pass + '</section>' +
+      '<aside class="pdc-card"><div class="pdc-sim"><div class="pdc-sim-label">SERIES CIRCUIT · A3</div><div class="pdc-sim-body">' + seriesCircuitSvg(model,s) + '</div></div><div class="pdc-callout" style="margin-top:12px"><strong>ค่าที่แบบจำลองคำนวณ / Model values:</strong><br>Rₜ = ' + formatOhm(model.rt) + ', I = ' + formatAmp(model.current) + ', V₁ = ' + formatVolt(model.v1) + ', V₂ = ' + formatVolt(model.v2) + '</div>' + footerActions(s) + '</aside></div>';
+  }
+
+  function conductanceBars(model) {
+    var max = Math.max(model.g1,model.g2,model.i1,model.i2,0.001);
+    function height(value) { return 25 + value/max*115; }
+    return '<svg class="pdc-svg" viewBox="0 0 520 255" role="img" aria-label="Conductance and current comparison bars">' +
+      '<line x1="45" y1="205" x2="490" y2="205" stroke="#172033" stroke-width="2"/>' +
+      '<rect x="85" y="' + (205-height(model.g1)) + '" width="65" height="' + height(model.g1) + '" fill="#c4b5fd" stroke="#7c3aed" stroke-width="2"/><text x="117" y="225" text-anchor="middle" font-weight="900">G₁</text><text x="117" y="' + (195-height(model.g1)) + '" text-anchor="middle">' + formatNumber(model.g1,3) + ' S</text>' +
+      '<rect x="170" y="' + (205-height(model.g2)) + '" width="65" height="' + height(model.g2) + '" fill="#c4b5fd" stroke="#7c3aed" stroke-width="2"/><text x="202" y="225" text-anchor="middle" font-weight="900">G₂</text><text x="202" y="' + (195-height(model.g2)) + '" text-anchor="middle">' + formatNumber(model.g2,3) + ' S</text>' +
+      '<rect x="300" y="' + (205-height(model.i1)) + '" width="65" height="' + height(model.i1) + '" fill="#bfdbfe" stroke="#2563eb" stroke-width="2"/><text x="332" y="225" text-anchor="middle" font-weight="900">I₁</text><text x="332" y="' + (195-height(model.i1)) + '" text-anchor="middle">' + formatNumber(model.i1,3) + ' A</text>' +
+      '<rect x="385" y="' + (205-height(model.i2)) + '" width="65" height="' + height(model.i2) + '" fill="#bfdbfe" stroke="#2563eb" stroke-width="2"/><text x="417" y="225" text-anchor="middle" font-weight="900">I₂</text><text x="417" y="' + (195-height(model.i2)) + '" text-anchor="middle">' + formatNumber(model.i2,3) + ' A</text>' +
+      '<text x="160" y="248" text-anchor="middle" font-size="12">Conductance</text><text x="375" y="248" text-anchor="middle" font-size="12">Current at common V</text>' +
+    '</svg>';
+  }
+
+  function renderA4(s) {
+    var step = stationStepById("A4");
+    var model = parallelModel(asNumber(s.supplyVoltageV,12),asNumber(s.resistance1Ohm,6),asNumber(s.resistance2Ohm,3));
+    var analysis = s.explanationViewed ? '<div class="pdc-analysis"><div><b>แรงดัน / Voltage:</b> ทุกแขนงต่ออยู่ระหว่างโหนดคู่เดียวกัน จึงมี Vₜ = V₁ = V₂<br>Each branch is connected across the same two nodes, so the voltage is equal.</div><div><b>กระแส / Current:</b> ที่จุดแยก กระแสรวมแบ่งเข้าสู่แขนง และกลับมารวมกัน: Iₜ = I₁ + I₂<br>Current divides at a junction and recombines later.</div><div><b>พิสูจน์ R รวม / Derive equivalent R:</b><span class="pdc-formula">Iₜ = I₁ + I₂<br>V/Rₜ = V/R₁ + V/R₂<br>1/Rₜ = 1/R₁ + 1/R₂</span></div><div><b>ความนำไฟฟ้า / Conductance:</b><span class="pdc-formula">G = 1/R &nbsp;&nbsp; Gₜ = G₁ + G₂</span>เมื่อแรงดันเท่ากัน I = VG ดังนั้นแขนงที่ G มากจะมีกระแสมาก / At common voltage, I = VG, so the branch with larger G carries more current.</div><div><b>กฎแบ่งกระแสในรูป G / Current divider using G:</b><span class="pdc-formula">I₁ = (G₁/Gₜ)Iₜ &nbsp;&nbsp; I₂ = (G₂/Gₜ)Iₜ</span></div></div>' : '';
+    var pass = s.explanationViewed ? passCardHeader(s,"บัตรผ่าน A4: วงจรขนานและความนำไฟฟ้า","A4 Pass Card: Parallel Circuit and Conductance") +
+      '<div class="pdc-question"><label>1) ข้อใดถูกต้องสำหรับแรงดันในวงจรขนาน? / Which voltage statement is correct in a parallel circuit?</label><select class="pdc-select" data-exit="voltageRule"' + (s.completed ? ' disabled' : '') + '>' + selectOptions([["same","Vₜ = V₁ = V₂"],["sum","Vₜ = V₁ + V₂"]],s.exitAnswers.voltageRule,"เลือก / Select") + '</select></div>' +
+      '<div class="pdc-question"><label>2) กระแสรวมสัมพันธ์กับกระแสแขนงอย่างไร? / How is total current related to branch currents?</label><select class="pdc-select" data-exit="currentRule"' + (s.completed ? ' disabled' : '') + '>' + selectOptions([["sum","Iₜ = I₁ + I₂"],["same","Iₜ = I₁ = I₂"]],s.exitAnswers.currentRule,"เลือก / Select") + '</select></div>' +
+      '<div class="pdc-question"><label>3) เมื่อแรงดันเท่ากัน แขนงใดมีกระแสมากกว่า? / At the same voltage, which branch carries more current?</label><select class="pdc-select" data-exit="largerCurrent"' + (s.completed ? ' disabled' : '') + '>' + selectOptions([["largerG","แขนงที่ G มาก หรือ R น้อย / The branch with larger G or smaller R"],["largerR","แขนงที่ R มาก / The branch with larger R"]],s.exitAnswers.largerCurrent,"เลือก / Select") + '</select></div>' +
+      '<div class="pdc-question"><label>4) คำนวณ: V = 12 V, R₁ = 4 Ω, R₂ = 12 Ω / Calculate for a parallel circuit.</label><div class="pdc-calc-grid"><div><small>Gₜ (S)</small><input class="pdc-input" inputmode="decimal" data-exit="totalConductance" value="' + esc(s.exitAnswers.totalConductance) + '" placeholder="1/3 หรือ 0.333"' + (s.completed ? ' disabled' : '') + '></div><div><small>Rₜ (Ω)</small><input class="pdc-input" inputmode="decimal" data-exit="totalResistance" value="' + esc(s.exitAnswers.totalResistance) + '"' + (s.completed ? ' disabled' : '') + '></div><div><small>I₁ (A)</small><input class="pdc-input" inputmode="decimal" data-exit="current1" value="' + esc(s.exitAnswers.current1) + '"' + (s.completed ? ' disabled' : '') + '></div><div><small>I₂ (A)</small><input class="pdc-input" inputmode="decimal" data-exit="current2" value="' + esc(s.exitAnswers.current2) + '"' + (s.completed ? ' disabled' : '') + '></div><div><small>Iₜ (A)</small><input class="pdc-input" inputmode="decimal" data-exit="totalCurrent" value="' + esc(s.exitAnswers.totalCurrent) + '"' + (s.completed ? ' disabled' : '') + '></div></div></div>' + passCardFooter(s) : '';
+
+    return '<div class="pdc-layout"><section class="pdc-card"><h3>A4 · ตัวต้านทานขนานและความนำไฟฟ้า G<span class="pdc-en">Parallel Resistors and Conductance G</span></h3><p class="pdc-sub">ใช้มิเตอร์พิสูจน์ว่า V เท่ากันและ I แบ่งกัน แล้วอธิบายด้วย G = 1/R / Verify equal voltage and divided current, then explain it using G = 1/R.</p>' + stepChips(step) + '<div class="pdc-mission"><strong>ภารกิจ / Mission</strong><br>เลือกวงจรและการต่อมิเตอร์ให้ถูก เปิดวงจร แล้ววัดครบ 7 จุด<br>Select the correct arrangement and meter rules, start the circuit, and measure all seven points.</div>' +
+      '<div class="pdc-form"><div class="pdc-field"><label>รูปแบบวงจร / Circuit arrangement</label><select class="pdc-select" data-field="connectionType"' + (s.approved ? ' disabled' : '') + '>' + selectOptions([["parallel","ตัวต้านทานแต่ละตัวต่อระหว่างโหนดคู่เดียวกัน / Each resistor connects across the same two nodes"],["series","ตัวต้านทานต่อเรียงเป็นทางเดินเดียว / One path end-to-end"]],s.connectionType,"เลือก / Select") + '</select></div><div class="pdc-two-col"><div class="pdc-field"><label>กฎแอมมิเตอร์ / Ammeter rule</label><select class="pdc-select" data-field="ammeterRule"' + (s.approved ? ' disabled' : '') + '>' + selectOptions([["series","แทรกในแขนงที่ต้องการวัด / Insert in the branch being measured"],["parallel","ต่อคร่อมแขนง / Connect across the branch"]],s.ammeterRule,"เลือก / Select") + '</select></div><div class="pdc-field"><label>กฎโวลต์มิเตอร์ / Voltmeter rule</label><select class="pdc-select" data-field="voltmeterRule"' + (s.approved ? ' disabled' : '') + '>' + selectOptions([["parallel","ต่อคร่อมสองโหนด / Connect across two nodes"],["series","แทรกในแขนง / Insert in a branch"]],s.voltmeterRule,"เลือก / Select") + '</select></div></div><div class="pdc-two-col"><div class="pdc-field"><label>แหล่งจ่าย V / Supply</label><select class="pdc-select" data-field="supplyVoltageV"' + (s.approved ? ' disabled' : '') + '>' + selectOptions([["6","6 V"],["9","9 V"],["12","12 V"]],s.supplyVoltageV,"เลือก / Select") + '</select></div><div class="pdc-field"><label>R₁ และ R₂ / Resistors</label><div class="pdc-two-col"><select class="pdc-select" data-field="resistance1Ohm"' + (s.approved ? ' disabled' : '') + '>' + selectOptions([["4","4 Ω"],["6","6 Ω"],["12","12 Ω"]],s.resistance1Ohm,"R₁") + '</select><select class="pdc-select" data-field="resistance2Ohm"' + (s.approved ? ' disabled' : '') + '>' + selectOptions([["3","3 Ω"],["6","6 Ω"],["12","12 Ω"]],s.resistance2Ohm,"R₂") + '</select></div></div></div></div>' +
+      '<div class="pdc-actions"><button type="button" class="pdc-btn primary" data-action="approve"' + (s.approved ? ' disabled' : '') + '>🧑‍🔬 ขออนุมัติ / Request approval</button><button type="button" class="pdc-btn amber" data-action="start-simulation"' + (!s.approved || s.simulationStarted ? ' disabled' : '') + '>▶ เปิดวงจร / Start circuit</button><button type="button" class="pdc-btn violet" data-action="explain"' + (!s.experimentViewed || s.explanationViewed ? ' disabled' : '') + '>🔍 พิสูจน์สูตรและ G / Derive equations and G</button></div>' + feedbackHtml(s) + meterPanel(s) + '<div class="pdc-result-box">วัดแล้ว / Measured: ' + measuredCount(s) + ' / 7</div>' + measurementTableParallel(model,s) + analysis + pass + '</section>' +
+      '<aside class="pdc-card"><div class="pdc-sim"><div class="pdc-sim-label">PARALLEL CIRCUIT · A4</div><div class="pdc-sim-body">' + parallelCircuitSvg(model,s) + '</div></div><div style="margin-top:12px">' + conductanceBars(model) + '</div><div class="pdc-callout"><strong>ค่าที่แบบจำลองคำนวณ / Model values:</strong><br>G₁ = ' + formatSiemens(model.g1) + ', G₂ = ' + formatSiemens(model.g2) + ', Gₜ = ' + formatSiemens(model.gt) + '<br>Rₜ = ' + formatOhm(model.rt) + ', I₁ = ' + formatAmp(model.i1) + ', I₂ = ' + formatAmp(model.i2) + ', Iₜ = ' + formatAmp(model.it) + '</div>' + footerActions(s) + '</aside></div>';
+  }
+
+  function footerActions(s) {
+    return '<div class="pdc-footer-actions"><button type="button" class="pdc-btn" data-action="reset-station"' + (s.completed ? ' disabled' : '') + '>↻ ล้างด่านนี้ / Reset station</button>' +
+      (state.completed && !state.showSummary ? '<button type="button" class="pdc-btn violet" data-action="show-summary">🏅 หน้าสรุป / Unit summary</button>' : '') +
+      '<button type="button" class="pdc-btn green" data-action="next-station"' + (!s.completed || state.currentStationIndex >= STATIONS.length-1 ? ' disabled' : '') + '>ด่านถัดไป / Next station →</button></div>';
+  }
+
+  function renderSummary() {
+    return '<section class="pdc-card pdc-summary"><div class="badge">🏅</div><h3>ผ่าน Unit A แล้ว / Unit A Completed</h3><p>คุณเชื่อมสมบัติของลวด กฎของโอห์ม และกฎของวงจรตัวต้านทานเข้าด้วยกันได้ครบทั้ง 4 ด่าน<br>You have connected wire properties, Ohm’s law, and resistor-network rules across all four stations.</p><div class="pdc-summary-grid">' +
+      '<div class="pdc-summary-item"><b>A1 · R = ρL/A</b>R เพิ่มตาม ρ และ L แต่ลดเมื่อ A เพิ่ม<br>R increases with ρ and L, and decreases as A increases.</div>' +
+      '<div class="pdc-summary-item"><b>A2 · I = V/R</b>กระแสเพิ่มตาม V และลดเมื่อ R เพิ่ม<br>Current increases with V and decreases as R increases.</div>' +
+      '<div class="pdc-summary-item"><b>A3 · Series</b>I เท่ากัน, V แบ่ง, Rₜ = R₁ + R₂<br>Same I, divided V, and additive resistance.</div>' +
+      '<div class="pdc-summary-item"><b>A4 · Parallel</b>V เท่ากัน, I แบ่ง, Gₜ = G₁ + G₂<br>Same V, divided I, and additive conductance.</div>' +
+      '</div><div class="pdc-formula">ρ, L, A → R → I = V/R → Series → Parallel and G</div><div class="pdc-actions" style="justify-content:center"><button type="button" class="pdc-btn" data-action="review-station" data-index="0">ทบทวนตั้งแต่ A1 / Review from A1</button><button type="button" class="pdc-btn primary" data-action="reset-all">เริ่ม Unit ใหม่ / Restart Unit</button></div></section>';
+  }
+
+  function renderTabs() {
+    var tabs = root.querySelector("#pdc-station-tabs");
+    tabs.innerHTML = STATIONS.map(function (d,index) {
+      var s = state.stations[d.id];
+      var locked = index > 0 && !state.stations[STATIONS[index-1].id].completed;
+      var cls = "pdc-tab" + (index === state.currentStationIndex && !state.showSummary ? " active" : "") + (s.completed ? " done" : "");
+      var status = s.completed ? "ผ่านแล้ว / Completed" : locked ? "ล็อก / Locked" : "พร้อมทำ / Available";
+      return '<button type="button" class="' + cls + '" data-action="go-station" data-index="' + index + '"' + (locked ? ' disabled' : '') + '><span>' + esc(d.icon + " " + d.id + " · " + status) + '</span><b>' + esc(d.titleTh) + '<br><small>' + esc(d.titleEn) + '</small></b></button>';
+    }).join("");
+  }
+  function renderStatus() {
+    var percent = getPercent();
+    root.querySelector("#pdc-current-station").textContent = state.showSummary ? "SUMMARY" : currentDef().id + " / 4";
+    root.querySelector("#pdc-completed-count").textContent = completedCount() + " / 4";
+    root.querySelector("#pdc-percent").textContent = percent + "%";
+    root.querySelector("#pdc-progress-bar").style.width = percent + "%";
+    root.querySelector("#pdc-progress-text").textContent = state.completed && state.showSummary ? "ผ่าน Unit A แล้ว / Unit A completed" : "กำลังทำ / Working on " + currentDef().id + " · " + currentDef().titleTh + " / " + currentDef().titleEn;
+  }
+  function render() {
+    renderTabs();
+    renderStatus();
+    var main = root.querySelector("#pdc-main");
+    if (state.completed && state.showSummary) main.innerHTML = renderSummary();
+    else {
+      var id = currentDef().id;
+      if (id === "A1") main.innerHTML = renderA1(state.stations.A1);
+      if (id === "A2") main.innerHTML = renderA2(state.stations.A2);
+      if (id === "A3") main.innerHTML = renderA3(state.stations.A3);
+      if (id === "A4") main.innerHTML = renderA4(state.stations.A4);
+    }
+  }
+
+  function approveCurrentStation() {
+    var id = currentDef().id;
+    var s = currentStationState();
+    var correct = false;
+    if (id === "A1") correct = s.selectedFormula === "rhoL_over_A" && s.selectedAreaConversion === "mm2_to_m2";
+    if (id === "A2") correct = s.ammeterConnection === "series" && s.voltmeterConnection === "parallel";
+    if (id === "A3") correct = s.connectionType === "series" && s.ammeterRule === "series" && s.voltmeterRule === "parallel";
+    if (id === "A4") correct = s.connectionType === "parallel" && s.ammeterRule === "series" && s.voltmeterRule === "parallel";
+    if (!STATION_ADAPTERS[id].prepared(s)) {
+      setFeedback(s,"bad","⚠️ กรุณาเลือกข้อมูลให้ครบทุกช่องก่อน / Complete all setup fields before requesting approval.");
+      render();return;
+    }
+    if (!correct) {
+      s.selectionAttempts += 1;
+      setFeedback(s,"bad","❌ การตั้งค่ายังไม่ถูกต้อง ตรวจสมการ รูปแบบวงจร หรือหลักการต่อมิเตอร์อีกครั้ง / The setup is not yet correct. Recheck the equation, circuit arrangement, or meter connection rules.");
+      render();notifyChange();return;
+    }
+    s.approved = true;
+    setFeedback(s,"good","✅ เจ้าหน้าที่อนุมัติแล้ว เริ่มการทดลองได้ / Approved. You may begin the simulation.");
+    render();notifyChange();
+  }
+
+  function startSimulation() {
+    var s = currentStationState();
+    if (!s.approved || s.simulationStarted) return;
+    s.simulationStarted = true;
+    setFeedback(s,"info","⚡ วงจรทำงานแล้ว ขั้นต่อไปคือ 1) เลือกมิเตอร์ 2) กดเปิดโหมดวัด 3) แตะจุดวัดที่กะพริบ / The circuit is active. Next: 1) choose a meter 2) turn measurement mode ON 3) tap the glowing measurement points.");
+    render();notifyChange();
+  }
+
+  function runA1Experiment(key) {
+    var s = state.stations.A1;
+    if (!s.approved || !s.experiments.hasOwnProperty(key)) return;
+    s.experiments[key] = true;
+    s.lastExperiment = key;
+    s.experimentViewed = allTrue(s.experiments);
+    setFeedback(s,s.experimentViewed ? "good" : "info",s.experimentViewed ? "✅ ทำการทดลองครบ 3 ชุดแล้ว เปิดการวิเคราะห์ความสัมพันธ์ได้ / All three investigations are complete. You may now analyse the relationships." : "บันทึกผลการทดลองชุดนี้แล้ว ทำชุดที่เหลือต่อ / This investigation has been recorded. Continue with the remaining sets.");
+    render();notifyChange();
+  }
+
+  function recordA2Trial(mode) {
+    var s = state.stations.A2;
+    if (!s.simulationStarted) return;
+    if (mode === "v") s.varyVTrials = uniqueNumbers(s.varyVTrials.concat([asNumber(s.voltageChoice,3)]));
+    if (mode === "r") s.varyRTrials = uniqueNumbers(s.varyRTrials.concat([asNumber(s.resistanceChoice,3)]));
+    s.experimentViewed = s.varyVTrials.length >= 4 && s.varyRTrials.length >= 4;
+    setFeedback(s,s.experimentViewed ? "good" : "info",s.experimentViewed ? "✅ บันทึกข้อมูลครบทั้งสองชุดแล้ว เปิดการวิเคราะห์กราฟได้ / Both data sets are complete. You may now analyse the graph." : "บันทึกจุดข้อมูลแล้ว เลือกค่าที่ยังไม่เคยบันทึก / Data point recorded. Select a value not yet recorded.");
+    render();notifyChange();
+  }
+
+  function measurePoint(target) {
+    var id = currentDef().id;
+    if (id !== "A3" && id !== "A4") return;
+    var s = currentStationState();
+    if (!s.simulationStarted) {
+      setFeedback(s,"bad","⚠️ ต้องได้รับอนุมัติและเปิดวงจรก่อนวัด / Obtain approval and start the circuit before measuring.");
+      render();return;
+    }
+    if (!s.measureMode) {
+      setFeedback(s,"bad","⚠️ ต้องกด เปิดโหมดวัด ก่อนแตะจุดวัด / Turn measurement mode ON before tapping a measurement point.");
+      render();return;
+    }
+    var point = target.getAttribute("data-point");
+    var required = target.getAttribute("data-required-meter");
+    if (s.meterType !== required) {
+      setFeedback(s,"bad",required === "ammeter" ? "จุดนี้วัดกระแส ต้องเลือกแอมมิเตอร์และแทรกในทางเดินกระแส / This point measures current. Select the ammeter and insert it in the current path." : "จุดนี้วัดความต่างศักย์ ต้องเลือกโวลต์มิเตอร์ต่อคร่อมสองจุด / This point measures potential difference. Select the voltmeter across two points.");
+      render();return;
+    }
+    if (!s.measuredPoints.hasOwnProperty(point)) return;
+    var model = id === "A3" ? seriesModel(asNumber(s.supplyVoltageV,12),asNumber(s.resistance1Ohm,2),asNumber(s.resistance2Ohm,4)) : parallelModel(asNumber(s.supplyVoltageV,12),asNumber(s.resistance1Ohm,6),asNumber(s.resistance2Ohm,3));
+    var measurement = id === "A3" ? seriesMeasurement(point,model) : parallelMeasurement(point,model);
+    if (!measurement) return;
+    s.measuredPoints[point] = true;
+    s.lastMeasurement = measurement;
+    s.experimentViewed = allTrue(s.measuredPoints);
+    setFeedback(s,s.experimentViewed ? "good" : "info",s.experimentViewed ? "✅ วัดครบทุกจุดแล้ว เปิดการพิสูจน์และวิเคราะห์ได้ / All measurement points are complete. You may now open the derivation and analysis." : "บันทึกค่า " + measurement.label + " = " + measurement.reading + " แล้ว / Measurement recorded.");
+    render();notifyChange();
+  }
+
+  function explainCurrent() {
+    var s = currentStationState();
+    if (!s.experimentViewed || s.explanationViewed) return;
+    s.explanationViewed = true;
+    setFeedback(s,"good","🔍 เปิดการวิเคราะห์แล้ว อ่านความสัมพันธ์และทำบัตรผ่านด่าน / Analysis unlocked. Study the relationships and complete the pass card.");
+    render();notifyChange();
+  }
+
+  function validatePassA1(s) {
+    return s.exitAnswers.lengthRule === "double" && s.exitAnswers.areaRule === "half" && s.exitAnswers.materialRule === "rho" && nearlyEqual(parseNumericAnswer(s.exitAnswers.calculation),3,0.01,0.02);
+  }
+  function validatePassA2(s) {
+    return s.exitAnswers.voltageRule === "double" && s.exitAnswers.resistanceRule === "half" && s.exitAnswers.graphRule === "origin_line" && nearlyEqual(parseNumericAnswer(s.exitAnswers.calculation),1.5,0.01,0.02);
+  }
+  function validatePassA3(s) {
+    return s.exitAnswers.currentRule === "same" && s.exitAnswers.voltageRule === "sum" &&
+      nearlyEqual(parseNumericAnswer(s.exitAnswers.totalResistance),9,0.01,0.02) && nearlyEqual(parseNumericAnswer(s.exitAnswers.totalCurrent),2,0.01,0.02) &&
+      nearlyEqual(parseNumericAnswer(s.exitAnswers.voltage1),6,0.01,0.02) && nearlyEqual(parseNumericAnswer(s.exitAnswers.voltage2),12,0.01,0.02);
+  }
+  function validatePassA4(s) {
+    return s.exitAnswers.voltageRule === "same" && s.exitAnswers.currentRule === "sum" && s.exitAnswers.largerCurrent === "largerG" &&
+      nearlyEqual(parseNumericAnswer(s.exitAnswers.totalConductance),1/3,0.02,0.006) && nearlyEqual(parseNumericAnswer(s.exitAnswers.totalResistance),3,0.01,0.02) &&
+      nearlyEqual(parseNumericAnswer(s.exitAnswers.current1),3,0.01,0.02) && nearlyEqual(parseNumericAnswer(s.exitAnswers.current2),1,0.01,0.02) && nearlyEqual(parseNumericAnswer(s.exitAnswers.totalCurrent),4,0.01,0.02);
+  }
+
+  function checkPassCard() {
+    var id = currentDef().id;
+    var s = currentStationState();
+    if (!s.explanationViewed) {
+      setExitFeedback(s,"ยังไม่สามารถส่งบัตรผ่านได้ ต้องทำการทดลองและเปิดการวิเคราะห์ก่อน / Complete the simulation and open the analysis before submitting the pass card.");
+      render();return;
+    }
+    s.exitAttempts += 1;
+    var correct = id === "A1" ? validatePassA1(s) : id === "A2" ? validatePassA2(s) : id === "A3" ? validatePassA3(s) : validatePassA4(s);
+    if (!correct) {
+      setExitFeedback(s,"❌ บัตรยังไม่ผ่าน ตรวจคำตอบแนวคิด หน่วย และการคำนวณอีกครั้ง สามารถแก้แล้วส่งใหม่ได้ / The pass card is not yet approved. Recheck the concepts, units, and calculations, then submit again.");
+      render();notifyChange();return;
+    }
+    s.completed = true;
+    setExitFeedback(s,"✅ ผ่านบัตรแล้ว / Pass card approved.");
+    setFeedback(s,"good","🏅 ผ่านด่าน " + id + " แล้ว / Station " + id + " completed.");
+    state.completed = STATIONS.every(function (d) { return state.stations[d.id].completed; });
+    if (state.completed) state.showSummary = true;
+    render();notifyChange();
+  }
+
+  function resetStation() {
+    var id = currentDef().id;
+    var s = currentStationState();
+    if (s.completed) return;
+    if (!window.confirm("ล้างการทำงานของด่านนี้และเริ่มใหม่? / Reset this station and start again?")) return;
+    state.stations[id] = id === "A1" ? createA1State() : id === "A2" ? createA2State() : id === "A3" ? createA3State() : createA4State();
+    render();notifyChange();
+  }
+  function resetAll() {
+    if (!window.confirm("เริ่ม Unit A ใหม่ทั้งหมด? / Restart the entire Unit A?")) return false;
+    state = blankState();render();notifyChange();return true;
+  }
+  function nextStation() {
+    var s = currentStationState();
+    if (!s.completed || state.currentStationIndex >= STATIONS.length-1) return;
+    state.currentStationIndex += 1;state.showSummary = false;render();notifyChange();
+  }
+
+  function updateField(field,value) {
+    var s = currentStationState();
+    if (!s.hasOwnProperty(field)) return;
+    s[field] = value;
+    render();scheduleNotifyChange();
+  }
+  function updateExit(field,value,rerender) {
+    var s = currentStationState();
+    if (!s.exitAnswers || !s.exitAnswers.hasOwnProperty(field)) return;
+    s.exitAnswers[field] = value;
+    if (rerender) render();
+    scheduleNotifyChange();
+  }
+
+  function handleClick(event) {
+    var target = event.target.closest("[data-action]");
+    if (!target || !root.contains(target)) return;
+    var action = target.getAttribute("data-action");
+    if (action === "go-station") {
+      var index = Number(target.getAttribute("data-index"));
+      if (Number.isFinite(index)) { state.currentStationIndex = clamp(index,0,STATIONS.length-1);state.showSummary = false;render();notifyChange(); }
+      return;
+    }
+    if (action === "approve") return approveCurrentStation();
+    if (action === "start-simulation") return startSimulation();
+    if (action === "run-a1-experiment") return runA1Experiment(target.getAttribute("data-experiment"));
+    if (action === "record-v-trial") return recordA2Trial("v");
+    if (action === "record-r-trial") return recordA2Trial("r");
+    if (action === "select-meter") { var s = currentStationState();s.meterType = target.getAttribute("data-meter");if ((currentDef().id === "A3" || currentDef().id === "A4") && s.simulationStarted) setFeedback(s,"info",(s.meterType === "ammeter" ? "เลือกแอมมิเตอร์แล้ว กดเปิดโหมดวัดเพื่อแตะจุด A / Ammeter selected. Turn measurement mode on, then tap A-points." : "เลือกโวลต์มิเตอร์แล้ว กดเปิดโหมดวัดเพื่อแตะจุด V / Voltmeter selected. Turn measurement mode on, then tap V-points."));render();scheduleNotifyChange();return; }
+    if (action === "toggle-measure-mode") { var s = currentStationState(); if (!(currentDef().id === "A3" || currentDef().id === "A4") || !s.simulationStarted) return; s.measureMode = !s.measureMode; setFeedback(s,"info",s.measureMode ? "🟢 เปิดโหมดวัดแล้ว แตะจุดที่กะพริบเพื่อบันทึกค่า / Measurement mode is ON. Tap the glowing points to record readings." : "🔴 ปิดโหมดวัดแล้ว หากต้องการแตะจุดวัดอีกครั้งให้กดเปิดโหมดวัด / Measurement mode is OFF. Turn it on again when you want to tap measurement points."); render(); notifyChange(); return; }
+    if (action === "measure-point") return measurePoint(target);
+    if (action === "explain") return explainCurrent();
+    if (action === "check-pass") return checkPassCard();
+    if (action === "reset-station") return resetStation();
+    if (action === "next-station") return nextStation();
+    if (action === "show-summary") { state.showSummary = true;render();notifyChange();return; }
+    if (action === "review-station") { state.showSummary = false;state.currentStationIndex = clamp(Number(target.getAttribute("data-index")) || 0,0,3);render();notifyChange();return; }
+    if (action === "reset-all") return resetAll();
+  }
+  function handleChange(event) {
+    var fieldNode = event.target.closest("[data-field]");
+    if (fieldNode && root.contains(fieldNode)) return updateField(fieldNode.getAttribute("data-field"),fieldNode.value);
+    var exitNode = event.target.closest("[data-exit]");
+    if (exitNode && root.contains(exitNode) && exitNode.tagName === "SELECT") return updateExit(exitNode.getAttribute("data-exit"),exitNode.value,true);
+  }
+  function handleInput(event) {
+    var exitNode = event.target.closest("[data-exit]");
+    if (!exitNode || !root.contains(exitNode) || exitNode.tagName === "SELECT") return;
+    updateExit(exitNode.getAttribute("data-exit"),exitNode.value,false);
+  }
+  function handleKeydown(event) {
+    var target = event.target.closest('[data-action="measure-point"]');
+    if (target && (event.key === "Enter" || event.key === " ")) { event.preventDefault();measurePoint(target); }
+  }
+
+  function parseMaybeJson(value) { if (typeof value !== "string") return value;try { return JSON.parse(value); } catch (error) { return value; } }
+  function normalizeRestorePayload(input) {
+    var queue = [parseMaybeJson(input)],fallback = null,visited = [];
+    while (queue.length) {
+      var candidate = parseMaybeJson(queue.shift());
+      if (!candidate || typeof candidate !== "object" || visited.indexOf(candidate) >= 0) continue;
+      visited.push(candidate);
+      if (candidate.stations && typeof candidate.stations === "object") return candidate;
+      if (fallback === null && (candidate.percent !== undefined || candidate.score !== undefined || candidate.completedStations !== undefined || candidate.currentStation !== undefined || candidate.currentStationIndex !== undefined)) fallback = candidate;
+      ["data","payload","saveData","savedData","labData","state","progress"].forEach(function (key) { if (candidate[key] !== undefined && candidate[key] !== candidate) queue.push(parseMaybeJson(candidate[key])); });
+    }
+    return fallback;
+  }
+  function savedPercent(data) {
+    var percent = Number(data && data.percent);
+    if (!Number.isFinite(percent)) {
+      var score = Number(data && data.score),maxScore = Number(data && data.maxScore);
+      if (Number.isFinite(score)) percent = Number.isFinite(maxScore) && maxScore > 0 ? score/maxScore*100 : score;
+    }
+    return Number.isFinite(percent) ? clamp(percent,0,100) : 0;
+  }
+  function completedStationsFromScore(data) {
+    var explicit = Number(data && data.completedStations);
+    if (Number.isFinite(explicit)) return clamp(Math.floor(explicit),0,4);
+    var percent = savedPercent(data);
+    if (percent >= 99.5) return 4;
+    if (percent >= 74.5) return 3;
+    if (percent >= 49.5) return 2;
+    if (percent >= 24.5) return 1;
+    return 0;
+  }
+
+  function sanitizeBase(target,input) {
+    input = input && typeof input === "object" ? input : {};
+    target.approved = input.approved === true;
+    target.experimentViewed = input.experimentViewed === true;
+    target.explanationViewed = input.explanationViewed === true;
+    target.completed = input.completed === true;
+    target.selectionAttempts = Math.max(0,Math.floor(asNumber(input.selectionAttempts,0)));
+    target.exitAttempts = Math.max(0,Math.floor(asNumber(input.exitAttempts,0)));
+    if (typeof input.feedbackTone === "string") target.feedbackTone = input.feedbackTone;
+    if (typeof input.feedbackMessage === "string") target.feedbackMessage = input.feedbackMessage;
+    if (typeof input.exitFeedback === "string") target.exitFeedback = input.exitFeedback;
+    return target;
+  }
+  function copyKnownStrings(target,source,keys) { keys.forEach(function (key) { if (typeof source[key] === "string") target[key] = source[key]; }); }
+  function sanitizeA1(input) {
+    var out = sanitizeBase(createA1State(),input);input = input || {};
+    copyKnownStrings(out,input,["selectedFormula","selectedAreaConversion","lastExperiment"]);
+    if (input.experiments && typeof input.experiments === "object") ["length","area","material"].forEach(function (key) { out.experiments[key] = input.experiments[key] === true; });
+    if (input.exitAnswers && typeof input.exitAnswers === "object") copyKnownStrings(out.exitAnswers,input.exitAnswers,["lengthRule","areaRule","materialRule","calculation"]);
+    out.experimentViewed = out.experimentViewed || allTrue(out.experiments);return out;
+  }
+  function sanitizeA2(input) {
+    var out = sanitizeBase(createA2State(),input);input = input || {};
+    copyKnownStrings(out,input,["ammeterConnection","voltmeterConnection","voltageChoice","resistanceChoice"]);out.simulationStarted = input.simulationStarted === true;
+    if (Array.isArray(input.varyVTrials)) out.varyVTrials = uniqueNumbers(input.varyVTrials.map(Number).filter(Number.isFinite)).filter(function (v) { return [3,6,9,12].indexOf(v) >= 0; });
+    if (Array.isArray(input.varyRTrials)) out.varyRTrials = uniqueNumbers(input.varyRTrials.map(Number).filter(Number.isFinite)).filter(function (r) { return [3,6,12,24].indexOf(r) >= 0; });
+    if (input.exitAnswers && typeof input.exitAnswers === "object") copyKnownStrings(out.exitAnswers,input.exitAnswers,["voltageRule","resistanceRule","graphRule","calculation"]);
+    out.experimentViewed = out.experimentViewed || (out.varyVTrials.length >= 4 && out.varyRTrials.length >= 4);return out;
+  }
+  function sanitizeCircuit(input,isParallel) {
+    var out = sanitizeBase(isParallel ? createA4State() : createA3State(),input);input = input || {};
+    copyKnownStrings(out,input,["connectionType","ammeterRule","voltmeterRule","supplyVoltageV","resistance1Ohm","resistance2Ohm","meterType"]);out.simulationStarted = input.simulationStarted === true;out.measureMode = input.measureMode === true;
+    if (input.measuredPoints && typeof input.measuredPoints === "object") Object.keys(out.measuredPoints).forEach(function (key) { out.measuredPoints[key] = input.measuredPoints[key] === true; });
+    if (input.lastMeasurement && typeof input.lastMeasurement === "object") out.lastMeasurement = {label:String(input.lastMeasurement.label || ""),reading:String(input.lastMeasurement.reading || "")};
+    if (input.exitAnswers && typeof input.exitAnswers === "object") copyKnownStrings(out.exitAnswers,input.exitAnswers,Object.keys(out.exitAnswers));
+    out.experimentViewed = out.experimentViewed || allTrue(out.measuredPoints);return out;
+  }
+
+  function fillCompletedA1(s) {
+    s.selectedFormula="rhoL_over_A";s.selectedAreaConversion="mm2_to_m2";s.approved=true;s.experiments={length:true,area:true,material:true};s.lastExperiment="material";s.experimentViewed=true;s.explanationViewed=true;s.exitAnswers={lengthRule:"double",areaRule:"half",materialRule:"rho",calculation:"3"};s.completed=true;
+  }
+  function fillCompletedA2(s) {
+    s.ammeterConnection="series";s.voltmeterConnection="parallel";s.approved=true;s.simulationStarted=true;s.varyVTrials=[3,6,9,12];s.varyRTrials=[3,6,12,24];s.experimentViewed=true;s.explanationViewed=true;s.exitAnswers={voltageRule:"double",resistanceRule:"half",graphRule:"origin_line",calculation:"1.5"};s.completed=true;
+  }
+  function fillCompletedA3(s) {
+    s.connectionType="series";s.ammeterRule="series";s.voltmeterRule="parallel";s.approved=true;s.simulationStarted=true;s.measureMode=true;Object.keys(s.measuredPoints).forEach(function (k) { s.measuredPoints[k]=true; });s.experimentViewed=true;s.explanationViewed=true;s.exitAnswers={currentRule:"same",voltageRule:"sum",totalResistance:"9",totalCurrent:"2",voltage1:"6",voltage2:"12"};s.completed=true;
+  }
+  function fillCompletedA4(s) {
+    s.connectionType="parallel";s.ammeterRule="series";s.voltmeterRule="parallel";s.approved=true;s.simulationStarted=true;s.measureMode=true;Object.keys(s.measuredPoints).forEach(function (k) { s.measuredPoints[k]=true; });s.experimentViewed=true;s.explanationViewed=true;s.exitAnswers={voltageRule:"same",currentRule:"sum",largerCurrent:"largerG",totalConductance:"1/3",totalResistance:"3",current1:"3",current2:"1",totalCurrent:"4"};s.completed=true;
+  }
+
+  function restore(input) {
+    if (!input) return false;
+    var data = normalizeRestorePayload(input);
+    if (!data || typeof data !== "object") return false;
+    if (data.labType && data.labType !== LAB_TYPE) return false;
+    var next = blankState();
+    var detailed = data.stations && typeof data.stations === "object";
+    if (detailed) {
+      if (data.stations.A1) next.stations.A1 = sanitizeA1(data.stations.A1);
+      if (data.stations.A2) next.stations.A2 = sanitizeA2(data.stations.A2);
+      if (data.stations.A3) next.stations.A3 = sanitizeCircuit(data.stations.A3,false);
+      if (data.stations.A4) next.stations.A4 = sanitizeCircuit(data.stations.A4,true);
+    } else {
+      var count = completedStationsFromScore(data);
+      if (count >= 1) fillCompletedA1(next.stations.A1);
+      if (count >= 2) fillCompletedA2(next.stations.A2);
+      if (count >= 3) fillCompletedA3(next.stations.A3);
+      if (count >= 4) fillCompletedA4(next.stations.A4);
+    }
+    next.completed = !!data.completed || STATIONS.every(function (d) { return next.stations[d.id].completed; }) || savedPercent(data) >= 99.5;
+    next.showSummary = next.completed ? data.showSummary !== false : false;
+    var requestedIndex = Number.isFinite(Number(data.currentStationIndex)) ? Number(data.currentStationIndex) : 0;
+    if (data.currentStation) {
+      var found = STATIONS.findIndex(function (d) { return d.id === data.currentStation; });
+      if (found >= 0) requestedIndex = found;
+    }
+    requestedIndex = clamp(requestedIndex,0,3);
+    if (!next.completed) {
+      var firstIncomplete = STATIONS.findIndex(function (d) { return !next.stations[d.id].completed; });
+      var requestedDef = STATIONS[requestedIndex];
+      var requestedAccessible = requestedIndex === 0 || next.stations[STATIONS[requestedIndex-1].id].completed;
+      if (!requestedDef || next.stations[requestedDef.id].completed || !requestedAccessible) requestedIndex = firstIncomplete >= 0 ? firstIncomplete : 0;
+    }
+    next.currentStationIndex = requestedIndex;
+    state = next;render();return true;
+  }
+
+  function consumePendingSave() {
+    if (!window.pendingLabSave) return false;
+    var normalized = normalizeRestorePayload(window.pendingLabSave);
+    if (normalized && normalized.labType && normalized.labType !== LAB_TYPE) return false;
+    var ok = restore(window.pendingLabSave);if (ok) window.pendingLabSave = null;return ok;
+  }
+  function handleRestoreRequest(event) {
+    var detail = event && event.detail ? event.detail : {};
+    var incoming = detail.data || detail.payload || detail.saveData || detail.savedData || detail.labData || detail.state || detail;
+    if (!incoming) return;
+    window.pendingLabSave = incoming;consumePendingSave();
+  }
+  function clearAllTimers() {
+    activeTimers.forEach(function (timer) { clearTimeout(timer);clearInterval(timer); });activeTimers=[];clearTimeout(saveDebounceTimer);
+  }
+
+  root.addEventListener("click",handleClick);
+  root.addEventListener("change",handleChange);
+  root.addEventListener("input",handleInput);
+  root.addEventListener("keydown",handleKeydown);
+  document.addEventListener("examate-lab-restore-request",handleRestoreRequest);
+
+  window.ExamateLab = {
+    version:VERSION,labType:LAB_TYPE,
+    config:{totalSteps:STATIONS.length*6,maxScore:100},
+    init:function () { render();return true; },
+    getPercent:getPercent,
+    getScore:function () { return getPercent(); },
+    getSavePayload:getSavePayload,
+    restore:restore,
+    resetAll:resetAll,
+    destroy:function () {
+      clearAllTimers();
+      root.removeEventListener("click",handleClick);root.removeEventListener("change",handleChange);root.removeEventListener("input",handleInput);root.removeEventListener("keydown",handleKeydown);
+      document.removeEventListener("examate-lab-restore-request",handleRestoreRequest);
+      if (root) root.dataset.pdcReady = "";
+      return true;
+    }
+  };
+
+  render();
+  consumePendingSave();
+  try { document.dispatchEvent(new CustomEvent("examate-lab-ready",{detail:{labType:LAB_TYPE,version:VERSION,unitId:UNIT_ID}})); } catch (error) {}
+})();
+</script>
