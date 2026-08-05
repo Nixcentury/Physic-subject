@@ -226,7 +226,7 @@
 
   var ROOT_ID = "organic-unit-a-root";
   var LAB_TYPE = "ORGANIC_LAB_UNIT_A_ALCOHOL_SODIUM";
-  var VERSION = "1.0.0";
+  var VERSION = "1.0.2";
   var root = document.getElementById(ROOT_ID);
   if (!root || root.dataset.olaReady === "1") return;
   root.dataset.olaReady = "1";
@@ -712,6 +712,8 @@
       currentStationIndex:state.currentStationIndex,
       currentStep:totalStepPoints(),
       totalSteps:STATIONS.length * 6,
+      score:getPercent(),
+      maxScore:100,
       percent:getPercent(),
       completedStations:completedCount(),
       totalStations:STATIONS.length,
@@ -721,26 +723,210 @@
     };
   }
 
-  function restore(data) {
-    if (!data) return false;
-    if (typeof data === "string") {
-      try { data = JSON.parse(data); } catch (error) { return false; }
+  function parseMaybeJson(value) {
+    if (typeof value !== "string") return value;
+    try {
+      return JSON.parse(value);
+    } catch (error) {
+      return value;
     }
+  }
+
+  function normalizeRestorePayload(input) {
+    var queue = [parseMaybeJson(input)];
+    var fallback = null;
+    var visited = [];
+
+    while (queue.length) {
+      var candidate = parseMaybeJson(queue.shift());
+
+      if (!candidate || typeof candidate !== "object") continue;
+      if (visited.indexOf(candidate) >= 0) continue;
+      visited.push(candidate);
+
+      if (
+        candidate.stations &&
+        typeof candidate.stations === "object"
+      ) {
+        return candidate;
+      }
+
+      if (
+        fallback === null &&
+        (
+          candidate.percent !== undefined ||
+          candidate.score !== undefined ||
+          candidate.completedStations !== undefined ||
+          candidate.currentStation !== undefined ||
+          candidate.currentStationIndex !== undefined
+        )
+      ) {
+        fallback = candidate;
+      }
+
+      [
+        "data",
+        "payload",
+        "saveData",
+        "savedData",
+        "labData",
+        "state",
+        "progress"
+      ].forEach(function (key) {
+        if (candidate[key] !== undefined && candidate[key] !== candidate) {
+          queue.push(parseMaybeJson(candidate[key]));
+        }
+      });
+    }
+
+    return fallback;
+  }
+
+  function savedPercent(data) {
+    var percent = Number(data && data.percent);
+
+    if (!Number.isFinite(percent)) {
+      var score = Number(data && data.score);
+      var maxScore = Number(data && data.maxScore);
+
+      if (Number.isFinite(score)) {
+        percent =
+          Number.isFinite(maxScore) && maxScore > 0
+            ? score / maxScore * 100
+            : score;
+      }
+    }
+
+    if (!Number.isFinite(percent)) return 0;
+    return Math.max(0,Math.min(100,percent));
+  }
+
+  function completedStationsFromScore(data) {
+    var explicit = Number(data && data.completedStations);
+
+    if (Number.isFinite(explicit)) {
+      return Math.max(
+        0,
+        Math.min(STATIONS.length,Math.floor(explicit))
+      );
+    }
+
+    var percent = savedPercent(data);
+
+    if (percent >= 99.5) return 3;
+    if (percent >= 66) return 2;
+    if (percent >= 33) return 1;
+    return 0;
+  }
+
+  function fillCompletedStationFromScore(definition,stationState) {
+    stationState.selectedStructure = definition.targetStructure;
+    stationState.selectedReagent = "sodium";
+    stationState.selectedCondition = "dry_room";
+    stationState.approved = true;
+    stationState.experimentViewed = true;
+    stationState.explanationViewed = true;
+    stationState.exitAnswers = {
+      bond:"oh",
+      product:"alkoxide",
+      gas:"h2",
+      reason:"has_oh"
+    };
+    stationState.completed = true;
+  }
+
+  function restore(input) {
+    if (!input) return false;
+
+    var data = normalizeRestorePayload(input);
+    if (!data || typeof data !== "object") return false;
     if (data.labType && data.labType !== LAB_TYPE) return false;
-    if (!data.stations || typeof data.stations !== "object") return false;
 
     var next = blankState();
-    STATIONS.forEach(function (d) {
-      if (data.stations[d.id] && typeof data.stations[d.id] === "object") {
-        next.stations[d.id] = Object.assign(blankStation(),clone(data.stations[d.id]));
-        next.stations[d.id].exitAnswers = Object.assign(
-          {bond:"",product:"",gas:"",reason:""},
-          clone((data.stations[d.id] || {}).exitAnswers || {})
-        );
+    var hasDetailedStations =
+      data.stations &&
+      typeof data.stations === "object";
+
+    if (hasDetailedStations) {
+      STATIONS.forEach(function (d) {
+        if (
+          data.stations[d.id] &&
+          typeof data.stations[d.id] === "object"
+        ) {
+          next.stations[d.id] = Object.assign(
+            blankStation(),
+            clone(data.stations[d.id])
+          );
+
+          next.stations[d.id].exitAnswers = Object.assign(
+            {bond:"",product:"",gas:"",reason:""},
+            clone((data.stations[d.id] || {}).exitAnswers || {})
+          );
+        }
+      });
+    } else {
+      var inferredCompleted = completedStationsFromScore(data);
+
+      STATIONS.forEach(function (d,index) {
+        if (index < inferredCompleted) {
+          fillCompletedStationFromScore(
+            d,
+            next.stations[d.id]
+          );
+        }
+      });
+    }
+
+    next.completed =
+      !!data.completed ||
+      STATIONS.every(function (d) {
+        return !!next.stations[d.id].completed;
+      }) ||
+      savedPercent(data) >= 99.5;
+
+    var requestedIndex =
+      Number.isFinite(Number(data.currentStationIndex))
+        ? Number(data.currentStationIndex)
+        : 0;
+
+    if (data.currentStation) {
+      var stationIndexFromId = STATIONS.findIndex(function (d) {
+        return d.id === data.currentStation;
+      });
+
+      if (stationIndexFromId >= 0) {
+        requestedIndex = stationIndexFromId;
       }
-    });
-    next.currentStationIndex = Math.max(0,Math.min(STATIONS.length-1,Number(data.currentStationIndex) || 0));
-    next.completed = !!data.completed || STATIONS.every(function (d) { return !!next.stations[d.id].completed; });
+    }
+
+    requestedIndex = Math.max(
+      0,
+      Math.min(STATIONS.length - 1,requestedIndex)
+    );
+
+    if (!next.completed) {
+      var firstIncompleteIndex = STATIONS.findIndex(function (d) {
+        return !next.stations[d.id].completed;
+      });
+
+      var requestedStation = STATIONS[requestedIndex];
+      var requestedIsIncomplete =
+        requestedStation &&
+        !next.stations[requestedStation.id].completed;
+
+      var requestedIsAccessible =
+        requestedIndex === 0 ||
+        !!next.stations[STATIONS[requestedIndex - 1].id].completed;
+
+      if (
+        firstIncompleteIndex >= 0 &&
+        (!requestedIsIncomplete || !requestedIsAccessible)
+      ) {
+        requestedIndex = firstIncompleteIndex;
+      }
+    }
+
+    next.currentStationIndex = requestedIndex;
     state = next;
     render();
     return true;
@@ -775,8 +961,16 @@
 
   function handleRestoreRequest(event) {
     var detail = event && event.detail ? event.detail : {};
-    var incoming = detail.data || null;
-    if (!incoming) return;
+    var incoming =
+      detail.data ||
+      detail.payload ||
+      detail.saveData ||
+      detail.savedData ||
+      detail.labData ||
+      detail.state ||
+      detail;
+
+    if (!incoming || typeof incoming !== "object") return;
     window.pendingLabSave = incoming;
     consumePendingSave();
   }
