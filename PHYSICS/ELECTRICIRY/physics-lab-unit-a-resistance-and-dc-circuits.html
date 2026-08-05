@@ -170,7 +170,7 @@
 
   var ROOT_ID = "physics-unit-a-resistance-root";
   var LAB_TYPE = "PHYSICS_LAB_UNIT_A_RESISTANCE_AND_DC_CIRCUITS";
-  var VERSION = "1.0.0";
+  var VERSION = "1.0.2";
   var UNIT_ID = "A";
   var root = document.getElementById(ROOT_ID);
   if (!root || root.dataset.pdcReady === "1") return;
@@ -967,8 +967,18 @@
       if (!candidate || typeof candidate !== "object" || visited.indexOf(candidate) >= 0) continue;
       visited.push(candidate);
       if (candidate.stations && typeof candidate.stations === "object") return candidate;
-      if (fallback === null && (candidate.percent !== undefined || candidate.score !== undefined || candidate.completedStations !== undefined || candidate.currentStation !== undefined || candidate.currentStationIndex !== undefined)) fallback = candidate;
-      ["data","payload","saveData","savedData","labData","state","progress"].forEach(function (key) { if (candidate[key] !== undefined && candidate[key] !== candidate) queue.push(parseMaybeJson(candidate[key])); });
+      if (fallback === null && (
+        candidate.percent !== undefined ||
+        candidate.score !== undefined ||
+        candidate.completedStations !== undefined ||
+        candidate.currentStation !== undefined ||
+        candidate.currentStationIndex !== undefined ||
+        candidate.currentStep !== undefined ||
+        candidate.step !== undefined
+      )) fallback = candidate;
+      ["data","payload","saveData","savedData","labData","state","progress","progressData","result","value"].forEach(function (key) {
+        if (candidate[key] !== undefined && candidate[key] !== candidate) queue.push(parseMaybeJson(candidate[key]));
+      });
     }
     return fallback;
   }
@@ -977,6 +987,14 @@
     if (!Number.isFinite(percent)) {
       var score = Number(data && data.score),maxScore = Number(data && data.maxScore);
       if (Number.isFinite(score)) percent = Number.isFinite(maxScore) && maxScore > 0 ? score/maxScore*100 : score;
+    }
+    if (!Number.isFinite(percent)) {
+      var currentStep = Number(data && (data.currentStep !== undefined ? data.currentStep : data.step));
+      var totalSteps = Number(data && data.totalSteps);
+      if (Number.isFinite(currentStep)) {
+        if (!Number.isFinite(totalSteps) || totalSteps <= 0) totalSteps = STATIONS.length * 6;
+        percent = currentStep / totalSteps * 100;
+      }
     }
     return Number.isFinite(percent) ? clamp(percent,0,100) : 0;
   }
@@ -1042,6 +1060,60 @@
     s.connectionType="parallel";s.ammeterRule="series";s.voltmeterRule="parallel";s.approved=true;s.simulationStarted=true;s.measureMode=true;Object.keys(s.measuredPoints).forEach(function (k) { s.measuredPoints[k]=true; });s.experimentViewed=true;s.explanationViewed=true;s.exitAnswers={voltageRule:"same",currentRule:"sum",largerCurrent:"largerG",totalConductance:"1/3",totalResistance:"3",current1:"3",current2:"1",totalCurrent:"4"};s.completed=true;
   }
 
+  function savedStepPoints(data) {
+    var currentStep = Number(data && (data.currentStep !== undefined ? data.currentStep : data.step));
+    var totalSteps = Number(data && data.totalSteps);
+    if (Number.isFinite(currentStep)) {
+      if (Number.isFinite(totalSteps) && totalSteps > 0 && totalSteps !== STATIONS.length * 6) {
+        currentStep = currentStep / totalSteps * (STATIONS.length * 6);
+      }
+      return clamp(Math.round(currentStep),0,STATIONS.length * 6);
+    }
+    return clamp(Math.round(savedPercent(data) / 100 * (STATIONS.length * 6)),0,STATIONS.length * 6);
+  }
+
+  function fillA1ToStep(s,step) {
+    if (step >= 1) s.selectedFormula = "rhoL_over_A";
+    if (step >= 2) s.selectedAreaConversion = "mm2_to_m2";
+    if (step >= 3) s.approved = true;
+    if (step >= 4) { s.experiments={length:true,area:true,material:true};s.lastExperiment="material";s.experimentViewed=true; }
+    if (step >= 5) s.explanationViewed = true;
+    if (step >= 6) fillCompletedA1(s);
+  }
+  function fillA2ToStep(s,step) {
+    if (step >= 1) s.ammeterConnection = "series";
+    if (step >= 2) s.voltmeterConnection = "parallel";
+    if (step >= 3) s.approved = true;
+    if (step >= 4) { s.simulationStarted=true;s.varyVTrials=[3,6,9,12];s.varyRTrials=[3,6,12,24];s.experimentViewed=true; }
+    if (step >= 5) s.explanationViewed = true;
+    if (step >= 6) fillCompletedA2(s);
+  }
+  function fillA3ToStep(s,step) {
+    if (step >= 1) s.connectionType = "series";
+    if (step >= 2) { s.ammeterRule="series";s.voltmeterRule="parallel"; }
+    if (step >= 3) s.approved = true;
+    if (step >= 4) { s.simulationStarted=true;s.measureMode=true;Object.keys(s.measuredPoints).forEach(function (k) { s.measuredPoints[k]=true; });s.experimentViewed=true; }
+    if (step >= 5) s.explanationViewed = true;
+    if (step >= 6) fillCompletedA3(s);
+  }
+  function fillA4ToStep(s,step) {
+    if (step >= 1) s.connectionType = "parallel";
+    if (step >= 2) { s.ammeterRule="series";s.voltmeterRule="parallel"; }
+    if (step >= 3) s.approved = true;
+    if (step >= 4) { s.simulationStarted=true;s.measureMode=true;Object.keys(s.measuredPoints).forEach(function (k) { s.measuredPoints[k]=true; });s.experimentViewed=true; }
+    if (step >= 5) s.explanationViewed = true;
+    if (step >= 6) fillCompletedA4(s);
+  }
+  function restoreFromStepPoints(next,totalPoints) {
+    var remaining = clamp(Math.floor(totalPoints),0,STATIONS.length * 6);
+    var fillers = [fillA1ToStep,fillA2ToStep,fillA3ToStep,fillA4ToStep];
+    STATIONS.forEach(function (definition,index) {
+      var stationPoints = clamp(remaining,0,6);
+      fillers[index](next.stations[definition.id],stationPoints);
+      remaining -= stationPoints;
+    });
+  }
+
   function restore(input) {
     if (!input) return false;
     var data = normalizeRestorePayload(input);
@@ -1055,11 +1127,7 @@
       if (data.stations.A3) next.stations.A3 = sanitizeCircuit(data.stations.A3,false);
       if (data.stations.A4) next.stations.A4 = sanitizeCircuit(data.stations.A4,true);
     } else {
-      var count = completedStationsFromScore(data);
-      if (count >= 1) fillCompletedA1(next.stations.A1);
-      if (count >= 2) fillCompletedA2(next.stations.A2);
-      if (count >= 3) fillCompletedA3(next.stations.A3);
-      if (count >= 4) fillCompletedA4(next.stations.A4);
+      restoreFromStepPoints(next,savedStepPoints(data));
     }
     next.completed = !!data.completed || STATIONS.every(function (d) { return next.stations[d.id].completed; }) || savedPercent(data) >= 99.5;
     next.showSummary = next.completed ? data.showSummary !== false : false;
@@ -1080,10 +1148,19 @@
   }
 
   function consumePendingSave() {
-    if (!window.pendingLabSave) return false;
-    var normalized = normalizeRestorePayload(window.pendingLabSave);
+    if (window.pendingLabSave === null || window.pendingLabSave === undefined || window.pendingLabSave === "") return false;
+    var incoming = window.pendingLabSave;
+    if (typeof incoming === "number" || (typeof incoming === "string" && /^\s*\d+(?:\.\d+)?\s*$/.test(incoming))) {
+      incoming = {score:Number(incoming),maxScore:100};
+    }
+    var normalized = normalizeRestorePayload(incoming);
     if (normalized && normalized.labType && normalized.labType !== LAB_TYPE) return false;
-    var ok = restore(window.pendingLabSave);if (ok) window.pendingLabSave = null;return ok;
+    var ok = restore(incoming);
+    if (ok) {
+      window.pendingLabSave = null;
+      try { console.log("[Physics Unit A] Restore successful", getSavePayload()); } catch (error) {}
+    }
+    return ok;
   }
   function handleRestoreRequest(event) {
     var detail = event && event.detail ? event.detail : {};
@@ -1099,7 +1176,6 @@
   root.addEventListener("change",handleChange);
   root.addEventListener("input",handleInput);
   root.addEventListener("keydown",handleKeydown);
-  document.addEventListener("examate-lab-restore-request",handleRestoreRequest);
 
   window.ExamateLab = {
     version:VERSION,labType:LAB_TYPE,
@@ -1121,6 +1197,7 @@
 
   render();
   consumePendingSave();
+  document.addEventListener("examate-lab-restore-request",handleRestoreRequest);
   try { document.dispatchEvent(new CustomEvent("examate-lab-ready",{detail:{labType:LAB_TYPE,version:VERSION,unitId:UNIT_ID}})); } catch (error) {}
 })();
 </script>
