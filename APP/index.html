@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEXUS Learning Portal | Kru Nix</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800;900&family=Noto+Sans+Thai:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#eef6ff;--card:#fff;--ink:#172033;--muted:#64748b;--blue:#2563eb;--cyan:#06b6d4;--green:#10b981;--line:#dbeafe;--shadow:0 24px 70px rgba(15,23,42,.12)}
+    *{box-sizing:border-box} body{margin:0;min-height:100vh;font-family:Inter,'Noto Sans Thai',system-ui,sans-serif;color:var(--ink);background:radial-gradient(circle at 0 0,rgba(37,99,235,.24),transparent 34%),radial-gradient(circle at 100% 0,rgba(6,182,212,.18),transparent 30%),linear-gradient(180deg,#f8fbff,var(--bg));}
+    .page{max-width:1180px;margin:0 auto;padding:28px 18px 72px}.hero{position:relative;overflow:hidden;border:1px solid rgba(147,197,253,.7);border-radius:32px;background:rgba(255,255,255,.82);box-shadow:var(--shadow);padding:30px}.kicker{display:inline-flex;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;border-radius:999px;padding:8px 12px;font-weight:900;font-size:12px;letter-spacing:.04em;text-transform:uppercase}h1{font-size:clamp(2.1rem,5vw,4.2rem);letter-spacing:-.06em;line-height:.98;margin:16px 0 10px}.sub{font-size:1.05rem;color:#475569;max-width:850px;line-height:1.75}.grid{display:grid;grid-template-columns:360px 1fr;gap:18px;margin-top:18px}.panel,.card{border:1px solid rgba(147,197,253,.7);background:rgba(255,255,255,.86);box-shadow:0 16px 42px rgba(15,23,42,.08);border-radius:24px;padding:18px}.panel h2,.work-head h2{margin:0 0 10px}.field{display:grid;gap:6px;margin:10px 0}.field label{font-size:13px;font-weight:900;color:#475569}.field input{width:100%;min-height:44px;border:2px solid #dbeafe;border-radius:14px;padding:10px 12px;font:800 15px/1.3 inherit;outline:none}.field input:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(37,99,235,.12)}.btn{border:0;border-radius:14px;background:#e2e8f0;color:#172033;padding:11px 14px;font:900 14px/1 inherit;cursor:pointer}.btn.primary{background:linear-gradient(135deg,var(--blue),#60a5fa);color:white}.btn.green{background:linear-gradient(135deg,var(--green),#34d399);color:white}.btn.ghost{background:white;border:1px solid #cbd5e1}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.status{margin-top:10px;font-weight:800;color:#475569;line-height:1.6}.userbox{display:none;margin-top:12px;padding:12px;border-radius:18px;background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;font-weight:900}.userbox.show{display:block}.work-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.search{min-width:220px;flex:1;border:2px solid #dbeafe;border-radius:14px;padding:10px 12px;font:800 14px/1 inherit}.works{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.work-card{border:1px solid #dbeafe;border-radius:20px;padding:14px;background:#fff;display:flex;flex-direction:column;gap:10px}.work-card h3{margin:0;font-size:16px;line-height:1.35}.meta{color:#64748b;font-size:12px;font-weight:800;line-height:1.5}.progress{height:10px;border-radius:999px;background:#e2e8f0;overflow:hidden}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--green))}.quick{margin-top:18px}.quick-links{display:grid;gap:10px}.quick-links a,.open-link{display:inline-flex;justify-content:center;text-decoration:none;border-radius:14px;padding:10px 12px;background:#eff6ff;color:#1d4ed8;font-weight:900;border:1px solid #bfdbfe}.open-link{background:var(--blue);color:#fff;border:0}.note{font-size:12px;color:#64748b;line-height:1.65;margin-top:10px}@media(max-width:900px){.grid{grid-template-columns:1fr}.works{grid-template-columns:1fr}.work-head{flex-direction:column;align-items:stretch}}
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <span class="kicker">Kru Nix • GitHub Pages Frontend</span>
+      <h1>NEXUS Learning Portal</h1>
+      <p class="sub">หน้าแรกสำหรับกิจกรรม Science • Math • Programming บน GitHub Pages เชื่อมหลังบ้าน Apps Script เพื่อ Login, โหลด Sitemap, Save/Restore progress และต่อยอด Google Classroom Sync</p>
+    </section>
+
+    <section class="grid">
+      <aside class="panel">
+        <h2>เข้าสู่ระบบ / Login</h2>
+        <div class="field"><label>Username</label><input id="username" autocomplete="username" placeholder="เช่น nix01"></div>
+        <div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password"></div>
+        <div class="row">
+          <button class="btn primary" id="loginBtn">Login</button>
+          <button class="btn ghost" id="logoutBtn">Logout</button>
+        </div>
+        <div class="status" id="loginStatus">ใส่ Apps Script Web App URL ในตัวแปร EXAMATE_API_URL ก่อนใช้งานจริง</div>
+        <div class="userbox" id="userBox"></div>
+
+        <div class="quick">
+          <h2>Quick Links</h2>
+          <div class="quick-links">
+            <a href="exam/%E0%B8%9F%E0%B8%B4%E0%B8%AA%E0%B8%B4%E0%B8%81%E0%B8%AA%E0%B9%8C%20Y12/m5-physics-rotation-shm-challenge-review.html">Physics Rotation & SHM</a>
+            <a href="exam/%E0%B9%80%E0%B8%84%E0%B8%A1%E0%B8%B5%20Y12%20%E0%B8%A1%E0%B8%B4%E0%B8%94%E0%B9%80%E0%B8%97%E0%B8%A1%E0%B8%AD/m5-chem-gas-ice-challenge-review-with-scratchpad.html">Chemistry Gas / ICE Challenge</a>
+            <a href="BASIC%20PRORAMING/python-foundations-operators-conditions-loops.html">Python Foundations</a>
+          </div>
+          <p class="note">Quick links เปิดได้ทันที ส่วนรายการด้านขวาจะดึงจาก Sitemap หลัง Login</p>
+        </div>
+      </aside>
+
+      <section class="panel">
+        <div class="work-head">
+          <div><h2>My Learning Activities</h2><div class="meta">ดึงจาก Sitemap + SavedStates ของระบบเดิม</div></div>
+          <div class="row"><input class="search" id="searchBox" placeholder="ค้นหา Physics, Chemistry, QuizID..."><button class="btn green" id="refreshBtn">Refresh</button></div>
+        </div>
+        <div id="works" class="works"></div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    // TODO: เปลี่ยนเป็น Web App URL ของ Apps Script deployment ล่าสุด
+    window.EXAMATE_API_URL = 'PASTE_APPS_SCRIPT_WEB_APP_URL_HERE';
+  </script>
+  <script src="assets/examate-bridge.js"></script>
+  <script>
+    const $ = (id) => document.getElementById(id);
+    let allWorks = [];
+
+    ExamateBridge.configure({ appUrl: window.EXAMATE_API_URL });
+
+    function updateUserBox(){
+      const user = ExamateBridge.getUser();
+      const box = $('userBox');
+      if(user){
+        box.classList.add('show');
+        box.innerHTML = '✅ Logged in: ' + (user.name || '') + '<br>StudentID: ' + (user.studentID || user.studentId || '');
+      } else {
+        box.classList.remove('show');
+        box.innerHTML = '';
+      }
+    }
+
+    async function doLogin(){
+      $('loginStatus').textContent = 'กำลังเข้าสู่ระบบ...';
+      try{
+        const data = await ExamateBridge.login($('username').value, $('password').value, false);
+        if(data.status === 'success'){
+          $('loginStatus').textContent = 'Login สำเร็จ กำลังโหลดงาน...';
+          updateUserBox();
+          await loadWorks();
+        } else {
+          $('loginStatus').textContent = data.message || 'Login ไม่สำเร็จ';
+        }
+      }catch(err){ $('loginStatus').textContent = err.message; }
+    }
+
+    async function loadWorks(){
+      $('works').innerHTML = '<div class="meta">Loading...</div>';
+      try{
+        const data = await ExamateBridge.getSitemap();
+        if(data.status !== 'success') throw new Error(data.message || 'โหลด Sitemap ไม่สำเร็จ');
+        allWorks = data.data || [];
+        renderWorks();
+        $('loginStatus').textContent = 'โหลดงานสำเร็จ: ' + allWorks.length + ' รายการ';
+      }catch(err){ $('works').innerHTML = '<div class="meta">' + err.message + '</div>'; }
+    }
+
+    function renderWorks(){
+      const q = $('searchBox').value.trim().toLowerCase();
+      const list = allWorks.filter(w => JSON.stringify(w).toLowerCase().includes(q));
+      $('works').innerHTML = list.map(workCard).join('') || '<div class="meta">ไม่พบรายการ</div>';
+    }
+
+    function workCard(w){
+      const title = (w.levels || []).filter(Boolean).slice(0,4).join(' › ') || w.id;
+      const progress = Number(w.savedProgress || 0);
+      const link = w.lessonUrl || w.manualLink || '#';
+      const safeLink = link === '#' ? '' : link;
+      return `
+        <article class="work-card">
+          <h3>${escapeHtml(title)}</h3>
+          <div class="meta">QuizID: ${escapeHtml(w.id || '')}<br>Tab: ${escapeHtml(w.tab || '')}</div>
+          <div class="progress"><div class="bar" style="width:${progress}%"></div></div>
+          <div class="meta">Progress: ${progress}% ${w.isSubmitted ? ' • Submitted' : ''}</div>
+          ${safeLink ? `<a class="open-link" href="${escapeAttr(safeLink)}">Open Activity</a>` : `<span class="meta">ยังไม่มี lessonUrl/manualLink</span>`}
+        </article>`;
+    }
+
+    function escapeHtml(s){return String(s||'').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+    function escapeAttr(s){return escapeHtml(s).replace(/'/g,'&#39;');}
+
+    $('loginBtn').onclick = doLogin;
+    $('logoutBtn').onclick = function(){ ExamateBridge.logout(); allWorks=[]; $('works').innerHTML=''; $('loginStatus').textContent='Logout แล้ว'; updateUserBox(); };
+    $('refreshBtn').onclick = loadWorks;
+    $('searchBox').addEventListener('input', renderWorks);
+    updateUserBox();
+    if(ExamateBridge.getToken()) loadWorks();
+  </script>
+</body>
+</html>
