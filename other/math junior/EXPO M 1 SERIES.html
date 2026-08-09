@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>M1 Master Review | Exponents & Scientific Notation</title>
+
+<script>
+window.MathJax={
+  tex:{
+    inlineMath:[["$","$"],["\\(","\\)"]],
+    displayMath:[["$$","$$"],["\\[","\\]"]],
+    processEscapes:true
+  },
+  options:{skipHtmlTags:["script","noscript","style","textarea","pre","code"]}
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700;900&family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+
+<style>
+:root{
+  --paper-width:210mm;
+  --paper-height:297mm;
+  --pad-x:14mm;
+  --pad-y:10mm;
+  --ink:#111;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:#e5e7eb;
+  color:var(--ink);
+  font-family:"Google Sans","Noto Sans Thai",Arial,sans-serif;
+  font-size:11.5px;
+  line-height:1.34;
+}
+
+.toolbar{
+  position:sticky;top:0;z-index:50;
+  display:flex;flex-wrap:wrap;gap:8px;
+  justify-content:center;align-items:center;
+  padding:10px;background:#0f172a;color:#fff;
+}
+.toolbar button{
+  border:0;border-radius:999px;
+  padding:8px 14px;cursor:pointer;
+  font-family:inherit;font-size:12px;font-weight:900;
+  background:#fff;color:#0f172a;
+}
+.toolbar .primary{background:#bae6fd;color:#082f49}
+.toolbar .gold{background:#fde68a;color:#78350f}
+.toolbar .status{
+  flex-basis:100%;text-align:center;opacity:.92;
+}
+
+.screen-guide{
+  width:min(var(--paper-width),calc(100vw - 24px));
+  margin:14px auto 0;padding:10px 12px;
+  background:#fff;border-radius:10px;
+  box-shadow:0 10px 28px rgba(15,23,42,.12);
+}
+
+.sheet{
+  width:var(--paper-width);
+  height:var(--paper-height);
+  margin:16px auto 28px;
+  padding:var(--pad-y) var(--pad-x);
+  background:#fff;
+  box-shadow:0 16px 42px rgba(15,23,42,.22);
+  overflow:hidden;
+  page-break-after:always;
+  break-after:page;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+}
+.school-header{
+  text-align:center;
+  border-bottom:1.5px solid #111;
+  padding-bottom:2.5mm;
+  margin-bottom:3mm;
+}
+.school-title .main{font-size:14.5px;font-weight:900;margin-top:1mm}
+.school-title .meta{font-size:10.8px}
+
+.section-header{
+  display:flex;justify-content:space-between;gap:4mm;
+  align-items:flex-end;
+  border-bottom:1.5px solid #111;
+  padding-bottom:2mm;margin-bottom:2.5mm;
+}
+.section-header h2{
+  margin:0;font-size:13px;line-height:1.2;
+}
+.score{font-weight:900;white-space:nowrap}
+
+.written-question{
+  border:1.2px solid #111;
+  padding:3.8mm;
+  flex:1 1 auto;
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+}
+.written-head{
+  font-weight:900;
+  font-size:12.4px;
+  line-height:1.3;
+  margin-bottom:1.6mm;
+}
+.item-score{float:right;white-space:nowrap}
+.en{font-weight:500;color:#333}
+
+.rule-box{
+  border:1px solid #111;
+  background:#fafafa;
+  padding:2.5mm 3mm;
+  margin:1.5mm 0 2.3mm;
+  font-size:10.5px;
+}
+.rule-box b{font-weight:900}
+
+.subq{
+  margin:1.3mm 0 0;
+  padding-left:7mm;
+}
+.subq li{
+  margin-bottom:1.35mm;
+  padding-left:1mm;
+}
+.pts{font-weight:900;white-space:nowrap}
+
+.work-frame{
+  flex:1 1 auto;
+  border:1px solid #111;
+  margin-top:3mm;
+  padding:3mm;
+  min-height:82mm;
+  position:relative;
+}
+.work-frame::before{
+  content:"พื้นที่แสดงวิธีทำ / Working area";
+  position:absolute;top:-3.4mm;left:4mm;
+  background:#fff;padding:0 2mm;
+  font-weight:800;font-size:10.4px;
+}
+.work-lines{
+  height:100%;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 8.7mm,
+      #cfcfcf 8.8mm,
+      transparent 8.9mm
+    );
+}
+
+.solution-box{display:none}
+body.mode-solution .solution-box{
+  display:block;
+  margin-top:2.4mm;
+  padding:3.4mm;
+  border:1.2px solid #15803d;
+  background:#edf7ee;
+  font-size:10.9px;
+  line-height:1.4;
+}
+body.mode-solution .work-frame{display:none}
+.solution-title{
+  font-weight:900;
+  margin-bottom:1.4mm;
+  color:#15803d;
+  font-size:12px;
+}
+.answer-table{
+  width:100%;
+  border-collapse:collapse;
+  margin:1.5mm 0;
+  font-size:10.2px;
+  background:#fff;
+}
+.answer-table th,.answer-table td{
+  border:1px solid #15803d;
+  padding:1.15mm;
+  text-align:left;
+  vertical-align:top;
+}
+.answer-table th{
+  background:#dff4e6;
+  font-weight:900;
+}
+.key-point{
+  border-left:3px solid #15803d;
+  background:#fff;
+  padding:1.5mm;
+  margin:1mm 0;
+}
+
+.ref-sheet{
+  padding:7mm 8mm!important;
+  height:297mm!important;
+  overflow:hidden!important;
+}
+.compact-grid{
+  display:grid!important;
+  grid-template-columns:repeat(3,1fr)!important;
+  gap:1.6mm!important;
+  align-items:start!important;
+}
+.ref-card{
+  border:1px solid #111!important;
+  border-radius:5px!important;
+  padding:1.4mm!important;
+  background:#fff!important;
+}
+.ref-card h3{
+  font-size:8.3pt!important;
+  margin:0 0 .7mm!important;
+  padding-bottom:.45mm!important;
+  border-bottom:1px solid #111!important;
+}
+.ref-formula{
+  border:1px solid #111!important;
+  border-radius:4px!important;
+  padding:.65mm .7mm!important;
+  text-align:center!important;
+  font-size:7.7pt!important;
+  font-weight:800!important;
+  margin-bottom:.6mm;
+}
+.ref-note{
+  font-size:7.4pt;
+  line-height:1.25;
+  margin-top:.6mm;
+}
+.page-footer{
+  position:absolute;
+  right:12mm;bottom:5mm;
+  font-size:10.5px;
+}
+
+@page{size:A4 portrait;margin:0}
+
+@media print{
+  html,body{width:210mm;background:#fff!important}
+  .toolbar,.screen-guide{display:none!important}
+  .sheet{
+    width:210mm!important;
+    height:297mm!important;
+    margin:0!important;
+    box-shadow:none!important;
+    page-break-after:always!important;
+    break-after:page!important;
+    overflow:hidden!important;
+  }
+  *{
+    color:#000!important;
+    border-color:#000!important;
+    box-shadow:none!important;
+    text-shadow:none!important;
+  }
+}
+
+body.mode-solution .sheet{
+  height:auto!important;
+  min-height:var(--paper-height)!important;
+  overflow:visible!important;
+  display:block!important;
+}
+body.mode-solution .written-question{
+  display:block!important;
+  min-height:0!important;
+  height:auto!important;
+}
+
+.competition-sheet .section-header{
+  border-bottom:2.2px solid #111;
+}
+.competition-sheet .written-question{
+  border:1.7px solid #111;
+}
+.challenge-banner{
+  display:flex;
+  justify-content:space-between;
+  gap:3mm;
+  align-items:center;
+  border:1.3px solid #111;
+  background:#f7f7f7;
+  padding:2.2mm 2.8mm;
+  margin:0 0 2.4mm;
+  font-weight:900;
+}
+.challenge-banner .en{
+  font-size:10.3px;
+}
+.no-reminder{
+  border:1px dashed #111;
+  padding:2.3mm 3mm;
+  margin:1.5mm 0 2.3mm;
+  background:#fff;
+  font-size:10.45px;
+}
+.no-reminder b{font-weight:900}
+
+</style>
+</head>
+
+<body class="mode-exam">
+
+<div class="toolbar">
+  <button class="primary" onclick="printExam()">🖨️ พิมพ์แบบฝึกเปล่า</button>
+  <button class="gold" onclick="printSolution()">✅ พิมพ์เฉลยละเอียด</button>
+  <button onclick="toggleSolution()">👁️ เปิด/ปิดเฉลย</button>
+  <div class="status" id="statusText">
+    M1 MASTER REVIEW | Exponents & Scientific Notation | 60 คะแนน + Competition Bonus 40 คะแนน
+  </div>
+</div>
+
+<section class="screen-guide">
+  Printable A4 • Core 6 ข้อใหญ่ + Competition Bonus 4 ข้อใหญ่ • ข้อละ 1 หน้า • มีข้อย่อย • Working area • เฉลยละเอียดซ่อน
+</section>
+
+<main id="root"></main>
+
+<script>
+const data = [
+{
+  t:"พื้นฐานเลขยกกำลัง / Foundations of Exponents",
+  p:"ตอบคำถามต่อไปนี้เกี่ยวกับความหมายของเลขยกกำลัง ฐาน เลขชี้กำลัง และเครื่องหมายลบ",
+  rule:"ใช้ความหมาย $a^n=a\\times a\\times\\cdots\\times a$ จำนวน $n$ ตัว และระวังความแตกต่างระหว่าง $(-a)^n$ กับ $-a^n$",
+  q:[
+    "เขียน $4\\times4\\times4\\times4\\times4$ ให้อยู่ในรูปเลขยกกำลัง <span class='pts'>(1)</span>",
+    "ใน $7^5$ ระบุฐานและเลขชี้กำลัง <span class='pts'>(1)</span>",
+    "หาค่า $2^6$ <span class='pts'>(1)</span>",
+    "หาค่า $(-3)^2$ <span class='pts'>(1)</span>",
+    "หาค่า $(-2)^5$ <span class='pts'>(1)</span>",
+    "หาค่า $-2^4$ และอธิบายว่าทำไมจึงต่างจาก $(-2)^4$ <span class='pts'>(2)</span>",
+    "เรียงค่าจากน้อยไปมาก: $-3^2,\\;(-3)^2,\\;2^3$ <span class='pts'>(2)</span>",
+    "เขียน $125$ ให้อยู่ในรูปเลขยกกำลังฐาน 5 <span class='pts'>(1)</span>"
+  ],
+  a:[
+    ["1","$4^5$","ฐาน 4 ถูกคูณซ้ำ 5 ครั้ง"],
+    ["2","ฐาน $=7$, เลขชี้กำลัง $=5$","ตัวล่างคือฐาน ตัวบนคือเลขชี้กำลัง"],
+    ["3","$64$","$2^6=2\\times2\\times2\\times2\\times2\\times2$"],
+    ["4","$9$","$(-3)(-3)=9$"],
+    ["5","$-32$","กำลังคี่คงเครื่องหมายลบไว้"],
+    ["6","$-2^4=-16$ แต่ $(-2)^4=16$","ไม่มีวงเล็บ กำลัง 4 กระทำเฉพาะเลข 2"],
+    ["7","$-3^2<2^3<(-3)^2$","ได้ $-9<8<9$"],
+    ["8","$5^3$","$125=5\\times5\\times5$"]
+  ]
+},
+{
+  t:"กฎของเลขยกกำลัง / Laws of Exponents",
+  p:"ทำให้นิพจน์ต่อไปนี้อยู่ในรูปอย่างง่าย โดยแสดงขั้นตอนการใช้กฎเลขยกกำลัง",
+  rule:"กฎสำคัญ: $a^m a^n=a^{m+n}$, $\\dfrac{a^m}{a^n}=a^{m-n}$, $(a^m)^n=a^{mn}$, $(ab)^n=a^n b^n$",
+  q:[
+    "ทำให้อยู่ในรูปอย่างง่าย: $2^3\\times2^5$ <span class='pts'>(1)</span>",
+    "ทำให้อยู่ในรูปอย่างง่าย: $5^9\\div5^4$ <span class='pts'>(1)</span>",
+    "ทำให้อยู่ในรูปอย่างง่าย: $(3^2)^4$ <span class='pts'>(1)</span>",
+    "ทำให้อยู่ในรูปอย่างง่าย: $(2\\times5)^3$ <span class='pts'>(1)</span>",
+    "ทำให้อยู่ในรูปอย่างง่าย: $\\left(\\dfrac{2}{3}\\right)^3$ <span class='pts'>(1)</span>",
+    "ทำให้อยู่ในรูปอย่างง่าย: $2^3\\times2^5\\div2^4$ <span class='pts'>(2)</span>",
+    "ทำให้อยู่ในรูปอย่างง่าย: $\\dfrac{(5^2)^3}{5^4}$ <span class='pts'>(2)</span>",
+    "ถ้า $a\\neq0$ จงทำให้อยู่ในรูปอย่างง่าย: $a^7\\div a^2\\times a^3$ <span class='pts'>(1)</span>"
+  ],
+  a:[
+    ["1","$2^8$","บวกเลขชี้กำลัง $3+5$"],
+    ["2","$5^5$","ลบเลขชี้กำลัง $9-4$"],
+    ["3","$3^8$","คูณเลขชี้กำลัง $2\\times4$"],
+    ["4","$2^3\\times5^3=1000$","กระจายกำลังเข้าทุกตัวประกอบ"],
+    ["5","$\\dfrac{8}{27}$","ยกกำลังทั้งเศษและส่วน"],
+    ["6","$2^{3+5-4}=2^4=16$","รวมกฎคูณและหาร"],
+    ["7","$5^{2(3)-4}=5^2=25$","กำลังซ้อนก่อน แล้วลบเลขชี้กำลัง"],
+    ["8","$a^{7-2+3}=a^8$","ทำจากซ้ายไปขวา หรือรวมเลขชี้กำลังทั้งหมด"]
+  ]
+},
+{
+  t:"เลขชี้กำลังศูนย์และลบ / Zero & Negative Exponents",
+  p:"ใช้กฎของเลขชี้กำลังศูนย์และเลขชี้กำลังลบเพื่อจัดรูปนิพจน์",
+  rule:"เมื่อ $a\\neq0$: $a^0=1$ และ $a^{-n}=\\dfrac{1}{a^n}$",
+  q:[
+    "หาค่า $9^0$ <span class='pts'>(1)</span>",
+    "หาค่า $2^{-3}$ <span class='pts'>(1)</span>",
+    "เขียน $x^{-5}$ โดยใช้เลขชี้กำลังเป็นบวก <span class='pts'>(1)</span>",
+    "ทำให้อยู่ในรูปอย่างง่าย: $\\dfrac{3^4}{3^7}$ <span class='pts'>(2)</span>",
+    "ทำให้อยู่ในรูปอย่างง่าย: $\\dfrac{2^{-2}\\times2^5}{2^1}$ <span class='pts'>(2)</span>",
+    "ทำให้อยู่ในรูปอย่างง่าย: $(5^{-2})^{-1}$ <span class='pts'>(1)</span>",
+    "ทำให้อยู่ในรูปอย่างง่าย: $\\dfrac{x^{-3}}{x^{-7}}$ เมื่อ $x\\neq0$ <span class='pts'>(1)</span>",
+    "อธิบายสั้น ๆ ว่าทำไม $4^{-2}$ ไม่เท่ากับ $-16$ <span class='pts'>(1)</span>"
+  ],
+  a:[
+    ["1","$1$","จำนวนที่ไม่เป็นศูนย์ยกกำลังศูนย์มีค่า 1"],
+    ["2","$\\dfrac18$","$2^{-3}=1/2^3$"],
+    ["3","$\\dfrac{1}{x^5}$","ย้ายลงส่วนแล้วเปลี่ยนเลขชี้กำลังเป็นบวก"],
+    ["4","$3^{-3}=\\dfrac1{27}$","$4-7=-3$"],
+    ["5","$2^{-2+5-1}=2^2=4$","รวมเลขชี้กำลังทั้งหมด"],
+    ["6","$5^2=25$","$(-2)(-1)=2$"],
+    ["7","$x^4$","$-3-(-7)=4$"],
+    ["8","$4^{-2}=1/16$","เลขชี้กำลังลบหมายถึงส่วนกลับ ไม่ได้หมายถึงคำตอบติดลบ"]
+  ]
+},
+{
+  t:"สัญกรณ์วิทยาศาสตร์ / Scientific Notation",
+  p:"เขียน อ่าน และเปรียบเทียบจำนวนในรูปสัญกรณ์วิทยาศาสตร์",
+  rule:"รูปมาตรฐานคือ $a\\times10^n$ โดย $1\\le a<10$ และ $n$ เป็นจำนวนเต็ม",
+  q:[
+    "เขียน $45,000$ ในรูปสัญกรณ์วิทยาศาสตร์ <span class='pts'>(1)</span>",
+    "เขียน $0.00072$ ในรูปสัญกรณ์วิทยาศาสตร์ <span class='pts'>(1)</span>",
+    "เขียน $6.03\\times10^5$ ให้อยู่ในรูปจำนวนปกติ <span class='pts'>(1)</span>",
+    "เขียน $8.2\\times10^{-4}$ ให้อยู่ในรูปจำนวนปกติ <span class='pts'>(1)</span>",
+    "ระหว่าง $8.5\\times10^6$ และ $2.1\\times10^7$ จำนวนใดมากกว่า พร้อมเหตุผล <span class='pts'>(2)</span>",
+    "จัด $34\\times10^5$ ให้อยู่ในรูปสัญกรณ์วิทยาศาสตร์มาตรฐาน <span class='pts'>(1)</span>",
+    "จัด $0.56\\times10^8$ ให้อยู่ในรูปสัญกรณ์วิทยาศาสตร์มาตรฐาน <span class='pts'>(1)</span>",
+    "เรียงจากน้อยไปมาก: $7\\times10^{-5},\\;2\\times10^{-4},\\;9\\times10^{-6}$ <span class='pts'>(2)</span>"
+  ],
+  a:[
+    ["1","$4.5\\times10^4$","เลื่อนจุดไปซ้าย 4 ตำแหน่ง"],
+    ["2","$7.2\\times10^{-4}$","จำนวนเล็กกว่า 1 จึงใช้เลขชี้กำลังลบ"],
+    ["3","$603,000$","เลื่อนจุดไปขวา 5 ตำแหน่ง"],
+    ["4","$0.00082$","เลื่อนจุดไปซ้าย 4 ตำแหน่ง"],
+    ["5","$2.1\\times10^7$","กำลัง $10^7$ มากกว่า $10^6$"],
+    ["6","$3.4\\times10^6$","เลื่อนจุดซ้ายหนึ่งตำแหน่ง จึงเพิ่มเลขชี้กำลัง 1"],
+    ["7","$5.6\\times10^7$","เลื่อนจุดขวาหนึ่งตำแหน่ง จึงลดเลขชี้กำลัง 1"],
+    ["8","$9\\times10^{-6}<7\\times10^{-5}<2\\times10^{-4}$","เปรียบเทียบเลขชี้กำลังก่อน"]
+  ]
+},
+{
+  t:"การคำนวณสัญกรณ์วิทยาศาสตร์ / Operations with Scientific Notation",
+  p:"คำนวณและตอบคำตอบสุดท้ายให้อยู่ในรูปสัญกรณ์วิทยาศาสตร์มาตรฐาน",
+  rule:"คูณ: คูณตัวหน้าและบวกเลขชี้กำลัง • หาร: หารตัวหน้าและลบเลขชี้กำลัง • บวก/ลบ: ทำให้กำลังของ 10 เท่ากันก่อน",
+  q:[
+    "คำนวณ $(3\\times10^4)(2\\times10^3)$ <span class='pts'>(1)</span>",
+    "คำนวณ $(4\\times10^6)(3\\times10^5)$ <span class='pts'>(2)</span>",
+    "คำนวณ $\\dfrac{8\\times10^7}{2\\times10^3}$ <span class='pts'>(1)</span>",
+    "คำนวณ $\\dfrac{9\\times10^{-3}}{3\\times10^2}$ <span class='pts'>(2)</span>",
+    "คำนวณ $(5\\times10^6)+(2\\times10^6)$ <span class='pts'>(1)</span>",
+    "คำนวณ $(6.5\\times10^5)-(2.0\\times10^5)$ <span class='pts'>(1)</span>",
+    "คำนวณ $(3\\times10^4)+(7\\times10^3)$ <span class='pts'>(2)</span>"
+  ],
+  a:[
+    ["1","$6\\times10^7$","$3(2)\\times10^{4+3}$"],
+    ["2","$12\\times10^{11}=1.2\\times10^{12}$","ต้องจัด 12 ให้เป็น 1.2 แล้วเพิ่มกำลัง 1"],
+    ["3","$4\\times10^4$","$8/2=4$, $10^{7-3}=10^4$"],
+    ["4","$3\\times10^{-5}$","$9/3=3$, $10^{-3-2}=10^{-5}$"],
+    ["5","$7\\times10^6$","กำลังเท่ากัน จึงบวกตัวหน้าได้เลย"],
+    ["6","$4.5\\times10^5$","กำลังเท่ากัน จึงลบตัวหน้าได้เลย"],
+    ["7","$3.7\\times10^4$","เขียน $7\\times10^3=0.7\\times10^4$ แล้วบวก $3+0.7$"]
+  ]
+},
+{
+  t:"โจทย์ปัญหาและ Final Boss / Applications & Final Boss",
+  p:"แก้โจทย์ปัญหาต่อไปนี้ โดยเขียนสมการที่ใช้และแสดงวิธีทำให้ครบ",
+  rule:"ก่อนคำนวณ ให้ถามตัวเองว่าโจทย์ต้องการ “คูณ”, “หาร”, “เปรียบเทียบ” หรือ “เขียนให้อยู่ในรูปมาตรฐาน”",
+  q:[
+    "แบคทีเรียเพิ่มจำนวนเป็น 2 เท่าทุกชั่วโมง เริ่มต้นจาก 1 ตัว หลัง 8 ชั่วโมงมีทั้งหมดกี่ตัว <span class='pts'>(1.5)</span>",
+    "สนามรูปสี่เหลี่ยมจัตุรัสมีด้านยาว $3^2$ เมตร จงหาพื้นที่ของสนาม <span class='pts'>(1.5)</span>",
+    "เซลล์ชนิดหนึ่งมีขนาด $0.000008$ เมตร จงเขียนขนาดในรูปสัญกรณ์วิทยาศาสตร์ <span class='pts'>(1)</span>",
+    "ข้อมูลขนาด $8\\times10^9$ bytes แบ่งเป็นไฟล์ละ $2\\times10^6$ bytes จะได้กี่ไฟล์ <span class='pts'>(1.5)</span>",
+    "อนุภาคชนิดหนึ่งมีมวล $2\\times10^{-6}$ g ถ้ามี $3\\times10^4$ อนุภาค มวลรวมเป็นเท่าใด <span class='pts'>(1.5)</span>",
+    "ดาว A อยู่ห่าง $7.2\\times10^8$ km และดาว B อยู่ห่าง $4.5\\times10^9$ km ดาวใดอยู่ไกลกว่า และไกลกว่าประมาณกี่เท่า <span class='pts'>(1.5)</span>",
+    "อนุภาคหนึ่งมีมวล $2.5\\times10^{-8}$ g จำนวน $8\\times10^5$ อนุภาคถูกแบ่งเท่า ๆ กันใส่ 4 กล่อง จงหามวลของอนุภาคในแต่ละกล่อง <span class='pts'>(1.5)</span>"
+  ],
+  a:[
+    ["1","$2^8=256$ ตัว","เพิ่มเป็น 2 เท่าทุกชั่วโมงจึงใช้เลขยกกำลังฐาน 2"],
+    ["2","$A=(3^2)^2=3^4=81\\text{ m}^2$","ด้านยาว 9 m แล้วพื้นที่คือด้านยกกำลังสอง"],
+    ["3","$8\\times10^{-6}\\text{ m}$","เลื่อนจุด 6 ตำแหน่งไปทางขวา จึงใช้กำลังลบ"],
+    ["4","$\\dfrac{8\\times10^9}{2\\times10^6}=4\\times10^3=4000$ ไฟล์","จำนวนไฟล์ = ข้อมูลทั้งหมด ÷ ขนาดต่อไฟล์"],
+    ["5","$(2\\times10^{-6})(3\\times10^4)=6\\times10^{-2}\\text{ g}$","มวลรวม = มวลต่ออนุภาค × จำนวนอนุภาค"],
+    ["6","ดาว B, ประมาณ $6.25$ เท่า","$\\dfrac{4.5\\times10^9}{7.2\\times10^8}=\\dfrac{4.5}{7.2}\\times10=6.25$"],
+    ["7","$5\\times10^{-3}\\text{ g}$","อนุภาคต่อกล่อง $=(8\\times10^5)/4=2\\times10^5$ จากนั้นคูณ $2.5\\times10^{-8}$"]
+  ]
+},
+{
+  comp:true,
+  t:"Challenge 1 — Exponent Detective / นักสืบเลขยกกำลัง",
+  p:"ตอบคำถามโดยพยายามเปลี่ยนจำนวนให้มีฐานเดียวกันก่อน แล้วอธิบายเหตุผลทุกขั้น",
+  rule:"Competition Rule: ห้ามใช้เครื่องคิดเลขในข้อนี้ / No calculator. ต้องแสดงการเปลี่ยนฐานและการใช้กฎเลขยกกำลัง",
+  q:[
+    "ถ้า $2^a\\times2^b=2^{17}$ และ $a-b=3$ จงหา $a$ และ $b$ <span class='pts'>(2.5)</span>",
+    "จงหา $n$ ถ้า $\\dfrac{4^3\\times8^2}{2^n}=2^7$ <span class='pts'>(2.5)</span>",
+    "ถ้า $2^x+2^x+2^x+2^x=2^{10}$ จงหา $x$ <span class='pts'>(2.5)</span>",
+    "ถ้า $3^n+3^n+3^n=3^8$ จงหา $n$ <span class='pts'>(2.5)</span>"
+  ],
+  a:[
+    ["1","$a=10,\\;b=7$","จาก $a+b=17$ และ $a-b=3$ บวกสมการได้ $2a=20$ จึง $a=10$ และ $b=7$"],
+    ["2","$n=5$","$4^3=2^6$ และ $8^2=2^6$ ดังนั้น $2^{12-n}=2^7$ จึง $12-n=7$"],
+    ["3","$x=8$","$4(2^x)=2^2(2^x)=2^{x+2}=2^{10}$ จึง $x+2=10$"],
+    ["4","$n=7$","$3^n+3^n+3^n=3(3^n)=3^{n+1}=3^8$ จึง $n+1=8$"]
+  ]
+},
+{
+  comp:true,
+  t:"Challenge 2 — Compare Without Calculator / เปรียบเทียบโดยไม่คำนวณตรง ๆ",
+  p:"เปรียบเทียบจำนวนต่อไปนี้โดยใช้โครงสร้างของเลขยกกำลัง ห้ามคำนวณค่าจำนวนเต็มขนาดใหญ่โดยตรง",
+  rule:"Competition Rule: No calculator. เปลี่ยนให้เป็นฐานเดียวกัน หรือจัดรูปให้เห็นโครงสร้างก่อน",
+  q:[
+    "เปรียบเทียบ $2^{15}$ กับ $4^7$ โดยใส่เครื่องหมาย $>,<,$ หรือ $=$ <span class='pts'>(2)</span>",
+    "เปรียบเทียบ $9^5$ กับ $3^9$ <span class='pts'>(2)</span>",
+    "เปรียบเทียบ $4^{12}$ กับ $8^8$ <span class='pts'>(2)</span>",
+    "ทำให้อยู่ในรูปอย่างง่าย: $2^{12}\\times5^{10}$ โดยให้คำตอบมีพจน์ $10^n$ <span class='pts'>(2)</span>",
+    "ระหว่าง $2^{20}$ และ $10^6$ จำนวนใดมากกว่า? จงให้เหตุผลโดยไม่หาค่า $2^{20}$ ตรง ๆ <span class='pts'>(2)</span>"
+  ],
+  a:[
+    ["1","$2^{15}>4^7$","$4^7=(2^2)^7=2^{14}$"],
+    ["2","$9^5>3^9$","$9^5=(3^2)^5=3^{10}$"],
+    ["3","$4^{12}=8^8$","$4^{12}=2^{24}$ และ $8^8=2^{24}$"],
+    ["4","$4\\times10^{10}$","$2^{12}5^{10}=2^2(2^{10}5^{10})=4(10^{10})$"],
+    ["5","$2^{20}>10^6$","$2^{20}=(2^{10})^2$ และ $2^{10}=1024>1000=10^3$ ดังนั้น $(2^{10})^2>10^6$"]
+  ]
+},
+{
+  comp:true,
+  t:"Challenge 3 — Scientific Notation Investigation / การสืบสวนข้อมูลขนาดใหญ่",
+  p:"เครื่องตรวจวัดบันทึกข้อมูล $2.5\\times10^6$ จุดต่อวินาที เป็นเวลา $3.6\\times10^3$ วินาที และข้อมูลแต่ละจุดใช้พื้นที่ 4 bytes",
+  rule:"Competition Rule: แสดงการจัดรูปสัญกรณ์วิทยาศาสตร์ทุกขั้น และคำตอบสุดท้ายต้องอยู่ในรูปมาตรฐานเมื่อเหมาะสม",
+  q:[
+    "หาจำนวน data points ทั้งหมดที่บันทึกได้ <span class='pts'>(2)</span>",
+    "หาจำนวน bytes ทั้งหมดที่ต้องใช้ <span class='pts'>(2)</span>",
+    "กำหนด $1\\text{ GB}=10^9\\text{ bytes}$ จงหาพื้นที่จัดเก็บเป็น GB <span class='pts'>(2)</span>",
+    "ถ้าความจุของอุปกรณ์มีเพียง $2.0\\times10^{10}$ bytes อุปกรณ์นี้เพียงพอหรือไม่? ขาดหรือเหลือกี่ bytes <span class='pts'>(2)</span>",
+    "ถ้า $(6\\times10^a)(4\\times10^{-3})=2.4\\times10^5$ จงหา $a$ <span class='pts'>(2)</span>"
+  ],
+  a:[
+    ["1","$9.0\\times10^9$ points","$(2.5\\times10^6)(3.6\\times10^3)=9.0\\times10^9$"],
+    ["2","$3.6\\times10^{10}$ bytes","$(9.0\\times10^9)(4)=36\\times10^9=3.6\\times10^{10}$"],
+    ["3","$36$ GB","$3.6\\times10^{10}\\div10^9=3.6\\times10^1=36$"],
+    ["4","ไม่พอ ขาด $1.6\\times10^{10}$ bytes","ต้องใช้ $3.6\\times10^{10}$ แต่มี $2.0\\times10^{10}$ จึงขาด $1.6\\times10^{10}$"],
+    ["5","$a=7$","ซ้าย $=24\\times10^{a-3}=2.4\\times10^{a-2}$ เทียบกับ $2.4\\times10^5$ จึง $a-2=5$"]
+  ]
+},
+{
+  comp:true,
+  t:"Challenge 4 — Final Boss: Exponential Growth / การเพิ่มจำนวนแบบเลขยกกำลัง",
+  p:"เริ่มต้นมีแบคทีเรีย $3.2\\times10^4$ ตัว และจำนวนเพิ่มเป็น 2 เท่าทุก ๆ 20 นาที ให้ถือว่าการเพิ่มจำนวนเกิดขึ้นครบหนึ่งรอบทุก 20 นาที",
+  rule:"Final Boss: ต้องแสดงจำนวนรอบการเพิ่มก่อนคำนวณ และข้อสุดท้ายห้ามใช้ logarithm",
+  q:[
+    "หลัง 1 ชั่วโมง มีแบคทีเรียกี่ตัว <span class='pts'>(2)</span>",
+    "หลัง 2 ชั่วโมง มีแบคทีเรียกี่ตัว ตอบในรูปสัญกรณ์วิทยาศาสตร์ <span class='pts'>(2)</span>",
+    "ถ้านำแบคทีเรียหลัง 2 ชั่วโมงแบ่งเท่า ๆ กันใส่จาน 8 ใบ แต่ละใบมีประมาณกี่ตัว <span class='pts'>(2)</span>",
+    "หลัง 3 ชั่วโมง จำนวนแบคทีเรียเป็นกี่เท่าของจำนวนเริ่มต้น <span class='pts'>(1.5)</span>",
+    "ต้องใช้เวลาอย่างน้อยกี่นาที จึงจะมีแบคทีเรียมากกว่า $1.0\\times10^7$ ตัว? ห้ามใช้ logarithm <span class='pts'>(2.5)</span>"
+  ],
+  a:[
+    ["1","$2.56\\times10^5$ ตัว","1 ชั่วโมง = 3 รอบ: $(3.2\\times10^4)2^3=25.6\\times10^4=2.56\\times10^5$"],
+    ["2","$2.048\\times10^6$ ตัว","2 ชั่วโมง = 6 รอบ: $(3.2\\times10^4)2^6=204.8\\times10^4=2.048\\times10^6$"],
+    ["3","$2.56\\times10^5$ ตัวต่อจาน","$(2.048\\times10^6)/8=0.256\\times10^6=2.56\\times10^5$"],
+    ["4","$2^9=512$ เท่า","3 ชั่วโมง = 180 นาที = 9 รอบ"],
+    ["5","$180$ นาที","8 รอบให้ $(3.2\\times10^4)2^8=8.192\\times10^6$ ยังไม่ถึง แต่ 9 รอบให้ $1.6384\\times10^7$ มากกว่า $10^7$ จึงต้อง 9 รอบ = $9(20)=180$ นาที"]
+  ]
+}
+
+];
+
+function page(q,i){
+  const isComp = !!q.comp;
+  return `
+  <section class="sheet written-sheet ${isComp ? "competition-sheet" : ""}">
+    ${i===0 ? `
+    <header class="school-header">
+      <div class="school-title">
+        <div class="main">M1 MASTER REVIEW SERIES — SET 1A</div>
+        <div class="meta">Exponents & Scientific Notation / เลขยกกำลังและสัญกรณ์วิทยาศาสตร์ | Core 60 + Bonus 40 คะแนน</div>
+      </div>
+    </header>` : ""}
+
+    ${isComp ? `
+    <div class="challenge-banner">
+      <span>COMPETITION EXTENSION — BONUS</span>
+      <span class="en">Reasoning & structure over direct calculation</span>
+    </div>` : ""}
+
+    <div class="section-header">
+      <h2>ข้อ ${i+1} / Problem ${i+1}: ${q.t}</h2>
+      <div class="score">${isComp ? "BONUS 10 คะแนน" : "10 คะแนน"}</div>
+    </div>
+
+    <article class="written-question">
+      <div class="written-head">
+        <span>ข้อ ${i+1}.</span> ${q.p}
+        <span class="item-score">(${isComp ? "Bonus " : ""}10 คะแนน)</span>
+      </div>
+
+      ${isComp ? `
+      <div class="no-reminder">
+        <b>Challenge Instruction / คำสั่ง:</b> ${q.rule}
+      </div>` : `
+      <div class="rule-box">
+        <b>Reminder / ทบทวน:</b> ${q.rule}
+      </div>`}
+
+      <ol class="subq">
+        ${q.q.map(x=>`<li>${x}</li>`).join("")}
+      </ol>
+
+      <div class="work-frame">
+        <div class="work-lines"></div>
+      </div>
+
+      <div class="solution-box">
+        <div class="solution-title">เฉลยละเอียด / Detailed Solution</div>
+        <table class="answer-table">
+          <tr>
+            <th>ข้อย่อย</th>
+            <th>คำตอบ</th>
+            <th>วิธีคิด</th>
+          </tr>
+          ${q.a.map(r=>`
+          <tr>
+            <td>${r[0]}</td>
+            <td>${r[1]}</td>
+            <td>${r[2]}</td>
+          </tr>`).join("")}
+        </table>
+        <div class="key-point">
+          <b>จุดตรวจ:</b> ${isComp
+            ? "ให้คะแนนจากการมองโครงสร้าง การเลือกวิธี และเหตุผล ไม่ใช่คำตอบสุดท้ายเพียงอย่างเดียว"
+            : "ตรวจฐาน เลขชี้กำลัง เครื่องหมายลบ และรูปมาตรฐานของสัญกรณ์วิทยาศาสตร์ทุกครั้ง"}
+        </div>
+      </div>
+    </article>
+
+    <div class="page-footer">${i+1}</div>
+  </section>`;
+}
+
+function ref(){
+  return `
+  <section class="sheet ref-sheet">
+    <header class="school-header">
+      <div class="school-title">
+        <div class="main">Reference Sheet / สรุปกฎที่ใช้</div>
+        <div class="meta">M1 Master Review — Exponents & Scientific Notation</div>
+      </div>
+    </header>
+
+    <div class="compact-grid">
+      <div class="ref-card">
+        <h3>Meaning</h3>
+        <div class="ref-formula">$a^n=a\\times a\\times\\cdots\\times a$</div>
+        <div class="ref-note">ฐาน = จำนวนที่ถูกคูณซ้ำ<br>เลขชี้กำลัง = จำนวนครั้งที่คูณ</div>
+      </div>
+
+      <div class="ref-card">
+        <h3>Multiply</h3>
+        <div class="ref-formula">$a^m a^n=a^{m+n}$</div>
+      </div>
+
+      <div class="ref-card">
+        <h3>Divide</h3>
+        <div class="ref-formula">$\\dfrac{a^m}{a^n}=a^{m-n}$</div>
+      </div>
+
+      <div class="ref-card">
+        <h3>Power of a Power</h3>
+        <div class="ref-formula">$(a^m)^n=a^{mn}$</div>
+      </div>
+
+      <div class="ref-card">
+        <h3>Power of Product</h3>
+        <div class="ref-formula">$(ab)^n=a^n b^n$</div>
+      </div>
+
+      <div class="ref-card">
+        <h3>Power of Fraction</h3>
+        <div class="ref-formula">$\\left(\\dfrac ab\\right)^n=\\dfrac{a^n}{b^n}$</div>
+      </div>
+
+      <div class="ref-card">
+        <h3>Zero Exponent</h3>
+        <div class="ref-formula">$a^0=1$</div>
+        <div class="ref-note">เมื่อ $a\\neq0$</div>
+      </div>
+
+      <div class="ref-card">
+        <h3>Negative Exponent</h3>
+        <div class="ref-formula">$a^{-n}=\\dfrac1{a^n}$</div>
+      </div>
+
+      <div class="ref-card">
+        <h3>Scientific Notation</h3>
+        <div class="ref-formula">$a\\times10^n$</div>
+        <div class="ref-note">$1\\le a<10$ และ $n$ เป็นจำนวนเต็ม</div>
+      </div>
+
+      <div class="ref-card">
+        <h3>Multiply Sci. Notation</h3>
+        <div class="ref-formula">$(a\\times10^m)(b\\times10^n)=ab\\times10^{m+n}$</div>
+      </div>
+
+      <div class="ref-card">
+        <h3>Divide Sci. Notation</h3>
+        <div class="ref-formula">$\\dfrac{a\\times10^m}{b\\times10^n}=\\dfrac ab\\times10^{m-n}$</div>
+      </div>
+
+      <div class="ref-card">
+        <h3>Important Trap</h3>
+        <div class="ref-formula">$(-a)^2\\neq -a^2$</div>
+        <div class="ref-note">วงเล็บกำหนดว่าลบเป็นส่วนหนึ่งของฐานหรือไม่</div>
+      </div>
+    </div>
+
+    <div class="page-footer">11</div>
+  </section>`;
+}
+
+document.getElementById("root").innerHTML=data.map(page).join("")+ref();
+
+async function typesetReady(){
+  if(window.MathJax && MathJax.typesetPromise){
+    try{await MathJax.typesetPromise()}
+    catch(e){console.warn(e)}
+  }
+}
+
+async function setMode(mode){
+  document.body.classList.remove("mode-exam","mode-solution");
+  document.body.classList.add(mode);
+  const status=document.getElementById("statusText");
+  if(status){
+    status.textContent=
+      mode==="mode-solution"
+      ? "โหมดเฉลยละเอียด / Solution mode"
+      : "โหมดแบบฝึกเปล่า / Worksheet mode";
+  }
+  await typesetReady();
+}
+
+async function printExam(){
+  await setMode("mode-exam");
+  setTimeout(()=>window.print(),250);
+}
+
+async function printSolution(){
+  await setMode("mode-solution");
+  setTimeout(()=>window.print(),250);
+}
+
+function toggleSolution(){
+  if(document.body.classList.contains("mode-solution")){
+    setMode("mode-exam");
+  }else{
+    setMode("mode-solution");
+  }
+}
+
+window.addEventListener("load",()=>typesetReady());
+</script>
+
+</body>
+</html>
