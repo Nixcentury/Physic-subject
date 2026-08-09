@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>แสง ตอนที่ 2: การหักเหของแสง | Light Part 2: Refraction of Light</title>
+<style>
+:root{
+  --navy:#17365d;--navy2:#234f80;--blue:#dceaf7;--blue2:#eef6fc;
+  --ink:#172033;--muted:#5b6676;--paper:#fff;--screen:#dfe5eb;
+  --warn:#fff6d8;--warnline:#b38618;--purple:#673091;--purplesoft:#f3ebfa;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--screen);color:var(--ink);font-family:"K2D","Noto Sans Thai","Noto Sans",Arial,sans-serif;line-height:1.46;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.toolbar{position:sticky;top:0;z-index:20;display:flex;justify-content:center;gap:9px;flex-wrap:wrap;padding:9px 12px;background:rgba(23,54,93,.97);box-shadow:0 2px 10px rgba(0,0,0,.18)}
+.toolbar button{border:1px solid rgba(255,255,255,.7);border-radius:8px;background:#fff;color:var(--navy);font:inherit;font-size:13px;font-weight:800;line-height:1.15;padding:7px 12px;cursor:pointer}
+.toolbar button:hover{background:#eef5fb}
+.document{padding:14px 0 28px}
+.sheet{width:210mm;height:297mm;margin:0 auto 16px;padding:9mm 11mm 8mm;background:var(--paper);position:relative;box-shadow:0 4px 18px rgba(35,50,70,.22);overflow:hidden;page-break-after:always}
+.sheet:last-child{page-break-after:auto}
+.page-header{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start;border-bottom:3px solid var(--navy);padding-bottom:6px;margin-bottom:7px}
+.eyebrow{color:var(--navy2);font-size:10.5px;font-weight:900;letter-spacing:.035em}
+h1{margin:1px 0 0;color:var(--navy);font-size:21px;line-height:1.22}.subtitle{margin-top:2px;color:var(--muted);font-size:12.3px;font-weight:700}
+.part-badge{border:2px solid var(--navy);color:var(--navy);border-radius:8px;padding:5px 9px;text-align:center;font-size:11px;font-weight:900;min-width:92px}
+.student-line{display:grid;grid-template-columns:1.7fr 1fr .65fr;gap:12px;margin:5px 0 7px;font-size:11.5px}.field{border-bottom:1px solid #566273;min-height:20px}
+.section{border:1px solid #c5d0db;border-radius:8px;overflow:hidden;margin:0 0 8px;break-inside:avoid}.section-title{margin:0;padding:6px 10px;background:var(--navy);color:#fff;font-size:15px;line-height:1.3}.section-body{padding:7px 9px 8px}
+.bilingual-pair{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:6px}.lang-block{border-left:3px solid #a8c2da;padding:4px 7px;background:#fff}.lang-label{display:block;color:var(--navy2);font-size:10.8px;font-weight:900;margin-bottom:1px}.lang-block p{margin:0;font-size:11.85px}
+.key-point{background:var(--blue);border:1px solid #9ebbd4;border-radius:6px;padding:5px 7px;margin-top:5px;font-size:11.85px}.key-point strong{color:var(--navy)}
+.warning{background:var(--warn);border-left:5px solid var(--warnline);border-radius:5px;padding:5px 7px;margin-top:5px;font-size:11.7px}
+.source-note{background:var(--purplesoft);border-left:5px solid var(--purple);border-radius:6px;padding:6px 8px;margin:5px 0;font-size:11.45px}.source-note strong{color:var(--purple)}
+table{width:100%;border-collapse:collapse;font-size:11.3px;margin-top:5px}th,td{border:1px solid #9eabb8;padding:4px 5px;vertical-align:top}th{background:#e7eff7;color:var(--navy);text-align:left}
+.check-box{border:1px dashed #7b8b9a;border-radius:7px;padding:5px 7px;margin-top:5px;background:#fcfdff;break-inside:avoid}.check-title{font-weight:900;color:var(--navy);font-size:12px;margin-bottom:3px}.question{margin:2px 0;font-size:11.55px}
+.answer-line{display:inline-block;white-space:nowrap;vertical-align:baseline;min-width:64px;height:17px;padding:0 3px 1px;border-bottom:1.3px solid #303b49;text-align:center;font-weight:900;color:var(--navy)}
+.answer-line.wide{min-width:112px}.answer-line.medium{min-width:88px}.answer-line.short{min-width:46px}.answer-text{visibility:hidden}.show-answers .answer-text{visibility:visible}
+.word-bank{display:flex;flex-wrap:wrap;align-items:center;gap:5px 7px;margin:6px 0 7px;padding:6px 8px;border:1.5px dashed #637b92;border-radius:7px;background:#f7f9fb;font-size:11.25px;line-height:1.32}.word-bank strong{color:#17365d;white-space:nowrap}.word-chip{display:inline-block;padding:2px 6px;border:1px solid #aab7c3;border-radius:999px;background:#fff}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:4px}.summary-card{border:1px solid #aebbc8;border-radius:6px;padding:5px 6px;background:#fff;font-size:10.95px}.summary-card strong{color:var(--navy)}
+.steps-list{display:grid;gap:5px;margin-top:4px}.step{border-left:4px solid var(--navy2);background:#f6f9fc;padding:5px 7px;border-radius:5px;font-size:11.3px}.step strong{color:var(--navy)}
+.rule-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:5px}.rule-card{border:1px solid #aebbc8;border-radius:7px;padding:6px;background:#fff;font-size:10.8px;text-align:center}.rule-card strong{color:var(--navy);display:block;margin-bottom:2px}
+.diagram{border:1px solid #b7c5d2;border-radius:7px;padding:4px;background:#fbfdff;margin:5px 0}.diagram svg{display:block;width:100%;height:auto;max-height:148px}.diagram-caption{text-align:center;color:var(--muted);font-size:10.4px;margin-top:2px}
+.footer{position:absolute;left:11mm;right:11mm;bottom:5mm;display:flex;justify-content:space-between;color:#697687;font-size:9.4px;border-top:1px solid #d0d7df;padding-top:2px}
+.small{font-size:10.8px}.mini-note{font-size:10.85px;color:var(--muted);margin:2px 0}.color-seq{font-weight:900;color:var(--navy);letter-spacing:.01em}
+a{color:var(--navy2);word-break:break-all}
+@media(max-width:850px){.sheet{width:100%;height:auto;min-height:0;margin:0 0 12px;padding:16px 14px 42px;overflow:visible}.bilingual-pair,.summary-grid,.rule-grid{grid-template-columns:1fr}.student-line{grid-template-columns:1fr}.footer{position:static;margin-top:12px}}
+@page{size:A4 portrait;margin:0}
+@media print{body{background:#fff}.toolbar{display:none!important}.document{padding:0}.sheet{width:210mm;height:297mm;margin:0;box-shadow:none;page-break-after:always}.sheet:last-child{page-break-after:auto}.word-bank{background:#fff!important;border-color:#777!important}a{color:#000;text-decoration:none}}
+</style>
+</head>
+<body>
+<div class="toolbar" aria-label="Document tools">
+  <button type="button" onclick="printWorksheet(false)">พิมพ์ใบสรุป<br><span lang="en">Print Worksheet</span></button>
+  <button type="button" onclick="printWorksheet(true)">พิมพ์พร้อมคำตอบ<br><span lang="en">Print with Answers</span></button>
+  <button id="toggleAnswers" type="button" aria-pressed="false" onclick="toggleAnswers()">เปิดคำตอบ<br><span lang="en">Show Answers</span></button>
+</div>
+<main class="document">
+
+<!-- PAGE 1 -->
+<section class="sheet">
+<header class="page-header"><div><div class="eyebrow">LIGHT PART 2</div><h1>แสง ตอนที่ 2: การหักเหของแสง<br><span lang="en">Light Part 2: Refraction of Light</span></h1><div class="subtitle">ใบสรุปสองภาษา · Bilingual Summary</div></div><div class="part-badge">ตอนที่ 2<br><span lang="en">PART 2</span></div></header>
+<div class="student-line"><div class="field">ชื่อ–สกุล / Name</div><div class="field">ชั้น / Class</div><div class="field">เลขที่ / No.</div></div>
+
+<article class="section"><h2 class="section-title">1. การหักเหของแสง · <span lang="en">Refraction of Light</span></h2><div class="section-body">
+<div class="bilingual-pair">
+<div class="lang-block" lang="en"><span class="lang-label">TRANSPARENT MEDIA</span><p>Light can pass through transparent media such as <strong>water, air, glass</strong> and certain types of plastics. Light travels at different speeds in different media.</p></div>
+<div class="lang-block"><span class="lang-label">ตัวกลางโปร่งใส</span><p>แสงสามารถเดินทางผ่านตัวกลางโปร่งใส เช่น <strong>น้ำ อากาศ แก้ว</strong> และพลาสติกบางชนิดได้ และแสงเดินทางด้วยความเร็วต่างกันในตัวกลางต่างชนิด</p></div>
+</div>
+<div class="bilingual-pair">
+<div class="lang-block" lang="en"><span class="lang-label">WHY LIGHT BENDS</span><p>When light passes from one transparent medium into another, it may slow down or speed up. This change in speed causes the light to bend or change direction.</p></div>
+<div class="lang-block"><span class="lang-label">เหตุใดแสงจึงหักเห</span><p>เมื่อแสงเดินทางจากตัวกลางโปร่งใสชนิดหนึ่งไปสู่อีกชนิดหนึ่ง แสงอาจช้าลงหรือเร็วขึ้น การเปลี่ยนความเร็วนี้ทำให้แสงเบนหรือเปลี่ยนทิศทาง</p></div>
+</div>
+<div class="key-point"><strong>Key Point · จุดที่ต้องจำ:</strong> Refraction of light is the bending of light as its speed changes when it passes from one transparent medium into another at an angle. · การหักเหของแสงคือการเบนของแสงเมื่อความเร็วเปลี่ยนขณะผ่านจากตัวกลางโปร่งใสหนึ่งไปสู่อีกตัวกลางหนึ่งในแนวเอียง</div>
+<div class="check-box"><div class="check-title">Complete the Idea · เติมแนวคิดสำคัญ</div><div class="word-bank"><strong>Word Bank · คลังคำ:</strong><span class="word-chip">transparent · โปร่งใส</span><span class="word-chip">speed · ความเร็ว</span><span class="word-chip">bend · เบน</span></div>
+<p class="question">Light can pass through <span class="answer-line wide"><span class="answer-text">transparent</span></span> media. · แสงผ่านตัวกลางที่ <span class="answer-line wide"><span class="answer-text">โปร่งใส</span></span> ได้</p>
+<p class="question">A change in light's <span class="answer-line medium"><span class="answer-text">speed</span></span> can make it <span class="answer-line medium"><span class="answer-text">bend</span></span>. · การเปลี่ยน <span class="answer-line medium"><span class="answer-text">ความเร็ว</span></span> ของแสงทำให้แสง <span class="answer-line medium"><span class="answer-text">เบน</span></span> ได้</p></div>
+</div></article>
+
+<article class="section"><h2 class="section-title">2. ความเร็วของแสงในตัวกลางต่างชนิด · <span lang="en">Speed of Light in Different Media</span></h2><div class="section-body">
+<table><thead><tr><th>Medium · ตัวกลาง</th><th>Speed of light · ความเร็วของแสง</th><th>Comparison · เปรียบเทียบ</th></tr></thead><tbody>
+<tr><td>Air · อากาศ</td><td><strong>300,000 km s⁻¹</strong></td><td>Fastest of the three values shown · เร็วที่สุดในสามค่าที่แสดง</td></tr>
+<tr><td>Water · น้ำ</td><td><strong>225,000 km s⁻¹</strong></td><td>Slower than in air · ช้ากว่าในอากาศ</td></tr>
+<tr><td>Glass · แก้ว</td><td><strong>197,000 km s⁻¹</strong></td><td>Slowest of the three values shown · ช้าที่สุดในสามค่าที่แสดง</td></tr>
+</tbody></table>
+<div class="check-box"><div class="check-title">Speed Check · ย้ำค่าความเร็ว</div><div class="word-bank"><strong>Numbers to Use · ตัวเลขที่ใช้:</strong><span class="word-chip">300,000</span><span class="word-chip">225,000</span><span class="word-chip">197,000</span></div>
+<p class="question">Air · อากาศ = <span class="answer-line medium"><span class="answer-text">300,000</span></span> km s⁻¹</p>
+<p class="question">Water · น้ำ = <span class="answer-line medium"><span class="answer-text">225,000</span></span> km s⁻¹</p>
+<p class="question">Glass · แก้ว = <span class="answer-line medium"><span class="answer-text">197,000</span></span> km s⁻¹</p></div>
+</div></article>
+<div class="footer"><span>Light Part 2 · Refraction of Light</span><span>1 / 6</span></div>
+</section>
+
+<!-- PAGE 2 -->
+<section class="sheet">
+<header class="page-header"><div><div class="eyebrow">LIGHT PART 2</div><h1>การทดลองการหักเหผ่านแท่งแก้ว<br><span lang="en">Studying Refraction Through a Glass Block</span></h1></div><div class="part-badge">ตอนที่ 2<br><span lang="en">PART 2</span></div></header>
+
+<article class="section"><h2 class="section-title">3. การศึกษาการหักเหของแสง · <span lang="en">Studying the Refraction of Light</span></h2><div class="section-body">
+<div class="bilingual-pair"><div class="lang-block" lang="en"><span class="lang-label">MATERIALS / APPARATUS</span><p><strong>Glass block</strong> and <strong>ray box with a single slit</strong>.</p></div><div class="lang-block"><span class="lang-label">วัสดุ / อุปกรณ์</span><p><strong>แท่งแก้ว</strong> และ <strong>กล่องรังสีที่มีช่องแคบเดี่ยว</strong></p></div></div>
+<div class="steps-list">
+<div class="step"><strong>Procedure 1 · วิธีทำขั้นที่ 1</strong><br><span lang="en">Direct a ray of light at an angle to a glass block and observe what happens to the ray.</span><br>ฉายรังสีแสงในแนวเอียงเข้าสู่แท่งแก้ว แล้วสังเกตสิ่งที่เกิดขึ้นกับรังสีแสง</div>
+<div class="step"><strong>Procedure 2 · วิธีทำขั้นที่ 2</strong><br><span lang="en">Repeat the procedure, but direct the ray vertically to the glass block so that it travels at a right angle to the block. Observe what happens.</span><br>ทำซ้ำโดยฉายรังสีตั้งฉากกับแท่งแก้วให้รังสีทำมุมฉากกับผิวแท่งแก้ว แล้วสังเกตสิ่งที่เกิดขึ้น</div>
+</div>
+<div class="check-box"><div class="check-title">Apparatus Check · ย้ำอุปกรณ์</div><div class="word-bank"><strong>Word Bank · คลังคำ:</strong><span class="word-chip">glass block · แท่งแก้ว</span><span class="word-chip">ray box · กล่องรังสี</span><span class="word-chip">single slit · ช่องแคบเดี่ยว</span></div>
+<p class="question">The experiment uses a <span class="answer-line wide"><span class="answer-text">glass block</span></span> and a <span class="answer-line wide"><span class="answer-text">ray box</span></span> with a <span class="answer-line wide"><span class="answer-text">single slit</span></span>.</p></div>
+</div></article>
+
+<article class="section"><h2 class="section-title">4. สิ่งที่สังเกตได้ · <span lang="en">Observation</span></h2><div class="section-body">
+<div class="diagram">
+<svg viewBox="0 0 900 220" role="img" aria-label="Three refraction cases">
+  <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#17365d"/></marker></defs>
+  <g font-family="Arial, sans-serif" fill="#17365d" font-size="20" font-weight="700">
+    <text x="145" y="24" text-anchor="middle">Air → Glass</text><text x="450" y="24" text-anchor="middle">Glass → Air</text><text x="755" y="24" text-anchor="middle">Right angle</text>
+  </g>
+  <g stroke="#8aa6bf" stroke-width="2" fill="#eef6fc"><rect x="35" y="104" width="220" height="88"/><rect x="340" y="38" width="220" height="66"/><rect x="645" y="104" width="220" height="88"/></g>
+  <g stroke="#647587" stroke-width="2" stroke-dasharray="7 6"><line x1="145" y1="45" x2="145" y2="205"/><line x1="450" y1="25" x2="450" y2="195"/><line x1="755" y1="45" x2="755" y2="205"/></g>
+  <g stroke="#17365d" stroke-width="4" fill="none" marker-end="url(#arr)">
+    <line x1="70" y1="55" x2="145" y2="104"/><line x1="145" y1="104" x2="170" y2="172"/>
+    <line x1="405" y1="74" x2="450" y2="104"/><line x1="450" y1="104" x2="530" y2="160"/>
+    <line x1="755" y1="54" x2="755" y2="172"/>
+  </g>
+  <g font-family="Arial, sans-serif" fill="#5b6676" font-size="16"><text x="145" y="216" text-anchor="middle">towards normal</text><text x="450" y="216" text-anchor="middle">away from normal</text><text x="755" y="216" text-anchor="middle">straight line</text></g>
+</svg>
+<div class="diagram-caption">สรุปทิศทางการหักเหตามที่อธิบายในสไลด์ · Summary of refraction directions described in the slides</div>
+</div>
+<div class="rule-grid">
+<div class="rule-card"><strong>Air → Glass</strong>Light bends <b>towards the normal</b>.<br>แสงหักเห <b>เข้าหาเส้นปกติ</b></div>
+<div class="rule-card"><strong>Glass → Air</strong>Light bends <b>away from the normal</b>.<br>แสงหักเห <b>ออกจากเส้นปกติ</b></div>
+<div class="rule-card"><strong>Right angle · ตกตั้งฉาก</strong>Light travels in a <b>straight line</b>.<br>แสงเดินทางเป็น <b>เส้นตรง</b></div>
+</div>
+<div class="check-box"><div class="check-title">Observation Check · ย้ำผลการสังเกต</div><div class="word-bank"><strong>Word Bank · คลังคำ:</strong><span class="word-chip">towards · เข้าหา</span><span class="word-chip">away from · ออกจาก</span><span class="word-chip">straight line · เส้นตรง</span></div>
+<p class="question">Air → glass: light bends <span class="answer-line medium"><span class="answer-text">towards</span></span> the normal. · อากาศ → แก้ว: แสงหักเห <span class="answer-line medium"><span class="answer-text">เข้าหา</span></span> เส้นปกติ</p>
+<p class="question">Glass → air: light bends <span class="answer-line medium"><span class="answer-text">away from</span></span> the normal. · แก้ว → อากาศ: แสงหักเห <span class="answer-line medium"><span class="answer-text">ออกจาก</span></span> เส้นปกติ</p>
+<p class="question">At a right angle, light travels in a <span class="answer-line wide"><span class="answer-text">straight line</span></span>. · เมื่อตกตั้งฉาก แสงเดินทางเป็น <span class="answer-line wide"><span class="answer-text">เส้นตรง</span></span></p></div>
+</div></article>
+<div class="footer"><span>Light Part 2 · Refraction of Light</span><span>2 / 6</span></div>
+</section>
+
+<!-- PAGE 3 -->
+<section class="sheet">
+<header class="page-header"><div><div class="eyebrow">LIGHT PART 2</div><h1>กฎเชิงคุณภาพของการหักเห<br><span lang="en">Qualitative Rules of Refraction</span></h1></div><div class="part-badge">ตอนที่ 2<br><span lang="en">PART 2</span></div></header>
+
+<article class="section"><h2 class="section-title">5. การอภิปรายและข้อสรุปจากการทดลอง · <span lang="en">Discussion and Conclusion</span></h2><div class="section-body">
+<div class="bilingual-pair"><div class="lang-block" lang="en"><span class="lang-label">DISCUSSION</span><p>When light is directed at an angle to the glass block, it is refracted. When light is directed vertically to the glass block, it is not refracted.</p></div><div class="lang-block"><span class="lang-label">อภิปรายผล</span><p>เมื่อฉายแสงในแนวเอียงเข้าสู่แท่งแก้ว แสงจะเกิดการหักเห แต่เมื่อฉายแสงตั้งฉากกับแท่งแก้ว แสงจะไม่หักเห</p></div></div>
+<div class="bilingual-pair"><div class="lang-block" lang="en"><span class="lang-label">CONCLUSION</span><p>Light is refracted when it travels at an angle from one transparent medium to another of different density.</p></div><div class="lang-block"><span class="lang-label">ข้อสรุป</span><p>แสงเกิดการหักเหเมื่อเดินทางในแนวเอียงจากตัวกลางโปร่งใสหนึ่งไปสู่อีกตัวกลางหนึ่งที่มีความหนาแน่นต่างกัน</p></div></div>
+</div></article>
+
+<article class="section"><h2 class="section-title">6. เปรียบเทียบการสะท้อนกับการหักเห · <span lang="en">Reflection vs Refraction</span></h2><div class="section-body">
+<table><thead><tr><th>Concept · แนวคิด</th><th>English</th><th>ภาษาไทย</th></tr></thead><tbody>
+<tr><td><strong>Reflection</strong><br>การสะท้อน</td><td>The bouncing of light off the surface on which it falls.</td><td>การที่แสงกระเด้งกลับจากพื้นผิวที่แสงตกกระทบ</td></tr>
+<tr><td><strong>Refraction</strong><br>การหักเห</td><td>The bending of light as it changes its speed when passing from one transparent medium into another at an angle.</td><td>การเบนของแสงเมื่อความเร็วเปลี่ยนขณะเดินทางในแนวเอียงจากตัวกลางโปร่งใสหนึ่งไปสู่อีกตัวกลางหนึ่ง</td></tr>
+</tbody></table>
+<div class="check-box"><div class="check-title">Choose the Correct Term · เลือกคำให้ถูก</div><div class="word-bank"><strong>Word Bank · คลังคำ:</strong><span class="word-chip">reflection · การสะท้อน</span><span class="word-chip">refraction · การหักเห</span></div>
+<p class="question">Light bouncing off a surface is <span class="answer-line wide"><span class="answer-text">reflection</span></span>. · แสงกระเด้งกลับจากผิวคือ <span class="answer-line wide"><span class="answer-text">การสะท้อน</span></span></p>
+<p class="question">Light bending as its speed changes between media is <span class="answer-line wide"><span class="answer-text">refraction</span></span>. · แสงเบนเมื่อเปลี่ยนความเร็วระหว่างตัวกลางคือ <span class="answer-line wide"><span class="answer-text">การหักเห</span></span></p></div>
+</div></article>
+
+<article class="section"><h2 class="section-title">7. ความหนาแน่นของตัวกลางกับทิศทางการหักเห · <span lang="en">Medium Density and Bending Direction</span></h2><div class="section-body">
+<div class="bilingual-pair"><div class="lang-block" lang="en"><span class="lang-label">LESS DENSE → DENSER</span><p>When light travels from a less dense medium to a denser medium, it <strong>slows down</strong> and is refracted <strong>towards the normal</strong>.</p></div><div class="lang-block"><span class="lang-label">ความหนาแน่นน้อยกว่า → มากกว่า</span><p>เมื่อแสงเดินทางจากตัวกลางที่มีความหนาแน่นน้อยกว่าไปยังตัวกลางที่หนาแน่นกว่า แสงจะ <strong>ช้าลง</strong> และหักเห <strong>เข้าหาเส้นปกติ</strong></p></div></div>
+<div class="bilingual-pair"><div class="lang-block" lang="en"><span class="lang-label">DENSER → LESS DENSE</span><p>When light travels from a denser medium to a less dense medium, it <strong>speeds up</strong> and is refracted <strong>away from the normal</strong>.</p></div><div class="lang-block"><span class="lang-label">ความหนาแน่นมากกว่า → น้อยกว่า</span><p>เมื่อแสงเดินทางจากตัวกลางที่หนาแน่นกว่าไปยังตัวกลางที่มีความหนาแน่นน้อยกว่า แสงจะ <strong>เร็วขึ้น</strong> และหักเห <strong>ออกจากเส้นปกติ</strong></p></div></div>
+<div class="key-point"><strong>Right-angle case · กรณีตกตั้งฉาก:</strong> If a light ray hits a transparent medium at a right angle, it passes through in a straight line and is not refracted. · ถ้ารังสีแสงตกกระทบตัวกลางโปร่งใสเป็นมุมฉาก แสงจะผ่านไปเป็นเส้นตรงและไม่เกิดการเบนของแนวรังสี</div>
+<div class="check-box"><div class="check-title">Complete the Rules · เติมกฎ</div><div class="word-bank"><strong>Word Bank · คลังคำ:</strong><span class="word-chip">slows down · ช้าลง</span><span class="word-chip">speeds up · เร็วขึ้น</span><span class="word-chip">towards · เข้าหา</span><span class="word-chip">away from · ออกจาก</span></div>
+<p class="question">Less dense → denser: light <span class="answer-line wide"><span class="answer-text">slows down</span></span> and bends <span class="answer-line medium"><span class="answer-text">towards</span></span> the normal.</p>
+<p class="question">Denser → less dense: light <span class="answer-line wide"><span class="answer-text">speeds up</span></span> and bends <span class="answer-line medium"><span class="answer-text">away from</span></span> the normal.</p></div>
+</div></article>
+<div class="footer"><span>Light Part 2 · Refraction of Light</span><span>3 / 6</span></div>
+</section>
+
+<!-- PAGE 4 -->
+<section class="sheet">
+<header class="page-header"><div><div class="eyebrow">LIGHT PART 2</div><h1>ความลึกปรากฏและดินสอดูหัก<br><span lang="en">Apparent Depth and the Bent-Pencil Effect</span></h1></div><div class="part-badge">ตอนที่ 2<br><span lang="en">PART 2</span></div></header>
+
+<article class="section"><h2 class="section-title">8. ความลึกและตำแหน่งที่เห็นคลาดเคลื่อน · <span lang="en">False Impression of Depth and Position</span></h2><div class="section-body">
+<div class="bilingual-pair"><div class="lang-block" lang="en"><span class="lang-label">GENERAL EFFECT</span><p>Refraction of light gives us a false impression of the <strong>depth</strong> and <strong>position</strong> of an object.</p></div><div class="lang-block"><span class="lang-label">ผลทั่วไป</span><p>การหักเหของแสงทำให้เราเห็น <strong>ความลึก</strong> และ <strong>ตำแหน่ง</strong> ของวัตถุคลาดเคลื่อนไปจากความเป็นจริง</p></div></div>
+<div class="key-point"><strong>Vocabulary · คำศัพท์:</strong> Apparent depth = ความลึกปรากฏ · Actual depth = ความลึกจริง</div>
+</div></article>
+
+<article class="section"><h2 class="section-title">9. ทำไมสระน้ำจึงดูตื้นกว่าความจริง? · <span lang="en">Why Does a Pond Appear Shallower?</span></h2><div class="section-body">
+<div class="bilingual-pair"><div class="lang-block" lang="en"><span class="lang-label">PONDS AND SWIMMING POOLS</span><p>Ponds and swimming pools appear shallower than they really are because light from the bottom is refracted as it moves out of the water into the air.</p></div><div class="lang-block"><span class="lang-label">บ่อน้ำและสระว่ายน้ำ</span><p>บ่อน้ำและสระว่ายน้ำดูตื้นกว่าความจริง เพราะแสงจากก้นบ่อหรือก้นสระเกิดการหักเหเมื่อเดินทางจากน้ำออกสู่อากาศ</p></div></div>
+<div class="bilingual-pair"><div class="lang-block" lang="en"><span class="lang-label">WHAT THE OBSERVER SEES</span><p>When the refracted light enters the observer's eyes, the image of the bottom is seen at a shallower position than the actual depth.</p></div><div class="lang-block"><span class="lang-label">สิ่งที่ผู้สังเกตเห็น</span><p>เมื่อแสงที่หักเหเข้าสู่ดวงตาของผู้สังเกต ภาพของก้นบ่อจะดูอยู่ในตำแหน่งที่ตื้นกว่าความลึกจริง</p></div></div>
+<div class="check-box"><div class="check-title">Depth Check · ย้ำเรื่องความลึก</div><div class="word-bank"><strong>Word Bank · คลังคำ:</strong><span class="word-chip">apparent depth · ความลึกปรากฏ</span><span class="word-chip">actual depth · ความลึกจริง</span><span class="word-chip">shallower · ตื้นกว่า</span></div>
+<p class="question">The pond appears <span class="answer-line medium"><span class="answer-text">shallower</span></span> than it really is. · บ่อน้ำดู <span class="answer-line medium"><span class="answer-text">ตื้นกว่า</span></span> ความเป็นจริง</p>
+<p class="question">The depth we seem to see is the <span class="answer-line wide"><span class="answer-text">apparent depth</span></span>. · ความลึกที่เราเห็นเรียกว่า <span class="answer-line wide"><span class="answer-text">ความลึกปรากฏ</span></span></p>
+<p class="question">The true depth is the <span class="answer-line wide"><span class="answer-text">actual depth</span></span>. · ความลึกจริงคือ <span class="answer-line wide"><span class="answer-text">ความลึกจริง</span></span></p></div>
+</div></article>
+
+<article class="section"><h2 class="section-title">10. ทำไมดินสอในแก้วน้ำจึงดูหัก? · <span lang="en">Why Does a Pencil in Water Appear Bent?</span></h2><div class="section-body">
+<div class="bilingual-pair"><div class="lang-block" lang="en"><span class="lang-label">BENT-PENCIL EFFECT</span><p>A pencil in a glass of water appears bent because light from the pencil is refracted as it travels from the water into the air.</p></div><div class="lang-block"><span class="lang-label">ปรากฏการณ์ดินสอดูหัก</span><p>ดินสอในแก้วน้ำดูเหมือนหัก เพราะแสงจากดินสอเกิดการหักเหเมื่อเดินทางจากน้ำสู่อากาศ</p></div></div>
+<div class="bilingual-pair"><div class="lang-block" lang="en"><span class="lang-label">IMAGE POSITION</span><p>When the refracted light enters the observer's eyes, the image of the pencil is seen somewhere above the bottom of the glass. This makes the pencil appear bent.</p></div><div class="lang-block"><span class="lang-label">ตำแหน่งภาพที่เห็น</span><p>เมื่อแสงที่หักเหเข้าสู่ดวงตา ผู้สังเกตจะเห็นภาพของส่วนดินสอในน้ำอยู่สูงกว่าตำแหน่งจริง จึงทำให้ดินสอดูเหมือนหัก</p></div></div>
+<div class="check-box"><div class="check-title">Cause and Effect · เหตุและผล</div><div class="word-bank"><strong>Word Bank · คลังคำ:</strong><span class="word-chip">water · น้ำ</span><span class="word-chip">air · อากาศ</span><span class="word-chip">refracted · หักเห</span></div>
+<p class="question">Light travels from <span class="answer-line medium"><span class="answer-text">water</span></span> into <span class="answer-line medium"><span class="answer-text">air</span></span> and is <span class="answer-line medium"><span class="answer-text">refracted</span></span>.</p>
+<p class="question">แสงเดินทางจาก <span class="answer-line medium"><span class="answer-text">น้ำ</span></span> สู่อากาศ และเกิดการ <span class="answer-line medium"><span class="answer-text">หักเห</span></span></p></div>
+</div></article>
+<div class="footer"><span>Light Part 2 · Refraction of Light</span><span>4 / 6</span></div>
+</section>
+
+<!-- PAGE 5 -->
+<section class="sheet">
+<header class="page-header"><div><div class="eyebrow">LIGHT PART 2</div><h1>มิราจ · <span lang="en">Mirage</span></h1></div><div class="part-badge">ตอนที่ 2<br><span lang="en">PART 2</span></div></header>
+
+<article class="section"><h2 class="section-title">11. มิราจคืออะไร? · <span lang="en">What Is a Mirage?</span></h2><div class="section-body">
+<div class="bilingual-pair"><div class="lang-block" lang="en"><span class="lang-label">DEFINITION</span><p>A mirage is an optical phenomenon that creates an image and is caused by layers of air of different temperatures and thicknesses.</p></div><div class="lang-block"><span class="lang-label">ความหมาย</span><p>มิราจเป็นปรากฏการณ์ทางแสงที่ทำให้เกิดภาพ โดยเกี่ยวข้องกับชั้นอากาศที่มีอุณหภูมิและความหนาแตกต่างกัน</p></div></div>
+<div class="bilingual-pair"><div class="lang-block" lang="en"><span class="lang-label">WHEN IT HAPPENS</span><p>Mirages happen on sunny days. The Sun heats the ground, and the ground then heats the air just above it.</p></div><div class="lang-block"><span class="lang-label">เกิดขึ้นเมื่อใด</span><p>มิราจมักเกิดในวันที่มีแดดจัด ดวงอาทิตย์ทำให้พื้นดินร้อน และพื้นดินทำให้อากาศที่อยู่เหนือพื้นร้อนขึ้นตาม</p></div></div>
+<div class="bilingual-pair"><div class="lang-block" lang="en"><span class="lang-label">HOW THE IMAGE IS FORMED</span><p>When light passes through the layers of air, it refracts and can fool our eyes into seeing something that is not present.</p></div><div class="lang-block"><span class="lang-label">การเกิดภาพ</span><p>เมื่อแสงเดินทางผ่านชั้นอากาศเหล่านี้ แสงจะหักเหและทำให้ดวงตาของเราเห็นภาพเสมือนว่ามีบางสิ่งอยู่ทั้งที่ไม่มีอยู่จริง ณ ตำแหน่งนั้น</p></div></div>
+<div class="key-point"><strong>Example from the slides · ตัวอย่างจากสไลด์:</strong> The puddle-like mirage often seen on deserts or roads is described as an image of clouds in the sky. · ภาพคล้ายแอ่งน้ำที่เห็นในทะเลทรายหรือบนถนนถูกอธิบายในสไลด์ว่าเป็นภาพของเมฆบนท้องฟ้า</div>
+</div></article>
+
+<article class="section"><h2 class="section-title">12. ลำดับการเกิดมิราจ · <span lang="en">Formation Sequence of a Mirage</span></h2><div class="section-body">
+<div class="steps-list">
+<div class="step"><strong>1. Sun heats the ground · ดวงอาทิตย์ทำให้พื้นร้อน</strong></div>
+<div class="step"><strong>2. Air near the ground becomes hotter · อากาศใกล้พื้นร้อนขึ้น</strong></div>
+<div class="step"><strong>3. Layers of air have different temperatures · ชั้นอากาศมีอุณหภูมิต่างกัน</strong></div>
+<div class="step"><strong>4. Light is refracted through the layers · แสงหักเหเมื่อผ่านชั้นอากาศ</strong></div>
+<div class="step"><strong>5. An apparent image is seen · ผู้สังเกตเห็นภาพปรากฏ</strong></div>
+</div>
+<div class="check-box"><div class="check-title">Mirage Check · ย้ำความเข้าใจมิราจ</div><div class="word-bank"><strong>Word Bank · คลังคำ:</strong><span class="word-chip">sunny · แดดจัด</span><span class="word-chip">temperature · อุณหภูมิ</span><span class="word-chip">refraction · การหักเห</span><span class="word-chip">apparent image · ภาพปรากฏ</span></div>
+<p class="question">Mirages commonly happen on <span class="answer-line medium"><span class="answer-text">sunny</span></span> days. · มิราจมักเกิดในวันที่มี <span class="answer-line medium"><span class="answer-text">แดดจัด</span></span></p>
+<p class="question">Different air layers have different <span class="answer-line medium"><span class="answer-text">temperature</span></span>. · ชั้นอากาศมี <span class="answer-line medium"><span class="answer-text">อุณหภูมิ</span></span> ต่างกัน</p>
+<p class="question">Light undergoes <span class="answer-line medium"><span class="answer-text">refraction</span></span>. · แสงเกิด <span class="answer-line medium"><span class="answer-text">การหักเห</span></span></p>
+<p class="question">The observer sees an <span class="answer-line wide"><span class="answer-text">apparent image</span></span>. · ผู้สังเกตเห็น <span class="answer-line wide"><span class="answer-text">ภาพปรากฏ</span></span></p></div>
+</div></article>
+
+<article class="section"><h2 class="section-title">13. คำสำคัญในภาพการเกิดมิราจ · <span lang="en">Key Labels in a Mirage Diagram</span></h2><div class="section-body">
+<table><thead><tr><th>English label</th><th>ภาษาไทย</th></tr></thead><tbody>
+<tr><td>Cloud</td><td>เมฆ</td></tr><tr><td>Cool air</td><td>อากาศเย็น</td></tr><tr><td>Warm air</td><td>อากาศอุ่น</td></tr><tr><td>Hot air</td><td>อากาศร้อน</td></tr><tr><td>Very hot air</td><td>อากาศร้อนมาก</td></tr><tr><td>Refracted light</td><td>แสงที่หักเห</td></tr><tr><td>Pool of water (apparent image)</td><td>แอ่งน้ำ (ภาพปรากฏ)</td></tr>
+</tbody></table>
+</div></article>
+<div class="footer"><span>Light Part 2 · Refraction of Light</span><span>5 / 6</span></div>
+</section>
+
+<!-- PAGE 6 -->
+<section class="sheet">
+<header class="page-header"><div><div class="eyebrow">LIGHT PART 2</div><h1>ปริซึม สเปกตรัม และรุ้ง<br><span lang="en">Prisms, Spectrum and Rainbows</span></h1></div><div class="part-badge">ตอนที่ 2<br><span lang="en">PART 2</span></div></header>
+
+<article class="section"><h2 class="section-title">14. ปริซึมและการกระจายแสง · <span lang="en">Prism and Dispersion</span></h2><div class="section-body">
+<div class="bilingual-pair"><div class="lang-block" lang="en"><span class="lang-label">PRISM</span><p>A prism is a triangular-based transparent block. When light passes through it, the light is refracted twice: once when it enters and once when it leaves. The two surfaces are not parallel.</p></div><div class="lang-block"><span class="lang-label">ปริซึม</span><p>ปริซึมเป็นแท่งโปร่งใสที่มีฐานเป็นรูปสามเหลี่ยม เมื่อแสงผ่านปริซึม แสงจะหักเหสองครั้ง คือเมื่อเข้าสู่ปริซึมและเมื่อออกจากปริซึม โดยผิวทั้งสองไม่ขนานกัน</p></div></div>
+<div class="bilingual-pair"><div class="lang-block" lang="en"><span class="lang-label">DISPERSION</span><p>The light is dispersed into a spectrum. Each color is refracted by a different amount.</p></div><div class="lang-block"><span class="lang-label">การกระจายแสง</span><p>แสงถูกกระจายออกเป็นสเปกตรัม และแสงแต่ละสีหักเหในปริมาณที่แตกต่างกัน</p></div></div>
+<div class="key-point"><strong>Colors listed in the source slide · ลำดับสีตามสไลด์ต้นฉบับ:</strong><br><span class="color-seq">red, orange, yellow, green, blue, violet, indigo</span><br>แดง ส้ม เหลือง เขียว น้ำเงิน ม่วง ไอคราม</div>
+<div class="check-box"><div class="check-title">Prism Check · ย้ำเรื่องปริซึม</div><div class="word-bank"><strong>Word Bank · คลังคำ:</strong><span class="word-chip">twice · สองครั้ง</span><span class="word-chip">spectrum · สเปกตรัม</span><span class="word-chip">different · แตกต่างกัน</span></div>
+<p class="question">Light is refracted <span class="answer-line medium"><span class="answer-text">twice</span></span> in a prism. · แสงหักเห <span class="answer-line medium"><span class="answer-text">สองครั้ง</span></span> ในปริซึม</p>
+<p class="question">White light is dispersed into a <span class="answer-line wide"><span class="answer-text">spectrum</span></span>. · แสงขาวกระจายออกเป็น <span class="answer-line wide"><span class="answer-text">สเปกตรัม</span></span></p>
+<p class="question">Each color is refracted by a <span class="answer-line medium"><span class="answer-text">different</span></span> amount. · แต่ละสีหักเหในปริมาณที่ <span class="answer-line medium"><span class="answer-text">แตกต่างกัน</span></span></p></div>
+</div></article>
+
+<article class="section"><h2 class="section-title">15. การเกิดรุ้ง · <span lang="en">Formation of a Rainbow</span></h2><div class="section-body">
+<div class="bilingual-pair"><div class="lang-block" lang="en"><span class="lang-label">RAINBOW</span><p>Rainbows are produced when light is both <strong>reflected</strong> and <strong>refracted</strong> by tiny water droplets in the air.</p></div><div class="lang-block"><span class="lang-label">รุ้ง</span><p>รุ้งเกิดขึ้นเมื่อแสงเกิดทั้ง <strong>การสะท้อน</strong> และ <strong>การหักเห</strong> โดยหยดน้ำขนาดเล็กในอากาศ</p></div></div>
+<div class="steps-list">
+<div class="step"><strong>1.</strong> <span lang="en">Light enters the water droplet.</span> · แสงเข้าสู่หยดน้ำ</div>
+<div class="step"><strong>2.</strong> <span lang="en">Light is reflected from the back of the droplet.</span> · แสงสะท้อนจากด้านหลังของหยดน้ำ</div>
+<div class="step"><strong>3.</strong> <span lang="en">Light is refracted twice when it enters and leaves the droplet.</span> · แสงหักเหสองครั้งเมื่อเข้าสู่และออกจากหยดน้ำ</div>
+<div class="step"><strong>4.</strong> <span lang="en">The light is separated into its components; the water droplet acts like a prism.</span> · แสงแยกออกเป็นองค์ประกอบ และหยดน้ำทำหน้าที่คล้ายปริซึม</div>
+</div>
+<div class="key-point"><strong>Viewing condition in the source · เงื่อนไขการเห็นตามสไลด์:</strong> We can see a rainbow when it is drizzling and the Sun is low and behind us. · เราสามารถเห็นรุ้งได้เมื่อมีฝนตกปรอย ๆ และดวงอาทิตย์อยู่ต่ำและอยู่ด้านหลังของเรา</div>
+<div class="check-box"><div class="check-title">Rainbow Check · ย้ำการเกิดรุ้ง</div><div class="word-bank"><strong>Word Bank · คลังคำ:</strong><span class="word-chip">reflected · สะท้อน</span><span class="word-chip">refracted · หักเห</span><span class="word-chip">water droplets · หยดน้ำ</span><span class="word-chip">prisms · ปริซึม</span></div>
+<p class="question">Rainbows involve both <span class="answer-line medium"><span class="answer-text">reflected</span></span> and <span class="answer-line medium"><span class="answer-text">refracted</span></span> light. · การเกิดรุ้งเกี่ยวข้องกับทั้งแสงที่ <span class="answer-line medium"><span class="answer-text">สะท้อน</span></span> และ <span class="answer-line medium"><span class="answer-text">หักเห</span></span></p>
+<p class="question">Tiny <span class="answer-line wide"><span class="answer-text">water droplets</span></span> act like <span class="answer-line medium"><span class="answer-text">prisms</span></span>. · <span class="answer-line wide"><span class="answer-text">หยดน้ำ</span></span> ขนาดเล็กทำหน้าที่คล้าย <span class="answer-line medium"><span class="answer-text">ปริซึม</span></span></p></div>
+</div></article>
+
+<article class="section"><h2 class="section-title">16. สรุปท้ายเรื่อง · <span lang="en">End Summary</span></h2><div class="section-body">
+<div class="summary-grid">
+<div class="summary-card"><strong>Different media · ตัวกลางต่างกัน</strong><br>Light travels at different speeds. · แสงเดินทางด้วยความเร็วต่างกัน</div>
+<div class="summary-card"><strong>Refraction · การหักเห</strong><br>A change in speed can change direction. · การเปลี่ยนความเร็วทำให้ทิศทางเปลี่ยน</div>
+<div class="summary-card"><strong>Everyday effects · ผลในชีวิตประจำวัน</strong><br>Ponds appear shallower; pencils appear bent. · บ่อน้ำดูตื้นและดินสอดูหัก</div>
+<div class="summary-card"><strong>Prism · ปริซึม</strong><br>White light is dispersed into a spectrum. · แสงขาวกระจายเป็นสเปกตรัม</div>
+<div class="summary-card"><strong>Rainbow · รุ้ง</strong><br>Water droplets cause reflection and refraction. · หยดน้ำทำให้เกิดการสะท้อนและหักเห</div>
+<div class="summary-card"><strong>Right angle · ตกตั้งฉาก</strong><br>The ray continues in a straight line. · รังสียังคงเดินทางเป็นเส้นตรง</div>
+</div>
+<div class="source-note"><strong>Source note · หมายเหตุจากต้นฉบับ:</strong> In the original conclusion slide, the sentence about ponds appearing shallower and pencils appearing bent uses the word <strong>“Reflection”</strong>. Earlier slides explain these effects as <strong>refraction</strong>. This worksheet keeps the main explanation from the preceding slides and records the wording difference here instead of silently changing the source. · ในสไลด์สรุปต้นฉบับ ประโยคเรื่องบ่อน้ำดูตื้นและดินสอดูหักใช้คำว่า <strong>“Reflection”</strong> ขณะที่สไลด์ก่อนหน้าอธิบายปรากฏการณ์ดังกล่าวด้วย <strong>refraction</strong> ใบสรุปนี้จึงยึดคำอธิบายหลักจากเนื้อหาก่อนหน้าและบันทึกความต่างของถ้อยคำไว้ตรงนี้โดยไม่แก้ต้นฉบับแบบเงียบ ๆ</div>
+<div class="check-box"><div class="check-title">Exit Check · ตรวจสอบก่อนจบ</div><div class="word-bank"><strong>Word Bank · คลังคำ:</strong><span class="word-chip">towards · เข้าหา</span><span class="word-chip">away from · ออกจาก</span><span class="word-chip">shallower · ตื้นกว่า</span><span class="word-chip">twice · สองครั้ง</span></div>
+<p class="question">1) Less dense → denser: bend <span class="answer-line medium"><span class="answer-text">towards</span></span> the normal. · ความหนาแน่นน้อยกว่า → มากกว่า: หักเห <span class="answer-line medium"><span class="answer-text">เข้าหา</span></span> เส้นปกติ</p>
+<p class="question">2) Denser → less dense: bend <span class="answer-line medium"><span class="answer-text">away from</span></span> the normal. · ความหนาแน่นมากกว่า → น้อยกว่า: หักเห <span class="answer-line medium"><span class="answer-text">ออกจาก</span></span> เส้นปกติ</p>
+<p class="question">3) A pond appears <span class="answer-line medium"><span class="answer-text">shallower</span></span> than it really is. · บ่อน้ำดู <span class="answer-line medium"><span class="answer-text">ตื้นกว่า</span></span> ความเป็นจริง</p>
+<p class="question">4) Light is refracted <span class="answer-line medium"><span class="answer-text">twice</span></span> in a prism. · แสงหักเห <span class="answer-line medium"><span class="answer-text">สองครั้ง</span></span> ในปริซึม</p></div>
+<div class="mini-note"><strong>Further viewing · วิดีโอประกอบในต้นฉบับ:</strong> https://www.youtube.com/watch?v=el8AUeZaljw · https://www.youtube.com/watch?v=jQDRNb-E-cY</div>
+</div></article>
+<div class="footer"><span>Light Part 2 · Refraction of Light</span><span>6 / 6</span></div>
+</section>
+</main>
+<script>
+let restoreAnswersAfterPrint=false;
+function updateToggleButton(){const shown=document.body.classList.contains('show-answers');const btn=document.getElementById('toggleAnswers');btn.setAttribute('aria-pressed',shown?'true':'false');btn.innerHTML=shown?'ปิดคำตอบ<br><span lang="en">Hide Answers</span>':'เปิดคำตอบ<br><span lang="en">Show Answers</span>'}
+function toggleAnswers(){document.body.classList.toggle('show-answers');updateToggleButton()}
+function printWorksheet(withAnswers){restoreAnswersAfterPrint=document.body.classList.contains('show-answers');document.body.classList.toggle('show-answers',withAnswers);updateToggleButton();window.setTimeout(()=>window.print(),80)}
+window.addEventListener('afterprint',()=>{document.body.classList.toggle('show-answers',restoreAnswersAfterPrint);updateToggleButton()});updateToggleButton();
+</script>
+</body>
+</html>
