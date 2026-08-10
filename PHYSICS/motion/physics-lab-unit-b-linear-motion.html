@@ -120,7 +120,7 @@
 
   var ROOT_ID="physics-unit-b-linear-motion-root";
   var LAB_TYPE="PHYSICS_LAB_UNIT_B_LINEAR_MOTION";
-  var VERSION="0.6.1";
+  var VERSION="0.6.2";
   var UNIT_ID="B";
   var TOTAL_STEPS=36;
   var root=document.getElementById(ROOT_ID);
@@ -360,7 +360,24 @@
   function resetB1(){if(state.stations.B1.live.running)return;var seed=state.stations.B1.trialSeed;state.stations.B1=createB1();state.stations.B1.trialSeed=seed;render();notifyChange();}
   function handleClick(e){var t=e.target.closest("[data-action]");if(!t||!root.contains(t))return;var a=t.getAttribute("data-action");if(a==="go-station"){var i=Number(t.getAttribute("data-index"));if(stationAvailable(i)){state.currentStationIndex=i;render();notifyChange();}return;}if(a==="approve")return approve();if(a==="run-route")return animateRoute(t.getAttribute("data-route"));if(a==="unlock-analysis")return unlockAnalysis();if(a==="check-pass")return checkPass();if(a==="reset-b1")return resetB1();if(a==="b2-approve")return b2Approve();if(a==="b2-run-journey")return b2RunJourney();if(a==="b2-run-ticker")return b2RunTicker(t.getAttribute("data-ticker"));if(a==="b2-unlock-analysis")return b2UnlockAnalysis();if(a==="b2-check-pass")return b2CheckPass();if(a==="b2-reset")return b2Reset();if(a==="b3-approve")return b3Approve();if(a==="b3-run-case")return b3RunCase(t.getAttribute("data-case"));if(a==="b3-unlock-analysis")return b3UnlockAnalysis();if(a==="b3-check-pass")return b3CheckPass();if(a==="b4-approve")return b4Approve();if(a==="b4-run-case")return b4RunCase(t.getAttribute("data-case"));if(a==="b4-measure")return b4Measure(t.getAttribute("data-measure"));if(a==="b4-unlock-analysis")return b4UnlockAnalysis();if(a==="b4-check-pass")return b4CheckPass();if(a==="b5-approve")return b5Approve();if(a==="b5-run")return b5Run();if(a==="b5-derive")return b5Derive();if(a==="b5-unlock-analysis")return b5UnlockAnalysis();if(a==="b5-check-pass")return b5CheckPass();if(a==="b6-approve")return b6Approve();if(a==="b6-run")return b6Run(t.getAttribute("data-mission"));if(a==="b6-unlock-analysis")return b6UnlockAnalysis();if(a==="b6-check-pass")return b6CheckPass();}
 
-  function normalize(input){var x=input;for(var i=0;i<8;i++){if(typeof x==="string"){try{x=JSON.parse(x);continue;}catch(e){break;}}if(x&&typeof x==="object"){var keys=["data","payload","saveData","savedData","labData","state","progress","progressData"];var found=null;for(var k=0;k<keys.length;k++){if(x[keys[k]]!=null){found=x[keys[k]];break;}}if(found!=null){x=found;continue;}}break;}return x;}
+  function parseMaybeJson(value){if(typeof value!=="string")return value;try{return JSON.parse(value);}catch(e){return value;}}
+  function normalize(input){
+    var queue=[parseMaybeJson(input)],fallback=null,visited=[];
+    while(queue.length){
+      var candidate=parseMaybeJson(queue.shift());
+      if(!candidate||typeof candidate!=="object"||visited.indexOf(candidate)>=0)continue;
+      visited.push(candidate);
+      if(candidate.stations&&typeof candidate.stations==="object")return candidate;
+      if(fallback===null&&(
+        candidate.percent!==undefined||candidate.score!==undefined||candidate.completedStations!==undefined||
+        candidate.currentStation!==undefined||candidate.currentStationIndex!==undefined||candidate.currentStep!==undefined||candidate.step!==undefined
+      ))fallback=candidate;
+      ["data","payload","saveData","savedData","labData","state","progress","progressData","result","value","detailedState","activityState","savePayload"].forEach(function(key){
+        if(candidate[key]!==undefined&&candidate[key]!==candidate)queue.push(parseMaybeJson(candidate[key]));
+      });
+    }
+    return fallback;
+  }
   function sanitizeB1(input){var out=createB1();input=input&&typeof input==="object"?input:{};["referencePoint","positiveDirection","approvalReference","approvalPosition","activeRoute"].forEach(function(k){if(typeof input[k]==="string")out[k]=input[k];});["approved","experimentViewed","explanationViewed","completed"].forEach(function(k){out[k]=input[k]===true;});out.selectionAttempts=Math.max(0,Math.floor(num(input.selectionAttempts,0)));out.exitAttempts=Math.max(0,Math.floor(num(input.exitAttempts,0)));if(typeof input.feedbackTone==="string")out.feedbackTone=input.feedbackTone;if(typeof input.feedbackMessage==="string")out.feedbackMessage=input.feedbackMessage;if(typeof input.exitFeedback==="string")out.exitFeedback=input.exitFeedback;if(input.routes&&typeof input.routes==="object")Object.keys(out.routes).forEach(function(k){out.routes[k]=input.routes[k]===true;});if(input.routeResults&&typeof input.routeResults==="object")Object.keys(ROUTES).forEach(function(k){var r=input.routeResults[k];if(r&&typeof r==="object")out.routeResults[k]={distance:num(r.distance,pathDistance(ROUTES[k].points)),displacement:num(r.displacement,displacement(ROUTES[k].points))};});if(input.analysisAnswers&&typeof input.analysisAnswers==="object")Object.keys(out.analysisAnswers).forEach(function(k){if(typeof input.analysisAnswers[k]==="string")out.analysisAnswers[k]=input.analysisAnswers[k];});if(input.exitAnswers&&typeof input.exitAnswers==="object")Object.keys(out.exitAnswers).forEach(function(k){if(typeof input.exitAnswers[k]==="string")out.exitAnswers[k]=input.exitAnswers[k];});if(!out.exitAnswers.sameEndpoint&&typeof input["exit.sameEndpoint"]==="string")out.exitAnswers.sameEndpoint=input["exit.sameEndpoint"];out.trialSeed=Math.max(0,Math.floor(num(input.trialSeed,out.trialSeed)));out.live={distance:0,displacement:0,x:0,y:0,running:false,trail:[[0,0]]};out.experimentViewed=out.experimentViewed||b1ExperimentComplete(out);return out;}
   function sanitizeB2(input){var out=createB2();input=input&&typeof input==="object"?input:{};["positiveDirection","timerFrequency","approvalGapTime","approvalGapCount","activeTicker"].forEach(function(k){if(typeof input[k]==="string")out[k]=input[k];});["approved","experimentViewed","explanationViewed","completed","journeyDone"].forEach(function(k){out[k]=input[k]===true;});out.selectionAttempts=Math.max(0,Math.floor(num(input.selectionAttempts,0)));out.exitAttempts=Math.max(0,Math.floor(num(input.exitAttempts,0)));if(typeof input.feedbackTone==="string")out.feedbackTone=input.feedbackTone;if(typeof input.feedbackMessage==="string")out.feedbackMessage=input.feedbackMessage;if(typeof input.exitFeedback==="string")out.exitFeedback=input.exitFeedback;if(input.journeyResult&&typeof input.journeyResult==="object")out.journeyResult={distance:num(input.journeyResult.distance,8),displacement:num(input.journeyResult.displacement,4),time:num(input.journeyResult.time,4),avgSpeed:num(input.journeyResult.avgSpeed,2),avgVelocity:num(input.journeyResult.avgVelocity,1)};if(input.tickerDone&&typeof input.tickerDone==="object")Object.keys(out.tickerDone).forEach(function(k){out.tickerDone[k]=input.tickerDone[k]===true;});if(input.tickerAnswers&&typeof input.tickerAnswers==="object")Object.keys(out.tickerAnswers).forEach(function(k){if(typeof input.tickerAnswers[k]==="string")out.tickerAnswers[k]=input.tickerAnswers[k];});if(input.analysisAnswers&&typeof input.analysisAnswers==="object")Object.keys(out.analysisAnswers).forEach(function(k){if(typeof input.analysisAnswers[k]==="string")out.analysisAnswers[k]=input.analysisAnswers[k];});if(input.exitAnswers&&typeof input.exitAnswers==="object")Object.keys(out.exitAnswers).forEach(function(k){if(typeof input.exitAnswers[k]==="string")out.exitAnswers[k]=input.exitAnswers[k];});out.trialSeed=Math.max(0,Math.floor(num(input.trialSeed,out.trialSeed)));out.live={running:false,mode:"",position:0,time:0,distance:0,displacement:0,revealDots:1};out.experimentViewed=out.experimentViewed||b2ExperimentComplete(out);return out;}
   function copyCommon(input,out){input=input&&typeof input==="object"?input:{};["approved","experimentViewed","explanationViewed","completed"].forEach(function(k){out[k]=input[k]===true;});out.selectionAttempts=Math.max(0,Math.floor(num(input.selectionAttempts,0)));out.exitAttempts=Math.max(0,Math.floor(num(input.exitAttempts,0)));if(typeof input.feedbackTone==="string")out.feedbackTone=input.feedbackTone;if(typeof input.feedbackMessage==="string")out.feedbackMessage=input.feedbackMessage;if(typeof input.exitFeedback==="string")out.exitFeedback=input.exitFeedback;out.trialSeed=Math.max(0,Math.floor(num(input.trialSeed,out.trialSeed||0)));return input;}
@@ -377,12 +394,56 @@
   function restoreB6ByStepPoints(points){var s=createB6();points=clamp(Math.floor(num(points,0)),0,6);if(points>=1)s.positiveDirection="up";if(points>=2)s.gravity="10";if(points>=3){s.approvalReleased="zero";s.approvalTopAcceleration="gravity";s.approved=true;}if(points>=4){Object.keys(s.missionDone).forEach(function(k){s.missionDone[k]=true;});s.experimentViewed=true;}if(points>=5){s.analysisAnswers={topVelocity:"zero",balloonInitial:"same"};s.explanationViewed=true;}if(points>=6){s.exitAnswers={topVelocity:"0",topAcceleration:"-10",timeUp:"2",maxHeight:"20",impactSpeed:"30",balloonInitial:"same"};s.completed=true;}return s;}
   function restoreB2ByStepPoints(points){var s=createB2();points=clamp(Math.floor(num(points,0)),0,6);if(points>=1)s.positiveDirection="right";if(points>=2){s.timerFrequency="50";s.approvalGapTime="0.02";s.approvalGapCount="5";}if(points>=3)s.approved=true;if(points>=4){s.journeyDone=true;s.journeyResult=b2JourneyResult();Object.keys(s.tickerDone).forEach(function(k){s.tickerDone[k]=true;s.tickerAnswers[k]=TICKER_PATTERNS[k].correct;});s.experimentViewed=true;}if(points>=5){s.analysisAnswers={speedNumerator:"distance",velocityNumerator:"displacement",instantMethod:"symmetric"};s.explanationViewed=true;}if(points>=6){var t=b2TrialValues(s),tt=t[1]+t[3];s.exitAnswers={meaning:"velocity",gapTime:"0.02",avgSpeed:String((t[0]+t[2])/tt),avgVelocity:String((t[0]-t[2])/tt),instantaneous:"2"};s.completed=true;}return s;}
   function restoreByStepPoints(points){var s=createB1();points=clamp(Math.floor(num(points,0)),0,6);if(points>=1){s.referencePoint="zero";}if(points>=2){s.positiveDirection="right";s.approvalReference="reference";s.approvalPosition="-3";}if(points>=3)s.approved=true;if(points>=4){Object.keys(s.routes).forEach(function(k){s.routes[k]=true;s.routeResults[k]={distance:pathDistance(ROUTES[k].points),displacement:displacement(ROUTES[k].points)};});s.experimentViewed=true;}if(points>=5){s.analysisAnswers={pathEffect:"distance",endpointEffect:"same"};s.explanationViewed=true;}if(points>=6){var t=trialValues(s);s.exitAnswers={sameEndpoint:"displacement",roundTrip:"0",signedDisplacement:"-12",distanceCalc:String(t[0]+t[1]),displacementCalc:String(t[2])};s.completed=true;}return s;}
-  function savedPoints(data){if(Number.isFinite(Number(data.currentStep)))return clamp(Number(data.currentStep),0,TOTAL_STEPS);var pct=Number.isFinite(Number(data.percent))?Number(data.percent):(Number.isFinite(Number(data.score))?Number(data.score):0);return clamp(Math.round(pct/100*TOTAL_STEPS),0,TOTAL_STEPS);}
+  function savedPercent(data){
+    var pct=Number(data&&data.percent);
+    if(!Number.isFinite(pct)){
+      var score=Number(data&&data.score),maxScore=Number(data&&data.maxScore);
+      if(Number.isFinite(score))pct=(Number.isFinite(maxScore)&&maxScore>0)?score/maxScore*100:score;
+    }
+    if(!Number.isFinite(pct)){
+      var step=Number(data&&(data.currentStep!==undefined?data.currentStep:data.step));
+      var total=Number(data&&data.totalSteps);
+      if(Number.isFinite(step)){
+        if(!Number.isFinite(total)||total<=0)total=TOTAL_STEPS;
+        pct=step/total*100;
+      }
+    }
+    return Number.isFinite(pct)?clamp(pct,0,100):0;
+  }
+  function savedPoints(data){
+    var step=Number(data&&(data.currentStep!==undefined?data.currentStep:data.step));
+    var total=Number(data&&data.totalSteps);
+    if(Number.isFinite(step)){
+      if(Number.isFinite(total)&&total>0&&total!==TOTAL_STEPS)step=step/total*TOTAL_STEPS;
+      return clamp(Math.round(step),0,TOTAL_STEPS);
+    }
+    return clamp(Math.round(savedPercent(data)/100*TOTAL_STEPS),0,TOTAL_STEPS);
+  }
   function restore(input){var data=normalize(input);if(!data||typeof data!=="object")return false;if(data.labType&&data.labType!==LAB_TYPE)return false;var next=blankState(),pts=savedPoints(data),d=data.stations||{};var funcs=[sanitizeB1,sanitizeB2,sanitizeB3,sanitizeB4,sanitizeB5,sanitizeB6],fallback=[restoreByStepPoints,restoreB2ByStepPoints,restoreB3ByStepPoints,restoreB4ByStepPoints,restoreB5ByStepPoints,restoreB6ByStepPoints];for(var i=0;i<6;i++){var id="B"+(i+1),part=clamp(pts-i*6,0,6);next.stations[id]=d[id]?funcs[i](d[id]):fallback[i](part);}var hi=0;for(var j=1;j<6;j++){if(stationAvailableForState(j,next))hi=j;else break;}var hasIndex=Number.isFinite(Number(data.currentStationIndex));if(hasIndex)next.currentStationIndex=Math.max(0,Math.min(5,Math.floor(Number(data.currentStationIndex))));else if(typeof data.currentStation==="string"&&/^B[1-6]$/.test(data.currentStation))next.currentStationIndex=Math.max(0,Math.min(5,Number(data.currentStation.slice(1))-1));else next.currentStationIndex=hi;if(!stationAvailableForState(next.currentStationIndex,next))next.currentStationIndex=hi;state=next;render();return true;}
   function stationAvailableForState(i,st){if(i===0)return true;return !!(st.stations["B"+i]&&st.stations["B"+i].completed);}
 
-  function consumePending(){if(window.pendingLabSave==null||window.pendingLabSave==="")return false;var incoming=window.pendingLabSave;if(typeof incoming==="number"||(typeof incoming==="string"&&/^\s*\d+(?:\.\d+)?\s*$/.test(incoming)))incoming={score:Number(incoming),maxScore:100};var ok=restore(incoming);if(ok)window.pendingLabSave=null;return ok;}
-  function handleRestoreRequest(e){var d=e&&e.detail?e.detail:{};var incoming=d.data||d.payload||d.saveData||d.savedData||d.labData||d.state||d.progress||d;if(!incoming)return;window.pendingLabSave=incoming;consumePending();}
+  function consumePending(){
+    if(window.pendingLabSave==null||window.pendingLabSave==="")return false;
+    var incoming=window.pendingLabSave;
+    if(typeof incoming==="number"||(typeof incoming==="string"&&/^\s*\d+(?:\.\d+)?\s*$/.test(incoming)))incoming={score:Number(incoming),maxScore:100};
+    var normalized=normalize(incoming);
+    if(normalized&&normalized.labType&&normalized.labType!==LAB_TYPE)return false;
+    var ok=restore(incoming);
+    if(ok){
+      window.pendingLabSave=null;
+      try{console.log("[Physics Unit B] Restore successful",getSavePayload());}catch(e){}
+    }else{
+      try{console.warn("[Physics Unit B] Restore payload was not recognized",incoming);}catch(e){}
+    }
+    return ok;
+  }
+  function handleRestoreRequest(e){
+    var d=e&&e.detail?e.detail:{};
+    var incoming=d.data||d.payload||d.saveData||d.savedData||d.labData||d.state||d.progress||d.progressData||d.result||d.value||d.detailedState||d.activityState||d.savePayload||d;
+    if(incoming==null||incoming==="")return;
+    window.pendingLabSave=incoming;
+    consumePending();
+  }
   function resetAll(){animationToken++;cancelAnimationFrame(animFrame);state=blankState();render();notifyChange();return true;}
 
   root.addEventListener("click",handleClick);root.addEventListener("change",handleChange);root.addEventListener("input",handleInput);
