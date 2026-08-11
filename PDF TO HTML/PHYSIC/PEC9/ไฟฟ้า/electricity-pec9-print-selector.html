@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PEC9 Electricity Print Selector</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--navy:#0f172a;--slate:#475569;--line:#cbd5e1;--soft:#f8fafc;--blue:#bae6fd;--gold:#fde68a}
+    *{box-sizing:border-box}
+    html,body{margin:0;height:100%;font-family:"K2D",Arial,sans-serif;background:#e5e7eb;color:#111827}
+    body{overflow:hidden}
+    .bar{height:54px;display:flex;align-items:center;justify-content:center;gap:8px;padding:8px;background:var(--navy);box-shadow:0 3px 14px #0f172a45;position:relative;z-index:20}
+    .bar button{border:0;border-radius:999px;padding:8px 16px;background:#fff;color:var(--navy);font:800 11px "K2D";cursor:pointer}
+    .bar .primary{background:var(--blue);color:#082f49}.bar .gold{background:var(--gold);color:#78350f}
+    .frame-wrap{height:calc(100vh - 54px);position:relative}
+    iframe{display:block;width:100%;height:100%;border:0;background:#e5e7eb}
+    .loading{position:absolute;inset:0;display:grid;place-items:center;background:#e5e7eb;color:var(--slate);font-weight:700;z-index:5}
+    .modal-bg{position:fixed;inset:0;z-index:100;background:#0f172ab8;display:none;align-items:center;justify-content:center;padding:18px}
+    .modal-bg.open{display:flex}
+    .modal{width:min(760px,96vw);max-height:90vh;overflow:auto;background:#fff;border-radius:16px;box-shadow:0 24px 70px #0007;padding:20px}
+    .modal-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;border-bottom:1px solid var(--line);padding-bottom:12px}
+    .modal h1{margin:0;color:var(--navy);font-size:20px;line-height:1.15}.modal h1 small{display:block;color:var(--slate);font-size:10px;margin-top:4px;font-weight:600}
+    .x{border:0;background:transparent;font-size:24px;line-height:1;cursor:pointer;color:var(--slate)}
+    .section{padding:14px 0;border-bottom:1px solid #e2e8f0}.section:last-of-type{border-bottom:0}
+    .section-title{font-weight:800;color:var(--navy);font-size:12px;margin-bottom:8px}.section-title small{display:block;color:var(--slate);font-size:9px;font-weight:500;margin-top:2px}
+    .quick{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}.quick button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 11px;font:700 10px "K2D";cursor:pointer;color:#334155}
+    .topic-list{display:grid;gap:6px}.topic-row{display:grid;grid-template-columns:auto 1fr auto;gap:9px;align-items:center;padding:8px 9px;border:1px solid #e2e8f0;border-radius:9px;background:#fff}.topic-row:hover{background:#f8fafc}.topic-row input{width:16px;height:16px}.topic-name{font-size:10.5px;font-weight:650}.topic-meta{font-size:8.5px;color:var(--slate);white-space:nowrap;text-align:right}
+    .options{display:grid;grid-template-columns:1fr 1fr;gap:8px}.option{border:1px solid var(--line);border-radius:10px;padding:9px 11px;background:#f8fafc;font-size:10px}.option label{display:flex;gap:7px;align-items:flex-start;font-weight:700}.option small{display:block;margin-left:22px;color:var(--slate);font-size:8px}
+    .page-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}.page-row input{width:100%;border:1px solid #94a3b8;border-radius:9px;padding:9px 11px;font:600 11px "K2D"}.page-count{font-size:9px;color:var(--slate);white-space:nowrap}.hint{margin-top:6px;color:var(--slate);font-size:8.5px}.hint strong{color:#7c2d12}
+    .mode-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mode{border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff}.mode label{display:flex;gap:8px;align-items:center;font-size:10px;font-weight:750}.mode input{width:16px;height:16px}
+    .error{display:none;margin-top:10px;padding:9px 11px;border-left:4px solid #b91c1c;background:#fef2f2;color:#991b1b;font-size:9px;font-weight:700}.error.show{display:block}
+    .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}.actions button{border:0;border-radius:999px;padding:9px 17px;font:800 11px "K2D";cursor:pointer}.cancel{background:#e2e8f0;color:#334155}.go{background:var(--navy);color:#fff}
+    @media(max-width:650px){.bar{height:auto;min-height:54px;flex-wrap:wrap}.frame-wrap{height:calc(100vh - 92px)}.modal{padding:14px}.options,.mode-row{grid-template-columns:1fr}.topic-row{grid-template-columns:auto 1fr}.topic-meta{grid-column:2;text-align:left}.page-row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <button class="primary" id="openPrintBtn">พิมพ์ / Print</button>
+    <button id="showBtn">เปิดคำตอบ / Show Answers</button>
+    <button id="hideBtn">ปิดคำตอบ / Hide Answers</button>
+  </div>
+
+  <div class="frame-wrap">
+    <div class="loading" id="loading">กำลังโหลดแบบฝึกหัดไฟฟ้า… / Loading electricity worksheet…</div>
+    <iframe id="docFrame" src="electricity-pec9-q001-q105-bilingual.html" title="PEC9 Electricity worksheet"></iframe>
+  </div>
+
+  <div class="modal-bg" id="printModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="printTitle">
+      <div class="modal-head">
+        <h1 id="printTitle">เลือกสิ่งที่จะพิมพ์<small>Print Selection</small></h1>
+        <button class="x" id="closeModalBtn" aria-label="Close">×</button>
+      </div>
+
+      <div class="section">
+        <div class="section-title">เลือกตามเรื่อง / Select by topic<small>เลือกได้หลายเรื่องพร้อมกัน</small></div>
+        <div class="quick"><button type="button" id="selectAllBtn">เลือกทั้งหมด / All</button><button type="button" id="selectNoneBtn">ล้างทั้งหมด / Clear</button></div>
+        <div class="topic-list" id="topicList"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">ชนิดหน้า / Page types<small>ใช้เมื่อเลือกตามเรื่อง</small></div>
+        <div class="options">
+          <div class="option"><label><input type="checkbox" id="includeLessons"> ใบความรู้ / Lesson pages</label><small>ตอนนี้บางหน้าเป็นพื้นที่สำรองสำหรับใบความรู้</small></div>
+          <div class="option"><label><input type="checkbox" id="includeQuestions" checked> โจทย์ / Exercise pages</label><small>หน้าข้อ 1–107 พร้อมพื้นที่ทำโจทย์</small></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">หรือเลือกเลขหน้า / Or enter page numbers<small>เลขหน้าตรงนี้หมายถึงลำดับ .sheet ในเอกสาร</small></div>
+        <div class="page-row"><input id="pageRange" type="text" placeholder="เช่น 1-8, 15, 20-23"><span class="page-count" id="pageCount"></span></div>
+        <div class="hint"><strong>ถ้ากรอกเลขหน้า ช่องนี้จะมีสิทธิ์เหนือการเลือกเรื่อง</strong> / Page range overrides topic selection.</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">รูปแบบการพิมพ์ / Print mode</div>
+        <div class="mode-row">
+          <div class="mode"><label><input type="radio" name="printMode" value="questions" checked> พิมพ์โจทย์ / Questions only</label></div>
+          <div class="mode"><label><input type="radio" name="printMode" value="answers"> พิมพ์พร้อมคำตอบ / With answers</label></div>
+        </div>
+      </div>
+
+      <div class="error" id="printError"></div>
+      <div class="actions"><button class="cancel" id="cancelBtn">ยกเลิก / Cancel</button><button class="go" id="doPrintBtn">พิมพ์ / Print</button></div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const frame=document.getElementById('docFrame');
+  const loading=document.getElementById('loading');
+  const modal=document.getElementById('printModal');
+  const topicList=document.getElementById('topicList');
+  const pageCount=document.getElementById('pageCount');
+  const pageRange=document.getElementById('pageRange');
+  const includeLessons=document.getElementById('includeLessons');
+  const includeQuestions=document.getElementById('includeQuestions');
+  const errorBox=document.getElementById('printError');
+  let doc=null, win=null, sheets=[], groups=[];
+
+  function installPrintCSS(){
+    if(doc.getElementById('external-print-selector-style')) return;
+    const style=doc.createElement('style');
+    style.id='external-print-selector-style';
+    style.textContent=`
+      @media print{
+        body.external-print-select .sheet.external-print-hidden{display:none!important}
+        body.external-print-select .sheet.external-print-last{break-after:auto!important;page-break-after:auto!important}
+      }
+    `;
+    doc.head.appendChild(style);
+  }
+
+  function buildIndex(){
+    sheets=[...doc.querySelectorAll('#book .sheet')];
+    sheets.forEach((sheet,i)=>sheet.dataset.printPage=String(i+1));
+    groups=[...doc.querySelectorAll('#book .topic-group')].map(group=>{
+      const groupSheets=[...group.querySelectorAll('.sheet')];
+      const first=groupSheets.length?sheets.indexOf(groupSheets[0])+1:0;
+      const last=groupSheets.length?sheets.indexOf(groupSheets[groupSheets.length-1])+1:0;
+      const title=group.querySelector('.topic')?.textContent?.trim()||group.dataset.topic||'Topic';
+      return {el:group,key:group.dataset.topic||'',start:Number(group.dataset.questionStart),end:Number(group.dataset.questionEnd),title,sheets:groupSheets,first,last};
+    });
+    topicList.innerHTML=groups.map((g,i)=>`<label class="topic-row"><input class="topic-check" type="checkbox" value="${i}" checked><span class="topic-name">${g.title}</span><span class="topic-meta">หน้า ${g.first}–${g.last} • ข้อ ${g.start}–${g.end}</span></label>`).join('');
+    pageCount.textContent=`1–${sheets.length} หน้า / pages`;
+  }
+
+  function cleanupPrintMarks(){
+    if(!doc) return;
+    doc.body.classList.remove('external-print-select','print-questions','print-answers');
+    sheets.forEach(s=>s.classList.remove('external-print-hidden','external-print-last'));
+  }
+
+  frame.addEventListener('load',()=>{
+    try{
+      doc=frame.contentDocument;
+      win=frame.contentWindow;
+      const ownToolbar=doc.querySelector('.toolbar');
+      if(ownToolbar) ownToolbar.style.display='none';
+      installPrintCSS();
+      buildIndex();
+      loading.style.display='none';
+      win.addEventListener('afterprint',cleanupPrintMarks);
+    }catch(err){
+      loading.textContent='ไม่สามารถเชื่อมกับเอกสารได้ / Could not access the worksheet.';
+      console.error(err);
+    }
+  });
+
+  function openModal(){
+    if(!doc){return}
+    cleanupPrintMarks();
+    errorBox.classList.remove('show');
+    errorBox.textContent='';
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden','false');
+  }
+  function closeModal(){modal.classList.remove('open');modal.setAttribute('aria-hidden','true')}
+  function showError(msg){errorBox.textContent=msg;errorBox.classList.add('show')}
+
+  function parsePages(text,max){
+    const result=new Set();
+    const clean=text.trim();
+    if(!clean) return result;
+    for(const raw of clean.split(',')){
+      const part=raw.trim();
+      if(!part) continue;
+      if(/^\d+$/.test(part)){
+        const n=Number(part); if(n<1||n>max) throw new Error(`เลขหน้า ${n} อยู่นอกช่วง 1–${max}`); result.add(n);
+      }else{
+        const m=part.match(/^(\d+)\s*-\s*(\d+)$/);
+        if(!m) throw new Error(`รูปแบบเลขหน้าไม่ถูกต้อง: ${part}`);
+        let a=Number(m[1]),b=Number(m[2]);
+        if(a>b)[a,b]=[b,a];
+        if(a<1||b>max) throw new Error(`ช่วง ${part} อยู่นอกช่วง 1–${max}`);
+        for(let n=a;n<=b;n++) result.add(n);
+      }
+    }
+    return result;
+  }
+
+  function selectedByTopics(){
+    const chosen=new Set();
+    const checks=[...topicList.querySelectorAll('.topic-check:checked')];
+    if(!checks.length) throw new Error('กรุณาเลือกอย่างน้อย 1 เรื่อง / Select at least one topic.');
+    if(!includeLessons.checked&&!includeQuestions.checked) throw new Error('กรุณาเลือกใบความรู้หรือโจทย์อย่างน้อยหนึ่งชนิด / Select at least one page type.');
+    checks.forEach(ch=>{
+      const g=groups[Number(ch.value)];
+      g.sheets.forEach(s=>{
+        const isLesson=s.classList.contains('lesson-sheet');
+        if((isLesson&&includeLessons.checked)||(!isLesson&&includeQuestions.checked)) chosen.add(s);
+      });
+    });
+    return chosen;
+  }
+
+  async function doPrint(){
+    try{
+      errorBox.classList.remove('show');
+      let selected;
+      if(pageRange.value.trim()){
+        const nums=parsePages(pageRange.value,sheets.length);
+        if(!nums.size) throw new Error('กรุณาระบุเลขหน้าที่ต้องการพิมพ์ / Enter page numbers.');
+        selected=new Set([...nums].map(n=>sheets[n-1]));
+      }else selected=selectedByTopics();
+      if(!selected.size) throw new Error('ไม่มีหน้าที่เลือกพิมพ์ / No pages selected.');
+
+      cleanupPrintMarks();
+      sheets.forEach(s=>{if(!selected.has(s))s.classList.add('external-print-hidden')});
+      const ordered=sheets.filter(s=>selected.has(s));
+      ordered[ordered.length-1]?.classList.add('external-print-last');
+      doc.body.classList.add('external-print-select');
+      const mode=document.querySelector('input[name="printMode"]:checked')?.value||'questions';
+      doc.body.classList.add(mode==='answers'?'print-answers':'print-questions');
+      closeModal();
+      if(win.MathJax?.typesetPromise) await win.MathJax.typesetPromise();
+      win.focus();
+      win.print();
+    }catch(err){showError(err.message||String(err))}
+  }
+
+  document.getElementById('openPrintBtn').addEventListener('click',openModal);
+  document.getElementById('closeModalBtn').addEventListener('click',closeModal);
+  document.getElementById('cancelBtn').addEventListener('click',closeModal);
+  document.getElementById('doPrintBtn').addEventListener('click',doPrint);
+  document.getElementById('selectAllBtn').addEventListener('click',()=>topicList.querySelectorAll('.topic-check').forEach(x=>x.checked=true));
+  document.getElementById('selectNoneBtn').addEventListener('click',()=>topicList.querySelectorAll('.topic-check').forEach(x=>x.checked=false));
+  document.getElementById('showBtn').addEventListener('click',()=>doc?.body.classList.add('show-answers'));
+  document.getElementById('hideBtn').addEventListener('click',()=>doc?.body.classList.remove('show-answers'));
+  modal.addEventListener('click',e=>{if(e.target===modal)closeModal()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('open'))closeModal()});
+})();
+</script>
+</body>
+</html>
