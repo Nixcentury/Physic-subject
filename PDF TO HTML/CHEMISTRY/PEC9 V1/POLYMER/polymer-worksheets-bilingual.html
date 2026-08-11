@@ -17,7 +17,7 @@
     .prompt{border-left:4px solid var(--navy);padding:1.5mm 2.3mm;background:#f8fafc}.prompt .th{font-size:12px;font-weight:650}.prompt.compact .th{font-size:11px}.qcard{border:1px solid var(--navy);padding:2.5mm;background:#fff;min-width:0}.qtitle{display:flex;justify-content:space-between;gap:3mm;align-items:baseline;margin-bottom:1.4mm}.qtitle b{font-size:12.5px;color:var(--navy)}.qtitle span{font-size:9px;color:var(--slate);font-weight:650}.qtext{font-size:11.1px;font-weight:550}.qtext small{display:block;margin-top:.6mm;color:var(--slate);font-size:9.3px;font-weight:400}
     .figure{border:1px solid var(--line);background:#fff;padding:2mm;display:grid;place-items:center;overflow:hidden;min-width:0;min-height:0}.figure img{display:block;width:100%;height:100%;min-width:0;min-height:0;max-width:none;max-height:none;object-fit:contain;object-position:center}.figure.wide{height:43mm}.figure.medium{height:34mm}.figure.short{height:26mm}.figure.tall{height:52mm}.figure-grid{display:grid;grid-template-columns:1fr 1fr;gap:2mm}.figure-grid.four{grid-template-columns:1fr 1fr}
     .answer-table{width:100%;border-collapse:collapse;font-size:9.6px}.answer-table th,.answer-table td{border:1px solid var(--line);padding:1.3mm 1.6mm;vertical-align:middle}.answer-table th{background:var(--soft);font-weight:750}.answer-table small{display:block;color:var(--slate);font-size:8.5px}.sketch{height:17mm;border:1px solid #94a3b8;background:#fff}.sketch.lg{height:35mm}.sketch.xl{height:55mm}.write-lines{height:28mm;border:1px solid var(--line);background:repeating-linear-gradient(to bottom,#fff 0,#fff 7.6mm,#cbd5e1 7.8mm,#fff 8mm)}.write-lines.sm{height:18mm}.write-lines.lg{height:45mm}.write-lines.xl{height:68mm}.work-label{padding:1mm 1.6mm;background:var(--soft);border:1px solid var(--line);border-bottom:0;font-size:9px;font-weight:700;color:var(--slate)}
-    .classify-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5mm 3mm}.classify{display:grid;grid-template-columns:1fr auto auto;gap:2mm;align-items:center;border-bottom:1px solid var(--line);padding:1.5mm}.classify b{font-size:10.5px}.classify small{display:block;color:var(--slate);font-size:8.7px}.check{width:8mm;text-align:center;font-size:8.2px;color:var(--slate)}.box{display:inline-block;width:3mm;height:3mm;border:1px solid #334155;vertical-align:-.5mm;margin-right:.8mm}
+    .classify-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5mm 3mm}.classify{display:grid;grid-template-columns:1fr auto auto;gap:2mm;align-items:center;border-bottom:1px solid var(--line);padding:1.5mm}.classify b{font-size:10.5px}.classify small{display:block;color:var(--slate);font-size:8.7px}.check{width:8mm;text-align:center;font-size:8.2px;color:var(--slate)}.box{display:inline-block;width:3mm;height:3mm;border:1px solid #334155;vertical-align:-.5mm;margin-right:.8mm}.check.correct-answer .box{position:relative}body.show-solutions .check.correct-answer .box::after{content:"✓";position:absolute;left:50%;top:50%;transform:translate(-50%,-58%);color:#b91c1c;font-size:15px;font-weight:900;line-height:1}
     .reaction-list{display:grid;gap:2mm}.reaction{display:grid;grid-template-columns:1fr 1.05fr;gap:2.5mm;align-items:center;border:1px solid var(--line);padding:2mm}.reaction .figure{height:31mm;border:0;padding:0}.reaction .blank-product{height:25mm;border:1.3px dashed #64748b;background:#fff}.reaction .meta{margin-top:1.2mm;font-size:9.2px;color:var(--slate)}.reaction .meta .box{margin-left:2mm}
     .monomer-pair{display:grid;grid-template-columns:.9fr 1.1fr;gap:3mm;align-items:center;border:1px solid var(--line);padding:2.5mm}.monomer-pair .figure{height:40mm;border:0}.monomer-pair .blank-product{height:40mm;border:1.3px dashed #64748b;background:#fff;display:grid;place-items:center;color:#94a3b8;font-size:9px}
     .subquestions{display:grid;gap:1.1mm}.subq{display:grid;grid-template-columns:1fr 38%;gap:2mm;align-items:end;border-bottom:1px solid var(--line);padding:1.2mm 0}.subq b{font-size:10.2px}.subq small{display:block;color:var(--slate);font-size:8.6px}.answer-line{height:8mm;border-bottom:1px dotted #64748b}
@@ -271,6 +271,14 @@
       solutionToggle.textContent=show?'ปิดเฉลย / Hide Answers':'เปิดเฉลย / Show Answers';
     }
     solutionToggle.addEventListener('click',()=>setSolutionMode(!document.body.classList.contains('show-solutions')));
+
+    const worksheet1ClassificationAnswers=[0,1,0,0,0,1,1,1,0,0,1,0];
+    document.querySelectorAll('.classify').forEach((item,index)=>{
+      const checks=item.querySelectorAll('.check');
+      const answerIndex=worksheet1ClassificationAnswers[index];
+      if(checks[answerIndex])checks[answerIndex].classList.add('correct-answer');
+    });
+
     setSolutionMode(false);
   </script>
 </body>
