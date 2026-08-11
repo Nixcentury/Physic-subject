@@ -13,20 +13,14 @@ html,body{margin:0;min-height:100%;font-family:Arial,"Noto Sans Thai",sans-serif
 <script>
 (async function(){
   const baseUrl='./solids-and-fluids-kru-kird-bilingual-base-20260812.html';
-  const patchUrl='./continuity-guided-notes-patch-v1.js';
-  const marker='const topics=[';
+  if(location.protocol==='file:'){
+    location.replace(baseUrl);
+    return;
+  }
   try{
-    const [baseResponse,patchResponse]=await Promise.all([
-      fetch(baseUrl,{cache:'no-store'}),
-      fetch(patchUrl,{cache:'no-store'})
-    ]);
+    const baseResponse=await fetch(baseUrl,{cache:'no-store'});
     if(!baseResponse.ok) throw new Error('Base HTTP '+baseResponse.status);
-    if(!patchResponse.ok) throw new Error('Patch HTTP '+patchResponse.status);
-    let html=await baseResponse.text();
-    const patch=await patchResponse.text();
-    if(!html.includes(marker)) throw new Error('Patch marker not found');
-    html=html.replace(marker,patch+'\n'+marker);
-    html=html.replace('</body>','<script>window.__initContinuityLesson&&window.__initContinuityLesson();<\/script></body>');
+    const html=await baseResponse.text();
     document.open();
     document.write(html);
     document.close();
