@@ -16,11 +16,11 @@ html,body{margin:0;min-height:100%;font-family:Arial,"Noto Sans Thai",sans-serif
   const solutionPatchUrl='./electricity-energy-power-detailed-solutions-v1.js';
   const resistorSolutionPatchUrl='./electricity-resistor-networks-detailed-solutions-q36-q41-v1.js';
   const resistorSolutionRestPatchUrl='./electricity-resistor-networks-detailed-solutions-q42-q72-v1.js';
-  const lessonPatchUrl='./electricity-energy-power-guided-notes-v1.js';
+  const lessonPatchUrl='./electricity-energy-power-guided-notes-v2.js';
   const solutionMarker='  const topics=[';
   const lessonMarker='  const groupedQuestions=';
   const defaultLessonPattern=/\n      <section class="sheet lesson-sheet" id="lesson-\$\{group\.key\}" data-topic="\$\{group\.key\}" aria-label="หน้าสำหรับใบความรู้: \$\{group\.title\}">[\s\S]*?\n      <\/section>\n      \$\{group\.questions\.map\(q=>render\(q,Q\.indexOf\(q\)\)\)\.join\(''\)\}/;
-  const lessonFixPatch="const fixGuidedLessonHtml=html=>html.replace(/(<span class=\\\"lesson-fill\\\">)([^<]*)(<\\/span>)/g,(all,open,value,close)=>{if(value.startsWith('(')&&value.endsWith(')')){const bs=String.fromCharCode(92);let inner=value.slice(1,-1).replace(/,mathrm/g,'@@RM@@').replace(/mathrm/g,bs+'mathrm').replace(/@@RM@@/g,bs+','+bs+'mathrm').replace(/text/g,bs+'text');value=bs+'('+inner+bs+')';}return open+value+close;});";
+  const lessonFixPatch="const fixGuidedLessonHtml=html=>html;";
   const lessonReplacement='\n      ${fixGuidedLessonHtml(lessonPagesForGroup(group))}\n      ${group.questions.map(q=>render(q,Q.indexOf(q))).join(\'\')}';
   try{
     const [baseResponse,solutionResponse,resistorSolutionResponse,resistorSolutionRestResponse,lessonResponse]=await Promise.all([
