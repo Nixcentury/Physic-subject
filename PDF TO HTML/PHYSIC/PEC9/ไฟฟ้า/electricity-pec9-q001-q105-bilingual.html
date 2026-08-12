@@ -16,6 +16,7 @@ html,body{margin:0;min-height:100%;font-family:Arial,"Noto Sans Thai",sans-serif
   const solutionPatchUrl='./electricity-energy-power-detailed-solutions-v1.js';
   const resistorSolutionPatchUrl='./electricity-resistor-networks-detailed-solutions-q36-q41-v1.js';
   const resistorSolutionRestPatchUrl='./electricity-resistor-networks-detailed-solutions-q42-q72-v1.js';
+  const resistorVisualPatchUrl='./electricity-resistor-networks-visual-aids-q42-q47-v1.js';
   const lessonPatchUrl='./electricity-energy-power-guided-notes-v2.js';
   const solutionMarker='  const topics=[';
   const lessonMarker='  const groupedQuestions=';
@@ -23,27 +24,30 @@ html,body{margin:0;min-height:100%;font-family:Arial,"Noto Sans Thai",sans-serif
   const lessonFixPatch="const fixGuidedLessonHtml=html=>html;";
   const lessonReplacement='\n      ${fixGuidedLessonHtml(lessonPagesForGroup(group))}\n      ${group.questions.map(q=>render(q,Q.indexOf(q))).join(\'\')}';
   try{
-    const [baseResponse,solutionResponse,resistorSolutionResponse,resistorSolutionRestResponse,lessonResponse]=await Promise.all([
+    const [baseResponse,solutionResponse,resistorSolutionResponse,resistorSolutionRestResponse,resistorVisualResponse,lessonResponse]=await Promise.all([
       fetch(baseUrl,{cache:'no-store'}),
       fetch(solutionPatchUrl,{cache:'no-store'}),
       fetch(resistorSolutionPatchUrl,{cache:'no-store'}),
       fetch(resistorSolutionRestPatchUrl,{cache:'no-store'}),
+      fetch(resistorVisualPatchUrl,{cache:'no-store'}),
       fetch(lessonPatchUrl,{cache:'no-store'})
     ]);
     if(!baseResponse.ok) throw new Error('Base HTTP '+baseResponse.status);
     if(!solutionResponse.ok) throw new Error('Energy solution patch HTTP '+solutionResponse.status);
     if(!resistorSolutionResponse.ok) throw new Error('Resistor solution Q36-Q41 patch HTTP '+resistorSolutionResponse.status);
     if(!resistorSolutionRestResponse.ok) throw new Error('Resistor solution Q42-Q72 patch HTTP '+resistorSolutionRestResponse.status);
+    if(!resistorVisualResponse.ok) throw new Error('Resistor visual Q42-Q47 patch HTTP '+resistorVisualResponse.status);
     if(!lessonResponse.ok) throw new Error('Lesson patch HTTP '+lessonResponse.status);
     let html=await baseResponse.text();
     const solutionPatch=await solutionResponse.text();
     const resistorSolutionPatch=await resistorSolutionResponse.text();
     const resistorSolutionRestPatch=await resistorSolutionRestResponse.text();
+    const resistorVisualPatch=await resistorVisualResponse.text();
     const lessonPatch=await lessonResponse.text();
     if(!html.includes(solutionMarker)) throw new Error('Solution patch marker not found');
     if(!html.includes(lessonMarker)) throw new Error('Lesson patch marker not found');
     if(!defaultLessonPattern.test(html)) throw new Error('Default lesson template not found');
-    html=html.replace(solutionMarker,solutionPatch+'\n'+resistorSolutionPatch+'\n'+resistorSolutionRestPatch+'\n'+solutionMarker);
+    html=html.replace(solutionMarker,solutionPatch+'\n'+resistorSolutionPatch+'\n'+resistorSolutionRestPatch+'\n'+resistorVisualPatch+'\n'+solutionMarker);
     html=html.replace(lessonMarker,lessonPatch+'\n'+lessonFixPatch+'\n'+lessonMarker);
     html=html.replace(defaultLessonPattern,()=>lessonReplacement);
     document.open();
@@ -57,6 +61,6 @@ html,body{margin:0;min-height:100%;font-family:Arial,"Noto Sans Thai",sans-serif
   }
 })();
 </script>
-<!-- Pages sync: resistor-network detailed solutions Q36-Q72 complete -->
+<!-- Pages sync: resistor-network detailed solutions Q36-Q72; visual aids Q42-Q47 -->
 </body>
 </html>
