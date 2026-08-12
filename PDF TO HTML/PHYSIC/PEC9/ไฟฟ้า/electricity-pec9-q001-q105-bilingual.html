@@ -23,13 +23,14 @@ html,body{margin:0;min-height:100%;font-family:Arial,"Noto Sans Thai",sans-serif
   const lessonPatchUrl='./electricity-energy-power-guided-notes-v2.js';
   const resistorLessonPatchUrl='./electricity-resistor-networks-guided-notes-v1.js';
   const resistorLessonFixUrl='./electricity-resistor-networks-guided-notes-runtime-fix-v1.js';
+  const resistorLessonV2Url='./electricity-resistor-networks-guided-notes-v2.js';
   const solutionMarker='  const topics=[';
   const lessonMarker='  const groupedQuestions=';
   const defaultLessonPattern=/\n      <section class="sheet lesson-sheet" id="lesson-\$\{group\.key\}" data-topic="\$\{group\.key\}" aria-label="หน้าสำหรับใบความรู้: \$\{group\.title\}">[\s\S]*?\n      <\/section>\n      \$\{group\.questions\.map\(q=>render\(q,Q\.indexOf\(q\)\)\)\.join\(''\)\}/;
   const lessonFixPatch="const fixGuidedLessonHtml=html=>html;";
-  const lessonReplacement='\n      ${fixGuidedLessonHtml(lessonPagesForGroupExtended(group))}\n      ${group.questions.map(q=>render(q,Q.indexOf(q))).join(\'\')}';
+  const lessonReplacement='\n      ${fixGuidedLessonHtml(lessonPagesForGroupExtendedV2(group))}\n      ${group.questions.map(q=>render(q,Q.indexOf(q))).join(\'\')}';
   try{
-    const [baseResponse,solutionResponse,resistorSolutionResponse,resistorSolutionRestResponse,resistorSolutionQ42Q47RefineResponse,resistorSolutionQ48Q53RefineResponse,resistorSolutionQ54Q59RefineResponse,resistorSolutionQ60Q65RefineResponse,lessonResponse,resistorLessonResponse,resistorLessonFixResponse]=await Promise.all([
+    const [baseResponse,solutionResponse,resistorSolutionResponse,resistorSolutionRestResponse,resistorSolutionQ42Q47RefineResponse,resistorSolutionQ48Q53RefineResponse,resistorSolutionQ54Q59RefineResponse,resistorSolutionQ60Q65RefineResponse,lessonResponse,resistorLessonResponse,resistorLessonFixResponse,resistorLessonV2Response]=await Promise.all([
       fetch(baseUrl,{cache:'no-store'}),
       fetch(solutionPatchUrl,{cache:'no-store'}),
       fetch(resistorSolutionPatchUrl,{cache:'no-store'}),
@@ -40,7 +41,8 @@ html,body{margin:0;min-height:100%;font-family:Arial,"Noto Sans Thai",sans-serif
       fetch(resistorSolutionQ60Q65RefineUrl,{cache:'no-store'}),
       fetch(lessonPatchUrl,{cache:'no-store'}),
       fetch(resistorLessonPatchUrl,{cache:'no-store'}),
-      fetch(resistorLessonFixUrl,{cache:'no-store'})
+      fetch(resistorLessonFixUrl,{cache:'no-store'}),
+      fetch(resistorLessonV2Url,{cache:'no-store'})
     ]);
     if(!baseResponse.ok) throw new Error('Base HTTP '+baseResponse.status);
     if(!solutionResponse.ok) throw new Error('Energy solution patch HTTP '+solutionResponse.status);
@@ -53,6 +55,7 @@ html,body{margin:0;min-height:100%;font-family:Arial,"Noto Sans Thai",sans-serif
     if(!lessonResponse.ok) throw new Error('Energy lesson patch HTTP '+lessonResponse.status);
     if(!resistorLessonResponse.ok) throw new Error('Resistor lesson patch HTTP '+resistorLessonResponse.status);
     if(!resistorLessonFixResponse.ok) throw new Error('Resistor lesson slot fix HTTP '+resistorLessonFixResponse.status);
+    if(!resistorLessonV2Response.ok) throw new Error('Resistor lesson v2 HTTP '+resistorLessonV2Response.status);
     let html=await baseResponse.text();
     const solutionPatch=await solutionResponse.text();
     const resistorSolutionPatch=await resistorSolutionResponse.text();
@@ -64,11 +67,12 @@ html,body{margin:0;min-height:100%;font-family:Arial,"Noto Sans Thai",sans-serif
     const lessonPatch=await lessonResponse.text();
     const resistorLessonPatch=await resistorLessonResponse.text();
     const resistorLessonFixPatch=await resistorLessonFixResponse.text();
+    const resistorLessonV2Patch=await resistorLessonV2Response.text();
     if(!html.includes(solutionMarker)) throw new Error('Solution patch marker not found');
     if(!html.includes(lessonMarker)) throw new Error('Lesson patch marker not found');
     if(!defaultLessonPattern.test(html)) throw new Error('Default lesson template not found');
     html=html.replace(solutionMarker,solutionPatch+'\n'+resistorSolutionPatch+'\n'+resistorSolutionRestPatch+'\n'+resistorSolutionQ42Q47RefinePatch+'\n'+resistorSolutionQ48Q53RefinePatch+'\n'+resistorSolutionQ54Q59RefinePatch+'\n'+resistorSolutionQ60Q65RefinePatch+'\n'+solutionMarker);
-    html=html.replace(lessonMarker,lessonPatch+'\n'+resistorLessonPatch+'\n'+resistorLessonFixPatch+'\n'+lessonFixPatch+'\n'+lessonMarker);
+    html=html.replace(lessonMarker,lessonPatch+'\n'+resistorLessonPatch+'\n'+resistorLessonFixPatch+'\n'+resistorLessonV2Patch+'\n'+lessonFixPatch+'\n'+lessonMarker);
     html=html.replace(defaultLessonPattern,()=>lessonReplacement);
     document.open();
     document.write(html);
@@ -81,6 +85,6 @@ html,body{margin:0;min-height:100%;font-family:Arial,"Noto Sans Thai",sans-serif
   }
 })();
 </script>
-<!-- Pages sync 2026-08-12: resistor guided notes 9 pages with answer-slot fix; detailed solutions Q36-Q72; refinements through Q65 -->
+<!-- Pages sync 2026-08-12: resistor guided notes v2 = 11 pages with short/open circuits and separate divider derivations; answer-slot fix retained; detailed solutions Q36-Q72; refinements through Q65 -->
 </body>
 </html>
