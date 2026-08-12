@@ -13,19 +13,30 @@ html,body{margin:0;min-height:100%;font-family:Arial,"Noto Sans Thai",sans-serif
 <script>
 (async function(){
   const baseUrl='./electricity-pec9-q001-q105-bilingual-base-20260812.html';
-  const patchUrl='./electricity-energy-power-detailed-solutions-v1.js';
-  const marker='  const topics=[';
+  const solutionPatchUrl='./electricity-energy-power-detailed-solutions-v1.js';
+  const lessonPatchUrl='./electricity-energy-power-guided-notes-v1.js';
+  const solutionMarker='  const topics=[';
+  const lessonMarker='  const groupedQuestions=';
+  const defaultLessonPattern=/\n      <section class="sheet lesson-sheet" id="lesson-\$\{group\.key\}" data-topic="\$\{group\.key\}" aria-label="หน้าสำหรับใบความรู้: \$\{group\.title\}">[\s\S]*?\n      <\/section>\n      \$\{group\.questions\.map\(q=>render\(q,Q\.indexOf\(q\)\)\)\.join\(''\)\}/;
+  const lessonReplacement='\n      ${lessonPagesForGroup(group)}\n      ${group.questions.map(q=>render(q,Q.indexOf(q))).join(\'\')}';
   try{
-    const [baseResponse,patchResponse]=await Promise.all([
+    const [baseResponse,solutionResponse,lessonResponse]=await Promise.all([
       fetch(baseUrl,{cache:'no-store'}),
-      fetch(patchUrl,{cache:'no-store'})
+      fetch(solutionPatchUrl,{cache:'no-store'}),
+      fetch(lessonPatchUrl,{cache:'no-store'})
     ]);
     if(!baseResponse.ok) throw new Error('Base HTTP '+baseResponse.status);
-    if(!patchResponse.ok) throw new Error('Patch HTTP '+patchResponse.status);
+    if(!solutionResponse.ok) throw new Error('Solution patch HTTP '+solutionResponse.status);
+    if(!lessonResponse.ok) throw new Error('Lesson patch HTTP '+lessonResponse.status);
     let html=await baseResponse.text();
-    const patch=await patchResponse.text();
-    if(!html.includes(marker)) throw new Error('Patch marker not found');
-    html=html.replace(marker,patch+'\n'+marker);
+    const solutionPatch=await solutionResponse.text();
+    const lessonPatch=await lessonResponse.text();
+    if(!html.includes(solutionMarker)) throw new Error('Solution patch marker not found');
+    if(!html.includes(lessonMarker)) throw new Error('Lesson patch marker not found');
+    if(!defaultLessonPattern.test(html)) throw new Error('Default lesson template not found');
+    html=html.replace(solutionMarker,solutionPatch+'\n'+solutionMarker);
+    html=html.replace(lessonMarker,lessonPatch+'\n'+lessonMarker);
+    html=html.replace(defaultLessonPattern,()=>lessonReplacement);
     document.open();
     document.write(html);
     document.close();
