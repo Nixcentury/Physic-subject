@@ -16,6 +16,7 @@ html,body{margin:0;min-height:100%;font-family:Arial,"Noto Sans Thai",sans-serif
   const continuityPatchUrl='./continuity-guided-notes-patch-v1.js?v=20260813-0810';
   const bernoulliPatchSrc='./bernoulli-detailed-solutions-q61-q66-v1.js?v=20260813-0805';
   const bernoulliPatch2Src='./bernoulli-detailed-solutions-q67-q72-v1.js?v=20260813-0823';
+  const bernoulliLessonSrc='./bernoulli-guided-notes-v1.js?v=20260813-0837';
   if(location.protocol==='file:'){
     location.replace(baseUrl);
     return;
@@ -42,13 +43,14 @@ html,body{margin:0;min-height:100%;font-family:Arial,"Noto Sans Thai",sans-serif
 
     if(!html.includes('</body>')) throw new Error('Body marker not found');
 
-    /* Bernoulli patches run after the sheets exist because they update the rendered
-       answer layers directly. Q61-Q66 retains its selective SVG visuals; Q67-Q72
-       reuses the existing question figures because those diagrams are already clear. */
+    /* Bernoulli solution patches and Guided Notes run after the sheets exist.
+       The lesson patch replaces the Bernoulli placeholder and uses the existing
+       Show/Hide Answers buttons so hidden content still leaves writing space. */
     html=html.replace(
       '</body>',
       '<script src="'+bernoulliPatchSrc+'"><\/script>\n'+
-      '<script src="'+bernoulliPatch2Src+'"><\/script>\n</body>'
+      '<script src="'+bernoulliPatch2Src+'"><\/script>\n'+
+      '<script src="'+bernoulliLessonSrc+'"><\/script>\n</body>'
     );
 
     document.open();
@@ -62,6 +64,6 @@ html,body{margin:0;min-height:100%;font-family:Arial,"Noto Sans Thai",sans-serif
   }
 })();
 </script>
-<!-- 2026-08-13: continuity Q53-Q60 + Bernoulli Q61-Q72 detailed solution patches -->
+<!-- 2026-08-13: continuity Q53-Q60 + Bernoulli Q61-Q72 solutions + Bernoulli Guided Notes -->
 </body>
 </html>
