@@ -3,315 +3,911 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Physics Lab: Newton's Laws (Bilingual)</title>
-    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>Physics Lab: Newton's Laws 1–3</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #000000;
+            --ink: #0f172a;
+            --muted: #64748b;
             --accent: #facc15;
-            --bg-body: #f8fafc;
-            --border: 4px solid #000000;
-            --shadow: 6px 6px 0px #000000;
-            --card-bg: #ffffff;
-            --text: #0f172a;
+            --blue: #2563eb;
+            --orange: #f97316;
+            --green: #10b981;
+            --red: #ef4444;
+            --purple: #7c3aed;
+            --paper: #ffffff;
+            --body: #f8fafc;
+            --border: 4px solid var(--ink);
+            --shadow: 6px 6px 0 var(--ink);
         }
 
-        * { box-sizing: border-box; font-family: 'K2D', sans-serif; user-select: none; }
-        body { background-color: var(--bg-body); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; color: var(--text); }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 20px;
+            background: var(--body);
+            color: var(--ink);
+            font-family: "K2D", sans-serif;
+        }
+        button, input { font: inherit; }
+        button { touch-action: manipulation; }
 
         .container {
-            background: var(--card-bg); border: var(--border); box-shadow: 8px 8px 0px #000;
-            width: 100%; max-width: 1000px; padding: 20px; display: flex; flex-direction: column; gap: 20px;
+            width: min(1100px, 100%);
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            gap: 22px;
+            background: var(--paper);
+            border: var(--border);
+            box-shadow: 8px 8px 0 var(--ink);
         }
 
         .header-title {
-            margin: 0; padding: 15px; background: var(--accent); border: var(--border);
-            font-size: 24px; font-weight: 900; text-transform: uppercase; text-align: center;
-            box-shadow: 4px 4px 0px #000; letter-spacing: 1px;
+            margin: 0;
+            padding: 16px;
+            background: var(--accent);
+            border: var(--border);
+            box-shadow: 4px 4px 0 var(--ink);
+            text-align: center;
+            font-size: clamp(22px, 4vw, 32px);
+            font-weight: 800;
         }
-        .header-subtitle { display: block; font-size: 14px; font-weight: 600; color: #333; margin-top: 5px; }
+        .header-subtitle {
+            display: block;
+            margin-top: 4px;
+            color: #334155;
+            font-size: 14px;
+            font-weight: 600;
+        }
 
-        /* 📊 แผงหน้าปัด (Dashboard) */
+        .law-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .tab-button, .control-button, .scenario-button {
+            border: 3px solid var(--ink);
+            box-shadow: 4px 4px 0 var(--ink);
+            cursor: pointer;
+            font-weight: 800;
+            transition: transform .1s, box-shadow .1s, background .1s;
+        }
+        .tab-button {
+            padding: 13px 16px;
+            background: #e2e8f0;
+            color: var(--ink);
+            font-size: 16px;
+        }
+        .tab-button.active { background: var(--accent); }
+        button:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 var(--ink);
+        }
+        button:focus-visible, input:focus-visible {
+            outline: 4px solid #38bdf8;
+            outline-offset: 3px;
+        }
+        .lab-panel[hidden] { display: none; }
+
+        .law-note {
+            margin: 0;
+            padding: 14px 16px;
+            border: 3px solid var(--ink);
+            background: #fffbeb;
+            font-weight: 700;
+            line-height: 1.55;
+        }
+        .law-note span { color: var(--muted); font-size: 13px; }
+
         .dashboard {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;
-            background: #ecfdf5; border: var(--border); padding: 15px; box-shadow: 4px 4px 0px #000;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            padding: 14px;
+            background: #ecfdf5;
+            border: var(--border);
+            box-shadow: 4px 4px 0 var(--ink);
         }
         .dash-box {
-            background: #fff; border: 3px solid #000; padding: 10px; text-align: center;
+            min-width: 0;
+            padding: 10px;
+            background: #fff;
+            border: 3px solid var(--ink);
+            text-align: center;
         }
-        .dash-label { font-size: 15px; font-weight: 800; color: #0f172a; }
-        .dash-label span { display: block; font-size: 11px; color: #64748b; font-weight: 600; }
-        .dash-value { font-size: 24px; font-weight: 900; color: #2563eb; font-family: monospace; margin-top: 5px; }
+        .dash-label { font-size: 14px; font-weight: 800; }
+        .dash-label span { display: block; color: var(--muted); font-size: 11px; }
+        .dash-value {
+            margin-top: 5px;
+            font: 800 clamp(18px, 3vw, 25px) ui-monospace, monospace;
+            white-space: nowrap;
+        }
+        .unit { color: var(--muted); font-size: .55em; }
 
-        /* 🎬 พื้นที่จำลอง (Simulation Area) */
         .sim-container {
-            width: 100%; height: 280px; background: #fff; border: 4px solid #000;
-            position: relative; overflow: hidden;
-            background-image: radial-gradient(#cbd5e1 2px, transparent 2px); background-size: 25px 25px;
-            box-shadow: inset 4px 4px 0px rgba(0,0,0,0.05);
+            position: relative;
+            width: 100%;
+            height: 290px;
+            overflow: hidden;
+            border: var(--border);
+            background-color: #fff;
+            background-image: radial-gradient(#cbd5e1 2px, transparent 2px);
+            background-size: 25px 25px;
         }
         .ground {
-            position: absolute; bottom: 0; width: 100%; height: 40px;
-            background: #94a3b8; border-top: 4px solid #000;
-            background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.1) 10px, rgba(0,0,0,0.1) 20px);
+            position: absolute;
+            inset: auto 0 0;
+            height: 42px;
+            border-top: 4px solid var(--ink);
+            background: repeating-linear-gradient(45deg, #94a3b8 0 10px, #a8b5c5 10px 20px);
         }
-        
-        /* 📦 วัตถุ (The Object) */
         #box {
-            width: 80px; height: 80px; background: #ef4444; border: 4px solid #000;
-            position: absolute; bottom: 40px; left: 420px;
-            display: flex; justify-content: center; align-items: center;
-            color: white; font-weight: 900; font-size: 18px; z-index: 10;
-            box-shadow: inset -4px -4px 0px rgba(0,0,0,0.2);
+            position: absolute;
+            bottom: 42px;
+            left: 0;
+            width: 82px;
+            height: 82px;
+            display: grid;
+            place-items: center;
+            background: var(--red);
+            border: 4px solid var(--ink);
+            box-shadow: inset -4px -4px 0 rgb(0 0 0 / .2);
+            color: white;
+            font-size: 17px;
+            font-weight: 800;
+            will-change: transform;
         }
+        .vector {
+            position: absolute;
+            top: 50%;
+            height: 8px;
+            background: var(--vector-color);
+            border-block: 2px solid var(--ink);
+            transform: translateY(-50%);
+        }
+        .vector::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            border: 11px solid transparent;
+            transform: translateY(-50%);
+        }
+        .vector.left { right: 100%; --vector-color: #3b82f6; }
+        .vector.left::after { left: -22px; border-right-color: var(--vector-color); }
+        .vector.right { left: 100%; --vector-color: var(--orange); }
+        .vector.right::after { right: -22px; border-left-color: var(--vector-color); }
+        #arrow-accel { top: -24px; --vector-color: var(--green); }
+        #arrow-accel[data-direction="left"] { right: 50%; }
+        #arrow-accel[data-direction="left"]::after { left: -22px; border-right-color: var(--vector-color); }
+        #arrow-accel[data-direction="right"] { left: 50%; }
+        #arrow-accel[data-direction="right"]::after { right: -22px; border-left-color: var(--vector-color); }
 
-        /* 🏹 เวกเตอร์ (Vectors) */
-        .arrow {
-            position: absolute; height: 8px; top: 50%; transform: translateY(-50%);
-            transition: width 0.1s; border-top: 2px solid #000; border-bottom: 2px solid #000;
-        }
-        .arrow::after {
-            content: ''; position: absolute; top: -8px;
-            border-style: solid; border-width: 11px;
-        }
-        
-        #arrow-left { background: #3b82f6; right: 100%; width: 0px; border-left: 2px solid #000; }
-        #arrow-left::after { left: -22px; border-color: transparent #000 transparent transparent; }
-        #arrow-left::before {
-            content: ''; position: absolute; top: -6px; left: -19px; z-index: 1;
-            border-style: solid; border-width: 9px; border-color: transparent #3b82f6 transparent transparent;
-        }
-
-        #arrow-right { background: #f97316; left: 100%; width: 0px; border-right: 2px solid #000; }
-        #arrow-right::after { right: -22px; border-color: transparent transparent transparent #000; }
-        #arrow-right::before {
-            content: ''; position: absolute; top: -6px; right: -19px; z-index: 1;
-            border-style: solid; border-width: 9px; border-color: transparent transparent transparent #f97316;
-        }
-
-        #arrow-accel {
-            position: absolute; height: 6px; top: -25px; background: #10b981; width: 0px;
-            border-top: 2px solid #000; border-bottom: 2px solid #000;
-        }
-        #arrow-accel::after {
-            content: ''; position: absolute; top: -7px;
-            border-style: solid; border-width: 9px;
-        }
-
-        /* 🎛️ แผงควบคุม (Controls) */
         .controls {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
-            background: #f1f5f9; border: var(--border); padding: 20px; box-shadow: 4px 4px 0px #000;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            padding: 18px;
+            background: #f1f5f9;
+            border: var(--border);
+            box-shadow: 4px 4px 0 var(--ink);
         }
-        .control-group { background: #fff; border: 3px solid #000; padding: 15px; box-shadow: 3px 3px 0px #000; }
-        .control-group label { font-size: 16px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
-        .control-label-en { font-size: 12px; font-weight: 600; color: #64748b; display: block; margin-top: -2px; }
-        .val-badge { background: #e2e8f0; border: 2px solid #000; padding: 2px 8px; border-radius: 4px; color: #2563eb; font-size: 16px; }
-        
-        input[type="range"] { width: 100%; margin-top: 10px; cursor: pointer; accent-color: #000; height: 8px; }
+        .control-group {
+            padding: 14px;
+            background: #fff;
+            border: 3px solid var(--ink);
+            box-shadow: 3px 3px 0 var(--ink);
+        }
+        .control-group label {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 800;
+        }
+        .control-label-en { display: block; color: var(--muted); font-size: 12px; font-weight: 600; }
+        .val-badge {
+            flex: 0 0 auto;
+            padding: 2px 8px;
+            border: 2px solid var(--ink);
+            border-radius: 4px;
+            background: #e2e8f0;
+            color: var(--blue);
+            font-weight: 800;
+        }
+        input[type="range"] { width: 100%; margin-top: 12px; accent-color: var(--ink); cursor: pointer; }
+        .buttons {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 4px;
+        }
+        .sim-status {
+            grid-column: 1 / -1;
+            margin: 0;
+            padding: 8px 12px;
+            border: 2px solid var(--ink);
+            background: #fff;
+            text-align: center;
+            font-weight: 800;
+        }
+        .sim-status.running { background: #dcfce7; color: #166534; }
+        .control-button { padding: 11px 20px; color: #fff; font-size: 16px; }
+        .start { background: var(--green); }
+        .pause { background: #f59e0b; color: var(--ink); }
+        .reset { background: var(--red); }
+        .control-button:disabled { opacity: .45; cursor: not-allowed; }
 
-        .buttons { grid-column: span 2; display: flex; justify-content: center; gap: 15px; margin-top: 10px; }
-        button {
-            padding: 12px 25px; font-size: 18px; font-weight: 900; color: white;
-            border: 3px solid #000; cursor: pointer; box-shadow: 4px 4px 0px #000; transition: 0.1s; text-transform: uppercase;
+        .scenario-picker {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
         }
-        button:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #000; }
-        #btn-start { background: #10b981; }
-        #btn-pause { background: #f59e0b; color: #000; }
-        #btn-reset { background: #ef4444; }
+        .scenario-button {
+            padding: 14px 10px;
+            background: #fff;
+            color: var(--ink);
+            font-size: 16px;
+        }
+        .scenario-button.active { background: #ddd6fe; }
+        .scenario-button .emoji { display: block; margin-bottom: 3px; font-size: 30px; }
+
+        .third-law-stage {
+            position: relative;
+            min-height: 330px;
+            overflow: hidden;
+            border: var(--border);
+            background: linear-gradient(#dbeafe 0 64%, #bfdbfe 64% 100%);
+        }
+        .third-law-stage[data-scene="rocket"] { background: linear-gradient(#172554 0 68%, #334155 68% 100%); }
+        .third-law-stage[data-scene="wall"] { background: linear-gradient(#f1f5f9 0 75%, #cbd5e1 75% 100%); }
+        .scene-object {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: min(520px, 88%);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            font-size: clamp(58px, 12vw, 100px);
+        }
+        .third-law-stage[data-scene="rocket"] .scene-object { flex-direction: column-reverse; gap: 0; }
+        .scene-moving { display: inline-block; will-change: transform; }
+        .scene-environment { display: inline-block; }
+        .third-law-stage[data-scene="wall"] .scene-moving { order: 0; }
+        .third-law-stage[data-scene="wall"] .scene-environment { order: 1; }
+        .third-law-stage[data-scene="rocket"] .scene-environment {
+            font-size: .65em;
+            transform-origin: center top;
+        }
+        .third-particle {
+            position: absolute;
+            z-index: 4;
+            width: 10px;
+            height: 10px;
+            border: 2px solid var(--ink);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particle-fade .7s ease-out forwards;
+        }
+        @keyframes particle-fade {
+            to { opacity: 0; transform: translate(var(--particle-x), var(--particle-y)) scale(1.7); }
+        }
+        .scene-caption {
+            position: absolute;
+            inset: auto 12px 12px;
+            padding: 9px 12px;
+            border: 3px solid var(--ink);
+            background: rgb(255 255 255 / .94);
+            text-align: center;
+            font-size: 14px;
+            font-weight: 800;
+        }
+        .force-pair {
+            position: absolute;
+            left: 50%;
+            top: 28px;
+            width: min(700px, 88%);
+            height: 72px;
+            transform: translateX(-50%);
+        }
+        .pair-arrow {
+            position: absolute;
+            top: 24px;
+            width: var(--pair-length, 20px);
+            min-width: 0;
+            height: 12px;
+            border-block: 3px solid var(--ink);
+        }
+        .pair-arrow::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            border: 13px solid transparent;
+            transform: translateY(-50%);
+        }
+        .pair-arrow.action { right: 50%; background: var(--blue); }
+        .pair-arrow.action::after { left: -26px; border-right-color: var(--blue); }
+        .pair-arrow.reaction { left: 50%; background: var(--orange); }
+        .pair-arrow.reaction::after { right: -26px; border-left-color: var(--orange); }
+        .pair-label {
+            position: absolute;
+            top: 50px;
+            width: 46%;
+            font-size: 12px;
+            font-weight: 800;
+            text-align: center;
+        }
+        .pair-label.action { left: 0; color: #1d4ed8; }
+        .pair-label.reaction { right: 0; color: #c2410c; }
+
+        .third-grid {
+            display: grid;
+            grid-template-columns: 1.15fr .85fr;
+            gap: 14px;
+        }
+        .third-control, .equation-card {
+            padding: 16px;
+            border: 3px solid var(--ink);
+            box-shadow: 3px 3px 0 var(--ink);
+        }
+        .third-control { background: #faf5ff; }
+        .equation-card { background: #fff7ed; }
+        .third-control label { display: flex; justify-content: space-between; gap: 12px; font-weight: 800; }
+        .equation {
+            margin: 5px 0 8px;
+            color: var(--purple);
+            font: 800 clamp(22px, 4vw, 34px) ui-monospace, monospace;
+            text-align: center;
+        }
+        .explanation { margin: 0; line-height: 1.6; }
+        .force-readout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .force-readout div { padding: 10px; border: 2px solid var(--ink); background: white; text-align: center; font-weight: 800; }
+        .force-readout strong { display: block; font: 800 23px ui-monospace, monospace; }
+        .action-value { color: var(--blue); }
+        .reaction-value { color: var(--orange); }
+
+        @media (max-width: 760px) {
+            body { padding: 10px; }
+            .container { padding: 12px; box-shadow: 5px 5px 0 var(--ink); }
+            .dashboard { grid-template-columns: 1fr 1fr; }
+            .controls, .third-grid { grid-template-columns: 1fr; }
+            .scenario-picker { grid-template-columns: 1fr; }
+            .sim-container { height: 250px; }
+        }
+        @media (max-width: 480px) {
+            .law-tabs { grid-template-columns: 1fr; }
+            .dashboard { gap: 8px; padding: 9px; }
+            .dash-value { font-size: 17px; }
+            .controls { padding: 11px; }
+            #box { width: 70px; height: 70px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+        }
     </style>
 </head>
 <body>
-
-    <div class="container">
+    <main class="container">
         <h1 class="header-title">
             ⚙️ ห้องปฏิบัติการกฎของนิวตัน
-            <span class="header-subtitle">Interactive Newton's Laws Lab</span>
+            <span class="header-subtitle">Interactive Newton's Laws Lab · Laws 1–3</span>
         </h1>
 
-        <div class="dashboard">
-            <div class="dash-box">
-                <div class="dash-label">เวลา <span>Time (t)</span></div>
-                <div class="dash-value" id="val-time">0.00 <span style="font-size:14px;color:#64748b;">s</span></div>
-            </div>
-            <div class="dash-box">
-                <div class="dash-label">แรงลัพธ์ <span>Net Force (ΣF)</span></div>
-                <div class="dash-value" id="val-net-force" style="color:#f97316;">0 <span style="font-size:14px;color:#64748b;">N</span></div>
-            </div>
-            <div class="dash-box">
-                <div class="dash-label">ความเร่ง <span>Acceleration (a)</span></div>
-                <div class="dash-value" id="val-accel" style="color:#10b981;">0.00 <span style="font-size:14px;color:#64748b;">m/s²</span></div>
-            </div>
-            <div class="dash-box">
-                <div class="dash-label">ความเร็ว <span>Velocity (v)</span></div>
-                <div class="dash-value" id="val-vel" style="color:#8b5cf6;">0.00 <span style="font-size:14px;color:#64748b;">m/s</span></div>
-            </div>
-        </div>
+        <nav class="law-tabs" aria-label="เลือกห้องทดลอง">
+            <button class="tab-button active" type="button" data-panel="laws-1-2" aria-selected="true">กฎข้อที่ 1 และ 2 · Laws 1 &amp; 2</button>
+            <button class="tab-button" type="button" data-panel="law-3" aria-selected="false">กฎข้อที่ 3 · Action &amp; Reaction</button>
+        </nav>
 
-        <div class="sim-container" id="sim-area">
-            <div class="ground"></div>
-            <div id="box">
-                <span id="box-mass">10 kg</span>
-                <div id="arrow-left" class="arrow"></div>
-                <div id="arrow-right" class="arrow"></div>
-                <div id="arrow-accel"></div>
-            </div>
-        </div>
+        <section class="lab-panel" id="laws-1-2">
+            <p class="law-note">
+                กฎข้อที่ 1: ถ้าแรงลัพธ์เป็นศูนย์ วัตถุจะอยู่นิ่งหรือเคลื่อนที่ด้วยความเร็วคงที่<br>
+                กฎข้อที่ 2: ความเร่งหาได้จาก <strong>a = ΣF ÷ m</strong>
+                <br><span>Law 1: Zero net force means no change in velocity. Law 2: a = ΣF ÷ m.</span>
+            </p>
 
-        <div class="controls">
-            <div class="control-group" style="background: #eff6ff;">
-                <label><div>แรงผลักไปทางซ้าย <span class="control-label-en">Left Force (F_L)</span></div> <span class="val-badge" id="lbl-force-l">0 N</span></label>
-                <input type="range" id="in-force-l" min="0" max="100" value="0">
-            </div>
-            <div class="control-group" style="background: #fff7ed;">
-                <label><div>แรงผลักไปทางขวา <span class="control-label-en">Right Force (F_R)</span></div> <span class="val-badge" id="lbl-force-r">0 N</span></label>
-                <input type="range" id="in-force-r" min="0" max="100" value="0">
-            </div>
-            <div class="control-group" style="background: #f0fdfa;">
-                <label><div>มวลวัตถุ <span class="control-label-en">Mass (m)</span></div> <span class="val-badge" id="lbl-mass">10 kg</span></label>
-                <input type="range" id="in-mass" min="1" max="50" value="10">
-            </div>
-            <div class="control-group" style="background: #f5f3ff;">
-                <label><div>ความเร็วต้น <span class="control-label-en">Initial Velocity (u)</span></div> <span class="val-badge" id="lbl-u">0 m/s</span></label>
-                <input type="range" id="in-u" min="-20" max="20" value="0" step="1">
+            <div class="dashboard" aria-live="polite">
+                <div class="dash-box">
+                    <div class="dash-label">เวลา <span>Time (t)</span></div>
+                    <div class="dash-value"><span id="val-time">0.00</span> <span class="unit">s</span></div>
+                </div>
+                <div class="dash-box">
+                    <div class="dash-label">แรงลัพธ์ <span>Net Force (ΣF)</span></div>
+                    <div class="dash-value" style="color:var(--orange)"><span id="val-net-force">0</span> <span class="unit">N</span></div>
+                </div>
+                <div class="dash-box">
+                    <div class="dash-label">ความเร่ง <span>Acceleration (a)</span></div>
+                    <div class="dash-value" style="color:var(--green)"><span id="val-accel">0.00</span> <span class="unit">m/s²</span></div>
+                </div>
+                <div class="dash-box">
+                    <div class="dash-label">ความเร็ว <span>Velocity (v)</span></div>
+                    <div class="dash-value" style="color:var(--purple)"><span id="val-vel">0.00</span> <span class="unit">m/s</span></div>
+                </div>
             </div>
 
-            <div class="buttons">
-                <button id="btn-start" onclick="startSim()">▶ เริ่ม (Start)</button>
-                <button id="btn-pause" onclick="pauseSim()">⏸ หยุด (Pause)</button>
-                <button id="btn-reset" onclick="resetSim()">🔄 รีเซ็ต (Reset)</button>
+            <div class="sim-container" id="sim-area" aria-label="พื้นที่จำลองการเคลื่อนที่">
+                <div class="ground"></div>
+                <div id="box">
+                    <span id="box-mass">10 kg</span>
+                    <div id="arrow-left" class="vector left" aria-hidden="true"></div>
+                    <div id="arrow-right" class="vector right" aria-hidden="true"></div>
+                    <div id="arrow-accel" class="vector" data-direction="none" aria-hidden="true"></div>
+                </div>
             </div>
-        </div>
-    </div>
+
+            <div class="controls">
+                <div class="control-group" style="background:#eff6ff">
+                    <label for="in-force-l"><span>แรงไปทางซ้าย <span class="control-label-en">Left Force (Fₗ)</span></span><span class="val-badge" id="lbl-force-l">0 N</span></label>
+                    <input type="range" id="in-force-l" min="0" max="100" value="0">
+                </div>
+                <div class="control-group" style="background:#fff7ed">
+                    <label for="in-force-r"><span>แรงไปทางขวา <span class="control-label-en">Right Force (Fᵣ)</span></span><span class="val-badge" id="lbl-force-r">0 N</span></label>
+                    <input type="range" id="in-force-r" min="0" max="100" value="0">
+                </div>
+                <div class="control-group" style="background:#f0fdfa">
+                    <label for="in-mass"><span>มวลวัตถุ <span class="control-label-en">Mass (m)</span></span><span class="val-badge" id="lbl-mass">10 kg</span></label>
+                    <input type="range" id="in-mass" min="1" max="50" value="10">
+                </div>
+                <div class="control-group" style="background:#f5f3ff">
+                    <label for="in-u"><span>ความเร็วต้น <span class="control-label-en">Initial Velocity (u)</span></span><span class="val-badge" id="lbl-u">0 m/s</span></label>
+                    <input type="range" id="in-u" min="-20" max="20" value="0" step="1">
+                </div>
+                <div class="buttons">
+                    <button class="control-button start" id="btn-start" type="button">▶ เริ่ม</button>
+                    <button class="control-button pause" id="btn-pause" type="button" disabled>⏸ หยุด</button>
+                    <button class="control-button reset" id="btn-reset" type="button">↻ รีเซ็ต</button>
+                </div>
+                <p class="sim-status" id="sim-status" role="status" aria-live="polite">หยุดอยู่ · Paused</p>
+            </div>
+        </section>
+
+        <section class="lab-panel" id="law-3" hidden>
+            <p class="law-note">
+                กฎข้อที่ 3: เมื่อวัตถุ A ออกแรงต่อวัตถุ B วัตถุ B จะออกแรงกลับต่อ A <strong>ขนาดเท่ากัน แต่ทิศตรงข้าม</strong><br>
+                แรงคู่นี้ไม่หักล้างกัน เพราะกระทำต่อวัตถุคนละชิ้น
+                <br><span>For every action force, there is an equal and opposite reaction force. The pair acts on different objects.</span>
+            </p>
+
+            <div class="scenario-picker" role="group" aria-label="เลือกตัวอย่างกฎข้อที่ 3">
+                <button class="scenario-button active" type="button" data-scene="boat"><span class="emoji">🚣</span>พายเรือ · Rowing</button>
+                <button class="scenario-button" type="button" data-scene="rocket"><span class="emoji">🚀</span>จรวด · Rocket</button>
+                <button class="scenario-button" type="button" data-scene="wall"><span class="emoji">👊</span>ต่อยกำแพง · Wall</button>
+            </div>
+
+            <div class="third-law-stage" id="third-stage" data-scene="boat">
+                <div class="force-pair" aria-hidden="true">
+                    <div class="pair-arrow action" id="action-arrow"></div>
+                    <div class="pair-arrow reaction" id="reaction-arrow"></div>
+                    <div class="pair-label action" id="action-label">ไม้พายดันน้ำไปด้านหลัง</div>
+                    <div class="pair-label reaction" id="reaction-label">น้ำดันเรือไปด้านหน้า</div>
+                </div>
+                <div id="third-particles" aria-hidden="true"></div>
+                <div class="scene-object" id="scene-object" aria-hidden="true">
+                    <span class="scene-environment" id="scene-environment">🌊</span>
+                    <span class="scene-moving" id="scene-moving">🚣‍♂️</span>
+                </div>
+                <div class="scene-caption" id="scene-caption">ยิ่งพายดันน้ำแรง เรือยิ่งได้รับแรงผลักกลับมาก</div>
+            </div>
+
+            <div class="third-grid">
+                <div class="third-control">
+                    <label for="in-action-force"><span id="force-control-label">แรงที่ไม้พายดันน้ำ</span><span class="val-badge" id="lbl-action-force">200 N</span></label>
+                    <input type="range" id="in-action-force" min="0" max="1000" value="200" step="10">
+                    <div class="force-readout" aria-live="polite">
+                        <div>แรงกิริยา · Action<strong class="action-value" id="action-value">200 N ←</strong></div>
+                        <div>แรงปฏิกิริยา · Reaction<strong class="reaction-value" id="reaction-value">→ 200 N</strong></div>
+                    </div>
+                    <div class="buttons">
+                        <button class="control-button start" id="btn-third-start" type="button">▶ เล่น</button>
+                        <button class="control-button pause" id="btn-third-pause" type="button" disabled>⏸ หยุด</button>
+                        <button class="control-button reset" id="btn-third-reset" type="button">↻ รีเซ็ต</button>
+                    </div>
+                    <p class="sim-status" id="third-status" role="status" aria-live="polite">พร้อมเล่น · Ready</p>
+                </div>
+                <div class="equation-card">
+                    <div class="equation">F<sub>A→B</sub> = −F<sub>B→A</sub></div>
+                    <p class="explanation" id="scene-explanation">
+                        ไม้พายดันน้ำไปด้านหลัง 200 N และน้ำดันเรือกลับไปด้านหน้า 200 N เรือจึงเร่งไปข้างหน้า
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <script>
-        // State Variables
-        let state = {
-            m: 10,       // Mass
-            fL: 0,       // Force Left
-            fR: 0,       // Force Right
-            u: 0,        // Initial Velocity
-            v: 0,        // Current Velocity
-            a: 0,        // Acceleration
-            x: 420,      // Position (px)
-            t: 0,        // Time (s)
-            isRunning: false
+        "use strict";
+
+        const simulation = {
+            mass: 10,
+            forceLeft: 0,
+            forceRight: 0,
+            initialVelocity: 0,
+            velocity: 0,
+            acceleration: 0,
+            position: 0,
+            time: 0,
+            running: false,
+            lastTimestamp: null
         };
 
-        const SIM_WIDTH = 1000; // อ้างอิงความกว้างสูงสุดเพื่อให้ทะลุจอเนียนๆ
+        const pixelsPerMeter = 10;
+        const boxWidth = 82;
+        const simArea = document.getElementById("sim-area");
+        const box = document.getElementById("box");
+        const arrowLeft = document.getElementById("arrow-left");
+        const arrowRight = document.getElementById("arrow-right");
+        const arrowAccel = document.getElementById("arrow-accel");
+        const forceLeftInput = document.getElementById("in-force-l");
+        const forceRightInput = document.getElementById("in-force-r");
+        const massInput = document.getElementById("in-mass");
+        const initialVelocityInput = document.getElementById("in-u");
+        const startButton = document.getElementById("btn-start");
+        const pauseButton = document.getElementById("btn-pause");
+        const simulationStatus = document.getElementById("sim-status");
+        let animationFrameId = null;
 
-        // DOM Elements
-        const elBox = document.getElementById('box');
-        const elArrLeft = document.getElementById('arrow-left');
-        const elArrRight = document.getElementById('arrow-right');
-        const elArrAccel = document.getElementById('arrow-accel');
-        
-        function updateInputs() {
-            if(!state.isRunning) {
-                state.fL = parseFloat(document.getElementById('in-force-l').value);
-                state.fR = parseFloat(document.getElementById('in-force-r').value);
-                state.m = parseFloat(document.getElementById('in-mass').value);
-                
-                if(state.t === 0) {
-                    state.u = parseFloat(document.getElementById('in-u').value);
-                    state.v = state.u;
-                }
+        function measuredBoxWidth() {
+            return box.getBoundingClientRect().width || boxWidth;
+        }
 
-                // Update Labels
-                document.getElementById('lbl-force-l').innerText = state.fL + " N";
-                document.getElementById('lbl-force-r').innerText = state.fR + " N";
-                document.getElementById('lbl-mass').innerText = state.m + " kg";
-                document.getElementById('lbl-u').innerText = state.u + " m/s";
-                document.getElementById('box-mass').innerText = state.m + " kg";
-
-                calculatePhysics();
-                updateVisuals();
-            }
+        function centerBox() {
+            simulation.position = Math.max(0, (simArea.clientWidth - measuredBoxWidth()) / 2);
         }
 
         function calculatePhysics() {
-            let netForce = state.fR - state.fL;
-            state.a = netForce / state.m;
-            
-            document.getElementById('val-net-force').innerText = netForce;
-            document.getElementById('val-accel').innerText = state.a.toFixed(2);
+            const netForce = simulation.forceRight - simulation.forceLeft;
+            simulation.acceleration = netForce / simulation.mass;
+            return netForce;
         }
 
-        function updateVisuals() {
-            elBox.style.left = state.x + 'px';
+        function updateLaw12Readout() {
+            const netForce = calculatePhysics();
+            document.getElementById("val-time").textContent = simulation.time.toFixed(2);
+            document.getElementById("val-net-force").textContent = netForce.toFixed(0);
+            document.getElementById("val-accel").textContent = simulation.acceleration.toFixed(2);
+            document.getElementById("val-vel").textContent = simulation.velocity.toFixed(2);
+            document.getElementById("lbl-force-l").textContent = simulation.forceLeft + " N";
+            document.getElementById("lbl-force-r").textContent = simulation.forceRight + " N";
+            document.getElementById("lbl-mass").textContent = simulation.mass + " kg";
+            document.getElementById("lbl-u").textContent = simulation.initialVelocity + " m/s";
+            document.getElementById("box-mass").textContent = simulation.mass + " kg";
 
-            // ความยาวลูกศร (1px ต่อ 1N)
-            elArrLeft.style.width = state.fL + 'px';
-            elArrRight.style.width = state.fR + 'px';
+            box.style.transform = `translateX(${simulation.position}px)`;
+            arrowLeft.style.width = Math.min(simulation.forceLeft, 120) + "px";
+            arrowRight.style.width = Math.min(simulation.forceRight, 120) + "px";
 
-            // ลูกศรความเร่ง (สีเขียว)
-            let netForce = state.fR - state.fL;
-            if(netForce > 0) {
-                elArrAccel.style.width = (state.a * 10) + 'px';
-                elArrAccel.style.left = '100%';
-                elArrAccel.style.right = 'auto';
-                elArrAccel.style.transform = 'scaleX(1)';
-                elArrAccel.style.borderLeft = '2px solid #000';
-                elArrAccel.style.borderRight = 'none';
-                document.styleSheets[0].insertRule('#arrow-accel::after { right: -20px; left: auto; border-color: transparent transparent transparent #000; }', document.styleSheets[0].cssRules.length);
-                document.styleSheets[0].insertRule('#arrow-accel::before { content: ""; position: absolute; top: -5px; right: -17px; z-index: 1; border-style: solid; border-width: 7px; border-color: transparent transparent transparent #10b981; }', document.styleSheets[0].cssRules.length);
-            } else if (netForce < 0) {
-                elArrAccel.style.width = (Math.abs(state.a) * 10) + 'px';
-                elArrAccel.style.right = '100%';
-                elArrAccel.style.left = 'auto';
-                elArrAccel.style.transform = 'scaleX(1)';
-                elArrAccel.style.borderRight = '2px solid #000';
-                elArrAccel.style.borderLeft = 'none';
-                document.styleSheets[0].insertRule('#arrow-accel::after { left: -20px; right: auto; border-color: transparent #000 transparent transparent; }', document.styleSheets[0].cssRules.length);
-                document.styleSheets[0].insertRule('#arrow-accel::before { content: ""; position: absolute; top: -5px; left: -17px; z-index: 1; border-style: solid; border-width: 7px; border-color: transparent #10b981 transparent transparent; }', document.styleSheets[0].cssRules.length);
+            if (netForce === 0) {
+                arrowAccel.dataset.direction = "none";
+                arrowAccel.style.width = "0px";
             } else {
-                elArrAccel.style.width = '0px';
-                elArrAccel.style.border = 'none';
+                arrowAccel.dataset.direction = netForce > 0 ? "right" : "left";
+                arrowAccel.style.width = Math.min(Math.abs(simulation.acceleration) * 10, 150) + "px";
             }
-
-            document.getElementById('val-time').innerText = state.t.toFixed(2);
-            document.getElementById('val-vel').innerText = state.v.toFixed(2);
         }
 
-        // Animation Loop
-        let lastTime = 0;
-        function loop(timestamp) {
-            if (!lastTime) lastTime = timestamp;
-            let dt = (timestamp - lastTime) / 1000; 
-            lastTime = timestamp;
+        function readControls({ applyInitialVelocity = false } = {}) {
+            simulation.forceLeft = Number(forceLeftInput.value);
+            simulation.forceRight = Number(forceRightInput.value);
+            simulation.mass = Number(massInput.value);
+            simulation.initialVelocity = Number(initialVelocityInput.value);
+            if (applyInitialVelocity) simulation.velocity = simulation.initialVelocity;
+            updateLaw12Readout();
+        }
 
-            if (state.isRunning) {
-                state.v += state.a * dt;
-                state.t += dt;
-                
-                state.x += (state.v * 10) * dt; 
+        function setRunning(running) {
+            simulation.running = running;
+            simulation.lastTimestamp = null;
+            startButton.disabled = running;
+            pauseButton.disabled = !running;
+            initialVelocityInput.disabled = running;
+            simulationStatus.textContent = running ? "กำลังเคลื่อนที่ · Running" : "หยุดอยู่ · Paused";
+            simulationStatus.classList.toggle("running", running);
+        }
 
-                // วนลูปกล่องเมื่อทะลุจอ
-                if (state.x > SIM_WIDTH) state.x = -80;
-                if (state.x < -100) state.x = SIM_WIDTH;
+        function startSimulation() {
+            if (simulation.running) return;
+            setRunning(true);
+            animationFrameId = requestAnimationFrame(animationLoop);
+        }
 
-                updateVisuals();
+        function pauseSimulation() {
+            setRunning(false);
+            if (animationFrameId !== null) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
             }
-            requestAnimationFrame(loop);
+            updateLaw12Readout();
         }
 
-        function startSim() { state.isRunning = true; }
-        function pauseSim() { state.isRunning = false; }
-        function resetSim() {
-            state.isRunning = false;
-            state.t = 0;
-            state.x = 420;
-            state.v = parseFloat(document.getElementById('in-u').value);
-            updateInputs();
+        function resetSimulation() {
+            pauseSimulation();
+            forceLeftInput.value = "0";
+            forceRightInput.value = "0";
+            massInput.value = "10";
+            initialVelocityInput.value = "0";
+            simulation.forceLeft = 0;
+            simulation.forceRight = 0;
+            simulation.mass = 10;
+            simulation.initialVelocity = 0;
+            simulation.velocity = 0;
+            simulation.acceleration = 0;
+            simulation.time = 0;
+            centerBox();
+            updateLaw12Readout();
         }
 
-        // Event Listeners
-        document.querySelectorAll('input[type=range]').forEach(input => {
-            input.addEventListener('input', updateInputs);
+        function animationLoop(timestamp) {
+            if (!simulation.running) return;
+            if (simulation.lastTimestamp === null) simulation.lastTimestamp = timestamp;
+            const dt = Math.min((timestamp - simulation.lastTimestamp) / 1000, 0.05);
+            simulation.lastTimestamp = timestamp;
+            simulation.velocity += simulation.acceleration * dt;
+            simulation.position += simulation.velocity * pixelsPerMeter * dt;
+            simulation.time += dt;
+
+            const limit = Math.max(0, simArea.clientWidth - measuredBoxWidth());
+            if (simulation.position > limit) {
+                simulation.position = limit;
+                simulation.velocity = -Math.abs(simulation.velocity) * 0.65;
+            } else if (simulation.position < 0) {
+                simulation.position = 0;
+                simulation.velocity = Math.abs(simulation.velocity) * 0.65;
+            }
+            updateLaw12Readout();
+            animationFrameId = requestAnimationFrame(animationLoop);
+        }
+
+        [forceLeftInput, forceRightInput, massInput].forEach(input => {
+            input.addEventListener("input", () => readControls());
+        });
+        initialVelocityInput.addEventListener("input", () => {
+            simulation.initialVelocity = Number(initialVelocityInput.value);
+            if (!simulation.running) simulation.velocity = simulation.initialVelocity;
+            updateLaw12Readout();
+        });
+        startButton.addEventListener("click", startSimulation);
+        pauseButton.addEventListener("click", pauseSimulation);
+        document.getElementById("btn-reset").addEventListener("click", resetSimulation);
+
+        document.querySelectorAll(".tab-button").forEach(button => {
+            button.addEventListener("click", () => {
+                pauseSimulation();
+                pauseThirdSimulation();
+                document.querySelectorAll(".tab-button").forEach(item => {
+                    const selected = item === button;
+                    item.classList.toggle("active", selected);
+                    item.setAttribute("aria-selected", String(selected));
+                });
+                document.querySelectorAll(".lab-panel").forEach(panel => {
+                    panel.hidden = panel.id !== button.dataset.panel;
+                });
+            });
         });
 
-        updateInputs();
-        requestAnimationFrame(loop);
+        const scenes = {
+            boat: {
+                environment: "🌊",
+                moving: "🚣‍♂️",
+                control: "แรงที่ไม้พายดันน้ำ",
+                action: "ไม้พายดันน้ำไปด้านหลัง",
+                reaction: "น้ำดันเรือไปด้านหน้า",
+                caption: "ยิ่งพายดันน้ำแรง เรือยิ่งได้รับแรงผลักกลับมาก",
+                explain: force => `ไม้พายดันน้ำไปด้านหลัง ${force} N และน้ำดันเรือกลับไปด้านหน้า ${force} N เรือจึงเร่งไปข้างหน้า`
+            },
+            rocket: {
+                environment: "🔥",
+                moving: "🚀",
+                control: "แรงที่จรวดดันแก๊ส",
+                action: "จรวดดันแก๊สลงด้านล่าง",
+                reaction: "แก๊สดันจรวดขึ้นด้านบน",
+                caption: "ยิ่งพ่นแก๊สด้วยแรงมาก จรวดยิ่งได้รับแรงขับมาก",
+                explain: force => `จรวดดันแก๊สลง ${force} N และแก๊สดันจรวดขึ้น ${force} N แรงคู่มีขนาดเท่ากันและทิศตรงข้าม`
+            },
+            wall: {
+                environment: "🧱",
+                moving: "🤜",
+                control: "แรงที่หมัดดันกำแพง",
+                action: "หมัดดันกำแพง",
+                reaction: "กำแพงดันหมัดกลับ",
+                caption: "ต่อยแรงเท่าไร กำแพงดันหมัดกลับด้วยแรงเท่ากัน",
+                explain: force => `หมัดดันกำแพง ${force} N และกำแพงดันหมัดกลับ ${force} N กำแพงแทบไม่เร่งเพราะยึดกับอาคารและมีมวลรวมสูงมาก`
+            }
+        };
+
+        let currentScene = "boat";
+        const actionForceInput = document.getElementById("in-action-force");
+        const thirdStage = document.getElementById("third-stage");
+        const sceneMoving = document.getElementById("scene-moving");
+        const sceneEnvironment = document.getElementById("scene-environment");
+        const thirdParticles = document.getElementById("third-particles");
+        const thirdStartButton = document.getElementById("btn-third-start");
+        const thirdPauseButton = document.getElementById("btn-third-pause");
+        const thirdStatus = document.getElementById("third-status");
+        const thirdSimulation = {
+            running: false,
+            position: 0,
+            phase: 0,
+            lastTimestamp: null,
+            frameId: null,
+            particleTime: 0
+        };
+
+        function updateThirdLaw() {
+            const force = Number(actionForceInput.value);
+            const scene = scenes[currentScene];
+            const arrowLength = force === 0 ? 0 : Math.max(4, force * 0.16);
+            document.getElementById("lbl-action-force").textContent = force + " N";
+            document.getElementById("action-value").textContent = force + " N ←";
+            document.getElementById("reaction-value").textContent = "→ " + force + " N";
+            document.getElementById("action-arrow").style.setProperty("--pair-length", arrowLength + "px");
+            document.getElementById("reaction-arrow").style.setProperty("--pair-length", arrowLength + "px");
+            document.getElementById("action-arrow").style.opacity = force === 0 ? "0" : "1";
+            document.getElementById("reaction-arrow").style.opacity = force === 0 ? "0" : "1";
+            document.getElementById("scene-explanation").textContent = scene.explain(force);
+
+            sceneEnvironment.style.transform = currentScene === "rocket"
+                ? `scaleY(${force === 0 ? 0.25 : 0.55 + force / 900})`
+                : "none";
+        }
+
+        function setThirdRunning(running) {
+            thirdSimulation.running = running;
+            thirdSimulation.lastTimestamp = null;
+            thirdStartButton.disabled = running;
+            thirdPauseButton.disabled = !running;
+            thirdStatus.textContent = running ? "กำลังเล่น · Running" : "หยุดอยู่ · Paused";
+            thirdStatus.classList.toggle("running", running);
+        }
+
+        function startThirdSimulation() {
+            if (thirdSimulation.running) return;
+            if (Number(actionForceInput.value) === 0) {
+                thirdStatus.textContent = "เพิ่มแรงก่อน แล้วกดเล่น · Increase the force, then press Play";
+                return;
+            }
+            setThirdRunning(true);
+            thirdSimulation.frameId = requestAnimationFrame(thirdAnimationLoop);
+        }
+
+        function pauseThirdSimulation() {
+            setThirdRunning(false);
+            if (thirdSimulation.frameId !== null) {
+                cancelAnimationFrame(thirdSimulation.frameId);
+                thirdSimulation.frameId = null;
+            }
+        }
+
+        function clearThirdParticles() {
+            thirdParticles.replaceChildren();
+        }
+
+        function resetThirdSimulation({ resetForce = true } = {}) {
+            pauseThirdSimulation();
+            if (resetForce) actionForceInput.value = "0";
+            thirdSimulation.position = 0;
+            thirdSimulation.phase = 0;
+            thirdSimulation.particleTime = 0;
+            sceneMoving.style.transform = "translate(0, 0)";
+            clearThirdParticles();
+            updateThirdLaw();
+            thirdStatus.textContent = "พร้อมเล่น · Ready";
+        }
+
+        function createThirdParticle() {
+            const particle = document.createElement("span");
+            particle.className = "third-particle";
+            const centerX = thirdStage.clientWidth / 2;
+            const centerY = thirdStage.clientHeight / 2;
+            if (currentScene === "boat") {
+                particle.style.left = centerX - 34 + thirdSimulation.position + "px";
+                particle.style.top = centerY + 35 + (Math.random() * 18 - 9) + "px";
+                particle.style.background = "#e0f2fe";
+                particle.style.setProperty("--particle-x", -(35 + Math.random() * 55) + "px");
+                particle.style.setProperty("--particle-y", (Math.random() * 26 - 13) + "px");
+            } else if (currentScene === "rocket") {
+                particle.style.left = centerX + thirdSimulation.position * .45 + (Math.random() * 20 - 10) + "px";
+                particle.style.top = centerY + 60 - thirdSimulation.position + "px";
+                particle.style.background = Math.random() > .5 ? "#fb7185" : "#fde047";
+                particle.style.setProperty("--particle-x", -(20 + Math.random() * 40) + "px");
+                particle.style.setProperty("--particle-y", (45 + Math.random() * 55) + "px");
+            } else {
+                particle.style.left = centerX - 4 + "px";
+                particle.style.top = centerY - 4 + (Math.random() * 20 - 10) + "px";
+                particle.style.background = "#fde047";
+                particle.style.setProperty("--particle-x", (Math.random() * 50 - 25) + "px");
+                particle.style.setProperty("--particle-y", (Math.random() * 50 - 25) + "px");
+            }
+            thirdParticles.appendChild(particle);
+            particle.addEventListener("animationend", () => particle.remove(), { once: true });
+        }
+
+        function thirdAnimationLoop(timestamp) {
+            if (!thirdSimulation.running) return;
+            if (thirdSimulation.lastTimestamp === null) thirdSimulation.lastTimestamp = timestamp;
+            const dt = Math.min((timestamp - thirdSimulation.lastTimestamp) / 1000, 0.05);
+            thirdSimulation.lastTimestamp = timestamp;
+            const force = Number(actionForceInput.value);
+            const forceRatio = force / 1000;
+            const speed = 28 + forceRatio * 150;
+            thirdSimulation.particleTime += dt;
+
+            if (currentScene === "boat") {
+                thirdSimulation.position += speed * dt;
+                const limit = Math.max(90, thirdStage.clientWidth * .34);
+                if (thirdSimulation.position > limit) thirdSimulation.position = -limit;
+                sceneMoving.style.transform = `translateX(${thirdSimulation.position}px)`;
+            } else if (currentScene === "rocket") {
+                thirdSimulation.position += speed * dt;
+                const limit = Math.max(100, thirdStage.clientHeight * .38);
+                if (thirdSimulation.position > limit) thirdSimulation.position = -limit * .55;
+                sceneMoving.style.transform = `translate(${thirdSimulation.position * .45}px, ${-thirdSimulation.position}px)`;
+            } else {
+                thirdSimulation.phase += dt * (1.2 + forceRatio * 2.8);
+                const cycle = thirdSimulation.phase % 1;
+                const distance = 32 + forceRatio * 55;
+                const x = cycle < .65
+                    ? -distance + (cycle / .65) * distance
+                    : -((cycle - .65) / .35) * distance;
+                sceneMoving.style.transform = `translateX(${x}px)`;
+            }
+
+            const particleInterval = Math.max(.045, .23 - forceRatio * .17);
+            if (thirdSimulation.particleTime >= particleInterval) {
+                createThirdParticle();
+                thirdSimulation.particleTime = 0;
+            }
+            thirdSimulation.frameId = requestAnimationFrame(thirdAnimationLoop);
+        }
+
+        function selectScene(name) {
+            pauseThirdSimulation();
+            currentScene = name;
+            const scene = scenes[name];
+            thirdStage.dataset.scene = name;
+            sceneEnvironment.textContent = scene.environment;
+            sceneMoving.textContent = scene.moving;
+            document.getElementById("force-control-label").textContent = scene.control;
+            document.getElementById("action-label").textContent = scene.action;
+            document.getElementById("reaction-label").textContent = scene.reaction;
+            document.getElementById("scene-caption").textContent = scene.caption;
+            document.querySelectorAll(".scenario-button").forEach(button => {
+                button.classList.toggle("active", button.dataset.scene === name);
+            });
+            resetThirdSimulation({ resetForce: false });
+        }
+
+        document.querySelectorAll(".scenario-button").forEach(button => {
+            button.addEventListener("click", () => selectScene(button.dataset.scene));
+        });
+        actionForceInput.addEventListener("input", () => {
+            updateThirdLaw();
+            if (Number(actionForceInput.value) === 0 && thirdSimulation.running) {
+                pauseThirdSimulation();
+                thirdStatus.textContent = "แรงเป็นศูนย์ การเคลื่อนที่หยุด · Zero force, motion stopped";
+            }
+        });
+        thirdStartButton.addEventListener("click", startThirdSimulation);
+        thirdPauseButton.addEventListener("click", pauseThirdSimulation);
+        document.getElementById("btn-third-reset").addEventListener("click", resetThirdSimulation);
+        window.addEventListener("resize", () => {
+            if (!simulation.running) centerBox();
+            updateLaw12Readout();
+        });
+
+        resetSimulation();
+        selectScene("boat");
     </script>
 </body>
 </html>
