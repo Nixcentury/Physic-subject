@@ -13,20 +13,36 @@ html,body{margin:0;min-height:100%;font-family:Arial,"Noto Sans Thai",sans-serif
 <script>
 (async function(){
   const baseUrl='./solids-and-fluids-kru-kird-bilingual-base-20260812.html';
+  const continuityPatchUrl='./continuity-guided-notes-patch-v1.js?v=20260813-0810';
   const bernoulliPatchSrc='./bernoulli-detailed-solutions-q61-q66-v1.js?v=20260813-0805';
   if(location.protocol==='file:'){
     location.replace(baseUrl);
     return;
   }
   try{
-    const baseResponse=await fetch(baseUrl,{cache:'no-store'});
+    const [baseResponse,continuityResponse]=await Promise.all([
+      fetch(baseUrl,{cache:'no-store'}),
+      fetch(continuityPatchUrl,{cache:'no-store'})
+    ]);
     if(!baseResponse.ok) throw new Error('Base HTTP '+baseResponse.status);
+    if(!continuityResponse.ok) throw new Error('Continuity patch HTTP '+continuityResponse.status);
+
     let html=await baseResponse.text();
+    const continuityPatch=await continuityResponse.text();
+
+    /* Continuity Q53-Q60 must run after Q is declared but before topics/rendering,
+       because this patch updates q.solution and selected figures before sheets are built. */
+    const continuityMarker='const topics=[';
+    if(!html.includes(continuityMarker)) throw new Error('Continuity injection marker not found');
+    html=html.replace(
+      continuityMarker,
+      continuityPatch+'\n\n'+continuityMarker
+    );
+
     if(!html.includes('</body>')) throw new Error('Body marker not found');
 
-    /* Load the Bernoulli patch as a normal external script after the base document
-       has created all question sheets. This is more reliable than embedding fetched
-       JavaScript text inside another script tag. */
+    /* Bernoulli Q61-Q66 patch can run after the sheets exist because it also updates
+       the rendered answer layers and selective SVG visuals directly. */
     html=html.replace(
       '</body>',
       '<script src="'+bernoulliPatchSrc+'"><\/script>\n</body>'
@@ -43,6 +59,6 @@ html,body{margin:0;min-height:100%;font-family:Arial,"Noto Sans Thai",sans-serif
   }
 })();
 </script>
-<!-- 2026-08-13: robust external loading for Bernoulli detailed solutions Q61-Q66 -->
+<!-- 2026-08-13: continuity Q53-Q60 + Bernoulli Q61-Q66 detailed solution patches -->
 </body>
 </html>
