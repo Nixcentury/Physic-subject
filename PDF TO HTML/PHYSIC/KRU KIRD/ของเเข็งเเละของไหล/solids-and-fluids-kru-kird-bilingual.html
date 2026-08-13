@@ -15,6 +15,7 @@ html,body{margin:0;min-height:100%;font-family:Arial,"Noto Sans Thai",sans-serif
   const baseUrl='./solids-and-fluids-kru-kird-bilingual-base-20260812.html';
   const continuityPatchUrl='./continuity-guided-notes-patch-v1.js?v=20260813-0810';
   const bernoulliPatchSrc='./bernoulli-detailed-solutions-q61-q66-v1.js?v=20260813-0805';
+  const bernoulliPatch2Src='./bernoulli-detailed-solutions-q67-q72-v1.js?v=20260813-0823';
   if(location.protocol==='file:'){
     location.replace(baseUrl);
     return;
@@ -41,11 +42,13 @@ html,body{margin:0;min-height:100%;font-family:Arial,"Noto Sans Thai",sans-serif
 
     if(!html.includes('</body>')) throw new Error('Body marker not found');
 
-    /* Bernoulli Q61-Q66 patch can run after the sheets exist because it also updates
-       the rendered answer layers and selective SVG visuals directly. */
+    /* Bernoulli patches run after the sheets exist because they update the rendered
+       answer layers directly. Q61-Q66 retains its selective SVG visuals; Q67-Q72
+       reuses the existing question figures because those diagrams are already clear. */
     html=html.replace(
       '</body>',
-      '<script src="'+bernoulliPatchSrc+'"><\/script>\n</body>'
+      '<script src="'+bernoulliPatchSrc+'"><\/script>\n'+
+      '<script src="'+bernoulliPatch2Src+'"><\/script>\n</body>'
     );
 
     document.open();
@@ -59,6 +62,6 @@ html,body{margin:0;min-height:100%;font-family:Arial,"Noto Sans Thai",sans-serif
   }
 })();
 </script>
-<!-- 2026-08-13: continuity Q53-Q60 + Bernoulli Q61-Q66 detailed solution patches -->
+<!-- 2026-08-13: continuity Q53-Q60 + Bernoulli Q61-Q72 detailed solution patches -->
 </body>
 </html>
