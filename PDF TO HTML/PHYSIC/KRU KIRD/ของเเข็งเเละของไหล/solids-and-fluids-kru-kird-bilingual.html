@@ -13,14 +13,48 @@ html,body{margin:0;min-height:100%;font-family:Arial,"Noto Sans Thai",sans-serif
 <script>
 (async function(){
   const baseUrl='./solids-and-fluids-kru-kird-bilingual-base-20260812.html';
+  const continuityPatchUrl='./continuity-guided-notes-patch-v1.js?v=20260813-0810';
+  const bernoulliPatchSrc='./bernoulli-detailed-solutions-q61-q66-v1.js?v=20260813-0805';
+  const bernoulliPatch2Src='./bernoulli-detailed-solutions-q67-q72-v1.js?v=20260813-0823';
+  const bernoulliPatch3Src='./bernoulli-detailed-solutions-q73-q74-v1.js?v=20260813-0853';
+  const bernoulliLessonSrc='./bernoulli-guided-notes-v1.js?v=20260813-0837';
   if(location.protocol==='file:'){
     location.replace(baseUrl);
     return;
   }
   try{
-    const baseResponse=await fetch(baseUrl,{cache:'no-store'});
+    const [baseResponse,continuityResponse]=await Promise.all([
+      fetch(baseUrl,{cache:'no-store'}),
+      fetch(continuityPatchUrl,{cache:'no-store'})
+    ]);
     if(!baseResponse.ok) throw new Error('Base HTTP '+baseResponse.status);
-    const html=await baseResponse.text();
+    if(!continuityResponse.ok) throw new Error('Continuity patch HTTP '+continuityResponse.status);
+
+    let html=await baseResponse.text();
+    const continuityPatch=await continuityResponse.text();
+
+    /* Continuity Q53-Q60 must run after Q is declared but before topics/rendering,
+       because this patch updates q.solution and selected figures before sheets are built. */
+    const continuityMarker='const topics=[';
+    if(!html.includes(continuityMarker)) throw new Error('Continuity injection marker not found');
+    html=html.replace(
+      continuityMarker,
+      continuityPatch+'\n\n'+continuityMarker
+    );
+
+    if(!html.includes('</body>')) throw new Error('Body marker not found');
+
+    /* Bernoulli solution patches and Guided Notes run after the sheets exist.
+       The lesson patch replaces the Bernoulli placeholder and uses the existing
+       Show/Hide Answers buttons so hidden content still leaves writing space. */
+    html=html.replace(
+      '</body>',
+      '<script src="'+bernoulliPatchSrc+'"><\/script>\n'+
+      '<script src="'+bernoulliPatch2Src+'"><\/script>\n'+
+      '<script src="'+bernoulliPatch3Src+'"><\/script>\n'+
+      '<script src="'+bernoulliLessonSrc+'"><\/script>\n</body>'
+    );
+
     document.open();
     document.write(html);
     document.close();
@@ -32,5 +66,6 @@ html,body{margin:0;min-height:100%;font-family:Arial,"Noto Sans Thai",sans-serif
   }
 })();
 </script>
+<!-- 2026-08-13: continuity Q53-Q60 + Bernoulli Q61-Q74 solutions + Bernoulli Guided Notes -->
 </body>
 </html>
