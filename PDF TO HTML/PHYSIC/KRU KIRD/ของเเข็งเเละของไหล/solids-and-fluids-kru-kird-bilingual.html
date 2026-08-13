@@ -13,14 +13,22 @@ html,body{margin:0;min-height:100%;font-family:Arial,"Noto Sans Thai",sans-serif
 <script>
 (async function(){
   const baseUrl='./solids-and-fluids-kru-kird-bilingual-base-20260812.html';
+  const bernoulliPatchUrl='./bernoulli-detailed-solutions-q61-q66-v1.js';
   if(location.protocol==='file:'){
     location.replace(baseUrl);
     return;
   }
   try{
-    const baseResponse=await fetch(baseUrl,{cache:'no-store'});
+    const [baseResponse,bernoulliResponse]=await Promise.all([
+      fetch(baseUrl,{cache:'no-store'}),
+      fetch(bernoulliPatchUrl,{cache:'no-store'})
+    ]);
     if(!baseResponse.ok) throw new Error('Base HTTP '+baseResponse.status);
-    const html=await baseResponse.text();
+    if(!bernoulliResponse.ok) throw new Error('Bernoulli solution patch HTTP '+bernoulliResponse.status);
+    let html=await baseResponse.text();
+    const bernoulliPatch=await bernoulliResponse.text();
+    if(!html.includes('</body>')) throw new Error('Body marker not found');
+    html=html.replace('</body>','<script>\n'+bernoulliPatch+'\n<\/script>\n</body>');
     document.open();
     document.write(html);
     document.close();
@@ -32,5 +40,6 @@ html,body{margin:0;min-height:100%;font-family:Arial,"Noto Sans Thai",sans-serif
   }
 })();
 </script>
+<!-- 2026-08-13: Bernoulli detailed solutions Q61-Q66 with selective SVG visuals -->
 </body>
 </html>
