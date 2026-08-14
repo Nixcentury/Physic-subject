@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ใบความรู้พอลิเมอร์ | Polymer Guided Learning Notes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--navy:#0f172a;--slate:#475569;--ink:#111827;--line:#b8c2cf;--soft:#f1f5f9;--paper:#fff;--answer:#b91c1c;--warm:#fff7ed;--warm-line:#c2410c}
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{background:#e5e7eb;color:var(--ink);font:11.2px/1.43 "K2D",Arial,sans-serif}
+    .toolbar{position:sticky;top:0;z-index:30;display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:10px;background:var(--navy);box-shadow:0 4px 14px #0f172a40}
+    .toolbar button{border:0;border-radius:999px;padding:9px 18px;background:#bae6fd;color:#082f49;font:800 11px "K2D";cursor:pointer}
+    .toolbar .answer-btn{background:#fde68a;color:#713f12}
+    .toolbar .answer-btn[aria-pressed="true"]{background:#fecaca;color:#7f1d1d}
+    .sheet{width:min(210mm,calc(100vw - 24px));height:297mm;margin:16px auto 28px;padding:8mm 10mm 7mm;background:var(--paper);box-shadow:0 16px 42px #0f172a38;overflow:hidden;display:flex;flex-direction:column;gap:2.2mm}
+    .head{display:grid;grid-template-columns:35mm 1fr;border:1.4px solid var(--navy)}
+    .head-tag{padding:3mm;background:var(--navy);color:#fff;display:grid;place-content:center;text-align:center}
+    .head-tag b{font-size:16px}.head-tag small{font-size:8.5px}
+    .head-main{padding:2.7mm 3.2mm}.head-main h1{margin:0;color:var(--navy);font-size:18px;line-height:1.15}.head-main .en-title{margin-top:.6mm;color:var(--slate);font-size:10px;font-weight:650}
+    .lesson-lead{border:1px solid var(--line);background:var(--soft);padding:2mm 2.5mm}.lesson-lead b{color:var(--navy)}.lesson-lead small{display:block;color:var(--slate);font-size:8.8px;margin-top:.4mm}
+    .think{border:1.3px solid var(--navy);padding:2.2mm 2.7mm;background:#fff}.think-title{font-weight:800;color:var(--navy);font-size:11px}.think p{margin:.7mm 0}.think .en{display:block;color:var(--slate);font-size:8.8px;border-top:1px dotted #94a3b8;padding-top:.7mm;margin-top:.7mm}
+    .build{display:grid;grid-template-columns:1fr 1fr;gap:2.3mm;min-height:0}
+    .route{border:1.2px solid var(--line);padding:2.2mm;background:#fff;min-width:0}
+    .route h2{margin:0 0 1.2mm;color:var(--navy);font-size:12px;line-height:1.18}.route h2 small{display:block;color:var(--slate);font-size:8.2px;margin-top:.35mm}
+    .signal{padding:1.3mm 1.6mm;background:var(--soft);font-weight:750;margin-bottom:1.2mm}.signal small{display:block;color:var(--slate);font-size:7.9px;font-weight:600;margin-top:.3mm}
+    .chem{font-family:Arial,sans-serif;font-weight:700;letter-spacing:.15px}
+    .eq{border:1px dashed #94a3b8;background:#f8fafc;padding:1.7mm;text-align:center;margin:1.2mm 0;font-size:12px;line-height:1.45}
+    .condition{font-family:"K2D",Arial,sans-serif;color:var(--slate);font-size:7.7px;font-weight:650;margin:.5mm 0}
+    .flow{display:grid;grid-template-columns:1fr 5mm 1fr 5mm 1fr;align-items:center;gap:.6mm;margin:1.3mm 0}
+    .flow .step{border:1px solid #cbd5e1;background:#f8fafc;padding:1.2mm;text-align:center;min-height:16mm;display:grid;place-content:center;font-size:8px;font-weight:700}.flow .arr{text-align:center;font-size:14px;font-weight:900;color:var(--slate)}
+    .route p{margin:.7mm 0;font-size:8.7px}.route p .en{display:block;color:var(--slate);font-size:7.8px;margin-top:.35mm}
+    .cond-pair{display:grid;grid-template-columns:1fr;gap:1mm;margin-top:1mm}
+    .mini{border:1px solid #cbd5e1;padding:1.3mm;background:#f8fafc}.mini b{color:var(--navy);font-size:8.6px}.mini small{display:block;color:var(--slate);font-size:7.4px;margin-top:.25mm}.mini .chem{display:block;text-align:center;font-size:10px;margin-top:.7mm}
+    .compare{width:100%;border-collapse:collapse;font-size:8.2px}.compare th,.compare td{border:1px solid #cbd5e1;padding:1.1mm 1.3mm;vertical-align:middle}.compare th{background:var(--soft);color:var(--navy)}.compare small{display:block;color:var(--slate);font-size:7.3px;margin-top:.2mm}
+    .trap{border-left:4px solid var(--warm-line);background:var(--warm);padding:1.3mm 1.7mm;font-size:8.2px;font-weight:700}.trap small{display:block;color:#7c2d12;font-size:7.4px;font-weight:600;margin-top:.35mm}
+    .guided{border:1.2px solid var(--navy);padding:1.6mm 2mm;background:#fff}.guided-title{font-weight:800;color:var(--navy);font-size:10px;margin-bottom:.8mm}.guided-title small{display:block;color:var(--slate);font-size:7.8px;margin-top:.2mm}.fill-grid{display:grid;grid-template-columns:1fr 1fr;gap:1mm 3mm}.fill{font-size:8.2px;line-height:1.45}.fill small{display:block;color:var(--slate);font-size:7.3px}.blank{position:relative;display:inline-block;min-width:22mm;border-bottom:1px solid #64748b;text-align:center;height:4.7mm;vertical-align:-.8mm}.solution-inline{display:none;color:var(--answer);font-weight:800}.show-answers .solution-inline{display:inline}
+    .stop{border:1px solid var(--line);background:#f8fafc;padding:1.3mm 1.7mm;font-size:8.2px}.stop b{color:var(--navy)}.stop small{display:block;color:var(--slate);font-size:7.4px;margin-top:.3mm}.stop-answer{display:none;color:var(--answer);font-weight:750;margin-top:.6mm}.show-answers .stop-answer{display:block}
+    .footer{margin-top:auto;display:flex;justify-content:space-between;border-top:1px solid var(--line);padding-top:1.2mm;color:#64748b;font-size:8px;font-weight:600}
+    @media(max-width:760px){.sheet{height:auto;min-height:297mm;padding:7mm 5mm}.head{grid-template-columns:1fr}.build,.fill-grid{grid-template-columns:1fr}.flow{grid-template-columns:1fr}.flow .arr{transform:rotate(90deg)}}
+    @page{size:A4 portrait;margin:6mm}
+    @media print{body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}.toolbar{display:none!important}.sheet{width:198mm;height:270mm;margin:0;padding:5mm 7mm 7mm;box-shadow:none}.footer{margin-top:auto}.print-student .solution-inline,.print-student .stop-answer{display:none!important}.print-answer .solution-inline{display:inline!important}.print-answer .stop-answer{display:block!important}}
+  </style>
+</head>
+<body>
+  <nav class="toolbar">
+    <button id="printStudent" type="button">พิมพ์สำหรับนักเรียน / Student Print</button>
+    <button id="printAnswer" type="button">พิมพ์พร้อมเฉลย / Print with Answers</button>
+    <button id="answerToggle" class="answer-btn" type="button" aria-pressed="false">เปิดเฉลย / Show Answers</button>
+  </nav>
+
+  <main>
+    <section class="sheet knowledge-sheet" id="knowledge-1">
+      <header class="head">
+        <div class="head-tag"><b>กล่องความรู้ 1</b><small>KNOWLEDGE BOX 1</small></div>
+        <div class="head-main">
+          <h1>การเกิดพอลิเมอร์</h1>
+          <div class="en-title">Polymer Formation: Addition and Condensation Polymerisation</div>
+        </div>
+      </header>
+
+      <div class="lesson-lead">
+        <b>แนวคิดตั้งต้น:</b> พอลิเมอร์เกิดเมื่อมอนอเมอร์จำนวนมากเชื่อมต่อกันด้วยปฏิกิริยาเคมีที่เกิดซ้ำ ๆ จนได้โมเลกุลขนาดใหญ่
+        <small><b>Starting idea:</b> A polymer forms when many monomer molecules become linked through repeated chemical reactions to produce a very large molecule.</small>
+      </div>
+
+      <div class="think">
+        <div class="think-title">Think First — จากเคมีอินทรีย์เดิม สู่พอลิเมอร์ / From familiar organic chemistry to polymers</div>
+        <p>เราเคยเห็นพันธะคู่ C=C เกิดปฏิกิริยาเติม และเคยเห็นหมู่ฟังก์ชันสร้างเอสเทอร์หรือเอไมด์ ถ้าการสร้างพันธะใหม่เหล่านี้เกิดซ้ำกับโมเลกุลจำนวนมาก จะเกิดอะไรขึ้น?</p>
+        <span class="en">We have seen C=C bonds undergo addition reactions, and we have seen functional groups form esters or amides. What happens if these bond-forming reactions repeat with many molecules?</span>
+      </div>
+
+      <div class="build">
+        <section class="route">
+          <h2>1) พอลิเมอไรเซชันแบบเติม <small>Addition polymerisation</small></h2>
+          <div class="signal">สัญญาณที่ควรมองหา: มอนอเมอร์มักมีพันธะคู่ C=C<small>Key signal: the monomer commonly contains a C=C double bond.</small></div>
+
+          <div class="eq chem">
+            n CH<sub>2</sub>=CH<sub>2</sub>
+            <div class="condition">ภายใต้สภาวะที่เหมาะสม เช่น ความร้อน + ตัวเริ่มปฏิกิริยา และในบางกระบวนการใช้ความดันสูง<br>under suitable conditions, e.g. heat + initiator; some processes use high pressure</div>
+            ↓<br>
+            [–CH<sub>2</sub>–CH<sub>2</sub>–]<sub>n</sub>
+            <div class="condition">ethene → polyethylene (PE)</div>
+          </div>
+
+          <div class="flow">
+            <div class="step">พันธะคู่ C=C เปิด<br><span style="font-size:7px;color:#475569">C=C opens</span></div>
+            <div class="arr">→</div>
+            <div class="step">เกิดพันธะ C–C ใหม่ระหว่างมอนอเมอร์<br><span style="font-size:7px;color:#475569">new C–C bonds form between monomers</span></div>
+            <div class="arr">→</div>
+            <div class="step">สายโซ่ยาวขึ้นซ้ำ ๆ<br><span style="font-size:7px;color:#475569">the chain grows repeatedly</span></div>
+          </div>
+
+          <p><b>ใจความ:</b> มอนอเมอร์หลายโมเลกุลรวมกันโดยไม่มีโมเลกุลเล็ก เช่น H₂O หลุดออกในกระบวนการเติมนี้
+            <span class="en"><b>Key idea:</b> many monomer molecules join together without eliminating a small molecule such as H₂O in this addition process.</span>
+          </p>
+        </section>
+
+        <section class="route">
+          <h2>2) พอลิเมอไรเซชันแบบควบแน่น <small>Condensation polymerisation</small></h2>
+          <div class="signal">สัญญาณที่ควรมองหา: มอนอเมอร์มีหมู่ฟังก์ชันที่ทำปฏิกิริยาได้อย่างน้อย 2 ตำแหน่ง<small>Key signal: monomers contain at least two reactive functional-group positions so the chain can keep growing.</small></div>
+
+          <p><b>หลักการ:</b> หมู่ฟังก์ชันของมอนอเมอร์ทำปฏิกิริยากัน เกิดพันธะเชื่อมใหม่ และมักมีโมเลกุลขนาดเล็ก เช่น H₂O เกิดออกมา
+            <span class="en"><b>Principle:</b> functional groups react to form new linkages, commonly releasing a small molecule such as H₂O.</span>
+          </p>
+
+          <div class="cond-pair">
+            <div class="mini">
+              <b>ก. สร้างพอลิเอสเทอร์ / Forming a polyester</b>
+              <small>ไดออล + กรดไดคาร์บอกซิลิก → พันธะเอสเทอร์ + น้ำ<br>diol + dicarboxylic acid → ester linkage + water</small>
+              <span class="chem">–OH + –COOH → –COO– + H<sub>2</sub>O</span>
+            </div>
+            <div class="mini">
+              <b>ข. สร้างพอลิเอไมด์ / Forming a polyamide</b>
+              <small>ไดเอมีน + กรดไดคาร์บอกซิลิก → พันธะเอไมด์ + น้ำ<br>diamine + dicarboxylic acid → amide linkage + water</small>
+              <span class="chem">–NH<sub>2</sub> + –COOH → –CONH– + H<sub>2</sub>O</span>
+            </div>
+          </div>
+
+          <div class="eq chem" style="font-size:10.3px">
+            HO–R–OH + HOOC–R′–COOH → …–O–R–O–CO–R′–CO–… + H<sub>2</sub>O
+            <div class="condition">ตัวอย่างแนวคิดของการต่อสายซ้ำ / schematic example of repeated chain formation</div>
+          </div>
+        </section>
+      </div>
+
+      <table class="compare" aria-label="comparison of addition and condensation polymerisation">
+        <thead><tr><th>สังเกตอะไร?<small>What should you look for?</small></th><th>แบบเติม<small>Addition</small></th><th>แบบควบแน่น<small>Condensation</small></th></tr></thead>
+        <tbody>
+          <tr><td>มอนอเมอร์<small>Monomer</small></td><td>มักมี C=C<small>commonly contains C=C</small></td><td>มีหมู่ฟังก์ชันที่ทำปฏิกิริยาได้ ≥ 2 ตำแหน่ง<small>has ≥ 2 reactive functional-group positions</small></td></tr>
+          <tr><td>สิ่งที่เกิดขึ้น<small>What happens?</small></td><td>C=C เปิดและมอนอเมอร์ต่อกัน<small>C=C opens and monomers link</small></td><td>หมู่ฟังก์ชันสร้าง linkage ใหม่<small>functional groups form new linkages</small></td></tr>
+          <tr><td>โมเลกุลเล็กหลุดออก?<small>Small molecule eliminated?</small></td><td>ไม่มี<small>No</small></td><td>มักมี เช่น H₂O<small>Commonly yes, e.g. H₂O</small></td></tr>
+          <tr><td>ตัวอย่าง<small>Examples</small></td><td>PE, PVC, PS, PTFE</td><td>PET, nylon, PLA</td></tr>
+        </tbody>
+      </table>
+
+      <div class="trap">
+        Common Trap — <b>เอมีน ≠ เอไมด์ / Amine ≠ Amide</b><br>
+        –NH₂ เป็นหมู่เอมีนของสารตั้งต้น ส่วน –CONH– เป็นพันธะเอไมด์ที่พบในสายพอลิเอไมด์
+        <small>–NH₂ is an amine functional group in a reactant, whereas –CONH– is an amide linkage found in a polyamide chain.</small>
+      </div>
+
+      <div class="guided">
+        <div class="guided-title">Guided Fill — เติมคำสำคัญระหว่างเรียน / Fill in the key ideas during the lesson</div>
+        <div class="fill-grid">
+          <div class="fill">1. แบบเติมมักเริ่มจากมอนอเมอร์ที่มีพันธะ <span class="blank"><span class="solution-inline">C=C</span></span><small>Addition polymerisation commonly starts from a monomer containing a <span class="blank"><span class="solution-inline">C=C</span></span> bond.</small></div>
+          <div class="fill">2. แบบเติมไม่มีโมเลกุลเล็ก เช่น <span class="blank"><span class="solution-inline">H₂O / น้ำ</span></span> หลุดออก<small>Addition polymerisation does not eliminate a small molecule such as <span class="blank"><span class="solution-inline">H₂O / water</span></span>.</small></div>
+          <div class="fill">3. แบบควบแน่นต้องมีตำแหน่งหมู่ฟังก์ชันที่ทำปฏิกิริยาได้อย่างน้อย <span class="blank"><span class="solution-inline">2</span></span> ตำแหน่ง<small>Condensation polymerisation needs at least <span class="blank"><span class="solution-inline">2</span></span> reactive functional-group positions.</small></div>
+          <div class="fill">4. –COO– คือพันธะ <span class="blank"><span class="solution-inline">เอสเทอร์ / ester</span></span> ส่วน –CONH– คือพันธะ <span class="blank"><span class="solution-inline">เอไมด์ / amide</span></span><small>–COO– is an <span class="blank"><span class="solution-inline">ester</span></span> linkage, whereas –CONH– is an <span class="blank"><span class="solution-inline">amide</span></span> linkage.</small></div>
+        </div>
+      </div>
+
+      <div class="stop">
+        <b>Stop & Think:</b> CH₂=CHCl ควรนึกถึงพอลิเมอไรเซชันชนิดใด? แล้ว HO–CH₂–CH₂–OH + HOOC–C₆H₄–COOH ควรนึกถึงชนิดใด? เพราะอะไร?
+        <small><b>Stop & Think:</b> Which polymerisation type should CH₂=CHCl suggest? Which type should HO–CH₂–CH₂–OH + HOOC–C₆H₄–COOH suggest, and why?</small>
+        <div class="stop-answer">เฉลย / Answer: CH₂=CHCl → addition polymerisation เพราะมี C=C; diol + dicarboxylic acid → condensation polymerisation เพราะหมู่ –OH และ –COOH สร้างพันธะเอสเทอร์พร้อมเกิด H₂O.<br>CH₂=CHCl → addition polymerisation because it contains C=C; diol + dicarboxylic acid → condensation polymerisation because –OH and –COOH form ester linkages with H₂O as a by-product.</div>
+      </div>
+
+      <footer class="footer"><span>ใบความรู้พอลิเมอร์ / Polymer Guided Learning Notes</span><span>กล่องความรู้ 1 / Knowledge Box 1</span></footer>
+    </section>
+  </main>
+
+  <script>
+    const answerToggle=document.getElementById('answerToggle');
+    function setAnswers(show){
+      document.body.classList.toggle('show-answers',show);
+      answerToggle.setAttribute('aria-pressed',show?'true':'false');
+      answerToggle.textContent=show?'ปิดเฉลย / Hide Answers':'เปิดเฉลย / Show Answers';
+    }
+    answerToggle.addEventListener('click',()=>setAnswers(!document.body.classList.contains('show-answers')));
+    document.getElementById('printStudent').addEventListener('click',()=>{
+      document.body.classList.remove('print-answer');
+      document.body.classList.add('print-student');
+      window.print();
+    });
+    document.getElementById('printAnswer').addEventListener('click',()=>{
+      document.body.classList.remove('print-student');
+      document.body.classList.add('print-answer');
+      window.print();
+    });
+    window.addEventListener('afterprint',()=>document.body.classList.remove('print-student','print-answer'));
+    setAnswers(false);
+  </script>
+</body>
+</html>
