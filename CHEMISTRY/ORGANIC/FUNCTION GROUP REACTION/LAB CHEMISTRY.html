@@ -1,0 +1,732 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>คู่มือปฏิบัติการและใบงานปฏิกิริยาเคมีอินทรีย์ ม.6 | Chemistry Lab & Worksheet</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- MathJax with mhchem plugin -->
+  <script>
+    MathJax = {
+      loader: {load: ['[tex]/mhchem']},
+      tex: {
+        packages: {'[+]': ['mhchem']},
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      options: { enableMenu: false }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root {
+      --navy: #0f172a;
+      --slate: #475569;
+      --ink: #111827;
+      --line: #b8c2cf;
+      --soft: #f8fafc;
+      --paper: #ffffff;
+      --ans: #b91c1c;
+      --accent: #f1f5f9;
+      --warn: #7c2d12;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      background: #e5e7eb;
+      color: var(--ink);
+      font: 11px/1.42 "K2D", Arial, sans-serif;
+    }
+    
+    /* Toolbar */
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px;
+      background: var(--navy);
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.3);
+    }
+    .toolbar button {
+      border: 0;
+      border-radius: 999px;
+      padding: 9px 22px;
+      background: #bae6fd;
+      color: #082f49;
+      font: 800 12px "K2D", sans-serif;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .toolbar button.solution-toggle {
+      background: #fde68a;
+      color: #713f12;
+    }
+    .toolbar button.solution-toggle[aria-pressed="true"] {
+      background: #fecaca;
+      color: #7f1d1d;
+    }
+
+    /* A4 Sheet Structure */
+    .sheet {
+      width: min(210mm, calc(100vw - 24px));
+      height: 297mm;
+      margin: 16px auto;
+      padding: 7mm 10mm 6mm;
+      background: var(--paper);
+      box-shadow: 0 16px 42px rgba(15, 23, 42, 0.25);
+      display: flex;
+      flex-direction: column;
+      gap: 2mm;
+      overflow: hidden;
+    }
+
+    /* Header */
+    .head {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 3.5mm;
+      border: 1.4px solid var(--navy);
+    }
+    .head-tag {
+      min-width: 32mm;
+      padding: 2mm 3.5mm;
+      background: var(--navy);
+      color: #ffffff;
+      text-align: center;
+      display: grid;
+      place-content: center;
+    }
+    .head-tag b { font-size: 15px; }
+    .head-tag small { font-size: 8px; letter-spacing: 0.5px; }
+    .head-main { padding: 2.5mm 3.5mm; display: flex; align-items: center; }
+    .head-main h1 { margin: 0; font-size: 15.5px; color: var(--navy); line-height: 1.2; }
+
+    /* Blocks & Typography */
+    .objective {
+      display: grid;
+      grid-template-columns: 24mm 1fr;
+      border: 1px solid var(--line);
+      background: var(--soft);
+      font-size: 9px;
+    }
+    .objective b { padding: 1.5mm; background: #e2e8f0; color: var(--navy); }
+    .objective div { padding: 1.5mm 2mm; }
+
+    .prompt {
+      border-left: 3.5px solid var(--navy);
+      padding: 1.5mm 2mm;
+      background: var(--soft);
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--navy);
+    }
+
+    .box-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2mm;
+    }
+    .card {
+      border: 1px solid var(--line);
+      padding: 2mm;
+      background: #fff;
+      font-size: 8.8px;
+    }
+    .card h3 {
+      margin: 0 0 1mm;
+      color: var(--navy);
+      font-size: 10px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 0.5mm;
+    }
+    .card ul, .card ol {
+      margin: 0;
+      padding-left: 3.5mm;
+    }
+    .card li { margin-bottom: 0.4mm; }
+
+    /* Tables */
+    .table-custom {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9px;
+      margin-top: 0.8mm;
+    }
+    .table-custom th, .table-custom td {
+      border: 1px solid var(--line);
+      padding: 1.4mm 2mm;
+      vertical-align: middle;
+    }
+    .table-custom th {
+      background: var(--accent);
+      color: var(--navy);
+      font-weight: 700;
+      text-align: center;
+    }
+
+    /* Questions & Lines */
+    .q-item {
+      margin-bottom: 1.5mm;
+      font-size: 9.2px;
+    }
+    .q-item b { color: var(--navy); }
+    .hint {
+      margin-top: 0.7mm;
+      padding: 0.7mm 1.4mm;
+      border-left: 2px solid #d97706;
+      background: #fffbeb;
+      color: #78350f;
+      font-size: 8.2px;
+      font-weight: 500;
+      line-height: 1.3;
+    }
+    .table-custom .hint { margin-top: 1mm; }
+    .write-box {
+      min-height: 8.5mm;
+      border-bottom: 1px dotted #94a3b8;
+      padding: 1mm 0;
+      position: relative;
+    }
+
+    /* MathJax Overrides */
+    .mjx-chtml { font-size: 98% !important; }
+
+    /* Answer & Blank Formatting */
+    .blank-box {
+      display: inline-block;
+      min-width: 85px;
+      border-bottom: 1.2px dotted #64748b;
+      text-align: center;
+      padding: 0 4px;
+      margin: 0 2px;
+    }
+    .sol-text {
+      display: none;
+      color: var(--ans);
+      font-weight: bold;
+    }
+    .sol-block {
+      display: none;
+      color: var(--ans);
+      font-weight: 600;
+      background: #fef2f2;
+      padding: 1mm 2mm;
+      border-radius: 2px;
+      font-size: 9px;
+    }
+    body.show-solutions .sol-text { display: inline-block; }
+    body.show-solutions .sol-block { display: block; }
+    body.show-solutions .blank-box { display: none; }
+    body.show-solutions .student-ans { display: none; }
+
+    /* Footer */
+    .footer {
+      margin-top: auto;
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid var(--line);
+      padding-top: 1mm;
+      color: #64748b;
+      font-size: 8.2px;
+      font-weight: 600;
+    }
+
+    @media print {
+      body { background: #fff; }
+      .toolbar { display: none !important; }
+      .sheet {
+        width: 198mm;
+        height: 270mm;
+        margin: 0;
+        padding: 4mm 6mm;
+        box-shadow: none;
+        page-break-after: always;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="toolbar">
+    <button id="solutionToggle" class="solution-toggle" type="button" aria-pressed="false">เปิดเฉลย / Show Answers</button>
+    <button type="button" onclick="window.print()">พิมพ์เอกสาร (A4) / Print All Sheets</button>
+  </nav>
+
+  <main>
+    <!-- PAGE 1: LAB OVERVIEW & PROCEDURES -->
+    <section class="sheet" id="page-1">
+      <header class="head">
+        <div class="head-tag"><b>ปฏิบัติการ</b><small>LAB SHEET</small></div>
+        <div class="head-main">
+          <h1>ปฏิบัติการ: ปฏิกิริยาของเอสเทอร์และสบู่</h1>
+        </div>
+      </header>
+
+      <div class="objective">
+        <b>จุดประสงค์</b>
+        <div>1. สังเคราะห์และอธิบายปฏิกิริยาเอสเทอริฟิเคชันและไฮโดรลิซิสของเอสเทอร์ | 2. สังเคราะห์สบู่และทดสอบสมบัติการเกิดฟองได้</div>
+      </div>
+
+      <div class="box-grid">
+        <div class="card">
+          <h3>🧪 สารเคมีและอุปกรณ์</h3>
+          <ul>
+            <li>กรดเบนโซอิก ($\ce{C6H5COOH}$), เอทานอล ($\ce{CH3CH2OH}$)</li>
+            <li>กรดซัลฟิวริกเข้มข้น ($\ce{18 M H2SO4}$), กรดซัลฟิวริกเจือจาง ($\ce{1 M}$)</li>
+            <li>เอทิลแอซีเตต ($\ce{CH3COOCH2CH3}$), น้ำมันพืช, $\ce{NaOH 2.5 M}$</li>
+            <li>หลอดทดลอง, ถ้วยกระเบื้อง, ขวดรูปกรวย $50\text{ mL}$, บีกเกอร์ทำน้ำร้อน</li>
+          </ul>
+        </div>
+        <div class="card" style="border-left: 3px solid var(--navy); background: var(--soft);">
+          <h3>⚠️ ข้อควรระวังความปลอดภัย</h3>
+          <ul>
+            <li><b>การดมกลิ่น:</b> ให้ใช้เทคนิค <b>"โบกกลิ่น" (Wafting)</b> เท่านั้น ห้ามสูดดมตรงๆ</li>
+            <li>$\ce{H2SO4}$ เข้มข้น และ $\ce{NaOH}$ เป็นสารกัดกร่อน สวมถุงมือและแว่นตานิรภัยเสมอ โดยให้ครูเป็นผู้จ่ายหรือหยดกรดเข้มข้น</li>
+            <li>เอทานอลเป็นสารไวไฟ ให้ใช้ <b>อ่างน้ำร้อนหรือแผ่นให้ความร้อน</b> และห้ามใช้เปลวไฟโดยตรง</li>
+            <li>ตอนให้ความร้อนสาร ห้ามปิดหลอดทดลองแน่น และให้ <b>คนสารตลอดเวลา</b> เพื่อลดการเดือดพุ่งและการกระเด็น</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="prompt">ขั้นตอนการดำเนินกิจกรรม (3 ตอนการทดลอง)</div>
+
+      <div class="card">
+        <h3>ตอนที่ 1: การสังเคราะห์เอสเทอร์ (Esterification)</h3>
+        <ol>
+          <li>ใส่กรดเบนโซอิก $0.5\text{ g} +$ เอทานอล $2\text{ mL} + \ce{H2SO4}$ เข้มข้น 3 หยด ลงในหลอดทดลอง อุดสำลีแล้วเขย่า</li>
+          <li>สังเกตกลิ่นก่อนให้ความร้อนโดยถือหลอดให้ห่างจากใบหน้า แล้วใช้มือโบกไอสารเข้าหาจมูกเบา ๆ ห้ามใช้แท่งแก้วแตะสารหรือดมโดยตรง</li>
+          <li>นำไปอุ่นในอ่างน้ำร้อน $60\text{--}70^\circ\text{C}$ ประมาณ 5--10 นาที เขย่าเบา ๆ เป็นระยะ แล้วพักให้เย็นก่อนโบกกลิ่นเพื่อสังเกตผล</li>
+        </ol>
+      </div>
+
+      <div class="card">
+        <h3>ตอนที่ 2: ปฏิกิริยาไฮโดรลิซิสของเอสเทอร์ในภาวะกรด (Ester Hydrolysis)</h3>
+        <ol>
+          <li>หยดเอทิลแอซีเตต 10 หยด เติมน้ำกลั่น $1\text{ mL}$ และ $\ce{H2SO4}$ เจือจาง ($\ce{1 M}$) 5 หยด ลงในหลอดทดลอง ปิดด้วยสำลีอย่างหลวม ๆ และเขย่า</li>
+          <li>สังเกตกลิ่นด้วยวิธีโบกกลิ่นก่อนให้ความร้อน จากนั้นอุ่นในอ่างน้ำร้อน $60\text{--}70^\circ\text{C}$ ประมาณ 10 นาที พักให้เย็น แล้วจึงโบกกลิ่นเปรียบเทียบ</li>
+        </ol>
+      </div>
+
+      <div class="card">
+        <h3>ตอนที่ 3: ปฏิกิริยาสะปอนนิฟิเคชัน / ทำสบู่ (Saponification)</h3>
+        <ol>
+          <li>เทน้ำมันพืช $1\text{ mL} + \ce{NaOH}\ 2.5\text{ M}\ (2\text{ mL}) +$ เอทานอล $1\text{ mL}$ ลงในถ้วยกระเบื้อง</li>
+          <li>ให้ความร้อนด้วยแผ่นให้ความร้อนหรืออ่างน้ำร้อน พร้อมคนตลอดเวลาจนสารเหนียวข้น (ไม่ต้มจนแห้ง) แล้วหยุดให้ความร้อนและพักให้เย็น</li>
+          <li>ตักสารใส่ขวดรูปกรวย เติมน้ำกลั่น $5\text{ mL}$ ปิดจุก เขย่าแรงๆ และสังเกตฟองที่เกิดขึ้น</li>
+        </ol>
+      </div>
+
+      <footer class="footer">
+        <span>คู่มือปฏิบัติการเคมีอินทรีย์ ม.6</span>
+        <span class="page-count">หน้า 1 / 4</span>
+      </footer>
+    </section>
+
+    <!-- PAGE 2: LAB DATA & QUESTIONS -->
+    <section class="sheet" id="page-2">
+      <header class="head">
+        <div class="head-tag"><b>บันทึกผล</b><small>RESULTS</small></div>
+        <div class="head-main">
+          <h1>ตารางบันทึกผลและคำถามท้ายการทดลอง</h1>
+        </div>
+      </header>
+
+      <div class="prompt">1. ตารางบันทึกผลการทดลอง</div>
+
+      <table class="table-custom">
+        <thead>
+          <tr>
+            <th style="width:25%;">การทดลอง</th>
+            <th style="width:35%;">ก่อนให้ความร้อน</th>
+            <th style="width:40%;">หลังให้ความร้อน / หลังทำปฏิกิริยา</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>ตอนที่ 1</b><br>Esterification</td>
+            <td>
+              <span class="student-ans">........................................................</span>
+              <span class="sol-text">กลิ่นฉุนเฉพาะตัวของแอลกอฮอล์</span>
+            </td>
+            <td>
+              <span class="student-ans">........................................................</span>
+              <span class="sol-text">เกิดกลิ่นหอมหวานคล้ายผลไม้/น้ำหอม (Ethyl benzoate)</span>
+            </td>
+          </tr>
+          <tr>
+            <td><b>ตอนที่ 2</b><br>Hydrolysis</td>
+            <td>
+              <span class="student-ans">........................................................</span>
+              <span class="sol-text">กลิ่นหอมผลไม้ของเอทิลแอซีเตต</span>
+            </td>
+            <td>
+              <span class="student-ans">........................................................</span>
+              <span class="sol-text">กลิ่นหอมลดลง มีกลิ่นเปรี้ยวฉุนของกรดแอซีติกเพิ่มขึ้น</span>
+            </td>
+          </tr>
+          <tr>
+            <td><b>ตอนที่ 3</b><br>Saponification</td>
+            <td colspan="2">
+              <b>ลักษณะสาร:</b> 
+              <span class="student-ans">.........................................................................................................................</span>
+              <span class="sol-text">ได้ของแข็งกึ่งเหนียวสีขาวนวล/เหลืองอ่อน</span><br>
+              <b>เมื่อเติมน้ำแล้วเขย่า:</b> 
+              <span class="student-ans">.............................................................................................................</span>
+              <span class="sol-text">เกิดฟองหนานุ่มและคงตัวปริมาณมาก (เกิดสบู่)</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="prompt" style="margin-top:1.5mm;">2. คำถามท้ายการทดลองและสรุปผล</div>
+
+      <div class="q-item">
+        <b>1) ในตอนที่ 1 สารผลิตภัณฑ์ที่ทำให้เกิดกลิ่นหอมคือสารใด? และเขียนสมการเคมีประกอบ</b>
+        <div class="hint"><b>คำใบ้:</b> ชื่อเอสเทอร์มาจากส่วนแอลคิลของแอลกอฮอล์ ตามด้วยชื่อคาร์บอกซิเลตของกรด</div>
+        <div class="write-box">
+          <div class="sol-block">
+            สารคือ <b>เอทิลเบนโซเอต (Ethyl benzoate)</b><br>
+            สมการ: $\ce{C6H5COOH + CH3CH2OH <=>[conc. H2SO4][\Delta] C6H5COOCH2CH3 + H2O}$
+          </div>
+        </div>
+      </div>
+
+      <div class="q-item">
+        <b>2) กรดซัลฟิวริกเข้มข้น ($\ce{18 M H2SO4}$) ในตอนที่ 1 ทำหน้าที่อะไรในปฏิกิริยา?</b>
+        <div class="hint"><b>คำใบ้:</b> พิจารณาทั้งการเพิ่มอัตราปฏิกิริยาและหลักเลอชาเตอลิเยร์เมื่อมีน้ำเป็นผลิตภัณฑ์</div>
+        <div class="write-box">
+          <div class="sol-block">
+            ทำหน้าที่เป็น <b>ตัวเร่งปฏิกิริยา (Catalyst)</b> และเป็น <b>สารดูดน้ำ (Dehydrating agent)</b> เพื่อเลื่อนสมดุลไปข้างหน้า
+          </div>
+        </div>
+      </div>
+
+      <div class="q-item">
+        <b>3) ในตอนที่ 2 กลิ่นของสารหลังให้ความร้อนเปลี่ยนแปลงอย่างไร เพราะเหตุใด?</b>
+        <div class="hint"><b>คำใบ้:</b> ไฮโดรลิซิสเป็นปฏิกิริยาย้อนกลับของเอสเทอริฟิเคชัน ผลิตภัณฑ์ชนิดหนึ่งเป็นกรดคาร์บอกซิลิก</div>
+        <div class="write-box">
+          <div class="sol-block">
+            กลิ่นหอมลดลงและมีกลิ่นเปรี้ยวฉุนเพิ่มขึ้น เนื่องจากเอสเทอร์เกิดไฮโดรลิซิสกับน้ำ ได้ <b>กรดแอซีติก ($\ce{CH3COOH}$)</b> และเอทานอล
+          </div>
+        </div>
+      </div>
+
+      <div class="q-item">
+        <b>4) การเติมเอทานอลลงในการต้มน้ำมันพืชกับ $\ce{NaOH}$ ในตอนที่ 3 มีวัตถุประสงค์เพื่ออะไร?</b>
+        <div class="hint"><b>คำใบ้:</b> เปรียบเทียบขั้วและการผสมกันของน้ำมันพืชกับสารละลาย $\ce{NaOH}$</div>
+        <div class="write-box">
+          <div class="sol-block">
+            เป็น <b>ตัวทำละลายร่วม (Co-solvent)</b> ช่วยให้น้ำมันพืช (ไม่มีขั้ว) กับ สารละลาย $\ce{NaOH}$ (มีขั้ว) เข้ากันได้ดีขึ้น ทำให้ปฏิกิริยาเกิดเร็วขึ้น
+          </div>
+        </div>
+      </div>
+
+      <div class="q-item">
+        <b>5) เขียนสมการทั่วไปของปฏิกิริยาสะปอนนิฟิเคชันของไตรกลีเซอไรด์ และระบุผลิตภัณฑ์ทั้งสองชนิด</b>
+        <div class="hint"><b>คำใบ้:</b> ไตรกลีเซอไรด์มีพันธะเอสเทอร์ 3 ตำแหน่ง จึงใช้ $\ce{NaOH}$ 3 โมลต่อไตรกลีเซอไรด์ 1 โมล</div>
+        <div class="write-box">
+          <div class="sol-block">$\ce{Triglyceride + 3 NaOH ->[\Delta] Glycerol + 3 RCOONa}$ โดย $\ce{RCOONa}$ คือเกลือโซเดียมของกรดไขมันหรือสบู่</div>
+        </div>
+      </div>
+
+      <div class="q-item">
+        <b>6) หลักฐานใดจากการทดลองสนับสนุนว่าเกิดสบู่ขึ้น และเหตุใดการเกิดฟองเพียงอย่างเดียวจึงไม่ยืนยันการเกิดปฏิกิริยาได้อย่างสมบูรณ์?</b>
+        <div class="hint"><b>คำใบ้:</b> แยก “สิ่งที่สังเกตได้” ออกจาก “ข้อสรุป” และคิดถึงการทดลองควบคุม</div>
+        <div class="write-box">
+          <div class="sol-block">การเกิดสารเหนียวและเกิดฟองคงตัวเมื่อเติมน้ำสนับสนุนการเกิดสบู่ แต่ฟองอาจเกิดจากสารลดแรงตึงผิวที่ปนเปื้อนได้ จึงควรเปรียบเทียบกับชุดควบคุมที่ไม่ให้ความร้อนหรือไม่เติม $\ce{NaOH}$</div>
+        </div>
+      </div>
+
+      <div class="q-item">
+        <b>7) หากทำตอนที่ 1 โดยไม่เติมกรดซัลฟิวริก แต่ควบคุมปริมาณสารและเวลาให้ความร้อนเท่าเดิม คาดว่าผลจะต่างอย่างไร?</b>
+        <div class="hint"><b>คำใบ้:</b> ตัวเร่งปฏิกิริยาเปลี่ยนอัตราการเข้าสู่สมดุล แต่ไม่เปลี่ยนตำแหน่งสมดุลด้วยตัวมันเอง</div>
+        <div class="write-box">
+          <div class="sol-block">ปฏิกิริยาจะช้าลงและในเวลาที่กำหนดมักได้เอสเทอร์น้อยลง จึงอาจได้กลิ่นหอมอ่อนกว่า อย่างไรก็ตามตัวเร่งไม่เปลี่ยนค่าคงที่สมดุล</div>
+        </div>
+      </div>
+
+      <div class="q-item">
+        <b>8) เพราะเหตุใดจึงใช้อ่างน้ำร้อนแทนการใช้เปลวไฟโดยตรง และต้องพักหลอดให้เย็นก่อนสังเกตกลิ่น?</b>
+        <div class="hint"><b>คำใบ้:</b> พิจารณาความไวไฟของเอทานอล การเดือดพุ่ง และปริมาณไอสารที่เข้าสู่จมูก</div>
+        <div class="write-box">
+          <div class="sol-block">อ่างน้ำร้อนควบคุมอุณหภูมิได้สม่ำเสมอและลดความเสี่ยงจากการติดไฟของเอทานอล การพักให้เย็นช่วยลดไอสารเข้มข้นและลดความเสี่ยงจากสารร้อนหรือการเดือดพุ่ง</div>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <span>คู่มือปฏิบัติการเคมีอินทรีย์ ม.6</span>
+        <span class="page-count">หน้า 2 / 4</span>
+      </footer>
+    </section>
+
+    <!-- PAGE 3: REACTION EQUATIONS 1 -->
+    <section class="sheet" id="page-3">
+      <header class="head">
+        <div class="head-tag"><b>ใบงานที่ 1</b><small>WORKSHEET 1</small></div>
+        <div class="head-main">
+          <h1>สมการปฏิกิริยาเคมีอินทรีย์ (แอลกอฮอล์ ถึง คีโตน)</h1>
+        </div>
+      </header>
+
+      <div class="prompt">
+        คำชี้แจง: จงเติมสารตั้งต้น ผลิตภัณฑ์ หรือสภาวะปฏิกิริยาลงในช่องว่างของสมการเคมีให้สมบูรณ์
+        <small>Fill in the missing reactants, products, or reaction conditions in the chemical equations below.</small>
+      </div>
+
+      <table class="table-custom" style="font-size:9.5px;">
+        <thead>
+          <tr>
+            <th style="width:6%;">ข้อ</th>
+            <th style="width:28%;">ปฏิกิริยา / ชื่อเรียก</th>
+            <th style="width:66%;">สมการปฏิกิริยาเคมี (Chemical Equation)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Q1 -->
+          <tr>
+            <td style="text-align:center; font-weight:bold;">1</td>
+            <td><b>Alcohol + Active Metal</b><br><small>แอลกอฮอล์กับโลหะโซเดียม</small></td>
+            <td>
+              $\ce{2 CH3CH2OH + 2 Na ->}$
+              <span class="blank-box">&nbsp;</span>
+              <span class="sol-text">$\ce{2 CH3CH2ONa + H2 (g)}$</span>
+              <div class="hint"><b>คำใบ้:</b> โลหะ Na แทนที่ H ในหมู่ $\ce{-OH}$ และ H สองอะตอมรวมเป็น $\ce{H2}$</div>
+            </td>
+          </tr>
+          <!-- Q2 -->
+          <tr>
+            <td style="text-align:center; font-weight:bold;">2</td>
+            <td><b>Phenol + Active Metal</b><br><small>ฟีนอลกับโลหะโซเดียม</small></td>
+            <td>
+              <span class="blank-box">&nbsp;</span>
+              <span class="sol-text">$\ce{2 C6H5OH}$</span>
+              $\ce{+ 2 Na -> 2 C6H5ONa + H2 (g)}$
+              <div class="hint"><b>คำใบ้:</b> ดุลจำนวน H ที่ถูกแทนที่และแก๊ส $\ce{H2}$ เช่นเดียวกับแอลกอฮอล์</div>
+            </td>
+          </tr>
+          <!-- Q3 -->
+          <tr>
+            <td style="text-align:center; font-weight:bold;">3</td>
+            <td><b>Oxidation of 1° Alcohol</b><br><small>การออกซิไดส์แอลกอฮอล์ปฐมภูมิ</small></td>
+            <td>
+              $\ce{CH3CH2OH + 2 [O] ->[\text{KMnO}_4 / \text{H}^+][\Delta]}$
+              <span class="blank-box">&nbsp;</span>
+              <span class="sol-text">$\ce{CH3COOH + H2O}$</span>
+              <div class="hint"><b>คำใบ้:</b> แอลกอฮอล์ปฐมภูมิเมื่อออกซิไดส์อย่างแรงให้กรดคาร์บอกซิลิกที่มีจำนวน C เท่าเดิม</div>
+            </td>
+          </tr>
+          <!-- Q4 -->
+          <tr>
+            <td style="text-align:center; font-weight:bold;">4</td>
+            <td><b>Oxidation of 2° Alcohol</b><br><small>การออกซิไดส์แอลกอฮอล์ทุติยภูมิ</small></td>
+            <td>
+              $\ce{CH3CH(OH)CH3 + [O] ->[\text{KMnO}_4 / \text{H}^+][\Delta]}$
+              <span class="blank-box">&nbsp;</span>
+              <span class="sol-text">$\ce{CH3COCH3 + H2O}$</span>
+              <div class="hint"><b>คำใบ้:</b> แอลกอฮอล์ทุติยภูมิสูญเสีย H สองอะตอมแล้วให้สารที่มีหมู่คาร์บอนิล</div>
+            </td>
+          </tr>
+          <!-- Q5 -->
+          <tr>
+            <td style="text-align:center; font-weight:bold;">5</td>
+            <td><b>Intermolecular Dehydration</b><br><small>การดึงน้ำเกิดอีเทอร์ ($140^\circ\text{C}$)</small></td>
+            <td>
+              <span class="blank-box">&nbsp;</span>
+              <span class="sol-text">$\ce{2 CH3CH2OH}$</span>
+              $\ce{->[\text{conc. } \text{H}_2\text{SO}_4][140^\circ\text{C}] CH3CH2-O-CH2CH3 + H2O}$
+              <div class="hint"><b>คำใบ้:</b> “ระหว่างโมเลกุล” หมายถึงแอลกอฮอล์ 2 โมเลกุลรวมกันและคายน้ำ 1 โมเลกุล</div>
+            </td>
+          </tr>
+          <!-- Q6 -->
+          <tr>
+            <td style="text-align:center; font-weight:bold;">6</td>
+            <td><b>Intramolecular Dehydration</b><br><small>การดึงน้ำเกิดแอลคีน ($170^\circ\text{C}$)</small></td>
+            <td>
+              $\ce{CH3CH2CH2OH ->[\text{conc. } \text{H}_2\text{SO}_4][170^\circ\text{C}]}$
+              <span class="blank-box">&nbsp;</span>
+              <span class="sol-text">$\ce{CH3CH=CH2}$</span>
+              $\ce{+ H2O}$
+              <div class="hint"><b>คำใบ้:</b> ตัด $\ce{H}$ และ $\ce{OH}$ จากคาร์บอนข้างเคียงเพื่อสร้างพันธะคู่ $\ce{C=C}$</div>
+            </td>
+          </tr>
+          <!-- Q7 -->
+          <tr>
+            <td style="text-align:center; font-weight:bold;">7</td>
+            <td><b>Oxidation of Aldehyde</b><br><small>การออกซิไดส์แอลดีไฮด์</small></td>
+            <td>
+              $\ce{CH3CHO + [O] ->[\text{KMnO}_4 / \text{H}^+][\Delta]}$
+              <span class="blank-box">&nbsp;</span>
+              <span class="sol-text">$\ce{CH3COOH}$</span>
+              <div class="hint"><b>คำใบ้:</b> เปลี่ยนหมู่ $\ce{-CHO}$ เป็น $\ce{-COOH}$ โดยโครงคาร์บอนเดิมไม่เปลี่ยน</div>
+            </td>
+          </tr>
+          <!-- Q8 -->
+          <tr>
+            <td style="text-align:center; font-weight:bold;">8</td>
+            <td><b>Oxidation Resistance of Ketone</b><br><small>คีโตนไม่ถูกออกซิไดส์ง่ายในสภาวะทั่วไป</small></td>
+            <td>
+              $\ce{CH3COCH3 + [O] ->[\text{mild oxidation conditions}]}$
+              <span class="blank-box">&nbsp;</span>
+              <span class="sol-text" style="font-family: 'K2D', sans-serif;">ไม่เกิดปฏิกิริยาภายใต้สภาวะทดสอบทั่วไป</span>
+              <div class="hint"><b>คำใบ้:</b> คีโตนไม่มี H ติดกับคาร์บอนของหมู่คาร์บอนิล จึงทนต่อสารออกซิไดส์อ่อน; สภาวะรุนแรงอาจตัดพันธะ $\ce{C-C}$ ได้</div>
+            </td>
+          </tr>
+          <!-- Q9 -->
+          <tr>
+            <td style="text-align:center; font-weight:bold;">9</td>
+            <td><b>Reduction of Carbonyl</b><br><small>การรีดิวซ์คีโตนได้ $2^\circ$ Alcohol</small></td>
+            <td>
+              $\ce{CH3COCH3 + 2 [H] ->[\text{NaBH}_4 \text{ or } \ce{H2/Ni}]}$
+              <span class="blank-box">&nbsp;</span>
+              <span class="sol-text">$\ce{CH3CH(OH)CH3}$</span>
+              <div class="hint"><b>คำใบ้:</b> การรีดิวซ์หมู่ $\ce{C=O}$ ของคีโตนให้หมู่ $\ce{-CHOH-}$</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <footer class="footer">
+        <span>ใบงานสมการปฏิกิริยาเคมีอินทรีย์ ม.6</span>
+        <span class="page-count">หน้า 3 / 4</span>
+      </footer>
+    </section>
+
+    <!-- PAGE 4: REACTION EQUATIONS 2 -->
+    <section class="sheet" id="page-4">
+      <header class="head">
+        <div class="head-tag"><b>ใบงานที่ 2</b><small>WORKSHEET 2</small></div>
+        <div class="head-main">
+          <h1>สมการปฏิกิริยาเคมีอินทรีย์ (กรดคาร์บอกซิลิก ถึง เอไมด์)</h1>
+        </div>
+      </header>
+
+      <div class="prompt">
+        คำชี้แจง: จงเติมสารตั้งต้น ผลิตภัณฑ์ หรือสภาวะปฏิกิริยาลงในช่องว่างของสมการเคมีให้สมบูรณ์
+        <small>Fill in the missing reactants, products, or reaction conditions in the chemical equations below.</small>
+      </div>
+
+      <table class="table-custom" style="font-size:9.5px;">
+        <thead>
+          <tr>
+            <th style="width:6%;">ข้อ</th>
+            <th style="width:28%;">ปฏิกิริยา / ชื่อเรียก</th>
+            <th style="width:66%;">สมการปฏิกิริยาเคมี (Chemical Equation)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Q10 -->
+          <tr>
+            <td style="text-align:center; font-weight:bold;">10</td>
+            <td><b>Acid + Hydrogen Carbonate</b><br><small>การทดสอบกรดด้วย $\text{NaHCO}_3$</small></td>
+            <td>
+              $\ce{CH3COOH + NaHCO3 -> CH3COONa + H2O +}$
+              <span class="blank-box">&nbsp;</span>
+              <span class="sol-text">$\ce{CO2 (g) ^}$</span>
+              <div class="hint"><b>คำใบ้:</b> กรดทำปฏิกิริยากับไฮโดรเจนคาร์บอเนตแล้วเกิดแก๊สที่ทำให้น้ำปูนใสขุ่น</div>
+            </td>
+          </tr>
+          <!-- Q11 -->
+          <tr>
+            <td style="text-align:center; font-weight:bold;">11</td>
+            <td><b>Esterification</b><br><small>การเกิดเอสเทอร์จากกรดกับแอลกอฮอล์</small></td>
+            <td>
+              $\ce{C6H5COOH + CH3CH2OH}$
+              $\ce{<=>[}$<span class="blank-box">&nbsp;</span><span class="sol-text">$\text{conc. } \ce{H2SO4}, \Delta$</span>$\ce{] C6H5COOCH2CH3 + H2O}$
+              <div class="hint"><b>คำใบ้:</b> ต้องใช้กรดเป็นตัวเร่งและให้ความร้อน ปฏิกิริยานี้เป็นสมดุลย้อนกลับได้</div>
+            </td>
+          </tr>
+          <!-- Q12 -->
+          <tr>
+            <td style="text-align:center; font-weight:bold;">12</td>
+            <td><b>Ester Hydrolysis (Acidic)</b><br><small>ปฏิกิริยาย้อนกลับของเอสเทอร์ในภาวะกรด</small></td>
+            <td>
+              $\ce{CH3COOCH2CH3 + H2O <=>[\text{dil. } \ce{H2SO4}][\Delta]}$
+              <span class="blank-box">&nbsp;</span>
+              <span class="sol-text">$\ce{CH3COOH + CH3CH2OH}$</span>
+              <div class="hint"><b>คำใบ้:</b> ตัดพันธะเอสเทอร์แล้วเติมส่วน $\ce{OH}$ และ $\ce{H}$ จากน้ำกลับเป็นกรดกับแอลกอฮอล์</div>
+            </td>
+          </tr>
+          <!-- Q13 -->
+          <tr>
+            <td style="text-align:center; font-weight:bold;">13</td>
+            <td><b>Saponification</b><br><small>การเตรียมสบู่จากไขมันและเบส</small></td>
+            <td>
+              $\ce{Triglyceride + 3 NaOH ->[\Delta]}$
+              <span class="blank-box">&nbsp;</span>
+              <span class="sol-text">$\ce{3 R-COONa \text{ (สบู่)}}$</span>
+              $\ce{+ Glycerol}$
+              <div class="hint"><b>คำใบ้:</b> ไตรกลีเซอไรด์มีเอสเทอร์ 3 หมู่ จึงได้เกลือของกรดไขมัน 3 โมลและกลีเซอรอล 1 โมล</div>
+            </td>
+          </tr>
+          <!-- Q14 -->
+          <tr>
+            <td style="text-align:center; font-weight:bold;">14</td>
+            <td><b>Amine + Mineral Acid</b><br><small>สมบัติความเป็นเบสของเอมีน</small></td>
+            <td>
+              $\ce{CH3NH2 + HCl ->}$
+              <span class="blank-box">&nbsp;</span>
+              <span class="sol-text">$\ce{[CH3NH3]+ Cl-}$</span>
+              <div class="hint"><b>คำใบ้:</b> คู่โดดเดี่ยวบน N รับโปรตอนจาก $\ce{HCl}$ เกิดไอออนเมทิลแอมโมเนียม</div>
+            </td>
+          </tr>
+          <!-- Q15 -->
+          <tr>
+            <td style="text-align:center; font-weight:bold;">15</td>
+            <td><b>Amide Formation (simplified)</b><br><small>การสังเคราะห์เอไมด์จากกรดและเอมีน</small></td>
+            <td>
+              $\ce{CH3COOH + CH3NH2 ->[\Delta \text{ (high)}]}$
+              <span class="blank-box">&nbsp;</span>
+              <span class="sol-text">$\ce{CH3CONHCH3 + H2O}$</span>
+              <div class="hint"><b>คำใบ้:</b> รวมส่วนอะซิล $\ce{CH3CO-}$ กับ $\ce{-NHCH3}$ แล้วคายน้ำ; ในทางปฏิบัติมักต้องใช้ความร้อนสูง/สารช่วยกำจัดน้ำหรืออนุพันธ์กรดที่ไวกว่า</div>
+            </td>
+          </tr>
+          <!-- Q16 -->
+          <tr>
+            <td style="text-align:center; font-weight:bold;">16</td>
+            <td><b>Amide Hydrolysis (Acidic)</b><br><small>ไฮโดรลิซิสของเอไมด์ในภาวะกรด</small></td>
+            <td>
+              $\ce{CH3CONH2 + H2O + HCl ->[\Delta] CH3COOH +}$
+              <span class="blank-box">&nbsp;</span>
+              <span class="sol-text">$\ce{NH4Cl}$</span>
+              <div class="hint"><b>คำใบ้:</b> ส่วน N ของเอไมด์รับโปรตอนในภาวะกรด จึงอยู่ในรูปเกลือแอมโมเนียม</div>
+            </td>
+          </tr>
+          <!-- Q17 -->
+          <tr>
+            <td style="text-align:center; font-weight:bold;">17</td>
+            <td><b>Amide Hydrolysis (Basic)</b><br><small>ไฮโดรลิซิสของเอไมด์ในภาวะเบส</small></td>
+            <td>
+              $\ce{CH3CONH2 + NaOH ->[\Delta]}$
+              <span class="blank-box">&nbsp;</span>
+              <span class="sol-text">$\ce{CH3COONa}$</span>
+              $\ce{+ NH3 (g) ^}$
+              <div class="hint"><b>คำใบ้:</b> ในภาวะเบส ส่วนกรดคาร์บอกซิลิกอยู่ในรูปเกลือโซเดียม และส่วน N ให้ $\ce{NH3}$</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <footer class="footer">
+        <span>ใบงานสมการปฏิกิริยาเคมีอินทรีย์ ม.6</span>
+        <span class="page-count">หน้า 4 / 4</span>
+      </footer>
+    </section>
+  </main>
+
+  <script>
+    const solutionToggle = document.getElementById('solutionToggle');
+    solutionToggle.addEventListener('click', () => {
+      const isShowing = document.body.classList.toggle('show-solutions');
+      solutionToggle.setAttribute('aria-pressed', isShowing ? 'true' : 'false');
+      solutionToggle.textContent = isShowing ? 'ซ่อนเฉลย / Hide Answers' : 'เปิดเฉลย / Show Answers';
+    });
+  </script>
+</body>
+</html>
