@@ -657,13 +657,11 @@
             simulation.position += simulation.velocity * pixelsPerMeter * dt;
             simulation.time += dt;
 
-            const limit = Math.max(0, simArea.clientWidth - measuredBoxWidth());
-            if (simulation.position > limit) {
-                simulation.position = limit;
-                simulation.velocity = -Math.abs(simulation.velocity) * 0.65;
-            } else if (simulation.position < 0) {
-                simulation.position = 0;
-                simulation.velocity = Math.abs(simulation.velocity) * 0.65;
+            const currentBoxWidth = measuredBoxWidth();
+            if (simulation.position > simArea.clientWidth) {
+                simulation.position = -currentBoxWidth;
+            } else if (simulation.position < -currentBoxWidth) {
+                simulation.position = simArea.clientWidth;
             }
             updateLaw12Readout();
             animationFrameId = requestAnimationFrame(animationLoop);
