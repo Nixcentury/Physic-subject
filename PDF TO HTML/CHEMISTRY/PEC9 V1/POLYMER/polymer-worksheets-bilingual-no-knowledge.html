@@ -16,17 +16,21 @@
   (async function(){
     const SOURCE='polymer-worksheets-bilingual-no-knowledge-source.html';
     const KNOWLEDGE='polymer-guided-knowledge-fragment.html';
+    const KNOWLEDGE4='polymer-guided-knowledge-fragment-4.html';
     try{
-      const [sourceResponse,knowledgeResponse]=await Promise.all([
+      const [sourceResponse,knowledgeResponse,knowledge4Response]=await Promise.all([
         fetch(SOURCE,{cache:'no-store'}),
-        fetch(KNOWLEDGE,{cache:'no-store'})
+        fetch(KNOWLEDGE,{cache:'no-store'}),
+        fetch(KNOWLEDGE4,{cache:'no-store'})
       ]);
       if(!sourceResponse.ok)throw new Error('Worksheet source HTTP '+sourceResponse.status);
       if(!knowledgeResponse.ok)throw new Error('Knowledge notes HTTP '+knowledgeResponse.status);
+      if(!knowledge4Response.ok)throw new Error('Knowledge notes 4 HTTP '+knowledge4Response.status);
 
-      const [sourceText,knowledgeText]=await Promise.all([
+      const [sourceText,knowledgeText,knowledge4Text]=await Promise.all([
         sourceResponse.text(),
-        knowledgeResponse.text()
+        knowledgeResponse.text(),
+        knowledge4Response.text()
       ]);
       const parsed=new DOMParser().parseFromString(sourceText,'text/html');
       const scripts=[...parsed.querySelectorAll('script')].map(s=>({src:s.getAttribute('src'),text:s.textContent||''}));
@@ -42,7 +46,7 @@
 
       const main=document.querySelector('main');
       if(!main)throw new Error('ไม่พบ main / main element not found');
-      main.insertAdjacentHTML('afterbegin',knowledgeText);
+      main.insertAdjacentHTML('afterbegin',knowledgeText+knowledge4Text);
 
       for(const spec of scripts){
         const s=document.createElement('script');
