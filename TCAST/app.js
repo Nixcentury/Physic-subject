@@ -1,6 +1,8 @@
 const DATA_URL = './data/tcas-programs.json';
 const STORAGE_KEY = 'kru-nix-tcas-learning-plan-v1';
 const ROUND_URL = 'https://my-tcas.s3.ap-southeast-1.amazonaws.com/mytcas/rounds/';
+const ROUND_REQUEST_TIMEOUT = 15000;
+const roundRequests = new Map();
 
 const state = {
   rows: [],
@@ -19,6 +21,7 @@ const state = {
 const els = {};
 
 document.addEventListener('DOMContentLoaded', init);
+window.addEventListener('message', handleLmsRoundResponse);
 
 async function init() {
   cacheElements();
@@ -396,10 +399,10 @@ function openProgram(row) {
     </section>
     <section class="detail-block">
       <h4>📅 รอบรับสมัครและเกณฑ์</h4>
-      <p>รุ่น GitHub แสดงข้อมูลหลักสูตรได้แล้ว ส่วนการอ่านรอบรับสมัครแบบสวยงามจะเชื่อมผ่าน LMS ในระยะถัดไป</p>
-      <div class="program-actions">
-        <a class="button button-ghost" href="${roundUrl}" target="_blank" rel="noopener">เปิดข้อมูลรอบต้นทาง ↗</a>
+      <div id="rounds-container" class="rounds-container" aria-live="polite">
+        <div class="rounds-status"><span class="rounds-spinner" aria-hidden="true"></span>กำลังอ่านข้อมูลรอบจาก MyTCAS…</div>
       </div>
+      <a class="round-source-link" href="${roundUrl}" target="_blank" rel="noopener">เปิดข้อมูลต้นทาง ↗</a>
     </section>
     <div class="program-actions">
       <button class="button ${isTarget ? 'button-danger' : 'button-success'}" id="toggle-target" type="button">
@@ -415,6 +418,157 @@ function openProgram(row) {
   });
   els.programContent.querySelector('#close-program-secondary').addEventListener('click', () => els.programDialog.close());
   els.programDialog.showModal();
+  loadProgramRounds(programId, roundUrl);
+}
+
+async function loadProgramRounds(programId, roundUrl) {
+  const container = document.getElementById('rounds-container');
+  if (!container) return;
+
+  try {
+    const payload = await requestRoundsFromLms(programId);
+    if (!payload || payload.success === false) {
+      throw new Error(payload?.message || 'ไม่สามารถอ่านข้อมูลรอบได้');
+    }
+    renderProgramRounds(container, Array.isArray(payload.rounds) ? payload.rounds : []);
+  } catch (error) {
+    const isEmbedded = window.parent !== window;
+    container.innerHTML = `
+      <div class="rounds-empty">
+        <strong>${isEmbedded ? 'ยังโหลดข้อมูลรอบไม่สำเร็จ' : 'ข้อมูลรอบจะแสดงเมื่อเปิดผ่าน LMS'}</strong>
+        <span>${escapeHtml(error?.message || 'กรุณาลองใหม่อีกครั้ง')}</span>
+        ${isEmbedded ? '<button type="button" class="round-retry-button">ลองโหลดอีกครั้ง</button>' : ''}
+      </div>
+    `;
+    const retry = container.querySelector('.round-retry-button');
+    if (retry) retry.addEventListener('click', () => {
+      container.innerHTML = '<div class="rounds-status"><span class="rounds-spinner" aria-hidden="true"></span>กำลังอ่านข้อมูลรอบจาก MyTCAS…</div>';
+      loadProgramRounds(programId, roundUrl);
+    });
+  }
+}
+
+function requestRoundsFromLms(programId) {
+  if (window.parent === window) {
+    return Promise.reject(new Error('โปรดเปิดจากแท็บแผนการเรียนใน LMS'));
+  }
+
+  const requestId = `tcas-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  return new Promise((resolve, reject) => {
+    const timer = window.setTimeout(() => {
+      roundRequests.delete(requestId);
+      reject(new Error('ใช้เวลาโหลดนานเกินไป กรุณาลองใหม่'));
+    }, ROUND_REQUEST_TIMEOUT);
+
+    roundRequests.set(requestId, { resolve, reject, timer });
+    window.parent.postMessage({
+      type: 'KRU_NIX_TCAS_ROUNDS_REQUEST',
+      requestId,
+      programId
+    }, '*');
+  });
+}
+
+function handleLmsRoundResponse(event) {
+  if (event.source !== window.parent) return;
+  const data = event.data || {};
+  if (data.type !== 'KRU_NIX_TCAS_ROUNDS_RESPONSE' || !data.requestId) return;
+
+  const pending = roundRequests.get(data.requestId);
+  if (!pending) return;
+  window.clearTimeout(pending.timer);
+  roundRequests.delete(data.requestId);
+
+  if (data.error) pending.reject(new Error(data.error));
+  else pending.resolve(data.payload);
+}
+
+function renderProgramRounds(container, rounds) {
+  if (!rounds.length) {
+    container.innerHTML = `
+      <div class="rounds-empty">
+        <strong>ยังไม่พบข้อมูลรอบรับสมัคร</strong>
+        <span>มหาวิทยาลัยอาจยังไม่ประกาศ หรือหลักสูตรนี้ไม่มีข้อมูลในปีปัจจุบัน</span>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = rounds.map((round, index) => {
+    const scoreConditions = Object.entries(round.scoreConditions || {});
+    const weights = Object.entries(round.scores || {});
+    const detailParts = [round.description, round.condition].filter(Boolean);
+    const folioText = round.folio?.criteria || '';
+    const closedDate = formatThaiDate(round.folio?.closedDate);
+    const link = safeExternalUrl(round.link);
+    const seats = Number(round.receiveStudentNumber || 0);
+
+    return `
+      <article class="round-card">
+        <header class="round-card-head">
+          <div>
+            <span class="round-badge">${escapeHtml(round.roundLabel || `รอบ ${index + 1}`)}</span>
+            <h5>${escapeHtml(round.projectName || 'โครงการรับสมัคร')}</h5>
+          </div>
+          <div class="round-seat"><small>จำนวนรับ</small><strong>${seats > 0 ? `${seats.toLocaleString('th-TH')} คน` : 'ไม่ระบุ'}</strong></div>
+        </header>
+        ${closedDate ? `<p class="round-deadline">⏳ ปิดรับสมัคร ${escapeHtml(closedDate)}</p>` : ''}
+        ${scoreConditions.length ? `
+          <div class="round-subsection">
+            <strong>เกณฑ์ขั้นต่ำ</strong>
+            <div class="score-chip-list">${scoreConditions.map(([key, value]) => `<span>${escapeHtml(formatScoreName(key))} ≥ ${escapeHtml(value)}</span>`).join('')}</div>
+          </div>
+        ` : ''}
+        ${weights.length ? `
+          <div class="round-subsection">
+            <strong>สัดส่วนคะแนน</strong>
+            <div class="score-chip-list is-weight">${weights.map(([key, value]) => `<span>${escapeHtml(formatScoreName(key))} ${escapeHtml(value)}%</span>`).join('')}</div>
+          </div>
+        ` : ''}
+        ${folioText ? `<details><summary>เกณฑ์แฟ้มสะสมผลงาน</summary><p>${formatMultiline(folioText)}</p></details>` : ''}
+        ${detailParts.length ? `<details><summary>คุณสมบัติและเงื่อนไขเพิ่มเติม</summary><p>${formatMultiline(detailParts.join('\n\n'))}</p></details>` : ''}
+        ${round.interviewDate || round.interviewLocation ? `<details><summary>ข้อมูลสัมภาษณ์</summary><p>${formatMultiline([round.interviewDate, round.interviewTime, round.interviewLocation].filter(Boolean).join('\n'))}</p></details>` : ''}
+        ${link ? `<a class="round-apply-link" href="${escapeHtml(link)}" target="_blank" rel="noopener">ไปยังหน้ารับสมัคร ↗</a>` : ''}
+      </article>
+    `;
+  }).join('');
+}
+
+function formatScoreName(key) {
+  const raw = cleanText(key).replace(/^min_/, '');
+  const known = {
+    gpax: 'GPAX', total_score: 'คะแนนรวม', tgat: 'TGAT', tpat: 'TPAT',
+    cal_type: 'รูปแบบคำนวณ', cal_score_sum: 'คะแนนรวมที่ใช้',
+    cal_subject_name: 'วิชาเลือกคำนวณ', subject_names: 'รายวิชา', score_minimum: 'คะแนนขั้นต่ำ'
+  };
+  if (known[raw]) return known[raw];
+  if (/^a_lv_/.test(raw)) return `A-Level ${raw.replace('a_lv_', '')}`;
+  if (/^tgat_/.test(raw)) return `TGAT ${raw.replace('tgat_', '')}`;
+  if (/^tpat_/.test(raw)) return `TPAT ${raw.replace('tpat_', '')}`;
+  return raw.replaceAll('_', ' ').toUpperCase();
+}
+
+function formatThaiDate(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return cleanText(value);
+  return new Intl.DateTimeFormat('th-TH', { dateStyle: 'long' }).format(date);
+}
+
+function safeExternalUrl(value) {
+  const text = cleanText(value);
+  if (!text) return '';
+  const candidate = /^www\./i.test(text) ? `https://${text}` : text;
+  try {
+    const url = new URL(candidate);
+    return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+  } catch (_) {
+    return '';
+  }
+}
+
+function formatMultiline(value) {
+  return escapeHtml(shorten(value, 7000)).replace(/\n/g, '<br>');
 }
 
 function toggleTarget(row) {
