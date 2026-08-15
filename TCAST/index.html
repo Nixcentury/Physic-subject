@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#eef7ff">
+  <title>แผนการเรียนของฉัน | My Learning Plan</title>
+  <meta name="description" content="ค้นหาสาขา หลักสูตร และมหาวิทยาลัย พร้อมวางแผน TCAS ส่วนบุคคล">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="หน้าหลักแผนการเรียนของฉัน">
+        <span class="brand-mark" aria-hidden="true">KN</span>
+        <span>
+          <small>KRU NIX LEARNING SPACE</small>
+          <strong>แผนการเรียนของฉัน</strong>
+        </span>
+      </a>
+      <div class="topbar-badge">BETA · TCAS PLANNER</div>
+    </header>
+
+    <main>
+      <section class="hero panel">
+        <div class="hero-copy">
+          <span class="eyebrow">🧭 MY LEARNING PLAN</span>
+          <h1>เลือกสาขาที่สนใจ<br><span>แล้วเห็นเส้นทางไปต่ออย่างชัดเจน</span></h1>
+          <p>จัดอันดับสาขาที่สนใจสูงสุด 4 อันดับ ค้นหามหาวิทยาลัย หลักสูตร และข้อมูลที่ต้องใช้วางแผนสมัคร TCAS</p>
+        </div>
+        <div class="data-status" id="data-status" aria-live="polite">
+          <span class="status-dot is-loading"></span>
+          <div>
+            <strong>กำลังเตรียมฐานข้อมูล…</strong>
+            <small>Loading TCAS program data</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="planner panel" aria-labelledby="planner-title">
+        <div class="section-heading">
+          <div>
+            <span class="step-chip">STEP 1</span>
+            <h2 id="planner-title">สาขาที่ฉันสนใจ</h2>
+            <p>เลือกตามความสนใจจริง สลับหรือเปลี่ยนอันดับภายหลังได้</p>
+          </div>
+          <button class="button button-ghost" id="clear-plan" type="button">ล้างตัวเลือก</button>
+        </div>
+
+        <div class="choice-grid" id="choice-grid" aria-live="polite"></div>
+
+        <div class="planner-actions">
+          <div class="selection-summary" id="selection-summary">ยังไม่ได้เลือกสาขา</div>
+          <button class="button button-primary" id="explore-button" type="button" disabled>
+            ค้นหามหาวิทยาลัย <span aria-hidden="true">→</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="targets panel is-hidden" id="target-section" aria-labelledby="target-title">
+        <div class="section-heading compact">
+          <div>
+            <span class="step-chip">MY TARGETS</span>
+            <h2 id="target-title">หลักสูตรเป้าหมายของฉัน</h2>
+          </div>
+        </div>
+        <div class="target-list" id="target-list"></div>
+      </section>
+
+      <section class="results panel is-hidden" id="results-section" aria-labelledby="results-title">
+        <div class="section-heading results-heading">
+          <div>
+            <span class="step-chip">STEP 2</span>
+            <h2 id="results-title">มหาวิทยาลัยและหลักสูตร</h2>
+            <p id="results-subtitle">เลือกอันดับเพื่อดูหลักสูตรที่ตรงกัน</p>
+          </div>
+          <div class="results-count" id="results-count">0 หลักสูตร</div>
+        </div>
+
+        <div class="rank-tabs" id="rank-tabs" role="tablist" aria-label="สาขาที่เลือก"></div>
+
+        <div class="result-tools">
+          <label class="search-box">
+            <span aria-hidden="true">🔎</span>
+            <input id="university-search" type="search" placeholder="ค้นหามหาวิทยาลัย คณะ หรือหลักสูตร…" autocomplete="off">
+          </label>
+          <select id="program-type-filter" aria-label="กรองประเภทหลักสูตร">
+            <option value="">ทุกประเภทหลักสูตร</option>
+          </select>
+        </div>
+
+        <div class="university-list" id="university-list"></div>
+        <div class="empty-state is-hidden" id="empty-state">
+          <span aria-hidden="true">🔭</span>
+          <strong>ยังไม่พบหลักสูตรที่ตรงกับคำค้น</strong>
+          <p>ลองเปลี่ยนชื่อมหาวิทยาลัยหรือประเภทหลักสูตร</p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>ข้อมูลใช้เพื่อวางแผนเบื้องต้น โปรดตรวจสอบประกาศล่าสุดจากมหาวิทยาลัยและ <a href="https://www.mytcas.com/" target="_blank" rel="noopener">MyTCAS</a> ก่อนสมัคร</p>
+      <p class="build-label">TCAS Learning Plan · Prototype 0.1</p>
+    </footer>
+  </div>
+
+  <dialog class="picker-dialog" id="field-dialog">
+    <form method="dialog" class="dialog-shell">
+      <div class="dialog-heading">
+        <div>
+          <span class="step-chip" id="picker-rank-label">อันดับ 1</span>
+          <h2>เลือกสาขาที่สนใจ</h2>
+          <p>ค้นหาจากชื่อสาขาภาษาไทยหรืออังกฤษ</p>
+        </div>
+        <button class="icon-button" value="cancel" aria-label="ปิด">×</button>
+      </div>
+      <div class="picker-tools">
+        <label class="search-box">
+          <span aria-hidden="true">🔎</span>
+          <input id="field-search" type="search" placeholder="เช่น วิศวกรรมคอมพิวเตอร์ จิตวิทยา…" autocomplete="off">
+        </label>
+        <select id="group-filter" aria-label="กรองกลุ่มสาขา">
+          <option value="">ทุกกลุ่มสาขา</option>
+        </select>
+      </div>
+      <div class="field-list" id="field-list"></div>
+    </form>
+  </dialog>
+
+  <dialog class="program-dialog" id="program-dialog">
+    <div class="dialog-shell program-shell">
+      <div class="dialog-heading">
+        <div>
+          <span class="step-chip">PROGRAM DETAIL</span>
+          <h2 id="program-title">รายละเอียดหลักสูตร</h2>
+        </div>
+        <button class="icon-button" id="close-program" type="button" aria-label="ปิด">×</button>
+      </div>
+      <div id="program-content"></div>
+    </div>
+  </dialog>
+
+  <template id="choice-template">
+    <article class="choice-card">
+      <div class="rank-badge"></div>
+      <div class="choice-copy">
+        <small class="choice-kicker"></small>
+        <strong class="choice-title">เลือกสาขา</strong>
+        <span class="choice-group">แตะเพื่อเปิดรายการ</span>
+      </div>
+      <button class="choice-button" type="button" aria-label="เลือกสาขา">เลือก</button>
+    </article>
+  </template>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
