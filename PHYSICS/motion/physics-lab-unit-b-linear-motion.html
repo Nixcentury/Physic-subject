@@ -16,6 +16,7 @@
     #physics-unit-b-linear-motion-root .plm-hero h2{margin:5px 0 4px;font-size:clamp(22px,3vw,34px);line-height:1.15;color:var(--navy)}
     #physics-unit-b-linear-motion-root .plm-hero p{margin:0;color:#334155;line-height:1.65}
     #physics-unit-b-linear-motion-root .plm-status-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:15px}
+    #physics-unit-b-linear-motion-root .plm-select-help{margin:10px 0 0;padding:9px 12px;border:1px solid #bfdbfe;border-radius:12px;background:#eff6ff;color:#1e3a8a;font-size:12px;font-weight:800}
     #physics-unit-b-linear-motion-root .plm-progress{flex:1 1 260px;height:14px;border-radius:999px;background:#dbeafe;overflow:hidden;border:1px solid #bfdbfe}
     #physics-unit-b-linear-motion-root .plm-progress>span{display:block;height:100%;width:0;background:linear-gradient(90deg,#2563eb,#0891b2);transition:width .25s ease}
     #physics-unit-b-linear-motion-root .plm-pill{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;border:1px solid #cbd5e1;background:#fff;font-size:12px;font-weight:900;color:#334155}
@@ -36,7 +37,9 @@
     #physics-unit-b-linear-motion-root .plm-field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
     #physics-unit-b-linear-motion-root .plm-field{display:grid;gap:5px}
     #physics-unit-b-linear-motion-root .plm-field label{font-size:12px;font-weight:900;color:#334155}
-    #physics-unit-b-linear-motion-root .plm-select,#physics-unit-b-linear-motion-root .plm-input{width:100%;min-height:44px;padding:9px 11px;border:1px solid #94a3b8;border-radius:11px;background:#fff;color:#172033}
+    #physics-unit-b-linear-motion-root .plm-select,#physics-unit-b-linear-motion-root .plm-input{width:100%;min-height:44px;padding:9px 11px;border:1px solid #94a3b8;border-radius:11px;background:#fff;color:#172033;font-size:16px;touch-action:manipulation}
+    #physics-unit-b-linear-motion-root .plm-select{position:relative;z-index:2;pointer-events:auto}
+    #physics-unit-b-linear-motion-root .plm-select:disabled{opacity:.62;cursor:not-allowed;background:#e2e8f0}
     #physics-unit-b-linear-motion-root .plm-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
     #physics-unit-b-linear-motion-root .plm-btn{min-height:44px;padding:9px 13px;border:1px solid #94a3b8;border-radius:12px;background:#fff;color:#172033;font-weight:900;cursor:pointer}
     #physics-unit-b-linear-motion-root .plm-btn.primary{background:#2563eb;border-color:#2563eb;color:#fff}.plm-btn.green{background:#059669!important;border-color:#059669!important;color:#fff!important}.plm-btn.amber{background:#d97706!important;border-color:#d97706!important;color:#fff!important}.plm-btn.violet{background:#7c3aed!important;border-color:#7c3aed!important;color:#fff!important}
@@ -108,6 +111,7 @@
       <span class="plm-pill" id="plm-progress-text">0%</span>
       <span class="plm-pill">36 progress points / 6 stations</span>
     </div>
+    <p class="plm-select-help">💡 เมนูสีขาวเลือกได้ทันที ส่วนเมนูสีเทาจะปลดล็อกเมื่อทำขั้นก่อนหน้าครบ · White menus are selectable; grey menus unlock after the required experiment.</p>
   </section>
 
   <nav class="plm-tabs" id="plm-tabs" aria-label="Unit B stations"></nav>
@@ -120,7 +124,7 @@
 
   var ROOT_ID="physics-unit-b-linear-motion-root";
   var LAB_TYPE="PHYSICS_LAB_UNIT_B_LINEAR_MOTION";
-  var VERSION="0.6.2";
+  var VERSION="0.6.3";
   var UNIT_ID="B";
   var TOTAL_STEPS=36;
   var root=document.getElementById(ROOT_ID);
@@ -132,6 +136,7 @@
   var progressBar=root.querySelector("#plm-progress-bar");
   var progressText=root.querySelector("#plm-progress-text");
   var saveTimer=null;
+  var renderTimer=null;
   var animFrame=null;
   var animationToken=0;
 
@@ -335,6 +340,7 @@
   function anyStationRunning(){for(var i=1;i<=6;i++){var st=state.stations["B"+i];if(st&&st.live&&st.live.running)return true;}return false;}
   function renderTabs(){var busy=anyStationRunning();tabs.innerHTML=STATIONS.map(function(d,i){var locked=!stationAvailable(i),disabled=locked||busy,suffix=locked?' · 🔒':(busy?' · ⏳':'');return '<button class="plm-tab '+(i===state.currentStationIndex?'active ':'')+(locked?'locked':'')+'" data-action="go-station" data-index="'+i+'"'+(disabled?' disabled':'')+'><b>'+d.icon+' '+d.id+' · '+d.th+'</b><small>'+d.en+suffix+'</small></button>';}).join("");}
   function render(){cancelAnimationFrame(animFrame);renderTabs();var pct=getPercent();progressBar.style.width=pct+'%';progressText.textContent=pct+'% · '+totalStepPoints()+'/'+TOTAL_STEPS;var i=state.currentStationIndex;if(i===0)main.innerHTML=renderB1();else if(i===1)main.innerHTML=renderB2();else if(i===2)main.innerHTML=renderB3();else if(i===3)main.innerHTML=renderB4();else if(i===4)main.innerHTML=renderB5();else if(i===5)main.innerHTML=renderB6();}
+  function scheduleRender(){clearTimeout(renderTimer);renderTimer=setTimeout(function(){renderTimer=null;render();},0);}
 
   function updatePath(obj,path,value){var parts=path.split("."),p0=parts[0],k=parts[1];
     if(p0==="analysis"){state.stations.B1.analysisAnswers[k]=value;return;}if(p0==="exit"){state.stations.B1.exitAnswers[k]=value;return;}
@@ -343,8 +349,9 @@
     if(p0==="b4"){state.stations.B4[k]=value;return;}if(p0==="b4measure"){state.stations.B4.measureAnswers[k]=value;state.stations.B4.experimentViewed=b4ExperimentComplete(state.stations.B4);return;}if(p0==="b4analysis"){state.stations.B4.analysisAnswers[k]=value;return;}if(p0==="b4exit"){state.stations.B4.exitAnswers[k]=value;return;}
     if(p0==="b5"){state.stations.B5[k]=value;return;}if(p0==="b5selector"){state.stations.B5.selectorAnswers[k]=value;return;}if(p0==="b5exit"){state.stations.B5.exitAnswers[k]=value;return;}
     if(p0==="b6"){state.stations.B6[k]=value;return;}if(p0==="b6analysis"){state.stations.B6.analysisAnswers[k]=value;return;}if(p0==="b6exit"){state.stations.B6.exitAnswers[k]=value;return;}obj[path]=value;}
-  function handleChange(e){var el=e.target.closest("[data-field]");if(!el||!root.contains(el))return;var path=el.getAttribute("data-field"),idx=state.currentStationIndex,obj=state.stations["B"+(idx+1)]||state.stations.B1;updatePath(obj,path,el.value);render();scheduleNotify();}
-  function handleInput(e){var maps=[["data-b2-exit","B2"],["data-b3-exit","B3"],["data-b4-exit","B4"],["data-b5-exit","B5"],["data-b6-exit","B6"]];for(var i=0;i<maps.length;i++){var el=e.target.closest("["+maps[i][0]+"]");if(el&&root.contains(el)){state.stations[maps[i][1]].exitAnswers[el.getAttribute(maps[i][0])]=el.value;scheduleNotify();return;}}var b2f=e.target.closest("[data-b2-field]");if(b2f&&root.contains(b2f)){state.stations.B2[b2f.getAttribute("data-b2-field")]=b2f.value;scheduleNotify();return;}var el1=e.target.closest("[data-exit]");if(el1&&root.contains(el1)){state.stations.B1.exitAnswers[el1.getAttribute("data-exit")]=el1.value;scheduleNotify();}}
+  function commitSelect(el){if(!el||!root.contains(el)||el.disabled)return false;var path=el.getAttribute("data-field"),idx=state.currentStationIndex,obj=state.stations["B"+(idx+1)]||state.stations.B1;updatePath(obj,path,el.value);scheduleRender();scheduleNotify();return true;}
+  function handleChange(e){var el=e.target.closest("select[data-field]");if(el){commitSelect(el);return;}el=e.target.closest("input[data-field]");if(!el||!root.contains(el))return;var path=el.getAttribute("data-field"),idx=state.currentStationIndex,obj=state.stations["B"+(idx+1)]||state.stations.B1;updatePath(obj,path,el.value);scheduleRender();scheduleNotify();}
+  function handleInput(e){var selectEl=e.target.closest("select[data-field]");if(selectEl&&commitSelect(selectEl))return;var maps=[["data-b2-exit","B2"],["data-b3-exit","B3"],["data-b4-exit","B4"],["data-b5-exit","B5"],["data-b6-exit","B6"]];for(var i=0;i<maps.length;i++){var el=e.target.closest("["+maps[i][0]+"]");if(el&&root.contains(el)){state.stations[maps[i][1]].exitAnswers[el.getAttribute(maps[i][0])]=el.value;scheduleNotify();return;}}var b2f=e.target.closest("[data-b2-field]");if(b2f&&root.contains(b2f)){state.stations.B2[b2f.getAttribute("data-b2-field")]=b2f.value;scheduleNotify();return;}var el1=e.target.closest("[data-exit]");if(el1&&root.contains(el1)){state.stations.B1.exitAnswers[el1.getAttribute("data-exit")]=el1.value;scheduleNotify();}}
 
 
   function approve(){var s=state.stations.B1;if(s.approved)return;if(!b1Prepared(s)){setFeedback(s,"bad","⚠️ เลือกจุดอ้างอิงและทิศบวกให้ครบก่อน / Choose the reference point and positive direction first.");render();return;}var expected=s.positiveDirection==="right"?-3:3;var pos=parseAnswer(s.approvalPosition);var ok=s.approvalReference==="reference"&&nearly(pos,expected,.001);if(!ok){s.selectionAttempts++;setFeedback(s,"bad","❌ ยังไม่ผ่านการตรวจ: ตำแหน่งต้องอ้างอิงจุดอ้างอิง และเครื่องหมายต้องสอดคล้องกับทิศบวกที่เลือก / Approval failed: position must be relative to the reference point, with a sign consistent with your positive direction.");render();notifyChange();return;}s.approved=true;setFeedback(s,"good","✅ อนุมัติแล้ว ทดลองเส้นทาง A → C และการกลับจุดเริ่มต้นให้ครบ / Approved. Run the A → C routes and the round trip.");render();notifyChange();}
@@ -447,7 +454,7 @@
   function resetAll(){animationToken++;cancelAnimationFrame(animFrame);state=blankState();render();notifyChange();return true;}
 
   root.addEventListener("click",handleClick);root.addEventListener("change",handleChange);root.addEventListener("input",handleInput);
-  window.ExamateLab={version:VERSION,labType:LAB_TYPE,config:{totalSteps:TOTAL_STEPS,maxScore:100},init:function(){render();return true;},getPercent:getPercent,getScore:function(){return getPercent();},getSavePayload:getSavePayload,restore:restore,resetAll:resetAll,destroy:function(){animationToken++;cancelAnimationFrame(animFrame);clearTimeout(saveTimer);root.removeEventListener("click",handleClick);root.removeEventListener("change",handleChange);root.removeEventListener("input",handleInput);document.removeEventListener("examate-lab-restore-request",handleRestoreRequest);root.dataset.plmReady="";return true;}};
+  window.ExamateLab={version:VERSION,labType:LAB_TYPE,config:{totalSteps:TOTAL_STEPS,maxScore:100},init:function(){render();return true;},getPercent:getPercent,getScore:function(){return getPercent();},getSavePayload:getSavePayload,restore:restore,resetAll:resetAll,destroy:function(){animationToken++;cancelAnimationFrame(animFrame);clearTimeout(saveTimer);clearTimeout(renderTimer);root.removeEventListener("click",handleClick);root.removeEventListener("change",handleChange);root.removeEventListener("input",handleInput);document.removeEventListener("examate-lab-restore-request",handleRestoreRequest);root.dataset.plmReady="";return true;}};
 
   render();
   consumePending();
