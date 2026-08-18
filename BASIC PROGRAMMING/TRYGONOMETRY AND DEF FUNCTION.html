@@ -1,0 +1,1748 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ตรีโกณมิติสู่ Python | Trigonometry to Python</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+:root{
+  --ink:#0f172a;
+  --muted:#475569;
+  --line:#cbd5e1;
+  --soft:#f8fafc;
+  --soft2:#eef2f7;
+  --accent:#1d4ed8;
+  --accent-soft:#eff6ff;
+  --answer:#166534;
+  --answer-bg:#f0fdf4;
+  --warn:#9a3412;
+  --warn-bg:#fff7ed;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:#e5e7eb;color:var(--ink);font-family:Arial,"Noto Sans Thai",Tahoma,sans-serif;line-height:1.45}
+body{padding:18px 0 70px}
+.toolbar{position:sticky;top:0;z-index:20;max-width:210mm;margin:0 auto 12px;display:flex;gap:8px;justify-content:flex-end;padding:8px 10px;background:#ffffffee;border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px #0f172a1a;backdrop-filter:blur(8px)}
+button{border:1px solid #94a3b8;background:#fff;color:var(--ink);border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer}
+button:hover{background:#f8fafc}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.document{max-width:210mm;margin:0 auto}
+.sheet{width:210mm;min-height:297mm;background:#fff;margin:0 auto 14px;padding:12mm 13mm 12mm;box-shadow:0 8px 28px #0f172a24;position:relative;overflow:hidden}
+.sheet::after{content:attr(data-page);position:absolute;right:10mm;bottom:7mm;color:#94a3b8;font-size:10px}
+.header{border-bottom:2px solid var(--ink);padding-bottom:7px;margin-bottom:10px}
+.kicker{font-size:11px;letter-spacing:.04em;color:var(--accent);font-weight:800;text-transform:uppercase}
+h1{font-size:23px;line-height:1.15;margin:3px 0 3px}
+.subtitle{color:var(--muted);font-size:13px;font-weight:700}
+.meta-row{display:flex;gap:10px;margin-top:8px;font-size:11px;color:var(--muted)}
+.meta-row span{flex:1;border-bottom:1px solid #94a3b8;min-height:18px}
+.goal{border-left:4px solid var(--accent);background:var(--accent-soft);padding:8px 10px;margin:9px 0 10px;font-size:12px}
+.goal strong{display:block;margin-bottom:2px}
+.note{background:var(--soft);border:1px solid var(--line);padding:8px 10px;border-radius:8px;font-size:11.5px;margin:8px 0}
+.warning{background:var(--warn-bg);border:1px solid #fed7aa;color:#7c2d12;padding:8px 10px;border-radius:8px;font-size:11.5px;margin:8px 0}
+.section-title{display:flex;align-items:baseline;gap:8px;margin:10px 0 6px}
+.section-title h2{font-size:16px;margin:0}
+.section-title small{font-size:10.5px;color:var(--muted);font-weight:700}
+.figure-card{border:1px solid var(--line);border-radius:10px;padding:6px 7px 5px;margin:7px 0;background:#fff}
+.figure-head{display:flex;justify-content:space-between;gap:8px;align-items:baseline;margin:0 3px 3px}
+.figure-head b{font-size:13px}
+.figure-head span{font-size:10.5px;color:var(--muted)}
+.figure-card > svg{display:block;width:100%;height:auto}
+.caption{font-size:10px;color:var(--muted);text-align:center;margin-top:2px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+table{width:100%;border-collapse:collapse;font-size:10.3px;margin:5px 0 9px;table-layout:fixed}
+th,td{border:1px solid #94a3b8;padding:4px 4px;text-align:center;vertical-align:middle}
+th{background:#f1f5f9;font-weight:800}
+td.given{background:#fafafa}
+.answer-cell{height:31px;position:relative;background:#fff;padding:2px 3px}
+.ratio-input{width:100%;height:24px;border:0;border-bottom:1.5px solid #64748b;background:transparent;text-align:center;font:inherit;color:var(--ink);outline:none;padding:1px 2px}
+.ratio-input:focus{border-bottom-color:var(--accent);background:#eff6ff}
+.answer-cell .answer{position:absolute;inset:2px 3px;display:flex;align-items:center;justify-content:center;background:var(--answer-bg);pointer-events:none}
+.show-answers .answer-cell .ratio-input{visibility:hidden}
+.answer{color:var(--answer);font-weight:800;opacity:0;visibility:hidden;transition:opacity .15s}
+.show-answers .answer{opacity:1;visibility:visible}
+.show-answers .answer-cell{background:var(--answer-bg)}
+.answer-box{border:1px solid #94a3b8;border-radius:8px;min-height:42px;padding:7px 9px;position:relative;margin:5px 0;background:#fff}
+.answer-box.tall{min-height:70px}
+.answer-box .answer{display:block}
+.show-answers .answer-box{background:var(--answer-bg);border-color:#86efac}
+.prompt{font-size:11.5px;margin:7px 0 3px;font-weight:700}
+.en{color:var(--muted);font-weight:600}
+.line{display:inline-block;min-width:115px;border-bottom:1px solid #64748b;height:16px;vertical-align:bottom}
+.ratio-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:8px 0}
+.ratio-card{border:1px solid var(--line);border-radius:8px;padding:6px;text-align:center;background:var(--soft)}
+.ratio-card b{display:block;font-size:14px;margin-bottom:2px}
+.ratio-card small{color:var(--muted)}
+.summary-box{border:2px solid var(--ink);padding:9px 10px;border-radius:10px;margin-top:8px}
+.summary-box h3{font-size:14px;margin:0 0 4px}
+.summary-box p{font-size:11.5px;margin:3px 0}
+.teacher-tag{display:inline-block;padding:2px 6px;border-radius:999px;background:#ecfccb;color:#3f6212;font-size:9px;font-weight:800;margin-left:4px}
+.future-placeholder{display:none}
+@media(max-width:900px){
+  body{padding:0;background:#fff}
+  .toolbar{position:sticky;border-radius:0;margin:0;max-width:none}
+  .document{max-width:none}
+  .sheet{width:100%;min-height:auto;margin:0;padding:18px 16px;box-shadow:none;border-bottom:8px solid #e5e7eb}
+}
+@page{size:A4;margin:0}
+@media print{
+  html,body{background:#fff;padding:0}
+  .toolbar{display:none!important}
+  .document{max-width:none;margin:0}
+  .sheet{box-shadow:none;margin:0;width:210mm;height:297mm;min-height:297mm;page-break-after:always;break-after:page}
+  .sheet:last-of-type{page-break-after:auto;break-after:auto}
+  button{display:none!important}
+  .ratio-input{border-bottom:1.2px solid #64748b!important;background:transparent!important;color:#000!important}
+}
+
+.practice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.example-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.practice-card,.example-card{border:1px solid var(--line);border-radius:10px;background:#fff;padding:6px;break-inside:avoid}
+.practice-card > svg,.example-card > svg{display:block;width:100%;height:auto}
+.practice-head{display:flex;justify-content:space-between;align-items:baseline;gap:6px;margin:0 0 4px}
+.practice-head b{font-size:12px}
+.practice-head span{font-size:10.5px;color:var(--muted)}
+.side-grid{display:grid;grid-template-columns:18px 1fr;gap:4px 6px;align-items:center;font-size:11px;margin-top:4px}
+.side-name{font-weight:700;text-align:center;color:#334155}
+.mini-answer{position:relative;min-height:24px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;padding:4px 6px;font-size:11px;display:flex;align-items:center}
+.mini-answer::before{content:'................................';letter-spacing:1.2px;color:#cbd5e1;white-space:nowrap;overflow:hidden}
+.mini-answer .answer{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--answer-bg);padding:2px 4px}
+.show-answers .mini-answer{background:var(--answer-bg);border-color:#86efac}
+.show-answers .mini-answer::before{opacity:0}
+.key-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px}
+.key-card{border:1px solid var(--line);border-radius:8px;background:var(--soft);padding:7px}
+.key-card b{display:block;margin-bottom:3px}
+.compare-strip{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.compare-card{border:1px solid var(--line);border-radius:10px;padding:6px;background:#fff}
+.compare-note{font-size:11.5px;color:var(--muted);margin-top:4px}
+.svg-label-ref{fill:#b45309;font-weight:700}
+.svg-label-vertex{fill:#0f172a;font-weight:700}
+.svg-label-side{fill:#1d4ed8;font-weight:700}
+
+
+.trig-def-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0}
+.trig-def{border:1.5px solid #94a3b8;border-radius:10px;padding:8px;text-align:center;background:#f8fafc}
+.trig-def .formula{font-size:17px;font-weight:800;margin:4px 0}
+.trig-def small{color:var(--muted)}
+.numeric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.numeric-card{border:1px solid var(--line);border-radius:10px;padding:6px;background:#fff;break-inside:avoid}
+.numeric-card > svg{display:block;width:100%;height:auto}
+.trig-answer-grid{display:grid;grid-template-columns:26px 1fr;gap:4px 5px;align-items:center;font-size:11px;margin-top:5px}
+.trig-answer-grid .tag{font-weight:800;color:#334155}
+.trig-answer-grid .mini-answer{min-height:23px}
+.work-box{position:relative;min-height:72px;border:1px dashed #94a3b8;border-radius:8px;margin-top:5px;padding:6px;background:#fff;font-size:11px}
+.work-box::before{content:'พื้นที่แสดงวิธีทำ / Working space';color:#94a3b8;font-size:10px}
+.work-box .answer{position:absolute;inset:0;padding:7px 9px;background:var(--answer-bg);display:flex;align-items:center;white-space:normal;line-height:1.5}
+.show-answers .work-box{background:var(--answer-bg);border-color:#86efac}
+.show-answers .work-box::before{opacity:0}
+.numeric-note{font-size:10.5px;color:var(--muted);margin-top:3px}
+.pyth-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.pyth-card{border:1px solid var(--line);border-radius:10px;padding:7px;background:#fff;break-inside:avoid}
+.pyth-card > svg{display:block;width:100%;height:auto;max-height:118px}
+.pyth-card .work-box{min-height:78px}
+
+
+/* Worksheet 3: keep numeric side labels readable on rotated triangles */
+.numeric-card .svg-label-side,
+.pyth-card .svg-label-side{
+  paint-order:stroke fill;
+  stroke:#fff;
+  stroke-width:5px;
+  stroke-linejoin:round;
+  font-weight:800;
+}
+.numeric-card .svg-label-ref,
+.pyth-card .svg-label-ref{
+  paint-order:stroke fill;
+  stroke:#fff;
+  stroke-width:4px;
+  stroke-linejoin:round;
+}
+
+
+
+/* MathJax safety: never size MathJax-generated SVGs like worksheet diagrams */
+mjx-container[jax="SVG"] > svg{width:auto !important;height:auto !important;max-width:none !important;display:inline-block !important;margin:0 !important}
+
+
+/* ===== Worksheet 6: Trigonometry to Python ===== */
+.python-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:8px}
+.python-card{border:1px solid var(--line);border-radius:10px;background:#fff;padding:8px;break-inside:avoid}
+.python-card h3{font-size:14px;margin:0 0 5px}
+.python-card p{font-size:11.5px;margin:3px 0}
+.code-block{margin:6px 0;border:1px solid #cbd5e1;border-radius:9px;background:#f8fafc;overflow:hidden;break-inside:avoid}
+.code-title{padding:5px 8px;border-bottom:1px solid #cbd5e1;background:#eef2f7;font-size:10.5px;font-weight:800;color:#334155}
+.code-block pre{margin:0;padding:8px 10px;white-space:pre-wrap;overflow-wrap:anywhere;font:11.2px/1.48 Consolas,"Courier New",monospace;color:#0f172a;background:#f8fafc}
+.code-block code{font:inherit;color:inherit;background:transparent;padding:0}
+.code-inline{font-family:Consolas,"Courier New",monospace;background:#eef2ff;border:1px solid #c7d2fe;border-radius:4px;padding:0 3px;color:#312e81}
+.flow-row{display:grid;grid-template-columns:1fr 30px 1.25fr 30px 1fr;gap:4px;align-items:center;margin:8px 0}
+.flow-box{border:1.5px solid #94a3b8;border-radius:9px;min-height:62px;padding:7px;text-align:center;background:#fff;font-size:11px;display:flex;flex-direction:column;justify-content:center}
+.flow-arrow{text-align:center;font-size:22px;color:#64748b;font-weight:800}
+.trace-table td,.trace-table th{font-size:10.7px;padding:5px 6px}
+.code-blank{display:inline-block;min-width:58px;border-bottom:1.4px solid #475569;height:17px;vertical-align:bottom}
+.code-answer{color:var(--answer);font-family:Consolas,"Courier New",monospace;font-weight:800;opacity:0;visibility:hidden}
+.show-answers .code-answer{opacity:1;visibility:visible}
+.fill-code{font:11px/1.55 Consolas,"Courier New",monospace;border:1px solid #cbd5e1;border-radius:8px;padding:8px;background:#fff;min-height:72px;white-space:pre-wrap}
+.fill-line{position:relative;display:block;min-height:18px}
+.fill-line .answer{font-family:Consolas,"Courier New",monospace}
+.step-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}
+.step-chip{border:1px solid #bfdbfe;background:#eff6ff;border-radius:8px;padding:6px;text-align:center;font-size:10.5px;font-weight:800;color:#1e3a8a}
+.python-note{border-left:4px solid #1d4ed8;background:#eff6ff;padding:7px 9px;border-radius:0 8px 8px 0;font-size:11.2px;margin:7px 0}
+.python-check{display:grid;grid-template-columns:24px 1fr;gap:5px 7px;align-items:start;margin-top:6px;font-size:11px}
+.python-check b{color:#1d4ed8;text-align:center}
+.run-output{border:1px dashed #94a3b8;border-radius:8px;background:#0f172a;color:#e2e8f0;padding:7px 9px;font:10.8px/1.5 Consolas,"Courier New",monospace;white-space:pre-wrap;margin-top:6px}
+@media print{
+  .code-block pre{font-size:10.5px!important}
+  .python-card{break-inside:avoid}
+}
+
+</style>
+
+
+<style id="worksheet4-styles">
+.special-layout{display:grid;grid-template-columns:1.05fr .95fr;gap:10px;align-items:start;margin-top:8px}
+.special-figure{border:1px solid var(--line);border-radius:12px;padding:8px;background:#fff}
+.special-figure > svg{display:block;width:100%;height:auto}
+.special-figure text{font-family:Arial,"Noto Sans Thai",sans-serif}
+.derive-stack{display:grid;gap:7px}
+.derive-card{border:1px solid var(--line);border-radius:10px;padding:8px;background:var(--soft);break-inside:avoid}
+.derive-card h3{font-size:13px;margin:0 0 4px}
+.derive-card p{margin:2px 0;font-size:11.5px}
+.derive-work{position:relative;min-height:76px;border:1px dashed #94a3b8;border-radius:8px;background:#fff;padding:7px;margin-top:5px}
+.derive-work::before{content:'พื้นที่แสดงวิธีทำ / Working space';font-size:10px;color:#94a3b8}
+.derive-work .answer{position:absolute;inset:0;background:var(--answer-bg);padding:8px 10px;display:flex;align-items:center;line-height:1.55}
+.show-answers .derive-work{background:var(--answer-bg);border-color:#86efac}
+.show-answers .derive-work::before{opacity:0}
+.special-ratios{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}
+.special-ratio{border:1px solid #cbd5e1;border-radius:8px;padding:6px;background:#fff;text-align:center;min-height:58px;position:relative}
+.special-ratio b{display:block;font-size:11px;margin-bottom:2px}
+.special-ratio .answer{position:absolute;inset:23px 4px 4px;background:var(--answer-bg);display:flex;align-items:center;justify-content:center;border-radius:5px}
+.special-ratio::after{content:'________________';color:#cbd5e1;font-size:11px}
+.show-answers .special-ratio::after{opacity:0}
+.angle-pair{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.angle-box{border:1px solid var(--line);border-radius:10px;padding:7px;background:#fff}
+.angle-box h3{font-size:13px;margin:0 0 4px;text-align:center}
+.special-table{width:100%;border-collapse:collapse;margin-top:8px;font-size:12px}
+.special-table th,.special-table td{border:1px solid #94a3b8;padding:6px;text-align:center;height:42px}
+.special-table th{background:#f1f5f9}
+.special-table .fill{position:relative;min-width:90px;background:#fff}
+.special-table .fill::before{content:'________________';color:#cbd5e1}
+.special-table .fill .answer{position:absolute;inset:2px;background:var(--answer-bg);display:flex;align-items:center;justify-content:center}
+.show-answers .special-table .fill::before{opacity:0}
+.pattern-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.pattern-card{border:1px solid var(--line);border-radius:9px;padding:7px;background:#fff}
+.pattern-card .answer-box{min-height:48px}
+.svg-number{font-size:14px;font-weight:800;fill:#1d4ed8;paint-order:stroke fill;stroke:white;stroke-width:5px;stroke-linejoin:round}
+.svg-angle{font-size:14px;font-weight:800;fill:#b45309;paint-order:stroke fill;stroke:white;stroke-width:4px;stroke-linejoin:round}
+.svg-side-note{font-size:12px;font-weight:700;fill:#334155;paint-order:stroke fill;stroke:white;stroke-width:4px;stroke-linejoin:round}
+@media print{
+  .special-layout,.angle-pair,.pattern-grid{break-inside:avoid}
+  .derive-card,.special-figure,.angle-box,.pattern-card{break-inside:avoid}
+}
+
+
+
+/* ===== Worksheet 6: Trigonometry to Python ===== */
+.python-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:8px}
+.python-card{border:1px solid var(--line);border-radius:10px;background:#fff;padding:8px;break-inside:avoid}
+.python-card h3{font-size:14px;margin:0 0 5px}
+.python-card p{font-size:11.5px;margin:3px 0}
+.code-block{margin:6px 0;border:1px solid #cbd5e1;border-radius:9px;background:#f8fafc;overflow:hidden;break-inside:avoid}
+.code-title{padding:5px 8px;border-bottom:1px solid #cbd5e1;background:#eef2f7;font-size:10.5px;font-weight:800;color:#334155}
+.code-block pre{margin:0;padding:8px 10px;white-space:pre-wrap;overflow-wrap:anywhere;font:11.2px/1.48 Consolas,"Courier New",monospace;color:#0f172a;background:#f8fafc}
+.code-block code{font:inherit;color:inherit;background:transparent;padding:0}
+.code-inline{font-family:Consolas,"Courier New",monospace;background:#eef2ff;border:1px solid #c7d2fe;border-radius:4px;padding:0 3px;color:#312e81}
+.flow-row{display:grid;grid-template-columns:1fr 30px 1.25fr 30px 1fr;gap:4px;align-items:center;margin:8px 0}
+.flow-box{border:1.5px solid #94a3b8;border-radius:9px;min-height:62px;padding:7px;text-align:center;background:#fff;font-size:11px;display:flex;flex-direction:column;justify-content:center}
+.flow-arrow{text-align:center;font-size:22px;color:#64748b;font-weight:800}
+.trace-table td,.trace-table th{font-size:10.7px;padding:5px 6px}
+.code-blank{display:inline-block;min-width:58px;border-bottom:1.4px solid #475569;height:17px;vertical-align:bottom}
+.code-answer{color:var(--answer);font-family:Consolas,"Courier New",monospace;font-weight:800;opacity:0;visibility:hidden}
+.show-answers .code-answer{opacity:1;visibility:visible}
+.fill-code{font:11px/1.55 Consolas,"Courier New",monospace;border:1px solid #cbd5e1;border-radius:8px;padding:8px;background:#fff;min-height:72px;white-space:pre-wrap}
+.fill-line{position:relative;display:block;min-height:18px}
+.fill-line .answer{font-family:Consolas,"Courier New",monospace}
+.step-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}
+.step-chip{border:1px solid #bfdbfe;background:#eff6ff;border-radius:8px;padding:6px;text-align:center;font-size:10.5px;font-weight:800;color:#1e3a8a}
+.python-note{border-left:4px solid #1d4ed8;background:#eff6ff;padding:7px 9px;border-radius:0 8px 8px 0;font-size:11.2px;margin:7px 0}
+.python-check{display:grid;grid-template-columns:24px 1fr;gap:5px 7px;align-items:start;margin-top:6px;font-size:11px}
+.python-check b{color:#1d4ed8;text-align:center}
+.run-output{border:1px dashed #94a3b8;border-radius:8px;background:#0f172a;color:#e2e8f0;padding:7px 9px;font:10.8px/1.5 Consolas,"Courier New",monospace;white-space:pre-wrap;margin-top:6px}
+@media print{
+  .code-block pre{font-size:10.5px!important}
+  .python-card{break-inside:avoid}
+}
+
+</style>
+
+<style id="worksheet5-styles">
+/* ===== Worksheet 5 layout ===== */
+.w5-reference{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:7px 0}
+.w5-ref-card{border:1px solid var(--line);border-radius:9px;padding:6px;background:var(--soft);text-align:center;font-size:11px}
+.w5-ref-card b{display:block;font-size:13px;margin-bottom:3px}
+.solve-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}
+.solve-card{border:1px solid var(--line);border-radius:10px;background:#fff;padding:7px;break-inside:avoid}
+.solve-card > svg.w5-svg{display:block;width:100%;height:92px;margin:0 auto 3px}
+.solve-head{display:flex;justify-content:space-between;gap:8px;align-items:baseline;margin-bottom:2px}
+.solve-head b{font-size:12px}.solve-head span{font-size:10px;color:var(--muted)}
+.solve-steps{display:grid;grid-template-columns:68px 1fr;gap:4px 6px;align-items:center;font-size:10.8px;margin-top:4px}
+.solve-label{font-weight:700;color:#334155}
+.step-answer{position:relative;min-height:23px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;padding:3px 6px;overflow:hidden}
+.step-answer::before{content:'................................................................';color:#d1d5db;letter-spacing:.5px;white-space:nowrap}
+.step-answer .answer{position:absolute;inset:0;display:flex;align-items:center;padding:3px 6px;background:var(--answer-bg);font-size:10.8px}
+.show-answers .step-answer{background:var(--answer-bg);border-color:#86efac}.show-answers .step-answer::before{opacity:0}
+.mixed-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:7px}
+.mixed-card{border:1px solid var(--line);border-radius:9px;background:#fff;padding:6px;break-inside:avoid}
+.mixed-card > svg.w5-svg{display:block;width:100%;height:78px}
+.mixed-card .work-box{min-height:52px;margin-top:4px}
+.context-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.context-card{border:1px solid var(--line);border-radius:10px;padding:7px;background:#fff;break-inside:avoid}
+.context-card > svg.w5-svg{display:block;width:100%;height:78px;margin-bottom:3px}
+.context-card p{font-size:10.6px;margin:2px 0;line-height:1.34}
+.context-card .work-box{min-height:58px}
+.bridge-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:9px;align-items:start;margin-top:8px}
+.bridge-card{border:1px solid var(--line);border-radius:10px;padding:8px;background:#fff}.bridge-card > svg.w5-svg{display:block;width:100%;height:145px}
+.variable-map{display:grid;grid-template-columns:95px 1fr;gap:5px 8px;font-size:11px;margin-top:6px}.variable-map b{color:#334155}
+.w5-svg text{font-family:Arial,"Noto Sans Thai",sans-serif;paint-order:stroke;stroke:#fff;stroke-width:3.4px;stroke-linejoin:round}
+.w5-svg .plain{paint-order:normal;stroke:none}.w5-svg .angle-label{fill:#b45309;font-weight:800}.w5-svg .side-label{fill:#1d4ed8;font-weight:800}.w5-svg .unknown-label{fill:#b91c1c;font-weight:900}
+@media print{.solve-card,.mixed-card,.context-card,.bridge-card{break-inside:avoid}}
+
+/* ===== Worksheet 6: Trigonometry to Python ===== */
+.python-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:8px}
+.python-card{border:1px solid var(--line);border-radius:10px;background:#fff;padding:8px;break-inside:avoid}
+.python-card h3{font-size:14px;margin:0 0 5px}
+.python-card p{font-size:11.5px;margin:3px 0}
+.code-block{margin:6px 0;border:1px solid #cbd5e1;border-radius:9px;background:#f8fafc;overflow:hidden;break-inside:avoid}
+.code-title{padding:5px 8px;border-bottom:1px solid #cbd5e1;background:#eef2f7;font-size:10.5px;font-weight:800;color:#334155}
+.code-block pre{margin:0;padding:8px 10px;white-space:pre-wrap;overflow-wrap:anywhere;font:11.2px/1.48 Consolas,"Courier New",monospace;color:#0f172a;background:#f8fafc}
+.code-block code{font:inherit;color:inherit;background:transparent;padding:0}
+.code-inline{font-family:Consolas,"Courier New",monospace;background:#eef2ff;border:1px solid #c7d2fe;border-radius:4px;padding:0 3px;color:#312e81}
+.flow-row{display:grid;grid-template-columns:1fr 30px 1.25fr 30px 1fr;gap:4px;align-items:center;margin:8px 0}
+.flow-box{border:1.5px solid #94a3b8;border-radius:9px;min-height:62px;padding:7px;text-align:center;background:#fff;font-size:11px;display:flex;flex-direction:column;justify-content:center}
+.flow-arrow{text-align:center;font-size:22px;color:#64748b;font-weight:800}
+.trace-table td,.trace-table th{font-size:10.7px;padding:5px 6px}
+.code-blank{display:inline-block;min-width:58px;border-bottom:1.4px solid #475569;height:17px;vertical-align:bottom}
+.code-answer{color:var(--answer);font-family:Consolas,"Courier New",monospace;font-weight:800;opacity:0;visibility:hidden}
+.show-answers .code-answer{opacity:1;visibility:visible}
+.fill-code{font:11px/1.55 Consolas,"Courier New",monospace;border:1px solid #cbd5e1;border-radius:8px;padding:8px;background:#fff;min-height:72px;white-space:pre-wrap}
+.fill-line{position:relative;display:block;min-height:18px}
+.fill-line .answer{font-family:Consolas,"Courier New",monospace}
+.step-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}
+.step-chip{border:1px solid #bfdbfe;background:#eff6ff;border-radius:8px;padding:6px;text-align:center;font-size:10.5px;font-weight:800;color:#1e3a8a}
+.python-note{border-left:4px solid #1d4ed8;background:#eff6ff;padding:7px 9px;border-radius:0 8px 8px 0;font-size:11.2px;margin:7px 0}
+.python-check{display:grid;grid-template-columns:24px 1fr;gap:5px 7px;align-items:start;margin-top:6px;font-size:11px}
+.python-check b{color:#1d4ed8;text-align:center}
+.run-output{border:1px dashed #94a3b8;border-radius:8px;background:#0f172a;color:#e2e8f0;padding:7px 9px;font:10.8px/1.5 Consolas,"Courier New",monospace;white-space:pre-wrap;margin-top:6px}
+@media print{
+  .code-block pre{font-size:10.5px!important}
+  .python-card{break-inside:avoid}
+}
+
+</style>
+
+</head>
+<body>
+<div class="toolbar" aria-label="Document controls">
+  <button type="button" id="answerBtn" class="primary" onclick="toggleAnswers()">แสดงเฉลย / Show Answers</button>
+  <button type="button" onclick="window.print()">พิมพ์ / Print</button>
+</div>
+
+<main class="document" id="documentRoot">
+
+<!-- =========================================================
+     WORKSHEET 1 / LESSON 1
+     ========================================================= -->
+<section class="sheet lesson-sheet" id="lesson-1-page-1" data-page="1">
+  <header class="header">
+    <div class="kicker">ใบความรู้และใบงานที่ 1 · Guided Notes & Worksheet 1</div>
+    <h1>อัตราส่วนของด้านเมื่อมุมคงที่<br><span style="font-size:.72em;color:#475569">Constant Side Ratios When the Angle Is Fixed</span></h1>
+    <div class="subtitle">สังเกตก่อนตั้งชื่ออัตราส่วน · Discover the pattern before naming the ratios</div>
+    <div class="meta-row"><span>ชื่อ / Name:</span><span>ชั้น / Class:</span><span>วันที่ / Date:</span></div>
+  </header>
+
+  <div class="goal">
+    <strong>เป้าหมาย / Goal</strong>
+    สังเกตว่าสามเหลี่ยมมุมฉากที่มี <b>มุมอ้างอิงเท่ากัน</b> แต่มีขนาดต่างกัน จะมีอัตราส่วนของด้านที่จับคู่กันคงที่<br>
+    <span class="en">Observe that right triangles with the same reference angle but different sizes have constant ratios between corresponding sides.</span>
+  </div>
+
+  <div class="note">
+    <b>วิธีอ่านรูป / How to read the diagrams:</b>
+    วงกลมทั้ง 4 มีจุดศูนย์กลางเดียวกัน จุด \(P_1,P_2,P_3,P_4\) อยู่บนรังสีที่ทำมุมเดียวกันกับแกน \(x\) เมื่อหย่อนเส้นตั้งฉากลงแกน \(x\) จะเกิดสามเหลี่ยมมุมฉาก 4 รูปที่มีขนาดต่างกัน<br>
+    <span class="en">The four circles share one center. Points \(P_1\)–\(P_4\) lie on the same ray. Dropping perpendiculars to the \(x\)-axis creates four different-sized right triangles with the same reference angle.</span>
+  </div>
+
+  <div class="figure-card">
+    <div class="figure-head"><b>รูป A — มุมอ้างอิง \(30^\circ\)</b><span>Reference angle = \(30^\circ\)</span></div>
+    <svg viewBox="0 0 720 180" role="img" aria-label="Four concentric circles and right triangles at 30 degrees">
+      <defs>
+        <style>
+          .c{fill:none;stroke:#cbd5e1;stroke-width:1.5}.axis{stroke:#0f172a;stroke-width:2}.ray{stroke:#1d4ed8;stroke-width:2.6}.drop{stroke:#64748b;stroke-width:1.5;stroke-dasharray:4 3}.pt{fill:#0f172a}.lab{font:12px Arial,sans-serif;fill:#0f172a}.sub{font:11px Arial,sans-serif;fill:#475569}.arc{fill:none;stroke:#1d4ed8;stroke-width:1.8}
+        
+.practice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.example-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.practice-card,.example-card{border:1px solid var(--line);border-radius:10px;background:#fff;padding:6px;break-inside:avoid}
+.practice-card > svg,.example-card > svg{display:block;width:100%;height:auto}
+.practice-head{display:flex;justify-content:space-between;align-items:baseline;gap:6px;margin:0 0 4px}
+.practice-head b{font-size:12px}
+.practice-head span{font-size:10.5px;color:var(--muted)}
+.side-grid{display:grid;grid-template-columns:18px 1fr;gap:4px 6px;align-items:center;font-size:11px;margin-top:4px}
+.side-name{font-weight:700;text-align:center;color:#334155}
+.mini-answer{position:relative;min-height:24px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;padding:4px 6px;font-size:11px;display:flex;align-items:center}
+.mini-answer::before{content:'................................';letter-spacing:1.2px;color:#cbd5e1;white-space:nowrap;overflow:hidden}
+.mini-answer .answer{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--answer-bg);padding:2px 4px}
+.show-answers .mini-answer{background:var(--answer-bg);border-color:#86efac}
+.show-answers .mini-answer::before{opacity:0}
+.key-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px}
+.key-card{border:1px solid var(--line);border-radius:8px;background:var(--soft);padding:7px}
+.key-card b{display:block;margin-bottom:3px}
+.compare-strip{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.compare-card{border:1px solid var(--line);border-radius:10px;padding:6px;background:#fff}
+.compare-note{font-size:11.5px;color:var(--muted);margin-top:4px}
+.svg-label-ref{fill:#b45309;font-weight:700}
+.svg-label-vertex{fill:#0f172a;font-weight:700}
+.svg-label-side{fill:#1d4ed8;font-weight:700}
+
+
+.trig-def-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0}
+.trig-def{border:1.5px solid #94a3b8;border-radius:10px;padding:8px;text-align:center;background:#f8fafc}
+.trig-def .formula{font-size:17px;font-weight:800;margin:4px 0}
+.trig-def small{color:var(--muted)}
+.numeric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.numeric-card{border:1px solid var(--line);border-radius:10px;padding:6px;background:#fff;break-inside:avoid}
+.numeric-card > svg{display:block;width:100%;height:auto}
+.trig-answer-grid{display:grid;grid-template-columns:26px 1fr;gap:4px 5px;align-items:center;font-size:11px;margin-top:5px}
+.trig-answer-grid .tag{font-weight:800;color:#334155}
+.trig-answer-grid .mini-answer{min-height:23px}
+.work-box{position:relative;min-height:72px;border:1px dashed #94a3b8;border-radius:8px;margin-top:5px;padding:6px;background:#fff;font-size:11px}
+.work-box::before{content:'พื้นที่แสดงวิธีทำ / Working space';color:#94a3b8;font-size:10px}
+.work-box .answer{position:absolute;inset:0;padding:7px 9px;background:var(--answer-bg);display:flex;align-items:center;white-space:normal;line-height:1.5}
+.show-answers .work-box{background:var(--answer-bg);border-color:#86efac}
+.show-answers .work-box::before{opacity:0}
+.numeric-note{font-size:10.5px;color:var(--muted);margin-top:3px}
+.pyth-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.pyth-card{border:1px solid var(--line);border-radius:10px;padding:7px;background:#fff;break-inside:avoid}
+.pyth-card > svg{display:block;width:100%;height:auto;max-height:118px}
+.pyth-card .work-box{min-height:78px}
+
+
+/* Worksheet 3: keep numeric side labels readable on rotated triangles */
+.numeric-card .svg-label-side,
+.pyth-card .svg-label-side{
+  paint-order:stroke fill;
+  stroke:#fff;
+  stroke-width:5px;
+  stroke-linejoin:round;
+  font-weight:800;
+}
+.numeric-card .svg-label-ref,
+.pyth-card .svg-label-ref{
+  paint-order:stroke fill;
+  stroke:#fff;
+  stroke-width:4px;
+  stroke-linejoin:round;
+}
+
+
+
+
+/* ===== Worksheet 6: Trigonometry to Python ===== */
+.python-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:8px}
+.python-card{border:1px solid var(--line);border-radius:10px;background:#fff;padding:8px;break-inside:avoid}
+.python-card h3{font-size:14px;margin:0 0 5px}
+.python-card p{font-size:11.5px;margin:3px 0}
+.code-block{margin:6px 0;border:1px solid #cbd5e1;border-radius:9px;background:#f8fafc;overflow:hidden;break-inside:avoid}
+.code-title{padding:5px 8px;border-bottom:1px solid #cbd5e1;background:#eef2f7;font-size:10.5px;font-weight:800;color:#334155}
+.code-block pre{margin:0;padding:8px 10px;white-space:pre-wrap;overflow-wrap:anywhere;font:11.2px/1.48 Consolas,"Courier New",monospace;color:#0f172a;background:#f8fafc}
+.code-block code{font:inherit;color:inherit;background:transparent;padding:0}
+.code-inline{font-family:Consolas,"Courier New",monospace;background:#eef2ff;border:1px solid #c7d2fe;border-radius:4px;padding:0 3px;color:#312e81}
+.flow-row{display:grid;grid-template-columns:1fr 30px 1.25fr 30px 1fr;gap:4px;align-items:center;margin:8px 0}
+.flow-box{border:1.5px solid #94a3b8;border-radius:9px;min-height:62px;padding:7px;text-align:center;background:#fff;font-size:11px;display:flex;flex-direction:column;justify-content:center}
+.flow-arrow{text-align:center;font-size:22px;color:#64748b;font-weight:800}
+.trace-table td,.trace-table th{font-size:10.7px;padding:5px 6px}
+.code-blank{display:inline-block;min-width:58px;border-bottom:1.4px solid #475569;height:17px;vertical-align:bottom}
+.code-answer{color:var(--answer);font-family:Consolas,"Courier New",monospace;font-weight:800;opacity:0;visibility:hidden}
+.show-answers .code-answer{opacity:1;visibility:visible}
+.fill-code{font:11px/1.55 Consolas,"Courier New",monospace;border:1px solid #cbd5e1;border-radius:8px;padding:8px;background:#fff;min-height:72px;white-space:pre-wrap}
+.fill-line{position:relative;display:block;min-height:18px}
+.fill-line .answer{font-family:Consolas,"Courier New",monospace}
+.step-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}
+.step-chip{border:1px solid #bfdbfe;background:#eff6ff;border-radius:8px;padding:6px;text-align:center;font-size:10.5px;font-weight:800;color:#1e3a8a}
+.python-note{border-left:4px solid #1d4ed8;background:#eff6ff;padding:7px 9px;border-radius:0 8px 8px 0;font-size:11.2px;margin:7px 0}
+.python-check{display:grid;grid-template-columns:24px 1fr;gap:5px 7px;align-items:start;margin-top:6px;font-size:11px}
+.python-check b{color:#1d4ed8;text-align:center}
+.run-output{border:1px dashed #94a3b8;border-radius:8px;background:#0f172a;color:#e2e8f0;padding:7px 9px;font:10.8px/1.5 Consolas,"Courier New",monospace;white-space:pre-wrap;margin-top:6px}
+@media print{
+  .code-block pre{font-size:10.5px!important}
+  .python-card{break-inside:avoid}
+}
+
+</style>
+      </defs>
+      <line class="axis" x1="48" y1="145" x2="680" y2="145"/>
+      <line class="axis" x1="85" y1="158" x2="85" y2="20"/>
+      <text class="lab" x="687" y="149">x</text><text class="lab" x="78" y="15">y</text><text class="lab" x="70" y="160">O</text>
+      <circle class="c" cx="85" cy="145" r="28"/><circle class="c" cx="85" cy="145" r="56"/><circle class="c" cx="85" cy="145" r="84"/><circle class="c" cx="85" cy="145" r="112"/>
+      <line class="ray" x1="85" y1="145" x2="182" y2="89"/>
+      <path class="arc" d="M115 145 A30 30 0 0 0 111 130"/><text class="lab" x="118" y="133">30°</text>
+      <line class="drop" x1="109.25" y1="131" x2="109.25" y2="145"/><circle class="pt" cx="109.25" cy="131" r="3"/><text class="sub" x="112" y="127">P₁</text>
+      <line class="drop" x1="133.50" y1="117" x2="133.50" y2="145"/><circle class="pt" cx="133.50" cy="117" r="3"/><text class="sub" x="136" y="113">P₂</text>
+      <line class="drop" x1="157.75" y1="103" x2="157.75" y2="145"/><circle class="pt" cx="157.75" cy="103" r="3"/><text class="sub" x="160" y="99">P₃</text>
+      <line class="drop" x1="182" y1="89" x2="182" y2="145"/><circle class="pt" cx="182" cy="89" r="3"/><text class="sub" x="185" y="85">P₄</text>
+      <text class="sub" x="245" y="52">สังเกต: รังสีเส้นเดียวกันตัดวงกลม 4 วง</text>
+      <text class="sub" x="245" y="70">Observe: the same ray intersects four circles.</text>
+      <text class="sub" x="245" y="100">แต่ละ P สร้างสามเหลี่ยมมุมฉากกับแกน x</text>
+      <text class="sub" x="245" y="118">Each P forms a right triangle with the x-axis.</text>
+    </svg>
+    <div class="caption">รูปไม่ได้ใช้เพื่ออ่านค่าความยาวโดยตรง — ใช้ค่าจำลองในตารางหน้า 2 / Use the model lengths on page 2 for calculations.</div>
+  </div>
+
+  <div class="figure-card">
+    <div class="figure-head"><b>รูป B — มุมอ้างอิง \(45^\circ\)</b><span>Reference angle = \(45^\circ\)</span></div>
+    <svg viewBox="0 0 720 180" role="img" aria-label="Four concentric circles and right triangles at 45 degrees">
+      <defs><style>.c2{fill:none;stroke:#cbd5e1;stroke-width:1.5}.a2{stroke:#0f172a;stroke-width:2}.r2{stroke:#1d4ed8;stroke-width:2.6}.d2{stroke:#64748b;stroke-width:1.5;stroke-dasharray:4 3}.p2{fill:#0f172a}.l2{font:12px Arial,sans-serif;fill:#0f172a}.s2{font:11px Arial,sans-serif;fill:#475569}.ar2{fill:none;stroke:#1d4ed8;stroke-width:1.8}
+.practice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.example-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.practice-card,.example-card{border:1px solid var(--line);border-radius:10px;background:#fff;padding:6px;break-inside:avoid}
+.practice-card > svg,.example-card > svg{display:block;width:100%;height:auto}
+.practice-head{display:flex;justify-content:space-between;align-items:baseline;gap:6px;margin:0 0 4px}
+.practice-head b{font-size:12px}
+.practice-head span{font-size:10.5px;color:var(--muted)}
+.side-grid{display:grid;grid-template-columns:18px 1fr;gap:4px 6px;align-items:center;font-size:11px;margin-top:4px}
+.side-name{font-weight:700;text-align:center;color:#334155}
+.mini-answer{position:relative;min-height:24px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;padding:4px 6px;font-size:11px;display:flex;align-items:center}
+.mini-answer::before{content:'................................';letter-spacing:1.2px;color:#cbd5e1;white-space:nowrap;overflow:hidden}
+.mini-answer .answer{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--answer-bg);padding:2px 4px}
+.show-answers .mini-answer{background:var(--answer-bg);border-color:#86efac}
+.show-answers .mini-answer::before{opacity:0}
+.key-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px}
+.key-card{border:1px solid var(--line);border-radius:8px;background:var(--soft);padding:7px}
+.key-card b{display:block;margin-bottom:3px}
+.compare-strip{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.compare-card{border:1px solid var(--line);border-radius:10px;padding:6px;background:#fff}
+.compare-note{font-size:11.5px;color:var(--muted);margin-top:4px}
+.svg-label-ref{fill:#b45309;font-weight:700}
+.svg-label-vertex{fill:#0f172a;font-weight:700}
+.svg-label-side{fill:#1d4ed8;font-weight:700}
+
+
+.trig-def-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0}
+.trig-def{border:1.5px solid #94a3b8;border-radius:10px;padding:8px;text-align:center;background:#f8fafc}
+.trig-def .formula{font-size:17px;font-weight:800;margin:4px 0}
+.trig-def small{color:var(--muted)}
+.numeric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.numeric-card{border:1px solid var(--line);border-radius:10px;padding:6px;background:#fff;break-inside:avoid}
+.numeric-card > svg{display:block;width:100%;height:auto}
+.trig-answer-grid{display:grid;grid-template-columns:26px 1fr;gap:4px 5px;align-items:center;font-size:11px;margin-top:5px}
+.trig-answer-grid .tag{font-weight:800;color:#334155}
+.trig-answer-grid .mini-answer{min-height:23px}
+.work-box{position:relative;min-height:72px;border:1px dashed #94a3b8;border-radius:8px;margin-top:5px;padding:6px;background:#fff;font-size:11px}
+.work-box::before{content:'พื้นที่แสดงวิธีทำ / Working space';color:#94a3b8;font-size:10px}
+.work-box .answer{position:absolute;inset:0;padding:7px 9px;background:var(--answer-bg);display:flex;align-items:center;white-space:normal;line-height:1.5}
+.show-answers .work-box{background:var(--answer-bg);border-color:#86efac}
+.show-answers .work-box::before{opacity:0}
+.numeric-note{font-size:10.5px;color:var(--muted);margin-top:3px}
+.pyth-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.pyth-card{border:1px solid var(--line);border-radius:10px;padding:7px;background:#fff;break-inside:avoid}
+.pyth-card > svg{display:block;width:100%;height:auto;max-height:118px}
+.pyth-card .work-box{min-height:78px}
+
+
+/* Worksheet 3: keep numeric side labels readable on rotated triangles */
+.numeric-card .svg-label-side,
+.pyth-card .svg-label-side{
+  paint-order:stroke fill;
+  stroke:#fff;
+  stroke-width:5px;
+  stroke-linejoin:round;
+  font-weight:800;
+}
+.numeric-card .svg-label-ref,
+.pyth-card .svg-label-ref{
+  paint-order:stroke fill;
+  stroke:#fff;
+  stroke-width:4px;
+  stroke-linejoin:round;
+}
+
+
+
+
+/* ===== Worksheet 6: Trigonometry to Python ===== */
+.python-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:8px}
+.python-card{border:1px solid var(--line);border-radius:10px;background:#fff;padding:8px;break-inside:avoid}
+.python-card h3{font-size:14px;margin:0 0 5px}
+.python-card p{font-size:11.5px;margin:3px 0}
+.code-block{margin:6px 0;border:1px solid #cbd5e1;border-radius:9px;background:#f8fafc;overflow:hidden;break-inside:avoid}
+.code-title{padding:5px 8px;border-bottom:1px solid #cbd5e1;background:#eef2f7;font-size:10.5px;font-weight:800;color:#334155}
+.code-block pre{margin:0;padding:8px 10px;white-space:pre-wrap;overflow-wrap:anywhere;font:11.2px/1.48 Consolas,"Courier New",monospace;color:#0f172a;background:#f8fafc}
+.code-block code{font:inherit;color:inherit;background:transparent;padding:0}
+.code-inline{font-family:Consolas,"Courier New",monospace;background:#eef2ff;border:1px solid #c7d2fe;border-radius:4px;padding:0 3px;color:#312e81}
+.flow-row{display:grid;grid-template-columns:1fr 30px 1.25fr 30px 1fr;gap:4px;align-items:center;margin:8px 0}
+.flow-box{border:1.5px solid #94a3b8;border-radius:9px;min-height:62px;padding:7px;text-align:center;background:#fff;font-size:11px;display:flex;flex-direction:column;justify-content:center}
+.flow-arrow{text-align:center;font-size:22px;color:#64748b;font-weight:800}
+.trace-table td,.trace-table th{font-size:10.7px;padding:5px 6px}
+.code-blank{display:inline-block;min-width:58px;border-bottom:1.4px solid #475569;height:17px;vertical-align:bottom}
+.code-answer{color:var(--answer);font-family:Consolas,"Courier New",monospace;font-weight:800;opacity:0;visibility:hidden}
+.show-answers .code-answer{opacity:1;visibility:visible}
+.fill-code{font:11px/1.55 Consolas,"Courier New",monospace;border:1px solid #cbd5e1;border-radius:8px;padding:8px;background:#fff;min-height:72px;white-space:pre-wrap}
+.fill-line{position:relative;display:block;min-height:18px}
+.fill-line .answer{font-family:Consolas,"Courier New",monospace}
+.step-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}
+.step-chip{border:1px solid #bfdbfe;background:#eff6ff;border-radius:8px;padding:6px;text-align:center;font-size:10.5px;font-weight:800;color:#1e3a8a}
+.python-note{border-left:4px solid #1d4ed8;background:#eff6ff;padding:7px 9px;border-radius:0 8px 8px 0;font-size:11.2px;margin:7px 0}
+.python-check{display:grid;grid-template-columns:24px 1fr;gap:5px 7px;align-items:start;margin-top:6px;font-size:11px}
+.python-check b{color:#1d4ed8;text-align:center}
+.run-output{border:1px dashed #94a3b8;border-radius:8px;background:#0f172a;color:#e2e8f0;padding:7px 9px;font:10.8px/1.5 Consolas,"Courier New",monospace;white-space:pre-wrap;margin-top:6px}
+@media print{
+  .code-block pre{font-size:10.5px!important}
+  .python-card{break-inside:avoid}
+}
+
+</style></defs>
+      <line class="a2" x1="48" y1="145" x2="680" y2="145"/><line class="a2" x1="85" y1="158" x2="85" y2="20"/>
+      <text class="l2" x="687" y="149">x</text><text class="l2" x="78" y="15">y</text><text class="l2" x="70" y="160">O</text>
+      <circle class="c2" cx="85" cy="145" r="28"/><circle class="c2" cx="85" cy="145" r="56"/><circle class="c2" cx="85" cy="145" r="84"/><circle class="c2" cx="85" cy="145" r="112"/>
+      <line class="r2" x1="85" y1="145" x2="164.2" y2="65.8"/>
+      <path class="ar2" d="M115 145 A30 30 0 0 0 106.2 123.8"/><text class="l2" x="116" y="127">45°</text>
+      <line class="d2" x1="104.8" y1="125.2" x2="104.8" y2="145"/><circle class="p2" cx="104.8" cy="125.2" r="3"/><text class="s2" x="108" y="121">P₁</text>
+      <line class="d2" x1="124.6" y1="105.4" x2="124.6" y2="145"/><circle class="p2" cx="124.6" cy="105.4" r="3"/><text class="s2" x="128" y="101">P₂</text>
+      <line class="d2" x1="144.4" y1="85.6" x2="144.4" y2="145"/><circle class="p2" cx="144.4" cy="85.6" r="3"/><text class="s2" x="148" y="81">P₃</text>
+      <line class="d2" x1="164.2" y1="65.8" x2="164.2" y2="145"/><circle class="p2" cx="164.2" cy="65.8" r="3"/><text class="s2" x="168" y="61">P₄</text>
+      <text class="s2" x="245" y="58">สามเหลี่ยมทั้ง 4 มีมุมแหลมนี้เท่ากัน</text><text class="s2" x="245" y="76">All four triangles share the same acute angle.</text>
+      <text class="s2" x="245" y="105">ขนาดเปลี่ยน แต่รูปร่างยังคล้ายกัน</text><text class="s2" x="245" y="123">Their sizes change, but their shapes remain similar.</text>
+    </svg>
+  </div>
+
+  <div class="figure-card">
+    <div class="figure-head"><b>รูป C — มุมอ้างอิง \(60^\circ\)</b><span>Reference angle = \(60^\circ\)</span></div>
+    <svg viewBox="0 0 720 180" role="img" aria-label="Four concentric circles and right triangles at 60 degrees">
+      <defs><style>.c3{fill:none;stroke:#cbd5e1;stroke-width:1.5}.a3{stroke:#0f172a;stroke-width:2}.r3{stroke:#1d4ed8;stroke-width:2.6}.d3{stroke:#64748b;stroke-width:1.5;stroke-dasharray:4 3}.p3{fill:#0f172a}.l3{font:12px Arial,sans-serif;fill:#0f172a}.s3{font:11px Arial,sans-serif;fill:#475569}.ar3{fill:none;stroke:#1d4ed8;stroke-width:1.8}
+.practice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.example-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.practice-card,.example-card{border:1px solid var(--line);border-radius:10px;background:#fff;padding:6px;break-inside:avoid}
+.practice-card > svg,.example-card > svg{display:block;width:100%;height:auto}
+.practice-head{display:flex;justify-content:space-between;align-items:baseline;gap:6px;margin:0 0 4px}
+.practice-head b{font-size:12px}
+.practice-head span{font-size:10.5px;color:var(--muted)}
+.side-grid{display:grid;grid-template-columns:18px 1fr;gap:4px 6px;align-items:center;font-size:11px;margin-top:4px}
+.side-name{font-weight:700;text-align:center;color:#334155}
+.mini-answer{position:relative;min-height:24px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;padding:4px 6px;font-size:11px;display:flex;align-items:center}
+.mini-answer::before{content:'................................';letter-spacing:1.2px;color:#cbd5e1;white-space:nowrap;overflow:hidden}
+.mini-answer .answer{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--answer-bg);padding:2px 4px}
+.show-answers .mini-answer{background:var(--answer-bg);border-color:#86efac}
+.show-answers .mini-answer::before{opacity:0}
+.key-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px}
+.key-card{border:1px solid var(--line);border-radius:8px;background:var(--soft);padding:7px}
+.key-card b{display:block;margin-bottom:3px}
+.compare-strip{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.compare-card{border:1px solid var(--line);border-radius:10px;padding:6px;background:#fff}
+.compare-note{font-size:11.5px;color:var(--muted);margin-top:4px}
+.svg-label-ref{fill:#b45309;font-weight:700}
+.svg-label-vertex{fill:#0f172a;font-weight:700}
+.svg-label-side{fill:#1d4ed8;font-weight:700}
+
+
+.trig-def-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0}
+.trig-def{border:1.5px solid #94a3b8;border-radius:10px;padding:8px;text-align:center;background:#f8fafc}
+.trig-def .formula{font-size:17px;font-weight:800;margin:4px 0}
+.trig-def small{color:var(--muted)}
+.numeric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.numeric-card{border:1px solid var(--line);border-radius:10px;padding:6px;background:#fff;break-inside:avoid}
+.numeric-card > svg{display:block;width:100%;height:auto}
+.trig-answer-grid{display:grid;grid-template-columns:26px 1fr;gap:4px 5px;align-items:center;font-size:11px;margin-top:5px}
+.trig-answer-grid .tag{font-weight:800;color:#334155}
+.trig-answer-grid .mini-answer{min-height:23px}
+.work-box{position:relative;min-height:72px;border:1px dashed #94a3b8;border-radius:8px;margin-top:5px;padding:6px;background:#fff;font-size:11px}
+.work-box::before{content:'พื้นที่แสดงวิธีทำ / Working space';color:#94a3b8;font-size:10px}
+.work-box .answer{position:absolute;inset:0;padding:7px 9px;background:var(--answer-bg);display:flex;align-items:center;white-space:normal;line-height:1.5}
+.show-answers .work-box{background:var(--answer-bg);border-color:#86efac}
+.show-answers .work-box::before{opacity:0}
+.numeric-note{font-size:10.5px;color:var(--muted);margin-top:3px}
+.pyth-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.pyth-card{border:1px solid var(--line);border-radius:10px;padding:7px;background:#fff;break-inside:avoid}
+.pyth-card > svg{display:block;width:100%;height:auto;max-height:118px}
+.pyth-card .work-box{min-height:78px}
+
+
+/* Worksheet 3: keep numeric side labels readable on rotated triangles */
+.numeric-card .svg-label-side,
+.pyth-card .svg-label-side{
+  paint-order:stroke fill;
+  stroke:#fff;
+  stroke-width:5px;
+  stroke-linejoin:round;
+  font-weight:800;
+}
+.numeric-card .svg-label-ref,
+.pyth-card .svg-label-ref{
+  paint-order:stroke fill;
+  stroke:#fff;
+  stroke-width:4px;
+  stroke-linejoin:round;
+}
+
+
+
+
+/* ===== Worksheet 6: Trigonometry to Python ===== */
+.python-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:8px}
+.python-card{border:1px solid var(--line);border-radius:10px;background:#fff;padding:8px;break-inside:avoid}
+.python-card h3{font-size:14px;margin:0 0 5px}
+.python-card p{font-size:11.5px;margin:3px 0}
+.code-block{margin:6px 0;border:1px solid #cbd5e1;border-radius:9px;background:#f8fafc;overflow:hidden;break-inside:avoid}
+.code-title{padding:5px 8px;border-bottom:1px solid #cbd5e1;background:#eef2f7;font-size:10.5px;font-weight:800;color:#334155}
+.code-block pre{margin:0;padding:8px 10px;white-space:pre-wrap;overflow-wrap:anywhere;font:11.2px/1.48 Consolas,"Courier New",monospace;color:#0f172a;background:#f8fafc}
+.code-block code{font:inherit;color:inherit;background:transparent;padding:0}
+.code-inline{font-family:Consolas,"Courier New",monospace;background:#eef2ff;border:1px solid #c7d2fe;border-radius:4px;padding:0 3px;color:#312e81}
+.flow-row{display:grid;grid-template-columns:1fr 30px 1.25fr 30px 1fr;gap:4px;align-items:center;margin:8px 0}
+.flow-box{border:1.5px solid #94a3b8;border-radius:9px;min-height:62px;padding:7px;text-align:center;background:#fff;font-size:11px;display:flex;flex-direction:column;justify-content:center}
+.flow-arrow{text-align:center;font-size:22px;color:#64748b;font-weight:800}
+.trace-table td,.trace-table th{font-size:10.7px;padding:5px 6px}
+.code-blank{display:inline-block;min-width:58px;border-bottom:1.4px solid #475569;height:17px;vertical-align:bottom}
+.code-answer{color:var(--answer);font-family:Consolas,"Courier New",monospace;font-weight:800;opacity:0;visibility:hidden}
+.show-answers .code-answer{opacity:1;visibility:visible}
+.fill-code{font:11px/1.55 Consolas,"Courier New",monospace;border:1px solid #cbd5e1;border-radius:8px;padding:8px;background:#fff;min-height:72px;white-space:pre-wrap}
+.fill-line{position:relative;display:block;min-height:18px}
+.fill-line .answer{font-family:Consolas,"Courier New",monospace}
+.step-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}
+.step-chip{border:1px solid #bfdbfe;background:#eff6ff;border-radius:8px;padding:6px;text-align:center;font-size:10.5px;font-weight:800;color:#1e3a8a}
+.python-note{border-left:4px solid #1d4ed8;background:#eff6ff;padding:7px 9px;border-radius:0 8px 8px 0;font-size:11.2px;margin:7px 0}
+.python-check{display:grid;grid-template-columns:24px 1fr;gap:5px 7px;align-items:start;margin-top:6px;font-size:11px}
+.python-check b{color:#1d4ed8;text-align:center}
+.run-output{border:1px dashed #94a3b8;border-radius:8px;background:#0f172a;color:#e2e8f0;padding:7px 9px;font:10.8px/1.5 Consolas,"Courier New",monospace;white-space:pre-wrap;margin-top:6px}
+@media print{
+  .code-block pre{font-size:10.5px!important}
+  .python-card{break-inside:avoid}
+}
+
+</style></defs>
+      <line class="a3" x1="48" y1="145" x2="680" y2="145"/><line class="a3" x1="85" y1="158" x2="85" y2="20"/>
+      <text class="l3" x="687" y="149">x</text><text class="l3" x="78" y="15">y</text><text class="l3" x="70" y="160">O</text>
+      <circle class="c3" cx="85" cy="145" r="28"/><circle class="c3" cx="85" cy="145" r="56"/><circle class="c3" cx="85" cy="145" r="84"/><circle class="c3" cx="85" cy="145" r="112"/>
+      <line class="r3" x1="85" y1="145" x2="141" y2="48"/>
+      <path class="ar3" d="M115 145 A30 30 0 0 0 100 119"/><text class="l3" x="107" y="123">60°</text>
+      <line class="d3" x1="99" y1="120.75" x2="99" y2="145"/><circle class="p3" cx="99" cy="120.75" r="3"/><text class="s3" x="103" y="117">P₁</text>
+      <line class="d3" x1="113" y1="96.5" x2="113" y2="145"/><circle class="p3" cx="113" cy="96.5" r="3"/><text class="s3" x="117" y="92">P₂</text>
+      <line class="d3" x1="127" y1="72.25" x2="127" y2="145"/><circle class="p3" cx="127" cy="72.25" r="3"/><text class="s3" x="131" y="68">P₃</text>
+      <line class="d3" x1="141" y1="48" x2="141" y2="145"/><circle class="p3" cx="141" cy="48" r="3"/><text class="s3" x="145" y="44">P₄</text>
+      <text class="s3" x="245" y="58">เมื่อมุมเปลี่ยน รูปร่างของสามเหลี่ยมก็เปลี่ยน</text><text class="s3" x="245" y="76">When the angle changes, the triangle's shape changes.</text>
+      <text class="s3" x="245" y="105">คำถาม: อัตราส่วนจะยังเหมือนมุมอื่นหรือไม่?</text><text class="s3" x="245" y="123">Question: Will the ratios match those for other angles?</text>
+    </svg>
+  </div>
+
+  <div class="warning">
+    <b>ยังไม่ต้องจำชื่ออัตราส่วน / Do not memorize ratio names yet.</b>
+    ใบนี้ต้องการให้ค้นพบเพียงว่า “อะไรคงที่เมื่อมุมคงที่” ก่อน เราจะตั้งชื่ออัตราส่วนเหล่านี้ในใบถัด ๆ ไป
+  </div>
+</section>
+
+<section class="sheet lesson-sheet" id="lesson-1-page-2" data-page="2">
+  <header class="header">
+    <div class="kicker">ใบความรู้และใบงานที่ 1 · Guided Notes & Worksheet 1</div>
+    <h1>คำนวณแล้วมองหารูปแบบ<br><span style="font-size:.72em;color:#475569">Calculate and Look for the Pattern</span></h1>
+    <div class="subtitle">ใช้ค่าความยาวจำลองเพื่อเปรียบเทียบอัตราส่วน · Use model lengths to compare ratios</div>
+  </header>
+
+  <div class="note">
+    ในแต่ละมุม ให้พิจารณาสามเหลี่ยม 4 รูป โดย \(r\) คือด้านจากจุดศูนย์กลางไปยัง \(P\), \(x\) คือด้านตามแนวนอน และ \(y\) คือด้านตามแนวตั้ง<br>
+    <span class="en">For each angle, \(r\) is the side from the center to point \(P\), \(x\) is the horizontal side, and \(y\) is the vertical side.</span>
+  </div>
+
+  <div class="note"><b>ลงมือคำนวณ / Calculate:</b> ใช้ค่า \(x,y,r\) ที่กำหนด แล้วกรอกค่า \(y/r\), \(x/r\) และ \(y/x\) ลงในช่องว่างด้วยตนเอง ก่อนเปิดเฉลย<br><span class="en">Use the given \(x,y,r\) values and calculate \(y/r\), \(x/r\), and \(y/x\) yourself before showing the answers.</span></div>
+
+  <div class="section-title"><h2>กิจกรรม A — มุม \(30^\circ\)</h2><small>Activity A — 30°</small></div>
+  <table aria-label="30 degree ratio table">
+    <thead><tr><th>รูป / Triangle</th><th>\(x\)</th><th>\(y\)</th><th>\(r\)</th><th>\(y/r\)</th><th>\(x/r\)</th><th>\(y/x\)</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td class="given">3.46</td><td class="given">2.00</td><td class="given">4.00</td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.50</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.87</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.58</span></td></tr>
+      <tr><td>2</td><td class="given">6.93</td><td class="given">4.00</td><td class="given">8.00</td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.50</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.87</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.58</span></td></tr>
+      <tr><td>3</td><td class="given">10.39</td><td class="given">6.00</td><td class="given">12.00</td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.50</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.87</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.58</span></td></tr>
+      <tr><td>4</td><td class="given">13.86</td><td class="given">8.00</td><td class="given">16.00</td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.50</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.87</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.58</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title"><h2>กิจกรรม B — มุม \(45^\circ\)</h2><small>Activity B — 45°</small></div>
+  <table aria-label="45 degree ratio table">
+    <thead><tr><th>รูป / Triangle</th><th>\(x\)</th><th>\(y\)</th><th>\(r\)</th><th>\(y/r\)</th><th>\(x/r\)</th><th>\(y/x\)</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td class="given">2.83</td><td class="given">2.83</td><td class="given">4.00</td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.71</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.71</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">1.00</span></td></tr>
+      <tr><td>2</td><td class="given">5.66</td><td class="given">5.66</td><td class="given">8.00</td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.71</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.71</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">1.00</span></td></tr>
+      <tr><td>3</td><td class="given">8.49</td><td class="given">8.49</td><td class="given">12.00</td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.71</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.71</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">1.00</span></td></tr>
+      <tr><td>4</td><td class="given">11.31</td><td class="given">11.31</td><td class="given">16.00</td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.71</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.71</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">1.00</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title"><h2>กิจกรรม C — มุม \(60^\circ\)</h2><small>Activity C — 60°</small></div>
+  <table aria-label="60 degree ratio table">
+    <thead><tr><th>รูป / Triangle</th><th>\(x\)</th><th>\(y\)</th><th>\(r\)</th><th>\(y/r\)</th><th>\(x/r\)</th><th>\(y/x\)</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td class="given">2.00</td><td class="given">3.46</td><td class="given">4.00</td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.87</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.50</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">1.73</span></td></tr>
+      <tr><td>2</td><td class="given">4.00</td><td class="given">6.93</td><td class="given">8.00</td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.87</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.50</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">1.73</span></td></tr>
+      <tr><td>3</td><td class="given">6.00</td><td class="given">10.39</td><td class="given">12.00</td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.87</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.50</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">1.73</span></td></tr>
+      <tr><td>4</td><td class="given">8.00</td><td class="given">13.86</td><td class="given">16.00</td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.87</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.50</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">1.73</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="prompt">1) ในมุมเดียวกัน เมื่อสามเหลี่ยมใหญ่ขึ้น อัตราส่วนทั้งสามเปลี่ยนหรือไม่? <span class="en">For the same angle, do the three ratios change as the triangle gets larger?</span></div>
+  <div class="answer-box"><span class="answer">ไม่เปลี่ยนโดยประมาณ / They remain approximately constant.</span></div>
+
+  <div class="prompt">2) เมื่อเปลี่ยนมุมจาก \(30^\circ\) เป็น \(45^\circ\) หรือ \(60^\circ\) ค่าอัตราส่วนเปลี่ยนหรือไม่? <span class="en">Do the ratios change when the angle changes?</span></div>
+  <div class="answer-box"><span class="answer">เปลี่ยน / Yes. Different angles give different ratio values.</span></div>
+</section>
+
+<section class="sheet lesson-sheet" id="lesson-1-page-3" data-page="3">
+  <header class="header">
+    <div class="kicker">ใบความรู้และใบงานที่ 1 · Guided Notes & Worksheet 1</div>
+    <h1>สรุปสิ่งที่ค้นพบ<br><span style="font-size:.72em;color:#475569">Summarize What You Discovered</span></h1>
+    <div class="subtitle">จากรูปหลายขนาดสู่แนวคิด “อัตราส่วนคงที่” · From different sizes to constant ratios</div>
+  </header>
+
+  <div class="section-title"><h2>1. เปรียบเทียบภายในมุมเดียวกัน</h2><small>Compare triangles with the same angle</small></div>
+  <div class="ratio-strip">
+    <div class="ratio-card"><b>\(\dfrac{y}{r}\)</b><small>vertical ÷ slanted side</small></div>
+    <div class="ratio-card"><b>\(\dfrac{x}{r}\)</b><small>horizontal ÷ slanted side</small></div>
+    <div class="ratio-card"><b>\(\dfrac{y}{x}\)</b><small>vertical ÷ horizontal</small></div>
+  </div>
+
+  <div class="prompt">เติมข้อความ / Complete the statement:</div>
+  <div class="answer-box tall">
+    เมื่อ <span class="line"></span> คงที่ แม้สามเหลี่ยมจะมี <span class="line"></span> ต่างกัน แต่อัตราส่วนของด้านที่จับคู่กันจะ <span class="line"></span><br>
+    <span class="en">When the <span class="line"></span> is fixed, triangles may have different <span class="line"></span>, but the ratios of corresponding sides remain <span class="line"></span>.</span>
+    <span class="answer" style="margin-top:6px">เฉลย / Answer: มุมอ้างอิง (reference angle) · ขนาด (sizes) · คงที่/เท่ากัน (constant/equal)</span>
+  </div>
+
+  <div class="section-title"><h2>2. เพราะอะไรจึงเกิดรูปแบบนี้?</h2><small>Why does this pattern occur?</small></div>
+  <div class="note">
+    สามเหลี่ยมมุมฉากในรูปชุดเดียวกันมีมุม \(90^\circ\) เท่ากัน และมีมุมอ้างอิงเท่ากันอีกหนึ่งมุม จึงมีรูปร่างเหมือนกันแต่ขนาดต่างกัน หรือกล่าวได้ว่าเป็น <b>สามเหลี่ยมคล้าย / similar triangles</b>
+  </div>
+  <div class="prompt">ถ้าสามเหลี่ยมรูปหนึ่งถูกขยายเป็น 2 เท่า ความยาวด้านทุกด้านจะเป็นอย่างไร? <span class="en">If one triangle is enlarged by a factor of 2, what happens to all side lengths?</span></div>
+  <div class="answer-box"><span class="answer">ทุกด้านยาวเป็น 2 เท่า แต่เมื่อหารด้านที่ถูกขยายด้วยตัวคูณเดียวกัน อัตราส่วนจึงไม่เปลี่ยน / Every side doubles, so ratios remain unchanged.</span></div>
+
+  <div class="section-title"><h2>3. เปรียบเทียบคนละมุม</h2><small>Compare different angles</small></div>
+  <table aria-label="Compare ratios across angles">
+    <thead><tr><th>มุม / Angle</th><th>\(y/r\)</th><th>\(x/r\)</th><th>\(y/x\)</th></tr></thead>
+    <tbody>
+      <tr><td>30°</td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.50</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.87</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.58</span></td></tr>
+      <tr><td>45°</td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.71</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.71</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">1.00</span></td></tr>
+      <tr><td>60°</td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.87</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">0.50</span></td><td class="answer-cell"><input class="ratio-input" type="text" inputmode="decimal" aria-label="Student answer"><span class="answer">1.73</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="prompt">จากตาราง อะไรเป็นตัวกำหนดค่าของอัตราส่วน? <span class="en">From the table, what determines the value of each ratio?</span></div>
+  <div class="answer-box"><span class="answer">มุมอ้างอิง / The reference angle.</span></div>
+
+  <div class="summary-box">
+    <h3>แนวคิดสำคัญ / Key Idea</h3>
+    <p><b>TH:</b> เมื่อมุมอ้างอิงของสามเหลี่ยมมุมฉากคงที่ อัตราส่วนของด้านที่จับคู่กันจะคงที่ ไม่ว่าสามเหลี่ยมจะใหญ่หรือเล็กเพียงใด</p>
+    <p><b>EN:</b> When the reference angle of a right triangle is fixed, ratios between corresponding sides remain constant regardless of the triangle's size.</p>
+    <div class="answer" style="margin-top:6px">ครูเชื่อมต่อบทถัดไปได้ว่า: “ถ้าเราจะเรียกด้านทั้งสามโดยอ้างอิงจากมุมหนึ่ง เราควรเรียกอย่างไร?” → Opposite / Adjacent / Hypotenuse</div>
+  </div>
+
+  <div class="warning">
+    <b>จบบทนี้ยังไม่ต้องใช้คำว่า sin, cos, tan</b><br>
+    เป้าหมายคือเข้าใจ “มุมคงที่ → อัตราส่วนคงที่” ก่อน แล้วใบงานที่ 2 จะเริ่มเรียกชื่อด้านของสามเหลี่ยมมุมฉาก
+  </div>
+</section>
+
+
+<section class="sheet" data-page="4">
+  <div class="header">
+    <div class="kicker">Worksheet 2 / ใบงานที่ 2</div>
+    <h1>การเรียกชื่อด้านของสามเหลี่ยมมุมฉาก</h1>
+    <div class="subtitle">Naming the Sides of a Right Triangle</div>
+    <div class="meta-row">
+      <div class="pill">เป้าหมาย: เรียกชื่อ Opposite / Adjacent / Hypotenuse ให้คล่อง</div>
+      <div class="pill">Goal: identify O / A / H from a reference angle</div>
+    </div>
+  </div>
+
+  <div class="lead"><b>TH:</b> ให้สังเกตมุมฉากก่อนเสมอ ด้านที่อยู่ตรงข้ามมุมฉากคือ <b>Hypotenuse</b> จากนั้นเลือกมุมอ้างอิง แล้วจึงพิจารณาว่าด้านใดเป็น <b>Opposite</b> และ <b>Adjacent</b>.<br>
+  <b>EN:</b> Always find the right angle first. The side opposite the right angle is the <b>hypotenuse</b>. Then choose the reference angle to determine the <b>opposite</b> and <b>adjacent</b> sides.</div>
+
+  <div class="key-grid">
+    <div class="key-card"><b>Hypotenuse</b> ด้านตรงข้ามมุมฉาก<br><small>The side opposite the right angle.</small></div>
+    <div class="key-card"><b>Opposite</b> ด้านตรงข้ามมุมอ้างอิง<br><small>The side opposite the reference angle.</small></div>
+    <div class="key-card"><b>Adjacent</b> ด้านประชิดมุมอ้างอิง แต่ไม่ใช่ hypotenuse<br><small>The side next to the reference angle, but not the hypotenuse.</small></div>
+  </div>
+
+  <div class="summary-box" style="margin-top:8px">
+    <h3>ตัวอย่าง / Worked Examples</h3>
+    <p>ในรูปแต่ละข้อ ด้านทั้งสามถูกติดฉลากเป็น <b>p, q, r</b>. จงพิจารณาว่าด้านใดเป็น opposite, adjacent และ hypotenuse เมื่ออ้างอิงมุมที่กำหนด</p>
+    <p><span class="en">In each figure, the three sides are labeled <b>p, q, r</b>. Decide which side is opposite, adjacent, and hypotenuse for the given reference angle.</span></p>
+  </div>
+
+  <div class="example-grid"><div class="example-card"><div class="practice-head"><b>ตัวอย่าง 1</b><span>Reference angle = A</span></div><svg viewBox="0 0 220 145" aria-label="Right triangle practice">
+  <line x1="60.0" y1="108.0" x2="60.0" y2="35.0" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="60.0" y1="35.0" x2="165.0" y2="108.0" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="165.0" y1="108.0" x2="60.0" y2="108.0" stroke="#0f172a" stroke-width="2.5" />
+  <path d="M 60.0,98.0 L 70.0,98.0 L 70.0,108.0" fill="none" stroke="#0f172a" stroke-width="1.5" />
+  <path d="M 152.7,99.4 A 15,15 0 0 0 150.0,108.0" fill="none" stroke="#b45309" stroke-width="1.6" />
+  <text x="44.0" y="29.0" class="svg-label-vertex" font-size="12">B</text>
+  <text x="172.0" y="105.0" class="svg-label-ref" font-size="12">A</text>
+  <text x="44.0" y="124.0" class="svg-label-vertex" font-size="12">C</text>
+  <text x="49.0" y="71.5" class="svg-label-side" font-size="12">p</text>
+  <text x="118.8" y="62.5" class="svg-label-side" font-size="12">q</text>
+  <text x="112.5" y="119.0" class="svg-label-side" font-size="12">r</text>
+</svg><div class="side-grid"><div class="side-name">p</div><div class="mini-answer"><span class="answer">Opposite</span></div><div class="side-name">q</div><div class="mini-answer"><span class="answer">Hypotenuse</span></div><div class="side-name">r</div><div class="mini-answer"><span class="answer">Adjacent</span></div></div><div class="compare-note">หา Hypotenuse จากมุมฉากก่อน แล้วจึงดูด้านตรงข้ามและด้านประชิดมุม A</div></div><div class="example-card"><div class="practice-head"><b>ตัวอย่าง 2</b><span>Reference angle = θ</span></div><svg viewBox="0 0 220 145" aria-label="Right triangle practice">
+  <line x1="49.0" y1="80.3" x2="83.2" y2="15.9" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="83.2" y1="15.9" x2="141.7" y2="129.6" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="141.7" y1="129.6" x2="49.0" y2="80.3" stroke="#0f172a" stroke-width="2.5" />
+  <path d="M 53.6,71.5 L 62.5,76.2 L 57.8,85.0" fill="none" stroke="#0f172a" stroke-width="1.5" />
+  <path d="M 76.2,29.1 A 15,15 0 0 0 90.1,29.2" fill="none" stroke="#b45309" stroke-width="1.6" />
+  <text x="67.2" y="9.9" class="svg-label-ref" font-size="12">θ</text>
+  <text x="148.7" y="126.6" class="svg-label-vertex" font-size="12">B</text>
+  <text x="33.0" y="96.3" class="svg-label-vertex" font-size="12">C</text>
+  <text x="56.4" y="42.9" class="svg-label-side" font-size="12">p</text>
+  <text x="122.2" y="67.7" class="svg-label-side" font-size="12">q</text>
+  <text x="90.1" y="114.7" class="svg-label-side" font-size="12">r</text>
+</svg><div class="side-grid"><div class="side-name">p</div><div class="mini-answer"><span class="answer">Adjacent</span></div><div class="side-name">q</div><div class="mini-answer"><span class="answer">Hypotenuse</span></div><div class="side-name">r</div><div class="mini-answer"><span class="answer">Opposite</span></div></div><div class="compare-note">แม้รูปจะเอียง ชื่อด้านยังขึ้นกับมุมอ้างอิงเหมือนเดิม</div></div><div class="example-card"><div class="practice-head"><b>ตัวอย่าง 3</b><span>Same triangle, angle A</span></div><svg viewBox="0 0 220 145" aria-label="Right triangle practice">
+  <line x1="51.3" y1="90.8" x2="73.9" y2="21.4" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="73.9" y1="21.4" x2="151.2" y2="123.2" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="151.2" y1="123.2" x2="51.3" y2="90.8" stroke="#0f172a" stroke-width="2.5" />
+  <path d="M 54.4,81.3 L 63.9,84.4 L 60.8,93.9" fill="none" stroke="#0f172a" stroke-width="1.5" />
+  <path d="M 142.1,111.3 A 15,15 0 0 0 136.9,118.6" fill="none" stroke="#b45309" stroke-width="1.6" />
+  <text x="57.9" y="15.4" class="svg-label-vertex" font-size="12">B</text>
+  <text x="158.2" y="120.2" class="svg-label-ref" font-size="12">A</text>
+  <text x="35.3" y="106.8" class="svg-label-vertex" font-size="12">C</text>
+  <text x="52.1" y="52.7" class="svg-label-side" font-size="12">p</text>
+  <text x="121.3" y="65.6" class="svg-label-side" font-size="12">q</text>
+  <text x="97.9" y="117.5" class="svg-label-side" font-size="12">r</text>
+</svg><div class="side-grid"><div class="side-name">p</div><div class="mini-answer"><span class="answer">Opposite</span></div><div class="side-name">q</div><div class="mini-answer"><span class="answer">Hypotenuse</span></div><div class="side-name">r</div><div class="mini-answer"><span class="answer">Adjacent</span></div></div><div class="compare-note">รูปเดียวกัน ถ้าอ้างอิงมุม A จะได้ชุดคำตอบหนึ่ง</div></div><div class="example-card"><div class="practice-head"><b>ตัวอย่าง 4</b><span>Same triangle, angle B</span></div><svg viewBox="0 0 220 145" aria-label="Right triangle practice">
+  <line x1="51.3" y1="90.8" x2="73.9" y2="21.4" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="73.9" y1="21.4" x2="151.2" y2="123.2" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="151.2" y1="123.2" x2="51.3" y2="90.8" stroke="#0f172a" stroke-width="2.5" />
+  <path d="M 54.4,81.3 L 63.9,84.4 L 60.8,93.9" fill="none" stroke="#0f172a" stroke-width="1.5" />
+  <path d="M 69.2,35.6 A 15,15 0 0 0 82.9,33.3" fill="none" stroke="#b45309" stroke-width="1.6" />
+  <text x="57.9" y="15.4" class="svg-label-ref" font-size="12">B</text>
+  <text x="158.2" y="120.2" class="svg-label-vertex" font-size="12">A</text>
+  <text x="35.3" y="106.8" class="svg-label-vertex" font-size="12">C</text>
+  <text x="52.1" y="52.7" class="svg-label-side" font-size="12">p</text>
+  <text x="121.3" y="65.6" class="svg-label-side" font-size="12">q</text>
+  <text x="97.9" y="117.5" class="svg-label-side" font-size="12">r</text>
+</svg><div class="side-grid"><div class="side-name">p</div><div class="mini-answer"><span class="answer">Adjacent</span></div><div class="side-name">q</div><div class="mini-answer"><span class="answer">Hypotenuse</span></div><div class="side-name">r</div><div class="mini-answer"><span class="answer">Opposite</span></div></div><div class="compare-note">เมื่อเปลี่ยนไปอ้างอิงมุม B, Opposite และ Adjacent จะสลับกัน แต่ Hypotenuse ไม่เปลี่ยน</div></div></div>
+
+  <div class="warning" style="margin-top:8px"><b>ข้อควรระวัง / Be careful:</b> Hypotenuse ถูกกำหนดโดยมุมฉาก จึงไม่เปลี่ยนเมื่อเปลี่ยนมุมอ้างอิง แต่ Opposite และ Adjacent อาจสลับกันได้</div>
+</section>
+
+<section class="sheet" data-page="5">
+  <div class="header">
+    <div class="kicker">Worksheet 2 / ใบงานที่ 2</div>
+    <h1>ฝึกเรียกชื่อด้าน ชุด A–B</h1>
+    <div class="subtitle">Practice Naming the Sides — Sets A–B</div>
+  </div>
+
+  <div class="prompt">จงเติมว่าแต่ละด้าน p, q, r เป็น <b>Opposite</b>, <b>Adjacent</b> หรือ <b>Hypotenuse</b> โดยอ้างอิงมุมที่กำหนด <span class="en">Label each side p, q, r as opposite, adjacent, or hypotenuse using the given reference angle.</span></div>
+  <div class="practice-grid"><div class="practice-card"><div class="practice-head"><b>ข้อ 1</b><span>อ้างอิงมุม A / Reference angle A</span></div><svg viewBox="0 0 220 145" aria-label="Right triangle practice">
+  <line x1="60.0" y1="108.0" x2="60.0" y2="35.0" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="60.0" y1="35.0" x2="165.0" y2="108.0" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="165.0" y1="108.0" x2="60.0" y2="108.0" stroke="#0f172a" stroke-width="2.5" />
+  <path d="M 60.0,98.0 L 70.0,98.0 L 70.0,108.0" fill="none" stroke="#0f172a" stroke-width="1.5" />
+  <path d="M 152.7,99.4 A 15,15 0 0 0 150.0,108.0" fill="none" stroke="#b45309" stroke-width="1.6" />
+  <text x="44.0" y="29.0" class="svg-label-vertex" font-size="12">B</text>
+  <text x="172.0" y="105.0" class="svg-label-ref" font-size="12">A</text>
+  <text x="44.0" y="124.0" class="svg-label-vertex" font-size="12">C</text>
+  <text x="49.0" y="71.5" class="svg-label-side" font-size="12">p</text>
+  <text x="118.8" y="62.5" class="svg-label-side" font-size="12">q</text>
+  <text x="112.5" y="119.0" class="svg-label-side" font-size="12">r</text>
+</svg><div class="side-grid"><div class="side-name">p</div><div class="mini-answer"><span class="answer">Opposite</span></div><div class="side-name">q</div><div class="mini-answer"><span class="answer">Hypotenuse</span></div><div class="side-name">r</div><div class="mini-answer"><span class="answer">Adjacent</span></div></div></div><div class="practice-card"><div class="practice-head"><b>ข้อ 2</b><span>อ้างอิงมุม θ / Reference angle θ</span></div><svg viewBox="0 0 220 145" aria-label="Right triangle practice">
+  <line x1="50.2" y1="86.6" x2="77.5" y2="19.0" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="77.5" y1="19.0" x2="147.5" y2="126.0" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="147.5" y1="126.0" x2="50.2" y2="86.6" stroke="#0f172a" stroke-width="2.5" />
+  <path d="M 53.9,77.4 L 63.2,81.1 L 59.4,90.4" fill="none" stroke="#0f172a" stroke-width="1.5" />
+  <path d="M 71.9,32.9 A 15,15 0 0 0 85.7,31.5" fill="none" stroke="#b45309" stroke-width="1.6" />
+  <text x="61.5" y="13.0" class="svg-label-ref" font-size="12">θ</text>
+  <text x="154.5" y="123.0" class="svg-label-vertex" font-size="12">B</text>
+  <text x="34.2" y="102.6" class="svg-label-vertex" font-size="12">C</text>
+  <text x="53.6" y="48.7" class="svg-label-side" font-size="12">p</text>
+  <text x="121.7" y="66.5" class="svg-label-side" font-size="12">q</text>
+  <text x="94.7" y="116.5" class="svg-label-side" font-size="12">r</text>
+</svg><div class="side-grid"><div class="side-name">p</div><div class="mini-answer"><span class="answer">Adjacent</span></div><div class="side-name">q</div><div class="mini-answer"><span class="answer">Hypotenuse</span></div><div class="side-name">r</div><div class="mini-answer"><span class="answer">Opposite</span></div></div></div><div class="practice-card"><div class="practice-head"><b>ข้อ 3</b><span>อ้างอิงมุม A / Reference angle A</span></div><svg viewBox="0 0 220 145" aria-label="Right triangle practice">
+  <line x1="51.8" y1="51.7" x2="111.6" y2="9.8" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="111.6" y1="9.8" x2="112.1" y2="137.7" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="112.1" y1="137.7" x2="51.8" y2="51.7" stroke="#0f172a" stroke-width="2.5" />
+  <path d="M 60.0,46.0 L 65.8,54.1 L 57.6,59.9" fill="none" stroke="#0f172a" stroke-width="1.5" />
+  <path d="M 112.0,122.7 A 15,15 0 0 0 103.5,125.4" fill="none" stroke="#b45309" stroke-width="1.6" />
+  <text x="95.6" y="3.8" class="svg-label-vertex" font-size="12">B</text>
+  <text x="119.1" y="134.7" class="svg-label-ref" font-size="12">A</text>
+  <text x="35.8" y="67.7" class="svg-label-vertex" font-size="12">C</text>
+  <text x="75.4" y="21.7" class="svg-label-side" font-size="12">p</text>
+  <text x="122.8" y="73.7" class="svg-label-side" font-size="12">q</text>
+  <text x="72.9" y="101.0" class="svg-label-side" font-size="12">r</text>
+</svg><div class="side-grid"><div class="side-name">p</div><div class="mini-answer"><span class="answer">Opposite</span></div><div class="side-name">q</div><div class="mini-answer"><span class="answer">Hypotenuse</span></div><div class="side-name">r</div><div class="mini-answer"><span class="answer">Adjacent</span></div></div></div><div class="practice-card"><div class="practice-head"><b>ข้อ 4</b><span>อ้างอิงมุม A / Reference angle A</span></div><svg viewBox="0 0 220 145" aria-label="Right triangle practice">
+  <line x1="78.5" y1="19.1" x2="151.2" y2="25.4" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="151.2" y1="25.4" x2="69.3" y2="123.7" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="69.3" y1="123.7" x2="78.5" y2="19.1" stroke="#0f172a" stroke-width="2.5" />
+  <path d="M 88.5,19.9 L 87.6,29.9 L 77.6,29.0" fill="none" stroke="#0f172a" stroke-width="1.5" />
+  <path d="M 136.3,24.1 A 15,15 0 0 0 141.6,36.9" fill="none" stroke="#b45309" stroke-width="1.6" />
+  <text x="135.2" y="19.4" class="svg-label-ref" font-size="12">A</text>
+  <text x="76.3" y="120.7" class="svg-label-vertex" font-size="12">B</text>
+  <text x="62.5" y="35.1" class="svg-label-vertex" font-size="12">C</text>
+  <text x="115.8" y="11.3" class="svg-label-side" font-size="12">p</text>
+  <text x="118.7" y="81.6" class="svg-label-side" font-size="12">q</text>
+  <text x="63.0" y="70.4" class="svg-label-side" font-size="12">r</text>
+</svg><div class="side-grid"><div class="side-name">p</div><div class="mini-answer"><span class="answer">Adjacent</span></div><div class="side-name">q</div><div class="mini-answer"><span class="answer">Hypotenuse</span></div><div class="side-name">r</div><div class="mini-answer"><span class="answer">Opposite</span></div></div></div><div class="practice-card"><div class="practice-head"><b>ข้อ 5</b><span>อ้างอิงมุม θ / Reference angle θ</span></div><svg viewBox="0 0 220 145" aria-label="Right triangle practice">
+  <line x1="125.2" y1="12.3" x2="172.1" y2="68.2" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="172.1" y1="68.2" x2="44.7" y2="79.8" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="44.7" y1="79.8" x2="125.2" y2="12.3" stroke="#0f172a" stroke-width="2.5" />
+  <path d="M 131.6,19.9 L 123.9,26.4 L 117.5,18.7" fill="none" stroke="#0f172a" stroke-width="1.5" />
+  <path d="M 59.7,78.4 A 15,15 0 0 0 56.2,70.1" fill="none" stroke="#b45309" stroke-width="1.6" />
+  <text x="156.1" y="62.2" class="svg-label-vertex" font-size="12">B</text>
+  <text x="51.7" y="76.8" class="svg-label-ref" font-size="12">θ</text>
+  <text x="109.2" y="28.3" class="svg-label-vertex" font-size="12">C</text>
+  <text x="157.1" y="33.2" class="svg-label-side" font-size="12">p</text>
+  <text x="109.4" y="84.9" class="svg-label-side" font-size="12">q</text>
+  <text x="77.9" y="37.6" class="svg-label-side" font-size="12">r</text>
+</svg><div class="side-grid"><div class="side-name">p</div><div class="mini-answer"><span class="answer">Opposite</span></div><div class="side-name">q</div><div class="mini-answer"><span class="answer">Hypotenuse</span></div><div class="side-name">r</div><div class="mini-answer"><span class="answer">Adjacent</span></div></div></div><div class="practice-card"><div class="practice-head"><b>ข้อ 6</b><span>อ้างอิงมุม A / Reference angle A</span></div><svg viewBox="0 0 220 145" aria-label="Right triangle practice">
+  <line x1="169.3" y1="55.3" x2="144.3" y2="123.9" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="144.3" y1="123.9" x2="70.6" y2="19.4" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="70.6" y1="19.4" x2="169.3" y2="55.3" stroke="#0f172a" stroke-width="2.5" />
+  <path d="M 165.9,64.7 L 156.5,61.2 L 159.9,51.9" fill="none" stroke="#0f172a" stroke-width="1.5" />
+  <path d="M 149.5,109.8 A 15,15 0 0 0 135.7,111.6" fill="none" stroke="#b45309" stroke-width="1.6" />
+  <text x="128.3" y="117.9" class="svg-label-ref" font-size="12">A</text>
+  <text x="77.6" y="16.4" class="svg-label-vertex" font-size="12">B</text>
+  <text x="153.3" y="71.3" class="svg-label-vertex" font-size="12">C</text>
+  <text x="167.2" y="93.3" class="svg-label-side" font-size="12">p</text>
+  <text x="98.5" y="78.0" class="svg-label-side" font-size="12">q</text>
+  <text x="123.7" y="27.0" class="svg-label-side" font-size="12">r</text>
+</svg><div class="side-grid"><div class="side-name">p</div><div class="mini-answer"><span class="answer">Adjacent</span></div><div class="side-name">q</div><div class="mini-answer"><span class="answer">Hypotenuse</span></div><div class="side-name">r</div><div class="mini-answer"><span class="answer">Opposite</span></div></div></div><div class="practice-card"><div class="practice-head"><b>ข้อ 7</b><span>อ้างอิงมุม A / Reference angle A</span></div><svg viewBox="0 0 220 145" aria-label="Right triangle practice">
+  <line x1="160.9" y1="106.7" x2="92.3" y2="131.6" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="92.3" y1="131.6" x2="125.0" y2="8.0" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="125.0" y1="8.0" x2="160.9" y2="106.7" stroke="#0f172a" stroke-width="2.5" />
+  <path d="M 151.5,110.1 L 148.1,100.7 L 157.5,97.3" fill="none" stroke="#0f172a" stroke-width="1.5" />
+  <path d="M 121.2,22.5 A 15,15 0 0 0 130.1,22.1" fill="none" stroke="#b45309" stroke-width="1.6" />
+  <text x="76.3" y="125.6" class="svg-label-vertex" font-size="12">B</text>
+  <text x="132.0" y="5.0" class="svg-label-ref" font-size="12">A</text>
+  <text x="144.9" y="122.7" class="svg-label-vertex" font-size="12">C</text>
+  <text x="130.4" y="129.5" class="svg-label-side" font-size="12">p</text>
+  <text x="98.0" y="67.0" class="svg-label-side" font-size="12">q</text>
+  <text x="153.3" y="53.6" class="svg-label-side" font-size="12">r</text>
+</svg><div class="side-grid"><div class="side-name">p</div><div class="mini-answer"><span class="answer">Opposite</span></div><div class="side-name">q</div><div class="mini-answer"><span class="answer">Hypotenuse</span></div><div class="side-name">r</div><div class="mini-answer"><span class="answer">Adjacent</span></div></div></div><div class="practice-card"><div class="practice-head"><b>ข้อ 8</b><span>อ้างอิงมุม θ / Reference angle θ</span></div><svg viewBox="0 0 220 145" aria-label="Right triangle practice">
+  <line x1="116.2" y1="133.3" x2="53.0" y2="96.8" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="53.0" y1="96.8" x2="168.7" y2="42.4" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="168.7" y1="42.4" x2="116.2" y2="133.3" stroke="#0f172a" stroke-width="2.5" />
+  <path d="M 107.5,128.3 L 112.5,119.6 L 121.2,124.6" fill="none" stroke="#0f172a" stroke-width="1.5" />
+  <path d="M 65.9,104.3 A 15,15 0 0 0 66.5,90.4" fill="none" stroke="#b45309" stroke-width="1.6" />
+  <text x="37.0" y="90.8" class="svg-label-ref" font-size="12">θ</text>
+  <text x="175.7" y="39.4" class="svg-label-vertex" font-size="12">B</text>
+  <text x="100.2" y="149.3" class="svg-label-vertex" font-size="12">C</text>
+  <text x="79.1" y="124.6" class="svg-label-side" font-size="12">p</text>
+  <text x="106.1" y="59.6" class="svg-label-side" font-size="12">q</text>
+  <text x="152.0" y="93.3" class="svg-label-side" font-size="12">r</text>
+</svg><div class="side-grid"><div class="side-name">p</div><div class="mini-answer"><span class="answer">Adjacent</span></div><div class="side-name">q</div><div class="mini-answer"><span class="answer">Hypotenuse</span></div><div class="side-name">r</div><div class="mini-answer"><span class="answer">Opposite</span></div></div></div><div class="practice-card"><div class="practice-head"><b>ข้อ 9</b><span>อ้างอิงมุม A / Reference angle A</span></div><svg viewBox="0 0 220 145" aria-label="Right triangle practice">
+  <line x1="82.8" y1="127.3" x2="48.5" y2="62.8" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="48.5" y1="62.8" x2="175.5" y2="78.0" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="175.5" y1="78.0" x2="82.8" y2="127.3" stroke="#0f172a" stroke-width="2.5" />
+  <path d="M 78.1,118.4 L 86.9,113.7 L 91.6,122.6" fill="none" stroke="#0f172a" stroke-width="1.5" />
+  <path d="M 160.6,76.2 A 15,15 0 0 0 162.2,85.0" fill="none" stroke="#b45309" stroke-width="1.6" />
+  <text x="32.5" y="56.8" class="svg-label-vertex" font-size="12">B</text>
+  <text x="182.5" y="75.0" class="svg-label-ref" font-size="12">A</text>
+  <text x="66.8" y="143.3" class="svg-label-vertex" font-size="12">C</text>
+  <text x="55.9" y="100.2" class="svg-label-side" font-size="12">p</text>
+  <text x="113.3" y="59.5" class="svg-label-side" font-size="12">q</text>
+  <text x="134.3" y="112.3" class="svg-label-side" font-size="12">r</text>
+</svg><div class="side-grid"><div class="side-name">p</div><div class="mini-answer"><span class="answer">Opposite</span></div><div class="side-name">q</div><div class="mini-answer"><span class="answer">Hypotenuse</span></div><div class="side-name">r</div><div class="mini-answer"><span class="answer">Adjacent</span></div></div></div></div>
+</section>
+
+<section class="sheet" data-page="6">
+  <div class="header">
+    <div class="kicker">Worksheet 2 / ใบงานที่ 2</div>
+    <h1>ฝึกเรียกชื่อด้าน ชุด C–D</h1>
+    <div class="subtitle">Practice Naming the Sides — Sets C–D</div>
+  </div>
+
+  <div class="prompt">สังเกตให้ดีว่าบางข้อรูปเอียงหรือกลับหัว แต่หลักการเหมือนเดิม: หา <b>Hypotenuse</b> ก่อน แล้วจึงดู <b>Opposite</b> และ <b>Adjacent</b> จากมุมอ้างอิง <span class="en">Some triangles are rotated or flipped. The rule stays the same: find the hypotenuse first, then identify the opposite and adjacent sides from the reference angle.</span></div>
+  <div class="practice-grid"><div class="practice-card"><div class="practice-head"><b>ข้อ 10</b><span>อ้างอิงมุม A / Reference angle A</span></div><svg viewBox="0 0 220 145" aria-label="Right triangle practice">
+  <line x1="54.5" y1="98.8" x2="67.2" y2="26.9" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="67.2" y1="26.9" x2="157.9" y2="117.0" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="157.9" y1="117.0" x2="54.5" y2="98.8" stroke="#0f172a" stroke-width="2.5" />
+  <path d="M 56.2,88.9 L 66.1,90.7 L 64.4,100.5" fill="none" stroke="#0f172a" stroke-width="1.5" />
+  <path d="M 64.6,41.7 A 15,15 0 0 0 77.8,37.5" fill="none" stroke="#b45309" stroke-width="1.6" />
+  <text x="51.2" y="20.9" class="svg-label-ref" font-size="12">A</text>
+  <text x="164.9" y="114.0" class="svg-label-vertex" font-size="12">B</text>
+  <text x="38.5" y="114.8" class="svg-label-vertex" font-size="12">C</text>
+  <text x="50.0" y="60.9" class="svg-label-side" font-size="12">p</text>
+  <text x="120.3" y="64.1" class="svg-label-side" font-size="12">q</text>
+  <text x="104.3" y="118.7" class="svg-label-side" font-size="12">r</text>
+</svg><div class="side-grid"><div class="side-name">p</div><div class="mini-answer"><span class="answer">Adjacent</span></div><div class="side-name">q</div><div class="mini-answer"><span class="answer">Hypotenuse</span></div><div class="side-name">r</div><div class="mini-answer"><span class="answer">Opposite</span></div></div></div><div class="practice-card"><div class="practice-head"><b>ข้อ 11</b><span>อ้างอิงมุม θ / Reference angle θ</span></div><svg viewBox="0 0 220 145" aria-label="Right triangle practice">
+  <line x1="49.8" y1="58.9" x2="104.0" y2="10.1" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="104.0" y1="10.1" x2="120.0" y2="137.0" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="120.0" y1="137.0" x2="49.8" y2="58.9" stroke="#0f172a" stroke-width="2.5" />
+  <path d="M 57.2,52.2 L 63.9,59.7 L 56.5,66.4" fill="none" stroke="#0f172a" stroke-width="1.5" />
+  <path d="M 118.2,122.1 A 15,15 0 0 0 110.0,125.8" fill="none" stroke="#b45309" stroke-width="1.6" />
+  <text x="88.0" y="4.1" class="svg-label-vertex" font-size="12">B</text>
+  <text x="127.0" y="134.0" class="svg-label-ref" font-size="12">θ</text>
+  <text x="33.8" y="74.9" class="svg-label-vertex" font-size="12">C</text>
+  <text x="69.6" y="26.3" class="svg-label-side" font-size="12">p</text>
+  <text x="123.0" y="72.1" class="svg-label-side" font-size="12">q</text>
+  <text x="76.7" y="105.3" class="svg-label-side" font-size="12">r</text>
+</svg><div class="side-grid"><div class="side-name">p</div><div class="mini-answer"><span class="answer">Opposite</span></div><div class="side-name">q</div><div class="mini-answer"><span class="answer">Hypotenuse</span></div><div class="side-name">r</div><div class="mini-answer"><span class="answer">Adjacent</span></div></div></div><div class="practice-card"><div class="practice-head"><b>ข้อ 12</b><span>อ้างอิงมุม A / Reference angle A</span></div><svg viewBox="0 0 220 145" aria-label="Right triangle practice">
+  <line x1="64.4" y1="30.6" x2="135.8" y2="15.4" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="135.8" y1="15.4" x2="86.2" y2="133.3" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="86.2" y1="133.3" x2="64.4" y2="30.6" stroke="#0f172a" stroke-width="2.5" />
+  <path d="M 74.2,28.5 L 76.3,38.3 L 66.5,40.4" fill="none" stroke="#0f172a" stroke-width="1.5" />
+  <path d="M 121.1,18.5 A 15,15 0 0 0 130.0,29.2" fill="none" stroke="#b45309" stroke-width="1.6" />
+  <text x="119.8" y="9.4" class="svg-label-ref" font-size="12">A</text>
+  <text x="93.2" y="130.3" class="svg-label-vertex" font-size="12">B</text>
+  <text x="48.4" y="46.6" class="svg-label-vertex" font-size="12">C</text>
+  <text x="97.8" y="12.2" class="svg-label-side" font-size="12">p</text>
+  <text x="121.1" y="78.6" class="svg-label-side" font-size="12">q</text>
+  <text x="64.5" y="84.2" class="svg-label-side" font-size="12">r</text>
+</svg><div class="side-grid"><div class="side-name">p</div><div class="mini-answer"><span class="answer">Adjacent</span></div><div class="side-name">q</div><div class="mini-answer"><span class="answer">Hypotenuse</span></div><div class="side-name">r</div><div class="mini-answer"><span class="answer">Opposite</span></div></div></div><div class="practice-card"><div class="practice-head"><b>ข้อ 13</b><span>อ้างอิงมุม A / Reference angle A</span></div><svg viewBox="0 0 220 145" aria-label="Right triangle practice">
+  <line x1="101.7" y1="11.0" x2="166.1" y2="45.2" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="166.1" y1="45.2" x2="52.4" y2="103.7" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="52.4" y1="103.7" x2="101.7" y2="11.0" stroke="#0f172a" stroke-width="2.5" />
+  <path d="M 110.5,15.6 L 105.8,24.5 L 97.0,19.8" fill="none" stroke="#0f172a" stroke-width="1.5" />
+  <path d="M 65.7,96.8 A 15,15 0 0 0 59.4,90.4" fill="none" stroke="#b45309" stroke-width="1.6" />
+  <text x="150.1" y="39.2" class="svg-label-vertex" font-size="12">B</text>
+  <text x="59.4" y="100.7" class="svg-label-ref" font-size="12">A</text>
+  <text x="85.7" y="27.0" class="svg-label-vertex" font-size="12">C</text>
+  <text x="139.1" y="18.4" class="svg-label-side" font-size="12">p</text>
+  <text x="114.3" y="84.2" class="svg-label-side" font-size="12">q</text>
+  <text x="67.3" y="52.1" class="svg-label-side" font-size="12">r</text>
+</svg><div class="side-grid"><div class="side-name">p</div><div class="mini-answer"><span class="answer">Opposite</span></div><div class="side-name">q</div><div class="mini-answer"><span class="answer">Hypotenuse</span></div><div class="side-name">r</div><div class="mini-answer"><span class="answer">Adjacent</span></div></div></div><div class="practice-card"><div class="practice-head"><b>ข้อ 14</b><span>อ้างอิงมุม θ / Reference angle θ</span></div><svg viewBox="0 0 220 145" aria-label="Right triangle practice">
+  <line x1="151.4" y1="26.4" x2="166.6" y2="97.8" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="166.6" y1="97.8" x2="48.7" y2="48.2" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="48.7" y1="48.2" x2="151.4" y2="26.4" stroke="#0f172a" stroke-width="2.5" />
+  <path d="M 153.5,36.2 L 143.7,38.3 L 141.6,28.5" fill="none" stroke="#0f172a" stroke-width="1.5" />
+  <path d="M 163.5,83.1 A 15,15 0 0 0 152.8,92.0" fill="none" stroke="#b45309" stroke-width="1.6" />
+  <text x="150.6" y="91.8" class="svg-label-ref" font-size="12">θ</text>
+  <text x="55.7" y="45.2" class="svg-label-vertex" font-size="12">B</text>
+  <text x="135.4" y="42.4" class="svg-label-vertex" font-size="12">C</text>
+  <text x="169.8" y="59.8" class="svg-label-side" font-size="12">p</text>
+  <text x="103.4" y="83.1" class="svg-label-side" font-size="12">q</text>
+  <text x="97.8" y="26.5" class="svg-label-side" font-size="12">r</text>
+</svg><div class="side-grid"><div class="side-name">p</div><div class="mini-answer"><span class="answer">Adjacent</span></div><div class="side-name">q</div><div class="mini-answer"><span class="answer">Hypotenuse</span></div><div class="side-name">r</div><div class="mini-answer"><span class="answer">Opposite</span></div></div></div><div class="practice-card"><div class="practice-head"><b>ข้อ 15</b><span>อ้างอิงมุม A / Reference angle A</span></div><svg viewBox="0 0 220 145" aria-label="Right triangle practice">
+  <line x1="171.4" y1="76.6" x2="124.5" y2="132.5" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="124.5" y1="132.5" x2="91.0" y2="9.1" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="91.0" y1="9.1" x2="171.4" y2="76.6" stroke="#0f172a" stroke-width="2.5" />
+  <path d="M 165.0,84.2 L 157.4,77.8 L 163.8,70.1" fill="none" stroke="#0f172a" stroke-width="1.5" />
+  <path d="M 94.9,23.5 A 15,15 0 0 0 102.5,18.7" fill="none" stroke="#b45309" stroke-width="1.6" />
+  <text x="108.5" y="126.5" class="svg-label-vertex" font-size="12">B</text>
+  <text x="98.0" y="6.1" class="svg-label-ref" font-size="12">A</text>
+  <text x="155.4" y="92.6" class="svg-label-vertex" font-size="12">C</text>
+  <text x="156.4" y="111.6" class="svg-label-side" font-size="12">p</text>
+  <text x="97.1" y="73.7" class="svg-label-side" font-size="12">q</text>
+  <text x="138.3" y="34.4" class="svg-label-side" font-size="12">r</text>
+</svg><div class="side-grid"><div class="side-name">p</div><div class="mini-answer"><span class="answer">Opposite</span></div><div class="side-name">q</div><div class="mini-answer"><span class="answer">Hypotenuse</span></div><div class="side-name">r</div><div class="mini-answer"><span class="answer">Adjacent</span></div></div></div><div class="practice-card"><div class="practice-head"><b>ข้อ 16</b><span>อ้างอิงมุม A / Reference angle A</span></div><svg viewBox="0 0 220 145" aria-label="Right triangle practice">
+  <line x1="147.7" y1="120.7" x2="74.8" y2="123.3" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="74.8" y1="123.3" x2="144.1" y2="15.8" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="144.1" y1="15.8" x2="147.7" y2="120.7" stroke="#0f172a" stroke-width="2.5" />
+  <path d="M 137.7,121.1 L 137.4,111.1 L 147.4,110.7" fill="none" stroke="#0f172a" stroke-width="1.5" />
+  <path d="M 89.8,122.7 A 15,15 0 0 0 82.9,110.7" fill="none" stroke="#b45309" stroke-width="1.6" />
+  <text x="58.8" y="117.3" class="svg-label-ref" font-size="12">A</text>
+  <text x="151.1" y="12.8" class="svg-label-vertex" font-size="12">B</text>
+  <text x="131.7" y="136.7" class="svg-label-vertex" font-size="12">C</text>
+  <text x="111.6" y="133.0" class="svg-label-side" font-size="12">p</text>
+  <text x="100.2" y="63.6" class="svg-label-side" font-size="12">q</text>
+  <text x="156.9" y="67.9" class="svg-label-side" font-size="12">r</text>
+</svg><div class="side-grid"><div class="side-name">p</div><div class="mini-answer"><span class="answer">Adjacent</span></div><div class="side-name">q</div><div class="mini-answer"><span class="answer">Hypotenuse</span></div><div class="side-name">r</div><div class="mini-answer"><span class="answer">Opposite</span></div></div></div><div class="practice-card"><div class="practice-head"><b>ข้อ 17</b><span>อ้างอิงมุม θ / Reference angle θ</span></div><svg viewBox="0 0 220 145" aria-label="Right triangle practice">
+  <line x1="100.1" y1="132.8" x2="48.5" y2="81.2" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="48.5" y1="81.2" x2="174.3" y2="58.6" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="174.3" y1="58.6" x2="100.1" y2="132.8" stroke="#0f172a" stroke-width="2.5" />
+  <path d="M 93.0,125.7 L 100.1,118.7 L 107.2,125.7" fill="none" stroke="#0f172a" stroke-width="1.5" />
+  <path d="M 159.6,61.2 A 15,15 0 0 0 163.7,69.2" fill="none" stroke="#b45309" stroke-width="1.6" />
+  <text x="32.5" y="75.2" class="svg-label-vertex" font-size="12">B</text>
+  <text x="181.3" y="55.6" class="svg-label-ref" font-size="12">θ</text>
+  <text x="84.1" y="148.8" class="svg-label-vertex" font-size="12">C</text>
+  <text x="66.5" y="114.8" class="svg-label-side" font-size="12">p</text>
+  <text x="109.5" y="59.1" class="svg-label-side" font-size="12">q</text>
+  <text x="145.0" y="103.5" class="svg-label-side" font-size="12">r</text>
+</svg><div class="side-grid"><div class="side-name">p</div><div class="mini-answer"><span class="answer">Opposite</span></div><div class="side-name">q</div><div class="mini-answer"><span class="answer">Hypotenuse</span></div><div class="side-name">r</div><div class="mini-answer"><span class="answer">Adjacent</span></div></div></div><div class="practice-card"><div class="practice-head"><b>ข้อ 18</b><span>อ้างอิงมุม A / Reference angle A</span></div><svg viewBox="0 0 220 145" aria-label="Right triangle practice">
+  <line x1="68.6" y1="117.6" x2="53.4" y2="46.2" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="53.4" y1="46.2" x2="171.3" y2="95.8" stroke="#0f172a" stroke-width="2.5" />
+  <line x1="171.3" y1="95.8" x2="68.6" y2="117.6" stroke="#0f172a" stroke-width="2.5" />
+  <path d="M 66.5,107.8 L 76.3,105.7 L 78.4,115.5" fill="none" stroke="#0f172a" stroke-width="1.5" />
+  <path d="M 56.5,60.9 A 15,15 0 0 0 67.2,52.0" fill="none" stroke="#b45309" stroke-width="1.6" />
+  <text x="37.4" y="40.2" class="svg-label-ref" font-size="12">A</text>
+  <text x="178.3" y="92.8" class="svg-label-vertex" font-size="12">B</text>
+  <text x="52.6" y="133.6" class="svg-label-vertex" font-size="12">C</text>
+  <text x="50.2" y="84.2" class="svg-label-side" font-size="12">p</text>
+  <text x="116.6" y="60.9" class="svg-label-side" font-size="12">q</text>
+  <text x="122.2" y="117.5" class="svg-label-side" font-size="12">r</text>
+</svg><div class="side-grid"><div class="side-name">p</div><div class="mini-answer"><span class="answer">Adjacent</span></div><div class="side-name">q</div><div class="mini-answer"><span class="answer">Hypotenuse</span></div><div class="side-name">r</div><div class="mini-answer"><span class="answer">Opposite</span></div></div></div></div>
+
+  <div class="compare-strip">
+    <div class="compare-card">
+      <div class="practice-head"><b>สรุปสำคัญ 1</b><span>Key Summary 1</span></div>
+      <div class="answer-box"><span class="answer">Hypotenuse คือด้านที่อยู่ตรงข้ามมุมฉากเสมอ / The hypotenuse is always opposite the right angle.</span></div>
+    </div>
+    <div class="compare-card">
+      <div class="practice-head"><b>สรุปสำคัญ 2</b><span>Key Summary 2</span></div>
+      <div class="answer-box"><span class="answer">เมื่อเปลี่ยนมุมอ้างอิง Opposite และ Adjacent อาจสลับกัน แต่ Hypotenuse ไม่เปลี่ยน / When the reference angle changes, opposite and adjacent may swap, but the hypotenuse does not.</span></div>
+    </div>
+  </div>
+</section>
+
+
+<section class="sheet" data-page="7">
+  <div class="header">
+    <div class="kicker">Worksheet 3 / ใบงานที่ 3</div>
+    <h1>นิยาม sin, cos และ tan จากความยาวด้าน</h1>
+    <div class="subtitle">Defining sin, cos and tan from Side Lengths</div>
+  </div>
+  <div class="lead"><b>TH:</b> จากใบงานก่อน เราเรียกด้านเมื่ออ้างอิงมุมหนึ่งว่า Opposite, Adjacent และ Hypotenuse แล้ว ตอนนี้เราจะตั้งชื่ออัตราส่วนของด้านเหล่านี้ว่า <b>sin, cos และ tan</b>.<br><b>EN:</b> We can now name the ratios of the opposite, adjacent, and hypotenuse sides as <b>sin, cos, and tan</b>.</div>
+  <div class="trig-def-grid">
+    <div class="trig-def"><b>sin θ</b><div class="formula">\(\displaystyle \sin\theta=\frac{\text{Opposite}}{\text{Hypotenuse}}\)</div><small>SOH</small></div>
+    <div class="trig-def"><b>cos θ</b><div class="formula">\(\displaystyle \cos\theta=\frac{\text{Adjacent}}{\text{Hypotenuse}}\)</div><small>CAH</small></div>
+    <div class="trig-def"><b>tan θ</b><div class="formula">\(\displaystyle \tan\theta=\frac{\text{Opposite}}{\text{Adjacent}}\)</div><small>TOA</small></div>
+  </div>
+  <div class="summary-box"><h3>ตัวอย่าง / Example</h3><p>ถ้าด้านตรงข้าม = 3, ด้านประชิด = 4 และด้านตรงข้ามมุมฉาก = 5:</p><p>\(\sin A=3/5\), \(\cos A=4/5\), \(\tan A=3/4\)</p></div>
+  <div class="prompt">ฝึกอ่านค่าจากรูปโดยตรงก่อน ทุกข้อมีความยาวครบทั้ง 3 ด้าน <span class="en">Read the side lengths directly. Every triangle below has all three side lengths given.</span></div>
+  <div class="numeric-grid"><div class="numeric-card"><div class="practice-head"><b>ข้อ 1</b><span>Reference angle = A</span></div><svg viewBox="-12 -12 244 169" aria-label="Right triangle with side lengths"><line x1="55.0" y1="110.0" x2="55.0" y2="30.0" stroke="#0f172a" stroke-width="2.5"/><line x1="55.0" y1="30.0" x2="170.0" y2="110.0" stroke="#0f172a" stroke-width="2.5"/><line x1="170.0" y1="110.0" x2="55.0" y2="110.0" stroke="#0f172a" stroke-width="2.5"/><path d="M 55.0,100.0 L 65.0,100.0 L 65.0,110.0" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 157.7,101.4 A 15,15 0 0 0 155.0,110.0" fill="none" stroke="#b45309" stroke-width="1.6"/><text x="148.0" y="105.0" class="svg-label-ref" font-size="12">A</text><text x="44.0" y="70.0" class="svg-label-side" font-size="12">3</text><text x="118.8" y="61.0" class="svg-label-side" font-size="12">5</text><text x="112.5" y="121.0" class="svg-label-side" font-size="12">4</text></svg><div class="trig-answer-grid"><div class="tag">sin</div><div class="mini-answer"><span class="answer">3/5</span></div><div class="tag">cos</div><div class="mini-answer"><span class="answer">4/5</span></div><div class="tag">tan</div><div class="mini-answer"><span class="answer">3/4</span></div></div></div><div class="numeric-card"><div class="practice-head"><b>ข้อ 2</b><span>Reference angle = B</span></div><svg viewBox="-12 -12 244 169" aria-label="Right triangle with side lengths"><line x1="45.3" y1="91.0" x2="70.1" y2="15.0" stroke="#0f172a" stroke-width="2.5"/><line x1="70.1" y1="15.0" x2="154.7" y2="126.6" stroke="#0f172a" stroke-width="2.5"/><line x1="154.7" y1="126.6" x2="45.3" y2="91.0" stroke="#0f172a" stroke-width="2.5"/><path d="M 48.4,81.5 L 57.9,84.6 L 54.8,94.1" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 65.4,29.2 A 15,15 0 0 0 79.1,26.9" fill="none" stroke="#b45309" stroke-width="1.6"/><text x="77.1" y="10.0" class="svg-label-ref" font-size="12">B</text><text x="47.2" y="49.6" class="svg-label-side" font-size="12">3</text><text x="121.1" y="64.1" class="svg-label-side" font-size="12">5</text><text x="96.6" y="119.3" class="svg-label-side" font-size="12">4</text></svg><div class="trig-answer-grid"><div class="tag">sin</div><div class="mini-answer"><span class="answer">4/5</span></div><div class="tag">cos</div><div class="mini-answer"><span class="answer">3/5</span></div><div class="tag">tan</div><div class="mini-answer"><span class="answer">4/3</span></div></div></div><div class="numeric-card"><div class="practice-head"><b>ข้อ 3</b><span>Reference angle = A</span></div><svg viewBox="-12 -12 244 169" aria-label="Right triangle with side lengths"><line x1="42.4" y1="62.9" x2="95.9" y2="3.5" stroke="#0f172a" stroke-width="2.5"/><line x1="95.9" y1="3.5" x2="127.8" y2="139.9" stroke="#0f172a" stroke-width="2.5"/><line x1="127.8" y1="139.9" x2="42.4" y2="62.9" stroke="#0f172a" stroke-width="2.5"/><path d="M 49.1,55.5 L 56.5,62.2 L 49.8,69.6" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 124.4,125.3 A 15,15 0 0 0 116.7,129.8" fill="none" stroke="#b45309" stroke-width="1.6"/><text x="105.8" y="134.9" class="svg-label-ref" font-size="12">A</text><text x="61.0" y="25.8" class="svg-label-side" font-size="12">5</text><text x="122.6" y="69.2" class="svg-label-side" font-size="12">13</text><text x="77.7" y="109.6" class="svg-label-side" font-size="12">12</text></svg><div class="trig-answer-grid"><div class="tag">sin</div><div class="mini-answer"><span class="answer">5/13</span></div><div class="tag">cos</div><div class="mini-answer"><span class="answer">12/13</span></div><div class="tag">tan</div><div class="mini-answer"><span class="answer">5/12</span></div></div></div><div class="numeric-card"><div class="practice-head"><b>ข้อ 4</b><span>Reference angle = θ</span></div><svg viewBox="-12 -12 244 169" aria-label="Right triangle with side lengths"><line x1="68.1" y1="16.4" x2="148.1" y2="13.6" stroke="#0f172a" stroke-width="2.5"/><line x1="148.1" y1="13.6" x2="72.1" y2="131.4" stroke="#0f172a" stroke-width="2.5"/><line x1="72.1" y1="131.4" x2="68.1" y2="16.4" stroke="#0f172a" stroke-width="2.5"/><path d="M 78.1,16.1 L 78.4,26.1 L 68.5,26.4" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 133.1,14.2 A 15,15 0 0 0 139.9,26.2" fill="none" stroke="#b45309" stroke-width="1.6"/><text x="126.1" y="8.6" class="svg-label-ref" font-size="12">θ</text><text x="107.7" y="4.0" class="svg-label-side" font-size="12">8</text><text x="119.3" y="78.5" class="svg-label-side" font-size="12">17</text><text x="59.1" y="74.3" class="svg-label-side" font-size="12">15</text></svg><div class="trig-answer-grid"><div class="tag">sin</div><div class="mini-answer"><span class="answer">15/17</span></div><div class="tag">cos</div><div class="mini-answer"><span class="answer">8/17</span></div><div class="tag">tan</div><div class="mini-answer"><span class="answer">15/8</span></div></div></div><div class="numeric-card"><div class="practice-head"><b>ข้อ 5</b><span>Reference angle = A</span></div><svg viewBox="-12 -12 244 169" aria-label="Right triangle with side lengths"><line x1="124.1" y1="3.5" x2="177.6" y2="62.9" stroke="#0f172a" stroke-width="2.5"/><line x1="177.6" y1="62.9" x2="38.6" y2="80.4" stroke="#0f172a" stroke-width="2.5"/><line x1="38.6" y1="80.4" x2="124.1" y2="3.5" stroke="#0f172a" stroke-width="2.5"/><path d="M 130.8,10.9 L 123.4,17.6 L 116.7,10.2" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 53.5,78.5 A 15,15 0 0 0 49.8,70.4" fill="none" stroke="#b45309" stroke-width="1.6"/><text x="45.6" y="75.4" class="svg-label-ref" font-size="12">A</text><text x="159.0" y="25.8" class="svg-label-side" font-size="12">7</text><text x="109.5" y="82.6" class="svg-label-side" font-size="12">25</text><text x="74.0" y="33.8" class="svg-label-side" font-size="12">24</text></svg><div class="trig-answer-grid"><div class="tag">sin</div><div class="mini-answer"><span class="answer">7/25</span></div><div class="tag">cos</div><div class="mini-answer"><span class="answer">24/25</span></div><div class="tag">tan</div><div class="mini-answer"><span class="answer">7/24</span></div></div></div><div class="numeric-card"><div class="practice-head"><b>ข้อ 6</b><span>Reference angle = θ</span></div><svg viewBox="-12 -12 244 169" aria-label="Right triangle with side lengths"><line x1="177.8" y1="74.7" x2="126.4" y2="136.0" stroke="#0f172a" stroke-width="2.5"/><line x1="126.4" y1="136.0" x2="89.7" y2="0.8" stroke="#0f172a" stroke-width="2.5"/><line x1="89.7" y1="0.8" x2="177.8" y2="74.7" stroke="#0f172a" stroke-width="2.5"/><path d="M 171.4,82.4 L 163.8,75.9 L 170.2,68.3" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 136.1,124.5 A 15,15 0 0 0 122.5,121.5" fill="none" stroke="#b45309" stroke-width="1.6"/><text x="104.4" y="131.0" class="svg-label-ref" font-size="12">θ</text><text x="160.6" y="112.4" class="svg-label-side" font-size="12">9</text><text x="97.5" y="71.3" class="svg-label-side" font-size="12">15</text><text x="140.9" y="29.3" class="svg-label-side" font-size="12">12</text></svg><div class="trig-answer-grid"><div class="tag">sin</div><div class="mini-answer"><span class="answer">4/5</span></div><div class="tag">cos</div><div class="mini-answer"><span class="answer">3/5</span></div><div class="tag">tan</div><div class="mini-answer"><span class="answer">4/3</span></div></div></div></div>
+</section>
+
+<section class="sheet" data-page="8">
+  <div class="header">
+    <div class="kicker">Worksheet 3 / ใบงานที่ 3</div>
+    <h1>ฝึกหา sin, cos และ tan จากตัวเลข</h1>
+    <div class="subtitle">Practice Finding sin, cos and tan from Side Lengths</div>
+  </div>
+  <div class="prompt">ในแต่ละข้อให้มองมุมอ้างอิงก่อน แล้วเขียนอัตราส่วนเป็นเศษส่วนอย่างง่าย <span class="en">For each problem, identify the reference angle first and write each ratio as a simplified fraction.</span></div>
+  <div class="numeric-grid"><div class="numeric-card"><div class="practice-head"><b>ข้อ 7</b><span>Reference angle = A</span></div><svg viewBox="-12 -12 244 169" aria-label="Right triangle with side lengths"><line x1="51.7" y1="105.1" x2="58.7" y2="25.4" stroke="#0f172a" stroke-width="2.5"/><line x1="58.7" y1="25.4" x2="166.3" y2="115.1" stroke="#0f172a" stroke-width="2.5"/><line x1="166.3" y1="115.1" x2="51.7" y2="105.1" stroke="#0f172a" stroke-width="2.5"/><path d="M 52.6,95.1 L 62.6,96.0 L 61.7,105.9" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 154.8,105.5 A 15,15 0 0 0 151.3,113.8" fill="none" stroke="#b45309" stroke-width="1.6"/><text x="144.3" y="110.1" class="svg-label-ref" font-size="12">A</text><text x="44.3" y="64.2" class="svg-label-side" font-size="12">6</text><text x="119.5" y="61.8" class="svg-label-side" font-size="12">10</text><text x="108.0" y="121.0" class="svg-label-side" font-size="12">8</text></svg><div class="trig-answer-grid"><div class="tag">sin</div><div class="mini-answer"><span class="answer">3/5</span></div><div class="tag">cos</div><div class="mini-answer"><span class="answer">4/5</span></div><div class="tag">tan</div><div class="mini-answer"><span class="answer">3/4</span></div></div></div><div class="numeric-card"><div class="practice-head"><b>ข้อ 8</b><span>Reference angle = B</span></div><svg viewBox="-12 -12 244 169" aria-label="Right triangle with side lengths"><line x1="42.7" y1="79.5" x2="80.2" y2="8.9" stroke="#0f172a" stroke-width="2.5"/><line x1="80.2" y1="8.9" x2="144.2" y2="133.5" stroke="#0f172a" stroke-width="2.5"/><line x1="144.2" y1="133.5" x2="42.7" y2="79.5" stroke="#0f172a" stroke-width="2.5"/><path d="M 47.4,70.7 L 56.2,75.4 L 51.5,84.2" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 73.2,22.1 A 15,15 0 0 0 87.1,22.2" fill="none" stroke="#b45309" stroke-width="1.6"/><text x="87.2" y="3.9" class="svg-label-ref" font-size="12">B</text><text x="51.7" y="39.0" class="svg-label-side" font-size="12">6</text><text x="122.0" y="66.1" class="svg-label-side" font-size="12">10</text><text x="88.3" y="116.2" class="svg-label-side" font-size="12">8</text></svg><div class="trig-answer-grid"><div class="tag">sin</div><div class="mini-answer"><span class="answer">4/5</span></div><div class="tag">cos</div><div class="mini-answer"><span class="answer">3/5</span></div><div class="tag">tan</div><div class="mini-answer"><span class="answer">4/3</span></div></div></div><div class="numeric-card"><div class="practice-head"><b>ข้อ 9</b><span>Reference angle = θ</span></div><svg viewBox="-12 -12 244 169" aria-label="Right triangle with side lengths"><line x1="46.9" y1="44.6" x2="114.8" y2="2.2" stroke="#0f172a" stroke-width="2.5"/><line x1="114.8" y1="2.2" x2="107.9" y2="142.1" stroke="#0f172a" stroke-width="2.5"/><line x1="107.9" y1="142.1" x2="46.9" y2="44.6" stroke="#0f172a" stroke-width="2.5"/><path d="M 55.4,39.3 L 60.7,47.7 L 52.2,53.0" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 108.6,127.1 A 15,15 0 0 0 99.9,129.4" fill="none" stroke="#b45309" stroke-width="1.6"/><text x="114.9" y="137.1" class="svg-label-ref" font-size="12">θ</text><text x="75.0" y="14.0" class="svg-label-side" font-size="12">12</text><text x="122.3" y="72.7" class="svg-label-side" font-size="12">20</text><text x="68.1" y="99.1" class="svg-label-side" font-size="12">16</text></svg><div class="trig-answer-grid"><div class="tag">sin</div><div class="mini-answer"><span class="answer">3/5</span></div><div class="tag">cos</div><div class="mini-answer"><span class="answer">4/5</span></div><div class="tag">tan</div><div class="mini-answer"><span class="answer">3/4</span></div></div></div><div class="numeric-card"><div class="practice-head"><b>ข้อ 10</b><span>Reference angle = A</span></div><svg viewBox="-12 -12 244 169" aria-label="Right triangle with side lengths"><line x1="71.9" y1="13.6" x2="151.9" y2="16.4" stroke="#0f172a" stroke-width="2.5"/><line x1="151.9" y1="16.4" x2="67.9" y2="128.6" stroke="#0f172a" stroke-width="2.5"/><line x1="67.9" y1="128.6" x2="71.9" y2="13.6" stroke="#0f172a" stroke-width="2.5"/><path d="M 81.9,14.0 L 81.6,24.0 L 71.6,23.6" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 136.9,15.9 A 15,15 0 0 0 142.9,28.4" fill="none" stroke="#b45309" stroke-width="1.6"/><text x="129.9" y="11.4" class="svg-label-ref" font-size="12">A</text><text x="112.3" y="4.0" class="svg-label-side" font-size="12">10</text><text x="118.7" y="79.1" class="svg-label-side" font-size="12">26</text><text x="58.9" y="70.7" class="svg-label-side" font-size="12">24</text></svg><div class="trig-answer-grid"><div class="tag">sin</div><div class="mini-answer"><span class="answer">12/13</span></div><div class="tag">cos</div><div class="mini-answer"><span class="answer">5/13</span></div><div class="tag">tan</div><div class="mini-answer"><span class="answer">12/5</span></div></div></div><div class="numeric-card"><div class="practice-head"><b>ข้อ 11</b><span>Reference angle = θ</span></div><svg viewBox="-12 -12 244 169" aria-label="Right triangle with side lengths"><line x1="108.8" y1="2.0" x2="174.3" y2="47.9" stroke="#0f172a" stroke-width="2.5"/><line x1="174.3" y1="47.9" x2="42.8" y2="96.2" stroke="#0f172a" stroke-width="2.5"/><line x1="42.8" y1="96.2" x2="108.8" y2="2.0" stroke="#0f172a" stroke-width="2.5"/><path d="M 117.0,7.7 L 111.2,15.9 L 103.0,10.2" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 56.9,91.0 A 15,15 0 0 0 51.4,83.9" fill="none" stroke="#b45309" stroke-width="1.6"/><text x="49.8" y="91.2" class="svg-label-ref" font-size="12">θ</text><text x="147.9" y="15.9" class="svg-label-side" font-size="12">15</text><text x="112.4" y="82.4" class="svg-label-side" font-size="12">25</text><text x="66.8" y="42.8" class="svg-label-side" font-size="12">20</text></svg><div class="trig-answer-grid"><div class="tag">sin</div><div class="mini-answer"><span class="answer">3/5</span></div><div class="tag">cos</div><div class="mini-answer"><span class="answer">4/5</span></div><div class="tag">tan</div><div class="mini-answer"><span class="answer">3/4</span></div></div></div><div class="numeric-card"><div class="practice-head"><b>ข้อ 12</b><span>Reference angle = A</span></div><svg viewBox="-12 -12 244 169" aria-label="Right triangle with side lengths"><line x1="152.8" y1="17.1" x2="173.5" y2="94.4" stroke="#0f172a" stroke-width="2.5"/><line x1="173.5" y1="94.4" x2="41.7" y2="46.9" stroke="#0f172a" stroke-width="2.5"/><line x1="41.7" y1="46.9" x2="152.8" y2="17.1" stroke="#0f172a" stroke-width="2.5"/><path d="M 155.4,26.8 L 145.7,29.4 L 143.1,19.7" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 169.6,79.9 A 15,15 0 0 0 159.4,89.3" fill="none" stroke="#b45309" stroke-width="1.6"/><text x="151.5" y="89.4" class="svg-label-ref" font-size="12">A</text><text x="173.8" y="52.9" class="svg-label-side" font-size="12">20</text><text x="103.9" y="81.0" class="svg-label-side" font-size="12">29</text><text x="94.4" y="21.4" class="svg-label-side" font-size="12">21</text></svg><div class="trig-answer-grid"><div class="tag">sin</div><div class="mini-answer"><span class="answer">21/29</span></div><div class="tag">cos</div><div class="mini-answer"><span class="answer">20/29</span></div><div class="tag">tan</div><div class="mini-answer"><span class="answer">21/20</span></div></div></div><div class="numeric-card"><div class="practice-head"><b>ข้อ 13</b><span>Reference angle = A</span></div><svg viewBox="-12 -12 244 169" aria-label="Right triangle with side lengths"><line x1="176.8" y1="57.0" x2="142.9" y2="129.5" stroke="#0f172a" stroke-width="2.5"/><line x1="142.9" y1="129.5" x2="72.5" y2="8.4" stroke="#0f172a" stroke-width="2.5"/><line x1="72.5" y1="8.4" x2="176.8" y2="57.0" stroke="#0f172a" stroke-width="2.5"/><path d="M 172.5,66.1 L 163.5,61.8 L 167.7,52.8" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 80.1,21.4 A 15,15 0 0 0 86.1,14.7" fill="none" stroke="#b45309" stroke-width="1.6"/><text x="79.5" y="3.4" class="svg-label-ref" font-size="12">A</text><text x="169.8" y="97.9" class="svg-label-side" font-size="12">12</text><text x="98.2" y="74.5" class="svg-label-side" font-size="12">37</text><text x="129.3" y="22.7" class="svg-label-side" font-size="12">35</text></svg><div class="trig-answer-grid"><div class="tag">sin</div><div class="mini-answer"><span class="answer">12/37</span></div><div class="tag">cos</div><div class="mini-answer"><span class="answer">35/37</span></div><div class="tag">tan</div><div class="mini-answer"><span class="answer">12/35</span></div></div></div><div class="numeric-card"><div class="practice-head"><b>ข้อ 14</b><span>Reference angle = θ</span></div><svg viewBox="-12 -12 244 169" aria-label="Right triangle with side lengths"><line x1="165.0" y1="109.9" x2="89.0" y2="134.7" stroke="#0f172a" stroke-width="2.5"/><line x1="89.0" y1="134.7" x2="129.5" y2="0.6" stroke="#0f172a" stroke-width="2.5"/><line x1="129.5" y1="0.6" x2="165.0" y2="109.9" stroke="#0f172a" stroke-width="2.5"/><path d="M 155.5,113.0 L 152.4,103.5 L 161.9,100.4" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 103.2,130.0 A 15,15 0 0 0 93.3,120.3" fill="none" stroke="#b45309" stroke-width="1.6"/><text x="96.0" y="129.7" class="svg-label-ref" font-size="12">θ</text><text x="130.4" y="132.8" class="svg-label-side" font-size="12">16</text><text x="98.7" y="64.4" class="svg-label-side" font-size="12">34</text><text x="157.7" y="51.9" class="svg-label-side" font-size="12">30</text></svg><div class="trig-answer-grid"><div class="tag">sin</div><div class="mini-answer"><span class="answer">15/17</span></div><div class="tag">cos</div><div class="mini-answer"><span class="answer">8/17</span></div><div class="tag">tan</div><div class="mini-answer"><span class="answer">15/8</span></div></div></div><div class="numeric-card"><div class="practice-head"><b>ข้อ 15</b><span>Reference angle = A</span></div><svg viewBox="-12 -12 244 169" aria-label="Right triangle with side lengths"><line x1="99.4" y1="137.2" x2="42.8" y2="80.6" stroke="#0f172a" stroke-width="2.5"/><line x1="42.8" y1="80.6" x2="180.7" y2="55.9" stroke="#0f172a" stroke-width="2.5"/><line x1="180.7" y1="55.9" x2="99.4" y2="137.2" stroke="#0f172a" stroke-width="2.5"/><path d="M 92.3,130.1 L 99.4,123.0 L 106.5,130.1" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 165.9,58.5 A 15,15 0 0 0 170.1,66.5" fill="none" stroke="#b45309" stroke-width="1.6"/><text x="158.7" y="50.9" class="svg-label-ref" font-size="12">A</text><text x="63.3" y="116.7" class="svg-label-side" font-size="12">18</text><text x="109.8" y="57.4" class="svg-label-side" font-size="12">30</text><text x="147.8" y="104.3" class="svg-label-side" font-size="12">24</text></svg><div class="trig-answer-grid"><div class="tag">sin</div><div class="mini-answer"><span class="answer">3/5</span></div><div class="tag">cos</div><div class="mini-answer"><span class="answer">4/5</span></div><div class="tag">tan</div><div class="mini-answer"><span class="answer">3/4</span></div></div></div></div>
+</section>
+
+<section class="sheet" data-page="9">
+  <div class="header">
+    <div class="kicker">Worksheet 3 / ใบงานที่ 3</div>
+    <h1>ทวนพีทาโกรัสก่อนหาอัตราส่วนตรีโกณมิติ</h1>
+    <div class="subtitle">Review Pythagoras before Finding Trigonometric Ratios</div>
+  </div>
+  <div class="summary-box"><h3>ทวนสั้น ๆ / Quick Review</h3><p>สำหรับสามเหลี่ยมมุมฉาก: \(a^2+b^2=c^2\) โดย \(c\) คือ hypotenuse</p><p><span class="en">For a right triangle, \(a^2+b^2=c^2\), where \(c\) is the hypotenuse.</span></p></div>
+  <div class="prompt">บางข้อยังให้ความยาวมาไม่ครบ จึงต้องหาด้านที่หายไปก่อน แล้วจึงใช้ SOH–CAH–TOA <span class="en">Some problems do not give all three sides. Find the missing side first, then use SOH–CAH–TOA.</span></div>
+  <div class="pyth-grid"><div class="pyth-card"><div class="practice-head"><b>ข้อ 16</b><span>Reference angle = A</span></div><svg viewBox="-12 -12 244 169" aria-label="Right triangle with side lengths"><line x1="55.0" y1="110.0" x2="55.0" y2="30.0" stroke="#0f172a" stroke-width="2.5"/><line x1="55.0" y1="30.0" x2="170.0" y2="110.0" stroke="#0f172a" stroke-width="2.5"/><line x1="170.0" y1="110.0" x2="55.0" y2="110.0" stroke="#0f172a" stroke-width="2.5"/><path d="M 55.0,100.0 L 65.0,100.0 L 65.0,110.0" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 157.7,101.4 A 15,15 0 0 0 155.0,110.0" fill="none" stroke="#b45309" stroke-width="1.6"/><text x="148.0" y="105.0" class="svg-label-ref" font-size="12">A</text><text x="44.0" y="70.0" class="svg-label-side" font-size="12">6</text><text x="118.8" y="61.0" class="svg-label-side" font-size="12">?</text><text x="112.5" y="121.0" class="svg-label-side" font-size="12">8</text></svg><div class="numeric-note">1) หาด้านที่หายไปด้วยพีทาโกรัส / Find the missing side using Pythagoras.</div><div class="work-box"><span class="answer">c² = 6² + 8² = 100 ⇒ c = 10</span></div><div class="numeric-note">2) จากนั้นหา sin, cos, tan / Then find sin, cos and tan.</div><div class="trig-answer-grid"><div class="tag">sin</div><div class="mini-answer"><span class="answer">3/5</span></div><div class="tag">cos</div><div class="mini-answer"><span class="answer">4/5</span></div><div class="tag">tan</div><div class="mini-answer"><span class="answer">3/4</span></div></div></div><div class="pyth-card"><div class="practice-head"><b>ข้อ 17</b><span>Reference angle = A</span></div><svg viewBox="-12 -12 244 169" aria-label="Right triangle with side lengths"><line x1="42.2" y1="74.8" x2="84.6" y2="6.9" stroke="#0f172a" stroke-width="2.5"/><line x1="84.6" y1="6.9" x2="139.7" y2="135.7" stroke="#0f172a" stroke-width="2.5"/><line x1="139.7" y1="135.7" x2="42.2" y2="74.8" stroke="#0f172a" stroke-width="2.5"/><path d="M 47.5,66.3 L 55.9,71.6 L 50.6,80.1" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 133.8,121.9 A 15,15 0 0 0 127.0,127.8" fill="none" stroke="#b45309" stroke-width="1.6"/><text x="117.7" y="130.7" class="svg-label-ref" font-size="12">A</text><text x="54.0" y="35.0" class="svg-label-side" font-size="12">5</text><text x="122.2" y="67.0" class="svg-label-side" font-size="12">13</text><text x="85.1" y="114.6" class="svg-label-side" font-size="12">?</text></svg><div class="numeric-note">1) หาด้านที่หายไปด้วยพีทาโกรัส / Find the missing side using Pythagoras.</div><div class="work-box"><span class="answer">x² + 5² = 13² ⇒ x² = 144 ⇒ x = 12</span></div><div class="numeric-note">2) จากนั้นหา sin, cos, tan / Then find sin, cos and tan.</div><div class="trig-answer-grid"><div class="tag">sin</div><div class="mini-answer"><span class="answer">5/13</span></div><div class="tag">cos</div><div class="mini-answer"><span class="answer">12/13</span></div><div class="tag">tan</div><div class="mini-answer"><span class="answer">5/12</span></div></div></div><div class="pyth-card"><div class="practice-head"><b>ข้อ 18</b><span>Reference angle = θ</span></div><svg viewBox="-12 -12 244 169" aria-label="Right triangle with side lengths"><line x1="55.0" y1="30.1" x2="131.0" y2="5.3" stroke="#0f172a" stroke-width="2.5"/><line x1="131.0" y1="5.3" x2="90.5" y2="139.4" stroke="#0f172a" stroke-width="2.5"/><line x1="90.5" y1="139.4" x2="55.0" y2="30.1" stroke="#0f172a" stroke-width="2.5"/><path d="M 64.5,27.0 L 67.6,36.5 L 58.1,39.6" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 116.8,10.0 A 15,15 0 0 0 126.7,19.7" fill="none" stroke="#b45309" stroke-width="1.6"/><text x="109.0" y="0.3" class="svg-label-ref" font-size="12">θ</text><text x="89.6" y="7.2" class="svg-label-side" font-size="12">9</text><text x="121.3" y="75.6" class="svg-label-side" font-size="12">?</text><text x="62.3" y="88.1" class="svg-label-side" font-size="12">12</text></svg><div class="numeric-note">1) หาด้านที่หายไปด้วยพีทาโกรัส / Find the missing side using Pythagoras.</div><div class="work-box"><span class="answer">c² = 9² + 12² = 225 ⇒ c = 15</span></div><div class="numeric-note">2) จากนั้นหา sin, cos, tan / Then find sin, cos and tan.</div><div class="trig-answer-grid"><div class="tag">sin</div><div class="mini-answer"><span class="answer">4/5</span></div><div class="tag">cos</div><div class="mini-answer"><span class="answer">3/5</span></div><div class="tag">tan</div><div class="mini-answer"><span class="answer">4/3</span></div></div></div><div class="pyth-card"><div class="practice-head"><b>ข้อ 19</b><span>Reference angle = A</span></div><svg viewBox="-12 -12 244 169" aria-label="Right triangle with side lengths"><line x1="108.8" y1="2.0" x2="174.3" y2="47.9" stroke="#0f172a" stroke-width="2.5"/><line x1="174.3" y1="47.9" x2="42.8" y2="96.2" stroke="#0f172a" stroke-width="2.5"/><line x1="42.8" y1="96.2" x2="108.8" y2="2.0" stroke="#0f172a" stroke-width="2.5"/><path d="M 117.0,7.7 L 111.2,15.9 L 103.0,10.2" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 162.0,39.3 A 15,15 0 0 0 160.2,53.1" fill="none" stroke="#b45309" stroke-width="1.6"/><text x="152.3" y="42.9" class="svg-label-ref" font-size="12">A</text><text x="147.9" y="15.9" class="svg-label-side" font-size="12">8</text><text x="112.4" y="82.4" class="svg-label-side" font-size="12">17</text><text x="66.8" y="42.8" class="svg-label-side" font-size="12">?</text></svg><div class="numeric-note">1) หาด้านที่หายไปด้วยพีทาโกรัส / Find the missing side using Pythagoras.</div><div class="work-box"><span class="answer">x² + 8² = 17² ⇒ x² = 225 ⇒ x = 15</span></div><div class="numeric-note">2) จากนั้นหา sin, cos, tan / Then find sin, cos and tan.</div><div class="trig-answer-grid"><div class="tag">sin</div><div class="mini-answer"><span class="answer">15/17</span></div><div class="tag">cos</div><div class="mini-answer"><span class="answer">8/17</span></div><div class="tag">tan</div><div class="mini-answer"><span class="answer">15/8</span></div></div></div><div class="pyth-card"><div class="practice-head"><b>ข้อ 20</b><span>Reference angle = θ</span></div><svg viewBox="-12 -12 244 169" aria-label="Right triangle with side lengths"><line x1="176.8" y1="57.0" x2="142.9" y2="129.5" stroke="#0f172a" stroke-width="2.5"/><line x1="142.9" y1="129.5" x2="72.5" y2="8.4" stroke="#0f172a" stroke-width="2.5"/><line x1="72.5" y1="8.4" x2="176.8" y2="57.0" stroke="#0f172a" stroke-width="2.5"/><path d="M 172.5,66.1 L 163.5,61.8 L 167.7,52.8" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 80.1,21.4 A 15,15 0 0 0 86.1,14.7" fill="none" stroke="#b45309" stroke-width="1.6"/><text x="79.5" y="3.4" class="svg-label-ref" font-size="12">θ</text><text x="169.8" y="97.9" class="svg-label-side" font-size="12">?</text><text x="98.2" y="74.5" class="svg-label-side" font-size="12">25</text><text x="129.3" y="22.7" class="svg-label-side" font-size="12">24</text></svg><div class="numeric-note">1) หาด้านที่หายไปด้วยพีทาโกรัส / Find the missing side using Pythagoras.</div><div class="work-box"><span class="answer">x² + 24² = 25² ⇒ x² = 49 ⇒ x = 7</span></div><div class="numeric-note">2) จากนั้นหา sin, cos, tan / Then find sin, cos and tan.</div><div class="trig-answer-grid"><div class="tag">sin</div><div class="mini-answer"><span class="answer">7/25</span></div><div class="tag">cos</div><div class="mini-answer"><span class="answer">24/25</span></div><div class="tag">tan</div><div class="mini-answer"><span class="answer">7/24</span></div></div></div><div class="pyth-card"><div class="practice-head"><b>ข้อ 21</b><span>Reference angle = A</span></div><svg viewBox="-12 -12 244 169" aria-label="Right triangle with side lengths"><line x1="134.4" y1="133.5" x2="57.1" y2="112.8" stroke="#0f172a" stroke-width="2.5"/><line x1="57.1" y1="112.8" x2="164.2" y2="22.4" stroke="#0f172a" stroke-width="2.5"/><line x1="164.2" y1="22.4" x2="134.4" y2="133.5" stroke="#0f172a" stroke-width="2.5"/><path d="M 124.7,130.9 L 127.3,121.2 L 137.0,123.8" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 71.6,116.7 A 15,15 0 0 0 68.6,103.1" fill="none" stroke="#b45309" stroke-width="1.6"/><text x="64.1" y="107.8" class="svg-label-ref" font-size="12">A</text><text x="92.9" y="133.8" class="svg-label-side" font-size="12">?</text><text x="103.6" y="59.2" class="svg-label-side" font-size="12">29</text><text x="159.9" y="80.8" class="svg-label-side" font-size="12">21</text></svg><div class="numeric-note">1) หาด้านที่หายไปด้วยพีทาโกรัส / Find the missing side using Pythagoras.</div><div class="work-box"><span class="answer">x² + 21² = 29² ⇒ x² = 400 ⇒ x = 20</span></div><div class="numeric-note">2) จากนั้นหา sin, cos, tan / Then find sin, cos and tan.</div><div class="trig-answer-grid"><div class="tag">sin</div><div class="mini-answer"><span class="answer">21/29</span></div><div class="tag">cos</div><div class="mini-answer"><span class="answer">20/29</span></div><div class="tag">tan</div><div class="mini-answer"><span class="answer">21/20</span></div></div></div></div>
+</section>
+
+
+<section class="sheet" data-page="10">
+  <div class="header">
+    <div class="kicker">Worksheet 4 / ใบงานที่ 4</div>
+    <h1>สร้างค่า sin, cos, tan ของ 30° และ 60°</h1>
+    <div class="subtitle">Deriving sin, cos and tan for 30° and 60°</div>
+  </div>
+
+  <div class="lead"><b>TH:</b> เริ่มจากสามเหลี่ยมด้านเท่าที่ทุกด้านยาว 1 แล้วลากเส้นสูงจากยอดลงกึ่งกลางฐาน เส้นสูงนี้แบ่งสามเหลี่ยมออกเป็นสามเหลี่ยมมุมฉากสองรูปที่เท่ากัน<br><b>EN:</b> Start with an equilateral triangle of side length 1. Draw an altitude from the top vertex to the midpoint of the base. This creates two congruent right triangles.</div>
+
+  <div class="special-layout">
+    <div class="special-figure">
+      <div class="figure-head"><b>สามเหลี่ยมด้านเท่าด้านละ 1</b><span>Equilateral triangle, side = 1</span></div>
+      <svg viewBox="0 0 430 330" role="img" aria-label="Equilateral triangle split into two 30-60-90 triangles">
+        <polygon points="215,38 55,285 375,285" fill="#eff6ff" stroke="#0f172a" stroke-width="3"/>
+        <line x1="215" y1="38" x2="215" y2="285" stroke="#1d4ed8" stroke-width="3"/>
+        <path d="M215 268 L232 268 L232 285" fill="none" stroke="#0f172a" stroke-width="2"/>
+        <line x1="199" y1="285" x2="231" y2="285" stroke="#64748b" stroke-width="2"/>
+        <line x1="215" y1="279" x2="215" y2="291" stroke="#64748b" stroke-width="2"/>
+        <path d="M79 285 A34 34 0 0 1 97 256" fill="none" stroke="#b45309" stroke-width="2"/>
+        <path d="M351 285 A34 34 0 0 0 333 256" fill="none" stroke="#b45309" stroke-width="2"/>
+        <path d="M215 70 A32 32 0 0 0 198 65" fill="none" stroke="#b45309" stroke-width="2"/>
+        <text x="86" y="265" class="svg-angle">60°</text>
+        <text x="322" y="265" class="svg-angle">60°</text>
+        <text x="182" y="82" class="svg-angle">30°</text>
+        <text x="112" y="150" class="svg-number">1</text>
+        <text x="305" y="150" class="svg-number">1</text>
+        <text x="199" y="310" class="svg-number">1/2</text>
+        <text x="274" y="310" class="svg-number">1/2</text>
+        <text x="226" y="165" class="svg-side-note">h = ?</text>
+        <text x="203" y="29" class="svg-side-note">A</text>
+        <text x="38" y="302" class="svg-side-note">B</text>
+        <text x="381" y="302" class="svg-side-note">C</text>
+        <text x="203" y="302" class="svg-side-note">D</text>
+      </svg>
+    </div>
+
+    <div class="derive-stack">
+      <div class="derive-card">
+        <h3>1. ทำไมฐานแต่ละครึ่งจึงยาว 1/2? / Why is each half of the base 1/2?</h3>
+        <div class="answer-box"><span class="answer">เพราะฐาน BC ยาว 1 และ D เป็นจุดกึ่งกลาง ดังนั้น BD = DC = 1/2. / Because BC = 1 and D is the midpoint, BD = DC = 1/2.</span></div>
+      </div>
+      <div class="derive-card">
+        <h3>2. ใช้พีทาโกรัสหาเส้นสูง h / Use Pythagoras to find h</h3>
+        <p>เลือกสามเหลี่ยมมุมฉากหนึ่งรูป: hypotenuse = 1 และฐาน = 1/2</p>
+        <div class="derive-work"><span class="answer">\(h^2+(\frac12)^2=1^2\)<br>\(h^2=1-\frac14=\frac34\)<br>\(h=\sqrt{\frac34}=\frac{\sqrt3}{2}\)</span></div>
+      </div>
+      <div class="derive-card">
+        <h3>3. ตอนนี้เรารู้ด้านของสามเหลี่ยม 30°–60°–90° แล้ว</h3>
+        <div class="answer-box"><span class="answer">ด้านทั้งสามคือ \(\frac12,\ \frac{\sqrt3}{2},\ 1\) / The three side lengths are \(\frac12,\ \frac{\sqrt3}{2},\ 1\).</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="angle-pair">
+    <div class="angle-box">
+      <h3>อ้างอิงมุม 30° / Reference angle 30°</h3>
+      <div class="special-ratios">
+        <div class="special-ratio"><b>sin 30°</b><span class="answer">\(\frac{1/2}{1}=\frac12\)</span></div>
+        <div class="special-ratio"><b>cos 30°</b><span class="answer">\(\frac{\sqrt3/2}{1}=\frac{\sqrt3}{2}\)</span></div>
+        <div class="special-ratio"><b>tan 30°</b><span class="answer">\(\frac{1/2}{\sqrt3/2}=\frac1{\sqrt3}\)</span></div>
+      </div>
+    </div>
+    <div class="angle-box">
+      <h3>อ้างอิงมุม 60° / Reference angle 60°</h3>
+      <div class="special-ratios">
+        <div class="special-ratio"><b>sin 60°</b><span class="answer">\(\frac{\sqrt3/2}{1}=\frac{\sqrt3}{2}\)</span></div>
+        <div class="special-ratio"><b>cos 60°</b><span class="answer">\(\frac{1/2}{1}=\frac12\)</span></div>
+        <div class="special-ratio"><b>tan 60°</b><span class="answer">\(\frac{\sqrt3/2}{1/2}=\sqrt3\)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="warning"><b>อย่าเพิ่งจำตาราง / Do not memorize a table yet.</b> ให้จำที่มาว่า 30° และ 60° เกิดจากการผ่าครึ่งสามเหลี่ยมด้านเท่าด้านละ 1</div>
+</section>
+
+
+<section class="sheet" data-page="11">
+  <div class="header">
+    <div class="kicker">Worksheet 4 / ใบงานที่ 4</div>
+    <h1>สร้างค่า sin, cos, tan ของ 45°</h1>
+    <div class="subtitle">Deriving sin, cos and tan for 45°</div>
+  </div>
+
+  <div class="lead"><b>TH:</b> ใช้สามเหลี่ยมมุมฉากหน้าจั่วที่มุมแหลมทั้งสองเป็น 45° และกำหนดให้ด้านตรงข้ามมุมฉากยาว 1 จากความสมมาตร ขาทั้งสองยาวเท่ากัน ให้ยาวด้านละ \(x\).<br><b>EN:</b> Use an isosceles right triangle with two 45° angles and hypotenuse 1. By symmetry, the two legs have the same length, call it \(x\).</div>
+
+  <div class="special-layout">
+    <div class="special-figure">
+      <div class="figure-head"><b>สามเหลี่ยมมุมฉากหน้าจั่ว</b><span>Isosceles right triangle</span></div>
+      <svg viewBox="0 0 430 330" role="img" aria-label="45-45-90 triangle with hypotenuse 1">
+        <polygon points="80,275 80,65 290,275" fill="#eff6ff" stroke="#0f172a" stroke-width="3"/>
+        <path d="M80 255 L100 255 L100 275" fill="none" stroke="#0f172a" stroke-width="2"/>
+        <path d="M80 98 A34 34 0 0 1 104 88" fill="none" stroke="#b45309" stroke-width="2"/>
+        <path d="M256 275 A34 34 0 0 0 266 251" fill="none" stroke="#b45309" stroke-width="2"/>
+        <text x="99" y="104" class="svg-angle">45°</text>
+        <text x="238" y="256" class="svg-angle">45°</text>
+        <text x="55" y="175" class="svg-side-note">x</text>
+        <text x="174" y="304" class="svg-side-note">x</text>
+        <text x="196" y="157" class="svg-number">1</text>
+        <text x="65" y="294" class="svg-side-note">C</text>
+        <text x="65" y="55" class="svg-side-note">A</text>
+        <text x="298" y="294" class="svg-side-note">B</text>
+      </svg>
+    </div>
+
+    <div class="derive-stack">
+      <div class="derive-card">
+        <h3>1. เขียนสมการพีทาโกรัส / Write the Pythagorean equation</h3>
+        <div class="derive-work"><span class="answer">\(x^2+x^2=1^2\)</span></div>
+      </div>
+      <div class="derive-card">
+        <h3>2. แก้สมการหา x / Solve for x</h3>
+        <div class="derive-work"><span class="answer">\(2x^2=1\)<br>\(x^2=\frac12\)<br>\(x=\sqrt{\frac12}=\frac1{\sqrt2}=\frac{\sqrt2}{2}\)</span></div>
+      </div>
+      <div class="derive-card">
+        <h3>3. สรุปความยาวด้าน / Side lengths</h3>
+        <div class="answer-box"><span class="answer">ขาทั้งสองยาว \(\frac{\sqrt2}{2}\) และ hypotenuse ยาว 1. / Both legs are \(\frac{\sqrt2}{2}\), and the hypotenuse is 1.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="angle-box" style="margin-top:10px">
+    <h3>อ้างอิงมุม 45° / Reference angle 45°</h3>
+    <div class="special-ratios">
+      <div class="special-ratio"><b>sin 45°</b><span class="answer">\(\frac{\sqrt2/2}{1}=\frac{\sqrt2}{2}\)</span></div>
+      <div class="special-ratio"><b>cos 45°</b><span class="answer">\(\frac{\sqrt2/2}{1}=\frac{\sqrt2}{2}\)</span></div>
+      <div class="special-ratio"><b>tan 45°</b><span class="answer">\(\frac{\sqrt2/2}{\sqrt2/2}=1\)</span></div>
+    </div>
+  </div>
+
+  <div class="summary-box" style="margin-top:10px">
+    <h3>ทำไม sin 45° = cos 45°? / Why are sin 45° and cos 45° equal?</h3>
+    <div class="answer-box"><span class="answer">เพราะด้าน Opposite และ Adjacent ของมุม 45° ยาวเท่ากัน จึงมีอัตราส่วนต่อ hypotenuse เท่ากัน / Because the opposite and adjacent legs are equal, their ratios to the hypotenuse are equal.</span></div>
+  </div>
+
+  <div class="warning"><b>ที่มาของ 45° / Origin of 45°:</b> ค่านี้มาจากสามเหลี่ยมมุมฉากหน้าจั่ว ไม่ได้เกิดจากการจำตัวเลขแยก ๆ</div>
+</section>
+
+
+<section class="sheet" data-page="12">
+  <div class="header">
+    <div class="kicker">Worksheet 4 / ใบงานที่ 4</div>
+    <h1>สร้างตารางค่ามุมพิเศษจากสิ่งที่พิสูจน์</h1>
+    <div class="subtitle">Build the Special-Angle Table from Your Derivations</div>
+  </div>
+
+  <div class="lead"><b>TH:</b> ห้ามเปิดตารางสำเร็จรูป ให้ย้อนดูการพิสูจน์สองรูปก่อนหน้า แล้วเติมค่าต่อไปนี้ด้วยตนเอง<br><b>EN:</b> Do not use a memorized table. Use the two derivations from the previous pages to complete the values below.</div>
+
+  <table class="special-table">
+    <thead><tr><th>θ</th><th>30°</th><th>45°</th><th>60°</th></tr></thead>
+    <tbody>
+      <tr><th>sin θ</th><td class="fill"><span class="answer">\(\frac12\)</span></td><td class="fill"><span class="answer">\(\frac{\sqrt2}{2}\)</span></td><td class="fill"><span class="answer">\(\frac{\sqrt3}{2}\)</span></td></tr>
+      <tr><th>cos θ</th><td class="fill"><span class="answer">\(\frac{\sqrt3}{2}\)</span></td><td class="fill"><span class="answer">\(\frac{\sqrt2}{2}\)</span></td><td class="fill"><span class="answer">\(\frac12\)</span></td></tr>
+      <tr><th>tan θ</th><td class="fill"><span class="answer">\(\frac1{\sqrt3}=\frac{\sqrt3}{3}\)</span></td><td class="fill"><span class="answer">\(1\)</span></td><td class="fill"><span class="answer">\(\sqrt3\)</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="pattern-grid">
+    <div class="pattern-card">
+      <b>1. เปรียบเทียบ sin 30° กับ cos 60°</b><br><span class="en">Compare sin 30° and cos 60°.</span>
+      <div class="answer-box"><span class="answer">เท่ากัน: \(\sin30^\circ=\cos60^\circ=\frac12\)</span></div>
+    </div>
+    <div class="pattern-card">
+      <b>2. เปรียบเทียบ sin 60° กับ cos 30°</b><br><span class="en">Compare sin 60° and cos 30°.</span>
+      <div class="answer-box"><span class="answer">เท่ากัน: \(\sin60^\circ=\cos30^\circ=\frac{\sqrt3}{2}\)</span></div>
+    </div>
+    <div class="pattern-card">
+      <b>3. ทำไม tan 45° = 1?</b><br><span class="en">Why is tan 45° equal to 1?</span>
+      <div class="answer-box"><span class="answer">เพราะ Opposite = Adjacent ดังนั้น \(\tan45^\circ=O/A=1\).</span></div>
+    </div>
+    <div class="pattern-card">
+      <b>4. เมื่อมุมเพิ่มจาก 30° → 60° ค่า sin เปลี่ยนอย่างไร?</b><br><span class="en">What happens to sine as the angle increases from 30° to 60°?</span>
+      <div class="answer-box"><span class="answer">เพิ่มขึ้น: \(\frac12 < \frac{\sqrt2}{2} < \frac{\sqrt3}{2}\).</span></div>
+    </div>
+  </div>
+
+  <div class="summary-box" style="margin-top:10px">
+    <h3>สิ่งที่ต้องติดตัวไปใบงานที่ 5 / What you need for Worksheet 5</h3>
+    <p><b>TH:</b> ตอนนี้เรารู้ค่าของ sin, cos, tan ที่มุม 30°, 45°, 60° และรู้ว่าค่าเหล่านี้สร้างมาจากสามเหลี่ยมมุมฉากอย่างไร ใบถัดไปจะนำค่าเหล่านี้ไป <b>หาความยาวด้านที่ไม่ทราบค่า</b>.</p>
+    <p><b>EN:</b> We now know the special-angle values and where they come from. In the next worksheet, we will use them to <b>find unknown side lengths</b>.</p>
+  </div>
+
+  <div class="warning"><b>Key idea:</b> ตารางนี้เป็น “ผลลัพธ์ของการพิสูจน์” ไม่ใช่จุดเริ่มต้นของบทเรียน / This table is the result of the derivation, not the starting point.</div>
+</section>
+
+<section class="sheet" data-page="13"><div class="header"><div class="kicker">Worksheet 5 / ใบงานที่ 5</div><h1>ใช้ sin, cos, tan หาความยาวด้าน</h1><div class="subtitle">Using Sine, Cosine and Tangent to Find Side Lengths</div></div><div class="lead"><b>TH:</b> จากใบงานที่ 4 เราพิสูจน์ค่าของมุมพิเศษแล้ว ตอนนี้จะนำค่าพวกนั้นมาใช้หา <b>ด้านที่ไม่ทราบค่า</b>. ให้ทำตามลำดับ: เรียกชื่อด้าน → เลือกอัตราส่วน → ตั้งสมการ → แทนค่ามุมพิเศษ → แก้สมการ.<br><b>EN:</b> We derived the special-angle values in Worksheet 4. Now use them to find <b>unknown side lengths</b>: name the sides → choose a ratio → write an equation → substitute the special value → solve.</div><div class="w5-reference"><div class="w5-ref-card"><b>30°</b>\(\sin30^\circ=\frac12\)<br>\(\cos30^\circ=\frac{\sqrt3}2\)<br>\(\tan30^\circ=\frac1{\sqrt3}\)</div><div class="w5-ref-card"><b>45°</b>\(\sin45^\circ=\frac{\sqrt2}2\)<br>\(\cos45^\circ=\frac{\sqrt2}2\)<br>\(\tan45^\circ=1\)</div><div class="w5-ref-card"><b>60°</b>\(\sin60^\circ=\frac{\sqrt3}2\)<br>\(\cos60^\circ=\frac12\)<br>\(\tan60^\circ=\sqrt3\)</div></div><div class="prompt"><b>ฝึกแบบมีขั้นตอน / Guided Practice:</b> จงหา x และเขียนแต่ละขั้นให้ครบ <span class="en">Find x and complete each step.</span></div><div class="solve-grid"><div class="solve-card"><div class="solve-head"><b>ข้อ 1</b><span>Find x / จงหา x</span></div><svg class="w5-svg" viewBox="0 0 240 150"><line x1="38.6" y1="122.0" x2="201.4" y2="122.0" stroke="#0f172a" stroke-width="2.5"/><line x1="201.4" y1="122.0" x2="201.4" y2="28.0" stroke="#0f172a" stroke-width="2.5"/><line x1="38.6" y1="122.0" x2="201.4" y2="28.0" stroke="#0f172a" stroke-width="2.5"/><path d="M 191.4,122.0 L 191.4,112.0 L 201.4,112.0" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 55.6,122.0 A 17,17 0 0 0 53.3,113.5" fill="none" stroke="#b45309" stroke-width="1.7"/><text x="48.6" y="115.0" class="angle-label" font-size="12">30°</text><text x="113.0" y="62.9" text-anchor="middle" class="side-label" font-size="12">12</text><text x="215.4" y="75.0" text-anchor="middle" class="unknown-label" font-size="13">x</text></svg><div class="solve-steps"><div class="solve-label">1. Ratio</div><div class="step-answer"><span class="answer">sin</span></div><div class="solve-label">2. Equation</div><div class="step-answer"><span class="answer">\(\sin30^\circ=\frac{x}{12}\)</span></div><div class="solve-label">3. Substitute</div><div class="step-answer"><span class="answer">\(\frac12=\frac{x}{12}\)</span></div><div class="solve-label">4. Answer</div><div class="step-answer"><span class="answer">\(x=6\)</span></div></div></div><div class="solve-card"><div class="solve-head"><b>ข้อ 2</b><span>Find x / จงหา x</span></div><svg class="w5-svg" viewBox="0 0 240 150"><line x1="71.9" y1="97.8" x2="126.2" y2="122.0" stroke="#0f172a" stroke-width="2.5"/><line x1="126.2" y1="122.0" x2="168.1" y2="28.0" stroke="#0f172a" stroke-width="2.5"/><line x1="71.9" y1="97.8" x2="168.1" y2="28.0" stroke="#0f172a" stroke-width="2.5"/><path d="M 117.1,117.9 L 121.1,108.8 L 130.3,112.9" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 87.5,104.8 A 17,17 0 0 0 85.7,87.8" fill="none" stroke="#b45309" stroke-width="1.7"/><text x="81.9" y="90.8" class="angle-label" font-size="12">60°</text><text x="111.8" y="51.6" text-anchor="middle" class="side-label" font-size="12">10</text><text x="93.4" y="122.7" text-anchor="middle" class="unknown-label" font-size="13">x</text></svg><div class="solve-steps"><div class="solve-label">1. Ratio</div><div class="step-answer"><span class="answer">cos</span></div><div class="solve-label">2. Equation</div><div class="step-answer"><span class="answer">\(\cos60^\circ=\frac{x}{10}\)</span></div><div class="solve-label">3. Substitute</div><div class="step-answer"><span class="answer">\(\frac12=\frac{x}{10}\)</span></div><div class="solve-label">4. Answer</div><div class="step-answer"><span class="answer">\(x=5\)</span></div></div></div><div class="solve-card"><div class="solve-head"><b>ข้อ 3</b><span>Find x / จงหา x</span></div><svg class="w5-svg" viewBox="0 0 240 150"><line x1="85.5" y1="122.0" x2="154.5" y2="96.9" stroke="#0f172a" stroke-width="2.5"/><line x1="154.5" y1="96.9" x2="129.4" y2="28.0" stroke="#0f172a" stroke-width="2.5"/><line x1="85.5" y1="122.0" x2="129.4" y2="28.0" stroke="#0f172a" stroke-width="2.5"/><path d="M 145.1,100.3 L 141.6,90.9 L 151.0,87.5" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 101.5,116.2 A 17,17 0 0 0 92.7,106.6" fill="none" stroke="#b45309" stroke-width="1.7"/><text x="95.5" y="115.0" class="angle-label" font-size="12">45°</text><text x="124.8" y="122.6" text-anchor="middle" class="side-label" font-size="12">8</text><text x="155.1" y="57.7" text-anchor="middle" class="unknown-label" font-size="13">x</text></svg><div class="solve-steps"><div class="solve-label">1. Ratio</div><div class="step-answer"><span class="answer">tan</span></div><div class="solve-label">2. Equation</div><div class="step-answer"><span class="answer">\(\tan45^\circ=\frac{x}{8}\)</span></div><div class="solve-label">3. Substitute</div><div class="step-answer"><span class="answer">\(1=\frac{x}{8}\)</span></div><div class="solve-label">4. Answer</div><div class="step-answer"><span class="answer">\(x=8\)</span></div></div></div><div class="solve-card"><div class="solve-head"><b>ข้อ 4</b><span>Find x / จงหา x</span></div><svg class="w5-svg" viewBox="0 0 240 150"><line x1="32.7" y1="28.0" x2="153.0" y2="122.0" stroke="#0f172a" stroke-width="2.5"/><line x1="153.0" y1="122.0" x2="207.3" y2="52.5" stroke="#0f172a" stroke-width="2.5"/><line x1="32.7" y1="28.0" x2="207.3" y2="52.5" stroke="#0f172a" stroke-width="2.5"/><path d="M 145.1,115.8 L 151.3,108.0 L 159.2,114.1" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 46.1,38.5 A 17,17 0 0 0 49.5,30.4" fill="none" stroke="#b45309" stroke-width="1.7"/><text x="42.7" y="21.0" class="angle-label" font-size="12">30°</text><text x="191.2" y="95.9" text-anchor="middle" class="side-label" font-size="12">5</text><text x="121.9" y="26.4" text-anchor="middle" class="unknown-label" font-size="13">x</text></svg><div class="solve-steps"><div class="solve-label">1. Ratio</div><div class="step-answer"><span class="answer">sin</span></div><div class="solve-label">2. Equation</div><div class="step-answer"><span class="answer">\(\sin30^\circ=\frac{5}{x}\)</span></div><div class="solve-label">3. Substitute</div><div class="step-answer"><span class="answer">\(\frac12=\frac{5}{x}\)</span></div><div class="solve-label">4. Answer</div><div class="step-answer"><span class="answer">\(x=10\)</span></div></div></div><div class="solve-card"><div class="solve-head"><b>ข้อ 5</b><span>Find x / จงหา x</span></div><svg class="w5-svg" viewBox="0 0 240 150"><line x1="95.3" y1="122.0" x2="144.7" y2="77.5" stroke="#0f172a" stroke-width="2.5"/><line x1="144.7" y1="77.5" x2="100.2" y2="28.0" stroke="#0f172a" stroke-width="2.5"/><line x1="95.3" y1="122.0" x2="100.2" y2="28.0" stroke="#0f172a" stroke-width="2.5"/><path d="M 137.3,84.2 L 130.6,76.7 L 138.0,70.0" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 107.9,110.6 A 17,17 0 0 0 96.2,105.0" fill="none" stroke="#b45309" stroke-width="1.7"/><text x="105.3" y="115.0" class="angle-label" font-size="12">45°</text><text x="132.9" y="43.4" text-anchor="middle" class="side-label" font-size="12">7</text><text x="83.8" y="74.3" text-anchor="middle" class="unknown-label" font-size="13">x</text></svg><div class="solve-steps"><div class="solve-label">1. Ratio</div><div class="step-answer"><span class="answer">sin</span></div><div class="solve-label">2. Equation</div><div class="step-answer"><span class="answer">\(\sin45^\circ=\frac{7}{x}\)</span></div><div class="solve-label">3. Substitute</div><div class="step-answer"><span class="answer">\(\frac{\sqrt2}{2}=\frac{7}{x}\)</span></div><div class="solve-label">4. Answer</div><div class="step-answer"><span class="answer">\(x=7\sqrt2\)</span></div></div></div><div class="solve-card"><div class="solve-head"><b>ข้อ 6</b><span>Find x / จงหา x</span></div><svg class="w5-svg" viewBox="0 0 240 150"><line x1="28.0" y1="34.4" x2="71.2" y2="115.6" stroke="#0f172a" stroke-width="2.5"/><line x1="71.2" y1="115.6" x2="212.0" y2="40.8" stroke="#0f172a" stroke-width="2.5"/><line x1="28.0" y1="34.4" x2="212.0" y2="40.8" stroke="#0f172a" stroke-width="2.5"/><path d="M 66.5,106.8 L 75.4,102.1 L 80.0,110.9" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 36.0,49.4 A 17,17 0 0 0 45.0,35.0" fill="none" stroke="#b45309" stroke-width="1.7"/><text x="38.0" y="27.4" class="angle-label" font-size="12">60°</text><text x="37.2" y="81.6" text-anchor="middle" class="side-label" font-size="12">6</text><text x="148.2" y="90.6" text-anchor="middle" class="unknown-label" font-size="13">x</text></svg><div class="solve-steps"><div class="solve-label">1. Ratio</div><div class="step-answer"><span class="answer">tan</span></div><div class="solve-label">2. Equation</div><div class="step-answer"><span class="answer">\(\tan60^\circ=\frac{x}{6}\)</span></div><div class="solve-label">3. Substitute</div><div class="step-answer"><span class="answer">\(\sqrt3=\frac{x}{6}\)</span></div><div class="solve-label">4. Answer</div><div class="step-answer"><span class="answer">\(x=6\sqrt3\)</span></div></div></div></div></section><section class="sheet" data-page="14"><div class="header"><div class="kicker">Worksheet 5 / ใบงานที่ 5</div><h1>ฝึกผสม: x อาจอยู่บนเศษหรือส่วน</h1><div class="subtitle">Mixed Practice: the Unknown May Be in the Numerator or Denominator</div></div><div class="prompt">อย่าจำว่า “เอาด้านที่รู้คูณค่า trig เสมอ” ให้ตั้งอัตราส่วนก่อนทุกข้อ แล้วค่อยแก้สมการ <span class="en">Do not memorize “known side × trig.” Write the ratio first, then solve the equation.</span></div><div class="mixed-grid"><div class="mixed-card"><div class="solve-head"><b>ข้อ 7</b><span>30°</span></div><svg class="w5-svg" viewBox="0 0 220 132"><line x1="38.8" y1="85.5" x2="170.5" y2="104.0" stroke="#0f172a" stroke-width="2.5"/><line x1="170.5" y1="104.0" x2="181.2" y2="28.0" stroke="#0f172a" stroke-width="2.5"/><line x1="38.8" y1="85.5" x2="181.2" y2="28.0" stroke="#0f172a" stroke-width="2.5"/><path d="M 160.6,102.6 L 162.0,92.7 L 171.9,94.1" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 55.7,87.9 A 17,17 0 0 0 54.6,79.1" fill="none" stroke="#b45309" stroke-width="1.7"/><text x="48.8" y="78.5" class="angle-label" font-size="12">30°</text><text x="102.7" y="108.6" text-anchor="middle" class="side-label" font-size="12">9</text><text x="189.7" y="67.9" text-anchor="middle" class="unknown-label" font-size="13">x</text></svg><div class="work-box"><span class="answer">ใช้ / Use \(\tan30^\circ=\frac{x}{9}\)<br>แทนค่า / Substitute: \(\frac{1}{\sqrt3}=\frac{x}{9}\)<br><b>\(x=3\sqrt3\)</b></span></div></div><div class="mixed-card"><div class="solve-head"><b>ข้อ 8</b><span>60°</span></div><svg class="w5-svg" viewBox="0 0 220 132"><line x1="39.4" y1="47.8" x2="83.3" y2="104.0" stroke="#0f172a" stroke-width="2.5"/><line x1="83.3" y1="104.0" x2="180.6" y2="28.0" stroke="#0f172a" stroke-width="2.5"/><line x1="39.4" y1="47.8" x2="180.6" y2="28.0" stroke="#0f172a" stroke-width="2.5"/><path d="M 77.1,96.1 L 85.0,90.0 L 91.2,97.8" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 49.9,61.2 A 17,17 0 0 0 56.3,45.5" fill="none" stroke="#b45309" stroke-width="1.7"/><text x="49.4" y="40.8" class="angle-label" font-size="12">60°</text><text x="140.6" y="77.0" text-anchor="middle" class="side-label" font-size="12">4√3</text><text x="50.3" y="84.5" text-anchor="middle" class="unknown-label" font-size="13">x</text></svg><div class="work-box"><span class="answer">ใช้ / Use \(\tan60^\circ=\frac{4\sqrt3}{x}\)<br>แทนค่า / Substitute: \(\sqrt3=\frac{4\sqrt3}{x}\)<br><b>\(x=4\)</b></span></div></div><div class="mixed-card"><div class="solve-head"><b>ข้อ 9</b><span>45°</span></div><svg class="w5-svg" viewBox="0 0 220 132"><line x1="87.6" y1="104.0" x2="132.4" y2="72.7" stroke="#0f172a" stroke-width="2.5"/><line x1="132.4" y1="72.7" x2="101.1" y2="28.0" stroke="#0f172a" stroke-width="2.5"/><line x1="87.6" y1="104.0" x2="101.1" y2="28.0" stroke="#0f172a" stroke-width="2.5"/><path d="M 124.2,78.4 L 118.4,70.2 L 126.6,64.5" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 101.6,94.2 A 17,17 0 0 0 90.6,87.3" fill="none" stroke="#b45309" stroke-width="1.7"/><text x="97.6" y="97.0" class="angle-label" font-size="12">45°</text><text x="80.6" y="63.6" text-anchor="middle" class="side-label" font-size="12">12√2</text><text x="118.0" y="99.8" text-anchor="middle" class="unknown-label" font-size="13">x</text></svg><div class="work-box"><span class="answer">ใช้ / Use \(\cos45^\circ=\frac{x}{12\sqrt2}\)<br>แทนค่า / Substitute: \(\frac{\sqrt2}{2}=\frac{x}{12\sqrt2}\)<br><b>\(x=12\)</b></span></div></div><div class="mixed-card"><div class="solve-head"><b>ข้อ 10</b><span>30°</span></div><svg class="w5-svg" viewBox="0 0 220 132"><line x1="78.6" y1="28.0" x2="97.5" y2="104.0" stroke="#0f172a" stroke-width="2.5"/><line x1="97.5" y1="104.0" x2="141.4" y2="93.1" stroke="#0f172a" stroke-width="2.5"/><line x1="78.6" y1="28.0" x2="141.4" y2="93.1" stroke="#0f172a" stroke-width="2.5"/><path d="M 95.1,94.3 L 104.8,91.9 L 107.2,101.6" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 82.7,44.5 A 17,17 0 0 0 90.4,40.2" fill="none" stroke="#b45309" stroke-width="1.7"/><text x="88.6" y="21.0" class="angle-label" font-size="12">30°</text><text x="120.1" y="50.8" text-anchor="middle" class="side-label" font-size="12">18</text><text x="74.5" y="69.4" text-anchor="middle" class="unknown-label" font-size="13">x</text></svg><div class="work-box"><span class="answer">ใช้ / Use \(\cos30^\circ=\frac{x}{18}\)<br>แทนค่า / Substitute: \(\frac{\sqrt3}{2}=\frac{x}{18}\)<br><b>\(x=9\sqrt3\)</b></span></div></div><div class="mixed-card"><div class="solve-head"><b>ข้อ 11</b><span>60°</span></div><svg class="w5-svg" viewBox="0 0 220 132"><line x1="89.3" y1="28.0" x2="71.3" y2="72.7" stroke="#0f172a" stroke-width="2.5"/><line x1="71.3" y1="72.7" x2="148.7" y2="104.0" stroke="#0f172a" stroke-width="2.5"/><line x1="89.3" y1="28.0" x2="148.7" y2="104.0" stroke="#0f172a" stroke-width="2.5"/><path d="M 75.0,63.4 L 84.3,67.2 L 80.6,76.5" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 83.0,43.8 A 17,17 0 0 0 99.8,41.4" fill="none" stroke="#b45309" stroke-width="1.7"/><text x="99.3" y="21.0" class="angle-label" font-size="12">60°</text><text x="130.1" y="57.4" text-anchor="middle" class="side-label" font-size="12">14</text><text x="104.8" y="101.3" text-anchor="middle" class="unknown-label" font-size="13">x</text></svg><div class="work-box"><span class="answer">ใช้ / Use \(\sin60^\circ=\frac{x}{14}\)<br>แทนค่า / Substitute: \(\frac{\sqrt3}{2}=\frac{x}{14}\)<br><b>\(x=7\sqrt3\)</b></span></div></div><div class="mixed-card"><div class="solve-head"><b>ข้อ 12</b><span>45°</span></div><svg class="w5-svg" viewBox="0 0 220 132"><line x1="134.1" y1="28.0" x2="85.9" y2="55.8" stroke="#0f172a" stroke-width="2.5"/><line x1="85.9" y1="55.8" x2="113.7" y2="104.0" stroke="#0f172a" stroke-width="2.5"/><line x1="134.1" y1="28.0" x2="113.7" y2="104.0" stroke="#0f172a" stroke-width="2.5"/><path d="M 94.6,50.8 L 99.6,59.5 L 90.9,64.5" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 119.4,36.5 A 17,17 0 0 0 129.7,44.4" fill="none" stroke="#b45309" stroke-width="1.7"/><text x="144.1" y="21.0" class="angle-label" font-size="12">45°</text><text x="103.0" y="29.8" text-anchor="middle" class="side-label" font-size="12">11</text><text x="137.4" y="69.6" text-anchor="middle" class="unknown-label" font-size="13">x</text></svg><div class="work-box"><span class="answer">ใช้ / Use \(\cos45^\circ=\frac{11}{x}\)<br>แทนค่า / Substitute: \(\frac{\sqrt2}{2}=\frac{11}{x}\)<br><b>\(x=11\sqrt2\)</b></span></div></div><div class="mixed-card"><div class="solve-head"><b>ข้อ 13</b><span>30°</span></div><svg class="w5-svg" viewBox="0 0 220 132"><line x1="188.2" y1="70.8" x2="56.5" y2="28.0" stroke="#0f172a" stroke-width="2.5"/><line x1="56.5" y1="28.0" x2="31.8" y2="104.0" stroke="#0f172a" stroke-width="2.5"/><line x1="188.2" y1="70.8" x2="31.8" y2="104.0" stroke="#0f172a" stroke-width="2.5"/><path d="M 66.0,31.1 L 62.9,40.6 L 53.4,37.5" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 172.0,65.5 A 17,17 0 0 0 171.5,74.3" fill="none" stroke="#b45309" stroke-width="1.7"/><text x="198.2" y="63.8" class="angle-label" font-size="12">30°</text><text x="30.9" y="61.7" text-anchor="middle" class="side-label" font-size="12">6</text><text x="126.7" y="36.1" text-anchor="middle" class="unknown-label" font-size="13">x</text></svg><div class="work-box"><span class="answer">ใช้ / Use \(\tan30^\circ=\frac{6}{x}\)<br>แทนค่า / Substitute: \(\frac{1}{\sqrt3}=\frac{6}{x}\)<br><b>\(x=6\sqrt3\)</b></span></div></div><div class="mixed-card"><div class="solve-head"><b>ข้อ 14</b><span>60°</span></div><svg class="w5-svg" viewBox="0 0 220 132"><line x1="186.2" y1="90.7" x2="142.3" y2="28.0" stroke="#0f172a" stroke-width="2.5"/><line x1="142.3" y1="28.0" x2="33.8" y2="104.0" stroke="#0f172a" stroke-width="2.5"/><line x1="186.2" y1="90.7" x2="33.8" y2="104.0" stroke="#0f172a" stroke-width="2.5"/><path d="M 148.1,36.2 L 139.9,41.9 L 134.1,33.7" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 176.5,76.7 A 17,17 0 0 0 169.3,92.1" fill="none" stroke="#b45309" stroke-width="1.7"/><text x="196.2" y="83.7" class="angle-label" font-size="12">60°</text><text x="175.7" y="51.3" text-anchor="middle" class="side-label" font-size="12">9</text><text x="111.2" y="111.3" text-anchor="middle" class="unknown-label" font-size="13">x</text></svg><div class="work-box"><span class="answer">ใช้ / Use \(\cos60^\circ=\frac{9}{x}\)<br>แทนค่า / Substitute: \(\frac12=\frac{9}{x}\)<br><b>\(x=18\)</b></span></div></div><div class="mixed-card"><div class="solve-head"><b>ข้อ 15</b><span>45°</span></div><svg class="w5-svg" viewBox="0 0 220 132"><line x1="106.3" y1="104.0" x2="134.1" y2="55.8" stroke="#0f172a" stroke-width="2.5"/><line x1="134.1" y1="55.8" x2="85.9" y2="28.0" stroke="#0f172a" stroke-width="2.5"/><line x1="106.3" y1="104.0" x2="85.9" y2="28.0" stroke="#0f172a" stroke-width="2.5"/><path d="M 129.1,64.5 L 120.4,59.5 L 125.4,50.8" fill="none" stroke="#0f172a" stroke-width="1.5"/><path d="M 114.8,89.3 A 17,17 0 0 0 101.9,87.6" fill="none" stroke="#b45309" stroke-width="1.7"/><text x="116.3" y="97.0" class="angle-label" font-size="12">45°</text><text x="117.0" y="29.8" text-anchor="middle" class="side-label" font-size="12">13</text><text x="132.3" y="86.9" text-anchor="middle" class="unknown-label" font-size="13">x</text></svg><div class="work-box"><span class="answer">ใช้ / Use \(\tan45^\circ=\frac{13}{x}\)<br>แทนค่า / Substitute: \(1=\frac{13}{x}\)<br><b>\(x=13\)</b></span></div></div></div><div class="warning" style="margin-top:8px"><b>Self-check / ตรวจตัวเอง:</b> Hypotenuse ต้องเป็นด้านยาวที่สุด ถ้าคำตอบที่ได้ขัดกับรูป ให้ย้อนกลับไปตรวจการตั้งอัตราส่วน</div></section><section class="sheet" data-page="15"><div class="header"><div class="kicker">Worksheet 5 / ใบงานที่ 5</div><h1>ตรีโกณมิติในสถานการณ์จริง</h1><div class="subtitle">Using Trigonometry in Real Situations</div></div><div class="prompt">วาดหรืออ่านสามเหลี่ยมมุมฉากจากสถานการณ์ แล้วเลือก sin, cos หรือ tan ให้เหมาะสม <span class="en">Interpret the right triangle in each situation and choose the appropriate trig ratio.</span></div><div class="context-grid"><div class="context-card"><div class="solve-head"><b>1. เสาธง / Flagpole</b><span>Application</span></div><svg class="w5-svg" viewBox="0 0 300 150"><line x1="20" y1="120" x2="280" y2="120" stroke="#64748b" stroke-width="2"/><line x1="235" y1="120" x2="235" y2="35" stroke="#334155" stroke-width="4"/><path d="M 235,40 L 263,48 L 235,56 Z" fill="none" stroke="#334155" stroke-width="2"/><line x1="45" y1="120" x2="235" y2="35" stroke="#1d4ed8" stroke-width="2" stroke-dasharray="5 4"/><path d="M 67,120 A 22,22 0 0 0 63,107" fill="none" stroke="#b45309" stroke-width="1.5"/><text x="73" y="112" class="angle-label" font-size="12">45°</text><text x="140.0" y="138" text-anchor="middle" class="side-label" font-size="12">10 m</text><text x="249" y="77.5" class="unknown-label" font-size="13">h</text></svg><p><b>TH:</b> ยืนห่างจากเสาธงในแนวราบ 10 m และมุมเงยถึงยอดเท่ากับ 45°. จงหาความสูงของเสาธง (ไม่คิดระดับสายตา).</p><p><b>EN:</b> You stand 10 m horizontally from a flagpole. The angle of elevation to the top is 45°. Find the height (ignore eye height).</p><div class="work-box"><span class="answer">\(\tan45^\circ=\frac{h}{10}\Rightarrow h=10\text{ m}\)</span></div></div><div class="context-card"><div class="solve-head"><b>2. ต้นไม้ / Tree</b><span>Application</span></div><svg class="w5-svg" viewBox="0 0 300 150"><line x1="20" y1="120" x2="280" y2="120" stroke="#64748b" stroke-width="2"/><rect x="230" y="72" width="10" height="48" fill="none" stroke="#334155" stroke-width="2"/><circle cx="235" cy="48" r="30" fill="none" stroke="#334155" stroke-width="2"/><line x1="45" y1="120" x2="235" y2="18" stroke="#1d4ed8" stroke-width="2" stroke-dasharray="5 4"/><path d="M 67,120 A 22,22 0 0 0 63,107" fill="none" stroke="#b45309" stroke-width="1.5"/><text x="73" y="112" class="angle-label" font-size="12">30°</text><text x="140.0" y="138" text-anchor="middle" class="side-label" font-size="12">12 m</text><text x="249" y="69.0" class="unknown-label" font-size="13">h</text></svg><p><b>TH:</b> จุดสังเกตอยู่ห่างจากโคนต้นไม้ 12 m และมุมเงยถึงยอดเป็น 30°. จงหาความสูง.</p><p><b>EN:</b> The observation point is 12 m from the tree. The angle of elevation is 30°. Find the height.</p><div class="work-box"><span class="answer">\(\tan30^\circ=\frac{h}{12}\Rightarrow h=4\sqrt3\text{ m}\approx6.93\text{ m}\)</span></div></div><div class="context-card"><div class="solve-head"><b>3. อาคาร / Building</b><span>Application</span></div><svg class="w5-svg" viewBox="0 0 300 150"><line x1="20" y1="120" x2="280" y2="120" stroke="#64748b" stroke-width="2"/><rect x="207" y="42" width="56" height="78" fill="none" stroke="#334155" stroke-width="2"/><line x1="223" y1="60" x2="247" y2="60" stroke="#94a3b8"/><line x1="223" y1="78" x2="247" y2="78" stroke="#94a3b8"/><line x1="223" y1="96" x2="247" y2="96" stroke="#94a3b8"/><line x1="45" y1="120" x2="235" y2="42" stroke="#1d4ed8" stroke-width="2" stroke-dasharray="5 4"/><path d="M 67,120 A 22,22 0 0 0 63,107" fill="none" stroke="#b45309" stroke-width="1.5"/><text x="73" y="112" class="angle-label" font-size="12">60°</text><text x="140.0" y="138" text-anchor="middle" class="side-label" font-size="12">8 m</text><text x="249" y="81.0" class="unknown-label" font-size="13">h</text></svg><p><b>TH:</b> ยืนห่างจากอาคาร 8 m และมองยอดอาคารเป็นมุมเงย 60°. จงหาความสูง.</p><p><b>EN:</b> You stand 8 m from a building. The angle of elevation to the top is 60°. Find its height.</p><div class="work-box"><span class="answer">\(\tan60^\circ=\frac{h}{8}\Rightarrow h=8\sqrt3\text{ m}\approx13.86\text{ m}\)</span></div></div><div class="context-card"><div class="solve-head"><b>4. บันได / Ladder</b><span>Application</span></div><svg class="w5-svg" viewBox="0 0 300 150"><line x1="25" y1="120" x2="270" y2="120" stroke="#64748b" stroke-width="2"/><line x1="235" y1="20" x2="235" y2="120" stroke="#64748b" stroke-width="3"/><line x1="55" y1="120" x2="235" y2="42" stroke="#1d4ed8" stroke-width="5"/><path d="M 80,120 A 25,25 0 0 0 77,109" fill="none" stroke="#b45309" stroke-width="1.5"/><text x="85" y="108" class="angle-label" font-size="12">30°</text><text x="140.0" y="76.0" text-anchor="middle" class="side-label" font-size="12">10 m</text><text x="249" y="82" class="unknown-label" font-size="13">h</text></svg><p><b>TH:</b> บันไดยาว 10 m พาดกำแพงและทำมุม 30° กับพื้น จงหาความสูงที่ปลายบันไดแตะกำแพง.</p><p><b>EN:</b> A 10 m ladder makes a 30° angle with the ground. Find the height reached on the wall.</p><div class="work-box"><span class="answer">\(\sin30^\circ=\frac{h}{10}\Rightarrow h=5\text{ m}\)</span></div></div><div class="context-card"><div class="solve-head"><b>5. สายยึดเสา / Guy wire</b><span>Application</span></div><svg class="w5-svg" viewBox="0 0 300 150"><line x1="20" y1="120" x2="280" y2="120" stroke="#64748b" stroke-width="2"/><line x1="235" y1="25" x2="235" y2="120" stroke="#334155" stroke-width="4"/><line x1="48" y1="120" x2="235" y2="35" stroke="#1d4ed8" stroke-width="2.5"/><path d="M 72,120 A 24,24 0 0 0 68,106" fill="none" stroke="#b45309" stroke-width="1.5"/><text x="78" y="106" class="angle-label" font-size="12">60°</text><text x="137.5" y="70.5" text-anchor="middle" class="side-label" font-size="12">20 m</text><text x="141.5" y="138" text-anchor="middle" class="unknown-label" font-size="13">x</text></svg><p><b>TH:</b> สายยึดยาว 20 m ทำมุม 60° กับพื้น จงหาระยะในแนวราบจากจุดยึดถึงโคนเสา.</p><p><b>EN:</b> A 20 m guy wire makes a 60° angle with the ground. Find the horizontal distance from the anchor to the pole.</p><div class="work-box"><span class="answer">\(\cos60^\circ=\frac{x}{20}\Rightarrow x=10\text{ m}\)</span></div></div><div class="context-card"><div class="solve-head"><b>6. บันได 45° / 45° Ladder</b><span>Application</span></div><svg class="w5-svg" viewBox="0 0 300 150"><line x1="25" y1="120" x2="270" y2="120" stroke="#64748b" stroke-width="2"/><line x1="235" y1="20" x2="235" y2="120" stroke="#64748b" stroke-width="3"/><line x1="55" y1="120" x2="235" y2="42" stroke="#1d4ed8" stroke-width="5"/><path d="M 80,120 A 25,25 0 0 0 77,109" fill="none" stroke="#b45309" stroke-width="1.5"/><text x="85" y="108" class="angle-label" font-size="12">45°</text><text x="140.0" y="76.0" text-anchor="middle" class="side-label" font-size="12">6 m</text><text x="249" y="82" class="unknown-label" font-size="13">h</text></svg><p><b>TH:</b> บันไดยาว 6 m ทำมุม 45° กับพื้น จงหาความสูงที่แตะกำแพง.</p><p><b>EN:</b> A 6 m ladder makes a 45° angle with the ground. Find the height reached.</p><div class="work-box"><span class="answer">\(\sin45^\circ=\frac{h}{6}\Rightarrow h=3\sqrt2\text{ m}\approx4.24\text{ m}\)</span></div></div></div></section><section class="sheet" data-page="16"><div class="header"><div class="kicker">Worksheet 5 / ใบงานที่ 5</div><h1>จากโจทย์ความสูงสู่สูตรทั่วไป</h1><div class="subtitle">From a Height Problem to a General Rule</div></div><div class="bridge-grid"><div class="bridge-card"><svg class="w5-svg" viewBox="0 0 330 190"><line x1="28" y1="150" x2="305" y2="150" stroke="#64748b" stroke-width="2"/><line x1="270" y1="42" x2="270" y2="150" stroke="#0f172a" stroke-width="4"/><line x1="55" y1="150" x2="270" y2="42" stroke="#1d4ed8" stroke-width="2.5" stroke-dasharray="6 4"/><path d="M 82,150 A 27,27 0 0 0 78,136" fill="none" stroke="#b45309" stroke-width="1.7"/><text x="87" y="136" class="angle-label" font-size="14">θ</text><text x="162" y="173" text-anchor="middle" class="side-label" font-size="14">distance_x = x</text><text x="287" y="98" class="unknown-label" font-size="14">height = h</text><text x="166" y="84" text-anchor="middle" class="plain" fill="#475569" font-size="11">line of sight</text></svg><div class="variable-map"><b>มุมเงย / angle</b><span>\(\theta\)</span><b>ระยะแนวราบ</b><span>\(x\) = horizontal distance</span><b>ความสูง</b><span>\(h\) = height</span></div></div><div class="bridge-card"><h3 style="margin:0 0 5px">สร้างสูตร / Build the Formula</h3><div class="prompt">1. เมื่ออ้างอิงมุม \(\theta\), ด้าน h เป็นด้านอะไร? <span class="en">What side is h?</span></div><div class="answer-box"><span class="answer">Opposite</span></div><div class="prompt">2. ด้าน x เป็นด้านอะไร? <span class="en">What side is x?</span></div><div class="answer-box"><span class="answer">Adjacent</span></div><div class="prompt">3. จึงควรใช้ ratio ใด? <span class="en">Which ratio should we use?</span></div><div class="answer-box"><span class="answer">\(\tan\theta=\frac{h}{x}\)</span></div><div class="prompt">4. จัดรูปเพื่อหา h <span class="en">Rearrange for h.</span></div><div class="answer-box"><span class="answer">\(\boxed{h=x\tan\theta}\)</span></div></div></div><div class="summary-box" style="margin-top:10px"><h3>ทดลองสูตรกับมุมพิเศษ / Test the General Rule</h3><p>ให้ \(x=10\) m แล้วคำนวณความสูงเมื่อมุมเงยเป็น 30°, 45°, 60°. <span class="en">Let \(x=10\) m. Find the height for angles 30°, 45°, and 60°.</span></p><table><thead><tr><th>Angle</th><th>Set up / ตั้งสมการ</th><th>Height / ความสูง</th></tr></thead><tbody><tr><td>30°</td><td class="answer-cell"><input class="ratio-input" aria-label="student setup"><span class="answer">\(h=10\tan30^\circ\)</span></td><td class="answer-cell"><input class="ratio-input" aria-label="student height"><span class="answer">\(\frac{10}{\sqrt3}=\frac{10\sqrt3}3\approx5.77\) m</span></td></tr><tr><td>45°</td><td class="answer-cell"><input class="ratio-input" aria-label="student setup"><span class="answer">\(h=10\tan45^\circ\)</span></td><td class="answer-cell"><input class="ratio-input" aria-label="student height"><span class="answer">\(10\) m</span></td></tr><tr><td>60°</td><td class="answer-cell"><input class="ratio-input" aria-label="student setup"><span class="answer">\(h=10\tan60^\circ\)</span></td><td class="answer-cell"><input class="ratio-input" aria-label="student height"><span class="answer">\(10\sqrt3\approx17.32\) m</span></td></tr></tbody></table></div><div class="prompt" style="margin-top:10px">ถ้าต้องคำนวณความสูงของต้นไม้ อาคาร หรือเสาธงหลายสิบครั้ง โดยแต่ละครั้ง x และ θ เปลี่ยนไป เราจะเขียนขั้นตอน \(h=x\tan\theta\) ซ้ำทุกครั้งหรือไม่? <span class="en">If x and θ change for dozens of measurements, should we rewrite the same calculation every time?</span></div><div class="answer-box tall"><span class="answer">นี่คือปัญหาที่จะพาไปสู่ Python Function ในใบงานที่ 6: เราจะรวมขั้นตอนที่ใช้ซ้ำแล้วตั้งชื่อให้มัน เช่น <code>find_height(distance_x, angle)</code>.</span></div><div class="warning"><b>Next / ต่อไป:</b> ใบงานที่ 6 จะเปลี่ยนความสัมพันธ์ \(h=x\tan\theta\) ให้กลายเป็นโปรแกรม Python และใช้เป็นเหตุผลในการแนะนำ <code>def</code>, <code>return</code>, <code>if</code> และ <code>while</code>.</div></section>
+
+<section class="sheet" data-page="17">
+  <div class="header">
+    <div class="kicker">Worksheet 6 / ใบงานที่ 6</div>
+    <h1>จากตรีโกณมิติสู่ Python</h1>
+    <div class="subtitle">From Trigonometry to Python — Let the Computer Calculate</div>
+    <div class="meta-row"><span>ชื่อ / Name:</span><span>ชั้น / Class:</span><span>เลขที่ / No.:</span></div>
+  </div>
+
+  <div class="summary-box">
+    <h3>ปัญหาที่เราจะให้คอมพิวเตอร์ช่วย / The Problem We Want Python to Solve</h3>
+    <p>จากใบงานที่ 5 เราได้ความสัมพันธ์ \(h=x\tan\theta\). ถ้าระยะทาง \(x\) และมุมเงย \(\theta\) เปลี่ยนทุกครั้ง เราสามารถให้ Python คำนวณความสูงให้เราได้</p>
+    <p><b>From Worksheet 5:</b> \(h=x\tan\theta\). We will turn this mathematical rule into a reusable program.</p>
+  </div>
+
+  <div class="python-grid">
+    <div class="python-card">
+      <h3>1. เริ่มจากคำนวณเพียงครั้งเดียว / Calculate Once</h3>
+      <div class="code-block"><div class="code-title">Python Example 1</div><pre><code>import math
+
+angle = 45
+distance_x = 10
+
+height = distance_x * math.tan(
+    math.radians(angle)
+)
+
+print(height)</code></pre></div>
+      <div class="run-output">10.0</div>
+      <div class="python-note"><b>ทำไมต้อง <span class="code-inline">math.radians()</span>?</b><br>ฟังก์ชันตรีโกณมิติใน <span class="code-inline">math</span> ใช้มุมหน่วย radian จึงต้องแปลงองศาก่อน / Python's math trigonometric functions use radians.</div>
+    </div>
+
+    <div class="python-card">
+      <h3>อ่านโค้ดทีละส่วน / Read the Code</h3>
+      <div class="python-check">
+        <b>1</b><div><span class="code-inline">import math</span> — เรียกใช้เครื่องมือทางคณิตศาสตร์ / load mathematical tools</div>
+        <b>2</b><div><span class="code-inline">angle = 45</span> — เก็บค่ามุมเป็นตัวแปร</div>
+        <b>3</b><div><span class="code-inline">distance_x = 10</span> — เก็บระยะแนวราบ</div>
+        <b>4</b><div><span class="code-inline">math.radians(angle)</span> — degree → radian</div>
+        <b>5</b><div><span class="code-inline">math.tan(...)</span> — หา \(\tan\theta\)</div>
+        <b>6</b><div><span class="code-inline">print(height)</span> — แสดงผลให้ผู้ใช้เห็น</div>
+      </div>
+      <div class="prompt">ถ้าเปลี่ยน angle เป็น 60° และ distance_x เป็น 10 m คาดว่า height จะมากกว่า น้อยกว่า หรือเท่ากับ 10 m? <span class="en">Predict before running.</span></div>
+      <div class="answer-box"><span class="answer">มากกว่า 10 m เพราะ \(\tan60^\circ=\sqrt3&gt;1\), ดังนั้น \(h=10\sqrt3\approx17.32\) m.</span></div>
+    </div>
+  </div>
+
+  <div class="python-card" style="margin-top:8px">
+    <h3>ลองเติมโค้ด / Try It</h3>
+    <p>ต้องการหาความสูงเมื่อระยะแนวราบ 20 m และมุมเงย 30°. เติมค่าที่หายไป</p>
+    <div class="fill-code">import math
+
+angle = <span class="answer">30</span>
+distance_x = <span class="answer">20</span>
+height = distance_x * math.tan(math.radians(angle))
+print(height)</div>
+    <div class="prompt">คาดว่าคำตอบประมาณเท่าใด? / Expected height?</div>
+    <div class="answer-box"><span class="answer">\(20\tan30^\circ=\frac{20}{\sqrt3}\approx11.55\) m</span></div>
+  </div>
+</section>
+
+<section class="sheet" data-page="18">
+  <div class="header">
+    <div class="kicker">Worksheet 6 / ใบงานที่ 6</div>
+    <h1>รับข้อมูลจากผู้ใช้ และพบปัญหาการเขียนซ้ำ</h1>
+    <div class="subtitle">User Input and the Problem of Repetition</div>
+  </div>
+
+  <div class="python-grid">
+    <div class="python-card">
+      <h3>2. รับค่าแทนการแก้ตัวเลขในโค้ด / Use input()</h3>
+      <div class="code-block"><div class="code-title">Python Example 2</div><pre><code>import math
+
+distance_x = float(input(
+    "Horizontal distance (m): "
+))
+
+angle = float(input(
+    "Angle of elevation (degree): "
+))
+
+height = distance_x * math.tan(
+    math.radians(angle)
+)
+
+print("Height =", round(height, 2), "m")</code></pre></div>
+      <div class="python-note"><span class="code-inline">input()</span> ได้ข้อมูลเป็นข้อความ จึงใช้ <span class="code-inline">float(...)</span> เปลี่ยนให้เป็นตัวเลขที่คำนวณได้.</div>
+    </div>
+
+    <div class="python-card">
+      <h3>ตัวอย่างการรัน / Example Run</h3>
+      <div class="run-output">Horizontal distance (m): 10
+Angle of elevation (degree): 45
+Height = 10.0 m</div>
+      <div class="prompt">ถ้าผู้ใช้ป้อน 15 และ 60 โปรแกรมใช้ค่าใดเป็น x และค่าใดเป็น θ?</div>
+      <div class="answer-box"><span class="answer">distance_x = 15 และ angle = 60°</span></div>
+      <div class="prompt">คำสั่งใดเป็นส่วน “รับข้อมูล”? / Which statements receive input?</div>
+      <div class="answer-box"><span class="answer"><code>float(input(...))</code> ทั้งสองบรรทัด</span></div>
+      <div class="prompt">คำสั่งใดเป็นส่วน “ส่งผลให้คนดู”? / Which statement displays output?</div>
+      <div class="answer-box"><span class="answer"><code>print(...)</code></span></div>
+    </div>
+  </div>
+
+  <div class="summary-box" style="margin-top:9px">
+    <h3>3. แล้วถ้าต้องใช้สูตรเดียวกันหลายครั้งล่ะ? / What if the Same Calculation Is Used Repeatedly?</h3>
+    <div class="code-block"><div class="code-title">Repeated Code</div><pre><code>height1 = 10 * math.tan(math.radians(30))
+height2 = 15 * math.tan(math.radians(45))
+height3 = 20 * math.tan(math.radians(60))
+height4 = 12 * math.tan(math.radians(35))</code></pre></div>
+    <p>ขั้นตอน <span class="code-inline">distance × tan(radians(angle))</span> ถูกเขียนซ้ำหลายครั้ง หากสูตรเปลี่ยน เราต้องตามแก้ทุกจุด</p>
+    <div class="prompt">ส่วนใดของโค้ดกำลังทำ “งานชนิดเดียวกัน” ซ้ำ? <span class="en">Which calculation repeats?</span></div>
+    <div class="answer-box"><span class="answer"><code>distance_x * math.tan(math.radians(angle))</code></span></div>
+  </div>
+
+  <div class="warning"><b>แนวคิดใหม่ / New Idea:</b> เราสามารถรวมขั้นตอนที่ใช้ซ้ำ แล้ว “ตั้งชื่อ” ให้ชุดคำสั่งนั้นได้ สิ่งนี้เรียกว่า <b>Function</b>.</div>
+</section>
+
+<section class="sheet" data-page="19">
+  <div class="header">
+    <div class="kicker">Worksheet 6 / ใบงานที่ 6</div>
+    <h1>สร้าง Function: รับข้อมูล → คำนวณ → ส่งคำตอบกลับ</h1>
+    <div class="subtitle">Python Function — Input → Process → Return</div>
+  </div>
+
+  <div class="code-block"><div class="code-title">Python Example 3 — Our First Useful Function</div><pre><code>import math
+
+
+def find_height(distance_x, angle):
+    height = distance_x * math.tan(math.radians(angle))
+    return height
+
+
+answer = find_height(10, 45)
+print(answer)</code></pre></div>
+
+  <div class="flow-row">
+    <div class="flow-box"><b>INPUT</b><br>10, 45<br><small>arguments</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box"><b>find_height</b><br>distance_x = 10<br>angle = 45<br>คำนวณ \(h=x\tan\theta\)</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box"><b>RETURN</b><br>10.0<br><small>answer = 10.0</small></div>
+  </div>
+
+  <div class="python-grid">
+    <div class="python-card">
+      <h3>Parameter คือช่องรับข้อมูล</h3>
+      <div class="code-block"><pre><code>def find_height(distance_x, angle):</code></pre></div>
+      <p><span class="code-inline">distance_x</span> และ <span class="code-inline">angle</span> คือชื่อที่ Function ใช้รับข้อมูล.</p>
+      <div class="prompt">Function นี้รับข้อมูลกี่ค่า? / How many inputs?</div>
+      <div class="answer-box"><span class="answer">2 ค่า: distance_x และ angle</span></div>
+    </div>
+
+    <div class="python-card">
+      <h3>return คือส่งข้อมูลกลับไปให้โปรแกรม</h3>
+      <div class="code-block"><pre><code>return height</code></pre></div>
+      <p><b>print</b> = แสดงให้คนเห็น<br><b>return</b> = ส่งค่าให้โปรแกรมเอาไปใช้ต่อ</p>
+      <div class="prompt">หลังบรรทัด <code>answer = find_height(10, 45)</code> ค่า answer คืออะไร?</div>
+      <div class="answer-box"><span class="answer">10.0</span></div>
+    </div>
+  </div>
+
+  <div class="summary-box" style="margin-top:9px">
+    <h3>ลองเรียกใช้ Function เดิมหลายครั้ง / Reuse the Same Function</h3>
+    <div class="code-block"><pre><code>tree = find_height(15, 30)
+flagpole = find_height(10, 45)
+building = find_height(20, 60)
+
+print(tree)
+print(flagpole)
+print(building)</code></pre></div>
+    <div class="prompt">เราเขียนสูตร \(x\tan\theta\) กี่ครั้งในตัว Function? และเรียกใช้งานได้กี่ครั้ง?</div>
+    <div class="answer-box"><span class="answer">เขียนสูตรเพียง 1 ครั้ง แต่เรียกใช้ Function ได้กี่ครั้งก็ได้ / Write once, reuse many times.</span></div>
+  </div>
+
+  <div class="python-card" style="margin-top:8px">
+    <h3>เติม Function ให้สมบูรณ์ / Complete the Function</h3>
+    <div class="fill-code">def find_height(distance_x, angle):
+    height = distance_x * math.tan(math.radians(angle))
+    <span class="answer">return height</span></div>
+  </div>
+</section>
+
+<section class="sheet" data-page="20">
+  <div class="header">
+    <div class="kicker">Worksheet 6 / ใบงานที่ 6</div>
+    <h1>ใช้เงื่อนไขตรวจข้อมูลก่อนคำนวณ</h1>
+    <div class="subtitle">Using Conditions to Validate Input</div>
+  </div>
+
+  <div class="summary-box">
+    <h3>ข้อมูลทุกค่าควรถูกนำไปคำนวณหรือไม่? / Should Every Input Be Accepted?</h3>
+    <p>สำหรับแบบจำลองมุมเงยนี้ ระยะแนวราบต้องเป็นบวก และมุมควรอยู่ระหว่าง \(0^\circ\) กับ \(90^\circ\).</p>
+    <p>So we use <span class="code-inline">if / elif / else</span> to decide what the program should do.</p>
+  </div>
+
+  <div class="python-grid">
+    <div class="python-card">
+      <h3>4. ตรวจข้อมูล / Validation</h3>
+      <div class="code-block"><div class="code-title">Python Example 4</div><pre><code>if distance_x &lt;= 0:
+    print("Distance must be greater than 0.")
+
+elif angle &lt;= 0 or angle &gt;= 90:
+    print("Angle must be between 0 and 90 degrees.")
+
+else:
+    height = find_height(distance_x, angle)
+    print("Estimated height =", round(height, 2), "m")</code></pre></div>
+    </div>
+
+    <div class="python-card">
+      <h3>โปรแกรมกำลัง “ตัดสินใจ” / The Program Decides</h3>
+      <table class="trace-table">
+        <thead><tr><th>distance_x</th><th>angle</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td>10</td><td>45</td><td class="answer-cell"><input class="ratio-input"><span class="answer">Calculate height</span></td></tr>
+          <tr><td>-5</td><td>45</td><td class="answer-cell"><input class="ratio-input"><span class="answer">Invalid distance</span></td></tr>
+          <tr><td>10</td><td>100</td><td class="answer-cell"><input class="ratio-input"><span class="answer">Invalid angle</span></td></tr>
+          <tr><td>0</td><td>30</td><td class="answer-cell"><input class="ratio-input"><span class="answer">Invalid distance</span></td></tr>
+        </tbody>
+      </table>
+      <div class="prompt">คำว่า <code>or</code> ในเงื่อนไขมุมหมายถึงอะไร?</div>
+      <div class="answer-box"><span class="answer">ถ้ามุม ≤ 0 หรือมุม ≥ 90 อย่างใดอย่างหนึ่งเป็นจริง ให้ถือว่าข้อมูลมุมไม่ถูกต้อง</span></div>
+    </div>
+  </div>
+
+  <div class="python-card" style="margin-top:9px">
+    <h3>ลองเติม Condition / Complete the Condition</h3>
+    <div class="fill-code">if distance_x <span class="answer">&lt;= 0</span>:
+    print("Invalid distance")
+
+elif angle &lt;= 0 <span class="answer">or</span> angle &gt;= 90:
+    print("Invalid angle")
+
+else:
+    height = <span class="answer">find_height(distance_x, angle)</span></div>
+  </div>
+
+  <div class="warning"><b>เชื่อมความรู้เดิม:</b> เราไม่ได้เรียน <code>if</code> ใหม่ แต่กำลังนำเงื่อนไขที่เคยเรียนมาใช้แก้ปัญหาจริงร่วมกับ Function และตรีโกณมิติ.</div>
+</section>
+
+<section class="sheet" data-page="21">
+  <div class="header">
+    <div class="kicker">Worksheet 6 / ใบงานที่ 6</div>
+    <h1>วนวัดหลายครั้ง และรวมเป็นโปรแกรม Height Surveyor</h1>
+    <div class="subtitle">Looping Measurements — Final Example Program</div>
+  </div>
+
+  <div class="python-grid">
+    <div class="python-card">
+      <h3>5. ทำไมต้อง Loop?</h3>
+      <p>ถ้าต้องวัดต้นไม้ เสาธง และอาคารหลายชิ้น เราไม่ต้องการ Run โปรแกรมใหม่ทุกครั้ง.</p>
+      <div class="code-block"><pre><code>while True:
+    # measurement code here
+
+    again = input(
+        "Measure another object? (y/n): "
+    )
+
+    if again == "n":
+        break</code></pre></div>
+      <div class="python-note"><span class="code-inline">while True</span> = วนต่อไปเรื่อย ๆ<br><span class="code-inline">break</span> = ออกจาก loop เมื่อผู้ใช้ต้องการหยุด</div>
+      <div class="prompt">ถ้าผู้ใช้ตอบ n โปรแกรมควรทำอะไร?</div>
+      <div class="answer-box"><span class="answer">ออกจาก while loop และจบโปรแกรม</span></div>
+    </div>
+
+    <div class="python-card">
+      <h3>โครงสร้างโปรแกรมทั้งหมด / Program Structure</h3>
+      <div class="step-strip">
+        <div class="step-chip">1<br>Function</div><div class="step-chip">2<br>Input</div><div class="step-chip">3<br>Condition</div><div class="step-chip">4<br>Loop</div>
+      </div>
+      <div class="flow-row" style="grid-template-columns:1fr 24px 1fr 24px 1fr">
+        <div class="flow-box">รับ x, θ<br>Input</div><div class="flow-arrow">→</div><div class="flow-box">ตรวจข้อมูล<br>if / elif</div><div class="flow-arrow">→</div><div class="flow-box">find_height()<br>return h</div>
+      </div>
+      <div class="flow-row" style="grid-template-columns:1fr 24px 1fr 24px 1fr">
+        <div class="flow-box">print result</div><div class="flow-arrow">→</div><div class="flow-box">ถามทำต่อไหม?</div><div class="flow-arrow">→</div><div class="flow-box">วนต่อ / break</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block" style="margin-top:9px"><div class="code-title">Final Example — Height Surveyor</div><pre><code>import math
+
+
+def find_height(distance_x, angle):
+    height = distance_x * math.tan(math.radians(angle))
+    return height
+
+
+while True:
+    print("\n=== Height Surveyor ===")
+
+    distance_x = float(input("Horizontal distance (m): "))
+    angle = float(input("Angle of elevation (degree): "))
+
+    if distance_x &lt;= 0:
+        print("Distance must be greater than 0.")
+
+    elif angle &lt;= 0 or angle &gt;= 90:
+        print("Angle must be between 0 and 90 degrees.")
+
+    else:
+        height = find_height(distance_x, angle)
+        print("Estimated height =", round(height, 2), "m")
+
+    again = input("Measure another object? (y/n): ")
+
+    if again == "n":
+        break</code></pre></div>
+
+  <div class="summary-box">
+    <h3>อ่านโปรแกรมให้เป็น / Can You Identify Each Part?</h3>
+    <table class="trace-table"><thead><tr><th>Concept</th><th>Code used in the program</th></tr></thead><tbody>
+      <tr><td>Trigonometry</td><td class="answer-cell"><input class="ratio-input"><span class="answer"><code>math.tan(math.radians(angle))</code></span></td></tr>
+      <tr><td>Function</td><td class="answer-cell"><input class="ratio-input"><span class="answer"><code>def find_height(...)</code></span></td></tr>
+      <tr><td>Return data</td><td class="answer-cell"><input class="ratio-input"><span class="answer"><code>return height</code></span></td></tr>
+      <tr><td>Condition</td><td class="answer-cell"><input class="ratio-input"><span class="answer"><code>if / elif / else</code></span></td></tr>
+      <tr><td>Loop</td><td class="answer-cell"><input class="ratio-input"><span class="answer"><code>while True</code></span></td></tr>
+      <tr><td>Stop the loop</td><td class="answer-cell"><input class="ratio-input"><span class="answer"><code>break</code></span></td></tr>
+    </tbody></table>
+  </div>
+
+  <div class="warning"><b>Mini Challenge:</b> ลองเพิ่ม <code>eye_height</code> เป็นข้อมูลอีกหนึ่งค่า แล้วเปลี่ยนสูตรเป็น <code>total_height = distance_x * tan(angle) + eye_height</code>. <span class="en">Add the observer's eye height as another parameter.</span></div>
+</section>
+
+<!-- =========================================================
+     FUTURE LESSONS WILL BE APPENDED BELOW IN THE SAME FILE.
+     Worksheet 2: Naming Opposite / Adjacent / Hypotenuse
+     ========================================================= -->
+
+</main>
+
+<script>
+function toggleAnswers(){
+  const root=document.getElementById('documentRoot');
+  const btn=document.getElementById('answerBtn');
+  const showing=root.classList.toggle('show-answers');
+  btn.textContent=showing ? 'ซ่อนเฉลย / Hide Answers' : 'แสดงเฉลย / Show Answers';
+  btn.setAttribute('aria-pressed', showing ? 'true' : 'false');
+}
+</script>
+</body>
+</html>
