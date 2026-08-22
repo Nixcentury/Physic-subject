@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>แบบฝึกหัดการเคลื่อนที่แนวตรง KRU KIRD | Linear Motion Practice</title>
+<title>แบบฝึกหัดการเคลื่อนที่แนวตรง KRU KIRD | Linear Motion Practice • Print by Topic</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=K2D:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -37,6 +37,97 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],proc
 @page exercise{size:A4 portrait;margin:0}
 
 
+
+/* ===== Print selection modal ===== */
+.print-selection-backdrop{
+  position:fixed;inset:0;z-index:999;background:#0f172ab8;
+  display:none;align-items:center;justify-content:center;padding:18px
+}
+.print-selection-backdrop.open{display:flex}
+.print-selection-modal{
+  width:min(760px,96vw);max-height:90vh;overflow:auto;background:#fff;
+  border-radius:16px;box-shadow:0 24px 70px #0007;padding:20px
+}
+.print-selection-head{
+  display:flex;justify-content:space-between;gap:16px;align-items:flex-start;
+  border-bottom:1px solid var(--line);padding-bottom:12px
+}
+.print-selection-modal h1{margin:0;color:var(--navy);font-size:20px;line-height:1.2}
+.print-selection-modal h1 small{
+  display:block;color:var(--slate);font-size:10px;margin-top:4px;font-weight:600
+}
+.print-selection-close{
+  border:0;background:transparent;font-size:24px;line-height:1;
+  cursor:pointer;color:var(--slate)
+}
+.print-selection-section{padding:14px 0;border-bottom:1px solid #e2e8f0}
+.print-selection-section:last-of-type{border-bottom:0}
+.print-selection-title{
+  font-weight:800;color:var(--navy);font-size:12px;margin-bottom:8px
+}
+.print-selection-title small{
+  display:block;color:var(--slate);font-size:9px;font-weight:500;margin-top:2px
+}
+.print-selection-quick{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.print-selection-quick button{
+  border:1px solid var(--line);background:#fff;border-radius:999px;
+  padding:6px 11px;font:700 10px "K2D";cursor:pointer;color:#334155
+}
+.print-topic-list{display:grid;gap:6px}
+.print-topic-row{
+  display:grid;grid-template-columns:auto 1fr auto;gap:9px;align-items:center;
+  padding:9px 10px;border:1px solid #e2e8f0;border-radius:9px;background:#fff
+}
+.print-topic-row:hover{background:#f8fafc}
+.print-topic-name{font-size:10.5px;font-weight:700;color:#1e293b}
+.print-topic-name small{display:block;color:#64748b;font-size:8.8px;font-weight:500;margin-top:1px}
+.print-topic-range{font-size:9px;color:#64748b;white-space:nowrap}
+.print-mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.print-mode-option{
+  display:flex;gap:8px;align-items:flex-start;border:1px solid #e2e8f0;
+  border-radius:10px;padding:10px;background:#fff
+}
+.print-mode-option strong{display:block;color:#0f172a;font-size:10.5px}
+.print-mode-option small{display:block;color:#64748b;font-size:8.8px;margin-top:2px}
+.print-range-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.print-range-row input[type="text"]{
+  width:100%;border:1px solid #cbd5e1;border-radius:8px;padding:8px 10px;
+  font:600 10px "K2D";color:#0f172a
+}
+.print-range-help{margin-top:5px;color:#64748b;font-size:8.8px}
+.print-extra-row{display:flex;gap:8px;align-items:flex-start;font-size:10px;color:#334155}
+.print-selection-error{
+  display:none;margin-top:10px;padding:8px 10px;border-radius:8px;
+  background:#fee2e2;color:#991b1b;font-size:9.5px;font-weight:700
+}
+.print-selection-error.show{display:block}
+.print-selection-summary{
+  margin-top:10px;padding:9px 10px;border-radius:9px;background:#f8fafc;
+  border:1px solid #e2e8f0;color:#334155;font-size:9.4px
+}
+.print-selection-actions{
+  display:flex;justify-content:flex-end;gap:8px;padding-top:14px
+}
+.print-selection-actions button{
+  border:0;border-radius:999px;padding:9px 16px;font:800 11px "K2D";cursor:pointer
+}
+.print-selection-actions .cancel{background:#e2e8f0;color:#334155}
+.print-selection-actions .go{background:var(--navy);color:#fff}
+
+@media(max-width:640px){
+  .print-mode-grid{grid-template-columns:1fr}
+  .print-topic-row{grid-template-columns:auto 1fr}
+  .print-topic-range{grid-column:2}
+}
+
+@media print{
+  .print-selection-backdrop{display:none!important}
+  .sheet.print-hidden{display:none!important}
+  .sheet.print-visible{display:grid!important}
+  body.print-filter-active .topic-group{display:contents}
+  body.print-filter-active .sheet{break-after:page;page-break-after:always}
+}
+
 </style>
 </head>
 <body>
@@ -45,6 +136,75 @@ window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],proc
   <button class="gold" id="printAnswersBtn" type="button">พิมพ์พร้อมคำตอบ / Print with Answers</button>
   <button id="showAnswersBtn" type="button">เปิดคำตอบ / Show Answers</button>
   <button id="hideAnswersBtn" type="button">ปิดคำตอบ / Hide Answers</button>
+</div>
+
+<div class="print-selection-backdrop" id="printSelectionModal" aria-hidden="true">
+  <div class="print-selection-modal" role="dialog" aria-modal="true" aria-labelledby="printSelectionTitle">
+    <div class="print-selection-head">
+      <h1 id="printSelectionTitle">
+        เลือกหัวข้อสำหรับพิมพ์
+        <small>Select topics to print</small>
+      </h1>
+      <button class="print-selection-close" id="printSelectionClose" type="button" aria-label="Close">×</button>
+    </div>
+
+    <div class="print-selection-section">
+      <div class="print-selection-title">
+        1. เลือกเรื่อง
+        <small>Select one or more topics</small>
+      </div>
+      <div class="print-selection-quick">
+        <button type="button" id="printSelectAll">เลือกทั้งหมด / Select all</button>
+        <button type="button" id="printSelectNone">ยกเลิกทั้งหมด / Clear all</button>
+      </div>
+      <div class="print-topic-list" id="printTopicList"></div>
+    </div>
+
+    <div class="print-selection-section">
+      <div class="print-selection-title">
+        2. เลือกรูปแบบ
+        <small>Choose print mode</small>
+      </div>
+      <div class="print-mode-grid">
+        <label class="print-mode-option">
+          <input type="radio" name="printModeChoice" value="questions" checked>
+          <span><strong>โจทย์อย่างเดียว</strong><small>Questions only</small></span>
+        </label>
+        <label class="print-mode-option">
+          <input type="radio" name="printModeChoice" value="answers">
+          <span><strong>พิมพ์พร้อมเฉลย</strong><small>Questions with answers</small></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="print-selection-section">
+      <div class="print-selection-title">
+        3. ช่วงข้อกำหนดเอง (ไม่บังคับ)
+        <small>Optional custom question range</small>
+      </div>
+      <div class="print-range-row">
+        <input id="printQuestionRange" type="text" placeholder="เช่น 17-34 หรือ 1-5,43-46">
+        <button type="button" id="printClearRange" style="border:1px solid #cbd5e1;background:#fff;border-radius:8px;padding:8px 10px;font:700 10px K2D;cursor:pointer">ล้าง</button>
+      </div>
+      <div class="print-range-help">
+        หากกรอกช่วงข้อ ระบบจะใช้ช่วงข้อนี้แทนการเลือกเรื่องด้านบน / A custom range overrides topic selection.
+      </div>
+    </div>
+
+    <div class="print-selection-section">
+      <label class="print-extra-row">
+        <input type="checkbox" id="printIncludeLessons">
+        <span>รวมหน้าใบความรู้ของหัวข้อที่เลือก <small style="display:block;color:#64748b">Include lesson placeholder pages</small></span>
+      </label>
+      <div class="print-selection-summary" id="printSelectionSummary">ยังไม่ได้เลือก / Nothing selected</div>
+      <div class="print-selection-error" id="printSelectionError"></div>
+    </div>
+
+    <div class="print-selection-actions">
+      <button class="cancel" id="printSelectionCancel" type="button">ยกเลิก / Cancel</button>
+      <button class="go" id="printSelectionGo" type="button">พิมพ์ / Print</button>
+    </div>
+  </div>
 </div>
 
 <main id="book"></main>
@@ -85,9 +245,171 @@ if(queryMode==='answers')document.body.classList.add('show-answers','print-answe
 async function typeset(){if(window.MathJax?.typesetPromise)await MathJax.typesetPromise()}
 document.getElementById('showAnswersBtn').addEventListener('click',async()=>{document.body.classList.add('show-answers');await typeset()});
 document.getElementById('hideAnswersBtn').addEventListener('click',()=>document.body.classList.remove('show-answers'));
-async function printMode(mode){document.body.classList.remove('print-questions','print-answers');document.body.classList.add(mode==='answers'?'print-answers':'print-questions');await typeset();window.print()}
-document.getElementById('printQuestionsBtn').addEventListener('click',()=>printMode('questions'));
-document.getElementById('printAnswersBtn').addEventListener('click',()=>printMode('answers'));
+
+const printSelectionModal=document.getElementById('printSelectionModal');
+const printTopicList=document.getElementById('printTopicList');
+const printQuestionRange=document.getElementById('printQuestionRange');
+const printIncludeLessons=document.getElementById('printIncludeLessons');
+const printSelectionSummary=document.getElementById('printSelectionSummary');
+const printSelectionError=document.getElementById('printSelectionError');
+
+const printGroups=GROUPS.map(([start,end,sec,key])=>({
+  start,end,sec,key,
+  th:TOPICS[sec][0],
+  en:TOPICS[sec][1]
+}));
+
+function buildPrintTopicList(){
+  printTopicList.innerHTML=printGroups.map((g,i)=>`
+    <label class="print-topic-row">
+      <input type="checkbox" class="print-topic-check" value="${g.key}" ${i===0?'checked':''}>
+      <span class="print-topic-name">${g.sec} ${g.th}<small>${g.en}</small></span>
+      <span class="print-topic-range">Q${g.start}–Q${g.end}</span>
+    </label>
+  `).join('');
+  printTopicList.querySelectorAll('.print-topic-check').forEach(el=>el.addEventListener('change',updatePrintSummary));
+}
+buildPrintTopicList();
+
+function parseQuestionRange(raw){
+  const value=(raw||'').trim();
+  if(!value)return null;
+  const selected=new Set();
+  const parts=value.split(',').map(x=>x.trim()).filter(Boolean);
+  for(const part of parts){
+    if(/^\d+$/.test(part)){
+      const n=Number(part);
+      if(n<1||n>Q.length)throw new Error(`ข้อ ${n} อยู่นอกช่วง 1-${Q.length}`);
+      selected.add(n);
+    }else{
+      const m=part.match(/^(\d+)\s*-\s*(\d+)$/);
+      if(!m)throw new Error('รูปแบบช่วงข้อไม่ถูกต้อง เช่น 17-34 หรือ 1-5,43-46');
+      let a=Number(m[1]), b=Number(m[2]);
+      if(a>b)[a,b]=[b,a];
+      if(a<1||b>Q.length)throw new Error(`ช่วงข้อต้องอยู่ระหว่าง 1-${Q.length}`);
+      for(let n=a;n<=b;n++)selected.add(n);
+    }
+  }
+  return selected;
+}
+
+function getSelectedQuestionNumbers(){
+  const custom=parseQuestionRange(printQuestionRange.value);
+  if(custom)return custom;
+
+  const chosenKeys=new Set(
+    [...document.querySelectorAll('.print-topic-check:checked')].map(x=>x.value)
+  );
+  const selected=new Set();
+  printGroups.forEach(g=>{
+    if(chosenKeys.has(g.key)){
+      for(let n=g.start;n<=g.end;n++)selected.add(n);
+    }
+  });
+  return selected;
+}
+
+function selectedTopicKeys(){
+  return new Set([...document.querySelectorAll('.print-topic-check:checked')].map(x=>x.value));
+}
+
+function updatePrintSummary(){
+  try{
+    printSelectionError.classList.remove('show');
+    const nums=getSelectedQuestionNumbers();
+    const mode=document.querySelector('input[name="printModeChoice"]:checked')?.value||'questions';
+    if(!nums.size){
+      printSelectionSummary.textContent='ยังไม่ได้เลือกข้อสำหรับพิมพ์ / No questions selected';
+      return;
+    }
+    const arr=[...nums].sort((a,b)=>a-b);
+    const first=arr[0], last=arr[arr.length-1];
+    const label=mode==='answers'?'พร้อมเฉลย / with answers':'โจทย์อย่างเดียว / questions only';
+    printSelectionSummary.textContent=`เลือก ${arr.length} ข้อ (Q${first}–Q${last}) • ${label}`;
+  }catch(err){
+    printSelectionSummary.textContent='ตรวจสอบช่วงข้อ / Check custom range';
+  }
+}
+
+function openPrintSelection(defaultMode){
+  const radio=document.querySelector(`input[name="printModeChoice"][value="${defaultMode}"]`);
+  if(radio)radio.checked=true;
+  printSelectionModal.classList.add('open');
+  printSelectionModal.setAttribute('aria-hidden','false');
+  updatePrintSummary();
+}
+function closePrintSelection(){
+  printSelectionModal.classList.remove('open');
+  printSelectionModal.setAttribute('aria-hidden','true');
+}
+function resetPrintVisibility(){
+  document.body.classList.remove('print-filter-active','print-questions','print-answers');
+  document.querySelectorAll('#book .sheet').forEach(s=>s.classList.remove('print-hidden','print-visible'));
+}
+
+async function applyPrintSelectionAndPrint(){
+  try{
+    printSelectionError.classList.remove('show');
+    const selected=getSelectedQuestionNumbers();
+    if(!selected.size)throw new Error('กรุณาเลือกอย่างน้อย 1 เรื่อง หรือกำหนดช่วงข้อ / Select at least one topic or enter a question range.');
+
+    const customRange=(printQuestionRange.value||'').trim();
+    const includeLessons=printIncludeLessons.checked;
+    const chosenKeys=selectedTopicKeys();
+    const mode=document.querySelector('input[name="printModeChoice"]:checked')?.value||'questions';
+
+    resetPrintVisibility();
+    document.body.classList.add('print-filter-active',mode==='answers'?'print-answers':'print-questions');
+
+    document.querySelectorAll('#book .sheet').forEach(sheet=>{
+      let show=false;
+      if(sheet.classList.contains('lesson-sheet')){
+        if(includeLessons && !customRange){
+          const group=sheet.closest('.topic-group');
+          const key=group?.id?.replace('topic-','')||'';
+          show=chosenKeys.has(key);
+        }
+      }else{
+        const m=sheet.id.match(/^q-(\d+)$/);
+        if(m)show=selected.has(Number(m[1]));
+      }
+      sheet.classList.toggle('print-visible',show);
+      sheet.classList.toggle('print-hidden',!show);
+    });
+
+    closePrintSelection();
+    await typeset();
+    setTimeout(()=>window.print(),50);
+  }catch(err){
+    printSelectionError.textContent=err.message||String(err);
+    printSelectionError.classList.add('show');
+  }
+}
+
+document.getElementById('printQuestionsBtn').addEventListener('click',()=>openPrintSelection('questions'));
+document.getElementById('printAnswersBtn').addEventListener('click',()=>openPrintSelection('answers'));
+document.getElementById('printSelectionClose').addEventListener('click',closePrintSelection);
+document.getElementById('printSelectionCancel').addEventListener('click',closePrintSelection);
+document.getElementById('printSelectionGo').addEventListener('click',applyPrintSelectionAndPrint);
+document.getElementById('printSelectAll').addEventListener('click',()=>{
+  document.querySelectorAll('.print-topic-check').forEach(x=>x.checked=true);
+  printQuestionRange.value='';
+  updatePrintSummary();
+});
+document.getElementById('printSelectNone').addEventListener('click',()=>{
+  document.querySelectorAll('.print-topic-check').forEach(x=>x.checked=false);
+  updatePrintSummary();
+});
+document.getElementById('printClearRange').addEventListener('click',()=>{
+  printQuestionRange.value='';
+  updatePrintSummary();
+});
+printQuestionRange.addEventListener('input',updatePrintSummary);
+document.querySelectorAll('input[name="printModeChoice"]').forEach(x=>x.addEventListener('change',updatePrintSummary));
+printIncludeLessons.addEventListener('change',updatePrintSummary);
+printSelectionModal.addEventListener('click',e=>{if(e.target===printSelectionModal)closePrintSelection()});
+window.addEventListener('afterprint',resetPrintVisibility);
+
 if(Q.length!==70)document.body.insertAdjacentHTML('afterbegin','<p style="background:#fee2e2;padding:12px">Question count audit failed: '+Q.length+'</p>');
 </script>
 </body>
