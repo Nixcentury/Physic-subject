@@ -1,0 +1,1911 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Scratchpad Experiment: Multiplication</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+            chtml: { scale: 1.02 }
+        };
+    </script>
+    <script async id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Sarabun', 'Inter', sans-serif; background-color: #f3f4f6; }
+        .option-btn { transition: all 0.2s ease-in-out; }
+        .option-btn:hover { transform: translateY(-2px); }
+        .fade-in { animation: fadeIn 0.3s ease-in; }
+        .celebration-card { background: linear-gradient(135deg, #ecfdf5 0%, #eff6ff 48%, #faf5ff 100%); }
+        .celebration-icon { animation: celebrate 1.8s ease-in-out infinite; }
+        .history-line::before { content: ''; position: absolute; left: 19px; top: 38px; bottom: -18px; width: 2px; background: #c7d2fe; }
+        .history-line:last-child::before { display: none; }
+        mjx-container { max-width: 100%; overflow-x: auto; overflow-y: hidden; padding: 0.08rem 0; }
+        mjx-container[display="true"] { margin: 0.65rem 0 !important; }
+        .question-math mjx-container { font-size: 1.06em !important; }
+        .option-btn mjx-container { margin: 0 !important; }
+        .hint-math mjx-container { font-size: 0.98em !important; }
+        .table-wrap { overflow-x:auto; margin: 1rem 0 1.25rem; }
+        .chem-table { width:100%; min-width:520px; border-collapse:collapse; font-size:0.95rem; }
+        .chem-table th, .chem-table td { border:1px solid #cbd5e1; padding:0.65rem 0.75rem; text-align:center; }
+        .chem-table th { background:#eef2ff; color:#3730a3; font-weight:700; }
+        .chem-table tbody tr:nth-child(even) { background:#f8fafc; }
+        .graph-card { background:#fff; border:1px solid #dbeafe; border-radius:16px; padding:10px; margin: 1rem 0 1.25rem; overflow-x:auto; }
+        .graph-card svg { width:100%; min-width:430px; height:auto; display:block; }
+        .graph-card.compact svg { min-width:400px; }
+        .axis { stroke:#334155; stroke-width:2.4; }
+        .curve { fill:none; stroke:#4f46e5; stroke-width:4; stroke-linecap:round; }
+        .curve-alt { fill:none; stroke:#f59e0b; stroke-width:4; stroke-linecap:round; stroke-dasharray:9 7; }
+        .guide { stroke:#94a3b8; stroke-width:1.5; stroke-dasharray:5 5; }
+        .level { stroke:#64748b; stroke-width:2; }
+        .axis-label { fill:#475569; font-size:14px; font-family:'Sarabun','Inter',sans-serif; text-anchor:middle; }
+        .graph-text { fill:#334155; font-size:14px; font-weight:700; font-family:'Sarabun','Inter',sans-serif; }
+
+        .hint-step { border-left:4px solid #f59e0b; }
+
+        /* Scratchpad add-on: full A4 + multi-page + AI that follows recent writing */
+        .scratchpad-shell {
+            border:2px solid #cbd5e1;
+            border-radius:16px;
+            overflow:hidden;
+            background:#fff;
+            margin:1rem 0 1.25rem;
+            box-shadow:0 8px 24px rgba(15,23,42,.06);
+        }
+        .scratchpad-toolbar {
+            display:flex;
+            flex-wrap:wrap;
+            align-items:center;
+            gap:7px;
+            padding:9px;
+            background:#f8fafc;
+            border-bottom:1px solid #cbd5e1;
+        }
+        .scratch-tool {
+            border:1px solid #cbd5e1;
+            background:#fff;
+            color:#334155;
+            border-radius:9px;
+            padding:7px 10px;
+            font-size:.8rem;
+            font-weight:700;
+            cursor:pointer;
+            white-space:nowrap;
+        }
+        .scratch-tool:hover { background:#f1f5f9; }
+        .scratch-tool.active {
+            border-color:#6366f1;
+            background:#eef2ff;
+            color:#4338ca;
+        }
+        .scratch-tool.copy {
+            background:#eef2ff;
+            color:#4338ca;
+            border-color:#c7d2fe;
+        }
+        .scratch-tool.page {
+            background:#ecfeff;
+            color:#155e75;
+            border-color:#a5f3fc;
+        }
+        .scratch-tool.ai-check-btn {
+            background:#f5f3ff;
+            color:#6d28d9;
+            border-color:#c4b5fd;
+        }
+        .scratch-tool.ai-check-btn:hover { background:#ede9fe; }
+        .scratch-tool.ai-check-btn:disabled {
+            opacity:.55;
+            cursor:not-allowed;
+        }
+        .scratch-tool.danger { color:#be123c; }
+        .scratch-tool:disabled {
+            opacity:.45;
+            cursor:not-allowed;
+        }
+
+        .scratch-status {
+            padding:7px 11px;
+            border-bottom:1px solid #e2e8f0;
+            font-size:.74rem;
+            font-weight:600;
+            line-height:1.55;
+        }
+
+        /* Visible workspace. The A4 sheet is larger than the viewport and scrolls. */
+        .scratch-viewport {
+            position:relative;
+            background:#dbe3ee;
+            overflow:hidden;
+        }
+        .scratch-scroll {
+            height:clamp(620px, 88vh, 1120px);
+            min-height:620px;
+            overflow-y:auto;
+            overflow-x:hidden;
+            background:#dbe3ee;
+            padding:20px;
+            overscroll-behavior:contain;
+            -webkit-overflow-scrolling:touch;
+            touch-action:pan-y;
+            scroll-behavior:smooth;
+        }
+        .scratch-sheet {
+            position:relative;
+            width:min(100%, 1000px);
+            aspect-ratio:210 / 297;
+            margin:0 auto;
+            overflow:hidden;
+            border-radius:8px;
+            box-shadow:0 8px 30px rgba(15,23,42,.20);
+            background:
+                linear-gradient(#eef2f7 1px, transparent 1px),
+                linear-gradient(90deg, #eef2f7 1px, transparent 1px),
+                #fff;
+            background-size:24px 24px;
+        }
+
+        /* Locked question/background layer. */
+        .scratch-question-bg {
+            position:absolute;
+            inset:0;
+            z-index:1;
+            padding:20px 22px;
+            pointer-events:none;
+            overflow:hidden;
+            color:#0f172a;
+            background:rgba(255,255,255,.84);
+        }
+        .scratch-question-bg.hidden { display:none; }
+        .scratch-question-bg .sq-title {
+            color:#4338ca;
+            font-weight:800;
+            font-size:.82rem;
+            margin-bottom:7px;
+        }
+        .scratch-question-bg .sq-th {
+            font-size:.95rem;
+            font-weight:700;
+            line-height:1.55;
+        }
+        .scratch-question-bg .sq-en {
+            font-size:.76rem;
+            color:#64748b;
+            line-height:1.45;
+            margin-top:5px;
+        }
+        .scratch-question-bg .sq-content {
+            margin-top:9px;
+            font-size:.72rem;
+        }
+        .scratch-question-bg .sq-content .table-wrap { margin:.35rem 0; }
+        .scratch-question-bg .sq-content .chem-table {
+            min-width:0;
+            font-size:.72rem;
+            background:#fff;
+        }
+        .scratch-question-bg .sq-content .chem-table th,
+        .scratch-question-bg .sq-content .chem-table td { padding:.24rem .38rem; }
+        .scratch-question-bg .sq-content .graph-card { margin:.35rem 0; padding:5px; }
+        .scratch-question-bg .sq-content .graph-card svg {
+            min-width:0 !important;
+            max-height:330px;
+        }
+
+        /* Ink layer */
+        #scratchpad-canvas {
+            position:absolute;
+            inset:0;
+            z-index:2;
+            width:100%;
+            height:100%;
+            display:block;
+            cursor:crosshair;
+        }
+
+        .scratch-color-dot {
+            width:13px;
+            height:13px;
+            border-radius:50%;
+            display:inline-block;
+            vertical-align:-1px;
+            margin-right:4px;
+        }
+        .scratch-page-indicator {
+            display:inline-flex;
+            align-items:center;
+            padding:6px 9px;
+            border-radius:999px;
+            background:#fff;
+            border:1px solid #cbd5e1;
+            color:#475569;
+            font-size:.75rem;
+            font-weight:800;
+        }
+
+        .scratch-scroll::-webkit-scrollbar { width:10px; }
+        .scratch-scroll::-webkit-scrollbar-thumb {
+            background:#94a3b8;
+            border-radius:999px;
+            border:2px solid #dbe3ee;
+        }
+
+        /* AI panel floats in the visible board viewport near the latest writing. */
+        .ai-feedback-panel {
+            position:absolute;
+            z-index:10;
+            width:min(410px, calc(100% - 36px));
+            max-height:min(48vh, 440px);
+            overflow:auto;
+            border:1px solid #c4b5fd;
+            border-radius:16px;
+            background:rgba(255,255,255,.97);
+            box-shadow:0 16px 38px rgba(76,29,149,.22);
+            pointer-events:auto;
+            backdrop-filter:blur(8px);
+        }
+        .ai-feedback-head {
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:8px;
+            padding:10px 12px;
+            background:#f5f3ff;
+            border-bottom:1px solid #ddd6fe;
+            color:#5b21b6;
+            font-weight:800;
+            font-size:.82rem;
+        }
+        .ai-feedback-body {
+            padding:12px;
+            font-size:.82rem;
+            line-height:1.55;
+            color:#334155;
+        }
+        .ai-feedback-row + .ai-feedback-row { margin-top:9px; }
+        .ai-feedback-label {
+            font-weight:800;
+            color:#475569;
+            margin-bottom:2px;
+        }
+        .ai-anchor-note {
+            color:#8b5cf6;
+            font-size:10px;
+            font-weight:700;
+        }
+        .ai-spinner {
+            width:15px;height:15px;border-radius:50%;
+            border:2px solid #ddd6fe;border-top-color:#7c3aed;
+            animation:aiSpin .8s linear infinite;
+            display:inline-block;vertical-align:-2px;margin-right:6px;
+        }
+        @keyframes aiSpin { to { transform:rotate(360deg); } }
+
+        @media (max-width:700px) {
+            .scratch-scroll {
+                height:82vh;
+                min-height:520px;
+                padding:10px;
+            }
+            .scratch-sheet { width:100%; }
+            .scratch-tool { padding:7px 8px; font-size:.74rem; }
+            .ai-feedback-panel {
+                width:calc(100% - 24px);
+                max-height:40vh;
+            }
+        }
+
+        /* Hidden DOM used only when exporting scratchpads to PDF */
+        #scratch-export-host {
+            position:fixed;
+            left:-10000px;
+            top:0;
+            width:794px;
+            pointer-events:none;
+            z-index:-1;
+        }
+        .scratch-export-page {
+            width:794px;
+            min-height:1123px;
+            background:#fff;
+            padding:38px;
+            color:#0f172a;
+            font-family:'Sarabun','Inter',sans-serif;
+        }
+        .scratch-export-board {
+            position:relative;
+            width:100%;
+            height:720px;
+            margin-top:18px;
+            overflow:hidden;
+            border:1.5px solid #94a3b8;
+            border-radius:12px;
+            background:
+                linear-gradient(#eef2f7 1px, transparent 1px),
+                linear-gradient(90deg, #eef2f7 1px, transparent 1px),
+                #fff;
+            background-size:24px 24px;
+        }
+        .scratch-export-question {
+            position:absolute;
+            inset:0;
+            z-index:1;
+            padding:20px;
+            overflow:hidden;
+            background:rgba(255,255,255,.84);
+        }
+        .scratch-export-ink {
+            position:absolute;
+            inset:0;
+            z-index:2;
+            width:100%;
+            height:100%;
+            object-fit:fill;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes celebrate { 0%,100% { transform: rotate(-5deg) scale(1); } 50% { transform: rotate(5deg) scale(1.08); } }
+        @media print {
+            body { background:#fff !important; padding:0 !important; }
+            #app { box-shadow:none !important; max-width:none !important; }
+            button { display:none !important; }
+            .graph-card svg { min-width:0 !important; }
+        }
+    
+        /* === Firebase Phase 1: Google Sign-In + Live Presence === */
+        .fb-gate{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(15,23,42,.74);backdrop-filter:blur(8px)}
+        .fb-gate.hidden{display:none}.fb-card{width:min(480px,100%);background:#fff;border:1px solid #e2e8f0;border-radius:24px;padding:28px;box-shadow:0 28px 80px rgba(15,23,42,.3)}
+        .fb-google{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:12px 16px;border:1px solid #cbd5e1;border-radius:14px;background:#fff;color:#0f172a;font-weight:800;cursor:pointer}.fb-google:hover{background:#f8fafc}.fb-google:disabled{opacity:.55;cursor:not-allowed}
+        .fb-error{display:none;margin-top:12px;padding:10px 12px;border:1px solid #fecdd3;border-radius:12px;background:#fff1f2;color:#be123c;font-size:.8rem;line-height:1.5}.fb-error.show{display:block}
+        .fb-userbar{position:sticky;top:0;z-index:50;width:100%;max-width:80rem;display:none;align-items:center;justify-content:space-between;gap:10px;margin:0 auto 10px;padding:8px 12px;border:1px solid #cbd5e1;border-radius:14px;background:rgba(255,255,255,.97);box-shadow:0 4px 16px rgba(15,23,42,.06);backdrop-filter:blur(8px)}
+        .fb-userbar.show{display:flex}.fb-meta{min-width:0;display:flex;align-items:center;gap:10px}.fb-avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;background:#e2e8f0;border:1px solid #cbd5e1}.fb-dot{width:10px;height:10px;border-radius:50%;display:inline-block;background:#94a3b8}.fb-dot.online{background:#10b981}.fb-dot.idle{background:#f59e0b}.fb-dot.offline{background:#94a3b8}
+        .fb-signout{border:1px solid #cbd5e1;border-radius:10px;padding:7px 10px;background:#fff;color:#475569;font-size:.76rem;font-weight:800;cursor:pointer}.fb-signout:hover{background:#f8fafc}
+        @media(max-width:640px){.fb-userbar{border-radius:0;margin-bottom:8px}.fb-email{display:none}}
+
+</style>
+</head>
+<body class="text-gray-800 min-h-screen flex flex-col items-center py-6 px-4">
+
+<div id="fb-gate" class="fb-gate">
+  <div class="fb-card">
+    <div style="font-size:12px;font-weight:900;color:#6366f1;letter-spacing:.15em;text-transform:uppercase">Phase 1 · Live Presence</div>
+    <h2 style="font-size:26px;font-weight:900;color:#0f172a;margin:8px 0 4px">เข้าสู่ Quiz / Enter Quiz</h2>
+    <p style="color:#64748b;font-size:14px;line-height:1.65;margin:0 0 18px">เข้าสู่ระบบด้วย Google เพื่อให้ครูเห็นว่าใครกำลังทำ Quiz และอยู่ข้อไหน<br>Sign in with Google so your teacher can see that you are online and which question you are working on.</p>
+    <button id="fb-signin" class="fb-google"><span style="font-size:20px;font-weight:900">G</span><span>เข้าสู่ระบบด้วย Google / Sign in with Google</span></button>
+    <div id="fb-error" class="fb-error"></div>
+    <div style="font-size:11px;color:#94a3b8;line-height:1.55;margin-top:14px">ตอนนี้ Firebase ใช้เฉพาะสถานะออนไลน์เท่านั้น กระดานยังส่งเป็น PDF ตามเดิม<br>Firebase is used for live presence only. Scratchpads still use the existing PDF workflow.</div>
+  </div>
+</div>
+<div id="fb-userbar" class="fb-userbar">
+  <div class="fb-meta">
+    <img id="fb-photo" class="fb-avatar" alt="Profile">
+    <div style="min-width:0">
+      <div style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:900;color:#0f172a"><span id="fb-dot" class="fb-dot"></span><span id="fb-name">...</span><span id="fb-state" style="font-size:11px;color:#64748b">Connecting...</span></div>
+      <div id="fb-email" class="fb-email" style="font-size:11px;color:#94a3b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+    </div>
+  </div>
+  <button id="fb-signout" class="fb-signout">ออกจากระบบ / Sign out</button>
+</div>
+
+<div id="app" class="w-full max-w-5xl bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col min-h-[80vh]">
+    <div style="padding:32px;text-align:center;font-family:Sarabun,Arial,sans-serif;color:#4f46e5;">
+        กำลังโหลดแบบทดสอบอัตราการเกิดปฏิกิริยาเคมี... / Loading Reaction Rate Mastery Quiz...
+    </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, GoogleAuthProvider, onAuthStateChanged, setPersistence, browserLocalPersistence, signInWithPopup, signInWithRedirect, getRedirectResult, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getDatabase, ref, set, update, get, onValue, onDisconnect, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+const FIREBASE_CONFIG={
+  apiKey:"AIzaSyDfkxDDnbzLUv85yDwqSpZwPCORx_eCGuo",
+  authDomain:"examateapp-1007d.firebaseapp.com",
+  databaseURL:"https://examateapp-1007d-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"examateapp-1007d",
+  storageBucket:"examateapp-1007d.firebasestorage.app",
+  messagingSenderId:"791216427108",
+  appId:"1:791216427108:web:ccf63a9cc416650877cf71",
+  measurementId:"G-0HPEFRXYW5"
+};
+const QUIZ_ID="ai-scratchpad-multiplication-2q-phase1";
+const QUIZ_TITLE="AI Scratchpad · Multiplication 2Q";
+
+const app=initializeApp(FIREBASE_CONFIG), auth=getAuth(app), db=getDatabase(app), provider=new GoogleAuthProvider();
+provider.setCustomParameters({prompt:"select_account"});
+const gate=document.getElementById('fb-gate'), signin=document.getElementById('fb-signin'), signoutBtn=document.getElementById('fb-signout'), errBox=document.getElementById('fb-error'), userbar=document.getElementById('fb-userbar'), nameEl=document.getElementById('fb-name'), emailEl=document.getElementById('fb-email'), photoEl=document.getElementById('fb-photo'), dot=document.getElementById('fb-dot'), stateEl=document.getElementById('fb-state');
+let user=null,presRef=null,connectedAt=Date.now(),status='ONLINE',lastAct=Date.now(),pending=null,unsubConn=null,current={qId:'q1',qNo:1,activity:'VIEWING',scratchPage:1};
+const avatar="data:image/svg+xml;charset=UTF-8,"+encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><rect width='100%' height='100%' fill='#e2e8f0'/><circle cx='40' cy='31' r='15' fill='#94a3b8'/><path d='M14 72c2-17 13-26 26-26s24 9 26 26' fill='#94a3b8'/></svg>`);
+function safeName(){return (user?.displayName||user?.email?.split('@')[0]||'Student').slice(0,80)}
+function showErr(m){errBox.textContent=m||'';errBox.classList.toggle('show',!!m)}
+function setUI(s){dot.className='fb-dot '+s.toLowerCase();stateEl.textContent=s==='ONLINE'?'🟢 Online':s==='IDLE'?'🟡 Idle':'⚪ Offline'}
+async function writeNow(){if(!user||!presRef)return;clearTimeout(pending);try{await set(presRef,{name:safeName(),status,quizId:QUIZ_ID,quizTitle:QUIZ_TITLE,currentQuestion:String(current.qId||'').slice(0,32),questionNumber:Number(current.qNo)||1,scratchPage:Math.max(1,Number(current.scratchPage)||1),activity:String(current.activity||'VIEWING').slice(0,32),lastActiveAt:serverTimestamp(),connectedAt});setUI(status)}catch(e){console.warn('presence write',e);setUI('OFFLINE')}}
+function schedule(){clearTimeout(pending);pending=setTimeout(writeNow,300)}
+function touch(activity){lastAct=Date.now();if(activity)current.activity=activity;if(status!=='ONLINE'){status='ONLINE';writeNow()}else schedule()}
+window.ExamatePresence={setQuizState(qId,qNo,activity,scratchPage){current={qId:qId||current.qId,qNo:Number(qNo)||current.qNo,activity:activity||current.activity,scratchPage:Math.max(1,Number(scratchPage)||current.scratchPage)};touch(activity)},setActivity(a,page){if(page!=null)current.scratchPage=Math.max(1,Number(page)||1);touch(a)},getUser(){return user}};
+['pointerdown','keydown','touchstart'].forEach(ev=>document.addEventListener(ev,()=>{if(user)touch()}, {passive:true}));
+document.addEventListener('visibilitychange',()=>{if(!user)return;if(document.visibilityState==='hidden'){status='IDLE';writeNow()}else{status='ONLINE';touch()}});
+setInterval(()=>{if(user&&Date.now()-lastAct>5*60*1000&&status!=='IDLE'){status='IDLE';writeNow()}},30000);
+async function setupPresence(u){user=u;presRef=ref(db,`quizPresence/${QUIZ_ID}/${u.uid}`);try{const s=await get(presRef);connectedAt=(s.exists()&&typeof s.val()?.connectedAt==='number')?s.val().connectedAt:Date.now()}catch{connectedAt=Date.now()}const cRef=ref(db,'.info/connected');if(unsubConn)unsubConn();unsubConn=onValue(cRef,async s=>{if(s.val()!==true){setUI('OFFLINE');return}try{await onDisconnect(presRef).update({status:'OFFLINE',lastActiveAt:serverTimestamp()});status='ONLINE';await writeNow()}catch(e){console.warn(e)}})}
+signin.onclick=async()=>{signin.disabled=true;showErr('');try{await setPersistence(auth,browserLocalPersistence);await signInWithPopup(auth,provider)}catch(e){if(['auth/popup-blocked','auth/operation-not-supported-in-this-environment'].includes(e?.code)){try{await signInWithRedirect(auth,provider);return}catch(e2){showErr('เข้าสู่ระบบไม่สำเร็จ / Sign-in failed: '+(e2?.message||e2))}}else showErr('เข้าสู่ระบบไม่สำเร็จ / Sign-in failed: '+(e?.message||e))}finally{signin.disabled=false}};
+signoutBtn.onclick=async()=>{try{if(presRef)await update(presRef,{status:'OFFLINE',lastActiveAt:serverTimestamp()})}catch{}await signOut(auth)};
+try{await setPersistence(auth,browserLocalPersistence);await getRedirectResult(auth)}catch(e){console.warn(e)}
+onAuthStateChanged(auth,async u=>{if(!u){user=null;presRef=null;gate.classList.remove('hidden');userbar.classList.remove('show');setUI('OFFLINE');return}gate.classList.add('hidden');userbar.classList.add('show');nameEl.textContent=u.displayName||u.email||'Student';emailEl.textContent=u.email||'';photoEl.src=u.photoURL||avatar;photoEl.onerror=()=>photoEl.src=avatar;status='ONLINE';lastAct=Date.now();await setupPresence(u);try{const q=window.state?.activeQuestions?.[window.state?.currentIndex||0];if(q){current.qId=q.id;current.qNo=typeof window.getQuestionNumber==='function'?window.getQuestionNumber(q.id):(window.state.currentIndex+1)}}catch{}await writeNow()});
+</script>
+
+<script>
+const questionsData = [
+    {
+        "id": "q1",
+        "questionTH": "คำนวณ \\(5\\times5\\) ได้เท่าใด? แสดงวิธีคิดสั้น ๆ บนกระดานทดก่อนให้ AI ช่วยตรวจ",
+        "questionEN": "Calculate \\(5\\times5\\). Show a short working on the scratchpad before asking AI to review it.",
+        "hints": [
+            {
+                "th": "คิดว่าเป็นการบวก 5 ซ้ำกันหลายครั้ง",
+                "en": "Think of multiplication as repeated addition."
+            },
+            {
+                "th": "เขียน \\(5+5+5+5+5\\) แล้วรวม",
+                "en": "Write \\(5+5+5+5+5\\) and add."
+            },
+            {
+                "th": "หาผลรวมของจำนวน 5 จำนวน",
+                "en": "Find the sum of five 5s."
+            }
+        ],
+        "solutionTH": "<div>\\(5\\times5\\) หมายถึงมี 5 อยู่ 5 กลุ่ม จึงได้ \\(5+5+5+5+5=25\\)</div><div class='mt-2 font-bold text-emerald-700'>ตอบ: \\(25\\)</div>",
+        "solutionEN": "<div>\\(5\\times5\\) means five groups of 5, so \\(5+5+5+5+5=25\\).</div><div class='mt-2 font-bold text-emerald-700'>Answer: \\(25\\)</div>",
+        "options": [
+            {
+                "text": "\\(25\\)",
+                "isCorrect": true
+            },
+            {
+                "text": "\\(10\\)",
+                "isCorrect": false
+            },
+            {
+                "text": "\\(15\\)",
+                "isCorrect": false
+            },
+            {
+                "text": "\\(20\\)",
+                "isCorrect": false
+            },
+            {
+                "text": "\\(30\\)",
+                "isCorrect": false
+            },
+            {
+                "text": "\\(35\\)",
+                "isCorrect": false
+            },
+            {
+                "text": "\\(55\\)",
+                "isCorrect": false
+            }
+        ]
+    },
+    {
+        "id": "q2",
+        "questionTH": "คำนวณ \\(4\\times3\\) ได้เท่าใด? แสดงวิธีคิดสั้น ๆ บนกระดานทดก่อนให้ AI ช่วยตรวจ",
+        "questionEN": "Calculate \\(4\\times3\\). Show a short working on the scratchpad before asking AI to review it.",
+        "hints": [
+            {
+                "th": "มองเป็น 4 กลุ่ม กลุ่มละ 3",
+                "en": "Think of it as 4 groups of 3."
+            },
+            {
+                "th": "เขียน \\(3+3+3+3\\) แล้วรวม",
+                "en": "Write \\(3+3+3+3\\) and add."
+            },
+            {
+                "th": "รวมจำนวน 3 ทั้งหมด 4 ตัว",
+                "en": "Add four 3s."
+            }
+        ],
+        "solutionTH": "<div>\\(4\\times3\\) หมายถึง 4 กลุ่ม กลุ่มละ 3 จึงได้ \\(3+3+3+3=12\\)</div><div class='mt-2 font-bold text-emerald-700'>ตอบ: \\(12\\)</div>",
+        "solutionEN": "<div>\\(4\\times3\\) means 4 groups of 3, so \\(3+3+3+3=12\\).</div><div class='mt-2 font-bold text-emerald-700'>Answer: \\(12\\)</div>",
+        "options": [
+            {
+                "text": "\\(12\\)",
+                "isCorrect": true
+            },
+            {
+                "text": "\\(7\\)",
+                "isCorrect": false
+            },
+            {
+                "text": "\\(8\\)",
+                "isCorrect": false
+            },
+            {
+                "text": "\\(10\\)",
+                "isCorrect": false
+            },
+            {
+                "text": "\\(14\\)",
+                "isCorrect": false
+            },
+            {
+                "text": "\\(16\\)",
+                "isCorrect": false
+            },
+            {
+                "text": "\\(43\\)",
+                "isCorrect": false
+            }
+        ]
+    }
+];
+
+let state = {
+    attempt: 1,
+    activeQuestions: [],
+    currentIndex: 0,
+    answers: {},
+    giveUps: {},
+    hintLevels: {},
+    masteredIds: [],
+    masteredAnswers: {},
+    showScratchpad: false,
+    scratchpadData: {},
+    scratchpadPages: {},
+    scratchpadPageIndex: {},
+    scratchpadCopiedQuestion: {},
+    scratchpadInputMode: 'pen',
+    scratchpadTool: 'pen',
+    scratchpadColor: '#0f172a',
+    scratchpadWidth: 2.3,
+    scratchpadUndo: {},
+    scratchpadRedo: {},
+    scratchpadHasInk: {},
+    scratchScrollTop: {},
+    aiAnchor: {},
+    aiFeedback: {},
+    aiLoading: {},
+    aiErrors: {},
+    view: 'exam',
+    startedAt: null,
+    attemptStartedAt: null,
+    finishedAt: null,
+    attemptHistory: []
+};
+
+function shuffleArray(array) {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    }
+    return newArray;
+}
+
+function initApp() {
+    const now = Date.now();
+    state.activeQuestions = questionsData.map(q => ({ ...q, shuffledOptions: shuffleArray(q.options) }));
+    state.answers = {};
+    state.giveUps = {};
+    state.hintLevels = {};
+    state.masteredIds = [];
+    state.masteredAnswers = {};
+    state.showScratchpad = false;
+    state.scratchpadData = {};
+    state.scratchpadPages = {};
+    state.scratchpadPageIndex = {};
+    state.scratchpadCopiedQuestion = {};
+    state.scratchpadUndo = {};
+    state.scratchpadRedo = {};
+    state.scratchpadHasInk = {};
+    state.scratchScrollTop = {};
+    state.aiAnchor = {};
+    state.aiFeedback = {};
+    state.aiLoading = {};
+    state.aiErrors = {};
+    state.currentIndex = 0;
+    state.attempt = 1;
+    state.view = 'exam';
+    state.startedAt = now;
+    state.attemptStartedAt = now;
+    state.finishedAt = null;
+    state.attemptHistory = [];
+    renderApp();
+}
+
+function prepareRetry() {
+    saveCurrentScratchpad();
+    const masteredMap = new Map();
+
+    // Gather every item that has already been answered correctly in any prior round.
+    state.attemptHistory.forEach(attempt => {
+        attempt.results.forEach(result => {
+            if (result.isCorrect) {
+                const q = questionsData.find(item => item.id === result.id);
+                const correctOption = q ? q.options.find(opt => opt.isCorrect) : null;
+                masteredMap.set(
+                    result.id,
+                    result.selected || (correctOption ? correctOption.text : '')
+                );
+            }
+        });
+    });
+
+    state.masteredIds = Array.from(masteredMap.keys());
+    state.masteredAnswers = Object.fromEntries(masteredMap.entries());
+
+    // Keep all original questions visible so later items can still refer back
+    // to tables, graphs, or information from earlier items.
+    state.activeQuestions = questionsData.map(q => ({
+        ...q,
+        shuffledOptions: shuffleArray(q.options)
+    }));
+
+    state.answers = {};
+    state.giveUps = {};
+    state.hintLevels = {};
+
+    // Jump to the first question that still needs to be corrected.
+    const firstRetryIndex = state.activeQuestions.findIndex(
+        q => !state.masteredIds.includes(q.id)
+    );
+    state.currentIndex = firstRetryIndex >= 0 ? firstRetryIndex : 0;
+
+    state.attempt++;
+    state.attemptStartedAt = Date.now();
+    state.view = 'exam';
+    renderApp();
+}
+
+function getQuestionNumber(questionId) {
+    return questionsData.findIndex(q => q.id === questionId) + 1;
+}
+
+function formatDuration(milliseconds) {
+    const totalSeconds = Math.max(1, Math.round(milliseconds / 1000));
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return minutes > 0 ? `${minutes} นาที ${String(seconds).padStart(2, '0')} วินาที` : `${seconds} วินาที`;
+}
+
+function evaluateCurrentAttempt() {
+    return state.activeQuestions.map(q => {
+        const isMastered = state.masteredIds.includes(q.id);
+        const selected = isMastered
+            ? (state.masteredAnswers[q.id] || '')
+            : (state.answers[q.id] || '');
+        const selectedOption = q.options.find(opt => opt.text === selected);
+        const isGiveUp = isMastered ? false : Boolean(state.giveUps[q.id]);
+
+        return {
+            id: q.id,
+            questionNumber: getQuestionNumber(q.id),
+            questionTH: q.questionTH,
+            selected,
+            isGiveUp,
+            isAnswered: isMastered || Boolean(selected),
+            hintCount: isMastered ? 0 : (state.hintLevels[q.id] || 0),
+            isCarried: isMastered,
+            isCorrect: isMastered || (!isGiveUp && Boolean(selectedOption && selectedOption.isCorrect))
+        };
+    });
+}
+
+window.selectOption = function(qId, optionIndex) {
+    const q = state.activeQuestions.find(item => item.id === qId);
+    if (!q || !q.shuffledOptions[optionIndex] || state.giveUps[qId] || state.masteredIds.includes(qId)) return;
+    state.answers[qId] = q.shuffledOptions[optionIndex].text;
+    renderApp();
+};
+
+function getGuidedSolutionSteps(q) {
+    const holder = document.createElement('div');
+    holder.innerHTML = q.solutionTH || '';
+    return Array.from(holder.children)
+        .filter(el => !/(ตอบ\s*:|คำตอบ|answer\s*:|correct answer)/i.test(el.textContent || ''))
+        .map(el => el.outerHTML);
+}
+
+window.revealNextHint = function(qId) {
+    const q = state.activeQuestions.find(item => item.id === qId);
+    if (!q || state.giveUps[qId] || state.masteredIds.includes(qId)) return;
+    const current = state.hintLevels[qId] || 0;
+    state.hintLevels[qId] = current + 1;
+    renderApp();
+    requestAnimationFrame(() => {
+        const el = document.getElementById('hint-panel');
+        if (el) el.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    });
+};
+
+window.giveUpQuestion = function(qId) {
+    if (state.giveUps[qId] || state.masteredIds.includes(qId)) return;
+    delete state.answers[qId];
+    state.giveUps[qId] = true;
+    renderApp();
+    requestAnimationFrame(() => {
+        const feedback = document.getElementById('give-up-feedback');
+        if (feedback) feedback.scrollIntoView({ behavior:'smooth', block:'center' });
+    });
+};
+
+window.skipQuestion = function() {
+    if (state.currentIndex < state.activeQuestions.length - 1) {
+        saveCurrentScratchpad();
+        state.currentIndex++;
+        renderApp();
+    }
+};
+
+window.goToQuestion = function(index) {
+    saveCurrentScratchpad();
+    state.currentIndex = index;
+    renderApp();
+};
+
+window.submitAll = function() {
+    saveCurrentScratchpad();
+    const submittedAt = Date.now();
+    const results = evaluateCurrentAttempt();
+    const correctCount = results.filter(result => result.isCorrect).length;
+    const giveUpCount = results.filter(result => result.isGiveUp).length;
+    const hintsUsed = results.reduce((sum, result) => sum + result.hintCount, 0);
+    state.attemptHistory.push({
+        attempt: state.attempt,
+        total: results.length,
+        correctCount,
+        giveUpCount,
+        hintsUsed,
+        percentage: Math.round((correctCount / results.length) * 100),
+        durationMs: submittedAt - state.attemptStartedAt,
+        submittedAt,
+        results
+    });
+    if (correctCount === results.length) state.finishedAt = submittedAt;
+    state.view = 'summary';
+    renderApp();
+};
+
+window.startRetry = function() { prepareRetry(); };
+window.restartQuiz = function() { initApp(); };
+
+
+/* ================= SCRATCHPAD + AI ADD-ON ================= */
+let scratchCanvas = null;
+let scratchCtx = null;
+let scratchDrawing = false;
+let scratchPointerId = null;
+let scratchLastX = 0;
+let scratchLastY = 0;
+let scratchRestoreToken = 0;
+
+const AI_WORKER_URL = 'https://student-work-ai-checker.micksattawatbutklo.workers.dev/';
+
+function scratchCurrentQuestion() {
+    if (state.view !== 'exam') return null;
+    return state.activeQuestions[state.currentIndex] || null;
+}
+
+function scratchCurrentQid() {
+    const q = scratchCurrentQuestion();
+    return q ? q.id : null;
+}
+
+function ensureScratchPages(qId) {
+    if (!qId) return;
+    if (!Array.isArray(state.scratchpadPages[qId]) || state.scratchpadPages[qId].length === 0) {
+        state.scratchpadPages[qId] = [''];
+    }
+    if (!Number.isInteger(state.scratchpadPageIndex[qId])) {
+        state.scratchpadPageIndex[qId] = 0;
+    }
+    state.scratchpadPageIndex[qId] = Math.max(
+        0,
+        Math.min(state.scratchpadPageIndex[qId], state.scratchpadPages[qId].length - 1)
+    );
+}
+
+function scratchCurrentPageIndex(qId = scratchCurrentQid()) {
+    ensureScratchPages(qId);
+    return qId ? (state.scratchpadPageIndex[qId] || 0) : 0;
+}
+
+function scratchPageKey(qId = scratchCurrentQid(), pageIndex = scratchCurrentPageIndex(qId)) {
+    return qId ? `${qId}__page_${pageIndex}` : '';
+}
+
+function ensureScratchHistory(pageKey) {
+    if (!pageKey) return;
+    if (!state.scratchpadUndo[pageKey]) state.scratchpadUndo[pageKey] = [];
+    if (!state.scratchpadRedo[pageKey]) state.scratchpadRedo[pageKey] = [];
+}
+
+function getScratchPageData(qId, pageIndex) {
+    ensureScratchPages(qId);
+    return state.scratchpadPages[qId][pageIndex] || '';
+}
+
+function setScratchPageData(qId, pageIndex, dataUrl) {
+    ensureScratchPages(qId);
+    state.scratchpadPages[qId][pageIndex] = dataUrl || '';
+    // Keep old one-page field as a harmless compatibility mirror of page 1.
+    if (pageIndex === 0) state.scratchpadData[qId] = dataUrl || '';
+}
+
+function applyScratchScale() {
+    if (!scratchCtx) return;
+    const dpr = window.devicePixelRatio || 1;
+    scratchCtx.setTransform(dpr,0,0,dpr,0,0);
+    scratchCtx.lineCap = 'round';
+    scratchCtx.lineJoin = 'round';
+}
+
+function clearScratchPhysical() {
+    if (!scratchCanvas || !scratchCtx) return;
+    scratchCtx.save();
+    scratchCtx.setTransform(1,0,0,1,0,0);
+    scratchCtx.clearRect(0,0,scratchCanvas.width,scratchCanvas.height);
+    scratchCtx.restore();
+    applyScratchScale();
+}
+
+function saveCurrentScratchpad() {
+    if (!scratchCanvas || state.view !== 'exam') return;
+    const qId = scratchCurrentQid();
+    if (!qId) return;
+    const pageIndex = scratchCurrentPageIndex(qId);
+    setScratchPageData(qId, pageIndex, scratchCanvas.toDataURL('image/png'));
+
+    const scrollEl = document.querySelector('.scratch-scroll');
+    if (scrollEl) {
+        state.scratchScrollTop[scratchPageKey(qId, pageIndex)] = scrollEl.scrollTop;
+    }
+}
+
+function pushScratchSnapshot() {
+    if (!scratchCanvas) return;
+    const qId = scratchCurrentQid();
+    if (!qId) return;
+    const pageIndex = scratchCurrentPageIndex(qId);
+    const pageKey = scratchPageKey(qId, pageIndex);
+
+    ensureScratchHistory(pageKey);
+
+    const shot = scratchCanvas.toDataURL('image/png');
+    const stack = state.scratchpadUndo[pageKey];
+
+    if (!stack.length || stack[stack.length - 1] !== shot) {
+        stack.push(shot);
+        if (stack.length > 24) stack.shift();
+    }
+
+    state.scratchpadRedo[pageKey] = [];
+    setScratchPageData(qId, pageIndex, shot);
+}
+
+function loadScratchData(dataUrl) {
+    if (!scratchCanvas || !scratchCtx) return;
+    const token = ++scratchRestoreToken;
+    clearScratchPhysical();
+
+    if (!dataUrl) return;
+
+    const img = new Image();
+    img.onload = () => {
+        if (token !== scratchRestoreToken || !scratchCanvas || !scratchCtx) return;
+
+        scratchCtx.save();
+        scratchCtx.setTransform(1,0,0,1,0,0);
+        scratchCtx.clearRect(0,0,scratchCanvas.width,scratchCanvas.height);
+        scratchCtx.drawImage(img,0,0,scratchCanvas.width,scratchCanvas.height);
+        scratchCtx.restore();
+        applyScratchScale();
+    };
+    img.src = dataUrl;
+}
+
+window.toggleScratchpad = function() {
+    if (state.showScratchpad) saveCurrentScratchpad();
+    state.showScratchpad = !state.showScratchpad;
+    renderApp();
+};
+
+window.copyQuestionToScratchpad = function() {
+    const qId = scratchCurrentQid();
+    if (!qId) return;
+
+    ensureScratchPages(qId);
+    const pageIndex = scratchCurrentPageIndex(qId);
+    const pageKey = scratchPageKey(qId, pageIndex);
+
+    state.scratchpadCopiedQuestion[pageKey] = true;
+    state.showScratchpad = true;
+    renderApp();
+};
+
+window.setScratchInputMode = function(mode) {
+    saveCurrentScratchpad();
+    state.scratchpadInputMode = mode;
+    renderApp();
+};
+
+window.setScratchPen = function(color) {
+    saveCurrentScratchpad();
+    state.scratchpadTool = 'pen';
+    state.scratchpadColor = color;
+    state.scratchpadWidth = 2.3;
+    renderApp();
+};
+
+window.setScratchEraser = function() {
+    saveCurrentScratchpad();
+    state.scratchpadTool = 'eraser';
+    state.scratchpadWidth = 22;
+    renderApp();
+};
+
+window.clearScratchInk = function() {
+    if (!scratchCanvas || !scratchCtx) return;
+
+    const qId = scratchCurrentQid();
+    const pageIndex = scratchCurrentPageIndex(qId);
+    const pageKey = scratchPageKey(qId, pageIndex);
+
+    clearScratchPhysical();
+    state.scratchpadHasInk[pageKey] = false;
+    state.aiFeedback[pageKey] = null;
+    state.aiErrors[pageKey] = '';
+    pushScratchSnapshot();
+};
+
+window.undoScratch = function() {
+    const qId = scratchCurrentQid();
+    const pageIndex = scratchCurrentPageIndex(qId);
+    const pageKey = scratchPageKey(qId, pageIndex);
+
+    ensureScratchHistory(pageKey);
+    const stack = state.scratchpadUndo[pageKey];
+    if (!stack || stack.length <= 1) return;
+
+    const current = stack.pop();
+    state.scratchpadRedo[pageKey].push(current);
+
+    const previous = stack[stack.length - 1];
+    setScratchPageData(qId, pageIndex, previous);
+    loadScratchData(previous);
+};
+
+window.redoScratch = function() {
+    const qId = scratchCurrentQid();
+    const pageIndex = scratchCurrentPageIndex(qId);
+    const pageKey = scratchPageKey(qId, pageIndex);
+
+    ensureScratchHistory(pageKey);
+    const redo = state.scratchpadRedo[pageKey];
+    if (!redo || !redo.length) return;
+
+    const next = redo.pop();
+    state.scratchpadUndo[pageKey].push(next);
+    setScratchPageData(qId, pageIndex, next);
+    loadScratchData(next);
+};
+
+window.addScratchPage = function() {
+    const qId = scratchCurrentQid();
+    if (!qId) return;
+
+    saveCurrentScratchpad();
+    ensureScratchPages(qId);
+
+    state.scratchpadPages[qId].push('');
+    state.scratchpadPageIndex[qId] = state.scratchpadPages[qId].length - 1;
+    state.showScratchpad = true;
+
+    renderApp();
+};
+
+window.previousScratchPage = function() {
+    const qId = scratchCurrentQid();
+    if (!qId) return;
+
+    saveCurrentScratchpad();
+    ensureScratchPages(qId);
+
+    const current = scratchCurrentPageIndex(qId);
+    if (current <= 0) return;
+
+    state.scratchpadPageIndex[qId] = current - 1;
+    renderApp();
+};
+
+window.nextScratchPage = function() {
+    const qId = scratchCurrentQid();
+    if (!qId) return;
+
+    saveCurrentScratchpad();
+    ensureScratchPages(qId);
+
+    const current = scratchCurrentPageIndex(qId);
+    if (current >= state.scratchpadPages[qId].length - 1) return;
+
+    state.scratchpadPageIndex[qId] = current + 1;
+    renderApp();
+};
+
+function scratchPointerAllowed(e) {
+    if (state.scratchpadInputMode === 'pen') {
+        // Stylus writes. Finger/palm contacts do not create ink.
+        // Mouse stays enabled for desktop testing.
+        return e.pointerType === 'pen' || e.pointerType === 'mouse';
+    }
+
+    return e.pointerType === 'touch' || e.pointerType === 'pen' || e.pointerType === 'mouse';
+}
+
+function initScratchCanvas() {
+    scratchCanvas = document.getElementById('scratchpad-canvas');
+    if (!scratchCanvas) return;
+
+    scratchCtx = scratchCanvas.getContext('2d', { alpha:true });
+
+    const rect = scratchCanvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+
+    scratchCanvas.width = Math.max(1, Math.round(rect.width * dpr));
+    scratchCanvas.height = Math.max(1, Math.round(rect.height * dpr));
+
+    // Pen mode lets a finger scroll the large A4 sheet while Pencil writes.
+    scratchCanvas.style.touchAction =
+        state.scratchpadInputMode === 'pen' ? 'pan-y' : 'none';
+
+    applyScratchScale();
+
+    const qId = scratchCurrentQid();
+    ensureScratchPages(qId);
+
+    const pageIndex = scratchCurrentPageIndex(qId);
+    const pageKey = scratchPageKey(qId, pageIndex);
+    ensureScratchHistory(pageKey);
+
+    const scrollEl = document.querySelector('.scratch-scroll');
+    const viewportEl = document.querySelector('.scratch-viewport');
+
+    if (scrollEl) {
+        requestAnimationFrame(() => {
+            scrollEl.scrollTop = state.scratchScrollTop[pageKey] || 0;
+        });
+
+        scrollEl.addEventListener('scroll', () => {
+            state.scratchScrollTop[pageKey] = scrollEl.scrollTop;
+        }, { passive:true });
+    }
+
+    const existing = getScratchPageData(qId, pageIndex);
+
+    if (existing) {
+        loadScratchData(existing);
+    } else {
+        clearScratchPhysical();
+        const blank = scratchCanvas.toDataURL('image/png');
+        setScratchPageData(qId, pageIndex, blank);
+        state.scratchpadUndo[pageKey] = [blank];
+    }
+
+    const getPoint = (e) => {
+        const r = scratchCanvas.getBoundingClientRect();
+        const vr = viewportEl ? viewportEl.getBoundingClientRect() : r;
+
+        return {
+            x:e.clientX-r.left,
+            y:e.clientY-r.top,
+            visibleX:e.clientX-vr.left,
+            visibleY:e.clientY-vr.top
+        };
+    };
+
+    const rememberAIAnchor = (p) => {
+        if (!pageKey || !p) return;
+
+        const vr = viewportEl ? viewportEl.getBoundingClientRect() : null;
+        const width = vr ? Math.max(1, vr.width) : 1;
+
+        state.aiAnchor[pageKey] = {
+            xRatio:Math.max(0, Math.min(1, p.visibleX / width)),
+            visibleY:Math.max(0, p.visibleY)
+        };
+    };
+
+    scratchCanvas.onpointerdown = (e) => {
+        if (!scratchPointerAllowed(e)) return;
+        if (scratchPointerId !== null) return;
+
+        e.preventDefault();
+        scratchPointerId = e.pointerId;
+        scratchDrawing = true;
+
+        try { scratchCanvas.setPointerCapture(e.pointerId); } catch (_) {}
+
+        const p = getPoint(e);
+        window.ExamatePresence?.setActivity('WRITING', pageIndex + 1);
+        scratchLastX = p.x;
+        scratchLastY = p.y;
+        rememberAIAnchor(p);
+    };
+
+    scratchCanvas.onpointermove = (e) => {
+        if (!scratchDrawing || e.pointerId !== scratchPointerId || !scratchPointerAllowed(e)) return;
+
+        e.preventDefault();
+        const p = getPoint(e);
+
+        scratchCtx.save();
+
+        if (state.scratchpadTool === 'eraser') {
+            scratchCtx.globalCompositeOperation = 'destination-out';
+            scratchCtx.strokeStyle = 'rgba(0,0,0,1)';
+            scratchCtx.lineWidth = state.scratchpadWidth;
+        } else {
+            scratchCtx.globalCompositeOperation = 'source-over';
+            scratchCtx.strokeStyle = state.scratchpadColor;
+
+            const pressure = (e.pointerType === 'pen' && e.pressure > 0)
+                ? e.pressure
+                : 0.55;
+
+            scratchCtx.lineWidth = Math.max(
+                1.2,
+                state.scratchpadWidth * (0.75 + pressure * 0.65)
+            );
+        }
+
+        scratchCtx.lineCap = 'round';
+        scratchCtx.lineJoin = 'round';
+        scratchCtx.beginPath();
+        scratchCtx.moveTo(scratchLastX,scratchLastY);
+        scratchCtx.lineTo(p.x,p.y);
+        scratchCtx.stroke();
+        scratchCtx.restore();
+
+        scratchLastX = p.x;
+        scratchLastY = p.y;
+        rememberAIAnchor(p);
+    };
+
+    const endStroke = (e) => {
+        if (e.pointerId !== scratchPointerId) return;
+
+        scratchDrawing = false;
+        scratchPointerId = null;
+
+        try { scratchCanvas.releasePointerCapture(e.pointerId); } catch (_) {}
+
+        state.scratchpadHasInk[pageKey] = true;
+        pushScratchSnapshot();
+    };
+
+    scratchCanvas.onpointerup = endStroke;
+    scratchCanvas.onpointercancel = endStroke;
+    scratchCanvas.onlostpointercapture = endStroke;
+}
+
+function escapeHTML(value) {
+    return String(value ?? '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#039;');
+}
+
+function aiPanelStyle(pageKey) {
+    const anchor = state.aiAnchor[pageKey] || { xRatio:0.72, visibleY:72 };
+
+    const requestedTop = Math.max(14, Math.round((anchor.visibleY || 72) + 24));
+
+    // Show on the opposite side of the writing, so it is less likely to cover it.
+    const side = (anchor.xRatio || 0) > 0.52
+        ? 'left:18px;right:auto;'
+        : 'right:18px;left:auto;';
+
+    return `top:clamp(14px, ${requestedTop}px, calc(100% - 260px));${side}`;
+}
+
+window.checkScratchpadWithAI = async function() {
+    const q = scratchCurrentQuestion();
+    if (!q) return;
+
+    const qId = q.id;
+    const pageIndex = scratchCurrentPageIndex(qId);
+    const pageKey = scratchPageKey(qId, pageIndex);
+
+    if (!state.scratchpadHasInk[pageKey]) {
+        state.aiErrors[pageKey] =
+            'เขียนวิธีทำบนหน้าปัจจุบันก่อน แล้วค่อยให้ AI ช่วยตรวจ / Write some working on the current page before asking AI to review it.';
+        state.aiFeedback[pageKey] = null;
+        renderApp();
+        return;
+    }
+
+    saveCurrentScratchpad();
+
+    state.aiLoading[pageKey] = true;
+    state.aiErrors[pageKey] = '';
+    renderApp();
+
+    try {
+        const savedDataUrl = getScratchPageData(qId, pageIndex);
+        const imageBase64 = savedDataUrl.replace(/^data:image\/png;base64,/, '');
+
+        const response = await fetch(AI_WORKER_URL, {
+            method:'POST',
+            headers:{ 'Content-Type':'application/json' },
+            body:JSON.stringify({
+                question: `${q.questionTH}\n${q.questionEN}`,
+                referenceSolution: `${q.solutionTH || ''}\n${q.solutionEN || ''}`,
+                imageBase64,
+                hintLevel: state.hintLevels[qId] || 0
+            })
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+            throw new Error(data?.error || data?.detail || `HTTP ${response.status}`);
+        }
+
+        const feedback = data?.feedback || data;
+
+        if (!feedback || typeof feedback !== 'object') {
+            throw new Error('AI returned an unexpected response.');
+        }
+
+        state.aiFeedback[pageKey] = feedback;
+        state.aiErrors[pageKey] = '';
+    } catch (err) {
+        state.aiErrors[pageKey] =
+            `AI ตรวจไม่สำเร็จ / AI review failed: ${err.message || String(err)}`;
+    } finally {
+        state.aiLoading[pageKey] = false;
+        renderApp();
+    }
+};
+
+function renderAIFeedbackPanel(q, pageIndex) {
+    const qId = q.id;
+    const pageKey = scratchPageKey(qId, pageIndex);
+
+    const loading = Boolean(state.aiLoading[pageKey]);
+    const error = state.aiErrors[pageKey] || '';
+    const fb = state.aiFeedback[pageKey];
+
+    if (!loading && !error && !fb) return '';
+
+    if (loading) {
+        return `
+            <div class="ai-feedback-panel" style="${aiPanelStyle(pageKey)}">
+                <div class="ai-feedback-head">
+                    <span>🤖 AI กำลังตรวจ / AI Reviewing</span>
+                    <span class="ai-anchor-note">หน้า ${pageIndex+1} / Page ${pageIndex+1}</span>
+                </div>
+                <div class="ai-feedback-body">
+                    <span class="ai-spinner"></span>
+                    กำลังตรวจวิธีทำบนหน้าปัจจุบัน... / Reviewing the current scratchpad page...
+                </div>
+            </div>`;
+    }
+
+    if (error) {
+        return `
+            <div class="ai-feedback-panel" style="${aiPanelStyle(pageKey)}">
+                <div class="ai-feedback-head">
+                    <span>🤖 คำแนะนำจาก AI / AI Feedback</span>
+                    <span class="ai-anchor-note">หน้า ${pageIndex+1} / Page ${pageIndex+1}</span>
+                </div>
+                <div class="ai-feedback-body text-rose-700">${escapeHTML(error)}</div>
+            </div>`;
+    }
+
+    const status = escapeHTML(fb.status || '');
+    const correct = escapeHTML(fb.correct_so_far_th || '');
+    const issue = escapeHTML(fb.issue_th || '');
+    const hintTh = escapeHTML(fb.hint_th || '');
+    const hintEn = escapeHTML(fb.hint_en || '');
+    const confidence = Number(fb.confidence);
+
+    return `
+        <div class="ai-feedback-panel" style="${aiPanelStyle(pageKey)}">
+            <div class="ai-feedback-head">
+                <span>🤖 AI ตรวจแล้ว / AI Review</span>
+                <span class="ai-anchor-note">ใกล้จุดที่เขียนล่าสุด · หน้า ${pageIndex+1} / Near latest writing · Page ${pageIndex+1}</span>
+                ${Number.isFinite(confidence)
+                    ? `<span class="text-[10px] font-bold text-violet-500">${Math.round(confidence*100)}%</span>`
+                    : ''}
+            </div>
+
+            <div class="ai-feedback-body">
+                ${correct
+                    ? `<div class="ai-feedback-row"><div class="ai-feedback-label">✓ มาถูกทาง / Correct so far</div><div>${correct}</div></div>`
+                    : ''}
+
+                ${issue
+                    ? `<div class="ai-feedback-row"><div class="ai-feedback-label">🔎 จุดที่ควรตรวจ / Check this</div><div>${issue}</div></div>`
+                    : ''}
+
+                ${hintTh
+                    ? `<div class="ai-feedback-row"><div class="ai-feedback-label">💡 ใบ้ / Hint</div><div>${hintTh}</div></div>`
+                    : ''}
+
+                ${hintEn
+                    ? `<div class="ai-feedback-row text-slate-500"><div class="ai-feedback-label">English hint</div><div>${hintEn}</div></div>`
+                    : ''}
+
+                ${status
+                    ? `<div class="ai-feedback-row text-[11px] text-slate-400">status: ${status}</div>`
+                    : ''}
+            </div>
+        </div>`;
+}
+
+function renderScratchpad(q) {
+    const qId = q.id;
+    ensureScratchPages(qId);
+
+    const pageIndex = scratchCurrentPageIndex(qId);
+    const pageCount = state.scratchpadPages[qId].length;
+    const pageKey = scratchPageKey(qId, pageIndex);
+
+    const copied = Boolean(state.scratchpadCopiedQuestion[pageKey]);
+    const penMode = state.scratchpadInputMode === 'pen';
+
+    return `
+        <div id="scratchpad-shell" class="scratchpad-shell fade-in">
+            <div class="scratchpad-toolbar">
+                <button class="scratch-tool ${penMode ? 'active' : ''}" onclick="setScratchInputMode('pen')">
+                    ✏️ ปากกา · วางมือได้ / Pen · Palm Rejection
+                </button>
+
+                <button class="scratch-tool ${!penMode ? 'active' : ''}" onclick="setScratchInputMode('finger')">
+                    👆 นิ้ว / Finger
+                </button>
+
+                <span class="w-px h-6 bg-slate-300 mx-1"></span>
+
+                <button class="scratch-tool ${state.scratchpadTool==='pen' && state.scratchpadColor==='#0f172a' ? 'active' : ''}" onclick="setScratchPen('#0f172a')">
+                    <span class="scratch-color-dot" style="background:#0f172a"></span>ดำ / Black
+                </button>
+
+                <button class="scratch-tool ${state.scratchpadTool==='pen' && state.scratchpadColor==='#2563eb' ? 'active' : ''}" onclick="setScratchPen('#2563eb')">
+                    <span class="scratch-color-dot" style="background:#2563eb"></span>น้ำเงิน / Blue
+                </button>
+
+                <button class="scratch-tool ${state.scratchpadTool==='pen' && state.scratchpadColor==='#e11d48' ? 'active' : ''}" onclick="setScratchPen('#e11d48')">
+                    <span class="scratch-color-dot" style="background:#e11d48"></span>แดง / Red
+                </button>
+
+                <button class="scratch-tool ${state.scratchpadTool==='eraser' ? 'active' : ''}" onclick="setScratchEraser()">
+                    🧽 ยางลบ / Eraser
+                </button>
+
+                <span class="w-px h-6 bg-slate-300 mx-1"></span>
+
+                <button class="scratch-tool" onclick="undoScratch()">↶ ย้อนกลับ / Undo</button>
+                <button class="scratch-tool" onclick="redoScratch()">↷ ทำซ้ำ / Redo</button>
+                <button class="scratch-tool danger" onclick="clearScratchInk()">🗑 ล้างหมึก / Clear Ink</button>
+
+                <button class="scratch-tool copy" onclick="copyQuestionToScratchpad()">
+                    📋 ${copied ? 'อัปเดตโจทย์ / Update Question' : 'คัดลอกโจทย์ลงหน้านี้ / Copy Question Here'}
+                </button>
+
+                <button class="scratch-tool ai-check-btn" onclick="checkScratchpadWithAI()" ${state.aiLoading[pageKey] ? 'disabled' : ''}>
+                    ${state.aiLoading[pageKey]
+                        ? '🤖 กำลังตรวจ... / Checking...'
+                        : (state.aiFeedback[pageKey]
+                            ? '🤖 ตรวจอีกครั้ง / Check Again'
+                            : '🤖 ตรวจวิธีทำ / Check Working')}
+                </button>
+
+                <span class="w-px h-6 bg-slate-300 mx-1"></span>
+
+                <button class="scratch-tool page" onclick="previousScratchPage()" ${pageIndex === 0 ? 'disabled' : ''}>
+                    ◀ หน้าก่อน / Previous Page
+                </button>
+
+                <span class="scratch-page-indicator">
+                    หน้า ${pageIndex+1}/${pageCount} · Page ${pageIndex+1}/${pageCount}
+                </span>
+
+                <button class="scratch-tool page" onclick="nextScratchPage()" ${pageIndex >= pageCount-1 ? 'disabled' : ''}>
+                    หน้าถัดไป / Next Page ▶
+                </button>
+
+                <button class="scratch-tool page" onclick="addScratchPage()">
+                    ＋ เพิ่มหน้า A4 / Add A4 Page
+                </button>
+
+                <span class="text-xs font-bold text-slate-500 ml-auto">
+                    A4 เต็มหน้า · เลื่อนลงได้ / Full A4 · Scroll ↓
+                </span>
+            </div>
+
+            <div class="scratch-status ${penMode ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}">
+                ${penMode
+                    ? '✓ Pen mode: Apple Pencil/ปากกาเขียนได้ นิ้วและฝ่ามือไม่สร้างเส้น และใช้นิ้วเลื่อนกระดาษได้ / Pencil writes; touch can scroll without drawing.'
+                    : 'Finger mode: ใช้นิ้วเขียนได้ จึงไม่สามารถแยกฝ่ามือออกจากนิ้วได้ / Finger writes; palm rejection is unavailable in this mode.'}
+                · Q${getQuestionNumber(q.id)} มี ${pageCount} หน้า A4 / ${pageCount} A4 page(s)
+                · AI ตรวจเฉพาะหน้าปัจจุบัน และ feedback จะลอยใกล้ตำแหน่งที่เขียนล่าสุด / AI checks the current page and appears near your latest writing
+            </div>
+
+            <div class="scratch-viewport">
+                <div class="scratch-scroll">
+                    <div class="scratch-sheet">
+                        <div class="scratch-question-bg ${copied ? '' : 'hidden'}">
+                            <div class="sq-title">
+                                Q${getQuestionNumber(q.id)} · หน้า ${pageIndex+1} / Page ${pageIndex+1}
+                                · โจทย์อ้างอิง / Question reference
+                            </div>
+                            <div class="sq-th question-math">${q.questionTH}</div>
+                            <div class="sq-en question-math">${q.questionEN}</div>
+                            <div class="sq-content">${q.contentHTML || ''}</div>
+                        </div>
+
+                        <canvas id="scratchpad-canvas"></canvas>
+                    </div>
+                </div>
+
+                ${renderAIFeedbackPanel(q, pageIndex)}
+            </div>
+        </div>`;
+}
+
+/* ================= END SCRATCHPAD + AI ADD-ON ================= */
+
+/* ============= PDF EXPORT AFTER CHECKING ANSWERS ============= */
+function latestStatusForQuestion(qId) {
+    for (let i = state.attemptHistory.length - 1; i >= 0; i--) {
+        const found = state.attemptHistory[i].results.find(r => r.id === qId);
+        if (found) {
+            if (found.isCorrect) return { text:'✓ Correct', color:'#047857' };
+            if (found.isGiveUp) return { text:'Give Up · 0', color:'#be123c' };
+            if (found.isAnswered) return { text:'Incorrect', color:'#b91c1c' };
+            return { text:'Skipped', color:'#64748b' };
+        }
+    }
+    return { text:'Not checked', color:'#64748b' };
+}
+
+window.exportScratchpadsPDF = async function() {
+    saveCurrentScratchpad();
+
+    if (!window.html2canvas || !window.jspdf || !window.jspdf.jsPDF) {
+        alert('เครื่องมือ PDF ยังโหลดไม่เสร็จ กรุณาลองอีกครั้ง / PDF tools are still loading. Please try again.');
+        return;
+    }
+
+    const button = document.getElementById('export-scratchpads-btn');
+
+    const exportPages = [];
+    questionsData.forEach(q => {
+        ensureScratchPages(q.id);
+        state.scratchpadPages[q.id].forEach((ink, pageIndex) => {
+            exportPages.push({ q, pageIndex, ink:ink || '' });
+        });
+    });
+
+    if (button) {
+        button.disabled = true;
+        button.textContent = `กำลังสร้าง PDF 0/${exportPages.length}... / Creating PDF 0/${exportPages.length}...`;
+    }
+
+    const host = document.createElement('div');
+    host.id = 'scratch-export-host';
+    document.body.appendChild(host);
+
+    try {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4', compress:true });
+
+        for (let i = 0; i < exportPages.length; i++) {
+            const { q, pageIndex, ink } = exportPages[i];
+            const qNo = getQuestionNumber(q.id);
+            const pageKey = scratchPageKey(q.id, pageIndex);
+            const copied = Boolean(state.scratchpadCopiedQuestion[pageKey]);
+            const status = latestStatusForQuestion(q.id);
+
+            if (button) {
+                button.textContent =
+                    `กำลังสร้าง PDF ${i+1}/${exportPages.length}... / Creating PDF ${i+1}/${exportPages.length}...`;
+            }
+
+            host.innerHTML = `
+                <div class="scratch-export-page">
+                    <div style="display:flex;justify-content:space-between;gap:16px;align-items:center;border-bottom:2px solid #e2e8f0;padding-bottom:12px;">
+                        <div>
+                            <div style="font-size:21px;font-weight:800;">
+                                Question ${qNo} · Scratchpad · Page ${pageIndex+1}
+                            </div>
+                            <div style="font-size:12px;color:#64748b;margin-top:3px;">
+                                AI Scratchpad Experiment · Multiplication
+                            </div>
+                        </div>
+                        <div style="font-size:14px;font-weight:800;color:${status.color};">
+                            ${status.text}
+                        </div>
+                    </div>
+
+                    <div class="scratch-export-board">
+                        ${copied ? `
+                            <div class="scratch-export-question">
+                                <div style="font-size:14px;font-weight:800;color:#4338ca;margin-bottom:7px;">
+                                    Q${qNo} · Page ${pageIndex+1} · โจทย์อ้างอิง / Question reference
+                                </div>
+                                <div class="question-math" style="font-size:15px;font-weight:700;line-height:1.55;">
+                                    ${q.questionTH}
+                                </div>
+                                <div class="question-math" style="font-size:12px;color:#64748b;line-height:1.45;margin-top:5px;">
+                                    ${q.questionEN}
+                                </div>
+                                <div style="font-size:11px;margin-top:9px;">
+                                    ${q.contentHTML || ''}
+                                </div>
+                            </div>` : ''}
+
+                        ${ink
+                            ? `<img class="scratch-export-ink" src="${ink}" alt="Scratchpad ink Q${qNo} page ${pageIndex+1}">`
+                            : ''}
+                    </div>
+
+                    <div style="margin-top:14px;font-size:11px;color:#64748b;display:flex;justify-content:space-between;gap:12px;">
+                        <span>
+                            ${copied
+                                ? 'มีโจทย์เป็นพื้นหลัง / Question included as background'
+                                : 'หน้ากระดาษเปล่า / Blank working page'}
+                        </span>
+                        <span>Q${qNo} · Page ${pageIndex+1}</span>
+                    </div>
+                </div>`;
+
+            const pageEl = host.firstElementChild;
+
+            if (window.MathJax && MathJax.typesetPromise) {
+                if (MathJax.typesetClear) MathJax.typesetClear([pageEl]);
+                await MathJax.typesetPromise([pageEl]);
+            }
+
+            await new Promise(resolve =>
+                requestAnimationFrame(() => requestAnimationFrame(resolve))
+            );
+
+            const shot = await html2canvas(pageEl, {
+                scale:1.25,
+                backgroundColor:'#ffffff',
+                useCORS:true,
+                logging:false
+            });
+
+            const imgData = shot.toDataURL('image/jpeg', 0.90);
+
+            if (i > 0) pdf.addPage('a4', 'portrait');
+
+            const pageW = 210;
+            const pageH = 297;
+            const ratio = Math.min(pageW / shot.width, pageH / shot.height);
+            const drawW = shot.width * ratio;
+            const drawH = shot.height * ratio;
+
+            pdf.addImage(
+                imgData,
+                'JPEG',
+                (pageW-drawW)/2,
+                (pageH-drawH)/2,
+                drawW,
+                drawH,
+                undefined,
+                'FAST'
+            );
+        }
+
+        pdf.save('AI_Scratchpad_Multiplication_Multipage.pdf');
+    } catch (err) {
+        console.error(err);
+        alert('สร้าง PDF ไม่สำเร็จ กรุณาลองใหม่ / PDF export failed. Please try again.');
+    } finally {
+        host.remove();
+
+        if (button) {
+            button.disabled = false;
+            button.textContent =
+                '📄 ส่งออกกระดานทั้งหมดเป็น PDF / Export All Scratchpads PDF';
+        }
+    }
+};
+/* ================= END SCRATCHPAD ADD-ON ================= */
+
+function typesetMath() {
+    if (window.MathJax && MathJax.typesetPromise) {
+        const root = document.getElementById('app');
+        if (!root) return;
+        if (MathJax.typesetClear) MathJax.typesetClear([root]);
+        MathJax.typesetPromise([root]).catch(err => console.warn('MathJax:', err));
+    }
+}
+
+function renderApp() {
+    const appDiv = document.getElementById('app');
+    appDiv.innerHTML = state.view === 'exam' ? renderExamView() : renderSummaryView();
+
+    if (state.view === 'exam') {
+        const q = state.activeQuestions[state.currentIndex];
+        if (q) {
+            const pageIndex = state.scratchpadPageIndex?.[q.id] || 0;
+            window.ExamatePresence?.setQuizState(
+                q.id,
+                getQuestionNumber(q.id),
+                state.showScratchpad ? 'WRITING' : 'VIEWING',
+                pageIndex + 1
+            );
+        }
+    } else {
+        window.ExamatePresence?.setActivity('SUBMITTED');
+    }
+
+    requestAnimationFrame(() => {
+        typesetMath();
+        if (state.view === 'exam' && state.showScratchpad) initScratchCanvas();
+    });
+}
+
+function renderExamView() {
+    const total = state.activeQuestions.length;
+    const currentQ = state.activeQuestions[state.currentIndex];
+    const currentMastered = state.masteredIds.includes(currentQ.id);
+
+    let answeredCount = 0;
+    let giveUpCount = 0;
+    let masteredCount = 0;
+
+    state.activeQuestions.forEach(q => {
+        if (state.masteredIds.includes(q.id)) masteredCount++;
+        else if (state.giveUps[q.id]) giveUpCount++;
+        else if (state.answers[q.id]) answeredCount++;
+    });
+
+    const completedCount = masteredCount + answeredCount + giveUpCount;
+    const retryNeededCount = total - masteredCount;
+    const currentGivenUp = !currentMastered && Boolean(state.giveUps[currentQ.id]);
+    const correctOption = currentQ.options.find(opt => opt.isCorrect);
+    const masteredAnswer = state.masteredAnswers[currentQ.id] || (correctOption ? correctOption.text : '');
+
+    const hintCount = currentMastered ? 0 : (state.hintLevels[currentQ.id] || 0);
+    const maxHints = (currentQ.hints || []).length;
+    const guidedSteps = getGuidedSolutionSteps(currentQ);
+    const authoredShown = Math.min(hintCount, maxHints);
+    const guidedShown = Math.min(Math.max(0, hintCount - maxHints), guidedSteps.length);
+    const allUniqueHelpShown = authoredShown >= maxHints && guidedShown >= guidedSteps.length;
+
+    let navHtml = `<div class="grid grid-cols-5 sm:grid-cols-10 gap-2 mb-3">`;
+    state.activeQuestions.forEach((q, index) => {
+        const isMastered = state.masteredIds.includes(q.id);
+        const isAnswered = !!state.answers[q.id];
+        const isGiveUp = !!state.giveUps[q.id];
+        const isActive = index === state.currentIndex;
+
+        let btnClass = `w-10 h-10 rounded-full text-sm font-semibold flex items-center justify-center gap-0.5 cursor-pointer transition-colors `;
+
+        if (isActive && isMastered) {
+            btnClass += `bg-emerald-600 text-white ring-4 ring-emerald-100 `;
+        } else if (isActive) {
+            btnClass += isGiveUp
+                ? `bg-rose-600 text-white ring-4 ring-rose-100 `
+                : `bg-blue-600 text-white ring-4 ring-blue-100 `;
+        } else if (isMastered) {
+            btnClass += `bg-emerald-500 text-white hover:bg-emerald-600 `;
+        } else if (isGiveUp) {
+            btnClass += `bg-rose-500 text-white `;
+        } else if (isAnswered) {
+            btnClass += `bg-blue-100 text-blue-700 border border-blue-300 `;
+        } else {
+            btnClass += `bg-gray-200 text-gray-600 hover:bg-gray-300 `;
+        }
+
+        const label = isMastered
+            ? `<span>${getQuestionNumber(q.id)}</span><span class="text-[10px] leading-none">✓</span>`
+            : `${getQuestionNumber(q.id)}`;
+
+        navHtml += `<button onclick="goToQuestion(${index})" class="${btnClass}" title="${isMastered ? 'ผ่านแล้ว / Correct' : 'ต้องทำในรอบนี้ / Retry'}">${label}</button>`;
+    });
+    navHtml += `</div>`;
+
+    const legendHtml = state.attempt > 1 ? `
+        <div class="flex flex-wrap gap-3 text-xs mb-6">
+            <span class="inline-flex items-center gap-1.5 text-emerald-700"><span class="w-3 h-3 rounded-full bg-emerald-500"></span>✓ ผ่านแล้วจากรอบก่อน / Already correct</span>
+            <span class="inline-flex items-center gap-1.5 text-blue-700"><span class="w-3 h-3 rounded-full bg-blue-100 border border-blue-300"></span>ตอบในรอบนี้ / Answered this retry</span>
+            <span class="inline-flex items-center gap-1.5 text-gray-600"><span class="w-3 h-3 rounded-full bg-gray-200"></span>ยังต้องแก้ / Still to retry</span>
+        </div>` : `<div class="mb-6"></div>`;
+
+    let optionsHtml = `<div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mt-6">`;
+    currentQ.shuffledOptions.forEach((opt, idx) => {
+        const selectedText = currentMastered ? masteredAnswer : state.answers[currentQ.id];
+        const isSelected = selectedText === opt.text;
+        const letter = String.fromCharCode(65 + idx);
+        let optClass = `option-btn p-4 rounded-xl border-2 text-left flex items-start gap-3 `;
+        let badgeClass = 'bg-gray-100 text-gray-500';
+
+        if (currentMastered) {
+            if (isSelected && opt.isCorrect) {
+                optClass += `bg-emerald-50 border-emerald-500 text-emerald-800 cursor-default`;
+                badgeClass = 'bg-emerald-500 text-white';
+            } else {
+                optClass += `bg-gray-50 border-gray-200 text-gray-400 cursor-default opacity-65`;
+            }
+        } else if (currentGivenUp) {
+            optClass += opt.isCorrect
+                ? `bg-emerald-50 border-emerald-500 text-emerald-800 cursor-default`
+                : `bg-gray-50 border-gray-200 text-gray-400 cursor-default opacity-70`;
+            if (opt.isCorrect) badgeClass = 'bg-emerald-500 text-white';
+        } else if (isSelected) {
+            optClass += `bg-blue-50 border-blue-500 text-blue-700 cursor-pointer`;
+            badgeClass = 'bg-blue-500 text-white';
+        } else {
+            optClass += `bg-white border-gray-200 text-gray-700 hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer`;
+        }
+
+        const disabled = currentMastered || currentGivenUp ? 'disabled' : '';
+        optionsHtml += `<button onclick="selectOption('${currentQ.id}', ${idx})" class="${optClass}" ${disabled}><span class="flex-shrink-0 w-8 h-8 rounded-lg ${badgeClass} font-bold flex items-center justify-center">${letter}</span><span class="font-medium leading-relaxed">${opt.text}</span></button>`;
+    });
+    optionsHtml += `</div>`;
+
+    const hintsHtml = (!currentMastered && hintCount > 0) ? `
+        <div id="hint-panel" class="space-y-3 mb-5 fade-in">
+            ${currentQ.hints.slice(0, authoredShown).map((hint, i) => `
+                <div class="hint-step bg-amber-50 p-4 rounded-r-xl">
+                    <div class="text-amber-900 font-bold text-sm mb-1">💡 Hint ${i+1}</div>
+                    <div class="hint-math text-amber-900 text-sm leading-7">${hint.th}</div>
+                    <div class="hint-math text-amber-700 text-xs leading-6 mt-1">${hint.en}</div>
+                </div>`).join('')}
+            ${guidedSteps.slice(0, guidedShown).map((step, i) => `
+                <div class="border-l-4 border-sky-400 bg-sky-50 p-4 rounded-r-xl">
+                    <div class="text-sky-900 font-bold text-sm mb-1">🧩 ช่วยเพิ่มอีกนิด ${i+1} · Guided step ${i+1}</div>
+                    <div class="hint-math text-sky-900 text-sm leading-7">${step}</div>
+                </div>`).join('')}
+            ${allUniqueHelpShown && hintCount > (maxHints + guidedSteps.length) ? `
+                <div class="border-l-4 border-violet-400 bg-violet-50 p-4 rounded-r-xl">
+                    <div class="text-violet-900 font-bold text-sm mb-1">🔁 ขอได้เรื่อย ๆ · Unlimited hints</div>
+                    <div class="text-violet-800 text-sm leading-7">เปิดความช่วยเหลือเฉพาะข้อนี้ครบทุกขั้นแล้ว ลองไล่จาก Hint 1 ลงมาทีละบรรทัดได้อีกครั้ง หรือกดขอคำใบ้ต่อได้โดยไม่เสียคะแนนและไม่ถูกล็อก</div>
+                    <div class="text-violet-700 text-xs leading-6 mt-1">All unique scaffolds for this item are visible. You can keep requesting hints without penalty and review the steps above as often as needed.</div>
+                </div>` : ''}
+        </div>` : '';
+
+    const masteredPanel = currentMastered ? `
+        <div class="mb-5 rounded-2xl border-2 border-emerald-300 bg-emerald-50 p-4 fade-in">
+            <div class="flex items-start gap-3">
+                <div class="w-9 h-9 rounded-full bg-emerald-500 text-white flex items-center justify-center font-black text-lg">✓</div>
+                <div>
+                    <div class="font-bold text-emerald-800">ผ่านแล้วจากรอบก่อน / Already correct</div>
+                    <div class="text-sm text-emerald-700 mt-1">ข้อนี้ยังคงแสดงไว้เพื่อให้อ้างอิงตาราง กราฟ หรือข้อมูลเดิมได้ โดยไม่ต้องตอบซ้ำ</div>
+                    <div class="text-xs text-emerald-600 mt-1">This item remains visible for reference and is locked. You do not need to answer it again.</div>
+                </div>
+            </div>
+        </div>` : '';
+
+    return `
+        <div class="bg-indigo-700 text-white px-6 py-4 flex flex-col sm:flex-row justify-between items-center shadow-md z-10">
+            <div class="mb-2 sm:mb-0">
+                <h1 class="text-xl font-bold">AI Scratchpad Experiment: Multiplication</h1>
+                <p class="text-indigo-200 text-xs mb-1">${questionsData.length} Questions · Simple Multiplication · AI Scratchpad Test</p>
+                <p class="text-indigo-200 text-sm">Attempt: ${state.attempt} | Question ${state.currentIndex + 1} of ${total} (Item #${getQuestionNumber(currentQ.id)})</p>
+                ${state.attempt > 1
+                    ? `<p class="text-emerald-200 text-xs mt-1">✓ ผ่านแล้ว ${masteredCount} ข้อ · ต้องแก้ ${retryNeededCount} ข้อ / ${masteredCount} correct · ${retryNeededCount} to retry</p>`
+                    : `<p class="text-indigo-200 text-xs mt-1">💡 Unlimited hints · ขอคำใบ้ได้ไม่จำกัด · ไม่หักคะแนน</p>`}
+            </div>
+            <button onclick="submitAll()" class="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-bold py-2 px-6 rounded-full shadow-lg transition-transform hover:scale-105">ตรวจคำตอบทั้งหมด / Submit All</button>
+        </div>
+
+        <div class="p-6 flex-1 bg-white overflow-y-auto fade-in">
+            ${navHtml}
+            ${legendHtml}
+
+            <div class="mb-6">
+                <div class="flex flex-wrap justify-between items-start gap-3 mb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="${currentMastered ? 'bg-emerald-100 text-emerald-800' : (currentGivenUp ? 'bg-rose-100 text-rose-800' : 'bg-indigo-100 text-indigo-800')} text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Q${getQuestionNumber(currentQ.id)}</span>
+                        ${currentMastered ? '<span class="bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full">✓ Correct · ผ่านแล้ว</span>' : ''}
+                        ${currentGivenUp ? '<span class="bg-rose-600 text-white text-xs font-bold px-3 py-1 rounded-full">🏳 Give Up · 0 pt</span>' : ''}
+                        ${!currentMastered && hintCount ? `<span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full">💡 ขอแล้ว ${hintCount} ครั้ง</span>` : ''}
+                    </div>
+                    <div class="flex flex-wrap gap-2 justify-end">
+                        <button onclick="toggleScratchpad()" class="px-4 py-2 rounded-xl font-bold text-sm bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300">
+                            ✍️ ${state.showScratchpad ? 'ปิดกระดานทด / Close Scratchpad' : 'เปิดกระดานทด / Open Scratchpad'}
+                        </button>
+                        <button onclick="copyQuestionToScratchpad()" class="px-4 py-2 rounded-xl font-bold text-sm bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200">
+                            📋 คัดลอกโจทย์ลงกระดาน / Copy Question
+                        </button>
+                        ${!currentMastered && !currentGivenUp ? `<button onclick="revealNextHint('${currentQ.id}')" class="px-4 py-2 rounded-xl font-bold text-sm bg-amber-100 text-amber-900 hover:bg-amber-200 border border-amber-300">💡 ขอคำใบ้เพิ่ม / More Hint #${hintCount+1}</button>` : ''}
+                    </div>
+                </div>
+
+                <h2 class="question-math text-xl font-semibold text-gray-800 mb-2 leading-relaxed">${currentQ.questionTH}</h2>
+                <p class="question-math text-md text-gray-500 mb-4 leading-relaxed">${currentQ.questionEN}</p>
+                ${currentQ.contentHTML || ''}
+                ${state.showScratchpad ? renderScratchpad(currentQ) : ''}
+                ${masteredPanel}
+                ${hintsHtml}
+
+                ${currentGivenUp ? `
+                <div id="give-up-feedback" class="mb-5 bg-rose-50 border-2 border-rose-300 rounded-2xl p-5 fade-in shadow-sm">
+                    <div class="flex items-start gap-3"><div class="text-3xl leading-none">🏳</div><div class="min-w-0 flex-1">
+                        <div class="font-bold text-rose-800 text-lg">ยอมแพ้ข้อนี้ — 0 คะแนน / Give Up — 0 points</div>
+                        <div class="mt-3 bg-white border border-emerald-200 rounded-xl p-3 text-gray-800"><span class="font-bold text-emerald-700">✓ คำตอบที่ถูก / Correct answer:</span> <span class="question-math ml-1 font-semibold">${correctOption ? correctOption.text : '-'}</span></div>
+                        <div class="mt-4 bg-white border border-indigo-200 rounded-xl p-4 text-gray-800"><div class="font-bold text-indigo-700 mb-2">เฉลยละเอียด / Detailed Solution</div><div class="hint-math text-sm leading-7">${currentQ.solutionTH}</div><div class="border-t border-gray-200 mt-4 pt-4"><div class="font-bold text-gray-600 mb-2">English solution</div><div class="hint-math text-sm leading-7 text-gray-600">${currentQ.solutionEN}</div></div></div>
+                        <div class="mt-3 text-xs text-rose-700 font-medium">บันทึก 0 คะแนนแล้ว · ล็อกคำตอบในรอบนี้ · ข้อนี้จะกลับมาในรอบ Retry</div>
+                    </div></div>
+                </div>` : ''}
+
+                ${optionsHtml}
+            </div>
+        </div>
+
+        <div class="bg-gray-50 px-6 py-4 border-t flex flex-col md:flex-row gap-3 justify-between items-center">
+            <div class="text-sm text-gray-500 font-medium flex flex-wrap gap-x-3 gap-y-1">
+                <span>Completed: <span class="text-indigo-600 font-bold">${completedCount}/${total}</span></span>
+                ${state.attempt > 1 ? `<span>✓ Mastered: <span class="text-emerald-600 font-bold">${masteredCount}</span></span>` : ''}
+                <span>Answered this round: <span class="text-blue-600">${answeredCount}</span></span>
+                <span>Give Up: <span class="text-rose-600 font-bold">${giveUpCount}</span></span>
+                ${!currentMastered ? `<span>Hint requests this item: <span class="text-amber-600 font-bold">${hintCount}</span></span>` : ''}
+            </div>
+
+            <div class="flex flex-wrap justify-end gap-3">
+                ${!currentMastered && !currentGivenUp ? `<button onclick="giveUpQuestion('${currentQ.id}')" class="px-4 py-2 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg hover:bg-rose-100 font-bold">🏳 ยอมแพ้และดูเฉลย / Give Up & Show Solution (0 คะแนน / points)</button>` : ''}
+                <button onclick="goToQuestion(Math.max(0, state.currentIndex - 1))" class="px-4 py-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 font-medium ${state.currentIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''}" ${state.currentIndex === 0 ? 'disabled' : ''}>ก่อนหน้า / Previous</button>
+                ${state.currentIndex < total - 1
+                    ? `<button onclick="skipQuestion()" class="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 font-medium">ถัดไป / Next</button>`
+                    : `<button onclick="submitAll()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium">ทบทวนและส่งคำตอบ / Review & Submit</button>`}
+            </div>
+        </div>`;
+}
+
+function renderSummaryView() {
+    const latest = state.attemptHistory[state.attemptHistory.length - 1];
+    const firstAttempt = state.attemptHistory[0];
+    const isPerfect = latest.correctCount === latest.total;
+    const totalElapsed = (state.finishedAt || Date.now()) - state.startedAt;
+    const missedQuestionNumbers = [...new Set(state.attemptHistory.flatMap(attempt => attempt.results.filter(r => !r.isCorrect).map(r => r.questionNumber)))].sort((a,b)=>a-b);
+    const retryCount = Math.max(0, state.attemptHistory.length - 1);
+
+    const currentResultHtml = latest.results.map(result => {
+        const statusColor = result.isCorrect ? 'text-green-700 bg-green-50 border-green-200' : (result.isGiveUp ? 'text-rose-700 bg-rose-50 border-rose-200' : (result.isAnswered ? 'text-red-700 bg-red-50 border-red-200' : 'text-gray-600 bg-gray-50 border-gray-200'));
+        const icon = result.isCorrect
+            ? (result.isCarried ? '✓ Correct · carried from earlier round' : '✓ Correct')
+            : (result.isGiveUp ? '🏳 Give Up · 0' : (result.isAnswered ? '✗ Incorrect' : '– Skipped'));
+        return `<div class="p-4 border rounded-xl flex flex-col ${statusColor}"><div class="font-bold mb-1">Question ${result.questionNumber}</div><div class="text-sm line-clamp-2 opacity-80 mb-2">${result.questionTH}</div><div class="mt-auto font-semibold">${icon}</div><div class="text-xs mt-1 opacity-80">💡 Hint requests: ${result.hintCount}</div></div>`;
+    }).join('');
+
+    const historyHtml = state.attemptHistory.map(attempt => {
+        const missed = attempt.results.filter(r => !r.isCorrect).map(r => `Q${r.questionNumber}`);
+        const gaveUp = attempt.results.filter(r => r.isGiveUp).map(r => `Q${r.questionNumber}`);
+        const tone = attempt.correctCount === attempt.total ? 'bg-green-100 text-green-700' : 'bg-indigo-100 text-indigo-700';
+        return `<div class="history-line relative flex gap-4 pb-6"><div class="relative z-10 w-10 h-10 rounded-full ${tone} flex items-center justify-center font-bold flex-shrink-0">${attempt.attempt}</div><div class="flex-1 bg-white border border-gray-200 rounded-xl p-4 shadow-sm"><div class="flex flex-wrap items-center justify-between gap-2"><div class="font-bold text-gray-800">รอบที่ ${attempt.attempt} · Attempt ${attempt.attempt}</div><div class="font-bold ${attempt.correctCount === attempt.total ? 'text-green-600' : 'text-indigo-600'}">${attempt.correctCount}/${attempt.total} (${attempt.percentage}%)</div></div><div class="text-sm text-gray-500 mt-1">ใช้เวลา ${formatDuration(attempt.durationMs)}</div><div class="text-xs text-gray-500 mt-1">💡 Hint requests: ${attempt.hintsUsed} · 🏳 Give Up: ${attempt.giveUpCount || 0}${gaveUp.length ? ` (${gaveUp.join(', ')})` : ''}</div><div class="text-sm mt-2 ${missed.length ? 'text-amber-700' : 'text-green-700'}">${missed.length ? `ต้องทบทวน: ${missed.join(', ')}` : 'ผ่านครบทุกข้อในรอบนี้ ✓'}</div></div></div>`;
+    }).join('');
+
+    return `<div class="${isPerfect ? 'bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-700' : 'bg-indigo-700'} text-white px-6 py-8 text-center rounded-t-2xl"><div class="text-sm font-bold uppercase tracking-[0.25em] text-white/75 mb-2">${isPerfect ? 'Mastery Complete' : 'Mastery Check'}</div><h1 class="text-3xl font-bold mb-2">${isPerfect ? 'ทำสำเร็จ 100% แล้ว! 🎉' : `ผลการทำรอบที่ ${state.attempt}`}</h1><p class="text-white/80">${isPerfect ? `ผ่านครบทั้ง ${questionsData.length} ข้อภายใน ${state.attemptHistory.length} รอบ` : `รอบนี้ได้ ${latest.correctCount} จาก ${latest.total} ข้อ (${latest.percentage}%) · ขอคำใบ้ ${latest.hintsUsed} ครั้ง`}</p></div>
+    <div class="p-6 bg-white flex-1 overflow-y-auto fade-in">${isPerfect ? `<div class="celebration-card border border-emerald-200 rounded-2xl p-6 text-center mb-6"><div class="celebration-icon text-6xl mb-3">🏆</div><h2 class="text-2xl font-bold text-gray-800">AI Scratchpad Experiment Complete!</h2><p class="text-gray-600 mt-2">ทดลองครบทั้งการเขียนบนกระดาน การตรวจแบบ Mastery และ AI ช่วยใบ้จากภาพ</p></div>` : `<div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded-r-lg"><h3 class="font-bold text-blue-800">Mastery Learning Mode Active</h3><p class="text-blue-700 text-sm mt-1">ระบบจะนำข้อที่ผิด ข้อที่ยังไม่ได้ตอบ และข้อที่กด Give Up กลับมาให้ทำใหม่ คำใบ้ขอได้ไม่จำกัด ช่วยเรียนรู้และไม่หักคะแนน</p></div>`}
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8"><div class="rounded-2xl bg-indigo-50 p-4 text-center"><div class="text-2xl font-bold text-indigo-700">${state.attemptHistory.length}</div><div class="text-xs text-indigo-500 mt-1">Attempts</div></div><div class="rounded-2xl bg-emerald-50 p-4 text-center"><div class="text-xl font-bold text-emerald-700">${formatDuration(totalElapsed)}</div><div class="text-xs text-emerald-600 mt-1">Total time</div></div><div class="rounded-2xl bg-amber-50 p-4 text-center"><div class="text-2xl font-bold text-amber-700">${firstAttempt.correctCount}/${firstAttempt.total}</div><div class="text-xs text-amber-600 mt-1">First attempt · Hint requests ${firstAttempt.hintsUsed}</div></div><div class="rounded-2xl bg-violet-50 p-4 text-center"><div class="text-2xl font-bold text-violet-700">${retryCount}</div><div class="text-xs text-violet-600 mt-1">Retries</div></div></div>
+    ${isPerfect ? `<div class="rounded-2xl border border-gray-200 p-5 mb-8"><h3 class="font-bold text-gray-800 mb-2">📌 สรุปเส้นทางการเรียนรู้</h3><p class="text-gray-600 text-sm leading-relaxed">${missedQuestionNumbers.length ? `เคยพลาด ${missedQuestionNumbers.length} ข้อ: ${missedQuestionNumbers.map(n=>`Q${n}`).join(', ')} และแก้ถูกครบแล้ว` : 'ตอบถูกครบทุกข้อตั้งแต่รอบแรก'}</p></div>` : `<h3 class="font-bold text-gray-800 text-lg mb-3">ผลคำตอบรอบล่าสุด</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">${currentResultHtml}</div>`}
+    <h3 class="font-bold text-gray-800 text-lg mb-4">ประวัติแต่ละรอบ / Attempt History</h3><div>${historyHtml}</div></div>
+    <div class="bg-gray-50 px-6 py-4 border-t">
+        <div class="flex flex-wrap justify-center gap-3">
+            <button id="export-scratchpads-btn" onclick="exportScratchpadsPDF()" class="bg-slate-800 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-slate-900 transition-colors">📄 ส่งออกกระดานทั้งหมดเป็น PDF / Export All Scratchpads PDF</button>
+            ${isPerfect ? `<button onclick="restartQuiz()" class="bg-green-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-green-700 transition-colors">เริ่มทำใหม่ / Restart Quiz</button>` : `<button onclick="startRetry()" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-indigo-700 transition-colors">แก้เฉพาะข้อที่ผิด / Retry Incorrect Questions</button>`}
+        </div>
+        <div class="text-center text-xs text-slate-500 mt-2">PDF: ทุกหน้า A4 ของทุกข้อจะถูกส่งออก · Each A4 scratchpad page is exported separately</div>
+    </div>`;
+}
+
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initApp, { once:true }); else initApp();
+const mathJaxScript = document.getElementById('MathJax-script');
+if (mathJaxScript) mathJaxScript.addEventListener('load', () => { if (window.MathJax && MathJax.startup && MathJax.startup.promise) MathJax.startup.promise.then(typesetMath).catch(()=>{}); else setTimeout(typesetMath,0); });
+</script>
+</body>
+</html>
