@@ -472,6 +472,14 @@
             line-height:1.6;
         }
 
+
+        #scratchpad-canvas {
+            -webkit-user-select:none;
+            user-select:none;
+            -webkit-touch-callout:none;
+            -webkit-tap-highlight-color:transparent;
+        }
+
 </style>
 </head>
 <body class="text-gray-800 min-h-screen flex flex-col items-center py-6 px-4">
@@ -1227,6 +1235,12 @@ let scratchLastX = 0;
 let scratchLastY = 0;
 let scratchRestoreToken = 0;
 
+// Stylus v2: manual finger scrolling in Pen mode so the browser never steals Pencil gestures.
+let scratchTouchScrollId = null;
+let scratchTouchScrollStartY = 0;
+let scratchTouchScrollStartTop = 0;
+let scratchFilteredPressure = 0.5;
+
 const AI_WORKER_URL = 'https://student-work-ai-checker.micksattawatbutklo.workers.dev/';
 
 function scratchCurrentQuestion() {
@@ -1502,9 +1516,12 @@ function initScratchCanvas() {
     scratchCanvas.width = Math.max(1, Math.round(rect.width * dpr));
     scratchCanvas.height = Math.max(1, Math.round(rect.height * dpr));
 
-    // Pen mode lets a finger scroll the large A4 sheet while Pencil writes.
-    scratchCanvas.style.touchAction =
-        state.scratchpadInputMode === 'pen' ? 'pan-y' : 'none';
+    // Stylus v2:
+    // - Pen mode uses touch-action:none so Safari/iPadOS cannot cancel Pencil strokes
+    //   when it thinks the gesture is a page scroll.
+    // - Finger scrolling is recreated manually below.
+    // - Finger mode also uses none because touch draws ink.
+    scratchCanvas.style.touchAction = 'none';
 
     applyScratchScale();
 
@@ -1563,29 +1580,28 @@ function initScratchCanvas() {
         };
     };
 
-    scratchCanvas.onpointerdown = (e) => {
-        if (!scratchPointerAllowed(e)) return;
-        if (scratchPointerId !== null) return;
+    const penWidthForEvent = (evt) => {
+        if (state.scratchpadTool === 'eraser') return state.scratchpadWidth;
 
-        e.preventDefault();
-        scratchPointerId = e.pointerId;
-        scratchDrawing = true;
+        // For handwriting/math, a nearly constant width feels much better than
+        // raw Apple Pencil pressure, which can flicker at low pressure.
+        if (evt.pointerType !== 'pen') return state.scratchpadWidth;
 
-        try { scratchCanvas.setPointerCapture(e.pointerId); } catch (_) {}
+        const raw = (Number.isFinite(evt.pressure) && evt.pressure > 0)
+            ? evt.pressure
+            : 0.5;
 
-        const p = getPoint(e);
-        window.ExamatePresence?.setActivity('WRITING', pageIndex + 1);
-        scratchLastX = p.x;
-        scratchLastY = p.y;
-        rememberAIAnchor(p);
+        scratchFilteredPressure =
+            scratchFilteredPressure * 0.78 + raw * 0.22;
+
+        // Only a subtle pressure response. Keeps strokes stable but not robotic.
+        return Math.max(
+            1.35,
+            state.scratchpadWidth * (0.94 + scratchFilteredPressure * 0.16)
+        );
     };
 
-    scratchCanvas.onpointermove = (e) => {
-        if (!scratchDrawing || e.pointerId !== scratchPointerId || !scratchPointerAllowed(e)) return;
-
-        e.preventDefault();
-        const p = getPoint(e);
-
+    const drawSegmentTo = (evt, point) => {
         scratchCtx.save();
 
         if (state.scratchpadTool === 'eraser') {
@@ -1595,31 +1611,123 @@ function initScratchCanvas() {
         } else {
             scratchCtx.globalCompositeOperation = 'source-over';
             scratchCtx.strokeStyle = state.scratchpadColor;
-
-            const pressure = (e.pointerType === 'pen' && e.pressure > 0)
-                ? e.pressure
-                : 0.55;
-
-            scratchCtx.lineWidth = Math.max(
-                1.2,
-                state.scratchpadWidth * (0.75 + pressure * 0.65)
-            );
+            scratchCtx.lineWidth = penWidthForEvent(evt);
         }
 
         scratchCtx.lineCap = 'round';
         scratchCtx.lineJoin = 'round';
         scratchCtx.beginPath();
-        scratchCtx.moveTo(scratchLastX,scratchLastY);
-        scratchCtx.lineTo(p.x,p.y);
+        scratchCtx.moveTo(scratchLastX, scratchLastY);
+        scratchCtx.lineTo(point.x, point.y);
         scratchCtx.stroke();
         scratchCtx.restore();
 
+        scratchLastX = point.x;
+        scratchLastY = point.y;
+    };
+
+    scratchCanvas.onpointerdown = (e) => {
+        // Pen mode: finger/palm never draws. A finger can scroll the paper
+        // when no stylus stroke is active.
+        if (state.scratchpadInputMode === 'pen' && e.pointerType === 'touch') {
+            if (scratchDrawing) return; // palm/finger ignored while Pencil is writing
+            if (!scrollEl || scratchTouchScrollId !== null) return;
+
+            e.preventDefault();
+            scratchTouchScrollId = e.pointerId;
+            scratchTouchScrollStartY = e.clientY;
+            scratchTouchScrollStartTop = scrollEl.scrollTop;
+
+            try { scratchCanvas.setPointerCapture(e.pointerId); } catch (_) {}
+            return;
+        }
+
+        if (!scratchPointerAllowed(e)) return;
+        if (scratchPointerId !== null) return;
+
+        e.preventDefault();
+        scratchPointerId = e.pointerId;
+        scratchDrawing = true;
+        scratchFilteredPressure =
+            (e.pointerType === 'pen' && e.pressure > 0) ? e.pressure : 0.5;
+
+        try { scratchCanvas.setPointerCapture(e.pointerId); } catch (_) {}
+
+        const p = getPoint(e);
+        window.ExamatePresence?.setActivity('WRITING', pageIndex + 1);
         scratchLastX = p.x;
         scratchLastY = p.y;
         rememberAIAnchor(p);
+
+        // A quick Pencil tap should still leave a dot.
+        scratchCtx.save();
+        if (state.scratchpadTool === 'eraser') {
+            scratchCtx.globalCompositeOperation = 'destination-out';
+            scratchCtx.fillStyle = 'rgba(0,0,0,1)';
+        } else {
+            scratchCtx.globalCompositeOperation = 'source-over';
+            scratchCtx.fillStyle = state.scratchpadColor;
+        }
+        const dotW = state.scratchpadTool === 'eraser'
+            ? state.scratchpadWidth
+            : penWidthForEvent(e);
+        scratchCtx.beginPath();
+        scratchCtx.arc(p.x, p.y, Math.max(0.7, dotW * 0.48), 0, Math.PI * 2);
+        scratchCtx.fill();
+        scratchCtx.restore();
+    };
+
+    scratchCanvas.onpointermove = (e) => {
+        // Manual one-finger scrolling in Pen mode.
+        if (
+            state.scratchpadInputMode === 'pen' &&
+            e.pointerType === 'touch' &&
+            e.pointerId === scratchTouchScrollId
+        ) {
+            if (!scrollEl || scratchDrawing) return;
+            e.preventDefault();
+            const dy = e.clientY - scratchTouchScrollStartY;
+            scrollEl.scrollTop = scratchTouchScrollStartTop - dy;
+            return;
+        }
+
+        if (
+            !scratchDrawing ||
+            e.pointerId !== scratchPointerId ||
+            !scratchPointerAllowed(e)
+        ) return;
+
+        e.preventDefault();
+
+        // Browser pen events may bundle high-frequency sub-points.
+        // Using them removes the angular/jagged feeling from fast Pencil writing.
+        let events;
+        try {
+            events = (typeof e.getCoalescedEvents === 'function')
+                ? e.getCoalescedEvents()
+                : null;
+        } catch (_) {
+            events = null;
+        }
+
+        if (!events || !events.length) events = [e];
+
+        for (const evt of events) {
+            const p = getPoint(evt);
+            drawSegmentTo(evt, p);
+            rememberAIAnchor(p);
+        }
+    };
+
+    const endTouchScroll = (e) => {
+        if (e.pointerId !== scratchTouchScrollId) return false;
+        scratchTouchScrollId = null;
+        try { scratchCanvas.releasePointerCapture(e.pointerId); } catch (_) {}
+        return true;
     };
 
     const endStroke = (e) => {
+        if (endTouchScroll(e)) return;
         if (e.pointerId !== scratchPointerId) return;
 
         scratchDrawing = false;
@@ -1877,7 +1985,7 @@ function renderScratchpad(q) {
 
             <div class="scratch-status ${penMode ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}">
                 ${penMode
-                    ? '✓ Pen mode: Apple Pencil/ปากกาเขียนได้ นิ้วและฝ่ามือไม่สร้างเส้น และใช้นิ้วเลื่อนกระดาษได้ / Pencil writes; touch can scroll without drawing.'
+                    ? '✓ Pen mode v2: ปากกาใช้จุดข้อมูลละเอียดขึ้น + กัน browser แย่ง gesture; นิ้วใช้เลื่อนกระดาษ / Stylus-optimized input with coalesced points; finger scrolls without drawing.'
                     : 'Finger mode: ใช้นิ้วเขียนได้ จึงไม่สามารถแยกฝ่ามือออกจากนิ้วได้ / Finger writes; palm rejection is unavailable in this mode.'}
                 · Q${getQuestionNumber(q.id)} มี ${pageCount} หน้า A4 / ${pageCount} A4 page(s)
                 · AI ตรวจเฉพาะหน้าปัจจุบัน และ feedback จะลอยใกล้ตำแหน่งที่เขียนล่าสุด / AI checks the current page and appears near your latest writing
