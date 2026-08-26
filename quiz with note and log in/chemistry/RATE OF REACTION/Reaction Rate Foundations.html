@@ -1,0 +1,4557 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Scratchpad Experiment: Multiplication</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+            chtml: { scale: 1.02 }
+        };
+    </script>
+    <script async id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Sarabun', 'Inter', sans-serif; background-color: #f3f4f6; }
+        .option-btn { transition: all 0.2s ease-in-out; }
+        .option-btn:hover { transform: translateY(-2px); }
+        .fade-in { animation: fadeIn 0.3s ease-in; }
+        .celebration-card { background: linear-gradient(135deg, #ecfdf5 0%, #eff6ff 48%, #faf5ff 100%); }
+        .celebration-icon { animation: celebrate 1.8s ease-in-out infinite; }
+        .history-line::before { content: ''; position: absolute; left: 19px; top: 38px; bottom: -18px; width: 2px; background: #c7d2fe; }
+        .history-line:last-child::before { display: none; }
+        mjx-container { max-width: 100%; overflow-x: auto; overflow-y: hidden; padding: 0.08rem 0; }
+        mjx-container[display="true"] { margin: 0.65rem 0 !important; }
+        .question-math mjx-container { font-size: 1.06em !important; }
+        .option-btn mjx-container { margin: 0 !important; }
+        .hint-math mjx-container { font-size: 0.98em !important; }
+        .table-wrap { overflow-x:auto; margin: 1rem 0 1.25rem; }
+        .chem-table { width:100%; min-width:520px; border-collapse:collapse; font-size:0.95rem; }
+        .chem-table th, .chem-table td { border:1px solid #cbd5e1; padding:0.65rem 0.75rem; text-align:center; }
+        .chem-table th { background:#eef2ff; color:#3730a3; font-weight:700; }
+        .chem-table tbody tr:nth-child(even) { background:#f8fafc; }
+        .graph-card { background:#fff; border:1px solid #dbeafe; border-radius:16px; padding:10px; margin: 1rem 0 1.25rem; overflow-x:auto; }
+        .graph-card svg { width:100%; min-width:430px; height:auto; display:block; }
+        .graph-card.compact svg { min-width:400px; }
+        .axis { stroke:#334155; stroke-width:2.4; }
+        .curve { fill:none; stroke:#4f46e5; stroke-width:4; stroke-linecap:round; }
+        .curve-alt { fill:none; stroke:#f59e0b; stroke-width:4; stroke-linecap:round; stroke-dasharray:9 7; }
+        .guide { stroke:#94a3b8; stroke-width:1.5; stroke-dasharray:5 5; }
+        .level { stroke:#64748b; stroke-width:2; }
+        .axis-label { fill:#475569; font-size:14px; font-family:'Sarabun','Inter',sans-serif; text-anchor:middle; }
+        .graph-text { fill:#334155; font-size:14px; font-weight:700; font-family:'Sarabun','Inter',sans-serif; }
+
+        .hint-step { border-left:4px solid #f59e0b; }
+
+        /* Scratchpad add-on: full A4 + multi-page + AI that follows recent writing */
+        .scratchpad-shell {
+            border:2px solid #cbd5e1;
+            border-radius:16px;
+            overflow:hidden;
+            background:#fff;
+            margin:1rem 0 1.25rem;
+            box-shadow:0 8px 24px rgba(15,23,42,.06);
+        }
+        .scratchpad-toolbar {
+            display:flex;
+            flex-wrap:wrap;
+            align-items:center;
+            gap:7px;
+            padding:9px;
+            background:#f8fafc;
+            border-bottom:1px solid #cbd5e1;
+        }
+        .scratch-tool {
+            border:1px solid #cbd5e1;
+            background:#fff;
+            color:#334155;
+            border-radius:9px;
+            padding:7px 10px;
+            font-size:.8rem;
+            font-weight:700;
+            cursor:pointer;
+            white-space:nowrap;
+        }
+        .scratch-tool:hover { background:#f1f5f9; }
+        .scratch-tool.active {
+            border-color:#6366f1;
+            background:#eef2ff;
+            color:#4338ca;
+        }
+        .scratch-tool.copy {
+            background:#eef2ff;
+            color:#4338ca;
+            border-color:#c7d2fe;
+        }
+        .scratch-tool.page {
+            background:#ecfeff;
+            color:#155e75;
+            border-color:#a5f3fc;
+        }
+        .scratch-tool.ai-check-btn {
+            background:#f5f3ff;
+            color:#6d28d9;
+            border-color:#c4b5fd;
+        }
+        .scratch-tool.ai-check-btn:hover { background:#ede9fe; }
+        .scratch-tool.ai-check-btn:disabled {
+            opacity:.55;
+            cursor:not-allowed;
+        }
+        .scratch-tool.danger { color:#be123c; }
+        .scratch-tool:disabled {
+            opacity:.45;
+            cursor:not-allowed;
+        }
+
+        .scratch-status {
+            padding:7px 11px;
+            border-bottom:1px solid #e2e8f0;
+            font-size:.74rem;
+            font-weight:600;
+            line-height:1.55;
+        }
+
+        /* Visible workspace. The A4 sheet is larger than the viewport and scrolls. */
+        .scratch-viewport {
+            position:relative;
+            background:#dbe3ee;
+            overflow:hidden;
+        }
+        .scratch-scroll {
+            height:clamp(620px, 88vh, 1120px);
+            min-height:620px;
+            overflow-y:auto;
+            overflow-x:hidden;
+            background:#dbe3ee;
+            padding:20px;
+            overscroll-behavior:contain;
+            -webkit-overflow-scrolling:touch;
+            touch-action:pan-y;
+            scroll-behavior:smooth;
+        }
+        .scratch-sheet {
+            position:relative;
+            width:min(100%, 1000px);
+            aspect-ratio:210 / 297;
+            margin:0 auto;
+            overflow:hidden;
+            border-radius:8px;
+            box-shadow:0 8px 30px rgba(15,23,42,.20);
+            background:
+                linear-gradient(#eef2f7 1px, transparent 1px),
+                linear-gradient(90deg, #eef2f7 1px, transparent 1px),
+                #fff;
+            background-size:24px 24px;
+        }
+
+        /* Locked question/background layer. */
+        .scratch-question-bg {
+            position:absolute;
+            inset:0;
+            z-index:1;
+            padding:20px 22px;
+            pointer-events:none;
+            overflow:hidden;
+            color:#0f172a;
+            background:rgba(255,255,255,.84);
+        }
+        .scratch-question-bg.hidden { display:none; }
+        .scratch-question-bg .sq-title {
+            color:#4338ca;
+            font-weight:800;
+            font-size:.82rem;
+            margin-bottom:7px;
+        }
+        .scratch-question-bg .sq-th {
+            font-size:.95rem;
+            font-weight:700;
+            line-height:1.55;
+        }
+        .scratch-question-bg .sq-en {
+            font-size:.76rem;
+            color:#64748b;
+            line-height:1.45;
+            margin-top:5px;
+        }
+        .scratch-question-bg .sq-content {
+            margin-top:9px;
+            font-size:.72rem;
+        }
+        .scratch-question-bg .sq-content .table-wrap { margin:.35rem 0; }
+        .scratch-question-bg .sq-content .chem-table {
+            min-width:0;
+            font-size:.72rem;
+            background:#fff;
+        }
+        .scratch-question-bg .sq-content .chem-table th,
+        .scratch-question-bg .sq-content .chem-table td { padding:.24rem .38rem; }
+        .scratch-question-bg .sq-content .graph-card { margin:.35rem 0; padding:5px; }
+        .scratch-question-bg .sq-content .graph-card svg {
+            min-width:0 !important;
+            max-height:330px;
+        }
+
+        /* Ink layer */
+        #scratchpad-canvas {
+            position:absolute;
+            inset:0;
+            z-index:2;
+            width:100%;
+            height:100%;
+            display:block;
+            cursor:crosshair;
+        }
+
+        .scratch-color-dot {
+            width:13px;
+            height:13px;
+            border-radius:50%;
+            display:inline-block;
+            vertical-align:-1px;
+            margin-right:4px;
+        }
+        .scratch-page-indicator {
+            display:inline-flex;
+            align-items:center;
+            padding:6px 9px;
+            border-radius:999px;
+            background:#fff;
+            border:1px solid #cbd5e1;
+            color:#475569;
+            font-size:.75rem;
+            font-weight:800;
+        }
+
+        .scratch-scroll::-webkit-scrollbar { width:10px; }
+        .scratch-scroll::-webkit-scrollbar-thumb {
+            background:#94a3b8;
+            border-radius:999px;
+            border:2px solid #dbe3ee;
+        }
+
+        /* AI panel floats in the visible board viewport near the latest writing. */
+        .ai-feedback-panel {
+            position:absolute;
+            z-index:10;
+            width:min(410px, calc(100% - 36px));
+            max-height:min(48vh, 440px);
+            overflow:auto;
+            border:1px solid #c4b5fd;
+            border-radius:16px;
+            background:rgba(255,255,255,.97);
+            box-shadow:0 16px 38px rgba(76,29,149,.22);
+            pointer-events:auto;
+            backdrop-filter:blur(8px);
+        }
+        .ai-feedback-head {
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:8px;
+            padding:10px 12px;
+            background:#f5f3ff;
+            border-bottom:1px solid #ddd6fe;
+            color:#5b21b6;
+            font-weight:800;
+            font-size:.82rem;
+        }
+        .ai-feedback-body {
+            padding:12px;
+            font-size:.82rem;
+            line-height:1.55;
+            color:#334155;
+        }
+        .ai-feedback-row + .ai-feedback-row { margin-top:9px; }
+        .ai-feedback-label {
+            font-weight:800;
+            color:#475569;
+            margin-bottom:2px;
+        }
+        .ai-anchor-note {
+            color:#8b5cf6;
+            font-size:10px;
+            font-weight:700;
+        }
+        .ai-spinner {
+            width:15px;height:15px;border-radius:50%;
+            border:2px solid #ddd6fe;border-top-color:#7c3aed;
+            animation:aiSpin .8s linear infinite;
+            display:inline-block;vertical-align:-2px;margin-right:6px;
+        }
+        @keyframes aiSpin { to { transform:rotate(360deg); } }
+
+        @media (max-width:700px) {
+            .scratch-scroll {
+                height:82vh;
+                min-height:520px;
+                padding:10px;
+            }
+            .scratch-sheet { width:100%; }
+            .scratch-tool { padding:7px 8px; font-size:.74rem; }
+            .ai-feedback-panel {
+                width:calc(100% - 24px);
+                max-height:40vh;
+            }
+        }
+
+        /* Hidden DOM used only when exporting scratchpads to PDF */
+        #scratch-export-host {
+            position:fixed;
+            left:-10000px;
+            top:0;
+            width:794px;
+            pointer-events:none;
+            z-index:-1;
+        }
+        .scratch-export-page {
+            width:794px;
+            min-height:1123px;
+            background:#fff;
+            padding:38px;
+            color:#0f172a;
+            font-family:'Sarabun','Inter',sans-serif;
+        }
+        .scratch-export-board {
+            position:relative;
+            width:100%;
+            height:720px;
+            margin-top:18px;
+            overflow:hidden;
+            border:1.5px solid #94a3b8;
+            border-radius:12px;
+            background:
+                linear-gradient(#eef2f7 1px, transparent 1px),
+                linear-gradient(90deg, #eef2f7 1px, transparent 1px),
+                #fff;
+            background-size:24px 24px;
+        }
+        .scratch-export-question {
+            position:absolute;
+            inset:0;
+            z-index:1;
+            padding:20px;
+            overflow:hidden;
+            background:rgba(255,255,255,.84);
+        }
+        .scratch-export-ink {
+            position:absolute;
+            inset:0;
+            z-index:2;
+            width:100%;
+            height:100%;
+            object-fit:fill;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes celebrate { 0%,100% { transform: rotate(-5deg) scale(1); } 50% { transform: rotate(5deg) scale(1.08); } }
+        @media print {
+            body { background:#fff !important; padding:0 !important; }
+            #app { box-shadow:none !important; max-width:none !important; }
+            button { display:none !important; }
+            .graph-card svg { min-width:0 !important; }
+        }
+    
+        /* === Firebase Phase 1: Google Sign-In + Live Presence === */
+        .fb-gate{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(15,23,42,.74);backdrop-filter:blur(8px)}
+        .fb-gate.hidden{display:none}.fb-card{width:min(480px,100%);background:#fff;border:1px solid #e2e8f0;border-radius:24px;padding:28px;box-shadow:0 28px 80px rgba(15,23,42,.3)}
+        .fb-google{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:12px 16px;border:1px solid #cbd5e1;border-radius:14px;background:#fff;color:#0f172a;font-weight:800;cursor:pointer}.fb-google:hover{background:#f8fafc}.fb-google:disabled{opacity:.55;cursor:not-allowed}
+        .fb-error{display:none;margin-top:12px;padding:10px 12px;border:1px solid #fecdd3;border-radius:12px;background:#fff1f2;color:#be123c;font-size:.8rem;line-height:1.5}.fb-error.show{display:block}
+        .fb-userbar{position:sticky;top:0;z-index:50;width:100%;max-width:80rem;display:none;align-items:center;justify-content:space-between;gap:10px;margin:0 auto 10px;padding:8px 12px;border:1px solid #cbd5e1;border-radius:14px;background:rgba(255,255,255,.97);box-shadow:0 4px 16px rgba(15,23,42,.06);backdrop-filter:blur(8px)}
+        .fb-userbar.show{display:flex}.fb-meta{min-width:0;display:flex;align-items:center;gap:10px}.fb-avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;background:#e2e8f0;border:1px solid #cbd5e1}.fb-dot{width:10px;height:10px;border-radius:50%;display:inline-block;background:#94a3b8}.fb-dot.online{background:#10b981}.fb-dot.idle{background:#f59e0b}.fb-dot.offline{background:#94a3b8}
+        .fb-signout{border:1px solid #cbd5e1;border-radius:10px;padding:7px 10px;background:#fff;color:#475569;font-size:.76rem;font-weight:800;cursor:pointer}.fb-signout:hover{background:#f8fafc}
+        @media(max-width:640px){.fb-userbar{border-radius:0;margin-bottom:8px}.fb-email{display:none}}
+
+
+        /* === Inline Teacher Live Monitor === */
+        .fb-live-btn{
+            display:none;
+            border:1px solid #a7f3d0;
+            border-radius:10px;
+            padding:7px 10px;
+            background:#ecfdf5;
+            color:#047857;
+            font-size:.76rem;
+            font-weight:900;
+            cursor:pointer;
+            white-space:nowrap;
+        }
+        .fb-live-btn.show{display:inline-flex;align-items:center;gap:6px}
+        .fb-monitor-backdrop{
+            display:none;
+            position:fixed;
+            inset:0;
+            z-index:9997;
+            background:rgba(15,23,42,.38);
+            backdrop-filter:blur(2px);
+        }
+        .fb-monitor-backdrop.show{display:block}
+        .fb-monitor{
+            position:fixed;
+            top:0;
+            right:0;
+            z-index:9998;
+            width:min(430px,94vw);
+            height:100dvh;
+            transform:translateX(104%);
+            transition:transform .22s ease;
+            background:#f8fafc;
+            border-left:1px solid #cbd5e1;
+            box-shadow:-18px 0 50px rgba(15,23,42,.18);
+            display:flex;
+            flex-direction:column;
+        }
+        .fb-monitor.show{transform:translateX(0)}
+        .fb-monitor-head{
+            padding:16px;
+            background:#312e81;
+            color:white;
+            display:flex;
+            align-items:flex-start;
+            justify-content:space-between;
+            gap:10px;
+        }
+        .fb-monitor-close{
+            width:34px;height:34px;border:0;border-radius:10px;
+            background:rgba(255,255,255,.15);color:#fff;font-size:18px;
+            cursor:pointer;font-weight:900;
+        }
+        .fb-monitor-summary{
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:8px;
+            padding:12px;
+            border-bottom:1px solid #e2e8f0;
+            background:#fff;
+        }
+        .fb-monitor-stat{
+            border:1px solid #e2e8f0;
+            border-radius:12px;
+            padding:9px 8px;
+            text-align:center;
+        }
+        .fb-monitor-stat b{display:block;font-size:20px;color:#0f172a}
+        .fb-monitor-stat span{font-size:10px;color:#64748b}
+        .fb-monitor-list{
+            flex:1;
+            overflow:auto;
+            padding:10px;
+        }
+        .fb-student-row{
+            background:#fff;
+            border:1px solid #e2e8f0;
+            border-radius:14px;
+            padding:11px 12px;
+            margin-bottom:8px;
+        }
+        .fb-student-row.online{border-color:#a7f3d0;background:#f0fdf4}
+        .fb-student-row.idle{border-color:#fde68a;background:#fffbeb}
+        .fb-student-row.offline{opacity:.66}
+        .fb-student-name{font-size:14px;font-weight:900;color:#0f172a}
+        .fb-student-meta{font-size:11px;color:#64748b;margin-top:2px}
+        .fb-student-q{font-size:17px;font-weight:900;color:#4338ca}
+        .fb-status-pill{
+            border-radius:999px;
+            padding:3px 7px;
+            font-size:10px;
+            font-weight:900;
+            white-space:nowrap;
+        }
+        .fb-status-pill.online{background:#d1fae5;color:#047857}
+        .fb-status-pill.idle{background:#fef3c7;color:#92400e}
+        .fb-status-pill.offline{background:#e2e8f0;color:#475569}
+        .fb-monitor-empty{
+            padding:30px 14px;
+            text-align:center;
+            color:#64748b;
+            font-size:13px;
+            line-height:1.6;
+        }
+
+
+        #scratchpad-canvas {
+            -webkit-user-select:none;
+            user-select:none;
+            -webkit-touch-callout:none;
+            -webkit-tap-highlight-color:transparent;
+        }
+
+
+        /* === Stylus v3: suppress iPad/Safari Copy / Select / Look Up only on scratchpad === */
+        #scratchpad-canvas,
+        .scratch-viewport,
+        .scratch-sheet,
+        .scratch-scroll {
+            -webkit-user-select: none !important;
+            user-select: none !important;
+            -webkit-touch-callout: none !important;
+            -webkit-tap-highlight-color: transparent !important;
+            -webkit-user-drag: none !important;
+        }
+
+        #scratchpad-canvas {
+            touch-action: none !important;
+        }
+
+
+        /* === Fabric Scratchpad v1.9 === */
+        .scratch-sheet > .canvas-container {
+            position:absolute !important;
+            inset:0 !important;
+            width:100% !important;
+            height:100% !important;
+            z-index:2 !important;
+            margin:0 !important;
+            padding:0 !important;
+            touch-action:none !important;
+            -webkit-user-select:none !important;
+            user-select:none !important;
+            -webkit-touch-callout:none !important;
+        }
+
+        .scratch-sheet > .canvas-container canvas,
+        .scratch-sheet .upper-canvas,
+        .scratch-sheet .lower-canvas {
+            width:100% !important;
+            height:100% !important;
+            touch-action:none !important;
+            -webkit-user-select:none !important;
+            user-select:none !important;
+            -webkit-touch-callout:none !important;
+            -webkit-tap-highlight-color:transparent !important;
+        }
+
+
+        /* === v1.11 Fabric layer-order fix ===
+           Fabric's .upper-canvas MUST be the interactive surface.
+           The original #scratchpad-canvas becomes Fabric's lower canvas. */
+        .scratch-sheet .canvas-container #scratchpad-canvas.lower-canvas {
+            z-index:1 !important;
+            pointer-events:none !important;
+        }
+        .scratch-sheet .canvas-container .upper-canvas {
+            z-index:3 !important;
+            pointer-events:auto !important;
+            touch-action:none !important;
+        }
+
+
+        /* === v1.13 PDF answer stamp === */
+        .scratch-export-stamp {
+            position:absolute;
+            top:18px;
+            right:18px;
+            z-index:6;
+            width:136px;
+            min-height:82px;
+            padding:9px 10px 8px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            gap:2px;
+            border:4px double currentColor;
+            border-radius:18px;
+            background:rgba(255,255,255,.88);
+            box-shadow:0 2px 0 rgba(15,23,42,.06);
+            transform:rotate(-6deg);
+            text-align:center;
+            line-height:1.05;
+            letter-spacing:.02em;
+        }
+        .scratch-export-stamp .stamp-symbol {
+            font-family:Arial,sans-serif;
+            font-size:27px;
+            font-weight:900;
+            line-height:1;
+        }
+        .scratch-export-stamp .stamp-th {
+            font-size:18px;
+            font-weight:900;
+        }
+        .scratch-export-stamp .stamp-en {
+            font-family:Arial,sans-serif;
+            font-size:11px;
+            font-weight:900;
+            letter-spacing:.08em;
+        }
+        .scratch-export-stamp .stamp-meta {
+            margin-top:3px;
+            padding-top:4px;
+            width:100%;
+            border-top:1px solid currentColor;
+            font-family:Arial,sans-serif;
+            font-size:9px;
+            font-weight:800;
+            opacity:.8;
+        }
+        .scratch-export-stamp.correct {
+            color:#047857;
+            background:rgba(236,253,245,.92);
+        }
+        .scratch-export-stamp.incorrect {
+            color:#b91c1c;
+            background:rgba(254,242,242,.92);
+        }
+        .scratch-export-stamp.giveup {
+            color:#b45309;
+            background:rgba(255,251,235,.94);
+        }
+        .scratch-export-stamp.skipped,
+        .scratch-export-stamp.unchecked {
+            color:#64748b;
+            background:rgba(248,250,252,.94);
+        }
+
+</style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+</head>
+<body class="text-gray-800 min-h-screen flex flex-col items-center py-6 px-4">
+
+
+
+<div id="fb-gate" class="fb-gate">
+  <div class="fb-card">
+    <div id="fb-gate-kicker" style="font-size:12px;font-weight:900;color:#6366f1;letter-spacing:.15em;text-transform:uppercase">
+      Template v1.17 · Firebase + Scratchpad
+    </div>
+    <h2 id="fb-gate-title" style="font-size:26px;font-weight:900;color:#0f172a;margin:8px 0 4px">
+      เข้าสู่ Quiz / Enter Quiz
+    </h2>
+    <p id="fb-gate-copy" style="color:#64748b;font-size:14px;line-height:1.65;margin:0 0 18px">
+      เข้าสู่ระบบด้วย Google เพื่อบันทึกความคืบหน้า Quiz และแสดงสถานะออนไลน์<br>
+      Sign in with Google to restore quiz progress and show live presence.
+    </p>
+
+    <button id="fb-signin" class="fb-google">
+      <span style="font-size:20px;font-weight:900">G</span>
+      <span>เข้าสู่ระบบด้วย Google / Sign in with Google</span>
+    </button>
+
+    <div id="fb-auth-loading" style="display:none;margin-top:12px;padding:10px 12px;border-radius:12px;background:#eef2ff;color:#4338ca;font-size:12px;font-weight:800;line-height:1.55">
+      ⏳ กำลังโหลดความคืบหน้าจาก Cloud ก่อนเปิด Quiz...<br>
+      Loading cloud progress before the quiz is unlocked...
+    </div>
+
+    <div id="fb-error" class="fb-error"></div>
+
+    <div style="font-size:11px;color:#94a3b8;line-height:1.55;margin-top:14px">
+      ✍️ เวอร์ชันนี้บันทึกสถานะ Quiz ขึ้น Firebase แต่ยังไม่อัปโหลดรอยปากกาไป Cloud เพื่อไม่ให้กระทบความลื่นของ Apple Pencil<br>
+      Quiz progress is cloud-saved. Handwriting remains local to this browser for now and is included when exporting PDF.
+    </div>
+  </div>
+</div>
+
+<div id="fb-userbar" class="fb-userbar">
+  <div class="fb-meta">
+    <img id="fb-photo" class="fb-avatar" alt="Profile">
+    <div style="min-width:0">
+      <div style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:900;color:#0f172a">
+        <span id="fb-dot" class="fb-dot"></span>
+        <span id="fb-name">...</span>
+        <span id="fb-state" style="font-size:11px;color:#64748b">Connecting...</span>
+      </div>
+      <div id="fb-email" class="fb-email" style="font-size:11px;color:#94a3b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
+    <button id="fb-live-btn" class="fb-live-btn show" title="Live presence">
+      📡 <span id="fb-live-count">0</span> ออนไลน์ / online
+    </button>
+    <span id="fb-cloud-status" style="font-size:11px;font-weight:800;color:#64748b;white-space:nowrap;">
+      ☁️ กำลังเชื่อมต่อ / Connecting
+    </span>
+    <button id="fb-signout" class="fb-signout">ออกจากระบบ / Sign out</button>
+  </div>
+</div>
+
+<div id="fb-monitor-backdrop" class="fb-monitor-backdrop"></div>
+<aside id="fb-monitor" class="fb-monitor" aria-hidden="true">
+  <div class="fb-monitor-head">
+    <div>
+      <div style="font-size:11px;font-weight:900;letter-spacing:.13em;color:#c7d2fe">
+        LIVE PRESENCE · SAME QUIZ
+      </div>
+      <div style="font-size:20px;font-weight:900;margin-top:2px">📡 คนออนไลน์ / Live Monitor</div>
+      <div style="font-size:11px;color:#c7d2fe;margin-top:2px">
+        ผู้ที่เข้าสู่ระบบใน Quiz เดียวกัน / Signed-in users in this quiz
+      </div>
+    </div>
+    <button id="fb-monitor-close" class="fb-monitor-close" aria-label="Close">×</button>
+  </div>
+
+  <div class="fb-monitor-summary">
+    <div class="fb-monitor-stat"><b id="fb-mon-online">0</b><span>🟢 Online</span></div>
+    <div class="fb-monitor-stat"><b id="fb-mon-idle">0</b><span>🟡 Idle</span></div>
+    <div class="fb-monitor-stat"><b id="fb-mon-total">0</b><span>👥 Visible</span></div>
+  </div>
+
+  <div id="fb-monitor-list" class="fb-monitor-list">
+    <div class="fb-monitor-empty">
+      กำลังรอข้อมูลนักเรียน...<br>Waiting for student presence...
+    </div>
+  </div>
+</aside>
+
+<div id="app" class="w-full max-w-5xl bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col min-h-[80vh]">
+    <div style="padding:32px;text-align:center;font-family:Sarabun,Arial,sans-serif;color:#4f46e5;">
+        กำลังโหลดแบบทดสอบ... / Loading Mastery Quiz...
+    </div>
+</div>
+/* ============================================================
+   SHARED VISUALS / ตารางและกราฟใช้ร่วมกันระหว่าง TH + EN
+   Reaction Rate Foundations · Y12 Chemistry
+   ============================================================ */
+
+const RATE_GRAPH = `
+<div style="max-width:720px;margin:14px auto;">
+<svg viewBox="0 0 720 430"
+     style="width:100%;height:auto;border:1px solid #ddd;border-radius:12px;background:white;"
+     role="img"
+     aria-label="Product gas volume against time with tangent at 45 seconds">
+    <!-- axes -->
+    <line x1="85" y1="350" x2="655" y2="350" stroke="black" stroke-width="2"/>
+    <line x1="85" y1="350" x2="85" y2="55" stroke="black" stroke-width="2"/>
+
+    <!-- x ticks -->
+    <g font-size="13" text-anchor="middle">
+      <text x="85" y="373">0</text>
+      <text x="170" y="373">15</text>
+      <text x="255" y="373">30</text>
+      <text x="340" y="373">45</text>
+      <text x="425" y="373">60</text>
+      <text x="510" y="373">75</text>
+      <text x="595" y="373">90</text>
+    </g>
+
+    <!-- y ticks -->
+    <g font-size="13" text-anchor="end">
+      <text x="75" y="354">0</text>
+      <text x="75" y="299">10</text>
+      <text x="75" y="244">20</text>
+      <text x="75" y="189">30</text>
+      <text x="75" y="134">40</text>
+      <text x="75" y="79">50</text>
+    </g>
+
+    <!-- grid guides -->
+    <g stroke="#ddd" stroke-width="1">
+      <line x1="85" y1="295" x2="625" y2="295"/>
+      <line x1="85" y1="240" x2="625" y2="240"/>
+      <line x1="85" y1="185" x2="625" y2="185"/>
+      <line x1="85" y1="130" x2="625" y2="130"/>
+      <line x1="85" y1="75" x2="625" y2="75"/>
+    </g>
+
+    <!-- reaction curve from data:
+         0,0 ; 15,18 ; 30,30 ; 45,39 ; 60,45 ; 75,48 ; 90,50 -->
+    <path d="M85 350
+             C118 314, 145 270, 170 251
+             C195 225, 226 198, 255 185
+             C285 167, 314 145, 340 136
+             C370 123, 398 108, 425 103
+             C456 94, 481 87, 510 86
+             C543 79, 568 76, 595 75"
+          fill="none" stroke="black" stroke-width="3"/>
+
+    <!-- data points -->
+    <g fill="black">
+      <circle cx="85" cy="350" r="4"/>
+      <circle cx="170" cy="251" r="4"/>
+      <circle cx="255" cy="185" r="4"/>
+      <circle cx="340" cy="136" r="5"/>
+      <circle cx="425" cy="103" r="4"/>
+      <circle cx="510" cy="86" r="4"/>
+      <circle cx="595" cy="75" r="4"/>
+    </g>
+
+    <!-- tangent at t = 45 s
+         P=(25 s,31 cm3), Q=(65 s,47 cm3), slope=0.40 cm3/s -->
+    <line x1="227" y1="179.5" x2="453" y2="91.5"
+          stroke="#555" stroke-width="2.5" stroke-dasharray="9 6"/>
+    <circle cx="227" cy="179.5" r="5" fill="#555"/>
+    <circle cx="453" cy="91.5" r="5" fill="#555"/>
+    <text x="205" y="170" font-size="13">P (25, 31)</text>
+    <text x="462" y="88" font-size="13">Q (65, 47)</text>
+    <text x="350" y="165" font-size="13">tangent at 45 s</text>
+
+    <!-- axis labels -->
+    <text x="370" y="410" text-anchor="middle" font-size="17"
+          style="font-family:K2D,Arial,sans-serif;">Time / เวลา (s)</text>
+    <text x="25" y="210" text-anchor="middle" font-size="16"
+          transform="rotate(-90 25 210)"
+          style="font-family:K2D,Arial,sans-serif;">Product gas volume / ปริมาตรแก๊ส (cm³)</text>
+</svg>
+
+<div style="overflow-x:auto;margin-top:10px;">
+<table style="width:100%;border-collapse:collapse;text-align:center;font-size:0.95em;">
+  <tr>
+    <th style="border:1px solid #aaa;padding:6px;">Time / s</th>
+    <td style="border:1px solid #aaa;padding:6px;">0</td>
+    <td style="border:1px solid #aaa;padding:6px;">15</td>
+    <td style="border:1px solid #aaa;padding:6px;">30</td>
+    <td style="border:1px solid #aaa;padding:6px;">45</td>
+    <td style="border:1px solid #aaa;padding:6px;">60</td>
+    <td style="border:1px solid #aaa;padding:6px;">75</td>
+    <td style="border:1px solid #aaa;padding:6px;">90</td>
+  </tr>
+  <tr>
+    <th style="border:1px solid #aaa;padding:6px;">Gas volume / cm³</th>
+    <td style="border:1px solid #aaa;padding:6px;">0</td>
+    <td style="border:1px solid #aaa;padding:6px;">18</td>
+    <td style="border:1px solid #aaa;padding:6px;">30</td>
+    <td style="border:1px solid #aaa;padding:6px;">39</td>
+    <td style="border:1px solid #aaa;padding:6px;">45</td>
+    <td style="border:1px solid #aaa;padding:6px;">48</td>
+    <td style="border:1px solid #aaa;padding:6px;">50</td>
+  </tr>
+</table>
+</div>
+</div>`;
+
+const FACTOR_TABLE = `
+<div style="overflow-x:auto;margin:12px 0;">
+<table style="width:100%;border-collapse:collapse;text-align:center;">
+  <thead>
+    <tr>
+      <th style="border:1px solid #999;padding:8px;">Experiment</th>
+      <th style="border:1px solid #999;padding:8px;">CaCO₃ form</th>
+      <th style="border:1px solid #999;padding:8px;">[HCl] / M</th>
+      <th style="border:1px solid #999;padding:8px;">Temperature / °C</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="border:1px solid #999;padding:8px;">W</td>
+      <td style="border:1px solid #999;padding:8px;">large chips</td>
+      <td style="border:1px solid #999;padding:8px;">0.60</td>
+      <td style="border:1px solid #999;padding:8px;">20</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #999;padding:8px;">X</td>
+      <td style="border:1px solid #999;padding:8px;">powder</td>
+      <td style="border:1px solid #999;padding:8px;">0.60</td>
+      <td style="border:1px solid #999;padding:8px;">20</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #999;padding:8px;">Y</td>
+      <td style="border:1px solid #999;padding:8px;">large chips</td>
+      <td style="border:1px solid #999;padding:8px;">1.20</td>
+      <td style="border:1px solid #999;padding:8px;">20</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #999;padding:8px;">Z</td>
+      <td style="border:1px solid #999;padding:8px;">large chips</td>
+      <td style="border:1px solid #999;padding:8px;">0.60</td>
+      <td style="border:1px solid #999;padding:8px;">35</td>
+    </tr>
+  </tbody>
+</table>
+</div>`;
+
+const CONCENTRATION_GRAPH = `
+<div style="max-width:660px;margin:14px auto;">
+<svg viewBox="0 0 660 390"
+     style="width:100%;height:auto;border:1px solid #ddd;border-radius:12px;background:white;"
+     role="img"
+     aria-label="Comparison of gas-volume curves for experiments W and Y">
+  <line x1="80" y1="320" x2="600" y2="320" stroke="black" stroke-width="2"/>
+  <line x1="80" y1="320" x2="80" y2="55" stroke="black" stroke-width="2"/>
+
+  <!-- W lower concentration, slower -->
+  <path d="M80 320 C155 275, 210 205, 300 145 C390 105, 475 92, 575 90"
+        fill="none" stroke="black" stroke-width="3"/>
+  <!-- Y higher concentration, faster, same plateau -->
+  <path d="M80 320 C120 215, 180 135, 270 103 C350 91, 455 90, 575 90"
+        fill="none" stroke="black" stroke-width="3" stroke-dasharray="9 6"/>
+
+  <text x="480" y="125" font-size="15">W: 0.60 M HCl</text>
+  <text x="335" y="82" font-size="15">Y: 1.20 M HCl</text>
+
+  <line x1="80" y1="90" x2="590" y2="90" stroke="#bbb" stroke-width="1" stroke-dasharray="4 4"/>
+  <text x="590" y="80" text-anchor="end" font-size="13">same final gas volume</text>
+
+  <text x="340" y="365" text-anchor="middle" font-size="17"
+        style="font-family:K2D,Arial,sans-serif;">Time / เวลา</text>
+  <text x="23" y="190" text-anchor="middle" font-size="15"
+        transform="rotate(-90 23 190)"
+        style="font-family:K2D,Arial,sans-serif;">Gas volume / ปริมาตรแก๊ส</text>
+</svg>
+</div>`;
+
+
+/* ============================================================
+   MASTER QUIZ TEMPLATE · EDIT ZONE
+   ============================================================ */
+window.QUIZ_TEMPLATE = {
+    quizId: "chem-y12-reaction-rate-foundations-review-v1",
+
+    title: "Reaction Rate Foundations / พื้นฐานอัตราการเกิดปฏิกิริยา",
+
+    subtitle: "Y12 Chemistry Review · Monitoring · Graphs · Average & Instantaneous Rate · Fair Tests · Collision Theory",
+
+    completionTitle: "Reaction Rate Foundations Review Complete! / ทบทวนพื้นฐานอัตราการเกิดปฏิกิริยาครบแล้ว!",
+
+    questions: [
+
+    // =========================================================
+    // Q1 — Meaning of reaction rate
+    // =========================================================
+    {
+        "id": "q1",
+
+        "questionTH": `
+            <div>
+                ข้อใดให้นิยามของ <b>อัตราการเกิดปฏิกิริยาเคมี</b> ได้ถูกต้องที่สุด?
+            </div>
+        `,
+
+        "questionEN": `
+            <div>
+                Which statement gives the best definition of the <b>rate of a chemical reaction</b>?
+            </div>
+        `,
+
+        "hints": [
+            {
+                "th": "คำว่า rate ต้องเกี่ยวข้องกับทั้ง “การเปลี่ยนแปลง” และ “เวลา”",
+                "en": "A rate must involve both a change and time."
+            },
+            {
+                "th": "สิ่งที่ติดตามอาจเป็นสารตั้งต้นที่ลดลง หรือผลิตภัณฑ์ที่เพิ่มขึ้น",
+                "en": "The measured quantity may be a reactant decreasing or a product increasing."
+            },
+            {
+                "th": "คิดในรูป \\(\\text{rate}=\\frac{\\text{change in measured quantity}}{\\text{time}}\\)",
+                "en": "Think in the form \\(\\text{rate}=\\frac{\\text{change in measured quantity}}{\\text{time}}\\)."
+            }
+        ],
+
+        "solutionTH": `
+            <div>
+                อัตราการเกิดปฏิกิริยาเป็นการบอกว่า
+                <b>ปริมาณของสารตั้งต้นลดลง หรือปริมาณผลิตภัณฑ์เพิ่มขึ้นเร็วเพียงใดต่อหน่วยเวลา</b>
+            </div>
+            <div class="mt-2">
+                โดยทั่วไปเขียนแนวคิดได้ว่า
+                \\[
+                rate=\\frac{\\text{การเปลี่ยนแปลงของปริมาณที่วัด}}{\\text{ช่วงเวลา}}
+                \\]
+            </div>
+            <div class="mt-2 font-bold text-emerald-700">
+                ตอบ: การเปลี่ยนแปลงปริมาณของสารตั้งต้นหรือผลิตภัณฑ์ต่อหน่วยเวลา
+            </div>
+        `,
+
+        "solutionEN": `
+            <div>
+                Reaction rate describes <b>how quickly the amount of a reactant decreases
+                or the amount of a product increases per unit time</b>.
+            </div>
+            <div class="mt-2">
+                In general,
+                \\[
+                rate=\\frac{\\text{change in a measured quantity}}{\\text{time interval}}.
+                \\]
+            </div>
+            <div class="mt-2 font-bold text-emerald-700">
+                Answer: change in the amount of a reactant or product per unit time.
+            </div>
+        `,
+
+        "options": [
+            {
+                "text": "Change in the amount of a reactant consumed or product formed per unit time / การเปลี่ยนแปลงปริมาณสารตั้งต้นที่ถูกใช้ไปหรือผลิตภัณฑ์ที่เกิดขึ้นต่อหน่วยเวลา",
+                "isCorrect": true
+            },
+            {
+                "text": "The total amount of product present at the end of a reaction / ปริมาณผลิตภัณฑ์ทั้งหมดเมื่อปฏิกิริยาสิ้นสุด",
+                "isCorrect": false
+            },
+            {
+                "text": "The time required for all reactants to disappear, regardless of amount / เวลาที่ใช้จนสารตั้งต้นหมดโดยไม่คำนึงถึงปริมาณ",
+                "isCorrect": false
+            },
+            {
+                "text": "The activation energy of the reaction / พลังงานก่อกัมมันต์ของปฏิกิริยา",
+                "isCorrect": false
+            },
+            {
+                "text": "The concentration of a reactant at one instant only / ความเข้มข้นของสารตั้งต้น ณ เวลาใดเวลาหนึ่งเท่านั้น",
+                "isCorrect": false
+            },
+            {
+                "text": "The number of moles written in the balanced equation / จำนวนโมลที่เขียนในสมการเคมีที่ดุลแล้ว",
+                "isCorrect": false
+            },
+            {
+                "text": "The temperature at which a reaction starts / อุณหภูมิที่ปฏิกิริยาเริ่มเกิด",
+                "isCorrect": false
+            }
+        ]
+    },
+
+    // =========================================================
+    // Q2 — Choosing a quantity to monitor
+    // =========================================================
+    {
+        "id": "q2",
+
+        "questionTH": `
+            <div>
+                นักเรียนต้องการติดตามความคืบหน้าของปฏิกิริยา
+                \\[
+                Mg(s)+2HCl(aq)\\rightarrow MgCl_2(aq)+H_2(g)
+                \\]
+                อย่างต่อเนื่อง
+            </div>
+            <div class="mt-3">
+                วิธีใดเหมาะสมที่สุดสำหรับติดตามปฏิกิริยานี้?
+            </div>
+        `,
+
+        "questionEN": `
+            <div>
+                A student wants to continuously monitor the progress of
+                \\[
+                Mg(s)+2HCl(aq)\\rightarrow MgCl_2(aq)+H_2(g).
+                \\]
+            </div>
+            <div class="mt-3">
+                Which method is most suitable for monitoring this reaction?
+            </div>
+        `,
+
+        "hints": [
+            {
+                "th": "ดูว่าสารใดในสมการมีปริมาณเพิ่มขึ้นอย่างต่อเนื่องและวัดได้ง่าย",
+                "en": "Identify a species whose amount increases continuously and can be measured easily."
+            },
+            {
+                "th": "ปฏิกิริยานี้มีผลิตภัณฑ์สถานะแก๊ส",
+                "en": "This reaction produces a gaseous product."
+            },
+            {
+                "th": "ปริมาตรของ \\(H_2\\) สามารถวัดเป็นฟังก์ชันของเวลาได้",
+                "en": "The volume of \\(H_2\\) can be measured as a function of time."
+            }
+        ],
+
+        "solutionTH": `
+            <div>
+                ปฏิกิริยานี้สร้าง \\(H_2(g)\\) ดังนั้นปริมาตรแก๊สจะเพิ่มขึ้นเมื่อปฏิกิริยาดำเนินไป
+                และสามารถวัดต่อเนื่องด้วย gas syringe
+            </div>
+            <div class="mt-2 font-bold text-emerald-700">
+                ตอบ: วัดปริมาตร \\(H_2\\) ที่เกิดขึ้นตามเวลาด้วย gas syringe
+            </div>
+        `,
+
+        "solutionEN": `
+            <div>
+                The reaction produces \\(H_2(g)\\), so the gas volume increases as the reaction proceeds.
+                A gas syringe allows this quantity to be measured continuously with time.
+            </div>
+            <div class="mt-2 font-bold text-emerald-700">
+                Answer: measure the volume of \\(H_2\\) produced with time using a gas syringe.
+            </div>
+        `,
+
+        "options": [
+            {
+                "text": "Measure the volume of \\(H_2\\) produced with time using a gas syringe / วัดปริมาตร \\(H_2\\) ที่เกิดขึ้นตามเวลาด้วย gas syringe",
+                "isCorrect": true
+            },
+            {
+                "text": "Measure the room temperature once before the reaction / วัดอุณหภูมิห้องเพียงครั้งเดียวก่อนเริ่มปฏิกิริยา",
+                "isCorrect": false
+            },
+            {
+                "text": "Measure the initial mass of Mg only / วัดมวลเริ่มต้นของ Mg เพียงครั้งเดียว",
+                "isCorrect": false
+            },
+            {
+                "text": "Measure the volume of HCl solution only before mixing / วัดปริมาตรสารละลาย HCl เฉพาะก่อนผสม",
+                "isCorrect": false
+            },
+            {
+                "text": "Record the balanced-equation coefficients / บันทึกสัมประสิทธิ์ในสมการที่ดุลแล้ว",
+                "isCorrect": false
+            },
+            {
+                "text": "Measure the colour of Mg metal after the reaction only / วัดสีของ Mg หลังปฏิกิริยาสิ้นสุดเท่านั้น",
+                "isCorrect": false
+            },
+            {
+                "text": "Measure the atmospheric pressure once and keep it as the reaction rate / วัดความดันบรรยากาศครั้งเดียวแล้วใช้เป็นอัตราปฏิกิริยา",
+                "isCorrect": false
+            }
+        ]
+    },
+
+    // =========================================================
+    // Q3 — Unsuitable monitoring method
+    // =========================================================
+    {
+        "id": "q3",
+
+        "questionTH": `
+            <div>
+                นักเรียนต้องการติดตามความคืบหน้าของปฏิกิริยาเคมี
+                โดยเลือกปริมาณที่เปลี่ยนแปลงตามเวลา
+            </div>
+            <div class="mt-3">
+                ข้อใดเป็น <b>วิธีติดตามปฏิกิริยาที่ไม่เหมาะสม พร้อมเหตุผลที่ถูกต้อง</b>?
+            </div>
+        `,
+
+        "questionEN": `
+            <div>
+                A student wants to monitor reaction progress by measuring a quantity that changes with time.
+            </div>
+            <div class="mt-3">
+                Which option gives an <b>unsuitable monitoring method together with the correct reason</b>?
+            </div>
+        `,
+
+        "hints": [
+            {
+                "th": "ตรวจแต่ละตัวเลือกว่าปริมาณที่เสนอ “เปลี่ยนจริง” เมื่อปฏิกิริยาดำเนินไปหรือไม่",
+                "en": "Check whether the proposed measured quantity actually changes as the reaction proceeds."
+            },
+            {
+                "th": "ถ้าจะใช้ gas syringe ต้องมีแก๊สเกิดขึ้นจริง",
+                "en": "A gas syringe is useful only if a gas is actually produced."
+            },
+            {
+                "th": "ตรวจผลิตภัณฑ์ของ \\(HCl+NaOH\\rightarrow NaCl+H_2O\\)",
+                "en": "Inspect the products of \\(HCl+NaOH\\rightarrow NaCl+H_2O\\)."
+            }
+        ],
+
+        "solutionTH": `
+            <div>
+                สำหรับ
+                \\[
+                HCl(aq)+NaOH(aq)\\rightarrow NaCl(aq)+H_2O(l)
+                \\]
+                ไม่มีผลิตภัณฑ์เป็นแก๊ส ดังนั้น gas syringe จะไม่ให้ข้อมูลที่เปลี่ยนตาม reaction progress
+            </div>
+            <div class="mt-2">
+                ส่วนวิธีอื่น เช่น ปริมาตรแก๊ส การสูญเสียมวล ความขุ่น ความเข้มสี pH
+                หรือความดันของแก๊ส อาจใช้ได้หากปริมาณนั้นเปลี่ยนอย่างสัมพันธ์กับปฏิกิริยา
+            </div>
+            <div class="mt-2 font-bold text-emerald-700">
+                ตอบ: ใช้ gas syringe กับปฏิกิริยา HCl + NaOH เพราะไม่มีแก๊สเกิดขึ้น
+            </div>
+        `,
+
+        "solutionEN": `
+            <div>
+                For
+                \\[
+                HCl(aq)+NaOH(aq)\\rightarrow NaCl(aq)+H_2O(l),
+                \\]
+                no gaseous product is formed. A gas syringe would therefore not provide a quantity
+                that changes with reaction progress.
+            </div>
+            <div class="mt-2">
+                Other methods such as gas volume, mass loss, turbidity, colour intensity, pH,
+                or gas pressure may be suitable when that observable changes systematically during the reaction.
+            </div>
+            <div class="mt-2 font-bold text-emerald-700">
+                Answer: using a gas syringe for HCl + NaOH is unsuitable because no gas is produced.
+            </div>
+        `,
+
+        "options": [
+            {
+                "text": "\\(Mg+2HCl\\rightarrow MgCl_2+H_2\\): measure \\(H_2\\) volume because gas volume increases as reaction proceeds / วัดปริมาตร \\(H_2\\) เพราะปริมาตรแก๊สเพิ่มขึ้นตามปฏิกิริยา",
+                "isCorrect": false
+            },
+            {
+                "text": "\\(CaCO_3+2HCl\\rightarrow CaCl_2+CO_2+H_2O\\): measure mass loss because escaping \\(CO_2\\) decreases the measured mass / วัดมวลที่ลดลงเพราะ \\(CO_2\\) หลุดออกจากระบบ",
+                "isCorrect": false
+            },
+            {
+                "text": "\\(Na_2S_2O_3+2HCl\\rightarrow 2NaCl+SO_2+S+H_2O\\): time the disappearance of a cross because sulfur makes the mixture cloudy / จับเวลาจนมองกากบาทไม่เห็นเพราะกำมะถันทำให้สารขุ่น",
+                "isCorrect": false
+            },
+            {
+                "text": "A coloured reactant fades during reaction: use a colorimeter because colour intensity changes with concentration / สารมีสีจางลง ใช้ colorimeter เพราะความเข้มสีเปลี่ยนตามความเข้มข้น",
+                "isCorrect": false
+            },
+            {
+                "text": "\\(HCl+NaOH\\rightarrow NaCl+H_2O\\): use a gas syringe because gas should collect as product forms / ใช้ gas syringe เพราะควรมีแก๊สสะสมเมื่อผลิตภัณฑ์เกิดขึ้น",
+                "isCorrect": true
+            },
+            {
+                "text": "A reaction causes a large pH change: monitor pH with time because pH changes as composition changes / ปฏิกิริยาที่ pH เปลี่ยนมาก สามารถติดตาม pH ตามเวลาได้",
+                "isCorrect": false
+            },
+            {
+                "text": "A gas-forming reaction in a sealed rigid vessel at constant temperature: monitor pressure because pressure changes with the amount of gas / ปฏิกิริยาที่เกิดแก๊สในภาชนะปิดปริมาตรคงที่ สามารถติดตามความดันได้",
+                "isCorrect": false
+            }
+        ]
+    },
+
+    // =========================================================
+    // Q4 — Reading the language of a rate graph
+    // =========================================================
+    {
+        "id": "q4",
+
+        "questionTH": `
+            <div>
+                กราฟต่อไปนี้แสดงปริมาตรแก๊สผลิตภัณฑ์ที่เกิดขึ้นตามเวลา
+            </div>
+            ${RATE_GRAPH}
+            <div class="mt-3">
+                ข้อใดอธิบายความหมายของ <b>ความชัน</b> และ <b>ช่วงที่กราฟราบ</b> ได้ถูกต้อง?
+            </div>
+        `,
+
+        "questionEN": `
+            <div>
+                The graph below shows the volume of gaseous product formed with time.
+            </div>
+            ${RATE_GRAPH}
+            <div class="mt-3">
+                Which statement correctly interprets the <b>slope</b> and the <b>plateau</b> of the graph?
+            </div>
+        `,
+
+        "hints": [
+            {
+                "th": "Rate บนกราฟปริมาตร-เวลาเกี่ยวข้องกับความชัน ไม่ใช่ความสูงของกราฟอย่างเดียว",
+                "en": "On a volume-time graph, rate is related to slope, not simply to the height of the graph."
+            },
+            {
+                "th": "กราฟที่ชันกว่าหมายถึงปริมาตรเปลี่ยนมากกว่าในเวลาเท่ากัน",
+                "en": "A steeper graph means a larger change in volume during the same time."
+            },
+            {
+                "th": "เมื่อกราฟเป็นแนวนอน \\(\\Delta V=0\\) ในช่วงเวลานั้น",
+                "en": "When the graph is horizontal, \\(\\Delta V=0\\) over that interval."
+            }
+        ],
+
+        "solutionTH": `
+            <div>
+                ความชันของกราฟคือ
+                \\[
+                \\frac{\\Delta V}{\\Delta t}
+                \\]
+                จึงใช้บอกอัตราการเกิดแก๊สได้
+            </div>
+            <div class="mt-2">
+                ช่วงที่กราฟชันมากกว่าแสดงว่า rate สูงกว่า
+                ส่วนช่วงที่กราฟราบแสดงว่าปริมาตรผลิตภัณฑ์ที่วัดไม่เพิ่มขึ้นแล้ว
+            </div>
+            <div class="mt-2 font-bold text-emerald-700">
+                ตอบ: ความชันมาก → rate สูง; กราฟราบ → ปริมาตรผลิตภัณฑ์ไม่เพิ่มแล้ว
+            </div>
+        `,
+
+        "solutionEN": `
+            <div>
+                The slope is
+                \\[
+                \\frac{\\Delta V}{\\Delta t},
+                \\]
+                so it represents the rate of gas formation.
+            </div>
+            <div class="mt-2">
+                A steeper section represents a higher rate, whereas a horizontal section means
+                that the measured product volume is no longer increasing.
+            </div>
+            <div class="mt-2 font-bold text-emerald-700">
+                Answer: steeper slope → higher rate; plateau → measured product volume no longer increases.
+            </div>
+        `,
+
+        "options": [
+            {
+                "text": "A steeper slope means a higher rate; a horizontal section means the measured product volume is no longer increasing / ความชันมากหมายถึง rate สูง ส่วนกราฟราบหมายถึงปริมาตรผลิตภัณฑ์ไม่เพิ่มแล้ว",
+                "isCorrect": true
+            },
+            {
+                "text": "A higher point on the graph always means a higher instantaneous rate / จุดที่อยู่สูงกว่าบนกราฟหมายถึง instantaneous rate สูงกว่าเสมอ",
+                "isCorrect": false
+            },
+            {
+                "text": "A horizontal section means the reaction rate is at its maximum / กราฟราบหมายถึงอัตราการเกิดปฏิกิริยาสูงสุด",
+                "isCorrect": false
+            },
+            {
+                "text": "Slope represents the total amount of reactant originally added / ความชันแทนปริมาณสารตั้งต้นเริ่มต้นทั้งหมด",
+                "isCorrect": false
+            },
+            {
+                "text": "The plateau means activation energy has become zero / กราฟราบหมายถึงพลังงานก่อกัมมันต์เป็นศูนย์",
+                "isCorrect": false
+            },
+            {
+                "text": "Slope shows concentration but not reaction rate / ความชันแสดงความเข้มข้นแต่ไม่เกี่ยวกับ rate",
+                "isCorrect": false
+            },
+            {
+                "text": "The curve becomes flatter because the total product is decreasing / กราฟแบนลงเพราะปริมาณผลิตภัณฑ์ทั้งหมดกำลังลดลง",
+                "isCorrect": false
+            }
+        ]
+    },
+
+    // =========================================================
+    // Q5 — Average rate
+    // =========================================================
+    {
+        "id": "q5",
+
+        "questionTH": `
+            <div>
+                ใช้กราฟและตารางข้อมูลต่อไปนี้
+            </div>
+            ${RATE_GRAPH}
+            <div class="mt-3">
+                จงคำนวณ <b>อัตราเฉลี่ยของการเกิดแก๊ส</b> ระหว่าง 15 s ถึง 60 s
+            </div>
+        `,
+
+        "questionEN": `
+            <div>
+                Use the graph and data below.
+            </div>
+            ${RATE_GRAPH}
+            <div class="mt-3">
+                Calculate the <b>average rate of gas formation</b> between 15 s and 60 s.
+            </div>
+        `,
+
+        "hints": [
+            {
+                "th": "อัตราเฉลี่ยในช่วงเวลาหนึ่งใช้ \\(\\Delta V/\\Delta t\\)",
+                "en": "Average rate over an interval is \\(\\Delta V/\\Delta t\\)."
+            },
+            {
+                "th": "ที่ 15 s มี 18 cm³ และที่ 60 s มี 45 cm³",
+                "en": "At 15 s the volume is 18 cm³, and at 60 s it is 45 cm³."
+            },
+            {
+                "th": "ตั้ง \\(\\frac{45-18}{60-15}\\)",
+                "en": "Set up \\(\\frac{45-18}{60-15}\\)."
+            }
+        ],
+
+        "solutionTH": `
+            <div>\\[
+                \\text{average rate}
+                =\\frac{45-18}{60-15}
+                =\\frac{27}{45}
+                =0.60\\,cm^3s^{-1}
+            \\]</div>
+            <div class="mt-2 font-bold text-emerald-700">
+                ตอบ: \\(0.60\\,cm^3s^{-1}\\)
+            </div>
+        `,
+
+        "solutionEN": `
+            <div>\\[
+                \\text{average rate}
+                =\\frac{45-18}{60-15}
+                =\\frac{27}{45}
+                =0.60\\,cm^3s^{-1}
+            \\]</div>
+            <div class="mt-2 font-bold text-emerald-700">
+                Answer: \\(0.60\\,cm^3s^{-1}\\)
+            </div>
+        `,
+
+        "options": [
+            {"text": "\\(0.30\\,cm^3s^{-1}\\)", "isCorrect": false},
+            {"text": "\\(0.45\\,cm^3s^{-1}\\)", "isCorrect": false},
+            {"text": "\\(0.60\\,cm^3s^{-1}\\)", "isCorrect": true},
+            {"text": "\\(0.75\\,cm^3s^{-1}\\)", "isCorrect": false},
+            {"text": "\\(1.20\\,cm^3s^{-1}\\)", "isCorrect": false},
+            {"text": "\\(27\\,cm^3s^{-1}\\)", "isCorrect": false},
+            {"text": "\\(45\\,cm^3s^{-1}\\)", "isCorrect": false}
+        ]
+    },
+
+    // =========================================================
+    // Q6 — Fastest interval
+    // =========================================================
+    {
+        "id": "q6",
+
+        "questionTH": `
+            <div>
+                ใช้ข้อมูลชุดเดิม
+            </div>
+            ${RATE_GRAPH}
+            <div class="mt-3">
+                ช่วงเวลา 15 s ใดมี <b>อัตราเฉลี่ยของการเกิดแก๊สสูงที่สุด</b>?
+            </div>
+        `,
+
+        "questionEN": `
+            <div>
+                Use the same data.
+            </div>
+            ${RATE_GRAPH}
+            <div class="mt-3">
+                Which 15 s interval has the <b>greatest average rate of gas formation</b>?
+            </div>
+        `,
+
+        "hints": [
+            {
+                "th": "อย่าดูว่าช่วงใดมีปริมาตรแก๊สมากที่สุด ให้ดูว่าใน 15 s ปริมาตรเพิ่มขึ้นมากที่สุดช่วงใด",
+                "en": "Do not choose the interval with the largest gas volume; choose the interval with the largest volume increase in 15 s."
+            },
+            {
+                "th": "คำนวณ \\(\\Delta V\\) ในแต่ละช่วง: 18, 12, 9, 6, 3, 2 cm³",
+                "en": "The volume increases are 18, 12, 9, 6, 3, and 2 cm³ for the successive intervals."
+            },
+            {
+                "th": "ทุกช่วงมี \\(\\Delta t=15s\\) ดังนั้นช่วงที่ \\(\\Delta V\\) มากที่สุดมี rate สูงที่สุด",
+                "en": "Every interval has \\(\\Delta t=15s\\), so the largest \\(\\Delta V\\) gives the largest rate."
+            }
+        ],
+
+        "solutionTH": `
+            <div>
+                ช่วง 0–15 s:
+                \\[
+                \\frac{18-0}{15}=1.20\\,cm^3s^{-1}
+                \\]
+            </div>
+            <div class="mt-2">
+                ช่วงต่อ ๆ ไปให้ค่า 0.80, 0.60, 0.40, 0.20 และประมาณ 0.13 \\(cm^3s^{-1}\\)
+            </div>
+            <div class="mt-2 font-bold text-emerald-700">
+                ตอบ: 0–15 s
+            </div>
+        `,
+
+        "solutionEN": `
+            <div>
+                For 0–15 s:
+                \\[
+                \\frac{18-0}{15}=1.20\\,cm^3s^{-1}.
+                \\]
+            </div>
+            <div class="mt-2">
+                The later intervals give 0.80, 0.60, 0.40, 0.20, and about 0.13 \\(cm^3s^{-1}\\).
+            </div>
+            <div class="mt-2 font-bold text-emerald-700">
+                Answer: 0–15 s.
+            </div>
+        `,
+
+        "options": [
+            {"text": "0–15 s", "isCorrect": true},
+            {"text": "15–30 s", "isCorrect": false},
+            {"text": "30–45 s", "isCorrect": false},
+            {"text": "45–60 s", "isCorrect": false},
+            {"text": "60–75 s", "isCorrect": false},
+            {"text": "75–90 s", "isCorrect": false},
+            {"text": "All intervals have the same average rate / ทุกช่วงมีอัตราเฉลี่ยเท่ากัน", "isCorrect": false}
+        ]
+    },
+
+    // =========================================================
+    // Q7 — Instantaneous rate from a tangent
+    // =========================================================
+    {
+        "id": "q7",
+
+        "questionTH": `
+            <div>
+                เส้นประบนกราฟเป็น <b>เส้นสัมผัสที่เวลา 45 s</b>
+                และกำหนดจุดบนเส้นสัมผัสเป็น
+                \\(P=(25s,31cm^3)\\) และ \\(Q=(65s,47cm^3)\\)
+            </div>
+            ${RATE_GRAPH}
+            <div class="mt-3">
+                จงคำนวณ <b>อัตราการเกิดแก๊ส ณ เวลา 45 s</b>
+            </div>
+        `,
+
+        "questionEN": `
+            <div>
+                The dashed line is the <b>tangent at 45 s</b>.
+                Two points on the tangent are
+                \\(P=(25s,31cm^3)\\) and \\(Q=(65s,47cm^3)\\).
+            </div>
+            ${RATE_GRAPH}
+            <div class="mt-3">
+                Calculate the <b>instantaneous rate of gas formation at 45 s</b>.
+            </div>
+        `,
+
+        "hints": [
+            {
+                "th": "Instantaneous rate หาได้จาก gradient ของเส้นสัมผัส ไม่ใช่ gradient ของเส้นตัดช่วงยาวบน curve",
+                "en": "Instantaneous rate comes from the gradient of the tangent, not a secant across a long section of the curve."
+            },
+            {
+                "th": "ใช้จุด P และ Q ซึ่งอยู่บนเส้นสัมผัส",
+                "en": "Use points P and Q, which lie on the tangent."
+            },
+            {
+                "th": "ตั้ง \\(\\frac{47-31}{65-25}\\)",
+                "en": "Set up \\(\\frac{47-31}{65-25}\\)."
+            }
+        ],
+
+        "solutionTH": `
+            <div>\\[
+                rate_{45s}
+                =\\frac{47-31}{65-25}
+                =\\frac{16}{40}
+                =0.40\\,cm^3s^{-1}
+            \\]</div>
+            <div class="mt-2 font-bold text-emerald-700">
+                ตอบ: \\(0.40\\,cm^3s^{-1}\\)
+            </div>
+        `,
+
+        "solutionEN": `
+            <div>\\[
+                rate_{45s}
+                =\\frac{47-31}{65-25}
+                =\\frac{16}{40}
+                =0.40\\,cm^3s^{-1}
+            \\]</div>
+            <div class="mt-2 font-bold text-emerald-700">
+                Answer: \\(0.40\\,cm^3s^{-1}\\)
+            </div>
+        `,
+
+        "options": [
+            {"text": "\\(0.20\\,cm^3s^{-1}\\)", "isCorrect": false},
+            {"text": "\\(0.30\\,cm^3s^{-1}\\)", "isCorrect": false},
+            {"text": "\\(0.40\\,cm^3s^{-1}\\)", "isCorrect": true},
+            {"text": "\\(0.60\\,cm^3s^{-1}\\)", "isCorrect": false},
+            {"text": "\\(0.87\\,cm^3s^{-1}\\)", "isCorrect": false},
+            {"text": "\\(1.20\\,cm^3s^{-1}\\)", "isCorrect": false},
+            {"text": "\\(16\\,cm^3s^{-1}\\)", "isCorrect": false}
+        ]
+    },
+
+    // =========================================================
+    // Q8 — Why the slope decreases
+    // =========================================================
+    {
+        "id": "q8",
+
+        "questionTH": `
+            <div>
+                ในปฏิกิริยาระหว่าง \\(CaCO_3(s)\\) กับ \\(HCl(aq)\\)
+                ช่วงเวลาที่พิจารณายังมี \\(CaCO_3\\) เหลืออยู่
+                แต่ \\(HCl\\) ถูกใช้ไปเรื่อย ๆ
+            </div>
+            ${RATE_GRAPH}
+            <div class="mt-3">
+                ข้อใดอธิบายได้ดีที่สุดว่าเหตุใด <b>ความชันของกราฟจึงลดลงเมื่อเวลาผ่านไป</b>?
+            </div>
+        `,
+
+        "questionEN": `
+            <div>
+                In a reaction between \\(CaCO_3(s)\\) and \\(HCl(aq)\\),
+                solid \\(CaCO_3\\) is still present during the interval considered,
+                while \\(HCl\\) is gradually consumed.
+            </div>
+            ${RATE_GRAPH}
+            <div class="mt-3">
+                Which statement best explains why the <b>slope decreases as time passes</b>?
+            </div>
+        `,
+
+        "hints": [
+            {
+                "th": "ความชันลดลงหมายถึง rate ลดลง จึงต้องหาสาเหตุที่ทำให้การชนที่เกิดปฏิกิริยาต่อหน่วยเวลาลดลง",
+                "en": "A smaller slope means a lower rate, so identify why successful collisions per unit time decrease."
+            },
+            {
+                "th": "HCl เป็นสารละลายและถูกใช้ไป ความเข้มข้นของ HCl จึงลดลง",
+                "en": "HCl is in solution and is consumed, so its concentration decreases."
+            },
+            {
+                "th": "เมื่อ [HCl] ลดลง อนุภาค HCl ที่ชนผิว CaCO₃ ต่อหน่วยเวลาก็ลดลง",
+                "en": "As [HCl] decreases, fewer HCl particles collide with the CaCO₃ surface per unit time."
+            }
+        ],
+
+        "solutionTH": `
+            <div>
+                เมื่อ HCl ถูกใช้ไป ความเข้มข้นของ HCl ลดลง
+                ทำให้จำนวนการชนกับผิว \\(CaCO_3\\) ต่อหน่วยเวลาลดลง
+                และจำนวนการชนที่มีผลต่อหน่วยเวลาก็ลดลง
+            </div>
+            <div class="mt-2">
+                ดังนั้น rate ลดลงและกราฟจึงค่อย ๆ แบนลง
+            </div>
+            <div class="mt-2 font-bold text-emerald-700">
+                ตอบ: [HCl] ลดลง → การชนที่ผิวต่อหน่วยเวลาลดลง → rate ลดลง
+            </div>
+        `,
+
+        "solutionEN": `
+            <div>
+                As HCl is consumed, its concentration decreases.
+                Fewer HCl particles collide with the CaCO₃ surface per unit time,
+                so the number of successful collisions per unit time decreases.
+            </div>
+            <div class="mt-2">
+                The reaction rate therefore decreases and the curve becomes flatter.
+            </div>
+            <div class="mt-2 font-bold text-emerald-700">
+                Answer: [HCl] decreases → fewer successful surface collisions per unit time → lower rate.
+            </div>
+        `,
+
+        "options": [
+            {
+                "text": "[HCl] decreases, so fewer successful collisions occur at the CaCO₃ surface per unit time / [HCl] ลดลง จึงเกิดการชนที่มีผลบริเวณผิว CaCO₃ น้อยลงต่อหน่วยเวลา",
+                "isCorrect": true
+            },
+            {
+                "text": "The activation energy steadily increases as products form / พลังงานก่อกัมมันต์เพิ่มขึ้นเรื่อย ๆ เมื่อผลิตภัณฑ์เกิดขึ้น",
+                "isCorrect": false
+            },
+            {
+                "text": "The CaCO₃ concentration in the solid decreases in the same way as a solution concentration / ความเข้มข้นของ CaCO₃ ในของแข็งลดลงแบบเดียวกับสารละลาย",
+                "isCorrect": false
+            },
+            {
+                "text": "The products automatically act as a catalyst inhibitor / ผลิตภัณฑ์ทำหน้าที่เป็นตัวยับยั้งโดยอัตโนมัติ",
+                "isCorrect": false
+            },
+            {
+                "text": "The reaction temperature must decrease to 0 °C / อุณหภูมิของปฏิกิริยาต้องลดลงถึง 0 °C",
+                "isCorrect": false
+            },
+            {
+                "text": "The amount of product already formed makes the tangent less steep even though the rate is unchanged / ผลิตภัณฑ์ที่สะสมทำให้เส้นสัมผัสแบนลงทั้งที่ rate ไม่เปลี่ยน",
+                "isCorrect": false
+            },
+            {
+                "text": "The balanced equation changes with time / สมการเคมีที่ดุลแล้วเปลี่ยนไปตามเวลา",
+                "isCorrect": false
+            }
+        ]
+    },
+
+    // =========================================================
+    // Q9 — Fair test: particle size
+    // =========================================================
+    {
+        "id": "q9",
+
+        "questionTH": `
+            <div>
+                นักเรียนศึกษาปัจจัยที่มีผลต่อปฏิกิริยา
+                \\[
+                CaCO_3(s)+2HCl(aq)\\rightarrow CaCl_2(aq)+CO_2(g)+H_2O(l)
+                \\]
+                ทุกการทดลองใช้มวล \\(CaCO_3\\) เท่ากันและปริมาตร HCl เท่ากัน
+                และ HCl มีปริมาณมากเกินพอ
+            </div>
+            ${FACTOR_TABLE}
+            <div class="mt-3">
+                ควรเปรียบเทียบการทดลองคู่ใดเพื่อศึกษา <b>ผลของขนาดอนุภาคเพียงปัจจัยเดียว</b>?
+            </div>
+        `,
+
+        "questionEN": `
+            <div>
+                A student investigates factors affecting
+                \\[
+                CaCO_3(s)+2HCl(aq)\\rightarrow CaCl_2(aq)+CO_2(g)+H_2O(l).
+                \\]
+                Every experiment uses the same mass of \\(CaCO_3\\) and the same volume of HCl,
+                and HCl is in excess.
+            </div>
+            ${FACTOR_TABLE}
+            <div class="mt-3">
+                Which pair should be compared to investigate <b>only the effect of particle size</b>?
+            </div>
+        `,
+
+        "hints": [
+            {
+                "th": "Fair test ต้องเปลี่ยนตัวแปรต้นเพียงหนึ่งอย่าง",
+                "en": "A fair test changes only one independent variable."
+            },
+            {
+                "th": "ต้องให้ [HCl] และอุณหภูมิเท่ากัน",
+                "en": "[HCl] and temperature must be the same."
+            },
+            {
+                "th": "มองหาคู่ที่ต่างกันเฉพาะ large chips กับ powder",
+                "en": "Look for the pair differing only between large chips and powder."
+            }
+        ],
+
+        "solutionTH": `
+            <div>
+                W และ X มี [HCl] = 0.60 M และอุณหภูมิ = 20 °C เท่ากัน
+                ต่างกันเฉพาะรูปของ \\(CaCO_3\\): large chips กับ powder
+            </div>
+            <div class="mt-2 font-bold text-emerald-700">
+                ตอบ: W และ X
+            </div>
+        `,
+
+        "solutionEN": `
+            <div>
+                W and X have the same [HCl] = 0.60 M and the same temperature = 20 °C.
+                They differ only in the form of \\(CaCO_3\\): large chips versus powder.
+            </div>
+            <div class="mt-2 font-bold text-emerald-700">
+                Answer: W and X.
+            </div>
+        `,
+
+        "options": [
+            {"text": "W and X", "isCorrect": true},
+            {"text": "W and Y", "isCorrect": false},
+            {"text": "W and Z", "isCorrect": false},
+            {"text": "X and Y", "isCorrect": false},
+            {"text": "X and Z", "isCorrect": false},
+            {"text": "Y and Z", "isCorrect": false},
+            {"text": "Any pair can be used / ใช้คู่ใดก็ได้", "isCorrect": false}
+        ]
+    },
+
+    // =========================================================
+    // Q10 — Surface area and collision theory
+    // =========================================================
+    {
+        "id": "q10",
+
+        "questionTH": `
+            <div>
+                พิจารณาการทดลอง W และ X จากตารางเดิม
+            </div>
+            ${FACTOR_TABLE}
+            <div class="mt-3">
+                เหตุใดผง \\(CaCO_3\\) ในการทดลอง X จึงมี <b>อัตราเริ่มต้นสูงกว่า</b>
+                ก้อนขนาดใหญ่ใน W เมื่อเงื่อนไขอื่นเหมือนกัน?
+            </div>
+        `,
+
+        "questionEN": `
+            <div>
+                Consider experiments W and X in the same table.
+            </div>
+            ${FACTOR_TABLE}
+            <div class="mt-3">
+                Why does powdered \\(CaCO_3\\) in X have a <b>higher initial rate</b>
+                than large chips in W when all other conditions are the same?
+            </div>
+        `,
+
+        "hints": [
+            {
+                "th": "มวลเท่ากัน แต่ขนาดอนุภาคต่างกัน ทำให้พื้นที่ผิวรวมต่างกัน",
+                "en": "The masses are equal, but different particle sizes give different total surface areas."
+            },
+            {
+                "th": "ผงมีพื้นที่ผิวรวมที่สัมผัสกับ HCl มากกว่า",
+                "en": "Powder exposes a larger total surface area to HCl."
+            },
+            {
+                "th": "พื้นที่ผิวมากขึ้นทำให้เกิดการชนที่ผิวมากขึ้นต่อหน่วยเวลา",
+                "en": "Greater surface area gives more surface collisions per unit time."
+            }
+        ],
+
+        "solutionTH": `
+            <div>
+                เมื่อมวลเท่ากัน ผงมีพื้นที่ผิวรวมมากกว่าก้อนใหญ่
+                จึงมีบริเวณให้ HCl ชนกับ \\(CaCO_3\\) มากขึ้น
+                ทำให้จำนวนการชนและการชนที่มีผลต่อหน่วยเวลาเพิ่มขึ้น
+            </div>
+            <div class="mt-2">
+                การบดให้เป็นผง <b>ไม่ได้ลด \\(E_a\\)</b> และไม่ได้ทำให้อุณหภูมิสูงขึ้น
+            </div>
+            <div class="mt-2 font-bold text-emerald-700">
+                ตอบ: พื้นที่ผิวรวมเพิ่ม → การชนที่ผิวต่อหน่วยเวลาเพิ่ม → rate เพิ่ม
+            </div>
+        `,
+
+        "solutionEN": `
+            <div>
+                For the same mass, powder has a larger total surface area than large chips.
+                More surface is available for collisions with HCl,
+                so more collisions and more successful collisions occur per unit time.
+            </div>
+            <div class="mt-2">
+                Crushing the solid <b>does not lower \\(E_a\\)</b> and does not raise the temperature.
+            </div>
+            <div class="mt-2 font-bold text-emerald-700">
+                Answer: greater total surface area → more surface collisions per unit time → higher rate.
+            </div>
+        `,
+
+        "options": [
+            {
+                "text": "Powder has a larger total surface area, so more successful collisions occur at the surface per unit time / ผงมีพื้นที่ผิวรวมมากกว่า จึงเกิดการชนที่มีผลที่ผิวมากขึ้นต่อหน่วยเวลา",
+                "isCorrect": true
+            },
+            {
+                "text": "Powder has a lower activation energy than chips / ผงมีพลังงานก่อกัมมันต์ต่ำกว่าก้อน",
+                "isCorrect": false
+            },
+            {
+                "text": "Powder contains more moles of CaCO₃ even though the mass is the same / ผงมีจำนวนโมล CaCO₃ มากกว่าแม้มวลเท่ากัน",
+                "isCorrect": false
+            },
+            {
+                "text": "Particles in powder move faster because they are smaller / อนุภาคในผงเคลื่อนที่เร็วกว่าเพราะมีขนาดเล็ก",
+                "isCorrect": false
+            },
+            {
+                "text": "Powder increases the HCl concentration / ผงทำให้ความเข้มข้น HCl เพิ่มขึ้น",
+                "isCorrect": false
+            },
+            {
+                "text": "Powder increases the reaction temperature automatically / ผงทำให้อุณหภูมิของปฏิกิริยาเพิ่มขึ้นเอง",
+                "isCorrect": false
+            },
+            {
+                "text": "Powder changes the balanced chemical equation / ผงทำให้สมการเคมีที่ดุลแล้วเปลี่ยนไป",
+                "isCorrect": false
+            }
+        ]
+    },
+
+    // =========================================================
+    // Q11 — Concentration: rate vs final amount
+    // =========================================================
+    {
+        "id": "q11",
+
+        "questionTH": `
+            <div>
+                เปรียบเทียบการทดลอง W และ Y โดยใช้มวล \\(CaCO_3\\) เท่ากัน
+                และ HCl มีปริมาณมากเกินพอทั้งสองชุด
+            </div>
+            ${FACTOR_TABLE}
+            ${CONCENTRATION_GRAPH}
+            <div class="mt-3">
+                ข้อใดอธิบายกราฟได้ถูกต้องที่สุด?
+            </div>
+        `,
+
+        "questionEN": `
+            <div>
+                Compare experiments W and Y. The same mass of \\(CaCO_3\\) is used,
+                and HCl is in excess in both experiments.
+            </div>
+            ${FACTOR_TABLE}
+            ${CONCENTRATION_GRAPH}
+            <div class="mt-3">
+                Which statement best explains the graph?
+            </div>
+        `,
+
+        "hints": [
+            {
+                "th": "Y มี [HCl] สูงกว่า จึงควรดูผลต่อความชันช่วงต้นก่อน",
+                "en": "Y has the higher [HCl], so first consider the effect on the initial slope."
+            },
+            {
+                "th": "ความเข้มข้นสูงขึ้นหมายถึงมีอนุภาค HCl มากขึ้นต่อหน่วยปริมาตร จึงชนผิว CaCO₃ บ่อยขึ้น",
+                "en": "Higher concentration means more HCl particles per unit volume, so surface collisions occur more frequently."
+            },
+            {
+                "th": "แต่ CaCO₃ มีมวลเท่ากันและเป็นตัวกำหนดปริมาณ CO₂ สุดท้าย ดังนั้น plateau จึงเท่ากัน",
+                "en": "The same mass of CaCO₃ determines the final amount of CO₂, so the plateaus are equal."
+            }
+        ],
+
+        "solutionTH": `
+            <div>
+                Y มี [HCl] สูงกว่า W จึงมีอนุภาค HCl ต่อหน่วยปริมาตรมากกว่า
+                ทำให้ชนกับผิว \\(CaCO_3\\) บ่อยขึ้นและมี initial rate สูงกว่า
+            </div>
+            <div class="mt-2">
+                แต่ทั้งสองชุดใช้ \\(CaCO_3\\) มวลเท่ากัน และ HCl มากเกินพอ
+                ดังนั้นจำนวนโมล \\(CO_2\\) สุดท้ายที่เกิดจาก \\(CaCO_3\\) เท่ากัน
+                จึงได้ plateau เท่ากัน
+            </div>
+            <div class="mt-2 font-bold text-emerald-700">
+                ตอบ: Y ชันกว่าและถึง plateau เร็วกว่า แต่ปริมาตร CO₂ สุดท้ายเท่ากับ W
+            </div>
+        `,
+
+        "solutionEN": `
+            <div>
+                Y has a higher [HCl], so there are more HCl particles per unit volume.
+                Collisions with the \\(CaCO_3\\) surface occur more frequently,
+                giving a higher initial rate.
+            </div>
+            <div class="mt-2">
+                However, both experiments use the same mass of \\(CaCO_3\\), and HCl is in excess.
+                Therefore, the same final amount of \\(CO_2\\) is produced and the plateaus are equal.
+            </div>
+            <div class="mt-2 font-bold text-emerald-700">
+                Answer: Y is initially steeper and reaches the plateau sooner, but both give the same final CO₂ volume.
+            </div>
+        `,
+
+        "options": [
+            {
+                "text": "Y has a steeper initial slope and reaches the same final gas volume sooner because higher [HCl] increases collision frequency / Y ชันช่วงต้นกว่าและถึงปริมาตรสุดท้ายเท่ากันเร็วกว่า เพราะ [HCl] สูงทำให้ชนถี่ขึ้น",
+                "isCorrect": true
+            },
+            {
+                "text": "Y produces more final CO₂ because a higher concentration always produces more product / Y ให้ CO₂ สุดท้ายมากกว่าเพราะความเข้มข้นสูงทำให้ผลิตภัณฑ์มากขึ้นเสมอ",
+                "isCorrect": false
+            },
+            {
+                "text": "W is faster because dilute HCl particles have more space to move / W เร็วกว่าเพราะ HCl เจือจางมีพื้นที่ให้อนุภาคเคลื่อนที่มากกว่า",
+                "isCorrect": false
+            },
+            {
+                "text": "Both curves must be identical because the mass of CaCO₃ is the same / กราฟต้องเหมือนกันเพราะมวล CaCO₃ เท่ากัน",
+                "isCorrect": false
+            },
+            {
+                "text": "Higher [HCl] lowers activation energy, which is why Y is faster / [HCl] สูงทำให้ Ea ลดลง จึงทำให้ Y เร็วกว่า",
+                "isCorrect": false
+            },
+            {
+                "text": "Y is faster only because its temperature is higher / Y เร็วกว่าเพราะอุณหภูมิสูงกว่าเท่านั้น",
+                "isCorrect": false
+            },
+            {
+                "text": "The same plateau means the reaction rates must be identical at all times / plateau เท่ากันหมายถึง rate ต้องเท่ากันทุกเวลา",
+                "isCorrect": false
+            }
+        ]
+    },
+
+    // =========================================================
+    // Q12 — Temperature and collision theory
+    // =========================================================
+    {
+        "id": "q12",
+
+        "questionTH": `
+            <div>
+                พิจารณาการทดลอง W และ Z
+                ซึ่งต่างกันเฉพาะอุณหภูมิ
+            </div>
+            ${FACTOR_TABLE}
+            <div class="mt-3">
+                ข้อใดอธิบายได้ดีที่สุดว่าเหตุใดการทดลอง Z ที่ 35 °C
+                จึงมี <b>อัตราการเกิดปฏิกิริยาสูงกว่า</b> W ที่ 20 °C?
+            </div>
+        `,
+
+        "questionEN": `
+            <div>
+                Consider experiments W and Z, which differ only in temperature.
+            </div>
+            ${FACTOR_TABLE}
+            <div class="mt-3">
+                Which statement best explains why experiment Z at 35 °C has a
+                <b>higher reaction rate</b> than W at 20 °C?
+            </div>
+        `,
+
+        "hints": [
+            {
+                "th": "อุณหภูมิสูงขึ้นทำให้อนุภาคมีพลังงานจลน์เฉลี่ยสูงขึ้น",
+                "en": "Higher temperature increases the average kinetic energy of the particles."
+            },
+            {
+                "th": "จึงเกิดการชนถี่ขึ้น และการกระจายพลังงานมีสัดส่วนอนุภาคพลังงานสูงมากขึ้น",
+                "en": "Collisions occur more frequently, and a larger fraction of particles occupies higher energies."
+            },
+            {
+                "th": "คำอธิบายที่ครบต้องพูดถึงทั้งความถี่ของการชนและสัดส่วนการชนที่มีพลังงานเพียงพอ",
+                "en": "The most complete explanation includes both collision frequency and the fraction of collisions with sufficient energy."
+            }
+        ],
+
+        "solutionTH": `
+            <div>
+                ที่อุณหภูมิสูงขึ้น อนุภาคมีพลังงานจลน์เฉลี่ยสูงขึ้นและเคลื่อนที่เร็วขึ้น
+                จึงชนกันถี่ขึ้น
+            </div>
+            <div class="mt-2">
+                นอกจากนี้ สัดส่วนของการชนที่มีพลังงานเพียงพอสำหรับผ่านพลังงานก่อกัมมันต์ก็เพิ่มขึ้น
+                ทำให้จำนวนการชนที่เกิดปฏิกิริยาต่อหน่วยเวลาเพิ่มขึ้น
+            </div>
+            <div class="mt-2 font-bold text-emerald-700">
+                ตอบ: อุณหภูมิสูงขึ้น → ชนถี่ขึ้น + สัดส่วนการชนที่มีพลังงานเพียงพอเพิ่มขึ้น → rate สูงขึ้น
+            </div>
+        `,
+
+        "solutionEN": `
+            <div>
+                At higher temperature, particles have greater average kinetic energy and move faster,
+                so collisions occur more frequently.
+            </div>
+            <div class="mt-2">
+                In addition, a larger fraction of collisions has sufficient energy to overcome
+                the activation-energy barrier, so more successful collisions occur per unit time.
+            </div>
+            <div class="mt-2 font-bold text-emerald-700">
+                Answer: higher temperature → more frequent collisions + a larger fraction with sufficient energy → higher rate.
+            </div>
+        `,
+
+        "options": [
+            {
+                "text": "Particles move faster, collide more frequently, and a greater fraction of collisions has sufficient energy to react / อนุภาคเคลื่อนที่เร็วขึ้น ชนถี่ขึ้น และมีสัดส่วนการชนที่มีพลังงานเพียงพอมากขึ้น",
+                "isCorrect": true
+            },
+            {
+                "text": "The activation energy automatically decreases when temperature increases / พลังงานก่อกัมมันต์ลดลงโดยอัตโนมัติเมื่ออุณหภูมิเพิ่ม",
+                "isCorrect": false
+            },
+            {
+                "text": "The number of CaCO₃ moles increases when the mixture is heated / จำนวนโมล CaCO₃ เพิ่มขึ้นเมื่อให้ความร้อน",
+                "isCorrect": false
+            },
+            {
+                "text": "The HCl concentration doubles when temperature rises from 20 °C to 35 °C / ความเข้มข้น HCl เพิ่มเป็นสองเท่าเมื่ออุณหภูมิจาก 20 เป็น 35 °C",
+                "isCorrect": false
+            },
+            {
+                "text": "Higher temperature increases only the final amount of product, not the rate / อุณหภูมิสูงขึ้นเพิ่มเฉพาะปริมาณผลิตภัณฑ์สุดท้าย ไม่ได้เพิ่ม rate",
+                "isCorrect": false
+            },
+            {
+                "text": "Every collision becomes successful at 35 °C / การชนทุกครั้งกลายเป็นการชนที่เกิดปฏิกิริยาที่ 35 °C",
+                "isCorrect": false
+            },
+            {
+                "text": "Heating increases surface area of the CaCO₃ chips without changing anything else / การให้ความร้อนเพิ่มพื้นที่ผิวของก้อน CaCO₃ โดยไม่เปลี่ยนอย่างอื่น",
+                "isCorrect": false
+            }
+        ]
+    }
+
+    ]
+};
+
+// ไม่ต้องแก้บรรทัดนี้
+
+document.title = window.QUIZ_TEMPLATE.title;
+</script>
+<!-- ====================== END EDIT ZONE ====================== -->
+
+<script>
+(function validateQuizTemplate() {
+    const cfg = window.QUIZ_TEMPLATE;
+    const errors = [];
+
+    if (!cfg || typeof cfg !== "object") {
+        errors.push("QUIZ_TEMPLATE missing");
+    } else {
+        if (!String(cfg.quizId || "").trim()) errors.push("quizId is empty");
+        if (!String(cfg.title || "").trim()) errors.push("title is empty");
+        if (!Array.isArray(cfg.questions) || cfg.questions.length === 0) {
+            errors.push("questions is empty");
+        } else {
+            const ids = cfg.questions.map(q => String(q.id || ""));
+            const duplicateIds = ids.filter((id, index) => id && ids.indexOf(id) !== index);
+            if (ids.some(id => !id)) errors.push("some question id is empty");
+            if (duplicateIds.length) {
+                errors.push("duplicate question id: " + [...new Set(duplicateIds)].join(", "));
+            }
+        }
+    }
+
+    if (errors.length) {
+        console.error("QUIZ TEMPLATE ERROR:", errors);
+        window.__QUIZ_TEMPLATE_ERRORS__ = errors;
+    }
+})();
+</script>
+
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  setPersistence,
+  browserLocalPersistence,
+  signInWithPopup,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import {
+  getDatabase,
+  ref,
+  set,
+  update,
+  get,
+  onValue,
+  onDisconnect,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDfkxDDnbzLUv85yDwqSpZwPCORx_eCGuo",
+  authDomain: "examateapp-1007d.firebaseapp.com",
+  databaseURL: "https://examateapp-1007d-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "examateapp-1007d",
+  storageBucket: "examateapp-1007d.firebasestorage.app",
+  messagingSenderId: "791216427108",
+  appId: "1:791216427108:web:ccf63a9cc416650877cf71",
+  measurementId: "G-0HPEFRXYW5"
+};
+
+const QUIZ_ID = window.QUIZ_TEMPLATE.quizId;
+const QUIZ_TITLE = window.QUIZ_TEMPLATE.title;
+
+const fbApp = initializeApp(FIREBASE_CONFIG);
+const auth = getAuth(fbApp);
+const db = getDatabase(fbApp);
+const provider = new GoogleAuthProvider();
+provider.setCustomParameters({ prompt: "select_account" });
+
+const gate = document.getElementById("fb-gate");
+const signin = document.getElementById("fb-signin");
+const signoutBtn = document.getElementById("fb-signout");
+const errBox = document.getElementById("fb-error");
+const userbar = document.getElementById("fb-userbar");
+const nameEl = document.getElementById("fb-name");
+const emailEl = document.getElementById("fb-email");
+const photoEl = document.getElementById("fb-photo");
+const dot = document.getElementById("fb-dot");
+const stateEl = document.getElementById("fb-state");
+const authLoading = document.getElementById("fb-auth-loading");
+const gateTitle = document.getElementById("fb-gate-title");
+const gateCopy = document.getElementById("fb-gate-copy");
+
+const liveBtn = document.getElementById("fb-live-btn");
+const liveCountEl = document.getElementById("fb-live-count");
+const monitor = document.getElementById("fb-monitor");
+const monitorBackdrop = document.getElementById("fb-monitor-backdrop");
+const monitorClose = document.getElementById("fb-monitor-close");
+const monitorList = document.getElementById("fb-monitor-list");
+const monOnline = document.getElementById("fb-mon-online");
+const monIdle = document.getElementById("fb-mon-idle");
+const monTotal = document.getElementById("fb-mon-total");
+const cloudStatusEl = document.getElementById("fb-cloud-status");
+
+let user = null;
+let presRef = null;
+let connectedAt = Date.now();
+let presenceStatus = "ONLINE";
+let lastAct = Date.now();
+let presenceTimer = null;
+let unsubConn = null;
+let unsubQuizPresence = null;
+let presenceRows = {};
+let progressUser = null;
+let progressSaveTimer = null;
+
+let currentPresence = {
+  qId: "q1",
+  qNo: 1,
+  activity: "VIEWING",
+  scratchPage: 1
+};
+
+const avatar = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(
+  `<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'>
+    <rect width='100%' height='100%' fill='#e2e8f0'/>
+    <circle cx='40' cy='31' r='15' fill='#94a3b8'/>
+    <path d='M14 72c2-17 13-26 26-26s24 9 26 26' fill='#94a3b8'/>
+  </svg>`
+);
+
+function safeName() {
+  return (user?.displayName || user?.email?.split("@")[0] || "Student").slice(0, 80);
+}
+
+function showErr(message) {
+  errBox.textContent = message || "";
+  errBox.classList.toggle("show", Boolean(message));
+}
+
+function setPresenceUI(value) {
+  dot.className = "fb-dot " + String(value || "OFFLINE").toLowerCase();
+  stateEl.textContent =
+    value === "ONLINE" ? "🟢 Online" :
+    value === "IDLE" ? "🟡 Idle" :
+    "⚪ Offline";
+}
+
+function setGateSigningIn() {
+  gate.classList.remove("hidden");
+  signin.style.display = "none";
+  authLoading.style.display = "block";
+  gateTitle.textContent = "กำลังเปิดงานเดิม / Restoring your work";
+  gateCopy.innerHTML =
+    "กำลังตรวจ Firebase และโหลดความคืบหน้าก่อนเปิด Quiz เพื่อป้องกันงานว่างทับข้อมูลเดิม<br>" +
+    "Loading cloud progress before the quiz unlocks, so blank state cannot overwrite prior work.";
+}
+
+function setGateSignedOut() {
+  gate.classList.remove("hidden");
+  signin.style.display = "";
+  signin.disabled = false;
+  authLoading.style.display = "none";
+  gateTitle.textContent = "เข้าสู่ Quiz / Enter Quiz";
+  gateCopy.innerHTML =
+    "เข้าสู่ระบบด้วย Google เพื่อบันทึกความคืบหน้า Quiz และแสดงสถานะออนไลน์<br>" +
+    "Sign in with Google to restore quiz progress and show live presence.";
+}
+
+function unlockQuiz() {
+  gate.classList.add("hidden");
+  signin.style.display = "";
+  authLoading.style.display = "none";
+}
+
+async function writePresenceNow() {
+  if (!user || !presRef) return;
+  clearTimeout(presenceTimer);
+
+  try {
+    await set(presRef, {
+      name: safeName(),
+      status: presenceStatus,
+      quizId: QUIZ_ID,
+      quizTitle: QUIZ_TITLE,
+      currentQuestion: String(currentPresence.qId || "").slice(0, 32),
+      questionNumber: Number(currentPresence.qNo) || 1,
+      scratchPage: Math.max(1, Number(currentPresence.scratchPage) || 1),
+      activity: String(currentPresence.activity || "VIEWING").slice(0, 32),
+      lastActiveAt: serverTimestamp(),
+      connectedAt
+    });
+    setPresenceUI(presenceStatus);
+  } catch (err) {
+    console.warn("presence write", err);
+    setPresenceUI("OFFLINE");
+  }
+}
+
+function schedulePresenceWrite() {
+  clearTimeout(presenceTimer);
+  presenceTimer = setTimeout(writePresenceNow, 300);
+}
+
+function touchPresence(activity) {
+  lastAct = Date.now();
+  if (activity) currentPresence.activity = activity;
+
+  if (presenceStatus !== "ONLINE") {
+    presenceStatus = "ONLINE";
+    writePresenceNow();
+  } else {
+    schedulePresenceWrite();
+  }
+}
+
+window.ExamatePresence = {
+  setQuizState(qId, qNo, activity, scratchPage) {
+    currentPresence = {
+      qId: qId || currentPresence.qId,
+      qNo: Number(qNo) || currentPresence.qNo,
+      activity: activity || currentPresence.activity,
+      scratchPage: Math.max(1, Number(scratchPage) || currentPresence.scratchPage)
+    };
+    touchPresence(activity);
+  },
+
+  setActivity(activity, page) {
+    if (page != null) {
+      currentPresence.scratchPage = Math.max(1, Number(page) || 1);
+    }
+    touchPresence(activity);
+  },
+
+  getUser() {
+    return user;
+  }
+};
+
+// Passive listeners only. They do NOT prevent Pencil/touch input.
+["pointerdown", "keydown", "touchstart"].forEach(eventName => {
+  document.addEventListener(
+    eventName,
+    () => { if (user) touchPresence(); },
+    { passive: true }
+  );
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (!user) return;
+  if (document.visibilityState === "hidden") {
+    presenceStatus = "IDLE";
+    writePresenceNow();
+  } else {
+    presenceStatus = "ONLINE";
+    touchPresence();
+  }
+});
+
+setInterval(() => {
+  if (user && Date.now() - lastAct > 5 * 60 * 1000 && presenceStatus !== "IDLE") {
+    presenceStatus = "IDLE";
+    writePresenceNow();
+  }
+}, 30000);
+
+async function setupPresence(currentUser) {
+  user = currentUser;
+  presRef = ref(db, `quizPresence/${QUIZ_ID}/${currentUser.uid}`);
+
+  try {
+    const snap = await get(presRef);
+    connectedAt =
+      snap.exists() && typeof snap.val()?.connectedAt === "number"
+        ? snap.val().connectedAt
+        : Date.now();
+  } catch {
+    connectedAt = Date.now();
+  }
+
+  const connectedRef = ref(db, ".info/connected");
+
+  if (unsubConn) unsubConn();
+
+  unsubConn = onValue(connectedRef, async snap => {
+    if (snap.val() !== true) {
+      setPresenceUI("OFFLINE");
+      return;
+    }
+
+    try {
+      await onDisconnect(presRef).update({
+        status: "OFFLINE",
+        lastActiveAt: serverTimestamp()
+      });
+
+      presenceStatus = "ONLINE";
+      await writePresenceNow();
+    } catch (err) {
+      console.warn("presence connection", err);
+    }
+  });
+}
+
+function escapeFbHTML(value) {
+  return String(value ?? "").replace(
+    /[&<>"']/g,
+    char => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    })[char]
+  );
+}
+
+function activityText(activity) {
+  return ({
+    VIEWING: "👀 Viewing",
+    ANSWERING: "✅ Answering",
+    WRITING: "✍️ Writing",
+    READING_HINT: "💡 Hint",
+    AI_CHECK: "🤖 AI Check",
+    GIVE_UP: "🏳 Give Up",
+    SUBMITTED: "📤 Submitted"
+  })[activity] || activity || "👀 Viewing";
+}
+
+function timeAgo(timestamp) {
+  const ts = Number(timestamp || 0);
+  if (!ts) return "—";
+
+  const sec = Math.max(0, Math.floor((Date.now() - ts) / 1000));
+  if (sec < 5) return "now";
+  if (sec < 60) return sec + "s ago";
+
+  const minutes = Math.floor(sec / 60);
+  if (minutes < 60) return minutes + "m ago";
+
+  return Math.floor(minutes / 60) + "h ago";
+}
+
+function renderInlineMonitor() {
+  const cutoff = Date.now() - 6 * 60 * 60 * 1000;
+
+  const rows = Object.entries(presenceRows || {})
+    .map(([uid, value]) => ({ uid, ...(value || {}) }))
+    .filter(row =>
+      row.status !== "OFFLINE" ||
+      Number(row.lastActiveAt || 0) >= cutoff
+    );
+
+  const order = { ONLINE: 0, IDLE: 1, OFFLINE: 2 };
+  rows.sort((a, b) =>
+    (order[a.status] ?? 9) - (order[b.status] ?? 9) ||
+    Number(b.lastActiveAt || 0) - Number(a.lastActiveAt || 0)
+  );
+
+  const online = rows.filter(row => row.status === "ONLINE").length;
+  const idle = rows.filter(row => row.status === "IDLE").length;
+
+  liveCountEl.textContent = online + idle;
+  monOnline.textContent = online;
+  monIdle.textContent = idle;
+  monTotal.textContent = rows.length;
+
+  if (!rows.length) {
+    monitorList.innerHTML =
+      '<div class="fb-monitor-empty">ยังไม่มีผู้ใช้ใน Quiz นี้<br>No signed-in users are currently visible.</div>';
+    return;
+  }
+
+  monitorList.innerHTML = rows.map(row => {
+    const rawStatus = ["ONLINE", "IDLE", "OFFLINE"].includes(row.status)
+      ? row.status
+      : "OFFLINE";
+
+    const cls = rawStatus.toLowerCase();
+    const statusLabel =
+      rawStatus === "ONLINE" ? "🟢 ONLINE" :
+      rawStatus === "IDLE" ? "🟡 IDLE" :
+      "⚪ OFFLINE";
+
+    const isMe = row.uid === user?.uid;
+
+    return `<div class="fb-student-row ${cls}">
+      <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
+        <div>
+          <div class="fb-student-name">
+            ${escapeFbHTML(row.name || "Student")}
+            ${isMe ? '<span style="font-size:10px;color:#6366f1">(คุณ / You)</span>' : ""}
+          </div>
+          <div class="fb-student-meta">Last active: ${escapeFbHTML(timeAgo(row.lastActiveAt))}</div>
+        </div>
+        <span class="fb-status-pill ${cls}">${statusLabel}</span>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:end;gap:10px;margin-top:8px">
+        <div>
+          <div class="fb-student-q">Q${Number(row.questionNumber || 1)}</div>
+          <div class="fb-student-meta">Scratchpad: Page ${Number(row.scratchPage || 1)}</div>
+        </div>
+        <div style="font-size:12px;font-weight:800;color:#334155;text-align:right">
+          ${escapeFbHTML(activityText(row.activity))}
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function openMonitor() {
+  monitor.classList.add("show");
+  monitorBackdrop.classList.add("show");
+  monitor.setAttribute("aria-hidden", "false");
+}
+
+function closeMonitor() {
+  monitor.classList.remove("show");
+  monitorBackdrop.classList.remove("show");
+  monitor.setAttribute("aria-hidden", "true");
+}
+
+liveBtn.onclick = openMonitor;
+monitorClose.onclick = closeMonitor;
+monitorBackdrop.onclick = closeMonitor;
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") closeMonitor();
+});
+
+setInterval(renderInlineMonitor, 1000);
+
+function setupSharedMonitor() {
+  if (unsubQuizPresence) {
+    unsubQuizPresence();
+    unsubQuizPresence = null;
+  }
+
+  presenceRows = {};
+  renderInlineMonitor();
+  liveBtn.classList.add("show");
+
+  unsubQuizPresence = onValue(
+    ref(db, `quizPresence/${QUIZ_ID}`),
+    snap => {
+      presenceRows = snap.val() || {};
+      renderInlineMonitor();
+    },
+    err => {
+      console.warn("shared presence read", err);
+      monitorList.innerHTML =
+        '<div class="fb-monitor-empty">อ่านรายชื่อไม่ได้ / Cannot read presence.<br>ตรวจ Realtime Database Rules ของ quizPresence</div>';
+    }
+  );
+}
+
+function setCloudStatus(text, state = "idle") {
+  if (!cloudStatusEl) return;
+
+  cloudStatusEl.textContent = text;
+  cloudStatusEl.style.color =
+    state === "ok" ? "#047857" :
+    state === "busy" ? "#b45309" :
+    state === "error" ? "#be123c" :
+    "#64748b";
+}
+
+/* Small quiz-state JSON only. Handwriting intentionally stays out of RTDB. */
+window.ExamateProgress = {
+  get uid() {
+    return progressUser?.uid || null;
+  },
+
+  async load() {
+    if (!progressUser) return null;
+
+    setCloudStatus("☁️ กำลังโหลด / Loading...", "busy");
+
+    try {
+      const snap = await get(
+        ref(db, `quizProgress/${QUIZ_ID}/${progressUser.uid}`)
+      );
+
+      if (!snap.exists()) {
+        setCloudStatus("☁️ งานใหม่ / New", "idle");
+        return null;
+      }
+
+      setCloudStatus("☁️ โหลดงานเดิมแล้ว / Restored", "ok");
+      return snap.val();
+    } catch (err) {
+      console.warn("progress load", err);
+      setCloudStatus("⚠️ โหลดไม่ได้ / Load failed", "error");
+      return null;
+    }
+  },
+
+  save(snapshot) {
+    if (!progressUser || !snapshot) return;
+
+    clearTimeout(progressSaveTimer);
+    setCloudStatus("☁️ กำลังบันทึก / Saving...", "busy");
+
+    progressSaveTimer = setTimeout(async () => {
+      try {
+        await set(
+          ref(db, `quizProgress/${QUIZ_ID}/${progressUser.uid}`),
+          {
+            version: 1,
+            uid: progressUser.uid,
+            name: (progressUser.displayName || progressUser.email || "Student").slice(0, 80),
+            quizId: QUIZ_ID,
+            updatedAt: serverTimestamp(),
+            state: snapshot
+          }
+        );
+
+        setCloudStatus("✓ บันทึกแล้ว / Saved", "ok");
+      } catch (err) {
+        console.warn("progress save", err);
+        setCloudStatus("⚠️ บันทึกไม่ได้ / Save failed", "error");
+      }
+    }, 500);
+  },
+
+  async clear() {
+    if (!progressUser) return;
+
+    try {
+      clearTimeout(progressSaveTimer);
+      await set(
+        ref(db, `quizProgress/${QUIZ_ID}/${progressUser.uid}`),
+        null
+      );
+      setCloudStatus("☁️ เริ่มใหม่ / Reset", "idle");
+    } catch (err) {
+      console.warn("progress clear", err);
+    }
+  }
+};
+
+signin.onclick = async () => {
+  signin.disabled = true;
+  showErr("");
+
+  try {
+    await setPersistence(auth, browserLocalPersistence);
+
+    // GitHub Pages + Safari/iPad:
+    // use popup instead of redirect so Firebase does not depend on
+    // cross-origin redirect storage between github.io and firebaseapp.com.
+    await signInWithPopup(auth, provider);
+
+  } catch (err) {
+    const code = err?.code || "unknown";
+    const message = err?.message || String(err);
+
+    let friendly =
+      "เข้าสู่ระบบไม่สำเร็จ / Sign-in failed\\n" +
+      "Code: " + code + "\\n" + message;
+
+    if (code === "auth/popup-blocked") {
+      friendly +=
+        "\\n\\nSafari บล็อกหน้าต่างเข้าสู่ระบบ กรุณาไปที่ Settings → Safari → ปิด Block Pop-ups ชั่วคราว แล้วลองใหม่" +
+        "\\nSafari blocked the Google sign-in popup. Temporarily allow pop-ups and retry.";
+    }
+
+    if (code === "auth/unauthorized-domain") {
+      friendly +=
+        "\\n\\nFirebase Authentication → Settings → Authorized domains ต้องมี nixcentury.github.io";
+    }
+
+    showErr(friendly);
+    signin.disabled = false;
+  }
+};
+
+signoutBtn.onclick = async () => {
+  try {
+    if (presRef) {
+      await update(presRef, {
+        status: "OFFLINE",
+        lastActiveAt: serverTimestamp()
+      });
+    }
+  } catch {}
+
+  await signOut(auth);
+};
+
+document.addEventListener("examate-progress-ready", event => {
+  const readyUid = event.detail?.uid || null;
+  if (readyUid && readyUid === user?.uid) {
+    unlockQuiz();
+  }
+});
+
+try {
+  await setPersistence(auth, browserLocalPersistence);
+} catch (err) {
+  console.warn("auth persistence", err);
+}
+
+onAuthStateChanged(auth, async currentUser => {
+  if (!currentUser) {
+    user = null;
+    presRef = null;
+    progressUser = null;
+
+    if (unsubQuizPresence) {
+      unsubQuizPresence();
+      unsubQuizPresence = null;
+    }
+
+    presenceRows = {};
+    closeMonitor();
+    userbar.classList.remove("show");
+    setPresenceUI("OFFLINE");
+    setCloudStatus("☁️ รอเข้าสู่ระบบ / Waiting", "idle");
+    setGateSignedOut();
+
+    document.dispatchEvent(
+      new CustomEvent("examate-auth-change", {
+        detail: { uid: null }
+      })
+    );
+    return;
+  }
+
+  user = currentUser;
+  progressUser = currentUser;
+
+  nameEl.textContent = currentUser.displayName || currentUser.email || "Student";
+  emailEl.textContent = currentUser.email || "";
+  photoEl.src = currentUser.photoURL || avatar;
+  photoEl.onerror = () => { photoEl.src = avatar; };
+
+  userbar.classList.add("show");
+  setGateSigningIn();
+
+  presenceStatus = "ONLINE";
+  lastAct = Date.now();
+
+  await setupPresence(currentUser);
+  setupSharedMonitor();
+
+  try {
+    const q = window.state?.activeQuestions?.[window.state?.currentIndex || 0];
+    if (q) {
+      currentPresence.qId = q.id;
+      currentPresence.qNo =
+        typeof window.getQuestionNumber === "function"
+          ? window.getQuestionNumber(q.id)
+          : ((window.state?.currentIndex || 0) + 1);
+    }
+  } catch {}
+
+  await writePresenceNow();
+
+  document.dispatchEvent(
+    new CustomEvent("examate-auth-change", {
+      detail: { uid: currentUser.uid }
+    })
+  );
+});
+</script>
+
+<script>
+/* ============================================================
+   🔒🔒🔒 DO NOT EDIT BELOW THIS LINE UNLESS MODIFYING THE ENGINE
+   ============================================================ */
+
+/* ============================================================
+   🔒 QUIZ ENGINE STARTS HERE
+   Questions are defined in the EDIT ZONE above.
+   ============================================================ */
+const questionsData = window.QUIZ_TEMPLATE.questions;
+
+
+let state = {
+    attempt: 1,
+    activeQuestions: [],
+    currentIndex: 0,
+    answers: {},
+    giveUps: {},
+    hintLevels: {},
+    masteredIds: [],
+    masteredAnswers: {},
+    showScratchpad: false,
+    scratchpadData: {},
+    scratchpadPages: {},
+    scratchpadPageIndex: {},
+    scratchpadCopiedQuestion: {},
+    scratchpadInputMode: 'pen',
+    scratchpadTool: 'pen',
+    scratchpadColor: '#0f172a',
+    scratchpadWidth: 2.3,
+    scratchpadUndo: {},
+    scratchpadRedo: {},
+    // Vector Ink v1: actions are strokes/erasers/clear operations.
+    // PNG is now only a checkpoint for AI/PDF/page changes, never per stroke.
+    scratchpadActions: {},
+    scratchpadRedoActions: {},
+    // Fabric Scratchpad test: editable page JSON + lightweight operation history.
+    scratchpadFabricJson: {},
+    scratchpadFabricOps: {},
+    scratchpadFabricRedoOps: {},
+    scratchpadHasInk: {},
+    scratchScrollTop: {},
+    aiAnchor: {},
+    aiFeedback: {},
+    aiLoading: {},
+    aiErrors: {},
+    view: 'exam',
+    startedAt: null,
+    attemptStartedAt: null,
+    finishedAt: null,
+
+    attemptHistory: []
+};
+
+let cloudProgressReady = false;
+let cloudProgressLoadedForUid = null;
+let cloudProgressBooting = false;
+
+function cloudProgressSnapshot() {
+    return {
+        attempt: state.attempt,
+        currentIndex: state.currentIndex,
+        answers: state.answers,
+        giveUps: state.giveUps,
+        hintLevels: state.hintLevels,
+        masteredIds: state.masteredIds,
+        masteredAnswers: state.masteredAnswers,
+        view: state.view,
+        startedAt: state.startedAt,
+        attemptStartedAt: state.attemptStartedAt,
+        finishedAt: state.finishedAt,
+        attemptHistory: state.attemptHistory,
+        scratchpadPageIndex: state.scratchpadPageIndex
+    };
+}
+
+function applyCloudProgress(savedState) {
+    if (!savedState || typeof savedState !== 'object') return false;
+
+    state.activeQuestions = questionsData.map(q => ({
+        ...q,
+        shuffledOptions: shuffleArray(q.options)
+    }));
+
+    state.attempt = Math.max(1, Number(savedState.attempt) || 1);
+    state.currentIndex = Math.max(0, Math.min(
+        Number(savedState.currentIndex) || 0,
+        state.activeQuestions.length - 1
+    ));
+    state.answers = savedState.answers && typeof savedState.answers === 'object' ? savedState.answers : {};
+    state.giveUps = savedState.giveUps && typeof savedState.giveUps === 'object' ? savedState.giveUps : {};
+    state.hintLevels = savedState.hintLevels && typeof savedState.hintLevels === 'object' ? savedState.hintLevels : {};
+    state.masteredIds = Array.isArray(savedState.masteredIds) ? savedState.masteredIds : [];
+    state.masteredAnswers = savedState.masteredAnswers && typeof savedState.masteredAnswers === 'object' ? savedState.masteredAnswers : {};
+    state.view = savedState.view === 'summary' ? 'summary' : 'exam';
+    state.startedAt = Number(savedState.startedAt) || Date.now();
+    state.attemptStartedAt = Number(savedState.attemptStartedAt) || Date.now();
+    state.finishedAt = savedState.finishedAt ? Number(savedState.finishedAt) : null;
+    state.attemptHistory = Array.isArray(savedState.attemptHistory) ? savedState.attemptHistory : [];
+    state.scratchpadPageIndex = savedState.scratchpadPageIndex && typeof savedState.scratchpadPageIndex === 'object'
+        ? savedState.scratchpadPageIndex : {};
+
+    // Phase 1.5 intentionally does not restore handwriting.
+    state.showScratchpad = false;
+    return true;
+}
+
+async function bootstrapCloudProgress() {
+    const api = window.ExamateProgress;
+    const uid = api?.uid;
+    if (!uid || cloudProgressBooting) return;
+
+    // Same UID already restored: just tell the auth gate it is safe to unlock.
+    if (cloudProgressLoadedForUid === uid && cloudProgressReady) {
+        document.dispatchEvent(new CustomEvent('examate-progress-ready', {
+            detail: { uid }
+        }));
+        return;
+    }
+
+    cloudProgressBooting = true;
+    cloudProgressReady = false;
+
+    try {
+        // IMPORTANT: restore happens BEFORE cloudProgressReady becomes true.
+        // Therefore renderApp() cannot autosave a blank/default state over the
+        // student's previous Firebase progress.
+        const saved = await api.load();
+
+        if (saved?.state) {
+            applyCloudProgress(saved.state);
+        }
+
+        cloudProgressLoadedForUid = uid;
+        cloudProgressReady = true;
+
+        renderApp();
+
+        document.dispatchEvent(new CustomEvent('examate-progress-ready', {
+            detail: { uid }
+        }));
+    } finally {
+        cloudProgressBooting = false;
+    }
+}
+
+document.addEventListener('examate-auth-change', (event) => {
+    const uid = event.detail?.uid || null;
+    if (!uid) {
+        cloudProgressReady = false;
+        cloudProgressLoadedForUid = null;
+        return;
+    }
+    bootstrapCloudProgress();
+});
+
+
+function shuffleArray(array) {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    }
+    return newArray;
+}
+
+function initApp() {
+    const now = Date.now();
+    state.activeQuestions = questionsData.map(q => ({ ...q, shuffledOptions: shuffleArray(q.options) }));
+    state.answers = {};
+    state.giveUps = {};
+    state.hintLevels = {};
+    state.masteredIds = [];
+    state.masteredAnswers = {};
+    state.showScratchpad = false;
+    state.scratchpadData = {};
+    state.scratchpadPages = {};
+    state.scratchpadPageIndex = {};
+    state.scratchpadCopiedQuestion = {};
+    state.scratchpadUndo = {};
+    state.scratchpadRedo = {};
+    state.scratchpadActions = {};
+    state.scratchpadRedoActions = {};
+    state.scratchpadFabricJson = {};
+    state.scratchpadFabricOps = {};
+    state.scratchpadFabricRedoOps = {};
+    state.scratchpadHasInk = {};
+    state.scratchScrollTop = {};
+    state.aiAnchor = {};
+    state.aiFeedback = {};
+    state.aiLoading = {};
+    state.aiErrors = {};
+    state.currentIndex = 0;
+    state.attempt = 1;
+    state.view = 'exam';
+    state.startedAt = now;
+    state.attemptStartedAt = now;
+    state.finishedAt = null;
+    state.attemptHistory = [];
+    renderApp();
+    // If Firebase auth is already ready, restore cloud progress before autosave is enabled.
+    bootstrapCloudProgress();
+}
+
+function prepareRetry() {
+    saveCurrentScratchpad();
+    const masteredMap = new Map();
+
+    // Gather every item that has already been answered correctly in any prior round.
+    state.attemptHistory.forEach(attempt => {
+        attempt.results.forEach(result => {
+            if (result.isCorrect) {
+                const q = questionsData.find(item => item.id === result.id);
+                const correctOption = q ? q.options.find(opt => opt.isCorrect) : null;
+                masteredMap.set(
+                    result.id,
+                    result.selected || (correctOption ? correctOption.text : '')
+                );
+            }
+        });
+    });
+
+    state.masteredIds = Array.from(masteredMap.keys());
+    state.masteredAnswers = Object.fromEntries(masteredMap.entries());
+
+    // Keep all original questions visible so later items can still refer back
+    // to tables, graphs, or information from earlier items.
+    state.activeQuestions = questionsData.map(q => ({
+        ...q,
+        shuffledOptions: shuffleArray(q.options)
+    }));
+
+    state.answers = {};
+    state.giveUps = {};
+    state.hintLevels = {};
+
+    // Jump to the first question that still needs to be corrected.
+    const firstRetryIndex = state.activeQuestions.findIndex(
+        q => !state.masteredIds.includes(q.id)
+    );
+    state.currentIndex = firstRetryIndex >= 0 ? firstRetryIndex : 0;
+
+    state.attempt++;
+    state.attemptStartedAt = Date.now();
+    state.view = 'exam';
+    renderApp();
+}
+
+function getQuestionNumber(questionId) {
+    return questionsData.findIndex(q => q.id === questionId) + 1;
+}
+
+function formatDuration(milliseconds) {
+    const totalSeconds = Math.max(1, Math.round(milliseconds / 1000));
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return minutes > 0 ? `${minutes} นาที ${String(seconds).padStart(2, '0')} วินาที` : `${seconds} วินาที`;
+}
+
+function evaluateCurrentAttempt() {
+    return state.activeQuestions.map(q => {
+        const isMastered = state.masteredIds.includes(q.id);
+        const selected = isMastered
+            ? (state.masteredAnswers[q.id] || '')
+            : (state.answers[q.id] || '');
+        const selectedOption = q.options.find(opt => opt.text === selected);
+        const isGiveUp = isMastered ? false : Boolean(state.giveUps[q.id]);
+
+        return {
+            id: q.id,
+            questionNumber: getQuestionNumber(q.id),
+            questionTH: q.questionTH,
+            selected,
+            isGiveUp,
+            isAnswered: isMastered || Boolean(selected),
+            hintCount: isMastered ? 0 : (state.hintLevels[q.id] || 0),
+            isCarried: isMastered,
+            isCorrect: isMastered || (!isGiveUp && Boolean(selectedOption && selectedOption.isCorrect))
+        };
+    });
+}
+
+window.selectOption = function(qId, optionIndex) {
+    const q = state.activeQuestions.find(item => item.id === qId);
+    if (!q || !q.shuffledOptions[optionIndex] || state.giveUps[qId] || state.masteredIds.includes(qId)) return;
+    state.answers[qId] = q.shuffledOptions[optionIndex].text;
+    renderApp();
+};
+
+function getGuidedSolutionSteps(q) {
+    const holder = document.createElement('div');
+    holder.innerHTML = q.solutionTH || '';
+    return Array.from(holder.children)
+        .filter(el => !/(ตอบ\s*:|คำตอบ|answer\s*:|correct answer)/i.test(el.textContent || ''))
+        .map(el => el.outerHTML);
+}
+
+window.revealNextHint = function(qId) {
+    const q = state.activeQuestions.find(item => item.id === qId);
+    if (!q || state.giveUps[qId] || state.masteredIds.includes(qId)) return;
+    const current = state.hintLevels[qId] || 0;
+    state.hintLevels[qId] = current + 1;
+    renderApp();
+    requestAnimationFrame(() => {
+        const el = document.getElementById('hint-panel');
+        if (el) el.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    });
+};
+
+window.giveUpQuestion = function(qId) {
+    if (state.giveUps[qId] || state.masteredIds.includes(qId)) return;
+    delete state.answers[qId];
+    state.giveUps[qId] = true;
+    renderApp();
+    requestAnimationFrame(() => {
+        const feedback = document.getElementById('give-up-feedback');
+        if (feedback) feedback.scrollIntoView({ behavior:'smooth', block:'center' });
+    });
+};
+
+window.skipQuestion = function() {
+    if (state.currentIndex < state.activeQuestions.length - 1) {
+        saveCurrentScratchpad();
+        state.currentIndex++;
+        renderApp();
+    }
+};
+
+window.goToQuestion = function(index) {
+    // Save the currently mounted question before navigation.
+    saveCurrentScratchpad();
+    state.currentIndex = index;
+    renderApp();
+};
+
+window.submitAll = function() {
+    saveCurrentScratchpad();
+    const submittedAt = Date.now();
+    const results = evaluateCurrentAttempt();
+    const correctCount = results.filter(result => result.isCorrect).length;
+    const giveUpCount = results.filter(result => result.isGiveUp).length;
+    const hintsUsed = results.reduce((sum, result) => sum + result.hintCount, 0);
+    state.attemptHistory.push({
+        attempt: state.attempt,
+        total: results.length,
+        correctCount,
+        giveUpCount,
+        hintsUsed,
+        percentage: Math.round((correctCount / results.length) * 100),
+        durationMs: submittedAt - state.attemptStartedAt,
+        submittedAt,
+        results
+    });
+    if (correctCount === results.length) state.finishedAt = submittedAt;
+    state.view = 'summary';
+    renderApp();
+};
+
+window.startRetry = function() { prepareRetry(); };
+window.restartQuiz = async function() {
+    cloudProgressReady = false;
+    cloudProgressLoadedForUid = window.ExamateProgress?.uid || null;
+    await window.ExamateProgress?.clear();
+    initApp();
+    cloudProgressReady = true;
+    window.ExamateProgress?.save(cloudProgressSnapshot());
+};
+
+
+/* ================= SCRATCHPAD + AI ADD-ON ================= */
+let scratchCanvas = null;
+let scratchCtx = null;
+
+// Fabric-based scratchpad. Apple Pencil input is delegated to Fabric's PencilBrush,
+// following the simpler notebook engine used in the user's standalone board.
+let scratchFabricCanvas = null;
+let scratchFabricPageKey = '';
+// Mounted identity prevents ink from one question leaking into another
+// while renderApp() replaces the old Fabric canvas.
+let scratchFabricMountedQId = null;
+let scratchFabricMountedPageIndex = 0;
+let scratchFabricErasing = false;
+let scratchFabricObjectSeq = 0;
+let scratchFabricLoading = false;
+
+const AI_WORKER_URL = 'https://student-work-ai-checker.micksattawatbutklo.workers.dev/';
+
+function scratchCurrentQuestion() {
+    if (state.view !== 'exam') return null;
+    return state.activeQuestions[state.currentIndex] || null;
+}
+
+function scratchCurrentQid() {
+    const q = scratchCurrentQuestion();
+    return q ? q.id : null;
+}
+
+function ensureScratchPages(qId) {
+    if (!qId) return;
+    if (!Array.isArray(state.scratchpadPages[qId]) || state.scratchpadPages[qId].length === 0) {
+        state.scratchpadPages[qId] = [''];
+    }
+    if (!Number.isInteger(state.scratchpadPageIndex[qId])) {
+        state.scratchpadPageIndex[qId] = 0;
+    }
+    state.scratchpadPageIndex[qId] = Math.max(
+        0,
+        Math.min(state.scratchpadPageIndex[qId], state.scratchpadPages[qId].length - 1)
+    );
+}
+
+function scratchCurrentPageIndex(qId = scratchCurrentQid()) {
+    ensureScratchPages(qId);
+    return qId ? (state.scratchpadPageIndex[qId] || 0) : 0;
+}
+
+function scratchPageKey(qId = scratchCurrentQid(), pageIndex = scratchCurrentPageIndex(qId)) {
+    return qId ? `${qId}__page_${pageIndex}` : '';
+}
+
+function ensureScratchHistory(pageKey) {
+    if (!pageKey) return;
+    if (!state.scratchpadFabricOps[pageKey]) state.scratchpadFabricOps[pageKey] = [];
+    if (!state.scratchpadFabricRedoOps[pageKey]) state.scratchpadFabricRedoOps[pageKey] = [];
+}
+
+function getScratchPageData(qId, pageIndex) {
+    ensureScratchPages(qId);
+    return state.scratchpadPages[qId][pageIndex] || '';
+}
+
+function setScratchPageData(qId, pageIndex, dataUrl) {
+    ensureScratchPages(qId);
+    state.scratchpadPages[qId][pageIndex] = dataUrl || '';
+    if (pageIndex === 0) state.scratchpadData[qId] = dataUrl || '';
+}
+
+function scratchFabricEnsureId(obj) {
+    if (!obj) return '';
+    if (!obj.__scratchId) {
+        scratchFabricObjectSeq += 1;
+        obj.__scratchId = `ink_${Date.now()}_${scratchFabricObjectSeq}`;
+    }
+    return obj.__scratchId;
+}
+
+function scratchFabricSerializeObject(obj) {
+    return obj ? obj.toObject(['__scratchId']) : null;
+}
+
+function scratchFabricHasInk() {
+    if (!scratchFabricCanvas) return false;
+    return scratchFabricCanvas.getObjects().some(obj =>
+        obj && (obj.type === 'path' || obj.__legacyScratchInk)
+    );
+}
+
+function scratchFabricSetObjectMode() {
+    if (!scratchFabricCanvas) return;
+
+    const eraserMode = state.scratchpadTool === 'eraser';
+
+    scratchFabricCanvas.selection = false;
+    scratchFabricCanvas.skipTargetFind = !eraserMode;
+
+    scratchFabricCanvas.getObjects().forEach(obj => {
+        obj.selectable = false;
+        obj.evented = eraserMode && (obj.type === 'path' || obj.__legacyScratchInk);
+        obj.setCoords?.();
+    });
+}
+
+function scratchFabricApplyTool() {
+    if (!scratchFabricCanvas || !window.fabric) return;
+
+    scratchFabricSetObjectMode();
+
+    if (state.scratchpadTool === 'eraser') {
+        scratchFabricCanvas.isDrawingMode = false;
+        scratchFabricCanvas.defaultCursor = 'crosshair';
+        return;
+    }
+
+    // Always create a fresh PencilBrush when switching pen settings.
+    scratchFabricCanvas.freeDrawingBrush = new fabric.PencilBrush(scratchFabricCanvas);
+    scratchFabricCanvas.freeDrawingBrush.color = state.scratchpadColor || '#0f172a';
+    scratchFabricCanvas.freeDrawingBrush.width = Math.max(1.5, Number(state.scratchpadWidth) || 2.3);
+    scratchFabricCanvas.defaultCursor = 'crosshair';
+
+    // IMPORTANT for iPad/Safari + Fabric 5:
+    // Keep the brush armed BEFORE contact. In the user's working notebook,
+    // Fabric starts with isDrawingMode:true. Some Safari Pencil sequences can
+    // reach Fabric's touch/mouse handler before our pointerdown gate.
+    // pointerdown below only disables drawing for a finger in Pen mode.
+    scratchFabricCanvas.isDrawingMode = true;
+}
+
+function scratchFabricSaveMemory(makePng = true) {
+    if (!scratchFabricCanvas || scratchFabricLoading) return;
+
+    // Save to the Q/page this Fabric instance actually belongs to.
+    const qId = scratchFabricMountedQId;
+    const pageIndex = scratchFabricMountedPageIndex;
+    const pageKey = scratchFabricPageKey;
+
+    if (!qId || !pageKey || !Number.isInteger(pageIndex)) return;
+
+    try {
+        state.scratchpadFabricJson[pageKey] =
+            JSON.stringify(scratchFabricCanvas.toJSON(['__scratchId', '__legacyScratchInk']));
+
+        state.scratchpadHasInk[pageKey] = scratchFabricHasInk();
+
+        if (makePng) {
+            const png = scratchFabricCanvas.toDataURL({
+                format:'png',
+                multiplier:1,
+                enableRetinaScaling:false
+            });
+            setScratchPageData(qId, pageIndex, png);
+        }
+    } catch (err) {
+        console.warn('Fabric scratchpad save failed:', err);
+    }
+
+    const scrollEl = document.querySelector('.scratch-scroll');
+    if (scrollEl) state.scratchScrollTop[pageKey] = scrollEl.scrollTop;
+}
+
+function saveCurrentScratchpad() {
+    scratchFabricSaveMemory(true);
+}
+
+function scratchFabricAddLegacyImage(dataUrl, done) {
+    if (!scratchFabricCanvas || !dataUrl || !window.fabric) {
+        done?.();
+        return;
+    }
+
+    fabric.Image.fromURL(dataUrl, img => {
+        if (!img || !scratchFabricCanvas) {
+            done?.();
+            return;
+        }
+
+        const scaleX = scratchFabricCanvas.getWidth() / Math.max(1, img.width || 1);
+        const scaleY = scratchFabricCanvas.getHeight() / Math.max(1, img.height || 1);
+
+        img.set({
+            left:0,
+            top:0,
+            originX:'left',
+            originY:'top',
+            scaleX,
+            scaleY,
+            selectable:false,
+            evented:false,
+            __legacyScratchInk:true
+        });
+
+        scratchFabricEnsureId(img);
+        scratchFabricCanvas.add(img);
+        scratchFabricCanvas.sendToBack(img);
+        done?.();
+    });
+}
+
+window.toggleScratchpad = function() {
+    if (state.showScratchpad) saveCurrentScratchpad();
+    state.showScratchpad = !state.showScratchpad;
+    renderApp();
+};
+
+window.copyQuestionToScratchpad = function() {
+    const qId = scratchCurrentQid();
+    if (!qId) return;
+
+    saveCurrentScratchpad();
+    ensureScratchPages(qId);
+    const pageIndex = scratchCurrentPageIndex(qId);
+    const pageKey = scratchPageKey(qId, pageIndex);
+
+    state.scratchpadCopiedQuestion[pageKey] = true;
+    state.showScratchpad = true;
+    renderApp();
+};
+
+window.setScratchInputMode = function(mode) {
+    saveCurrentScratchpad();
+    state.scratchpadInputMode = mode === 'finger' ? 'finger' : 'pen';
+    renderApp();
+};
+
+window.setScratchPen = function(color) {
+    saveCurrentScratchpad();
+    state.scratchpadTool = 'pen';
+    state.scratchpadColor = color;
+    state.scratchpadWidth = 2.3;
+    renderApp();
+};
+
+window.setScratchEraser = function() {
+    saveCurrentScratchpad();
+    state.scratchpadTool = 'eraser';
+    state.scratchpadWidth = 22;
+    renderApp();
+};
+
+window.clearScratchInk = function() {
+    if (!scratchFabricCanvas) return;
+
+    const qId = scratchCurrentQid();
+    const pageIndex = scratchCurrentPageIndex(qId);
+    const pageKey = scratchPageKey(qId, pageIndex);
+    ensureScratchHistory(pageKey);
+
+    const removed = scratchFabricCanvas.getObjects().map(scratchFabricSerializeObject).filter(Boolean);
+
+    if (removed.length) {
+        state.scratchpadFabricOps[pageKey].push({
+            type:'clear',
+            objects:removed
+        });
+        state.scratchpadFabricRedoOps[pageKey] = [];
+    }
+
+    scratchFabricCanvas.getObjects().slice().forEach(obj => scratchFabricCanvas.remove(obj));
+    scratchFabricCanvas.requestRenderAll();
+
+    state.scratchpadHasInk[pageKey] = false;
+    state.aiFeedback[pageKey] = null;
+    state.aiErrors[pageKey] = '';
+};
+
+function scratchFabricEnliven(objectData, callback) {
+    if (!objectData || !window.fabric) {
+        callback?.(null);
+        return;
+    }
+    fabric.util.enlivenObjects([objectData], objects => callback?.(objects?.[0] || null));
+}
+
+function scratchFabricFindById(id) {
+    if (!scratchFabricCanvas || !id) return null;
+    return scratchFabricCanvas.getObjects().find(obj => obj.__scratchId === id) || null;
+}
+
+window.undoScratch = function() {
+    if (!scratchFabricCanvas) return;
+
+    const qId = scratchCurrentQid();
+    const pageIndex = scratchCurrentPageIndex(qId);
+    const pageKey = scratchPageKey(qId, pageIndex);
+    ensureScratchHistory(pageKey);
+
+    const ops = state.scratchpadFabricOps[pageKey];
+    if (!ops.length) return;
+
+    const op = ops.pop();
+    state.scratchpadFabricRedoOps[pageKey].push(op);
+
+    if (op.type === 'add') {
+        const obj = scratchFabricFindById(op.id);
+        if (obj) scratchFabricCanvas.remove(obj);
+        scratchFabricCanvas.requestRenderAll();
+    } else if (op.type === 'remove') {
+        scratchFabricEnliven(op.object, obj => {
+            if (!obj || !scratchFabricCanvas) return;
+            obj.selectable = false;
+            obj.evented = state.scratchpadTool === 'eraser';
+            scratchFabricCanvas.add(obj);
+            scratchFabricCanvas.requestRenderAll();
+        });
+    } else if (op.type === 'clear') {
+        const list = op.objects || [];
+        let pending = list.length;
+        if (!pending) return;
+
+        list.forEach(data => scratchFabricEnliven(data, obj => {
+            if (obj && scratchFabricCanvas) {
+                obj.selectable = false;
+                obj.evented = state.scratchpadTool === 'eraser';
+                scratchFabricCanvas.add(obj);
+            }
+            pending -= 1;
+            if (pending <= 0 && scratchFabricCanvas) scratchFabricCanvas.requestRenderAll();
+        }));
+    }
+
+    state.scratchpadHasInk[pageKey] = true;
+};
+
+window.redoScratch = function() {
+    if (!scratchFabricCanvas) return;
+
+    const qId = scratchCurrentQid();
+    const pageIndex = scratchCurrentPageIndex(qId);
+    const pageKey = scratchPageKey(qId, pageIndex);
+    ensureScratchHistory(pageKey);
+
+    const redo = state.scratchpadFabricRedoOps[pageKey];
+    if (!redo.length) return;
+
+    const op = redo.pop();
+    state.scratchpadFabricOps[pageKey].push(op);
+
+    if (op.type === 'add') {
+        scratchFabricEnliven(op.object, obj => {
+            if (!obj || !scratchFabricCanvas) return;
+            obj.selectable = false;
+            obj.evented = state.scratchpadTool === 'eraser';
+            scratchFabricCanvas.add(obj);
+            scratchFabricCanvas.requestRenderAll();
+        });
+    } else if (op.type === 'remove') {
+        const obj = scratchFabricFindById(op.id);
+        if (obj) scratchFabricCanvas.remove(obj);
+        scratchFabricCanvas.requestRenderAll();
+    } else if (op.type === 'clear') {
+        scratchFabricCanvas.getObjects().slice().forEach(obj => scratchFabricCanvas.remove(obj));
+        scratchFabricCanvas.requestRenderAll();
+    }
+
+    state.scratchpadHasInk[pageKey] = scratchFabricHasInk();
+};
+
+window.addScratchPage = function() {
+    const qId = scratchCurrentQid();
+    if (!qId) return;
+
+    saveCurrentScratchpad();
+    ensureScratchPages(qId);
+
+    state.scratchpadPages[qId].push('');
+    state.scratchpadPageIndex[qId] = state.scratchpadPages[qId].length - 1;
+    state.showScratchpad = true;
+
+    renderApp();
+};
+
+window.previousScratchPage = function() {
+    const qId = scratchCurrentQid();
+    if (!qId) return;
+
+    saveCurrentScratchpad();
+    ensureScratchPages(qId);
+
+    const current = scratchCurrentPageIndex(qId);
+    if (current <= 0) return;
+
+    state.scratchpadPageIndex[qId] = current - 1;
+    renderApp();
+};
+
+window.nextScratchPage = function() {
+    const qId = scratchCurrentQid();
+    if (!qId) return;
+
+    saveCurrentScratchpad();
+    ensureScratchPages(qId);
+
+    const current = scratchCurrentPageIndex(qId);
+    if (current >= state.scratchpadPages[qId].length - 1) return;
+
+    state.scratchpadPageIndex[qId] = current + 1;
+    renderApp();
+};
+
+function initScratchCanvas() {
+    const rawCanvas = document.getElementById('scratchpad-canvas');
+    if (!rawCanvas) return;
+
+    if (!window.fabric || !fabric.Canvas || !fabric.PencilBrush) {
+        console.error('Fabric.js 5.3.1 is not available.');
+        const status = document.querySelector('.scratch-status');
+        if (status) {
+            status.textContent =
+                '❌ Fabric.js โหลดไม่สำเร็จ / Fabric.js failed to load. Check internet access and refresh.';
+        }
+        return;
+    }
+
+    // Dispose the old instance after renderApp replaced the DOM.
+    if (scratchFabricCanvas) {
+        try { scratchFabricCanvas.dispose(); } catch (_) {}
+        scratchFabricCanvas = null;
+    }
+
+    const sheet = rawCanvas.closest('.scratch-sheet');
+    const viewportEl = rawCanvas.closest('.scratch-viewport');
+    const scrollEl = rawCanvas.closest('.scratch-scroll') || document.querySelector('.scratch-scroll');
+    if (!sheet) return;
+
+    const width = Math.max(1, Math.round(sheet.clientWidth));
+    const height = Math.max(1, Math.round(sheet.clientHeight));
+
+    const qId = scratchCurrentQid();
+    ensureScratchPages(qId);
+    const pageIndex = scratchCurrentPageIndex(qId);
+    const pageKey = scratchPageKey(qId, pageIndex);
+    ensureScratchHistory(pageKey);
+
+    scratchFabricMountedQId = qId;
+    scratchFabricMountedPageIndex = pageIndex;
+    scratchFabricPageKey = pageKey;
+    scratchFabricLoading = true;
+
+    console.log(`📄 Scratchpad mounted: ${qId} · page ${pageIndex + 1}`);
+
+    scratchFabricCanvas = new fabric.Canvas('scratchpad-canvas', {
+        // Match the working notebook: keep PencilBrush armed before the first Pencil contact.
+        isDrawingMode:true,
+        selection:false,
+        width,
+        height,
+        backgroundColor:'rgba(0,0,0,0)',
+        allowTouchScrolling:false,
+        stopContextMenu:true,
+        preserveObjectStacking:true,
+        enableRetinaScaling:true
+    });
+
+    // Keep legacy references alive for AI/PDF helper code.
+    scratchCanvas = scratchFabricCanvas.lowerCanvasEl;
+    scratchCtx = scratchCanvas.getContext('2d');
+
+    const wrapper = scratchFabricCanvas.wrapperEl;
+    const upper = scratchFabricCanvas.upperCanvasEl;
+    const lower = scratchFabricCanvas.lowerCanvasEl;
+
+    if (wrapper) {
+        Object.assign(wrapper.style, {
+            position:'absolute',
+            inset:'0',
+            width:'100%',
+            height:'100%',
+            zIndex:'2',
+            touchAction:'none',
+            WebkitUserSelect:'none',
+            userSelect:'none',
+            WebkitTouchCallout:'none'
+        });
+    }
+
+    // Fabric creates two canvases:
+    //   lowerCanvas = visible committed drawing
+    //   upperCanvas = the actual interactive input surface
+    //
+    // IMPORTANT: #scratchpad-canvas is the LOWER canvas after Fabric wraps it.
+    // The old scratchpad CSS gave that ID z-index:2, which could place the
+    // lower canvas ABOVE Fabric's upper canvas and steal every Pencil event.
+    Object.assign(lower.style, {
+        width:'100%',
+        height:'100%',
+        touchAction:'none',
+        WebkitUserSelect:'none',
+        userSelect:'none',
+        WebkitTouchCallout:'none',
+        WebkitTapHighlightColor:'transparent',
+        zIndex:'1',
+        pointerEvents:'none'
+    });
+
+    Object.assign(upper.style, {
+        width:'100%',
+        height:'100%',
+        touchAction:'none',
+        WebkitUserSelect:'none',
+        userSelect:'none',
+        WebkitTouchCallout:'none',
+        WebkitTapHighlightColor:'transparent',
+        zIndex:'3',
+        pointerEvents:'auto'
+    });
+
+    const dbgLayer = document.getElementById('scratch-input-debug');
+    if (dbgLayer) {
+        dbgLayer.textContent = 'upper-canvas ready · waiting for Pencil';
+    }
+
+    const blockNativeCallout = e => e.preventDefault();
+    upper.addEventListener('contextmenu', blockNativeCallout, { passive:false });
+    upper.addEventListener('selectstart', blockNativeCallout, { passive:false });
+    upper.addEventListener('dragstart', blockNativeCallout, { passive:false });
+
+    // This is the key pattern copied from the working notebook:
+    // pointerdown only decides whether Fabric is allowed to draw.
+    // Fabric itself owns the actual stroke lifecycle.
+    upper.addEventListener('pointerdown', function(e) {
+        scratchFabricCanvas._lastPointerType = e.pointerType;
+
+        if (state.scratchpadTool === 'eraser') {
+            scratchFabricCanvas.isDrawingMode = false;
+            scratchFabricSetObjectMode();
+            return;
+        }
+
+        scratchFabricCanvas.skipTargetFind = true;
+        scratchFabricCanvas.selection = false;
+
+        if (state.scratchpadInputMode === 'pen') {
+            // Same pattern as the working Fabric notebook:
+            // Pencil/mouse stays armed; finger turns drawing off.
+            scratchFabricCanvas.isDrawingMode =
+                e.pointerType === 'pen' || e.pointerType === 'mouse';
+        } else {
+            scratchFabricCanvas.isDrawingMode = true;
+        }
+
+        const dbg = document.getElementById('scratch-input-debug');
+        if (dbg) {
+            dbg.textContent = `input=${e.pointerType} · drawing=${scratchFabricCanvas.isDrawingMode ? 'ON' : 'OFF'}`;
+        }
+
+        window.ExamatePresence?.setActivity('WRITING', pageIndex + 1);
+    }, true);
+
+    // Passive location tracking only. No preventDefault, no pointer capture,
+    // no custom pointer lifecycle.
+    upper.addEventListener('pointermove', function(e) {
+        if (e.pointerType !== 'pen' && e.pointerType !== 'mouse' && e.pointerType !== 'touch') return;
+        if (!viewportEl) return;
+
+        const vr = viewportEl.getBoundingClientRect();
+        state.aiAnchor[pageKey] = {
+            xRatio:Math.max(0, Math.min(1, (e.clientX - vr.left) / Math.max(1, vr.width))),
+            visibleY:Math.max(0, e.clientY - vr.top)
+        };
+    }, { passive:true });
+
+    let eraseSeen = new Set();
+
+    const removeEraserTarget = target => {
+        if (!scratchFabricCanvas || !target) return;
+        if (!(target.type === 'path' || target.__legacyScratchInk)) return;
+
+        const id = scratchFabricEnsureId(target);
+        if (eraseSeen.has(id)) return;
+        eraseSeen.add(id);
+
+        const objectData = scratchFabricSerializeObject(target);
+
+        state.scratchpadFabricOps[pageKey].push({
+            type:'remove',
+            id,
+            object:objectData
+        });
+        state.scratchpadFabricRedoOps[pageKey] = [];
+
+        scratchFabricCanvas.remove(target);
+        scratchFabricCanvas.requestRenderAll();
+        state.scratchpadHasInk[pageKey] = scratchFabricHasInk();
+    };
+
+    scratchFabricCanvas.on('mouse:down', function(opt) {
+        if (state.scratchpadTool !== 'eraser') return;
+        scratchFabricErasing = true;
+        eraseSeen = new Set();
+        removeEraserTarget(opt.target);
+    });
+
+    scratchFabricCanvas.on('mouse:move', function(opt) {
+        if (!scratchFabricErasing || state.scratchpadTool !== 'eraser') return;
+        removeEraserTarget(opt.target);
+    });
+
+    scratchFabricCanvas.on('mouse:up', function() {
+        scratchFabricErasing = false;
+        eraseSeen.clear();
+    });
+
+    let scratchCreatedPathCount = 0;
+
+    scratchFabricCanvas.on('path:created', function(opt) {
+        const path = opt?.path;
+        if (!path) return;
+
+        scratchCreatedPathCount += 1;
+        const dbg = document.getElementById('scratch-input-debug');
+        if (dbg) {
+            dbg.textContent =
+                `input=${scratchFabricCanvas._lastPointerType || '?'} · path=${scratchCreatedPathCount}`;
+        }
+
+        // Defensive palm rejection. If Fabric creates a path after a touch
+        // while Pen mode is active, delete it immediately.
+        const lastType = scratchFabricCanvas._lastPointerType;
+        if (
+            state.scratchpadInputMode === 'pen' &&
+            lastType &&
+            lastType !== 'pen' &&
+            lastType !== 'mouse'
+        ) {
+            scratchFabricCanvas.remove(path);
+            scratchFabricCanvas.requestRenderAll();
+            return;
+        }
+
+        const id = scratchFabricEnsureId(path);
+        path.selectable = false;
+        path.evented = state.scratchpadTool === 'eraser';
+
+        state.scratchpadFabricOps[pageKey].push({
+            type:'add',
+            id,
+            object:scratchFabricSerializeObject(path)
+        });
+        state.scratchpadFabricRedoOps[pageKey] = [];
+        state.scratchpadHasInk[pageKey] = true;
+
+        // Important: no PNG encoding, no JSON stringify, no renderApp here.
+        // The next Pencil stroke can begin immediately.
+        scratchFabricCanvas.requestRenderAll();
+    });
+
+    if (scrollEl) {
+        requestAnimationFrame(() => {
+            scrollEl.scrollTop = state.scratchScrollTop[pageKey] || 0;
+        });
+        scrollEl.addEventListener('scroll', () => {
+            state.scratchScrollTop[pageKey] = scrollEl.scrollTop;
+        }, { passive:true });
+    }
+
+    const finishLoading = () => {
+        if (!scratchFabricCanvas) return;
+        scratchFabricLoading = false;
+        scratchFabricCanvas.getObjects().forEach(obj => scratchFabricEnsureId(obj));
+        state.scratchpadHasInk[pageKey] = scratchFabricHasInk();
+        scratchFabricApplyTool();
+        scratchFabricCanvas.calcOffset();
+        scratchFabricCanvas.requestRenderAll();
+    };
+
+    const json = state.scratchpadFabricJson[pageKey];
+    const legacyPng = getScratchPageData(qId, pageIndex);
+
+    if (json) {
+        scratchFabricCanvas.loadFromJSON(json, finishLoading);
+    } else if (legacyPng) {
+        scratchFabricAddLegacyImage(legacyPng, finishLoading);
+    } else {
+        finishLoading();
+    }
+}
+
+function escapeHTML(value) {
+    return String(value ?? '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#039;');
+}
+
+function aiPanelStyle(pageKey) {
+    const anchor = state.aiAnchor[pageKey] || { xRatio:0.72, visibleY:72 };
+
+    const requestedTop = Math.max(14, Math.round((anchor.visibleY || 72) + 24));
+
+    // Show on the opposite side of the writing, so it is less likely to cover it.
+    const side = (anchor.xRatio || 0) > 0.52
+        ? 'left:18px;right:auto;'
+        : 'right:18px;left:auto;';
+
+    return `top:clamp(14px, ${requestedTop}px, calc(100% - 260px));${side}`;
+}
+
+window.checkScratchpadWithAI = async function() {
+    const q = scratchCurrentQuestion();
+    if (!q) return;
+
+    const qId = q.id;
+    const pageIndex = scratchCurrentPageIndex(qId);
+    const pageKey = scratchPageKey(qId, pageIndex);
+
+    if (!state.scratchpadHasInk[pageKey]) {
+        state.aiErrors[pageKey] =
+            'เขียนวิธีทำบนหน้าปัจจุบันก่อน แล้วค่อยให้ AI ช่วยตรวจ / Write some working on the current page before asking AI to review it.';
+        state.aiFeedback[pageKey] = null;
+        renderApp();
+        return;
+    }
+
+    saveCurrentScratchpad();
+
+    state.aiLoading[pageKey] = true;
+    state.aiErrors[pageKey] = '';
+    renderApp();
+
+    try {
+        const savedDataUrl = getScratchPageData(qId, pageIndex);
+        const imageBase64 = savedDataUrl.replace(/^data:image\/png;base64,/, '');
+
+        const response = await fetch(AI_WORKER_URL, {
+            method:'POST',
+            headers:{ 'Content-Type':'application/json' },
+            body:JSON.stringify({
+                question: `${q.questionTH}\n${q.questionEN}`,
+                referenceSolution: `${q.solutionTH || ''}\n${q.solutionEN || ''}`,
+                imageBase64,
+                hintLevel: state.hintLevels[qId] || 0
+            })
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+            throw new Error(data?.error || data?.detail || `HTTP ${response.status}`);
+        }
+
+        const feedback = data?.feedback || data;
+
+        if (!feedback || typeof feedback !== 'object') {
+            throw new Error('AI returned an unexpected response.');
+        }
+
+        state.aiFeedback[pageKey] = feedback;
+        state.aiErrors[pageKey] = '';
+    } catch (err) {
+        state.aiErrors[pageKey] =
+            `AI ตรวจไม่สำเร็จ / AI review failed: ${err.message || String(err)}`;
+    } finally {
+        state.aiLoading[pageKey] = false;
+        renderApp();
+    }
+};
+
+function renderAIFeedbackPanel(q, pageIndex) {
+    const qId = q.id;
+    const pageKey = scratchPageKey(qId, pageIndex);
+
+    const loading = Boolean(state.aiLoading[pageKey]);
+    const error = state.aiErrors[pageKey] || '';
+    const fb = state.aiFeedback[pageKey];
+
+    if (!loading && !error && !fb) return '';
+
+    if (loading) {
+        return `
+            <div class="ai-feedback-panel" style="${aiPanelStyle(pageKey)}">
+                <div class="ai-feedback-head">
+                    <span>🤖 AI กำลังตรวจ / AI Reviewing</span>
+                    <span class="ai-anchor-note">หน้า ${pageIndex+1} / Page ${pageIndex+1}</span>
+                </div>
+                <div class="ai-feedback-body">
+                    <span class="ai-spinner"></span>
+                    กำลังตรวจวิธีทำบนหน้าปัจจุบัน... / Reviewing the current scratchpad page...
+                </div>
+            </div>`;
+    }
+
+    if (error) {
+        return `
+            <div class="ai-feedback-panel" style="${aiPanelStyle(pageKey)}">
+                <div class="ai-feedback-head">
+                    <span>🤖 คำแนะนำจาก AI / AI Feedback</span>
+                    <span class="ai-anchor-note">หน้า ${pageIndex+1} / Page ${pageIndex+1}</span>
+                </div>
+                <div class="ai-feedback-body text-rose-700">${escapeHTML(error)}</div>
+            </div>`;
+    }
+
+    const status = escapeHTML(fb.status || '');
+    const correct = escapeHTML(fb.correct_so_far_th || '');
+    const issue = escapeHTML(fb.issue_th || '');
+    const hintTh = escapeHTML(fb.hint_th || '');
+    const hintEn = escapeHTML(fb.hint_en || '');
+    const confidence = Number(fb.confidence);
+
+    return `
+        <div class="ai-feedback-panel" style="${aiPanelStyle(pageKey)}">
+            <div class="ai-feedback-head">
+                <span>🤖 AI ตรวจแล้ว / AI Review</span>
+                <span class="ai-anchor-note">ใกล้จุดที่เขียนล่าสุด · หน้า ${pageIndex+1} / Near latest writing · Page ${pageIndex+1}</span>
+                ${Number.isFinite(confidence)
+                    ? `<span class="text-[10px] font-bold text-violet-500">${Math.round(confidence*100)}%</span>`
+                    : ''}
+            </div>
+
+            <div class="ai-feedback-body">
+                ${correct
+                    ? `<div class="ai-feedback-row"><div class="ai-feedback-label">✓ มาถูกทาง / Correct so far</div><div>${correct}</div></div>`
+                    : ''}
+
+                ${issue
+                    ? `<div class="ai-feedback-row"><div class="ai-feedback-label">🔎 จุดที่ควรตรวจ / Check this</div><div>${issue}</div></div>`
+                    : ''}
+
+                ${hintTh
+                    ? `<div class="ai-feedback-row"><div class="ai-feedback-label">💡 ใบ้ / Hint</div><div>${hintTh}</div></div>`
+                    : ''}
+
+                ${hintEn
+                    ? `<div class="ai-feedback-row text-slate-500"><div class="ai-feedback-label">English hint</div><div>${hintEn}</div></div>`
+                    : ''}
+
+                ${status
+                    ? `<div class="ai-feedback-row text-[11px] text-slate-400">status: ${status}</div>`
+                    : ''}
+            </div>
+        </div>`;
+}
+
+function renderScratchpad(q) {
+    const qId = q.id;
+    ensureScratchPages(qId);
+
+    const pageIndex = scratchCurrentPageIndex(qId);
+    const pageCount = state.scratchpadPages[qId].length;
+    const pageKey = scratchPageKey(qId, pageIndex);
+
+    const copied = Boolean(state.scratchpadCopiedQuestion[pageKey]);
+    const penMode = state.scratchpadInputMode === 'pen';
+
+    return `
+        <div id="scratchpad-shell" class="scratchpad-shell fade-in">
+            <div class="scratchpad-toolbar">
+                <button class="scratch-tool ${penMode ? 'active' : ''}" onclick="setScratchInputMode('pen')">
+                    ✏️ ปากกา · วางมือได้ / Pen · Palm Rejection
+                </button>
+
+                <button class="scratch-tool ${!penMode ? 'active' : ''}" onclick="setScratchInputMode('finger')">
+                    👆 นิ้ว / Finger
+                </button>
+
+                <span class="w-px h-6 bg-slate-300 mx-1"></span>
+
+                <button class="scratch-tool ${state.scratchpadTool==='pen' && state.scratchpadColor==='#0f172a' ? 'active' : ''}" onclick="setScratchPen('#0f172a')">
+                    <span class="scratch-color-dot" style="background:#0f172a"></span>ดำ / Black
+                </button>
+
+                <button class="scratch-tool ${state.scratchpadTool==='pen' && state.scratchpadColor==='#2563eb' ? 'active' : ''}" onclick="setScratchPen('#2563eb')">
+                    <span class="scratch-color-dot" style="background:#2563eb"></span>น้ำเงิน / Blue
+                </button>
+
+                <button class="scratch-tool ${state.scratchpadTool==='pen' && state.scratchpadColor==='#e11d48' ? 'active' : ''}" onclick="setScratchPen('#e11d48')">
+                    <span class="scratch-color-dot" style="background:#e11d48"></span>แดง / Red
+                </button>
+
+                <button class="scratch-tool ${state.scratchpadTool==='eraser' ? 'active' : ''}" onclick="setScratchEraser()">
+                    🧽 ลบทั้งเส้น / Stroke Eraser
+                </button>
+
+                <span class="w-px h-6 bg-slate-300 mx-1"></span>
+
+                <button class="scratch-tool" onclick="undoScratch()">↶ ย้อนกลับ / Undo</button>
+                <button class="scratch-tool" onclick="redoScratch()">↷ ทำซ้ำ / Redo</button>
+                <button class="scratch-tool danger" onclick="clearScratchInk()">🗑 ล้างหมึก / Clear Ink</button>
+
+                <button class="scratch-tool copy" onclick="copyQuestionToScratchpad()">
+                    📋 ${copied ? 'อัปเดตโจทย์ / Update Question' : 'คัดลอกโจทย์ลงหน้านี้ / Copy Question Here'}
+                </button>
+
+                <button class="scratch-tool ai-check-btn" onclick="checkScratchpadWithAI()" ${state.aiLoading[pageKey] ? 'disabled' : ''}>
+                    ${state.aiLoading[pageKey]
+                        ? '🤖 กำลังตรวจ... / Checking...'
+                        : (state.aiFeedback[pageKey]
+                            ? '🤖 ตรวจอีกครั้ง / Check Again'
+                            : '🤖 ตรวจวิธีทำ / Check Working')}
+                </button>
+
+                <span class="w-px h-6 bg-slate-300 mx-1"></span>
+
+                <button class="scratch-tool page" onclick="previousScratchPage()" ${pageIndex === 0 ? 'disabled' : ''}>
+                    ◀ หน้าก่อน / Previous Page
+                </button>
+
+                <span class="scratch-page-indicator">
+                    หน้า ${pageIndex+1}/${pageCount} · Page ${pageIndex+1}/${pageCount}
+                </span>
+
+                <button class="scratch-tool page" onclick="nextScratchPage()" ${pageIndex >= pageCount-1 ? 'disabled' : ''}>
+                    หน้าถัดไป / Next Page ▶
+                </button>
+
+                <button class="scratch-tool page" onclick="addScratchPage()">
+                    ＋ เพิ่มหน้า A4 / Add A4 Page
+                </button>
+
+                <span class="text-xs font-bold text-slate-500 ml-auto">
+                    A4 เต็มหน้า · เลื่อนลงได้ / Full A4 · Scroll ↓
+                </span>
+            </div>
+
+            <div class="scratch-status ${penMode ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}">
+                ${penMode
+                    ? '✓ Fabric Notebook Engine v1.11: แก้ลำดับชั้น Canvas แล้ว โดย Fabric upper-canvas เป็นชั้นรับ Apple Pencil และ lower-canvas ไม่รับ pointer / Fabric upper-canvas now owns input.'
+                    : 'Finger mode: Fabric PencilBrush รับนิ้วด้วย / Finger drawing enabled; palm rejection is unavailable in this mode.'}
+                · 🧪 Fabric 5.3.1 · <span id="scratch-input-debug" class="inline-block px-2 py-0.5 bg-white/80 rounded border border-current/20">waiting for Pencil</span>
+                · <span class="inline-block px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded border border-indigo-200 font-bold">
+                    กระดาษเฉพาะ Q${getQuestionNumber(q.id)} / Q${getQuestionNumber(q.id)} notebook
+                  </span>
+                · ${pageCount} หน้า A4 / ${pageCount} A4 page(s)
+                · AI ตรวจเฉพาะหน้าปัจจุบัน และ feedback จะลอยใกล้ตำแหน่งที่เขียนล่าสุด / AI checks the current page and appears near your latest writing
+            </div>
+
+            <div class="scratch-viewport">
+                <div class="scratch-scroll">
+                    <div class="scratch-sheet">
+                        <div class="scratch-question-bg ${copied ? '' : 'hidden'}">
+                            <div class="sq-title">
+                                Q${getQuestionNumber(q.id)} · หน้า ${pageIndex+1} / Page ${pageIndex+1}
+                                · โจทย์อ้างอิง / Question reference
+                            </div>
+                            <div class="sq-th question-math">${q.questionTH}</div>
+                            <div class="sq-en question-math">${q.questionEN}</div>
+                            <div class="sq-content">${q.contentHTML || ''}</div>
+                        </div>
+
+                        <canvas id="scratchpad-canvas"></canvas>
+                    </div>
+                </div>
+
+                ${renderAIFeedbackPanel(q, pageIndex)}
+            </div>
+        </div>`;
+}
+
+/* ================= END SCRATCHPAD + AI ADD-ON ================= */
+
+/* ============= PDF EXPORT AFTER CHECKING ANSWERS ============= */
+function latestStatusForQuestion(qId) {
+    for (let i = state.attemptHistory.length - 1; i >= 0; i--) {
+        const attempt = state.attemptHistory[i];
+        const found = attempt.results.find(r => r.id === qId);
+
+        if (found) {
+            if (found.isCorrect) {
+                return {
+                    kind:'correct',
+                    symbol:'✓',
+                    th:'ถูก',
+                    en:'CORRECT',
+                    text:'✓ Correct / ถูก',
+                    color:'#047857',
+                    attempt:attempt.attempt || (i + 1)
+                };
+            }
+
+            if (found.isGiveUp) {
+                return {
+                    kind:'giveup',
+                    symbol:'0',
+                    th:'ยอมแพ้',
+                    en:'GIVE UP',
+                    text:'Give Up · 0',
+                    color:'#b45309',
+                    attempt:attempt.attempt || (i + 1)
+                };
+            }
+
+            if (found.isAnswered) {
+                return {
+                    kind:'incorrect',
+                    symbol:'✕',
+                    th:'ผิด',
+                    en:'INCORRECT',
+                    text:'✕ Incorrect / ผิด',
+                    color:'#b91c1c',
+                    attempt:attempt.attempt || (i + 1)
+                };
+            }
+
+            return {
+                kind:'skipped',
+                symbol:'—',
+                th:'ข้าม',
+                en:'SKIPPED',
+                text:'Skipped / ข้าม',
+                color:'#64748b',
+                attempt:attempt.attempt || (i + 1)
+            };
+        }
+    }
+
+    return {
+        kind:'unchecked',
+        symbol:'?',
+        th:'ยังไม่ตรวจ',
+        en:'NOT CHECKED',
+        text:'Not checked / ยังไม่ตรวจ',
+        color:'#64748b',
+        attempt:null
+    };
+}
+
+window.exportScratchpadsPDF = async function() {
+    saveCurrentScratchpad();
+
+    if (!window.html2canvas || !window.jspdf || !window.jspdf.jsPDF) {
+        alert('เครื่องมือ PDF ยังโหลดไม่เสร็จ กรุณาลองอีกครั้ง / PDF tools are still loading. Please try again.');
+        return;
+    }
+
+    const button = document.getElementById('export-scratchpads-btn');
+
+    const exportPages = [];
+    questionsData.forEach(q => {
+        ensureScratchPages(q.id);
+        state.scratchpadPages[q.id].forEach((ink, pageIndex) => {
+            exportPages.push({ q, pageIndex, ink:ink || '' });
+        });
+    });
+
+    if (button) {
+        button.disabled = true;
+        button.textContent = `กำลังสร้าง PDF 0/${exportPages.length}... / Creating PDF 0/${exportPages.length}...`;
+    }
+
+    const host = document.createElement('div');
+    host.id = 'scratch-export-host';
+    document.body.appendChild(host);
+
+    try {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4', compress:true });
+
+        for (let i = 0; i < exportPages.length; i++) {
+            const { q, pageIndex, ink } = exportPages[i];
+            const qNo = getQuestionNumber(q.id);
+            const pageKey = scratchPageKey(q.id, pageIndex);
+            const copied = Boolean(state.scratchpadCopiedQuestion[pageKey]);
+            const status = latestStatusForQuestion(q.id);
+
+            if (button) {
+                button.textContent =
+                    `กำลังสร้าง PDF ${i+1}/${exportPages.length}... / Creating PDF ${i+1}/${exportPages.length}...`;
+            }
+
+            host.innerHTML = `
+                <div class="scratch-export-page">
+                    <div style="display:flex;justify-content:space-between;gap:16px;align-items:center;border-bottom:2px solid #e2e8f0;padding-bottom:12px;">
+                        <div>
+                            <div style="font-size:21px;font-weight:800;">
+                                Question ${qNo} · Scratchpad · Page ${pageIndex+1}
+                            </div>
+                            <div style="font-size:12px;color:#64748b;margin-top:3px;">
+                                ${window.QUIZ_TEMPLATE.title}
+                            </div>
+                        </div>
+                        <div style="font-size:14px;font-weight:800;color:${status.color};">
+                            ${status.text}
+                        </div>
+                    </div>
+
+                    <div class="scratch-export-board">
+                        <div class="scratch-export-stamp ${status.kind}">
+                            <div class="stamp-symbol">${status.symbol}</div>
+                            <div class="stamp-th">${status.th}</div>
+                            <div class="stamp-en">${status.en}</div>
+                            <div class="stamp-meta">
+                                Q${qNo}${status.attempt ? ` · ATTEMPT ${status.attempt}` : ''}
+                            </div>
+                        </div>
+
+                        ${copied ? `
+                            <div class="scratch-export-question">
+                                <div style="font-size:14px;font-weight:800;color:#4338ca;margin-bottom:7px;">
+                                    Q${qNo} · Page ${pageIndex+1} · โจทย์อ้างอิง / Question reference
+                                </div>
+                                <div class="question-math" style="font-size:15px;font-weight:700;line-height:1.55;">
+                                    ${q.questionTH}
+                                </div>
+                                <div class="question-math" style="font-size:12px;color:#64748b;line-height:1.45;margin-top:5px;">
+                                    ${q.questionEN}
+                                </div>
+                                <div style="font-size:11px;margin-top:9px;">
+                                    ${q.contentHTML || ''}
+                                </div>
+                            </div>` : ''}
+
+                        ${ink
+                            ? `<img class="scratch-export-ink" src="${ink}" alt="Scratchpad ink Q${qNo} page ${pageIndex+1}">`
+                            : ''}
+                    </div>
+
+                    <div style="margin-top:14px;font-size:11px;color:#64748b;display:flex;justify-content:space-between;gap:12px;">
+                        <span>
+                            ${copied
+                                ? 'มีโจทย์เป็นพื้นหลัง / Question included as background'
+                                : 'หน้ากระดาษเปล่า / Blank working page'}
+                        </span>
+                        <span>Q${qNo} · Page ${pageIndex+1}</span>
+                    </div>
+                </div>`;
+
+            const pageEl = host.firstElementChild;
+
+            if (window.MathJax && MathJax.typesetPromise) {
+                if (MathJax.typesetClear) MathJax.typesetClear([pageEl]);
+                await MathJax.typesetPromise([pageEl]);
+            }
+
+            await new Promise(resolve =>
+                requestAnimationFrame(() => requestAnimationFrame(resolve))
+            );
+
+            const shot = await html2canvas(pageEl, {
+                scale:1.25,
+                backgroundColor:'#ffffff',
+                useCORS:true,
+                logging:false
+            });
+
+            const imgData = shot.toDataURL('image/jpeg', 0.90);
+
+            if (i > 0) pdf.addPage('a4', 'portrait');
+
+            const pageW = 210;
+            const pageH = 297;
+            const ratio = Math.min(pageW / shot.width, pageH / shot.height);
+            const drawW = shot.width * ratio;
+            const drawH = shot.height * ratio;
+
+            pdf.addImage(
+                imgData,
+                'JPEG',
+                (pageW-drawW)/2,
+                (pageH-drawH)/2,
+                drawW,
+                drawH,
+                undefined,
+                'FAST'
+            );
+        }
+
+        pdf.save('AI_Scratchpad_Multiplication_With_Answer_Stamps.pdf');
+    } catch (err) {
+        console.error(err);
+        alert('สร้าง PDF ไม่สำเร็จ กรุณาลองใหม่ / PDF export failed. Please try again.');
+    } finally {
+        host.remove();
+
+        if (button) {
+            button.disabled = false;
+            button.textContent =
+                '📄 ส่งออกกระดานทั้งหมดเป็น PDF / Export All Scratchpads PDF';
+        }
+    }
+};
+/* ================= END SCRATCHPAD ADD-ON ================= */
+
+function typesetMath() {
+    if (window.MathJax && MathJax.typesetPromise) {
+        const root = document.getElementById('app');
+        if (!root) return;
+        if (MathJax.typesetClear) MathJax.typesetClear([root]);
+        MathJax.typesetPromise([root]).catch(err => console.warn('MathJax:', err));
+    }
+}
+
+function renderApp() {
+    // Fabric scratchpad lives inside renderApp's DOM. Persist it before replacement.
+    if (scratchFabricCanvas && !scratchFabricLoading && state.view === 'exam') {
+        scratchFabricSaveMemory(true);
+    }
+
+    const appDiv = document.getElementById('app');
+    appDiv.innerHTML = state.view === 'exam' ? renderExamView() : renderSummaryView();
+
+    if (cloudProgressReady) {
+        window.ExamateProgress?.save(cloudProgressSnapshot());
+    }
+
+    if (state.view === 'exam') {
+        const q = state.activeQuestions[state.currentIndex];
+        if (q) {
+            const pageIndex = state.scratchpadPageIndex?.[q.id] || 0;
+            window.ExamatePresence?.setQuizState(
+                q.id,
+                getQuestionNumber(q.id),
+                state.showScratchpad ? 'WRITING' : 'VIEWING',
+                pageIndex + 1
+            );
+        }
+    } else {
+        window.ExamatePresence?.setActivity('SUBMITTED');
+    }
+
+    requestAnimationFrame(() => {
+        typesetMath();
+        if (state.view === 'exam' && state.showScratchpad) initScratchCanvas();
+    });
+}
+
+function renderExamView() {
+    const total = state.activeQuestions.length;
+    const currentQ = state.activeQuestions[state.currentIndex];
+    const currentMastered = state.masteredIds.includes(currentQ.id);
+
+    let answeredCount = 0;
+    let giveUpCount = 0;
+    let masteredCount = 0;
+
+    state.activeQuestions.forEach(q => {
+        if (state.masteredIds.includes(q.id)) masteredCount++;
+        else if (state.giveUps[q.id]) giveUpCount++;
+        else if (state.answers[q.id]) answeredCount++;
+    });
+
+    const completedCount = masteredCount + answeredCount + giveUpCount;
+    const retryNeededCount = total - masteredCount;
+    const currentGivenUp = !currentMastered && Boolean(state.giveUps[currentQ.id]);
+    const correctOption = currentQ.options.find(opt => opt.isCorrect);
+    const masteredAnswer = state.masteredAnswers[currentQ.id] || (correctOption ? correctOption.text : '');
+
+    const hintCount = currentMastered ? 0 : (state.hintLevels[currentQ.id] || 0);
+    const maxHints = (currentQ.hints || []).length;
+    const guidedSteps = getGuidedSolutionSteps(currentQ);
+    const authoredShown = Math.min(hintCount, maxHints);
+    const guidedShown = Math.min(Math.max(0, hintCount - maxHints), guidedSteps.length);
+    const allUniqueHelpShown = authoredShown >= maxHints && guidedShown >= guidedSteps.length;
+
+    let navHtml = `<div class="grid grid-cols-5 sm:grid-cols-10 gap-2 mb-3">`;
+    state.activeQuestions.forEach((q, index) => {
+        const isMastered = state.masteredIds.includes(q.id);
+        const isAnswered = !!state.answers[q.id];
+        const isGiveUp = !!state.giveUps[q.id];
+        const isActive = index === state.currentIndex;
+
+        let btnClass = `w-10 h-10 rounded-full text-sm font-semibold flex items-center justify-center gap-0.5 cursor-pointer transition-colors `;
+
+        if (isActive && isMastered) {
+            btnClass += `bg-emerald-600 text-white ring-4 ring-emerald-100 `;
+        } else if (isActive) {
+            btnClass += isGiveUp
+                ? `bg-rose-600 text-white ring-4 ring-rose-100 `
+                : `bg-blue-600 text-white ring-4 ring-blue-100 `;
+        } else if (isMastered) {
+            btnClass += `bg-emerald-500 text-white hover:bg-emerald-600 `;
+        } else if (isGiveUp) {
+            btnClass += `bg-rose-500 text-white `;
+        } else if (isAnswered) {
+            btnClass += `bg-blue-100 text-blue-700 border border-blue-300 `;
+        } else {
+            btnClass += `bg-gray-200 text-gray-600 hover:bg-gray-300 `;
+        }
+
+        const label = isMastered
+            ? `<span>${getQuestionNumber(q.id)}</span><span class="text-[10px] leading-none">✓</span>`
+            : `${getQuestionNumber(q.id)}`;
+
+        navHtml += `<button onclick="goToQuestion(${index})" class="${btnClass}" title="${isMastered ? 'ผ่านแล้ว / Correct' : 'ต้องทำในรอบนี้ / Retry'}">${label}</button>`;
+    });
+    navHtml += `</div>`;
+
+    const legendHtml = state.attempt > 1 ? `
+        <div class="flex flex-wrap gap-3 text-xs mb-6">
+            <span class="inline-flex items-center gap-1.5 text-emerald-700"><span class="w-3 h-3 rounded-full bg-emerald-500"></span>✓ ผ่านแล้วจากรอบก่อน / Already correct</span>
+            <span class="inline-flex items-center gap-1.5 text-blue-700"><span class="w-3 h-3 rounded-full bg-blue-100 border border-blue-300"></span>ตอบในรอบนี้ / Answered this retry</span>
+            <span class="inline-flex items-center gap-1.5 text-gray-600"><span class="w-3 h-3 rounded-full bg-gray-200"></span>ยังต้องแก้ / Still to retry</span>
+        </div>` : `<div class="mb-6"></div>`;
+
+    let optionsHtml = `<div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mt-6">`;
+    currentQ.shuffledOptions.forEach((opt, idx) => {
+        const selectedText = currentMastered ? masteredAnswer : state.answers[currentQ.id];
+        const isSelected = selectedText === opt.text;
+        const letter = String.fromCharCode(65 + idx);
+        let optClass = `option-btn p-4 rounded-xl border-2 text-left flex items-start gap-3 `;
+        let badgeClass = 'bg-gray-100 text-gray-500';
+
+        if (currentMastered) {
+            if (isSelected && opt.isCorrect) {
+                optClass += `bg-emerald-50 border-emerald-500 text-emerald-800 cursor-default`;
+                badgeClass = 'bg-emerald-500 text-white';
+            } else {
+                optClass += `bg-gray-50 border-gray-200 text-gray-400 cursor-default opacity-65`;
+            }
+        } else if (currentGivenUp) {
+            optClass += opt.isCorrect
+                ? `bg-emerald-50 border-emerald-500 text-emerald-800 cursor-default`
+                : `bg-gray-50 border-gray-200 text-gray-400 cursor-default opacity-70`;
+            if (opt.isCorrect) badgeClass = 'bg-emerald-500 text-white';
+        } else if (isSelected) {
+            optClass += `bg-blue-50 border-blue-500 text-blue-700 cursor-pointer`;
+            badgeClass = 'bg-blue-500 text-white';
+        } else {
+            optClass += `bg-white border-gray-200 text-gray-700 hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer`;
+        }
+
+        const disabled = currentMastered || currentGivenUp ? 'disabled' : '';
+        optionsHtml += `<button onclick="selectOption('${currentQ.id}', ${idx})" class="${optClass}" ${disabled}><span class="flex-shrink-0 w-8 h-8 rounded-lg ${badgeClass} font-bold flex items-center justify-center">${letter}</span><span class="font-medium leading-relaxed">${opt.text}</span></button>`;
+    });
+    optionsHtml += `</div>`;
+
+    const hintsHtml = (!currentMastered && hintCount > 0) ? `
+        <div id="hint-panel" class="space-y-3 mb-5 fade-in">
+            ${currentQ.hints.slice(0, authoredShown).map((hint, i) => `
+                <div class="hint-step bg-amber-50 p-4 rounded-r-xl">
+                    <div class="text-amber-900 font-bold text-sm mb-1">💡 Hint ${i+1}</div>
+                    <div class="hint-math text-amber-900 text-sm leading-7">${hint.th}</div>
+                    <div class="hint-math text-amber-700 text-xs leading-6 mt-1">${hint.en}</div>
+                </div>`).join('')}
+            ${guidedSteps.slice(0, guidedShown).map((step, i) => `
+                <div class="border-l-4 border-sky-400 bg-sky-50 p-4 rounded-r-xl">
+                    <div class="text-sky-900 font-bold text-sm mb-1">🧩 ช่วยเพิ่มอีกนิด ${i+1} · Guided step ${i+1}</div>
+                    <div class="hint-math text-sky-900 text-sm leading-7">${step}</div>
+                </div>`).join('')}
+            ${allUniqueHelpShown && hintCount > (maxHints + guidedSteps.length) ? `
+                <div class="border-l-4 border-violet-400 bg-violet-50 p-4 rounded-r-xl">
+                    <div class="text-violet-900 font-bold text-sm mb-1">🔁 ขอได้เรื่อย ๆ · Unlimited hints</div>
+                    <div class="text-violet-800 text-sm leading-7">เปิดความช่วยเหลือเฉพาะข้อนี้ครบทุกขั้นแล้ว ลองไล่จาก Hint 1 ลงมาทีละบรรทัดได้อีกครั้ง หรือกดขอคำใบ้ต่อได้โดยไม่เสียคะแนนและไม่ถูกล็อก</div>
+                    <div class="text-violet-700 text-xs leading-6 mt-1">All unique scaffolds for this item are visible. You can keep requesting hints without penalty and review the steps above as often as needed.</div>
+                </div>` : ''}
+        </div>` : '';
+
+    const masteredPanel = currentMastered ? `
+        <div class="mb-5 rounded-2xl border-2 border-emerald-300 bg-emerald-50 p-4 fade-in">
+            <div class="flex items-start gap-3">
+                <div class="w-9 h-9 rounded-full bg-emerald-500 text-white flex items-center justify-center font-black text-lg">✓</div>
+                <div>
+                    <div class="font-bold text-emerald-800">ผ่านแล้วจากรอบก่อน / Already correct</div>
+                    <div class="text-sm text-emerald-700 mt-1">ข้อนี้ยังคงแสดงไว้เพื่อให้อ้างอิงตาราง กราฟ หรือข้อมูลเดิมได้ โดยไม่ต้องตอบซ้ำ</div>
+                    <div class="text-xs text-emerald-600 mt-1">This item remains visible for reference and is locked. You do not need to answer it again.</div>
+                </div>
+            </div>
+        </div>` : '';
+
+    return `
+        <div class="bg-indigo-700 text-white px-6 py-4 flex flex-col sm:flex-row justify-between items-center shadow-md z-10">
+            <div class="mb-2 sm:mb-0">
+                <h1 class="text-xl font-bold">${window.QUIZ_TEMPLATE.title}</h1>
+                <p class="text-indigo-200 text-xs mb-1">${questionsData.length} Questions · ${window.QUIZ_TEMPLATE.subtitle}</p>
+                <p class="text-indigo-200 text-sm">Attempt: ${state.attempt} | Question ${state.currentIndex + 1} of ${total} (Item #${getQuestionNumber(currentQ.id)})</p>
+                ${state.attempt > 1
+                    ? `<p class="text-emerald-200 text-xs mt-1">✓ ผ่านแล้ว ${masteredCount} ข้อ · ต้องแก้ ${retryNeededCount} ข้อ / ${masteredCount} correct · ${retryNeededCount} to retry</p>`
+                    : `<p class="text-indigo-200 text-xs mt-1">💡 Unlimited hints · ขอคำใบ้ได้ไม่จำกัด · ไม่หักคะแนน</p>`}
+            </div>
+            <button onclick="submitAll()" class="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-bold py-2 px-6 rounded-full shadow-lg transition-transform hover:scale-105">ตรวจคำตอบทั้งหมด / Submit All</button>
+        </div>
+
+        <div class="p-6 flex-1 bg-white overflow-y-auto fade-in">
+            ${navHtml}
+            ${legendHtml}
+
+            <div class="mb-6">
+                <div class="flex flex-wrap justify-between items-start gap-3 mb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="${currentMastered ? 'bg-emerald-100 text-emerald-800' : (currentGivenUp ? 'bg-rose-100 text-rose-800' : 'bg-indigo-100 text-indigo-800')} text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Q${getQuestionNumber(currentQ.id)}</span>
+                        ${currentMastered ? '<span class="bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full">✓ Correct · ผ่านแล้ว</span>' : ''}
+                        ${currentGivenUp ? '<span class="bg-rose-600 text-white text-xs font-bold px-3 py-1 rounded-full">🏳 Give Up · 0 pt</span>' : ''}
+                        ${!currentMastered && hintCount ? `<span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full">💡 ขอแล้ว ${hintCount} ครั้ง</span>` : ''}
+                    </div>
+                    <div class="flex flex-wrap gap-2 justify-end">
+                        <button onclick="toggleScratchpad()" class="px-4 py-2 rounded-xl font-bold text-sm bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300">
+                            ✍️ ${state.showScratchpad ? 'ปิดกระดานทด / Close Scratchpad' : 'เปิดกระดานทด / Open Scratchpad'}
+                        </button>
+                        <button onclick="copyQuestionToScratchpad()" class="px-4 py-2 rounded-xl font-bold text-sm bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200">
+                            📋 คัดลอกโจทย์ลงกระดาน / Copy Question
+                        </button>
+                        ${!currentMastered && !currentGivenUp ? `<button onclick="revealNextHint('${currentQ.id}')" class="px-4 py-2 rounded-xl font-bold text-sm bg-amber-100 text-amber-900 hover:bg-amber-200 border border-amber-300">💡 ขอคำใบ้เพิ่ม / More Hint #${hintCount+1}</button>` : ''}
+                    </div>
+                </div>
+
+                <h2 class="question-math text-xl font-semibold text-gray-800 mb-2 leading-relaxed">${currentQ.questionTH}</h2>
+                <p class="question-math text-md text-gray-500 mb-4 leading-relaxed">${currentQ.questionEN}</p>
+                ${currentQ.contentHTML || ''}
+                ${state.showScratchpad ? renderScratchpad(currentQ) : ''}
+                ${masteredPanel}
+                ${hintsHtml}
+
+                ${currentGivenUp ? `
+                <div id="give-up-feedback" class="mb-5 bg-rose-50 border-2 border-rose-300 rounded-2xl p-5 fade-in shadow-sm">
+                    <div class="flex items-start gap-3"><div class="text-3xl leading-none">🏳</div><div class="min-w-0 flex-1">
+                        <div class="font-bold text-rose-800 text-lg">ยอมแพ้ข้อนี้ — 0 คะแนน / Give Up — 0 points</div>
+                        <div class="mt-3 bg-white border border-emerald-200 rounded-xl p-3 text-gray-800"><span class="font-bold text-emerald-700">✓ คำตอบที่ถูก / Correct answer:</span> <span class="question-math ml-1 font-semibold">${correctOption ? correctOption.text : '-'}</span></div>
+                        <div class="mt-4 bg-white border border-indigo-200 rounded-xl p-4 text-gray-800"><div class="font-bold text-indigo-700 mb-2">เฉลยละเอียด / Detailed Solution</div><div class="hint-math text-sm leading-7">${currentQ.solutionTH}</div><div class="border-t border-gray-200 mt-4 pt-4"><div class="font-bold text-gray-600 mb-2">English solution</div><div class="hint-math text-sm leading-7 text-gray-600">${currentQ.solutionEN}</div></div></div>
+                        <div class="mt-3 text-xs text-rose-700 font-medium">บันทึก 0 คะแนนแล้ว · ล็อกคำตอบในรอบนี้ · ข้อนี้จะกลับมาในรอบ Retry</div>
+                    </div></div>
+                </div>` : ''}
+
+                ${optionsHtml}
+            </div>
+        </div>
+
+        <div class="bg-gray-50 px-6 py-4 border-t flex flex-col md:flex-row gap-3 justify-between items-center">
+            <div class="text-sm text-gray-500 font-medium flex flex-wrap gap-x-3 gap-y-1">
+                <span>Completed: <span class="text-indigo-600 font-bold">${completedCount}/${total}</span></span>
+                ${state.attempt > 1 ? `<span>✓ Mastered: <span class="text-emerald-600 font-bold">${masteredCount}</span></span>` : ''}
+                <span>Answered this round: <span class="text-blue-600">${answeredCount}</span></span>
+                <span>Give Up: <span class="text-rose-600 font-bold">${giveUpCount}</span></span>
+                ${!currentMastered ? `<span>Hint requests this item: <span class="text-amber-600 font-bold">${hintCount}</span></span>` : ''}
+            </div>
+
+            <div class="flex flex-wrap justify-end gap-3">
+                ${!currentMastered && !currentGivenUp ? `<button onclick="giveUpQuestion('${currentQ.id}')" class="px-4 py-2 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg hover:bg-rose-100 font-bold">🏳 ยอมแพ้และดูเฉลย / Give Up & Show Solution (0 คะแนน / points)</button>` : ''}
+                <button onclick="goToQuestion(Math.max(0, state.currentIndex - 1))" class="px-4 py-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 font-medium ${state.currentIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''}" ${state.currentIndex === 0 ? 'disabled' : ''}>ก่อนหน้า / Previous</button>
+                ${state.currentIndex < total - 1
+                    ? `<button onclick="skipQuestion()" class="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 font-medium">ถัดไป / Next</button>`
+                    : `<button onclick="submitAll()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium">ทบทวนและส่งคำตอบ / Review & Submit</button>`}
+            </div>
+        </div>`;
+}
+
+function renderSummaryView() {
+    const latest = state.attemptHistory[state.attemptHistory.length - 1];
+    const firstAttempt = state.attemptHistory[0];
+    const isPerfect = latest.correctCount === latest.total;
+    const totalElapsed = (state.finishedAt || Date.now()) - state.startedAt;
+    const missedQuestionNumbers = [...new Set(state.attemptHistory.flatMap(attempt => attempt.results.filter(r => !r.isCorrect).map(r => r.questionNumber)))].sort((a,b)=>a-b);
+    const retryCount = Math.max(0, state.attemptHistory.length - 1);
+
+    const currentResultHtml = latest.results.map(result => {
+        const statusColor = result.isCorrect ? 'text-green-700 bg-green-50 border-green-200' : (result.isGiveUp ? 'text-rose-700 bg-rose-50 border-rose-200' : (result.isAnswered ? 'text-red-700 bg-red-50 border-red-200' : 'text-gray-600 bg-gray-50 border-gray-200'));
+        const icon = result.isCorrect
+            ? (result.isCarried ? '✓ Correct · carried from earlier round' : '✓ Correct')
+            : (result.isGiveUp ? '🏳 Give Up · 0' : (result.isAnswered ? '✗ Incorrect' : '– Skipped'));
+        return `<div class="p-4 border rounded-xl flex flex-col ${statusColor}"><div class="font-bold mb-1">Question ${result.questionNumber}</div><div class="text-sm line-clamp-2 opacity-80 mb-2">${result.questionTH}</div><div class="mt-auto font-semibold">${icon}</div><div class="text-xs mt-1 opacity-80">💡 Hint requests: ${result.hintCount}</div></div>`;
+    }).join('');
+
+    const historyHtml = state.attemptHistory.map(attempt => {
+        const missed = attempt.results.filter(r => !r.isCorrect).map(r => `Q${r.questionNumber}`);
+        const gaveUp = attempt.results.filter(r => r.isGiveUp).map(r => `Q${r.questionNumber}`);
+        const tone = attempt.correctCount === attempt.total ? 'bg-green-100 text-green-700' : 'bg-indigo-100 text-indigo-700';
+        return `<div class="history-line relative flex gap-4 pb-6"><div class="relative z-10 w-10 h-10 rounded-full ${tone} flex items-center justify-center font-bold flex-shrink-0">${attempt.attempt}</div><div class="flex-1 bg-white border border-gray-200 rounded-xl p-4 shadow-sm"><div class="flex flex-wrap items-center justify-between gap-2"><div class="font-bold text-gray-800">รอบที่ ${attempt.attempt} · Attempt ${attempt.attempt}</div><div class="font-bold ${attempt.correctCount === attempt.total ? 'text-green-600' : 'text-indigo-600'}">${attempt.correctCount}/${attempt.total} (${attempt.percentage}%)</div></div><div class="text-sm text-gray-500 mt-1">ใช้เวลา ${formatDuration(attempt.durationMs)}</div><div class="text-xs text-gray-500 mt-1">💡 Hint requests: ${attempt.hintsUsed} · 🏳 Give Up: ${attempt.giveUpCount || 0}${gaveUp.length ? ` (${gaveUp.join(', ')})` : ''}</div><div class="text-sm mt-2 ${missed.length ? 'text-amber-700' : 'text-green-700'}">${missed.length ? `ต้องทบทวน: ${missed.join(', ')}` : 'ผ่านครบทุกข้อในรอบนี้ ✓'}</div></div></div>`;
+    }).join('');
+
+    return `<div class="${isPerfect ? 'bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-700' : 'bg-indigo-700'} text-white px-6 py-8 text-center rounded-t-2xl"><div class="text-sm font-bold uppercase tracking-[0.25em] text-white/75 mb-2">${isPerfect ? 'Mastery Complete' : 'Mastery Check'}</div><h1 class="text-3xl font-bold mb-2">${isPerfect ? 'ทำสำเร็จ 100% แล้ว! 🎉' : `ผลการทำรอบที่ ${state.attempt}`}</h1><p class="text-white/80">${isPerfect ? `ผ่านครบทั้ง ${questionsData.length} ข้อภายใน ${state.attemptHistory.length} รอบ` : `รอบนี้ได้ ${latest.correctCount} จาก ${latest.total} ข้อ (${latest.percentage}%) · ขอคำใบ้ ${latest.hintsUsed} ครั้ง`}</p></div>
+    <div class="p-6 bg-white flex-1 overflow-y-auto fade-in">${isPerfect ? `<div class="celebration-card border border-emerald-200 rounded-2xl p-6 text-center mb-6"><div class="celebration-icon text-6xl mb-3">🏆</div><h2 class="text-2xl font-bold text-gray-800">${window.QUIZ_TEMPLATE.completionTitle}</h2><p class="text-gray-600 mt-2">ทดลองครบทั้งการเขียนบนกระดาน การตรวจแบบ Mastery และ AI ช่วยใบ้จากภาพ</p></div>` : `<div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded-r-lg"><h3 class="font-bold text-blue-800">Mastery Learning Mode Active</h3><p class="text-blue-700 text-sm mt-1">ระบบจะนำข้อที่ผิด ข้อที่ยังไม่ได้ตอบ และข้อที่กด Give Up กลับมาให้ทำใหม่ คำใบ้ขอได้ไม่จำกัด ช่วยเรียนรู้และไม่หักคะแนน</p></div>`}
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8"><div class="rounded-2xl bg-indigo-50 p-4 text-center"><div class="text-2xl font-bold text-indigo-700">${state.attemptHistory.length}</div><div class="text-xs text-indigo-500 mt-1">Attempts</div></div><div class="rounded-2xl bg-emerald-50 p-4 text-center"><div class="text-xl font-bold text-emerald-700">${formatDuration(totalElapsed)}</div><div class="text-xs text-emerald-600 mt-1">Total time</div></div><div class="rounded-2xl bg-amber-50 p-4 text-center"><div class="text-2xl font-bold text-amber-700">${firstAttempt.correctCount}/${firstAttempt.total}</div><div class="text-xs text-amber-600 mt-1">First attempt · Hint requests ${firstAttempt.hintsUsed}</div></div><div class="rounded-2xl bg-violet-50 p-4 text-center"><div class="text-2xl font-bold text-violet-700">${retryCount}</div><div class="text-xs text-violet-600 mt-1">Retries</div></div></div>
+    ${isPerfect ? `<div class="rounded-2xl border border-gray-200 p-5 mb-8"><h3 class="font-bold text-gray-800 mb-2">📌 สรุปเส้นทางการเรียนรู้</h3><p class="text-gray-600 text-sm leading-relaxed">${missedQuestionNumbers.length ? `เคยพลาด ${missedQuestionNumbers.length} ข้อ: ${missedQuestionNumbers.map(n=>`Q${n}`).join(', ')} และแก้ถูกครบแล้ว` : 'ตอบถูกครบทุกข้อตั้งแต่รอบแรก'}</p></div>` : `<h3 class="font-bold text-gray-800 text-lg mb-3">ผลคำตอบรอบล่าสุด</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">${currentResultHtml}</div>`}
+    <h3 class="font-bold text-gray-800 text-lg mb-4">ประวัติแต่ละรอบ / Attempt History</h3><div>${historyHtml}</div></div>
+    <div class="bg-gray-50 px-6 py-4 border-t">
+        <div class="flex flex-wrap justify-center gap-3">
+            <button id="export-scratchpads-btn" onclick="exportScratchpadsPDF()" class="bg-slate-800 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-slate-900 transition-colors">📄 ส่งออกกระดานทั้งหมดเป็น PDF / Export All Scratchpads PDF</button>
+            ${isPerfect ? `<button onclick="restartQuiz()" class="bg-green-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-green-700 transition-colors">เริ่มทำใหม่ / Restart Quiz</button>` : `<button onclick="startRetry()" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-indigo-700 transition-colors">แก้เฉพาะข้อที่ผิด / Retry Incorrect Questions</button>`}
+        </div>
+        <div class="text-center text-xs text-slate-500 mt-2">PDF: ทุกหน้า A4 ของทุกข้อจะถูกส่งออก · Each A4 scratchpad page is exported separately</div>
+    </div>`;
+}
+
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initApp, { once:true }); else initApp();
+const mathJaxScript = document.getElementById('MathJax-script');
+if (mathJaxScript) mathJaxScript.addEventListener('load', () => { if (window.MathJax && MathJax.startup && MathJax.startup.promise) MathJax.startup.promise.then(typesetMath).catch(()=>{}); else setTimeout(typesetMath,0); });
+</script>
+</body>
+</html>
