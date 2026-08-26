@@ -703,451 +703,296 @@
         กำลังโหลดแบบทดสอบ... / Loading Mastery Quiz...
     </div>
 </div>
+
+<!-- ============================================================
+     ✏️✏️✏️  MASTER QUIZ TEMPLATE · EDIT ZONE  ✏️✏️✏️
+
+     Rate Law & Initial Rates Review · Y12 Chemistry
+     v2: revised for exam preparation
+     - 9 questions
+     - bilingual TH/EN
+     - shared tables/graphs (one visual per question)
+     - includes stoichiometric reaction-rate expression
+     - includes new-rate calculation
+     ============================================================ -->
+<script>
+
 /* ============================================================
    SHARED VISUALS / ตารางและกราฟใช้ร่วมกันระหว่าง TH + EN
-   Reaction Rate Foundations · Y12 Chemistry
    ============================================================ */
 
-const RATE_GRAPH = `
-<div style="max-width:720px;margin:14px auto;">
-<svg viewBox="0 0 720 430"
-     style="width:100%;height:auto;border:1px solid #ddd;border-radius:12px;background:white;"
-     role="img"
-     aria-label="Product gas volume against time with tangent at 45 seconds">
-    <!-- axes -->
-    <line x1="85" y1="350" x2="655" y2="350" stroke="black" stroke-width="2"/>
-    <line x1="85" y1="350" x2="85" y2="55" stroke="black" stroke-width="2"/>
-
-    <!-- x ticks -->
-    <g font-size="13" text-anchor="middle">
-      <text x="85" y="373">0</text>
-      <text x="170" y="373">15</text>
-      <text x="255" y="373">30</text>
-      <text x="340" y="373">45</text>
-      <text x="425" y="373">60</text>
-      <text x="510" y="373">75</text>
-      <text x="595" y="373">90</text>
-    </g>
-
-    <!-- y ticks -->
-    <g font-size="13" text-anchor="end">
-      <text x="75" y="354">0</text>
-      <text x="75" y="299">10</text>
-      <text x="75" y="244">20</text>
-      <text x="75" y="189">30</text>
-      <text x="75" y="134">40</text>
-      <text x="75" y="79">50</text>
-    </g>
-
-    <!-- grid guides -->
-    <g stroke="#ddd" stroke-width="1">
-      <line x1="85" y1="295" x2="625" y2="295"/>
-      <line x1="85" y1="240" x2="625" y2="240"/>
-      <line x1="85" y1="185" x2="625" y2="185"/>
-      <line x1="85" y1="130" x2="625" y2="130"/>
-      <line x1="85" y1="75" x2="625" y2="75"/>
-    </g>
-
-    <!-- reaction curve from data:
-         0,0 ; 15,18 ; 30,30 ; 45,39 ; 60,45 ; 75,48 ; 90,50 -->
-    <path d="M85 350
-             C118 314, 145 270, 170 251
-             C195 225, 226 198, 255 185
-             C285 167, 314 145, 340 136
-             C370 123, 398 108, 425 103
-             C456 94, 481 87, 510 86
-             C543 79, 568 76, 595 75"
-          fill="none" stroke="black" stroke-width="3"/>
-
-    <!-- data points -->
-    <g fill="black">
-      <circle cx="85" cy="350" r="4"/>
-      <circle cx="170" cy="251" r="4"/>
-      <circle cx="255" cy="185" r="4"/>
-      <circle cx="340" cy="136" r="5"/>
-      <circle cx="425" cy="103" r="4"/>
-      <circle cx="510" cy="86" r="4"/>
-      <circle cx="595" cy="75" r="4"/>
-    </g>
-
-    <!-- tangent at t = 45 s
-         P=(25 s,31 cm3), Q=(65 s,47 cm3), slope=0.40 cm3/s -->
-    <line x1="227" y1="179.5" x2="453" y2="91.5"
-          stroke="#555" stroke-width="2.5" stroke-dasharray="9 6"/>
-    <circle cx="227" cy="179.5" r="5" fill="#555"/>
-    <circle cx="453" cy="91.5" r="5" fill="#555"/>
-    <text x="205" y="170" font-size="13">P (25, 31)</text>
-    <text x="462" y="88" font-size="13">Q (65, 47)</text>
-    <text x="350" y="165" font-size="13">tangent at 45 s</text>
-
-    <!-- axis labels -->
-    <text x="370" y="410" text-anchor="middle" font-size="17"
-          style="font-family:K2D,Arial,sans-serif;">Time / เวลา (s)</text>
-    <text x="25" y="210" text-anchor="middle" font-size="16"
-          transform="rotate(-90 25 210)"
-          style="font-family:K2D,Arial,sans-serif;">Product gas volume / ปริมาตรแก๊ส (cm³)</text>
-</svg>
-
-<div style="overflow-x:auto;margin-top:10px;">
-<table style="width:100%;border-collapse:collapse;text-align:center;font-size:0.95em;">
-  <tr>
-    <th style="border:1px solid #aaa;padding:6px;">Time / s</th>
-    <td style="border:1px solid #aaa;padding:6px;">0</td>
-    <td style="border:1px solid #aaa;padding:6px;">15</td>
-    <td style="border:1px solid #aaa;padding:6px;">30</td>
-    <td style="border:1px solid #aaa;padding:6px;">45</td>
-    <td style="border:1px solid #aaa;padding:6px;">60</td>
-    <td style="border:1px solid #aaa;padding:6px;">75</td>
-    <td style="border:1px solid #aaa;padding:6px;">90</td>
-  </tr>
-  <tr>
-    <th style="border:1px solid #aaa;padding:6px;">Gas volume / cm³</th>
-    <td style="border:1px solid #aaa;padding:6px;">0</td>
-    <td style="border:1px solid #aaa;padding:6px;">18</td>
-    <td style="border:1px solid #aaa;padding:6px;">30</td>
-    <td style="border:1px solid #aaa;padding:6px;">39</td>
-    <td style="border:1px solid #aaa;padding:6px;">45</td>
-    <td style="border:1px solid #aaa;padding:6px;">48</td>
-    <td style="border:1px solid #aaa;padding:6px;">50</td>
-  </tr>
-</table>
-</div>
-</div>`;
-
-const FACTOR_TABLE = `
+const Q2_TABLE = `
 <div style="overflow-x:auto;margin:12px 0;">
 <table style="width:100%;border-collapse:collapse;text-align:center;">
-  <thead>
-    <tr>
-      <th style="border:1px solid #999;padding:8px;">Experiment</th>
-      <th style="border:1px solid #999;padding:8px;">CaCO₃ form</th>
-      <th style="border:1px solid #999;padding:8px;">[HCl] / M</th>
-      <th style="border:1px solid #999;padding:8px;">Temperature / °C</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="border:1px solid #999;padding:8px;">W</td>
-      <td style="border:1px solid #999;padding:8px;">large chips</td>
-      <td style="border:1px solid #999;padding:8px;">0.60</td>
-      <td style="border:1px solid #999;padding:8px;">20</td>
-    </tr>
-    <tr>
-      <td style="border:1px solid #999;padding:8px;">X</td>
-      <td style="border:1px solid #999;padding:8px;">powder</td>
-      <td style="border:1px solid #999;padding:8px;">0.60</td>
-      <td style="border:1px solid #999;padding:8px;">20</td>
-    </tr>
-    <tr>
-      <td style="border:1px solid #999;padding:8px;">Y</td>
-      <td style="border:1px solid #999;padding:8px;">large chips</td>
-      <td style="border:1px solid #999;padding:8px;">1.20</td>
-      <td style="border:1px solid #999;padding:8px;">20</td>
-    </tr>
-    <tr>
-      <td style="border:1px solid #999;padding:8px;">Z</td>
-      <td style="border:1px solid #999;padding:8px;">large chips</td>
-      <td style="border:1px solid #999;padding:8px;">0.60</td>
-      <td style="border:1px solid #999;padding:8px;">35</td>
-    </tr>
-  </tbody>
+    <thead>
+        <tr>
+            <th style="border:1px solid #999;padding:8px;">Experiment</th>
+            <th style="border:1px solid #999;padding:8px;">\\([A]\\) / M</th>
+            <th style="border:1px solid #999;padding:8px;">\\([B]\\) / M</th>
+            <th style="border:1px solid #999;padding:8px;">Initial rate / \\(M\\,s^{-1}\\)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="border:1px solid #999;padding:8px;">1</td>
+            <td style="border:1px solid #999;padding:8px;">0.10</td>
+            <td style="border:1px solid #999;padding:8px;">0.20</td>
+            <td style="border:1px solid #999;padding:8px;">\\(1.20\\times10^{-3}\\)</td>
+        </tr>
+        <tr>
+            <td style="border:1px solid #999;padding:8px;">2</td>
+            <td style="border:1px solid #999;padding:8px;">0.20</td>
+            <td style="border:1px solid #999;padding:8px;">0.20</td>
+            <td style="border:1px solid #999;padding:8px;">\\(4.80\\times10^{-3}\\)</td>
+        </tr>
+    </tbody>
 </table>
 </div>`;
 
-const CONCENTRATION_GRAPH = `
-<div style="max-width:660px;margin:14px auto;">
-<svg viewBox="0 0 660 390"
+const Q3_TABLE = `
+<div style="overflow-x:auto;margin:12px 0;">
+<table style="width:100%;border-collapse:collapse;text-align:center;">
+    <thead>
+        <tr>
+            <th style="border:1px solid #999;padding:8px;">Experiment</th>
+            <th style="border:1px solid #999;padding:8px;">\\([A]\\) / M</th>
+            <th style="border:1px solid #999;padding:8px;">\\([B]\\) / M</th>
+            <th style="border:1px solid #999;padding:8px;">Initial rate / \\(M\\,s^{-1}\\)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="border:1px solid #999;padding:8px;">1</td>
+            <td style="border:1px solid #999;padding:8px;">0.15</td>
+            <td style="border:1px solid #999;padding:8px;">0.10</td>
+            <td style="border:1px solid #999;padding:8px;">\\(3.0\\times10^{-3}\\)</td>
+        </tr>
+        <tr>
+            <td style="border:1px solid #999;padding:8px;">2</td>
+            <td style="border:1px solid #999;padding:8px;">0.15</td>
+            <td style="border:1px solid #999;padding:8px;">0.20</td>
+            <td style="border:1px solid #999;padding:8px;">\\(3.0\\times10^{-3}\\)</td>
+        </tr>
+        <tr>
+            <td style="border:1px solid #999;padding:8px;">3</td>
+            <td style="border:1px solid #999;padding:8px;">0.15</td>
+            <td style="border:1px solid #999;padding:8px;">0.40</td>
+            <td style="border:1px solid #999;padding:8px;">\\(3.0\\times10^{-3}\\)</td>
+        </tr>
+    </tbody>
+</table>
+</div>`;
+
+const Q4_TABLE = `
+<div style="overflow-x:auto;margin:12px 0;">
+<table style="width:100%;border-collapse:collapse;text-align:center;">
+    <thead>
+        <tr>
+            <th style="border:1px solid #999;padding:8px;">Experiment</th>
+            <th style="border:1px solid #999;padding:8px;">\\([A]\\) / M</th>
+            <th style="border:1px solid #999;padding:8px;">\\([B]\\) / M</th>
+            <th style="border:1px solid #999;padding:8px;">Initial rate / \\(M\\,s^{-1}\\)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="border:1px solid #999;padding:8px;">1</td>
+            <td style="border:1px solid #999;padding:8px;">0.10</td>
+            <td style="border:1px solid #999;padding:8px;">0.10</td>
+            <td style="border:1px solid #999;padding:8px;">\\(1.50\\times10^{-3}\\)</td>
+        </tr>
+        <tr>
+            <td style="border:1px solid #999;padding:8px;">2</td>
+            <td style="border:1px solid #999;padding:8px;">0.20</td>
+            <td style="border:1px solid #999;padding:8px;">0.10</td>
+            <td style="border:1px solid #999;padding:8px;">\\(6.00\\times10^{-3}\\)</td>
+        </tr>
+        <tr>
+            <td style="border:1px solid #999;padding:8px;">3</td>
+            <td style="border:1px solid #999;padding:8px;">0.20</td>
+            <td style="border:1px solid #999;padding:8px;">0.30</td>
+            <td style="border:1px solid #999;padding:8px;">\\(1.80\\times10^{-2}\\)</td>
+        </tr>
+    </tbody>
+</table>
+</div>`;
+
+const Q8_GRAPH = `
+<div style="max-width:650px;margin:14px auto;">
+<svg viewBox="0 0 660 400"
      style="width:100%;height:auto;border:1px solid #ddd;border-radius:12px;background:white;"
      role="img"
-     aria-label="Comparison of gas-volume curves for experiments W and Y">
-  <line x1="80" y1="320" x2="600" y2="320" stroke="black" stroke-width="2"/>
-  <line x1="80" y1="320" x2="80" y2="55" stroke="black" stroke-width="2"/>
+     aria-label="Maxwell-Boltzmann energy distributions at T1 and T2">
+    <line x1="78" y1="322" x2="610" y2="322" stroke="black" stroke-width="2"/>
+    <line x1="78" y1="322" x2="78" y2="42" stroke="black" stroke-width="2"/>
 
-  <!-- W lower concentration, slower -->
-  <path d="M80 320 C155 275, 210 205, 300 145 C390 105, 475 92, 575 90"
-        fill="none" stroke="black" stroke-width="3"/>
-  <!-- Y higher concentration, faster, same plateau -->
-  <path d="M80 320 C120 215, 180 135, 270 103 C350 91, 455 90, 575 90"
-        fill="none" stroke="black" stroke-width="3" stroke-dasharray="9 6"/>
+    <!-- Lower temperature T1: taller, narrower, peak further left -->
+    <path d="M78 322
+             C92 300, 105 190, 135 120
+             C158 67, 195 70, 228 112
+             C274 171, 310 244, 371 285
+             C426 309, 497 318, 600 321"
+          fill="none" stroke="black" stroke-width="3"/>
 
-  <text x="480" y="125" font-size="15">W: 0.60 M HCl</text>
-  <text x="335" y="82" font-size="15">Y: 1.20 M HCl</text>
+    <!-- Higher temperature T2: lower, broader, shifted right -->
+    <path d="M78 322
+             C105 310, 132 256, 178 206
+             C224 156, 278 140, 329 154
+             C390 171, 438 219, 482 264
+             C524 302, 563 316, 606 321"
+          fill="none" stroke="black" stroke-width="3" stroke-dasharray="9 6"/>
 
-  <line x1="80" y1="90" x2="590" y2="90" stroke="#bbb" stroke-width="1" stroke-dasharray="4 4"/>
-  <text x="590" y="80" text-anchor="end" font-size="13">same final gas volume</text>
+    <!-- Same activation energy for the same pathway -->
+    <line x1="455" y1="64" x2="455" y2="322" stroke="black" stroke-width="2"/>
+    <text x="455" y="50" text-anchor="middle" font-size="18">Eₐ</text>
 
-  <text x="340" y="365" text-anchor="middle" font-size="17"
-        style="font-family:K2D,Arial,sans-serif;">Time / เวลา</text>
-  <text x="23" y="190" text-anchor="middle" font-size="15"
-        transform="rotate(-90 23 190)"
-        style="font-family:K2D,Arial,sans-serif;">Gas volume / ปริมาตรแก๊ส</text>
+    <text x="174" y="65" font-size="18">T₁</text>
+    <text x="338" y="145" font-size="18">T₂ &gt; T₁</text>
+
+    <text x="345" y="365" text-anchor="middle" font-size="17"
+          style="font-family:K2D,Arial,sans-serif;">Energy / พลังงาน</text>
+    <text x="23" y="188" text-anchor="middle" font-size="15"
+          transform="rotate(-90 23 188)"
+          style="font-family:K2D,Arial,sans-serif;">Fraction of molecules / สัดส่วนโมเลกุล</text>
+</svg>
+</div>`;
+
+const Q9_GRAPH = `
+<div style="max-width:660px;margin:14px auto;">
+<svg viewBox="0 0 680 430"
+     style="width:100%;height:auto;border:1px solid #ddd;border-radius:12px;background:white;"
+     role="img"
+     aria-label="Catalysed and uncatalysed reaction energy profiles">
+    <line x1="78" y1="350" x2="620" y2="350" stroke="black" stroke-width="2"/>
+    <line x1="78" y1="350" x2="78" y2="42" stroke="black" stroke-width="2"/>
+
+    <!-- Reactants and products -->
+    <line x1="105" y1="270" x2="180" y2="270" stroke="black" stroke-width="3"/>
+    <line x1="535" y1="325" x2="605" y2="325" stroke="black" stroke-width="3"/>
+
+    <!-- Uncatalysed -->
+    <path d="M180 270 C245 264, 285 82, 360 82 C435 90, 472 285, 535 325"
+          fill="none" stroke="black" stroke-width="3"/>
+
+    <!-- Catalysed -->
+    <path d="M180 270 C248 264, 292 165, 360 165 C430 172, 476 292, 535 325"
+          fill="none" stroke="black" stroke-width="3" stroke-dasharray="9 6"/>
+
+    <text x="115" y="254" font-size="15">Reactants = 40</text>
+    <text x="505" y="311" font-size="15">Products = 10</text>
+    <text x="370" y="76" font-size="15">120</text>
+    <text x="370" y="158" font-size="15">80</text>
+
+    <text x="445" y="105" font-size="14">uncatalysed</text>
+    <text x="445" y="192" font-size="14">catalysed</text>
+
+    <text x="350" y="398" text-anchor="middle" font-size="17"
+          style="font-family:K2D,Arial,sans-serif;">Reaction progress / การดำเนินปฏิกิริยา</text>
+    <text x="23" y="205" text-anchor="middle" font-size="14"
+          transform="rotate(-90 23 205)"
+          style="font-family:K2D,Arial,sans-serif;">Potential energy / พลังงานศักย์ (kJ mol⁻¹)</text>
 </svg>
 </div>`;
 
 
 /* ============================================================
-   MASTER QUIZ TEMPLATE · EDIT ZONE
+   QUIZ DATA
    ============================================================ */
 window.QUIZ_TEMPLATE = {
-    quizId: "chem-y12-reaction-rate-foundations-review-v1",
+    quizId: "chem-y12-rate-law-initial-rates-review-v2",
 
-    title: "Reaction Rate Foundations / พื้นฐานอัตราการเกิดปฏิกิริยา",
+    title: "Rate Law & Initial Rates / กฎอัตราและอัตราเริ่มต้น",
 
-    subtitle: "Y12 Chemistry Review · Monitoring · Graphs · Average & Instantaneous Rate · Fair Tests · Collision Theory",
+    subtitle: "Y12 Chemistry Review · Reaction Rate Expression · Initial-Rate Data · Rate Law · Rate Constant · Temperature · Catalyst",
 
-    completionTitle: "Reaction Rate Foundations Review Complete! / ทบทวนพื้นฐานอัตราการเกิดปฏิกิริยาครบแล้ว!",
+    completionTitle: "Rate Law & Initial Rates Review Complete! / ทบทวนกฎอัตราและอัตราเริ่มต้นครบแล้ว!",
 
     questions: [
 
     // =========================================================
-    // Q1 — Meaning of reaction rate
+    // Q1 — Stoichiometric reaction-rate expression
     // =========================================================
     {
         "id": "q1",
 
         "questionTH": `
             <div>
-                ข้อใดให้นิยามของ <b>อัตราการเกิดปฏิกิริยาเคมี</b> ได้ถูกต้องที่สุด?
+                กำหนดปฏิกิริยา
+                \\[
+                2NO(g)+O_2(g)\\rightarrow2NO_2(g)
+                \\]
+                ให้ \\(r\\) หมายถึง <b>อัตราการเกิดปฏิกิริยา</b>
+                ซึ่งนิยามให้มีค่าเป็นบวก
+            </div>
+            <div class="mt-3">
+                ข้อใดแสดงความสัมพันธ์ระหว่าง \\(r\\)
+                กับอัตราการเปลี่ยนแปลงความเข้มข้นของสารต่าง ๆ ได้ถูกต้อง?
             </div>
         `,
 
         "questionEN": `
             <div>
-                Which statement gives the best definition of the <b>rate of a chemical reaction</b>?
+                Consider the reaction
+                \\[
+                2NO(g)+O_2(g)\\rightarrow2NO_2(g)
+                \\]
+                Let \\(r\\) represent the <b>reaction rate</b>,
+                defined as a positive quantity.
+            </div>
+            <div class="mt-3">
+                Which expression correctly relates \\(r\\)
+                to the rates of change of the concentrations of the species?
             </div>
         `,
 
         "hints": [
             {
-                "th": "คำว่า rate ต้องเกี่ยวข้องกับทั้ง “การเปลี่ยนแปลง” และ “เวลา”",
-                "en": "A rate must involve both a change and time."
+                "th": "สารตั้งต้นมีความเข้มข้นลดลง จึงต้องมีเครื่องหมายลบ ส่วนผลิตภัณฑ์มีความเข้มข้นเพิ่มขึ้น",
+                "en": "Reactant concentrations decrease, so their terms carry a negative sign; product concentrations increase."
             },
             {
-                "th": "สิ่งที่ติดตามอาจเป็นสารตั้งต้นที่ลดลง หรือผลิตภัณฑ์ที่เพิ่มขึ้น",
-                "en": "The measured quantity may be a reactant decreasing or a product increasing."
+                "th": "เพื่อให้อัตราการเกิดปฏิกิริยาเป็นค่าเดียวกัน ต้องหารอัตราการเปลี่ยนแปลงด้วยสัมประสิทธิ์หน้าสาร",
+                "en": "To obtain one common reaction rate, divide each concentration-change rate by its stoichiometric coefficient."
             },
             {
-                "th": "คิดในรูป \\(\\text{rate}=\\frac{\\text{change in measured quantity}}{\\text{time}}\\)",
-                "en": "Think in the form \\(\\text{rate}=\\frac{\\text{change in measured quantity}}{\\text{time}}\\)."
+                "th": "สำหรับสัมประสิทธิ์ 2 : 1 : 2 จะมีตัวประกอบ \\(\\frac12\\), 1 และ \\(\\frac12\\) ตามลำดับ",
+                "en": "For coefficients 2 : 1 : 2, the corresponding factors are \\(\\frac12\\), 1, and \\(\\frac12\\)."
             }
         ],
 
         "solutionTH": `
             <div>
-                อัตราการเกิดปฏิกิริยาเป็นการบอกว่า
-                <b>ปริมาณของสารตั้งต้นลดลง หรือปริมาณผลิตภัณฑ์เพิ่มขึ้นเร็วเพียงใดต่อหน่วยเวลา</b>
+                จากสมการ
+                \\[
+                2NO+O_2\\rightarrow2NO_2
+                \\]
+                เมื่อปฏิกิริยาเกิดขึ้น NO และ \\(O_2\\) ลดลง ส่วน \\(NO_2\\) เพิ่มขึ้น
             </div>
             <div class="mt-2">
-                โดยทั่วไปเขียนแนวคิดได้ว่า
+                อัตราการเกิดปฏิกิริยาจึงเขียนได้เป็น
                 \\[
-                rate=\\frac{\\text{การเปลี่ยนแปลงของปริมาณที่วัด}}{\\text{ช่วงเวลา}}
-                \\]
-            </div>
-            <div class="mt-2 font-bold text-emerald-700">
-                ตอบ: การเปลี่ยนแปลงปริมาณของสารตั้งต้นหรือผลิตภัณฑ์ต่อหน่วยเวลา
-            </div>
-        `,
-
-        "solutionEN": `
-            <div>
-                Reaction rate describes <b>how quickly the amount of a reactant decreases
-                or the amount of a product increases per unit time</b>.
-            </div>
-            <div class="mt-2">
-                In general,
-                \\[
-                rate=\\frac{\\text{change in a measured quantity}}{\\text{time interval}}.
-                \\]
-            </div>
-            <div class="mt-2 font-bold text-emerald-700">
-                Answer: change in the amount of a reactant or product per unit time.
-            </div>
-        `,
-
-        "options": [
-            {
-                "text": "Change in the amount of a reactant consumed or product formed per unit time / การเปลี่ยนแปลงปริมาณสารตั้งต้นที่ถูกใช้ไปหรือผลิตภัณฑ์ที่เกิดขึ้นต่อหน่วยเวลา",
-                "isCorrect": true
-            },
-            {
-                "text": "The total amount of product present at the end of a reaction / ปริมาณผลิตภัณฑ์ทั้งหมดเมื่อปฏิกิริยาสิ้นสุด",
-                "isCorrect": false
-            },
-            {
-                "text": "The time required for all reactants to disappear, regardless of amount / เวลาที่ใช้จนสารตั้งต้นหมดโดยไม่คำนึงถึงปริมาณ",
-                "isCorrect": false
-            },
-            {
-                "text": "The activation energy of the reaction / พลังงานก่อกัมมันต์ของปฏิกิริยา",
-                "isCorrect": false
-            },
-            {
-                "text": "The concentration of a reactant at one instant only / ความเข้มข้นของสารตั้งต้น ณ เวลาใดเวลาหนึ่งเท่านั้น",
-                "isCorrect": false
-            },
-            {
-                "text": "The number of moles written in the balanced equation / จำนวนโมลที่เขียนในสมการเคมีที่ดุลแล้ว",
-                "isCorrect": false
-            },
-            {
-                "text": "The temperature at which a reaction starts / อุณหภูมิที่ปฏิกิริยาเริ่มเกิด",
-                "isCorrect": false
-            }
-        ]
-    },
-
-    // =========================================================
-    // Q2 — Choosing a quantity to monitor
-    // =========================================================
-    {
-        "id": "q2",
-
-        "questionTH": `
-            <div>
-                นักเรียนต้องการติดตามความคืบหน้าของปฏิกิริยา
-                \\[
-                Mg(s)+2HCl(aq)\\rightarrow MgCl_2(aq)+H_2(g)
-                \\]
-                อย่างต่อเนื่อง
-            </div>
-            <div class="mt-3">
-                วิธีใดเหมาะสมที่สุดสำหรับติดตามปฏิกิริยานี้?
-            </div>
-        `,
-
-        "questionEN": `
-            <div>
-                A student wants to continuously monitor the progress of
-                \\[
-                Mg(s)+2HCl(aq)\\rightarrow MgCl_2(aq)+H_2(g).
+                r=
+                -\\frac12\\frac{\\Delta[NO]}{\\Delta t}
+                =
+                -\\frac{\\Delta[O_2]}{\\Delta t}
+                =
+                \\frac12\\frac{\\Delta[NO_2]}{\\Delta t}
                 \\]
             </div>
             <div class="mt-3">
-                Which method is most suitable for monitoring this reaction?
-            </div>
-        `,
-
-        "hints": [
-            {
-                "th": "ดูว่าสารใดในสมการมีปริมาณเพิ่มขึ้นอย่างต่อเนื่องและวัดได้ง่าย",
-                "en": "Identify a species whose amount increases continuously and can be measured easily."
-            },
-            {
-                "th": "ปฏิกิริยานี้มีผลิตภัณฑ์สถานะแก๊ส",
-                "en": "This reaction produces a gaseous product."
-            },
-            {
-                "th": "ปริมาตรของ \\(H_2\\) สามารถวัดเป็นฟังก์ชันของเวลาได้",
-                "en": "The volume of \\(H_2\\) can be measured as a function of time."
-            }
-        ],
-
-        "solutionTH": `
-            <div>
-                ปฏิกิริยานี้สร้าง \\(H_2(g)\\) ดังนั้นปริมาตรแก๊สจะเพิ่มขึ้นเมื่อปฏิกิริยาดำเนินไป
-                และสามารถวัดต่อเนื่องด้วย gas syringe
+                <b>ระวัง:</b> สมการเคมีบอกความสัมพันธ์ของอัตราการลด/เพิ่มของสารได้
+                แต่ยังสรุปไม่ได้ว่า
+                \\(rate=k[NO]^2[O_2]\\)
+                เพราะเลขชี้กำลังใน <b>rate law ต้องหาโดยการทดลอง</b>
+                เว้นแต่โจทย์ระบุว่าเป็น elementary reaction
             </div>
             <div class="mt-2 font-bold text-emerald-700">
-                ตอบ: วัดปริมาตร \\(H_2\\) ที่เกิดขึ้นตามเวลาด้วย gas syringe
-            </div>
-        `,
-
-        "solutionEN": `
-            <div>
-                The reaction produces \\(H_2(g)\\), so the gas volume increases as the reaction proceeds.
-                A gas syringe allows this quantity to be measured continuously with time.
-            </div>
-            <div class="mt-2 font-bold text-emerald-700">
-                Answer: measure the volume of \\(H_2\\) produced with time using a gas syringe.
-            </div>
-        `,
-
-        "options": [
-            {
-                "text": "Measure the volume of \\(H_2\\) produced with time using a gas syringe / วัดปริมาตร \\(H_2\\) ที่เกิดขึ้นตามเวลาด้วย gas syringe",
-                "isCorrect": true
-            },
-            {
-                "text": "Measure the room temperature once before the reaction / วัดอุณหภูมิห้องเพียงครั้งเดียวก่อนเริ่มปฏิกิริยา",
-                "isCorrect": false
-            },
-            {
-                "text": "Measure the initial mass of Mg only / วัดมวลเริ่มต้นของ Mg เพียงครั้งเดียว",
-                "isCorrect": false
-            },
-            {
-                "text": "Measure the volume of HCl solution only before mixing / วัดปริมาตรสารละลาย HCl เฉพาะก่อนผสม",
-                "isCorrect": false
-            },
-            {
-                "text": "Record the balanced-equation coefficients / บันทึกสัมประสิทธิ์ในสมการที่ดุลแล้ว",
-                "isCorrect": false
-            },
-            {
-                "text": "Measure the colour of Mg metal after the reaction only / วัดสีของ Mg หลังปฏิกิริยาสิ้นสุดเท่านั้น",
-                "isCorrect": false
-            },
-            {
-                "text": "Measure the atmospheric pressure once and keep it as the reaction rate / วัดความดันบรรยากาศครั้งเดียวแล้วใช้เป็นอัตราปฏิกิริยา",
-                "isCorrect": false
-            }
-        ]
-    },
-
-    // =========================================================
-    // Q3 — Unsuitable monitoring method
-    // =========================================================
-    {
-        "id": "q3",
-
-        "questionTH": `
-            <div>
-                นักเรียนต้องการติดตามความคืบหน้าของปฏิกิริยาเคมี
-                โดยเลือกปริมาณที่เปลี่ยนแปลงตามเวลา
-            </div>
-            <div class="mt-3">
-                ข้อใดเป็น <b>วิธีติดตามปฏิกิริยาที่ไม่เหมาะสม พร้อมเหตุผลที่ถูกต้อง</b>?
-            </div>
-        `,
-
-        "questionEN": `
-            <div>
-                A student wants to monitor reaction progress by measuring a quantity that changes with time.
-            </div>
-            <div class="mt-3">
-                Which option gives an <b>unsuitable monitoring method together with the correct reason</b>?
-            </div>
-        `,
-
-        "hints": [
-            {
-                "th": "ตรวจแต่ละตัวเลือกว่าปริมาณที่เสนอ “เปลี่ยนจริง” เมื่อปฏิกิริยาดำเนินไปหรือไม่",
-                "en": "Check whether the proposed measured quantity actually changes as the reaction proceeds."
-            },
-            {
-                "th": "ถ้าจะใช้ gas syringe ต้องมีแก๊สเกิดขึ้นจริง",
-                "en": "A gas syringe is useful only if a gas is actually produced."
-            },
-            {
-                "th": "ตรวจผลิตภัณฑ์ของ \\(HCl+NaOH\\rightarrow NaCl+H_2O\\)",
-                "en": "Inspect the products of \\(HCl+NaOH\\rightarrow NaCl+H_2O\\)."
-            }
-        ],
-
-        "solutionTH": `
-            <div>
-                สำหรับ
-                \\[
-                HCl(aq)+NaOH(aq)\\rightarrow NaCl(aq)+H_2O(l)
-                \\]
-                ไม่มีผลิตภัณฑ์เป็นแก๊ส ดังนั้น gas syringe จะไม่ให้ข้อมูลที่เปลี่ยนตาม reaction progress
-            </div>
-            <div class="mt-2">
-                ส่วนวิธีอื่น เช่น ปริมาตรแก๊ส การสูญเสียมวล ความขุ่น ความเข้มสี pH
-                หรือความดันของแก๊ส อาจใช้ได้หากปริมาณนั้นเปลี่ยนอย่างสัมพันธ์กับปฏิกิริยา
-            </div>
-            <div class="mt-2 font-bold text-emerald-700">
-                ตอบ: ใช้ gas syringe กับปฏิกิริยา HCl + NaOH เพราะไม่มีแก๊สเกิดขึ้น
+                ตอบ:
+                \\(
+                r=-\\frac12\\frac{\\Delta[NO]}{\\Delta t}
+                =-\\frac{\\Delta[O_2]}{\\Delta t}
+                =\\frac12\\frac{\\Delta[NO_2]}{\\Delta t}
+                \\)
             </div>
         `,
 
@@ -1155,893 +1000,922 @@ window.QUIZ_TEMPLATE = {
             <div>
                 For
                 \\[
-                HCl(aq)+NaOH(aq)\\rightarrow NaCl(aq)+H_2O(l),
+                2NO+O_2\\rightarrow2NO_2,
                 \\]
-                no gaseous product is formed. A gas syringe would therefore not provide a quantity
-                that changes with reaction progress.
+                the concentrations of NO and \\(O_2\\) decrease, while \\(NO_2\\) increases.
             </div>
             <div class="mt-2">
-                Other methods such as gas volume, mass loss, turbidity, colour intensity, pH,
-                or gas pressure may be suitable when that observable changes systematically during the reaction.
+                The common reaction rate is therefore
+                \\[
+                r=
+                -\\frac12\\frac{\\Delta[NO]}{\\Delta t}
+                =
+                -\\frac{\\Delta[O_2]}{\\Delta t}
+                =
+                \\frac12\\frac{\\Delta[NO_2]}{\\Delta t}.
+                \\]
+            </div>
+            <div class="mt-3">
+                <b>Important:</b> the balanced equation determines the stoichiometric
+                relationship between rates of disappearance and formation,
+                but it does not by itself prove that
+                \\(rate=k[NO]^2[O_2]\\).
+                The exponents in an <b>experimental rate law must be determined experimentally</b>,
+                unless the reaction is explicitly stated to be elementary.
             </div>
             <div class="mt-2 font-bold text-emerald-700">
-                Answer: using a gas syringe for HCl + NaOH is unsuitable because no gas is produced.
+                Answer:
+                \\(
+                r=-\\frac12\\frac{\\Delta[NO]}{\\Delta t}
+                =-\\frac{\\Delta[O_2]}{\\Delta t}
+                =\\frac12\\frac{\\Delta[NO_2]}{\\Delta t}
+                \\)
             </div>
         `,
 
         "options": [
             {
-                "text": "\\(Mg+2HCl\\rightarrow MgCl_2+H_2\\): measure \\(H_2\\) volume because gas volume increases as reaction proceeds / วัดปริมาตร \\(H_2\\) เพราะปริมาตรแก๊สเพิ่มขึ้นตามปฏิกิริยา",
-                "isCorrect": false
-            },
-            {
-                "text": "\\(CaCO_3+2HCl\\rightarrow CaCl_2+CO_2+H_2O\\): measure mass loss because escaping \\(CO_2\\) decreases the measured mass / วัดมวลที่ลดลงเพราะ \\(CO_2\\) หลุดออกจากระบบ",
-                "isCorrect": false
-            },
-            {
-                "text": "\\(Na_2S_2O_3+2HCl\\rightarrow 2NaCl+SO_2+S+H_2O\\): time the disappearance of a cross because sulfur makes the mixture cloudy / จับเวลาจนมองกากบาทไม่เห็นเพราะกำมะถันทำให้สารขุ่น",
-                "isCorrect": false
-            },
-            {
-                "text": "A coloured reactant fades during reaction: use a colorimeter because colour intensity changes with concentration / สารมีสีจางลง ใช้ colorimeter เพราะความเข้มสีเปลี่ยนตามความเข้มข้น",
-                "isCorrect": false
-            },
-            {
-                "text": "\\(HCl+NaOH\\rightarrow NaCl+H_2O\\): use a gas syringe because gas should collect as product forms / ใช้ gas syringe เพราะควรมีแก๊สสะสมเมื่อผลิตภัณฑ์เกิดขึ้น",
+                "text": "\\(r=-\\frac12\\frac{\\Delta[NO]}{\\Delta t}=-\\frac{\\Delta[O_2]}{\\Delta t}=\\frac12\\frac{\\Delta[NO_2]}{\\Delta t}\\)",
                 "isCorrect": true
             },
             {
-                "text": "A reaction causes a large pH change: monitor pH with time because pH changes as composition changes / ปฏิกิริยาที่ pH เปลี่ยนมาก สามารถติดตาม pH ตามเวลาได้",
+                "text": "\\(r=-\\frac{\\Delta[NO]}{\\Delta t}=-\\frac{\\Delta[O_2]}{\\Delta t}=\\frac{\\Delta[NO_2]}{\\Delta t}\\)",
                 "isCorrect": false
             },
             {
-                "text": "A gas-forming reaction in a sealed rigid vessel at constant temperature: monitor pressure because pressure changes with the amount of gas / ปฏิกิริยาที่เกิดแก๊สในภาชนะปิดปริมาตรคงที่ สามารถติดตามความดันได้",
+                "text": "\\(r=-2\\frac{\\Delta[NO]}{\\Delta t}-\\frac{\\Delta[O_2]}{\\Delta t}+2\\frac{\\Delta[NO_2]}{\\Delta t}\\)",
+                "isCorrect": false
+            },
+            {
+                "text": "\\(r=\\frac12\\frac{\\Delta[NO]}{\\Delta t}+\\frac{\\Delta[O_2]}{\\Delta t}+\\frac12\\frac{\\Delta[NO_2]}{\\Delta t}\\)",
+                "isCorrect": false
+            },
+            {
+                "text": "\\(r=-\\frac12\\frac{\\Delta[NO]}{\\Delta t}=-\\frac12\\frac{\\Delta[O_2]}{\\Delta t}=\\frac{\\Delta[NO_2]}{\\Delta t}\\)",
+                "isCorrect": false
+            },
+            {
+                "text": "\\(r=k[NO]^2[O_2]\\)",
+                "isCorrect": false
+            },
+            {
+                "text": "Cannot be related from the balanced equation / ไม่สามารถหาความสัมพันธ์จากสมการที่ดุลแล้วได้",
                 "isCorrect": false
             }
         ]
     },
 
     // =========================================================
-    // Q4 — Reading the language of a rate graph
+    // Q2 — Order with respect to A
+    // =========================================================
+    {
+        "id": "q2",
+
+        "questionTH": `
+            <div>
+                ปฏิกิริยาหนึ่งมีอัตราเริ่มต้นที่วัดได้ดังตาราง
+                โดยอุณหภูมิและเงื่อนไขอื่น ๆ คงที่
+            </div>
+            ${Q2_TABLE}
+            <div class="mt-3">
+                จงหา <b>อันดับปฏิกิริยาต่อ A</b>
+            </div>
+        `,
+
+        "questionEN": `
+            <div>
+                The initial rates of a reaction are measured as shown in the table.
+                Temperature and all other experimental conditions are kept constant.
+            </div>
+            ${Q2_TABLE}
+            <div class="mt-3">
+                Determine the <b>order of reaction with respect to A</b>.
+            </div>
+        `,
+
+        "hints": [
+            {
+                "th": "เลือกเปรียบเทียบการทดลองที่ความเข้มข้นของ B ไม่เปลี่ยน",
+                "en": "Compare experiments in which the concentration of B is unchanged."
+            },
+            {
+                "th": "จากการทดลอง 1 → 2 ความเข้มข้นของ A เพิ่มเป็น 2 เท่า แต่อัตราเพิ่มเป็น 4 เท่า",
+                "en": "From experiment 1 → 2, [A] doubles while the rate becomes four times larger."
+            },
+            {
+                "th": "ถ้า \\(rate\\propto[A]^m\\) ให้ตั้ง \\(4=2^m\\)",
+                "en": "If \\(rate\\propto[A]^m\\), set up \\(4=2^m\\)."
+            }
+        ],
+
+        "solutionTH": `
+            <div>ให้ \\(rate\\propto[A]^m\\)</div>
+            <div class="mt-2">
+                จาก Exp. 1 → 2:
+                \\([A]\\) เพิ่มเป็น 2 เท่า ขณะที่ rate เพิ่มเป็น 4 เท่า
+            </div>
+            <div>\\[
+                4=2^m
+            \\]</div>
+            <div>ดังนั้น \\(m=2\\)</div>
+            <div class="mt-2 font-bold text-emerald-700">
+                ตอบ: อันดับสองต่อ A
+            </div>
+        `,
+
+        "solutionEN": `
+            <div>Let \\(rate\\propto[A]^m\\).</div>
+            <div class="mt-2">
+                From Exp. 1 → 2, [A] increases by a factor of 2 while the rate increases by a factor of 4.
+            </div>
+            <div>\\[
+                4=2^m
+            \\]</div>
+            <div>Therefore, \\(m=2\\).</div>
+            <div class="mt-2 font-bold text-emerald-700">
+                Answer: second order with respect to A.
+            </div>
+        `,
+
+        "options": [
+            {"text": "\\(0\\)", "isCorrect": false},
+            {"text": "\\(\\frac12\\)", "isCorrect": false},
+            {"text": "\\(1\\)", "isCorrect": false},
+            {"text": "\\(2\\)", "isCorrect": true},
+            {"text": "\\(3\\)", "isCorrect": false},
+            {"text": "\\(4\\)", "isCorrect": false},
+            {"text": "Cannot be determined / ระบุไม่ได้", "isCorrect": false}
+        ]
+    },
+
+    // =========================================================
+    // Q3 — Zero-order behaviour
+    // =========================================================
+    {
+        "id": "q3",
+
+        "questionTH": `
+            <div>
+                ในการทดลองต่อไปนี้ ความเข้มข้นของ A ถูกควบคุมให้คงที่
+                ขณะที่เปลี่ยนความเข้มข้นของ B
+            </div>
+            ${Q3_TABLE}
+            <div class="mt-3">
+                จากข้อมูล จงหา <b>อันดับปฏิกิริยาต่อ B</b>
+            </div>
+        `,
+
+        "questionEN": `
+            <div>
+                In the following experiments, the concentration of A is kept constant
+                while the concentration of B is varied.
+            </div>
+            ${Q3_TABLE}
+            <div class="mt-3">
+                Use the data to determine the <b>order of reaction with respect to B</b>.
+            </div>
+        `,
+
+        "hints": [
+            {
+                "th": "สังเกตว่า A คงที่ทุกการทดลอง ดังนั้นการเปลี่ยน rate ที่เห็นจะมาจาก B",
+                "en": "A is constant in every experiment, so any rate change would be associated with B."
+            },
+            {
+                "th": "แม้ [B] เพิ่มจาก 0.10 M เป็น 0.40 M แต่อัตราเริ่มต้นไม่เปลี่ยน",
+                "en": "Even though [B] increases from 0.10 M to 0.40 M, the initial rate does not change."
+            },
+            {
+                "th": "ถ้า \\(rate\\propto[B]^n\\) จะได้ \\(1=4^n\\)",
+                "en": "If \\(rate\\propto[B]^n\\), then \\(1=4^n\\)."
+            }
+        ],
+
+        "solutionTH": `
+            <div>
+                [B] เพิ่มจาก 0.10 M เป็น 0.40 M หรือเพิ่มเป็น 4 เท่า
+                แต่ initial rate ยังคงเท่าเดิม
+            </div>
+            <div>\\[
+                1=4^n
+            \\]</div>
+            <div>ดังนั้น \\(n=0\\)</div>
+            <div class="mt-2">
+                อันดับศูนย์หมายความว่า ภายใต้เงื่อนไขที่ศึกษา
+                การเปลี่ยน [B] ไม่ทำให้ rate เปลี่ยน
+                ไม่ได้หมายความว่า B ไม่เกี่ยวข้องกับปฏิกิริยาเลย
+            </div>
+            <div class="mt-2 font-bold text-emerald-700">
+                ตอบ: อันดับศูนย์ต่อ B
+            </div>
+        `,
+
+        "solutionEN": `
+            <div>
+                [B] increases from 0.10 M to 0.40 M, a factor of 4,
+                while the initial rate remains unchanged.
+            </div>
+            <div>\\[
+                1=4^n
+            \\]</div>
+            <div>Therefore, \\(n=0\\).</div>
+            <div class="mt-2">
+                Zero order means that, under these conditions, changing [B] does not change the rate.
+                It does not mean that B is completely unrelated to the reaction.
+            </div>
+            <div class="mt-2 font-bold text-emerald-700">
+                Answer: zero order with respect to B.
+            </div>
+        `,
+
+        "options": [
+            {"text": "\\(0\\)", "isCorrect": true},
+            {"text": "\\(\\frac12\\)", "isCorrect": false},
+            {"text": "\\(1\\)", "isCorrect": false},
+            {"text": "\\(2\\)", "isCorrect": false},
+            {"text": "\\(3\\)", "isCorrect": false},
+            {"text": "\\(4\\)", "isCorrect": false},
+            {"text": "Cannot be determined / ระบุไม่ได้", "isCorrect": false}
+        ]
+    },
+
+    // =========================================================
+    // Q4 — Full initial-rate analysis
     // =========================================================
     {
         "id": "q4",
 
         "questionTH": `
             <div>
-                กราฟต่อไปนี้แสดงปริมาตรแก๊สผลิตภัณฑ์ที่เกิดขึ้นตามเวลา
+                สำหรับปฏิกิริยาหนึ่ง กฎอัตราที่ได้จากการทดลองเขียนได้ในรูป
+                \\[
+                rate=k[A]^m[B]^n
+                \\]
+                โดยทำการทดลองทั้งหมดที่อุณหภูมิเดียวกัน
             </div>
-            ${RATE_GRAPH}
+            ${Q4_TABLE}
             <div class="mt-3">
-                ข้อใดอธิบายความหมายของ <b>ความชัน</b> และ <b>ช่วงที่กราฟราบ</b> ได้ถูกต้อง?
+                ใช้ข้อมูลหา \\(m\\) และ \\(n\\)
+                แล้วเลือกข้อที่ระบุ <b>กฎอัตราและอันดับรวมของปฏิกิริยา</b> ได้ถูกต้อง
             </div>
         `,
 
         "questionEN": `
             <div>
-                The graph below shows the volume of gaseous product formed with time.
+                For a reaction, the experimentally determined rate law has the form
+                \\[
+                rate=k[A]^m[B]^n.
+                \\]
+                All experiments are carried out at the same temperature.
             </div>
-            ${RATE_GRAPH}
+            ${Q4_TABLE}
             <div class="mt-3">
-                Which statement correctly interprets the <b>slope</b> and the <b>plateau</b> of the graph?
+                Use the data to determine \\(m\\) and \\(n\\),
+                then select the option giving the correct <b>rate law and overall reaction order</b>.
             </div>
         `,
 
         "hints": [
             {
-                "th": "Rate บนกราฟปริมาตร-เวลาเกี่ยวข้องกับความชัน ไม่ใช่ความสูงของกราฟอย่างเดียว",
-                "en": "On a volume-time graph, rate is related to slope, not simply to the height of the graph."
+                "th": "หาอันดับต่อ A จาก Exp. 1 กับ 2 แล้วหาอันดับต่อ B จาก Exp. 2 กับ 3",
+                "en": "Find the order in A from Exp. 1 and 2, then the order in B from Exp. 2 and 3."
             },
             {
-                "th": "กราฟที่ชันกว่าหมายถึงปริมาตรเปลี่ยนมากกว่าในเวลาเท่ากัน",
-                "en": "A steeper graph means a larger change in volume during the same time."
+                "th": "Exp. 1 → 2: [A] ×2 และ rate ×4; Exp. 2 → 3: [B] ×3 และ rate ×3",
+                "en": "Exp. 1 → 2: [A] ×2 and rate ×4; Exp. 2 → 3: [B] ×3 and rate ×3."
             },
             {
-                "th": "เมื่อกราฟเป็นแนวนอน \\(\\Delta V=0\\) ในช่วงเวลานั้น",
-                "en": "When the graph is horizontal, \\(\\Delta V=0\\) over that interval."
+                "th": "จึงได้ \\(m=2\\), \\(n=1\\) และอันดับรวมเท่ากับ \\(m+n\\)",
+                "en": "Thus \\(m=2\\), \\(n=1\\), and the overall order is \\(m+n\\)."
             }
         ],
 
         "solutionTH": `
-            <div>
-                ความชันของกราฟคือ
+            <div><b>อันดับต่อ A</b></div>
+            <div>Exp. 1 → 2: \\([A]\\times2\\), rate \\(\\times4\\)</div>
+            <div>\\[
+                4=2^m\\Rightarrow m=2
+            \\]</div>
+
+            <div class="mt-3"><b>อันดับต่อ B</b></div>
+            <div>Exp. 2 → 3: \\([B]\\times3\\), rate \\(\\times3\\)</div>
+            <div>\\[
+                3=3^n\\Rightarrow n=1
+            \\]</div>
+
+            <div class="mt-3">
+                ดังนั้น
                 \\[
-                \\frac{\\Delta V}{\\Delta t}
+                rate=k[A]^2[B]
                 \\]
-                จึงใช้บอกอัตราการเกิดแก๊สได้
+                และอันดับรวม
+                \\[
+                2+1=3
+                \\]
             </div>
-            <div class="mt-2">
-                ช่วงที่กราฟชันมากกว่าแสดงว่า rate สูงกว่า
-                ส่วนช่วงที่กราฟราบแสดงว่าปริมาตรผลิตภัณฑ์ที่วัดไม่เพิ่มขึ้นแล้ว
-            </div>
+
             <div class="mt-2 font-bold text-emerald-700">
-                ตอบ: ความชันมาก → rate สูง; กราฟราบ → ปริมาตรผลิตภัณฑ์ไม่เพิ่มแล้ว
+                ตอบ: \\(rate=k[A]^2[B]\\), overall order = 3
             </div>
         `,
 
         "solutionEN": `
-            <div>
-                The slope is
+            <div><b>Order with respect to A</b></div>
+            <div>Exp. 1 → 2: \\([A]\\times2\\), rate \\(\\times4\\)</div>
+            <div>\\[
+                4=2^m\\Rightarrow m=2
+            \\]</div>
+
+            <div class="mt-3"><b>Order with respect to B</b></div>
+            <div>Exp. 2 → 3: \\([B]\\times3\\), rate \\(\\times3\\)</div>
+            <div>\\[
+                3=3^n\\Rightarrow n=1
+            \\]</div>
+
+            <div class="mt-3">
+                Therefore
                 \\[
-                \\frac{\\Delta V}{\\Delta t},
+                rate=k[A]^2[B]
                 \\]
-                so it represents the rate of gas formation.
+                and the overall order is
+                \\[
+                2+1=3.
+                \\]
             </div>
-            <div class="mt-2">
-                A steeper section represents a higher rate, whereas a horizontal section means
-                that the measured product volume is no longer increasing.
-            </div>
+
             <div class="mt-2 font-bold text-emerald-700">
-                Answer: steeper slope → higher rate; plateau → measured product volume no longer increases.
+                Answer: \\(rate=k[A]^2[B]\\), overall order = 3
             </div>
         `,
 
         "options": [
-            {
-                "text": "A steeper slope means a higher rate; a horizontal section means the measured product volume is no longer increasing / ความชันมากหมายถึง rate สูง ส่วนกราฟราบหมายถึงปริมาตรผลิตภัณฑ์ไม่เพิ่มแล้ว",
-                "isCorrect": true
-            },
-            {
-                "text": "A higher point on the graph always means a higher instantaneous rate / จุดที่อยู่สูงกว่าบนกราฟหมายถึง instantaneous rate สูงกว่าเสมอ",
-                "isCorrect": false
-            },
-            {
-                "text": "A horizontal section means the reaction rate is at its maximum / กราฟราบหมายถึงอัตราการเกิดปฏิกิริยาสูงสุด",
-                "isCorrect": false
-            },
-            {
-                "text": "Slope represents the total amount of reactant originally added / ความชันแทนปริมาณสารตั้งต้นเริ่มต้นทั้งหมด",
-                "isCorrect": false
-            },
-            {
-                "text": "The plateau means activation energy has become zero / กราฟราบหมายถึงพลังงานก่อกัมมันต์เป็นศูนย์",
-                "isCorrect": false
-            },
-            {
-                "text": "Slope shows concentration but not reaction rate / ความชันแสดงความเข้มข้นแต่ไม่เกี่ยวกับ rate",
-                "isCorrect": false
-            },
-            {
-                "text": "The curve becomes flatter because the total product is decreasing / กราฟแบนลงเพราะปริมาณผลิตภัณฑ์ทั้งหมดกำลังลดลง",
-                "isCorrect": false
-            }
+            {"text": "\\(rate=k[A][B]\\), overall order = 2", "isCorrect": false},
+            {"text": "\\(rate=k[A]^2[B]\\), overall order = 3", "isCorrect": true},
+            {"text": "\\(rate=k[A][B]^2\\), overall order = 3", "isCorrect": false},
+            {"text": "\\(rate=k[A]^2[B]\\), overall order = 2", "isCorrect": false},
+            {"text": "\\(rate=k[A]^2[B]^3\\), overall order = 5", "isCorrect": false},
+            {"text": "\\(rate=k[A]^4[B]^3\\), overall order = 7", "isCorrect": false},
+            {"text": "\\(rate=k[A]^0[B]\\), overall order = 1", "isCorrect": false}
         ]
     },
 
     // =========================================================
-    // Q5 — Average rate
+    // Q5 — Rate constant k and unit
     // =========================================================
     {
         "id": "q5",
 
         "questionTH": `
             <div>
-                ใช้กราฟและตารางข้อมูลต่อไปนี้
+                ปฏิกิริยาหนึ่งมีกฎอัตราที่ได้จากการทดลองเป็น
+                \\[
+                rate=k[A]^2[B]
+                \\]
+                ที่อุณหภูมิหนึ่ง เมื่อ
+                \\([A]=0.20\\,M\\), \\([B]=0.30\\,M\\)
+                พบว่าอัตราเริ่มต้นเท่ากับ
+                \\(1.80\\times10^{-2}\\,M\\,s^{-1}\\)
             </div>
-            ${RATE_GRAPH}
             <div class="mt-3">
-                จงคำนวณ <b>อัตราเฉลี่ยของการเกิดแก๊ส</b> ระหว่าง 15 s ถึง 60 s
+                จงคำนวณ <b>ค่าคงที่อัตรา \\(k\\) พร้อมหน่วย</b>
             </div>
         `,
 
         "questionEN": `
             <div>
-                Use the graph and data below.
+                The experimentally determined rate law for a reaction is
+                \\[
+                rate=k[A]^2[B].
+                \\]
+                At a certain temperature,
+                \\([A]=0.20\\,M\\), \\([B]=0.30\\,M\\),
+                and the initial rate is
+                \\(1.80\\times10^{-2}\\,M\\,s^{-1}\\).
             </div>
-            ${RATE_GRAPH}
             <div class="mt-3">
-                Calculate the <b>average rate of gas formation</b> between 15 s and 60 s.
+                Calculate the <b>rate constant \\(k\\), including its unit</b>.
             </div>
         `,
 
         "hints": [
             {
-                "th": "อัตราเฉลี่ยในช่วงเวลาหนึ่งใช้ \\(\\Delta V/\\Delta t\\)",
-                "en": "Average rate over an interval is \\(\\Delta V/\\Delta t\\)."
+                "th": "จัดรูปเป็น \\(k=\\frac{rate}{[A]^2[B]}\\)",
+                "en": "Rearrange to \\(k=\\frac{rate}{[A]^2[B]}\\)."
             },
             {
-                "th": "ที่ 15 s มี 18 cm³ และที่ 60 s มี 45 cm³",
-                "en": "At 15 s the volume is 18 cm³, and at 60 s it is 45 cm³."
+                "th": "แทนค่า \\(k=\\frac{1.80\\times10^{-2}}{(0.20)^2(0.30)}\\)",
+                "en": "Substitute \\(k=\\frac{1.80\\times10^{-2}}{(0.20)^2(0.30)}\\)."
             },
             {
-                "th": "ตั้ง \\(\\frac{45-18}{60-15}\\)",
-                "en": "Set up \\(\\frac{45-18}{60-15}\\)."
+                "th": "อันดับรวมเท่ากับ 3 ดังนั้นหน่วยของ \\(k\\) คือ \\((M\\,s^{-1})/M^3\\)",
+                "en": "The overall order is 3, so the unit of \\(k\\) is \\((M\\,s^{-1})/M^3\\)."
             }
         ],
 
         "solutionTH": `
             <div>\\[
-                \\text{average rate}
-                =\\frac{45-18}{60-15}
-                =\\frac{27}{45}
-                =0.60\\,cm^3s^{-1}
+                k=\\frac{1.80\\times10^{-2}}{(0.20)^2(0.30)}
+            \\]</div>
+            <div>\\[
+                (0.20)^2(0.30)=0.012
+            \\]</div>
+            <div>\\[
+                k=\\frac{0.018}{0.012}=1.5
+            \\]</div>
+            <div class="mt-2">หน่วย:</div>
+            <div>\\[
+                \\frac{M\\,s^{-1}}{M^3}=M^{-2}s^{-1}
             \\]</div>
             <div class="mt-2 font-bold text-emerald-700">
-                ตอบ: \\(0.60\\,cm^3s^{-1}\\)
+                ตอบ: \\(k=1.5\\,M^{-2}s^{-1}\\)
             </div>
         `,
 
         "solutionEN": `
             <div>\\[
-                \\text{average rate}
-                =\\frac{45-18}{60-15}
-                =\\frac{27}{45}
-                =0.60\\,cm^3s^{-1}
+                k=\\frac{1.80\\times10^{-2}}{(0.20)^2(0.30)}
+            \\]</div>
+            <div>\\[
+                (0.20)^2(0.30)=0.012
+            \\]</div>
+            <div>\\[
+                k=\\frac{0.018}{0.012}=1.5
+            \\]</div>
+            <div class="mt-2">Unit:</div>
+            <div>\\[
+                \\frac{M\\,s^{-1}}{M^3}=M^{-2}s^{-1}
             \\]</div>
             <div class="mt-2 font-bold text-emerald-700">
-                Answer: \\(0.60\\,cm^3s^{-1}\\)
+                Answer: \\(k=1.5\\,M^{-2}s^{-1}\\)
             </div>
         `,
 
         "options": [
-            {"text": "\\(0.30\\,cm^3s^{-1}\\)", "isCorrect": false},
-            {"text": "\\(0.45\\,cm^3s^{-1}\\)", "isCorrect": false},
-            {"text": "\\(0.60\\,cm^3s^{-1}\\)", "isCorrect": true},
-            {"text": "\\(0.75\\,cm^3s^{-1}\\)", "isCorrect": false},
-            {"text": "\\(1.20\\,cm^3s^{-1}\\)", "isCorrect": false},
-            {"text": "\\(27\\,cm^3s^{-1}\\)", "isCorrect": false},
-            {"text": "\\(45\\,cm^3s^{-1}\\)", "isCorrect": false}
+            {"text": "\\(1.5\\,M^{-2}s^{-1}\\)", "isCorrect": true},
+            {"text": "\\(1.5\\,M^{-1}s^{-1}\\)", "isCorrect": false},
+            {"text": "\\(1.5\\,M^{2}s^{-1}\\)", "isCorrect": false},
+            {"text": "\\(1.5\\,s^{-1}\\)", "isCorrect": false},
+            {"text": "\\(0.67\\,M^{-2}s^{-1}\\)", "isCorrect": false},
+            {"text": "\\(15\\,M^{-2}s^{-1}\\)", "isCorrect": false},
+            {"text": "\\(150\\,M^{-2}s^{-1}\\)", "isCorrect": false}
         ]
     },
 
     // =========================================================
-    // Q6 — Fastest interval
+    // Q6 — Predict a new initial rate
     // =========================================================
     {
         "id": "q6",
 
         "questionTH": `
             <div>
-                ใช้ข้อมูลชุดเดิม
+                สำหรับปฏิกิริยาเดียวกันที่อุณหภูมิเดิม
+                \\[
+                rate=k[A]^2[B]
+                \\]
+                และ
+                \\[
+                k=1.5\\,M^{-2}s^{-1}.
+                \\]
+                การทดลองใหม่เริ่มต้นด้วย
+                \\([A]=0.40\\,M\\) และ \\([B]=0.15\\,M\\)
             </div>
-            ${RATE_GRAPH}
             <div class="mt-3">
-                ช่วงเวลา 15 s ใดมี <b>อัตราเฉลี่ยของการเกิดแก๊สสูงที่สุด</b>?
+                จงคำนวณ <b>อัตราเริ่มต้นของปฏิกิริยา</b>
             </div>
         `,
 
         "questionEN": `
             <div>
-                Use the same data.
+                For the same reaction at the same temperature,
+                \\[
+                rate=k[A]^2[B]
+                \\]
+                and
+                \\[
+                k=1.5\\,M^{-2}s^{-1}.
+                \\]
+                A new experiment starts with
+                \\([A]=0.40\\,M\\) and \\([B]=0.15\\,M\\).
             </div>
-            ${RATE_GRAPH}
             <div class="mt-3">
-                Which 15 s interval has the <b>greatest average rate of gas formation</b>?
+                Calculate the <b>initial reaction rate</b>.
             </div>
         `,
 
         "hints": [
             {
-                "th": "อย่าดูว่าช่วงใดมีปริมาตรแก๊สมากที่สุด ให้ดูว่าใน 15 s ปริมาตรเพิ่มขึ้นมากที่สุดช่วงใด",
-                "en": "Do not choose the interval with the largest gas volume; choose the interval with the largest volume increase in 15 s."
+                "th": "ใช้กฎอัตราที่โจทย์ให้โดยตรงและแทนความเข้มข้นของการทดลองใหม่",
+                "en": "Use the given rate law and substitute the new concentrations directly."
             },
             {
-                "th": "คำนวณ \\(\\Delta V\\) ในแต่ละช่วง: 18, 12, 9, 6, 3, 2 cm³",
-                "en": "The volume increases are 18, 12, 9, 6, 3, and 2 cm³ for the successive intervals."
+                "th": "ตั้งค่า \\(rate=1.5(0.40)^2(0.15)\\)",
+                "en": "Set up \\(rate=1.5(0.40)^2(0.15)\\)."
             },
             {
-                "th": "ทุกช่วงมี \\(\\Delta t=15s\\) ดังนั้นช่วงที่ \\(\\Delta V\\) มากที่สุดมี rate สูงที่สุด",
-                "en": "Every interval has \\(\\Delta t=15s\\), so the largest \\(\\Delta V\\) gives the largest rate."
+                "th": "คำนวณ \\((0.40)^2=0.16\\) ก่อน",
+                "en": "Calculate \\((0.40)^2=0.16\\) first."
             }
         ],
 
         "solutionTH": `
-            <div>
-                ช่วง 0–15 s:
-                \\[
-                \\frac{18-0}{15}=1.20\\,cm^3s^{-1}
-                \\]
-            </div>
-            <div class="mt-2">
-                ช่วงต่อ ๆ ไปให้ค่า 0.80, 0.60, 0.40, 0.20 และประมาณ 0.13 \\(cm^3s^{-1}\\)
-            </div>
+            <div>\\[
+                rate=k[A]^2[B]
+            \\]</div>
+            <div>\\[
+                rate=1.5(0.40)^2(0.15)
+            \\]</div>
+            <div>\\[
+                =1.5(0.16)(0.15)
+                =0.0360\\,M\\,s^{-1}
+            \\]</div>
             <div class="mt-2 font-bold text-emerald-700">
-                ตอบ: 0–15 s
+                ตอบ: \\(3.60\\times10^{-2}\\,M\\,s^{-1}\\)
             </div>
         `,
 
         "solutionEN": `
-            <div>
-                For 0–15 s:
-                \\[
-                \\frac{18-0}{15}=1.20\\,cm^3s^{-1}.
-                \\]
-            </div>
-            <div class="mt-2">
-                The later intervals give 0.80, 0.60, 0.40, 0.20, and about 0.13 \\(cm^3s^{-1}\\).
-            </div>
+            <div>\\[
+                rate=k[A]^2[B]
+            \\]</div>
+            <div>\\[
+                rate=1.5(0.40)^2(0.15)
+            \\]</div>
+            <div>\\[
+                =1.5(0.16)(0.15)
+                =0.0360\\,M\\,s^{-1}
+            \\]</div>
             <div class="mt-2 font-bold text-emerald-700">
-                Answer: 0–15 s.
+                Answer: \\(3.60\\times10^{-2}\\,M\\,s^{-1}\\)
             </div>
         `,
 
         "options": [
-            {"text": "0–15 s", "isCorrect": true},
-            {"text": "15–30 s", "isCorrect": false},
-            {"text": "30–45 s", "isCorrect": false},
-            {"text": "45–60 s", "isCorrect": false},
-            {"text": "60–75 s", "isCorrect": false},
-            {"text": "75–90 s", "isCorrect": false},
-            {"text": "All intervals have the same average rate / ทุกช่วงมีอัตราเฉลี่ยเท่ากัน", "isCorrect": false}
+            {"text": "\\(9.00\\times10^{-3}\\,M\\,s^{-1}\\)", "isCorrect": false},
+            {"text": "\\(1.80\\times10^{-2}\\,M\\,s^{-1}\\)", "isCorrect": false},
+            {"text": "\\(2.40\\times10^{-2}\\,M\\,s^{-1}\\)", "isCorrect": false},
+            {"text": "\\(3.60\\times10^{-2}\\,M\\,s^{-1}\\)", "isCorrect": true},
+            {"text": "\\(4.80\\times10^{-2}\\,M\\,s^{-1}\\)", "isCorrect": false},
+            {"text": "\\(7.20\\times10^{-2}\\,M\\,s^{-1}\\)", "isCorrect": false},
+            {"text": "\\(3.60\\times10^{-1}\\,M\\,s^{-1}\\)", "isCorrect": false}
         ]
     },
 
     // =========================================================
-    // Q7 — Instantaneous rate from a tangent
+    // Q7 — Reverse use of the rate law
     // =========================================================
     {
         "id": "q7",
 
         "questionTH": `
             <div>
-                เส้นประบนกราฟเป็น <b>เส้นสัมผัสที่เวลา 45 s</b>
-                และกำหนดจุดบนเส้นสัมผัสเป็น
-                \\(P=(25s,31cm^3)\\) และ \\(Q=(65s,47cm^3)\\)
+                ปฏิกิริยาหนึ่งมีกฎอัตรา
+                \\[
+                rate=k[P][Q]^2
+                \\]
+                โดย \\(k=2.0\\,M^{-2}s^{-1}\\)
             </div>
-            ${RATE_GRAPH}
             <div class="mt-3">
-                จงคำนวณ <b>อัตราการเกิดแก๊ส ณ เวลา 45 s</b>
+                ในการทดลองหนึ่ง \\([P]=0.25\\,M\\)
+                และวัดอัตราเริ่มต้นได้
+                \\(4.50\\times10^{-2}\\,M\\,s^{-1}\\)
+            </div>
+            <div class="mt-3">
+                จงคำนวณ <b>ความเข้มข้นเริ่มต้นของ Q</b>
             </div>
         `,
 
         "questionEN": `
             <div>
-                The dashed line is the <b>tangent at 45 s</b>.
-                Two points on the tangent are
-                \\(P=(25s,31cm^3)\\) and \\(Q=(65s,47cm^3)\\).
+                A reaction has the rate law
+                \\[
+                rate=k[P][Q]^2
+                \\]
+                where \\(k=2.0\\,M^{-2}s^{-1}\\).
             </div>
-            ${RATE_GRAPH}
             <div class="mt-3">
-                Calculate the <b>instantaneous rate of gas formation at 45 s</b>.
+                In one experiment, \\([P]=0.25\\,M\\)
+                and the measured initial rate is
+                \\(4.50\\times10^{-2}\\,M\\,s^{-1}\\).
+            </div>
+            <div class="mt-3">
+                Calculate the <b>initial concentration of Q</b>.
             </div>
         `,
 
         "hints": [
             {
-                "th": "Instantaneous rate หาได้จาก gradient ของเส้นสัมผัส ไม่ใช่ gradient ของเส้นตัดช่วงยาวบน curve",
-                "en": "Instantaneous rate comes from the gradient of the tangent, not a secant across a long section of the curve."
+                "th": "แทนค่าที่ทราบทั้งหมดลงใน \\(rate=k[P][Q]^2\\)",
+                "en": "Substitute all known values into \\(rate=k[P][Q]^2\\)."
             },
             {
-                "th": "ใช้จุด P และ Q ซึ่งอยู่บนเส้นสัมผัส",
-                "en": "Use points P and Q, which lie on the tangent."
+                "th": "จะได้ \\(0.045=2.0(0.25)[Q]^2\\)",
+                "en": "You should obtain \\(0.045=2.0(0.25)[Q]^2\\)."
             },
             {
-                "th": "ตั้ง \\(\\frac{47-31}{65-25}\\)",
-                "en": "Set up \\(\\frac{47-31}{65-25}\\)."
+                "th": "หา \\([Q]^2\\) ก่อน แล้วจึงถอดราก",
+                "en": "Solve for \\([Q]^2\\) first, then take the square root."
             }
         ],
 
         "solutionTH": `
             <div>\\[
-                rate_{45s}
-                =\\frac{47-31}{65-25}
-                =\\frac{16}{40}
-                =0.40\\,cm^3s^{-1}
+                0.045=2.0(0.25)[Q]^2
+            \\]</div>
+            <div>\\[
+                0.045=0.50[Q]^2
+            \\]</div>
+            <div>\\[
+                [Q]^2=0.090
+            \\]</div>
+            <div>\\[
+                [Q]=\\sqrt{0.090}=0.30\\,M
             \\]</div>
             <div class="mt-2 font-bold text-emerald-700">
-                ตอบ: \\(0.40\\,cm^3s^{-1}\\)
+                ตอบ: \\([Q]=0.30\\,M\\)
             </div>
         `,
 
         "solutionEN": `
             <div>\\[
-                rate_{45s}
-                =\\frac{47-31}{65-25}
-                =\\frac{16}{40}
-                =0.40\\,cm^3s^{-1}
+                0.045=2.0(0.25)[Q]^2
+            \\]</div>
+            <div>\\[
+                0.045=0.50[Q]^2
+            \\]</div>
+            <div>\\[
+                [Q]^2=0.090
+            \\]</div>
+            <div>\\[
+                [Q]=\\sqrt{0.090}=0.30\\,M
             \\]</div>
             <div class="mt-2 font-bold text-emerald-700">
-                Answer: \\(0.40\\,cm^3s^{-1}\\)
+                Answer: \\([Q]=0.30\\,M\\)
             </div>
         `,
 
         "options": [
-            {"text": "\\(0.20\\,cm^3s^{-1}\\)", "isCorrect": false},
-            {"text": "\\(0.30\\,cm^3s^{-1}\\)", "isCorrect": false},
-            {"text": "\\(0.40\\,cm^3s^{-1}\\)", "isCorrect": true},
-            {"text": "\\(0.60\\,cm^3s^{-1}\\)", "isCorrect": false},
-            {"text": "\\(0.87\\,cm^3s^{-1}\\)", "isCorrect": false},
-            {"text": "\\(1.20\\,cm^3s^{-1}\\)", "isCorrect": false},
-            {"text": "\\(16\\,cm^3s^{-1}\\)", "isCorrect": false}
+            {"text": "\\(0.030\\,M\\)", "isCorrect": false},
+            {"text": "\\(0.090\\,M\\)", "isCorrect": false},
+            {"text": "\\(0.15\\,M\\)", "isCorrect": false},
+            {"text": "\\(0.25\\,M\\)", "isCorrect": false},
+            {"text": "\\(0.30\\,M\\)", "isCorrect": true},
+            {"text": "\\(0.45\\,M\\)", "isCorrect": false},
+            {"text": "\\(0.60\\,M\\)", "isCorrect": false}
         ]
     },
 
     // =========================================================
-    // Q8 — Why the slope decreases
+    // Q8 — Temperature, k, and activation energy
     // =========================================================
     {
         "id": "q8",
 
         "questionTH": `
             <div>
-                ในปฏิกิริยาระหว่าง \\(CaCO_3(s)\\) กับ \\(HCl(aq)\\)
-                ช่วงเวลาที่พิจารณายังมี \\(CaCO_3\\) เหลืออยู่
-                แต่ \\(HCl\\) ถูกใช้ไปเรื่อย ๆ
+                กราฟแสดงการกระจายพลังงานของอนุภาคสำหรับ
+                <b>ปฏิกิริยาและเส้นทางปฏิกิริยาเดียวกัน</b>
+                ที่อุณหภูมิ \\(T_1\\) และ \\(T_2\\) โดย \\(T_2>T_1\\)
             </div>
-            ${RATE_GRAPH}
+            ${Q8_GRAPH}
             <div class="mt-3">
-                ข้อใดอธิบายได้ดีที่สุดว่าเหตุใด <b>ความชันของกราฟจึงลดลงเมื่อเวลาผ่านไป</b>?
+                ข้อใดอธิบายได้ถูกต้องที่สุดว่าเหตุใด
+                <b>ค่าคงที่อัตรา \\(k\\) จึงเพิ่มขึ้นเมื่ออุณหภูมิสูงขึ้น</b>?
             </div>
         `,
 
         "questionEN": `
             <div>
-                In a reaction between \\(CaCO_3(s)\\) and \\(HCl(aq)\\),
-                solid \\(CaCO_3\\) is still present during the interval considered,
-                while \\(HCl\\) is gradually consumed.
+                The graph shows particle-energy distributions for the
+                <b>same reaction and the same reaction pathway</b>
+                at temperatures \\(T_1\\) and \\(T_2\\), where \\(T_2>T_1\\).
             </div>
-            ${RATE_GRAPH}
+            ${Q8_GRAPH}
             <div class="mt-3">
-                Which statement best explains why the <b>slope decreases as time passes</b>?
+                Which statement best explains why the
+                <b>rate constant \\(k\\) increases as temperature increases</b>?
             </div>
         `,
 
         "hints": [
             {
-                "th": "ความชันลดลงหมายถึง rate ลดลง จึงต้องหาสาเหตุที่ทำให้การชนที่เกิดปฏิกิริยาต่อหน่วยเวลาลดลง",
-                "en": "A smaller slope means a lower rate, so identify why successful collisions per unit time decrease."
+                "th": "แยกผลของอุณหภูมิออกจากผลของตัวเร่งปฏิกิริยา",
+                "en": "Separate the effect of temperature from the effect of a catalyst."
             },
             {
-                "th": "HCl เป็นสารละลายและถูกใช้ไป ความเข้มข้นของ HCl จึงลดลง",
-                "en": "HCl is in solution and is consumed, so its concentration decreases."
+                "th": "พิจารณาสัดส่วนของอนุภาคที่อยู่ทางขวาของเส้น \\(E_a\\)",
+                "en": "Consider the fraction of particles lying to the right of the \\(E_a\\) line."
             },
             {
-                "th": "เมื่อ [HCl] ลดลง อนุภาค HCl ที่ชนผิว CaCO₃ ต่อหน่วยเวลาก็ลดลง",
-                "en": "As [HCl] decreases, fewer HCl particles collide with the CaCO₃ surface per unit time."
+                "th": "เมื่ออุณหภูมิสูงขึ้น สัดส่วนที่มี \\(E\\ge E_a\\) เพิ่มขึ้น แต่ \\(E_a\\) ของเส้นทางเดิมไม่เปลี่ยน",
+                "en": "At higher temperature, a greater fraction has \\(E\\ge E_a\\), while \\(E_a\\) for the same pathway is unchanged."
             }
         ],
 
         "solutionTH": `
             <div>
-                เมื่อ HCl ถูกใช้ไป ความเข้มข้นของ HCl ลดลง
-                ทำให้จำนวนการชนกับผิว \\(CaCO_3\\) ต่อหน่วยเวลาลดลง
-                และจำนวนการชนที่มีผลต่อหน่วยเวลาก็ลดลง
+                เมื่ออุณหภูมิสูงขึ้น การกระจายพลังงานกว้างขึ้น
+                และมีสัดส่วนอนุภาคที่อยู่ในช่วงพลังงานสูงมากขึ้น
             </div>
             <div class="mt-2">
-                ดังนั้น rate ลดลงและกราฟจึงค่อย ๆ แบนลง
+                ดังนั้น <b>สัดส่วนของอนุภาคที่มี \\(E\\ge E_a\\) เพิ่มขึ้น</b>
+                จึงมีการชนที่มีพลังงานเพียงพอสำหรับเกิดปฏิกิริยามากขึ้น
+                และ \\(k\\) เพิ่มขึ้น
+            </div>
+            <div class="mt-2">
+                สำหรับเส้นทางปฏิกิริยาเดิม การเพิ่มอุณหภูมิ
+                <b>ไม่ได้ทำให้ \\(E_a\\) ลดลง</b>
             </div>
             <div class="mt-2 font-bold text-emerald-700">
-                ตอบ: [HCl] ลดลง → การชนที่ผิวต่อหน่วยเวลาลดลง → rate ลดลง
+                ตอบ: สัดส่วนอนุภาคที่มี \\(E\\ge E_a\\) เพิ่มขึ้น โดย \\(E_a\\) คงเดิม
             </div>
         `,
 
         "solutionEN": `
             <div>
-                As HCl is consumed, its concentration decreases.
-                Fewer HCl particles collide with the CaCO₃ surface per unit time,
-                so the number of successful collisions per unit time decreases.
+                At higher temperature, the energy distribution becomes broader
+                and a larger proportion of particles occupies higher-energy states.
             </div>
             <div class="mt-2">
-                The reaction rate therefore decreases and the curve becomes flatter.
+                Therefore, <b>a greater fraction of particles has \\(E\\ge E_a\\)</b>.
+                More collisions have sufficient energy to react, so \\(k\\) increases.
+            </div>
+            <div class="mt-2">
+                For the same reaction pathway, increasing temperature
+                <b>does not lower \\(E_a\\)</b>.
             </div>
             <div class="mt-2 font-bold text-emerald-700">
-                Answer: [HCl] decreases → fewer successful surface collisions per unit time → lower rate.
+                Answer: a greater fraction of particles has \\(E\\ge E_a\\), while \\(E_a\\) remains unchanged.
             </div>
         `,
 
         "options": [
             {
-                "text": "[HCl] decreases, so fewer successful collisions occur at the CaCO₃ surface per unit time / [HCl] ลดลง จึงเกิดการชนที่มีผลบริเวณผิว CaCO₃ น้อยลงต่อหน่วยเวลา",
+                "text": "A greater fraction of particles has \\(E\\ge E_a\\), while \\(E_a\\) remains unchanged. / สัดส่วนอนุภาคที่มี \\(E\\ge E_a\\) เพิ่มขึ้น โดย \\(E_a\\) คงเดิม",
                 "isCorrect": true
             },
             {
-                "text": "The activation energy steadily increases as products form / พลังงานก่อกัมมันต์เพิ่มขึ้นเรื่อย ๆ เมื่อผลิตภัณฑ์เกิดขึ้น",
+                "text": "The activation energy decreases as temperature increases. / พลังงานก่อกัมมันต์ลดลงเมื่ออุณหภูมิเพิ่มขึ้น",
                 "isCorrect": false
             },
             {
-                "text": "The CaCO₃ concentration in the solid decreases in the same way as a solution concentration / ความเข้มข้นของ CaCO₃ ในของแข็งลดลงแบบเดียวกับสารละลาย",
+                "text": "The total number of particles increases. / จำนวนอนุภาคทั้งหมดเพิ่มขึ้น",
                 "isCorrect": false
             },
             {
-                "text": "The products automatically act as a catalyst inhibitor / ผลิตภัณฑ์ทำหน้าที่เป็นตัวยับยั้งโดยอัตโนมัติ",
+                "text": "The total area under the distribution becomes larger. / พื้นที่รวมใต้กราฟเพิ่มขึ้น",
                 "isCorrect": false
             },
             {
-                "text": "The reaction temperature must decrease to 0 °C / อุณหภูมิของปฏิกิริยาต้องลดลงถึง 0 °C",
+                "text": "The reaction enthalpy becomes more negative. / เอนทัลปีของปฏิกิริยามีค่าลบมากขึ้น",
                 "isCorrect": false
             },
             {
-                "text": "The amount of product already formed makes the tangent less steep even though the rate is unchanged / ผลิตภัณฑ์ที่สะสมทำให้เส้นสัมผัสแบนลงทั้งที่ rate ไม่เปลี่ยน",
+                "text": "A catalyst is formed automatically at higher temperature. / เกิดตัวเร่งปฏิกิริยาเองเมื่ออุณหภูมิสูงขึ้น",
                 "isCorrect": false
             },
             {
-                "text": "The balanced equation changes with time / สมการเคมีที่ดุลแล้วเปลี่ยนไปตามเวลา",
+                "text": "Every collision becomes successful. / การชนทุกครั้งทำให้เกิดปฏิกิริยา",
                 "isCorrect": false
             }
         ]
     },
 
     // =========================================================
-    // Q9 — Fair test: particle size
+    // Q9 — Catalyst, Ea, initial rate, and ΔH
     // =========================================================
     {
         "id": "q9",
 
         "questionTH": `
             <div>
-                นักเรียนศึกษาปัจจัยที่มีผลต่อปฏิกิริยา
+                กราฟแสดงแผนภาพพลังงานของปฏิกิริยาเดียวกัน
+                เมื่อไม่มีตัวเร่งและเมื่อมีตัวเร่งปฏิกิริยา
+                โดยความเข้มข้นของสารตั้งต้นและอุณหภูมิคงที่
+            </div>
+            ${Q9_GRAPH}
+            <div class="mt-3">
+                ข้อใดอธิบายผลของการเติมตัวเร่งปฏิกิริยาต่อ
+                <b>อัตราเริ่มต้น, \\(E_a\\) และ \\(\\Delta H\\)</b> ได้ถูกต้อง?
+            </div>
+        `,
+
+        "questionEN": `
+            <div>
+                The graph shows energy profiles for the same reaction
+                with and without a catalyst.
+                Reactant concentrations and temperature are unchanged.
+            </div>
+            ${Q9_GRAPH}
+            <div class="mt-3">
+                Which statement correctly describes the effect of adding the catalyst on
+                the <b>initial rate, \\(E_a\\), and \\(\\Delta H\\)</b>?
+            </div>
+        `,
+
+        "hints": [
+            {
+                "th": "ตัวเร่งเปลี่ยนเส้นทางปฏิกิริยา ไม่ได้เปลี่ยนระดับพลังงานของสารตั้งต้นหรือผลิตภัณฑ์",
+                "en": "A catalyst changes the reaction pathway, not the energy levels of the reactants or products."
+            },
+            {
+                "th": "จากกราฟ: ไม่มีตัวเร่ง \\(E_a=120-40\\); มีตัวเร่ง \\(E_a=80-40\\)",
+                "en": "From the graph: uncatalysed \\(E_a=120-40\\); catalysed \\(E_a=80-40\\)."
+            },
+            {
+                "th": "\\(\\Delta H=E_{products}-E_{reactants}=10-40\\) จึงไม่ขึ้นกับเส้นทาง",
+                "en": "\\(\\Delta H=E_{products}-E_{reactants}=10-40\\), so it does not depend on the pathway."
+            }
+        ],
+
+        "solutionTH": `
+            <div><b>ไม่มีตัวเร่ง</b></div>
+            <div>\\[
+                E_a=120-40=80\\,kJ\\,mol^{-1}
+            \\]</div>
+
+            <div class="mt-2"><b>มีตัวเร่ง</b></div>
+            <div>\\[
+                E_a=80-40=40\\,kJ\\,mol^{-1}
+            \\]</div>
+
+            <div class="mt-2">
+                ตัวเร่งให้เส้นทางใหม่ที่มี \\(E_a\\) ต่ำลง
+                ที่อุณหภูมิและความเข้มข้นเดิมจึงมีสัดส่วนการชนที่ผ่านกำแพงพลังงานได้มากขึ้น
+                ทำให้อัตราเริ่มต้นเพิ่มขึ้น
+            </div>
+
+            <div class="mt-2">
                 \\[
-                CaCO_3(s)+2HCl(aq)\\rightarrow CaCl_2(aq)+CO_2(g)+H_2O(l)
+                \\Delta H=10-40=-30\\,kJ\\,mol^{-1}
                 \\]
-                ทุกการทดลองใช้มวล \\(CaCO_3\\) เท่ากันและปริมาตร HCl เท่ากัน
-                และ HCl มีปริมาณมากเกินพอ
+                และไม่เปลี่ยน เพราะระดับพลังงานของสารตั้งต้นและผลิตภัณฑ์เท่าเดิม
             </div>
-            ${FACTOR_TABLE}
-            <div class="mt-3">
-                ควรเปรียบเทียบการทดลองคู่ใดเพื่อศึกษา <b>ผลของขนาดอนุภาคเพียงปัจจัยเดียว</b>?
+
+            <div class="mt-2 font-bold text-emerald-700">
+                ตอบ: อัตราเริ่มต้นเพิ่มขึ้น, \\(E_a:80\\rightarrow40\\,kJ\\,mol^{-1}\\),
+                และ \\(\\Delta H=-30\\,kJ\\,mol^{-1}\\) คงเดิม
             </div>
         `,
 
-        "questionEN": `
-            <div>
-                A student investigates factors affecting
+        "solutionEN": `
+            <div><b>Uncatalysed pathway</b></div>
+            <div>\\[
+                E_a=120-40=80\\,kJ\\,mol^{-1}
+            \\]</div>
+
+            <div class="mt-2"><b>Catalysed pathway</b></div>
+            <div>\\[
+                E_a=80-40=40\\,kJ\\,mol^{-1}
+            \\]</div>
+
+            <div class="mt-2">
+                The catalyst provides an alternative pathway with lower \\(E_a\\).
+                At the same temperature and reactant concentrations,
+                a larger fraction of collisions can overcome the energy barrier,
+                so the initial rate increases.
+            </div>
+
+            <div class="mt-2">
                 \\[
-                CaCO_3(s)+2HCl(aq)\\rightarrow CaCl_2(aq)+CO_2(g)+H_2O(l).
+                \\Delta H=10-40=-30\\,kJ\\,mol^{-1}
                 \\]
-                Every experiment uses the same mass of \\(CaCO_3\\) and the same volume of HCl,
-                and HCl is in excess.
+                and is unchanged because the reactant and product energy levels do not change.
             </div>
-            ${FACTOR_TABLE}
-            <div class="mt-3">
-                Which pair should be compared to investigate <b>only the effect of particle size</b>?
-            </div>
-        `,
 
-        "hints": [
-            {
-                "th": "Fair test ต้องเปลี่ยนตัวแปรต้นเพียงหนึ่งอย่าง",
-                "en": "A fair test changes only one independent variable."
-            },
-            {
-                "th": "ต้องให้ [HCl] และอุณหภูมิเท่ากัน",
-                "en": "[HCl] and temperature must be the same."
-            },
-            {
-                "th": "มองหาคู่ที่ต่างกันเฉพาะ large chips กับ powder",
-                "en": "Look for the pair differing only between large chips and powder."
-            }
-        ],
-
-        "solutionTH": `
-            <div>
-                W และ X มี [HCl] = 0.60 M และอุณหภูมิ = 20 °C เท่ากัน
-                ต่างกันเฉพาะรูปของ \\(CaCO_3\\): large chips กับ powder
-            </div>
             <div class="mt-2 font-bold text-emerald-700">
-                ตอบ: W และ X
-            </div>
-        `,
-
-        "solutionEN": `
-            <div>
-                W and X have the same [HCl] = 0.60 M and the same temperature = 20 °C.
-                They differ only in the form of \\(CaCO_3\\): large chips versus powder.
-            </div>
-            <div class="mt-2 font-bold text-emerald-700">
-                Answer: W and X.
-            </div>
-        `,
-
-        "options": [
-            {"text": "W and X", "isCorrect": true},
-            {"text": "W and Y", "isCorrect": false},
-            {"text": "W and Z", "isCorrect": false},
-            {"text": "X and Y", "isCorrect": false},
-            {"text": "X and Z", "isCorrect": false},
-            {"text": "Y and Z", "isCorrect": false},
-            {"text": "Any pair can be used / ใช้คู่ใดก็ได้", "isCorrect": false}
-        ]
-    },
-
-    // =========================================================
-    // Q10 — Surface area and collision theory
-    // =========================================================
-    {
-        "id": "q10",
-
-        "questionTH": `
-            <div>
-                พิจารณาการทดลอง W และ X จากตารางเดิม
-            </div>
-            ${FACTOR_TABLE}
-            <div class="mt-3">
-                เหตุใดผง \\(CaCO_3\\) ในการทดลอง X จึงมี <b>อัตราเริ่มต้นสูงกว่า</b>
-                ก้อนขนาดใหญ่ใน W เมื่อเงื่อนไขอื่นเหมือนกัน?
-            </div>
-        `,
-
-        "questionEN": `
-            <div>
-                Consider experiments W and X in the same table.
-            </div>
-            ${FACTOR_TABLE}
-            <div class="mt-3">
-                Why does powdered \\(CaCO_3\\) in X have a <b>higher initial rate</b>
-                than large chips in W when all other conditions are the same?
-            </div>
-        `,
-
-        "hints": [
-            {
-                "th": "มวลเท่ากัน แต่ขนาดอนุภาคต่างกัน ทำให้พื้นที่ผิวรวมต่างกัน",
-                "en": "The masses are equal, but different particle sizes give different total surface areas."
-            },
-            {
-                "th": "ผงมีพื้นที่ผิวรวมที่สัมผัสกับ HCl มากกว่า",
-                "en": "Powder exposes a larger total surface area to HCl."
-            },
-            {
-                "th": "พื้นที่ผิวมากขึ้นทำให้เกิดการชนที่ผิวมากขึ้นต่อหน่วยเวลา",
-                "en": "Greater surface area gives more surface collisions per unit time."
-            }
-        ],
-
-        "solutionTH": `
-            <div>
-                เมื่อมวลเท่ากัน ผงมีพื้นที่ผิวรวมมากกว่าก้อนใหญ่
-                จึงมีบริเวณให้ HCl ชนกับ \\(CaCO_3\\) มากขึ้น
-                ทำให้จำนวนการชนและการชนที่มีผลต่อหน่วยเวลาเพิ่มขึ้น
-            </div>
-            <div class="mt-2">
-                การบดให้เป็นผง <b>ไม่ได้ลด \\(E_a\\)</b> และไม่ได้ทำให้อุณหภูมิสูงขึ้น
-            </div>
-            <div class="mt-2 font-bold text-emerald-700">
-                ตอบ: พื้นที่ผิวรวมเพิ่ม → การชนที่ผิวต่อหน่วยเวลาเพิ่ม → rate เพิ่ม
-            </div>
-        `,
-
-        "solutionEN": `
-            <div>
-                For the same mass, powder has a larger total surface area than large chips.
-                More surface is available for collisions with HCl,
-                so more collisions and more successful collisions occur per unit time.
-            </div>
-            <div class="mt-2">
-                Crushing the solid <b>does not lower \\(E_a\\)</b> and does not raise the temperature.
-            </div>
-            <div class="mt-2 font-bold text-emerald-700">
-                Answer: greater total surface area → more surface collisions per unit time → higher rate.
+                Answer: the initial rate increases, \\(E_a:80\\rightarrow40\\,kJ\\,mol^{-1}\\),
+                and \\(\\Delta H=-30\\,kJ\\,mol^{-1}\\) remains unchanged.
             </div>
         `,
 
         "options": [
             {
-                "text": "Powder has a larger total surface area, so more successful collisions occur at the surface per unit time / ผงมีพื้นที่ผิวรวมมากกว่า จึงเกิดการชนที่มีผลที่ผิวมากขึ้นต่อหน่วยเวลา",
+                "text": "Initial rate increases; \\(E_a:80\\rightarrow40\\,kJ\\,mol^{-1}\\); \\(\\Delta H=-30\\,kJ\\,mol^{-1}\\) unchanged.",
                 "isCorrect": true
             },
             {
-                "text": "Powder has a lower activation energy than chips / ผงมีพลังงานก่อกัมมันต์ต่ำกว่าก้อน",
+                "text": "Initial rate increases; \\(E_a:80\\rightarrow40\\,kJ\\,mol^{-1}\\); \\(\\Delta H\\) becomes 0.",
                 "isCorrect": false
             },
             {
-                "text": "Powder contains more moles of CaCO₃ even though the mass is the same / ผงมีจำนวนโมล CaCO₃ มากกว่าแม้มวลเท่ากัน",
+                "text": "Initial rate decreases; \\(E_a:80\\rightarrow40\\,kJ\\,mol^{-1}\\); \\(\\Delta H=-30\\,kJ\\,mol^{-1}\\).",
                 "isCorrect": false
             },
             {
-                "text": "Particles in powder move faster because they are smaller / อนุภาคในผงเคลื่อนที่เร็วกว่าเพราะมีขนาดเล็ก",
+                "text": "Initial rate increases because \\(\\Delta H\\) becomes more negative; \\(E_a\\) is unchanged.",
                 "isCorrect": false
             },
             {
-                "text": "Powder increases the HCl concentration / ผงทำให้ความเข้มข้น HCl เพิ่มขึ้น",
+                "text": "Initial rate is unchanged; \\(E_a:40\\rightarrow80\\,kJ\\,mol^{-1}\\); \\(\\Delta H=-30\\,kJ\\,mol^{-1}\\).",
                 "isCorrect": false
             },
             {
-                "text": "Powder increases the reaction temperature automatically / ผงทำให้อุณหภูมิของปฏิกิริยาเพิ่มขึ้นเอง",
+                "text": "Initial rate increases; \\(E_a=120\\,kJ\\,mol^{-1}\\); \\(\\Delta H=-30\\,kJ\\,mol^{-1}\\).",
                 "isCorrect": false
             },
             {
-                "text": "Powder changes the balanced chemical equation / ผงทำให้สมการเคมีที่ดุลแล้วเปลี่ยนไป",
-                "isCorrect": false
-            }
-        ]
-    },
-
-    // =========================================================
-    // Q11 — Concentration: rate vs final amount
-    // =========================================================
-    {
-        "id": "q11",
-
-        "questionTH": `
-            <div>
-                เปรียบเทียบการทดลอง W และ Y โดยใช้มวล \\(CaCO_3\\) เท่ากัน
-                และ HCl มีปริมาณมากเกินพอทั้งสองชุด
-            </div>
-            ${FACTOR_TABLE}
-            ${CONCENTRATION_GRAPH}
-            <div class="mt-3">
-                ข้อใดอธิบายกราฟได้ถูกต้องที่สุด?
-            </div>
-        `,
-
-        "questionEN": `
-            <div>
-                Compare experiments W and Y. The same mass of \\(CaCO_3\\) is used,
-                and HCl is in excess in both experiments.
-            </div>
-            ${FACTOR_TABLE}
-            ${CONCENTRATION_GRAPH}
-            <div class="mt-3">
-                Which statement best explains the graph?
-            </div>
-        `,
-
-        "hints": [
-            {
-                "th": "Y มี [HCl] สูงกว่า จึงควรดูผลต่อความชันช่วงต้นก่อน",
-                "en": "Y has the higher [HCl], so first consider the effect on the initial slope."
-            },
-            {
-                "th": "ความเข้มข้นสูงขึ้นหมายถึงมีอนุภาค HCl มากขึ้นต่อหน่วยปริมาตร จึงชนผิว CaCO₃ บ่อยขึ้น",
-                "en": "Higher concentration means more HCl particles per unit volume, so surface collisions occur more frequently."
-            },
-            {
-                "th": "แต่ CaCO₃ มีมวลเท่ากันและเป็นตัวกำหนดปริมาณ CO₂ สุดท้าย ดังนั้น plateau จึงเท่ากัน",
-                "en": "The same mass of CaCO₃ determines the final amount of CO₂, so the plateaus are equal."
-            }
-        ],
-
-        "solutionTH": `
-            <div>
-                Y มี [HCl] สูงกว่า W จึงมีอนุภาค HCl ต่อหน่วยปริมาตรมากกว่า
-                ทำให้ชนกับผิว \\(CaCO_3\\) บ่อยขึ้นและมี initial rate สูงกว่า
-            </div>
-            <div class="mt-2">
-                แต่ทั้งสองชุดใช้ \\(CaCO_3\\) มวลเท่ากัน และ HCl มากเกินพอ
-                ดังนั้นจำนวนโมล \\(CO_2\\) สุดท้ายที่เกิดจาก \\(CaCO_3\\) เท่ากัน
-                จึงได้ plateau เท่ากัน
-            </div>
-            <div class="mt-2 font-bold text-emerald-700">
-                ตอบ: Y ชันกว่าและถึง plateau เร็วกว่า แต่ปริมาตร CO₂ สุดท้ายเท่ากับ W
-            </div>
-        `,
-
-        "solutionEN": `
-            <div>
-                Y has a higher [HCl], so there are more HCl particles per unit volume.
-                Collisions with the \\(CaCO_3\\) surface occur more frequently,
-                giving a higher initial rate.
-            </div>
-            <div class="mt-2">
-                However, both experiments use the same mass of \\(CaCO_3\\), and HCl is in excess.
-                Therefore, the same final amount of \\(CO_2\\) is produced and the plateaus are equal.
-            </div>
-            <div class="mt-2 font-bold text-emerald-700">
-                Answer: Y is initially steeper and reaches the plateau sooner, but both give the same final CO₂ volume.
-            </div>
-        `,
-
-        "options": [
-            {
-                "text": "Y has a steeper initial slope and reaches the same final gas volume sooner because higher [HCl] increases collision frequency / Y ชันช่วงต้นกว่าและถึงปริมาตรสุดท้ายเท่ากันเร็วกว่า เพราะ [HCl] สูงทำให้ชนถี่ขึ้น",
-                "isCorrect": true
-            },
-            {
-                "text": "Y produces more final CO₂ because a higher concentration always produces more product / Y ให้ CO₂ สุดท้ายมากกว่าเพราะความเข้มข้นสูงทำให้ผลิตภัณฑ์มากขึ้นเสมอ",
-                "isCorrect": false
-            },
-            {
-                "text": "W is faster because dilute HCl particles have more space to move / W เร็วกว่าเพราะ HCl เจือจางมีพื้นที่ให้อนุภาคเคลื่อนที่มากกว่า",
-                "isCorrect": false
-            },
-            {
-                "text": "Both curves must be identical because the mass of CaCO₃ is the same / กราฟต้องเหมือนกันเพราะมวล CaCO₃ เท่ากัน",
-                "isCorrect": false
-            },
-            {
-                "text": "Higher [HCl] lowers activation energy, which is why Y is faster / [HCl] สูงทำให้ Ea ลดลง จึงทำให้ Y เร็วกว่า",
-                "isCorrect": false
-            },
-            {
-                "text": "Y is faster only because its temperature is higher / Y เร็วกว่าเพราะอุณหภูมิสูงกว่าเท่านั้น",
-                "isCorrect": false
-            },
-            {
-                "text": "The same plateau means the reaction rates must be identical at all times / plateau เท่ากันหมายถึง rate ต้องเท่ากันทุกเวลา",
-                "isCorrect": false
-            }
-        ]
-    },
-
-    // =========================================================
-    // Q12 — Temperature and collision theory
-    // =========================================================
-    {
-        "id": "q12",
-
-        "questionTH": `
-            <div>
-                พิจารณาการทดลอง W และ Z
-                ซึ่งต่างกันเฉพาะอุณหภูมิ
-            </div>
-            ${FACTOR_TABLE}
-            <div class="mt-3">
-                ข้อใดอธิบายได้ดีที่สุดว่าเหตุใดการทดลอง Z ที่ 35 °C
-                จึงมี <b>อัตราการเกิดปฏิกิริยาสูงกว่า</b> W ที่ 20 °C?
-            </div>
-        `,
-
-        "questionEN": `
-            <div>
-                Consider experiments W and Z, which differ only in temperature.
-            </div>
-            ${FACTOR_TABLE}
-            <div class="mt-3">
-                Which statement best explains why experiment Z at 35 °C has a
-                <b>higher reaction rate</b> than W at 20 °C?
-            </div>
-        `,
-
-        "hints": [
-            {
-                "th": "อุณหภูมิสูงขึ้นทำให้อนุภาคมีพลังงานจลน์เฉลี่ยสูงขึ้น",
-                "en": "Higher temperature increases the average kinetic energy of the particles."
-            },
-            {
-                "th": "จึงเกิดการชนถี่ขึ้น และการกระจายพลังงานมีสัดส่วนอนุภาคพลังงานสูงมากขึ้น",
-                "en": "Collisions occur more frequently, and a larger fraction of particles occupies higher energies."
-            },
-            {
-                "th": "คำอธิบายที่ครบต้องพูดถึงทั้งความถี่ของการชนและสัดส่วนการชนที่มีพลังงานเพียงพอ",
-                "en": "The most complete explanation includes both collision frequency and the fraction of collisions with sufficient energy."
-            }
-        ],
-
-        "solutionTH": `
-            <div>
-                ที่อุณหภูมิสูงขึ้น อนุภาคมีพลังงานจลน์เฉลี่ยสูงขึ้นและเคลื่อนที่เร็วขึ้น
-                จึงชนกันถี่ขึ้น
-            </div>
-            <div class="mt-2">
-                นอกจากนี้ สัดส่วนของการชนที่มีพลังงานเพียงพอสำหรับผ่านพลังงานก่อกัมมันต์ก็เพิ่มขึ้น
-                ทำให้จำนวนการชนที่เกิดปฏิกิริยาต่อหน่วยเวลาเพิ่มขึ้น
-            </div>
-            <div class="mt-2 font-bold text-emerald-700">
-                ตอบ: อุณหภูมิสูงขึ้น → ชนถี่ขึ้น + สัดส่วนการชนที่มีพลังงานเพียงพอเพิ่มขึ้น → rate สูงขึ้น
-            </div>
-        `,
-
-        "solutionEN": `
-            <div>
-                At higher temperature, particles have greater average kinetic energy and move faster,
-                so collisions occur more frequently.
-            </div>
-            <div class="mt-2">
-                In addition, a larger fraction of collisions has sufficient energy to overcome
-                the activation-energy barrier, so more successful collisions occur per unit time.
-            </div>
-            <div class="mt-2 font-bold text-emerald-700">
-                Answer: higher temperature → more frequent collisions + a larger fraction with sufficient energy → higher rate.
-            </div>
-        `,
-
-        "options": [
-            {
-                "text": "Particles move faster, collide more frequently, and a greater fraction of collisions has sufficient energy to react / อนุภาคเคลื่อนที่เร็วขึ้น ชนถี่ขึ้น และมีสัดส่วนการชนที่มีพลังงานเพียงพอมากขึ้น",
-                "isCorrect": true
-            },
-            {
-                "text": "The activation energy automatically decreases when temperature increases / พลังงานก่อกัมมันต์ลดลงโดยอัตโนมัติเมื่ออุณหภูมิเพิ่ม",
-                "isCorrect": false
-            },
-            {
-                "text": "The number of CaCO₃ moles increases when the mixture is heated / จำนวนโมล CaCO₃ เพิ่มขึ้นเมื่อให้ความร้อน",
-                "isCorrect": false
-            },
-            {
-                "text": "The HCl concentration doubles when temperature rises from 20 °C to 35 °C / ความเข้มข้น HCl เพิ่มเป็นสองเท่าเมื่ออุณหภูมิจาก 20 เป็น 35 °C",
-                "isCorrect": false
-            },
-            {
-                "text": "Higher temperature increases only the final amount of product, not the rate / อุณหภูมิสูงขึ้นเพิ่มเฉพาะปริมาณผลิตภัณฑ์สุดท้าย ไม่ได้เพิ่ม rate",
-                "isCorrect": false
-            },
-            {
-                "text": "Every collision becomes successful at 35 °C / การชนทุกครั้งกลายเป็นการชนที่เกิดปฏิกิริยาที่ 35 °C",
-                "isCorrect": false
-            },
-            {
-                "text": "Heating increases surface area of the CaCO₃ chips without changing anything else / การให้ความร้อนเพิ่มพื้นที่ผิวของก้อน CaCO₃ โดยไม่เปลี่ยนอย่างอื่น",
+                "text": "The catalyst changes only \\(\\Delta H\\), not \\(E_a\\). / ตัวเร่งเปลี่ยนเฉพาะ \\(\\Delta H\\) แต่ไม่เปลี่ยน \\(E_a\\)",
                 "isCorrect": false
             }
         ]
@@ -2051,7 +1925,6 @@ window.QUIZ_TEMPLATE = {
 };
 
 // ไม่ต้องแก้บรรทัดนี้
-
 document.title = window.QUIZ_TEMPLATE.title;
 </script>
 <!-- ====================== END EDIT ZONE ====================== -->
