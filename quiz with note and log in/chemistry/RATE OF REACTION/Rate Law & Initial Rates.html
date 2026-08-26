@@ -706,101 +706,391 @@
 
 <!-- ============================================================
      ✏️✏️✏️  MASTER QUIZ TEMPLATE · EDIT ZONE  ✏️✏️✏️
+
+     Rate Law & Initial Rates Review · Y12 Chemistry
+     v2: revised for exam preparation
+     - 9 questions
+     - bilingual TH/EN
+     - shared tables/graphs (one visual per question)
+     - includes stoichiometric reaction-rate expression
+     - includes new-rate calculation
      ============================================================ -->
 <script>
+
+/* ============================================================
+   SHARED VISUALS / ตารางและกราฟใช้ร่วมกันระหว่าง TH + EN
+   ============================================================ */
+
+const Q2_TABLE = `
+<div style="overflow-x:auto;margin:12px 0;">
+<table style="width:100%;border-collapse:collapse;text-align:center;">
+    <thead>
+        <tr>
+            <th style="border:1px solid #999;padding:8px;">Experiment</th>
+            <th style="border:1px solid #999;padding:8px;">\\([A]\\) / M</th>
+            <th style="border:1px solid #999;padding:8px;">\\([B]\\) / M</th>
+            <th style="border:1px solid #999;padding:8px;">Initial rate / \\(M\\,s^{-1}\\)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="border:1px solid #999;padding:8px;">1</td>
+            <td style="border:1px solid #999;padding:8px;">0.10</td>
+            <td style="border:1px solid #999;padding:8px;">0.20</td>
+            <td style="border:1px solid #999;padding:8px;">\\(1.20\\times10^{-3}\\)</td>
+        </tr>
+        <tr>
+            <td style="border:1px solid #999;padding:8px;">2</td>
+            <td style="border:1px solid #999;padding:8px;">0.20</td>
+            <td style="border:1px solid #999;padding:8px;">0.20</td>
+            <td style="border:1px solid #999;padding:8px;">\\(4.80\\times10^{-3}\\)</td>
+        </tr>
+    </tbody>
+</table>
+</div>`;
+
+const Q3_TABLE = `
+<div style="overflow-x:auto;margin:12px 0;">
+<table style="width:100%;border-collapse:collapse;text-align:center;">
+    <thead>
+        <tr>
+            <th style="border:1px solid #999;padding:8px;">Experiment</th>
+            <th style="border:1px solid #999;padding:8px;">\\([A]\\) / M</th>
+            <th style="border:1px solid #999;padding:8px;">\\([B]\\) / M</th>
+            <th style="border:1px solid #999;padding:8px;">Initial rate / \\(M\\,s^{-1}\\)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="border:1px solid #999;padding:8px;">1</td>
+            <td style="border:1px solid #999;padding:8px;">0.15</td>
+            <td style="border:1px solid #999;padding:8px;">0.10</td>
+            <td style="border:1px solid #999;padding:8px;">\\(3.0\\times10^{-3}\\)</td>
+        </tr>
+        <tr>
+            <td style="border:1px solid #999;padding:8px;">2</td>
+            <td style="border:1px solid #999;padding:8px;">0.15</td>
+            <td style="border:1px solid #999;padding:8px;">0.20</td>
+            <td style="border:1px solid #999;padding:8px;">\\(3.0\\times10^{-3}\\)</td>
+        </tr>
+        <tr>
+            <td style="border:1px solid #999;padding:8px;">3</td>
+            <td style="border:1px solid #999;padding:8px;">0.15</td>
+            <td style="border:1px solid #999;padding:8px;">0.40</td>
+            <td style="border:1px solid #999;padding:8px;">\\(3.0\\times10^{-3}\\)</td>
+        </tr>
+    </tbody>
+</table>
+</div>`;
+
+const Q4_TABLE = `
+<div style="overflow-x:auto;margin:12px 0;">
+<table style="width:100%;border-collapse:collapse;text-align:center;">
+    <thead>
+        <tr>
+            <th style="border:1px solid #999;padding:8px;">Experiment</th>
+            <th style="border:1px solid #999;padding:8px;">\\([A]\\) / M</th>
+            <th style="border:1px solid #999;padding:8px;">\\([B]\\) / M</th>
+            <th style="border:1px solid #999;padding:8px;">Initial rate / \\(M\\,s^{-1}\\)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="border:1px solid #999;padding:8px;">1</td>
+            <td style="border:1px solid #999;padding:8px;">0.10</td>
+            <td style="border:1px solid #999;padding:8px;">0.10</td>
+            <td style="border:1px solid #999;padding:8px;">\\(1.50\\times10^{-3}\\)</td>
+        </tr>
+        <tr>
+            <td style="border:1px solid #999;padding:8px;">2</td>
+            <td style="border:1px solid #999;padding:8px;">0.20</td>
+            <td style="border:1px solid #999;padding:8px;">0.10</td>
+            <td style="border:1px solid #999;padding:8px;">\\(6.00\\times10^{-3}\\)</td>
+        </tr>
+        <tr>
+            <td style="border:1px solid #999;padding:8px;">3</td>
+            <td style="border:1px solid #999;padding:8px;">0.20</td>
+            <td style="border:1px solid #999;padding:8px;">0.30</td>
+            <td style="border:1px solid #999;padding:8px;">\\(1.80\\times10^{-2}\\)</td>
+        </tr>
+    </tbody>
+</table>
+</div>`;
+
+const Q8_GRAPH = `
+<div style="max-width:650px;margin:14px auto;">
+<svg viewBox="0 0 660 400"
+     style="width:100%;height:auto;border:1px solid #ddd;border-radius:12px;background:white;"
+     role="img"
+     aria-label="Maxwell-Boltzmann energy distributions at T1 and T2">
+    <line x1="78" y1="322" x2="610" y2="322" stroke="black" stroke-width="2"/>
+    <line x1="78" y1="322" x2="78" y2="42" stroke="black" stroke-width="2"/>
+
+    <!-- Lower temperature T1: taller, narrower, peak further left -->
+    <path d="M78 322
+             C92 300, 105 190, 135 120
+             C158 67, 195 70, 228 112
+             C274 171, 310 244, 371 285
+             C426 309, 497 318, 600 321"
+          fill="none" stroke="black" stroke-width="3"/>
+
+    <!-- Higher temperature T2: lower, broader, shifted right -->
+    <path d="M78 322
+             C105 310, 132 256, 178 206
+             C224 156, 278 140, 329 154
+             C390 171, 438 219, 482 264
+             C524 302, 563 316, 606 321"
+          fill="none" stroke="black" stroke-width="3" stroke-dasharray="9 6"/>
+
+    <!-- Same activation energy for the same pathway -->
+    <line x1="455" y1="64" x2="455" y2="322" stroke="black" stroke-width="2"/>
+    <text x="455" y="50" text-anchor="middle" font-size="18">Eₐ</text>
+
+    <text x="174" y="65" font-size="18">T₁</text>
+    <text x="338" y="145" font-size="18">T₂ &gt; T₁</text>
+
+    <text x="345" y="365" text-anchor="middle" font-size="17"
+          style="font-family:K2D,Arial,sans-serif;">Energy / พลังงาน</text>
+    <text x="23" y="188" text-anchor="middle" font-size="15"
+          transform="rotate(-90 23 188)"
+          style="font-family:K2D,Arial,sans-serif;">Fraction of molecules / สัดส่วนโมเลกุล</text>
+</svg>
+</div>`;
+
+const Q9_GRAPH = `
+<div style="max-width:660px;margin:14px auto;">
+<svg viewBox="0 0 680 430"
+     style="width:100%;height:auto;border:1px solid #ddd;border-radius:12px;background:white;"
+     role="img"
+     aria-label="Catalysed and uncatalysed reaction energy profiles">
+    <line x1="78" y1="350" x2="620" y2="350" stroke="black" stroke-width="2"/>
+    <line x1="78" y1="350" x2="78" y2="42" stroke="black" stroke-width="2"/>
+
+    <!-- Reactants and products -->
+    <line x1="105" y1="270" x2="180" y2="270" stroke="black" stroke-width="3"/>
+    <line x1="535" y1="325" x2="605" y2="325" stroke="black" stroke-width="3"/>
+
+    <!-- Uncatalysed -->
+    <path d="M180 270 C245 264, 285 82, 360 82 C435 90, 472 285, 535 325"
+          fill="none" stroke="black" stroke-width="3"/>
+
+    <!-- Catalysed -->
+    <path d="M180 270 C248 264, 292 165, 360 165 C430 172, 476 292, 535 325"
+          fill="none" stroke="black" stroke-width="3" stroke-dasharray="9 6"/>
+
+    <text x="115" y="254" font-size="15">Reactants = 40</text>
+    <text x="505" y="311" font-size="15">Products = 10</text>
+    <text x="370" y="76" font-size="15">120</text>
+    <text x="370" y="158" font-size="15">80</text>
+
+    <text x="445" y="105" font-size="14">uncatalysed</text>
+    <text x="445" y="192" font-size="14">catalysed</text>
+
+    <text x="350" y="398" text-anchor="middle" font-size="17"
+          style="font-family:K2D,Arial,sans-serif;">Reaction progress / การดำเนินปฏิกิริยา</text>
+    <text x="23" y="205" text-anchor="middle" font-size="14"
+          transform="rotate(-90 23 205)"
+          style="font-family:K2D,Arial,sans-serif;">Potential energy / พลังงานศักย์ (kJ mol⁻¹)</text>
+</svg>
+</div>`;
+
+
+/* ============================================================
+   QUIZ DATA
+   ============================================================ */
 window.QUIZ_TEMPLATE = {
-    // ---------------------------------------------------------
-    // 1. ชื่อและรหัส Quiz / QUIZ NAME + ID
-    // ---------------------------------------------------------
-    quizId: "chem-y12-rate-law-initial-rates-review-v1",
+    quizId: "chem-y12-rate-law-initial-rates-review-v2",
 
     title: "Rate Law & Initial Rates / กฎอัตราและอัตราเริ่มต้น",
 
-    subtitle: "Y12 Chemistry Review · Initial-Rate Data · Graphs · Rate Constant · Temperature · Catalyst",
+    subtitle: "Y12 Chemistry Review · Reaction Rate Expression · Initial-Rate Data · Rate Law · Rate Constant · Temperature · Catalyst",
 
     completionTitle: "Rate Law & Initial Rates Review Complete! / ทบทวนกฎอัตราและอัตราเริ่มต้นครบแล้ว!",
 
-    // ---------------------------------------------------------
-    // 2. คำถามทั้งหมด / ALL QUESTIONS
-    // ---------------------------------------------------------
     questions: [
 
     // =========================================================
-    // Q1 — Order from a simple initial-rate table
+    // Q1 — Stoichiometric reaction-rate expression
     // =========================================================
     {
         "id": "q1",
 
         "questionTH": `
-            <div class="mb-3">
-                ปฏิกิริยาหนึ่งมีรูปทั่วไป \\(A+B\\rightarrow products\\)
-                จากข้อมูลอัตราเริ่มต้นด้านล่าง จงหา <b>อันดับปฏิกิริยาต่อ A</b>
+            <div>
+                กำหนดปฏิกิริยา
+                \\[
+                2NO(g)+O_2(g)\\rightarrow2NO_2(g)
+                \\]
+                ให้ \\(r\\) หมายถึง <b>อัตราการเกิดปฏิกิริยา</b>
+                ซึ่งนิยามให้มีค่าเป็นบวก
             </div>
-
-            <div style="overflow-x:auto;margin:12px 0;">
-                <table style="width:100%;border-collapse:collapse;text-align:center;">
-                    <thead>
-                        <tr>
-                            <th style="border:1px solid #999;padding:8px;">Experiment</th>
-                            <th style="border:1px solid #999;padding:8px;">\\([A]\\) / M</th>
-                            <th style="border:1px solid #999;padding:8px;">\\([B]\\) / M</th>
-                            <th style="border:1px solid #999;padding:8px;">Initial rate / \\(M\\,s^{-1}\\)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td style="border:1px solid #999;padding:8px;">1</td>
-                            <td style="border:1px solid #999;padding:8px;">0.10</td>
-                            <td style="border:1px solid #999;padding:8px;">0.20</td>
-                            <td style="border:1px solid #999;padding:8px;">\\(1.20\\times10^{-3}\\)</td>
-                        </tr>
-                        <tr>
-                            <td style="border:1px solid #999;padding:8px;">2</td>
-                            <td style="border:1px solid #999;padding:8px;">0.20</td>
-                            <td style="border:1px solid #999;padding:8px;">0.20</td>
-                            <td style="border:1px solid #999;padding:8px;">\\(4.80\\times10^{-3}\\)</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="mt-3">
+                ข้อใดแสดงความสัมพันธ์ระหว่าง \\(r\\)
+                กับอัตราการเปลี่ยนแปลงความเข้มข้นของสารต่าง ๆ ได้ถูกต้อง?
             </div>
-
-            <div>เลือกคำตอบที่ถูกต้อง</div>
         `,
 
         "questionEN": `
-            <div class="mb-3">
-                A reaction has the general form \\(A+B\\rightarrow products\\).
-                Use the initial-rate data below to determine the <b>order with respect to A</b>.
+            <div>
+                Consider the reaction
+                \\[
+                2NO(g)+O_2(g)\\rightarrow2NO_2(g)
+                \\]
+                Let \\(r\\) represent the <b>reaction rate</b>,
+                defined as a positive quantity.
             </div>
-
-            <div style="overflow-x:auto;margin:12px 0;">
-                <table style="width:100%;border-collapse:collapse;text-align:center;">
-                    <thead>
-                        <tr>
-                            <th style="border:1px solid #999;padding:8px;">Experiment</th>
-                            <th style="border:1px solid #999;padding:8px;">\\([A]\\) / M</th>
-                            <th style="border:1px solid #999;padding:8px;">\\([B]\\) / M</th>
-                            <th style="border:1px solid #999;padding:8px;">Initial rate / \\(M\\,s^{-1}\\)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td style="border:1px solid #999;padding:8px;">1</td>
-                            <td style="border:1px solid #999;padding:8px;">0.10</td>
-                            <td style="border:1px solid #999;padding:8px;">0.20</td>
-                            <td style="border:1px solid #999;padding:8px;">\\(1.20\\times10^{-3}\\)</td>
-                        </tr>
-                        <tr>
-                            <td style="border:1px solid #999;padding:8px;">2</td>
-                            <td style="border:1px solid #999;padding:8px;">0.20</td>
-                            <td style="border:1px solid #999;padding:8px;">0.20</td>
-                            <td style="border:1px solid #999;padding:8px;">\\(4.80\\times10^{-3}\\)</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="mt-3">
+                Which expression correctly relates \\(r\\)
+                to the rates of change of the concentrations of the species?
             </div>
+        `,
 
-            <div>Select the correct answer.</div>
+        "hints": [
+            {
+                "th": "สารตั้งต้นมีความเข้มข้นลดลง จึงต้องมีเครื่องหมายลบ ส่วนผลิตภัณฑ์มีความเข้มข้นเพิ่มขึ้น",
+                "en": "Reactant concentrations decrease, so their terms carry a negative sign; product concentrations increase."
+            },
+            {
+                "th": "เพื่อให้อัตราการเกิดปฏิกิริยาเป็นค่าเดียวกัน ต้องหารอัตราการเปลี่ยนแปลงด้วยสัมประสิทธิ์หน้าสาร",
+                "en": "To obtain one common reaction rate, divide each concentration-change rate by its stoichiometric coefficient."
+            },
+            {
+                "th": "สำหรับสัมประสิทธิ์ 2 : 1 : 2 จะมีตัวประกอบ \\(\\frac12\\), 1 และ \\(\\frac12\\) ตามลำดับ",
+                "en": "For coefficients 2 : 1 : 2, the corresponding factors are \\(\\frac12\\), 1, and \\(\\frac12\\)."
+            }
+        ],
+
+        "solutionTH": `
+            <div>
+                จากสมการ
+                \\[
+                2NO+O_2\\rightarrow2NO_2
+                \\]
+                เมื่อปฏิกิริยาเกิดขึ้น NO และ \\(O_2\\) ลดลง ส่วน \\(NO_2\\) เพิ่มขึ้น
+            </div>
+            <div class="mt-2">
+                อัตราการเกิดปฏิกิริยาจึงเขียนได้เป็น
+                \\[
+                r=
+                -\\frac12\\frac{\\Delta[NO]}{\\Delta t}
+                =
+                -\\frac{\\Delta[O_2]}{\\Delta t}
+                =
+                \\frac12\\frac{\\Delta[NO_2]}{\\Delta t}
+                \\]
+            </div>
+            <div class="mt-3">
+                <b>ระวัง:</b> สมการเคมีบอกความสัมพันธ์ของอัตราการลด/เพิ่มของสารได้
+                แต่ยังสรุปไม่ได้ว่า
+                \\(rate=k[NO]^2[O_2]\\)
+                เพราะเลขชี้กำลังใน <b>rate law ต้องหาโดยการทดลอง</b>
+                เว้นแต่โจทย์ระบุว่าเป็น elementary reaction
+            </div>
+            <div class="mt-2 font-bold text-emerald-700">
+                ตอบ:
+                \\(
+                r=-\\frac12\\frac{\\Delta[NO]}{\\Delta t}
+                =-\\frac{\\Delta[O_2]}{\\Delta t}
+                =\\frac12\\frac{\\Delta[NO_2]}{\\Delta t}
+                \\)
+            </div>
+        `,
+
+        "solutionEN": `
+            <div>
+                For
+                \\[
+                2NO+O_2\\rightarrow2NO_2,
+                \\]
+                the concentrations of NO and \\(O_2\\) decrease, while \\(NO_2\\) increases.
+            </div>
+            <div class="mt-2">
+                The common reaction rate is therefore
+                \\[
+                r=
+                -\\frac12\\frac{\\Delta[NO]}{\\Delta t}
+                =
+                -\\frac{\\Delta[O_2]}{\\Delta t}
+                =
+                \\frac12\\frac{\\Delta[NO_2]}{\\Delta t}.
+                \\]
+            </div>
+            <div class="mt-3">
+                <b>Important:</b> the balanced equation determines the stoichiometric
+                relationship between rates of disappearance and formation,
+                but it does not by itself prove that
+                \\(rate=k[NO]^2[O_2]\\).
+                The exponents in an <b>experimental rate law must be determined experimentally</b>,
+                unless the reaction is explicitly stated to be elementary.
+            </div>
+            <div class="mt-2 font-bold text-emerald-700">
+                Answer:
+                \\(
+                r=-\\frac12\\frac{\\Delta[NO]}{\\Delta t}
+                =-\\frac{\\Delta[O_2]}{\\Delta t}
+                =\\frac12\\frac{\\Delta[NO_2]}{\\Delta t}
+                \\)
+            </div>
+        `,
+
+        "options": [
+            {
+                "text": "\\(r=-\\frac12\\frac{\\Delta[NO]}{\\Delta t}=-\\frac{\\Delta[O_2]}{\\Delta t}=\\frac12\\frac{\\Delta[NO_2]}{\\Delta t}\\)",
+                "isCorrect": true
+            },
+            {
+                "text": "\\(r=-\\frac{\\Delta[NO]}{\\Delta t}=-\\frac{\\Delta[O_2]}{\\Delta t}=\\frac{\\Delta[NO_2]}{\\Delta t}\\)",
+                "isCorrect": false
+            },
+            {
+                "text": "\\(r=-2\\frac{\\Delta[NO]}{\\Delta t}-\\frac{\\Delta[O_2]}{\\Delta t}+2\\frac{\\Delta[NO_2]}{\\Delta t}\\)",
+                "isCorrect": false
+            },
+            {
+                "text": "\\(r=\\frac12\\frac{\\Delta[NO]}{\\Delta t}+\\frac{\\Delta[O_2]}{\\Delta t}+\\frac12\\frac{\\Delta[NO_2]}{\\Delta t}\\)",
+                "isCorrect": false
+            },
+            {
+                "text": "\\(r=-\\frac12\\frac{\\Delta[NO]}{\\Delta t}=-\\frac12\\frac{\\Delta[O_2]}{\\Delta t}=\\frac{\\Delta[NO_2]}{\\Delta t}\\)",
+                "isCorrect": false
+            },
+            {
+                "text": "\\(r=k[NO]^2[O_2]\\)",
+                "isCorrect": false
+            },
+            {
+                "text": "Cannot be related from the balanced equation / ไม่สามารถหาความสัมพันธ์จากสมการที่ดุลแล้วได้",
+                "isCorrect": false
+            }
+        ]
+    },
+
+    // =========================================================
+    // Q2 — Order with respect to A
+    // =========================================================
+    {
+        "id": "q2",
+
+        "questionTH": `
+            <div>
+                ปฏิกิริยาหนึ่งมีอัตราเริ่มต้นที่วัดได้ดังตาราง
+                โดยอุณหภูมิและเงื่อนไขอื่น ๆ คงที่
+            </div>
+            ${Q2_TABLE}
+            <div class="mt-3">
+                จงหา <b>อันดับปฏิกิริยาต่อ A</b>
+            </div>
+        `,
+
+        "questionEN": `
+            <div>
+                The initial rates of a reaction are measured as shown in the table.
+                Temperature and all other experimental conditions are kept constant.
+            </div>
+            ${Q2_TABLE}
+            <div class="mt-3">
+                Determine the <b>order of reaction with respect to A</b>.
+            </div>
         `,
 
         "hints": [
@@ -813,35 +1103,38 @@ window.QUIZ_TEMPLATE = {
                 "en": "From experiment 1 → 2, [A] doubles while the rate becomes four times larger."
             },
             {
-                "th": "ตั้งความสัมพันธ์ \\(4=2^m\\) แล้วหาค่า \\(m\\)",
-                "en": "Set up \\(4=2^m\\) and determine \\(m\\)."
+                "th": "ถ้า \\(rate\\propto[A]^m\\) ให้ตั้ง \\(4=2^m\\)",
+                "en": "If \\(rate\\propto[A]^m\\), set up \\(4=2^m\\)."
             }
         ],
 
         "solutionTH": `
-            <div>ให้</div>
-            <div>\\(rate\\propto[A]^m\\)</div>
-            <div class="mt-2">เมื่อ \\([A]\\) เพิ่มจาก 0.10 M เป็น 0.20 M:</div>
-            <div>\\([A]\\) เพิ่มเป็น \\(2\\) เท่า</div>
-            <div>อัตราเพิ่มจาก \\(1.20\\times10^{-3}\\) เป็น \\(4.80\\times10^{-3}\\)</div>
-            <div>จึงเพิ่มเป็น \\(4\\) เท่า</div>
-            <div class="mt-2">ดังนั้น</div>
-            <div>\\(4=2^m\\)</div>
-            <div>\\(m=2\\)</div>
-            <div class="mt-2 font-bold text-emerald-700">ตอบ: อันดับสองต่อ A</div>
+            <div>ให้ \\(rate\\propto[A]^m\\)</div>
+            <div class="mt-2">
+                จาก Exp. 1 → 2:
+                \\([A]\\) เพิ่มเป็น 2 เท่า ขณะที่ rate เพิ่มเป็น 4 เท่า
+            </div>
+            <div>\\[
+                4=2^m
+            \\]</div>
+            <div>ดังนั้น \\(m=2\\)</div>
+            <div class="mt-2 font-bold text-emerald-700">
+                ตอบ: อันดับสองต่อ A
+            </div>
         `,
 
         "solutionEN": `
-            <div>Let</div>
-            <div>\\(rate\\propto[A]^m\\)</div>
-            <div class="mt-2">When \\([A]\\) increases from 0.10 M to 0.20 M:</div>
-            <div>\\([A]\\) increases by a factor of \\(2\\)</div>
-            <div>and the rate increases from \\(1.20\\times10^{-3}\\) to \\(4.80\\times10^{-3}\\),</div>
-            <div>which is a factor of \\(4\\).</div>
-            <div class="mt-2">Therefore</div>
-            <div>\\(4=2^m\\)</div>
-            <div>\\(m=2\\)</div>
-            <div class="mt-2 font-bold text-emerald-700">Answer: second order with respect to A.</div>
+            <div>Let \\(rate\\propto[A]^m\\).</div>
+            <div class="mt-2">
+                From Exp. 1 → 2, [A] increases by a factor of 2 while the rate increases by a factor of 4.
+            </div>
+            <div>\\[
+                4=2^m
+            \\]</div>
+            <div>Therefore, \\(m=2\\).</div>
+            <div class="mt-2 font-bold text-emerald-700">
+                Answer: second order with respect to A.
+            </div>
         `,
 
         "options": [
@@ -856,96 +1149,40 @@ window.QUIZ_TEMPLATE = {
     },
 
     // =========================================================
-    // Q2 — Zero-order trap
+    // Q3 — Zero-order behaviour
     // =========================================================
     {
-        "id": "q2",
+        "id": "q3",
 
         "questionTH": `
-            <div class="mb-3">
-                จากข้อมูลการทดลองต่อไปนี้ จงหา <b>อันดับปฏิกิริยาต่อ B</b>
+            <div>
+                ในการทดลองต่อไปนี้ ความเข้มข้นของ A ถูกควบคุมให้คงที่
+                ขณะที่เปลี่ยนความเข้มข้นของ B
             </div>
-
-            <div style="overflow-x:auto;margin:12px 0;">
-                <table style="width:100%;border-collapse:collapse;text-align:center;">
-                    <thead>
-                        <tr>
-                            <th style="border:1px solid #999;padding:8px;">Experiment</th>
-                            <th style="border:1px solid #999;padding:8px;">\\([A]\\) / M</th>
-                            <th style="border:1px solid #999;padding:8px;">\\([B]\\) / M</th>
-                            <th style="border:1px solid #999;padding:8px;">Initial rate / \\(M\\,s^{-1}\\)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td style="border:1px solid #999;padding:8px;">1</td>
-                            <td style="border:1px solid #999;padding:8px;">0.15</td>
-                            <td style="border:1px solid #999;padding:8px;">0.10</td>
-                            <td style="border:1px solid #999;padding:8px;">\\(3.0\\times10^{-3}\\)</td>
-                        </tr>
-                        <tr>
-                            <td style="border:1px solid #999;padding:8px;">2</td>
-                            <td style="border:1px solid #999;padding:8px;">0.15</td>
-                            <td style="border:1px solid #999;padding:8px;">0.20</td>
-                            <td style="border:1px solid #999;padding:8px;">\\(3.0\\times10^{-3}\\)</td>
-                        </tr>
-                        <tr>
-                            <td style="border:1px solid #999;padding:8px;">3</td>
-                            <td style="border:1px solid #999;padding:8px;">0.15</td>
-                            <td style="border:1px solid #999;padding:8px;">0.40</td>
-                            <td style="border:1px solid #999;padding:8px;">\\(3.0\\times10^{-3}\\)</td>
-                        </tr>
-                    </tbody>
-                </table>
+            ${Q3_TABLE}
+            <div class="mt-3">
+                จากข้อมูล จงหา <b>อันดับปฏิกิริยาต่อ B</b>
             </div>
         `,
 
         "questionEN": `
-            <div class="mb-3">
-                Use the following experimental data to determine the <b>order with respect to B</b>.
+            <div>
+                In the following experiments, the concentration of A is kept constant
+                while the concentration of B is varied.
             </div>
-
-            <div style="overflow-x:auto;margin:12px 0;">
-                <table style="width:100%;border-collapse:collapse;text-align:center;">
-                    <thead>
-                        <tr>
-                            <th style="border:1px solid #999;padding:8px;">Experiment</th>
-                            <th style="border:1px solid #999;padding:8px;">\\([A]\\) / M</th>
-                            <th style="border:1px solid #999;padding:8px;">\\([B]\\) / M</th>
-                            <th style="border:1px solid #999;padding:8px;">Initial rate / \\(M\\,s^{-1}\\)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td style="border:1px solid #999;padding:8px;">1</td>
-                            <td style="border:1px solid #999;padding:8px;">0.15</td>
-                            <td style="border:1px solid #999;padding:8px;">0.10</td>
-                            <td style="border:1px solid #999;padding:8px;">\\(3.0\\times10^{-3}\\)</td>
-                        </tr>
-                        <tr>
-                            <td style="border:1px solid #999;padding:8px;">2</td>
-                            <td style="border:1px solid #999;padding:8px;">0.15</td>
-                            <td style="border:1px solid #999;padding:8px;">0.20</td>
-                            <td style="border:1px solid #999;padding:8px;">\\(3.0\\times10^{-3}\\)</td>
-                        </tr>
-                        <tr>
-                            <td style="border:1px solid #999;padding:8px;">3</td>
-                            <td style="border:1px solid #999;padding:8px;">0.15</td>
-                            <td style="border:1px solid #999;padding:8px;">0.40</td>
-                            <td style="border:1px solid #999;padding:8px;">\\(3.0\\times10^{-3}\\)</td>
-                        </tr>
-                    </tbody>
-                </table>
+            ${Q3_TABLE}
+            <div class="mt-3">
+                Use the data to determine the <b>order of reaction with respect to B</b>.
             </div>
         `,
 
         "hints": [
             {
-                "th": "สังเกตว่า A ถูกควบคุมให้คงที่ทุกการทดลอง",
-                "en": "Notice that A is held constant in every experiment."
+                "th": "สังเกตว่า A คงที่ทุกการทดลอง ดังนั้นการเปลี่ยน rate ที่เห็นจะมาจาก B",
+                "en": "A is constant in every experiment, so any rate change would be associated with B."
             },
             {
-                "th": "แม้ความเข้มข้น B เพิ่มจาก 0.10 M เป็น 0.40 M แต่อัตราเริ่มต้นไม่เปลี่ยน",
+                "th": "แม้ [B] เพิ่มจาก 0.10 M เป็น 0.40 M แต่อัตราเริ่มต้นไม่เปลี่ยน",
                 "en": "Even though [B] increases from 0.10 M to 0.40 M, the initial rate does not change."
             },
             {
@@ -955,23 +1192,40 @@ window.QUIZ_TEMPLATE = {
         ],
 
         "solutionTH": `
-            <div>เมื่อ \\([B]\\) เพิ่มจาก 0.10 M เป็น 0.40 M ความเข้มข้นเพิ่มเป็น 4 เท่า</div>
-            <div>แต่ rate ยังคงเท่าเดิม</div>
-            <div class="mt-2">ดังนั้น</div>
-            <div>\\(1=4^n\\)</div>
-            <div>ค่าที่ทำให้สมการเป็นจริงคือ \\(n=0\\)</div>
-            <div class="mt-2">เนื่องจาก \\([B]^0=1\\) อัตราจึงไม่ขึ้นกับความเข้มข้นของ B ภายใต้เงื่อนไขนี้</div>
-            <div class="mt-2 font-bold text-emerald-700">ตอบ: อันดับศูนย์ต่อ B</div>
+            <div>
+                [B] เพิ่มจาก 0.10 M เป็น 0.40 M หรือเพิ่มเป็น 4 เท่า
+                แต่ initial rate ยังคงเท่าเดิม
+            </div>
+            <div>\\[
+                1=4^n
+            \\]</div>
+            <div>ดังนั้น \\(n=0\\)</div>
+            <div class="mt-2">
+                อันดับศูนย์หมายความว่า ภายใต้เงื่อนไขที่ศึกษา
+                การเปลี่ยน [B] ไม่ทำให้ rate เปลี่ยน
+                ไม่ได้หมายความว่า B ไม่เกี่ยวข้องกับปฏิกิริยาเลย
+            </div>
+            <div class="mt-2 font-bold text-emerald-700">
+                ตอบ: อันดับศูนย์ต่อ B
+            </div>
         `,
 
         "solutionEN": `
-            <div>When \\([B]\\) increases from 0.10 M to 0.40 M, its concentration increases by a factor of 4.</div>
-            <div>However, the initial rate remains unchanged.</div>
-            <div class="mt-2">Therefore</div>
-            <div>\\(1=4^n\\)</div>
-            <div>The value that satisfies this relationship is \\(n=0\\).</div>
-            <div class="mt-2">Because \\([B]^0=1\\), the rate is independent of [B] under these conditions.</div>
-            <div class="mt-2 font-bold text-emerald-700">Answer: zero order with respect to B.</div>
+            <div>
+                [B] increases from 0.10 M to 0.40 M, a factor of 4,
+                while the initial rate remains unchanged.
+            </div>
+            <div>\\[
+                1=4^n
+            \\]</div>
+            <div>Therefore, \\(n=0\\).</div>
+            <div class="mt-2">
+                Zero order means that, under these conditions, changing [B] does not change the rate.
+                It does not mean that B is completely unrelated to the reaction.
+            </div>
+            <div class="mt-2 font-bold text-emerald-700">
+                Answer: zero order with respect to B.
+            </div>
         `,
 
         "options": [
@@ -986,238 +1240,79 @@ window.QUIZ_TEMPLATE = {
     },
 
     // =========================================================
-    // Q3 — Rate vs concentration graph
-    // =========================================================
-    {
-        "id": "q3",
-
-        "questionTH": `
-            <div class="mb-3">
-                กราฟแสดงความสัมพันธ์ระหว่าง <b>อัตราเริ่มต้น</b> กับความเข้มข้นของสาร X
-                ที่อุณหภูมิคงที่
-            </div>
-
-            <div style="max-width:620px;margin:14px auto;">
-                <svg viewBox="0 0 600 360" style="width:100%;height:auto;border:1px solid #ddd;border-radius:12px;background:white;">
-                    <line x1="80" y1="290" x2="540" y2="290" stroke="black" stroke-width="2"/>
-                    <line x1="80" y1="290" x2="80" y2="50" stroke="black" stroke-width="2"/>
-
-                    <line x1="80" y1="290" x2="500" y2="80" stroke="black" stroke-width="3"/>
-
-                    <circle cx="185" cy="238" r="5" fill="black"/>
-                    <circle cx="290" cy="185" r="5" fill="black"/>
-                    <circle cx="395" cy="133" r="5" fill="black"/>
-                    <circle cx="500" cy="80" r="5" fill="black"/>
-
-                    <text x="300" y="335" text-anchor="middle" font-size="18">[X] / M</text>
-                    <text x="24" y="175" text-anchor="middle" font-size="18" transform="rotate(-90 24 175)">Initial rate</text>
-
-                    <text x="80" y="312" text-anchor="middle" font-size="14">0</text>
-                    <text x="185" y="312" text-anchor="middle" font-size="14">0.05</text>
-                    <text x="290" y="312" text-anchor="middle" font-size="14">0.10</text>
-                    <text x="395" y="312" text-anchor="middle" font-size="14">0.15</text>
-                    <text x="500" y="312" text-anchor="middle" font-size="14">0.20</text>
-                </svg>
-            </div>
-
-            <div>ความสัมพันธ์ใดสอดคล้องกับกราฟมากที่สุด?</div>
-        `,
-
-        "questionEN": `
-            <div class="mb-3">
-                The graph shows the relationship between <b>initial rate</b> and the concentration of X
-                at constant temperature.
-            </div>
-
-            <div style="max-width:620px;margin:14px auto;">
-                <svg viewBox="0 0 600 360" style="width:100%;height:auto;border:1px solid #ddd;border-radius:12px;background:white;">
-                    <line x1="80" y1="290" x2="540" y2="290" stroke="black" stroke-width="2"/>
-                    <line x1="80" y1="290" x2="80" y2="50" stroke="black" stroke-width="2"/>
-
-                    <line x1="80" y1="290" x2="500" y2="80" stroke="black" stroke-width="3"/>
-
-                    <circle cx="185" cy="238" r="5" fill="black"/>
-                    <circle cx="290" cy="185" r="5" fill="black"/>
-                    <circle cx="395" cy="133" r="5" fill="black"/>
-                    <circle cx="500" cy="80" r="5" fill="black"/>
-
-                    <text x="300" y="335" text-anchor="middle" font-size="18">[X] / M</text>
-                    <text x="24" y="175" text-anchor="middle" font-size="18" transform="rotate(-90 24 175)">Initial rate</text>
-
-                    <text x="80" y="312" text-anchor="middle" font-size="14">0</text>
-                    <text x="185" y="312" text-anchor="middle" font-size="14">0.05</text>
-                    <text x="290" y="312" text-anchor="middle" font-size="14">0.10</text>
-                    <text x="395" y="312" text-anchor="middle" font-size="14">0.15</text>
-                    <text x="500" y="312" text-anchor="middle" font-size="14">0.20</text>
-                </svg>
-            </div>
-
-            <div>Which relationship is most consistent with the graph?</div>
-        `,
-
-        "hints": [
-            {
-                "th": "ดูรูปร่างกราฟก่อนว่าเป็นเส้นตรง เส้นนอน หรือเส้นโค้ง",
-                "en": "First identify whether the graph is horizontal, linear, or curved."
-            },
-            {
-                "th": "เมื่อ [X] เพิ่มเป็น 2 เท่า อัตราก็เพิ่มเป็นประมาณ 2 เท่า",
-                "en": "When [X] doubles, the initial rate also approximately doubles."
-            },
-            {
-                "th": "ความสัมพันธ์แบบตรงกันโดยตรงเขียนได้ว่า \\(rate\\propto[X]\\)",
-                "en": "A direct proportional relationship can be written as \\(rate\\propto[X]\\)."
-            }
-        ],
-
-        "solutionTH": `
-            <div>กราฟเป็นเส้นตรงผ่านจุดกำเนิด</div>
-            <div>เมื่อ \\([X]\\) เพิ่มเป็น 2 เท่า อัตราก็เพิ่มเป็น 2 เท่า</div>
-            <div class="mt-2">ดังนั้น</div>
-            <div>\\(rate\\propto[X]^1\\)</div>
-            <div class="mt-2 font-bold text-emerald-700">ตอบ: ปฏิกิริยาเป็นอันดับหนึ่งต่อ X</div>
-        `,
-
-        "solutionEN": `
-            <div>The graph is a straight line through the origin.</div>
-            <div>When \\([X]\\) doubles, the initial rate also doubles.</div>
-            <div class="mt-2">Therefore</div>
-            <div>\\(rate\\propto[X]^1\\)</div>
-            <div class="mt-2 font-bold text-emerald-700">Answer: first order with respect to X.</div>
-        `,
-
-        "options": [
-            {"text": "\\(rate\\propto[X]^0\\)", "isCorrect": false},
-            {"text": "\\(rate\\propto[X]\\)", "isCorrect": true},
-            {"text": "\\(rate\\propto[X]^2\\)", "isCorrect": false},
-            {"text": "\\(rate\\propto[X]^3\\)", "isCorrect": false},
-            {"text": "\\(rate\\propto\\frac{1}{[X]}\\)", "isCorrect": false},
-            {"text": "\\(rate\\propto\\sqrt{[X]}\\)", "isCorrect": false},
-            {"text": "No relationship / ไม่มีความสัมพันธ์", "isCorrect": false}
-        ]
-    },
-
-    // =========================================================
-    // Q4 — Full initial-rate table: rate law + overall order
+    // Q4 — Full initial-rate analysis
     // =========================================================
     {
         "id": "q4",
 
         "questionTH": `
-            <div class="mb-3">
-                ปฏิกิริยาหนึ่งมีรูปทั่วไป \\(A+B\\rightarrow products\\)
-                และมีสมการกฎอัตราในรูป
-                \\(rate=k[A]^m[B]^n\\)
+            <div>
+                สำหรับปฏิกิริยาหนึ่ง กฎอัตราที่ได้จากการทดลองเขียนได้ในรูป
+                \\[
+                rate=k[A]^m[B]^n
+                \\]
+                โดยทำการทดลองทั้งหมดที่อุณหภูมิเดียวกัน
             </div>
-
-            <div style="overflow-x:auto;margin:12px 0;">
-                <table style="width:100%;border-collapse:collapse;text-align:center;">
-                    <thead>
-                        <tr>
-                            <th style="border:1px solid #999;padding:8px;">Exp.</th>
-                            <th style="border:1px solid #999;padding:8px;">\\([A]\\) / M</th>
-                            <th style="border:1px solid #999;padding:8px;">\\([B]\\) / M</th>
-                            <th style="border:1px solid #999;padding:8px;">Initial rate / \\(M\\,s^{-1}\\)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td style="border:1px solid #999;padding:8px;">1</td>
-                            <td style="border:1px solid #999;padding:8px;">0.10</td>
-                            <td style="border:1px solid #999;padding:8px;">0.10</td>
-                            <td style="border:1px solid #999;padding:8px;">\\(1.50\\times10^{-3}\\)</td>
-                        </tr>
-                        <tr>
-                            <td style="border:1px solid #999;padding:8px;">2</td>
-                            <td style="border:1px solid #999;padding:8px;">0.20</td>
-                            <td style="border:1px solid #999;padding:8px;">0.10</td>
-                            <td style="border:1px solid #999;padding:8px;">\\(6.00\\times10^{-3}\\)</td>
-                        </tr>
-                        <tr>
-                            <td style="border:1px solid #999;padding:8px;">3</td>
-                            <td style="border:1px solid #999;padding:8px;">0.20</td>
-                            <td style="border:1px solid #999;padding:8px;">0.30</td>
-                            <td style="border:1px solid #999;padding:8px;">\\(1.80\\times10^{-2}\\)</td>
-                        </tr>
-                    </tbody>
-                </table>
+            ${Q4_TABLE}
+            <div class="mt-3">
+                ใช้ข้อมูลหา \\(m\\) และ \\(n\\)
+                แล้วเลือกข้อที่ระบุ <b>กฎอัตราและอันดับรวมของปฏิกิริยา</b> ได้ถูกต้อง
             </div>
-
-            <div>ข้อใดให้ <b>กฎอัตราและอันดับรวม</b> ถูกต้อง?</div>
         `,
 
         "questionEN": `
-            <div class="mb-3">
-                A reaction has the general form \\(A+B\\rightarrow products\\)
-                and an experimental rate law of the form
-                \\(rate=k[A]^m[B]^n\\).
+            <div>
+                For a reaction, the experimentally determined rate law has the form
+                \\[
+                rate=k[A]^m[B]^n.
+                \\]
+                All experiments are carried out at the same temperature.
             </div>
-
-            <div style="overflow-x:auto;margin:12px 0;">
-                <table style="width:100%;border-collapse:collapse;text-align:center;">
-                    <thead>
-                        <tr>
-                            <th style="border:1px solid #999;padding:8px;">Exp.</th>
-                            <th style="border:1px solid #999;padding:8px;">\\([A]\\) / M</th>
-                            <th style="border:1px solid #999;padding:8px;">\\([B]\\) / M</th>
-                            <th style="border:1px solid #999;padding:8px;">Initial rate / \\(M\\,s^{-1}\\)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td style="border:1px solid #999;padding:8px;">1</td>
-                            <td style="border:1px solid #999;padding:8px;">0.10</td>
-                            <td style="border:1px solid #999;padding:8px;">0.10</td>
-                            <td style="border:1px solid #999;padding:8px;">\\(1.50\\times10^{-3}\\)</td>
-                        </tr>
-                        <tr>
-                            <td style="border:1px solid #999;padding:8px;">2</td>
-                            <td style="border:1px solid #999;padding:8px;">0.20</td>
-                            <td style="border:1px solid #999;padding:8px;">0.10</td>
-                            <td style="border:1px solid #999;padding:8px;">\\(6.00\\times10^{-3}\\)</td>
-                        </tr>
-                        <tr>
-                            <td style="border:1px solid #999;padding:8px;">3</td>
-                            <td style="border:1px solid #999;padding:8px;">0.20</td>
-                            <td style="border:1px solid #999;padding:8px;">0.30</td>
-                            <td style="border:1px solid #999;padding:8px;">\\(1.80\\times10^{-2}\\)</td>
-                        </tr>
-                    </tbody>
-                </table>
+            ${Q4_TABLE}
+            <div class="mt-3">
+                Use the data to determine \\(m\\) and \\(n\\),
+                then select the option giving the correct <b>rate law and overall reaction order</b>.
             </div>
-
-            <div>Which option gives the correct <b>rate law and overall order</b>?</div>
         `,
 
         "hints": [
             {
-                "th": "หาอันดับต่อ A จากการทดลอง 1 กับ 2 ก่อน แล้วหาอันดับต่อ B จากการทดลอง 2 กับ 3",
-                "en": "Determine the order in A from experiments 1 and 2, then the order in B from experiments 2 and 3."
+                "th": "หาอันดับต่อ A จาก Exp. 1 กับ 2 แล้วหาอันดับต่อ B จาก Exp. 2 กับ 3",
+                "en": "Find the order in A from Exp. 1 and 2, then the order in B from Exp. 2 and 3."
             },
             {
-                "th": "1 → 2: A เพิ่ม 2 เท่า แต่ rate เพิ่ม 4 เท่า ส่วน 2 → 3: B เพิ่ม 3 เท่า และ rate เพิ่ม 3 เท่า",
-                "en": "1 → 2: A doubles and the rate quadruples. 2 → 3: B triples and the rate triples."
+                "th": "Exp. 1 → 2: [A] ×2 และ rate ×4; Exp. 2 → 3: [B] ×3 และ rate ×3",
+                "en": "Exp. 1 → 2: [A] ×2 and rate ×4; Exp. 2 → 3: [B] ×3 and rate ×3."
             },
             {
-                "th": "จึงได้ \\(m=2\\), \\(n=1\\) และอันดับรวมคือ \\(m+n\\)",
-                "en": "Therefore \\(m=2\\), \\(n=1\\), and the overall order is \\(m+n\\)."
+                "th": "จึงได้ \\(m=2\\), \\(n=1\\) และอันดับรวมเท่ากับ \\(m+n\\)",
+                "en": "Thus \\(m=2\\), \\(n=1\\), and the overall order is \\(m+n\\)."
             }
         ],
 
         "solutionTH": `
-            <div><b>หาอันดับต่อ A</b></div>
-            <div>จาก Exp. 1 → 2:</div>
-            <div>\\([A]\\times2\\) และ \\(rate\\times4\\)</div>
-            <div>\\(4=2^m\\Rightarrow m=2\\)</div>
+            <div><b>อันดับต่อ A</b></div>
+            <div>Exp. 1 → 2: \\([A]\\times2\\), rate \\(\\times4\\)</div>
+            <div>\\[
+                4=2^m\\Rightarrow m=2
+            \\]</div>
 
-            <div class="mt-3"><b>หาอันดับต่อ B</b></div>
-            <div>จาก Exp. 2 → 3:</div>
-            <div>\\([B]\\times3\\) และ \\(rate\\times3\\)</div>
-            <div>\\(3=3^n\\Rightarrow n=1\\)</div>
+            <div class="mt-3"><b>อันดับต่อ B</b></div>
+            <div>Exp. 2 → 3: \\([B]\\times3\\), rate \\(\\times3\\)</div>
+            <div>\\[
+                3=3^n\\Rightarrow n=1
+            \\]</div>
 
-            <div class="mt-3">ดังนั้น</div>
-            <div>\\(rate=k[A]^2[B]\\)</div>
-            <div>อันดับรวม \\(=2+1=3\\)</div>
+            <div class="mt-3">
+                ดังนั้น
+                \\[
+                rate=k[A]^2[B]
+                \\]
+                และอันดับรวม
+                \\[
+                2+1=3
+                \\]
+            </div>
 
             <div class="mt-2 font-bold text-emerald-700">
                 ตอบ: \\(rate=k[A]^2[B]\\), overall order = 3
@@ -1226,18 +1321,27 @@ window.QUIZ_TEMPLATE = {
 
         "solutionEN": `
             <div><b>Order with respect to A</b></div>
-            <div>From Exp. 1 → 2:</div>
-            <div>\\([A]\\times2\\) and \\(rate\\times4\\)</div>
-            <div>\\(4=2^m\\Rightarrow m=2\\)</div>
+            <div>Exp. 1 → 2: \\([A]\\times2\\), rate \\(\\times4\\)</div>
+            <div>\\[
+                4=2^m\\Rightarrow m=2
+            \\]</div>
 
             <div class="mt-3"><b>Order with respect to B</b></div>
-            <div>From Exp. 2 → 3:</div>
-            <div>\\([B]\\times3\\) and \\(rate\\times3\\)</div>
-            <div>\\(3=3^n\\Rightarrow n=1\\)</div>
+            <div>Exp. 2 → 3: \\([B]\\times3\\), rate \\(\\times3\\)</div>
+            <div>\\[
+                3=3^n\\Rightarrow n=1
+            \\]</div>
 
-            <div class="mt-3">Therefore</div>
-            <div>\\(rate=k[A]^2[B]\\)</div>
-            <div>Overall order \\(=2+1=3\\)</div>
+            <div class="mt-3">
+                Therefore
+                \\[
+                rate=k[A]^2[B]
+                \\]
+                and the overall order is
+                \\[
+                2+1=3.
+                \\]
+            </div>
 
             <div class="mt-2 font-bold text-emerald-700">
                 Answer: \\(rate=k[A]^2[B]\\), overall order = 3
@@ -1256,81 +1360,72 @@ window.QUIZ_TEMPLATE = {
     },
 
     // =========================================================
-    // Q5 — Calculate k and its unit
+    // Q5 — Rate constant k and unit
     // =========================================================
     {
         "id": "q5",
 
         "questionTH": `
             <div>
-                สำหรับปฏิกิริยาหนึ่งพบว่า
+                ปฏิกิริยาหนึ่งมีกฎอัตราที่ได้จากการทดลองเป็น
                 \\[
                 rate=k[A]^2[B]
                 \\]
-                เมื่อ \\([A]=0.20\\,M\\), \\([B]=0.30\\,M\\)
-                และอัตราเริ่มต้นเท่ากับ
+                ที่อุณหภูมิหนึ่ง เมื่อ
+                \\([A]=0.20\\,M\\), \\([B]=0.30\\,M\\)
+                พบว่าอัตราเริ่มต้นเท่ากับ
                 \\(1.80\\times10^{-2}\\,M\\,s^{-1}\\)
             </div>
             <div class="mt-3">
-                จงหาค่า \\(k\\) <b>พร้อมหน่วยที่ถูกต้อง</b>
+                จงคำนวณ <b>ค่าคงที่อัตรา \\(k\\) พร้อมหน่วย</b>
             </div>
         `,
 
         "questionEN": `
             <div>
-                For a reaction,
+                The experimentally determined rate law for a reaction is
                 \\[
-                rate=k[A]^2[B]
+                rate=k[A]^2[B].
                 \\]
-                At \\([A]=0.20\\,M\\) and \\([B]=0.30\\,M\\),
-                the initial rate is
+                At a certain temperature,
+                \\([A]=0.20\\,M\\), \\([B]=0.30\\,M\\),
+                and the initial rate is
                 \\(1.80\\times10^{-2}\\,M\\,s^{-1}\\).
             </div>
             <div class="mt-3">
-                Calculate \\(k\\), <b>including the correct unit</b>.
+                Calculate the <b>rate constant \\(k\\), including its unit</b>.
             </div>
         `,
 
         "hints": [
             {
-                "th": "จัดรูปจากกฎอัตราเป็น \\(k=\\frac{rate}{[A]^2[B]}\\)",
-                "en": "Rearrange the rate law to \\(k=\\frac{rate}{[A]^2[B]}\\)."
+                "th": "จัดรูปเป็น \\(k=\\frac{rate}{[A]^2[B]}\\)",
+                "en": "Rearrange to \\(k=\\frac{rate}{[A]^2[B]}\\)."
             },
             {
                 "th": "แทนค่า \\(k=\\frac{1.80\\times10^{-2}}{(0.20)^2(0.30)}\\)",
                 "en": "Substitute \\(k=\\frac{1.80\\times10^{-2}}{(0.20)^2(0.30)}\\)."
             },
             {
-                "th": "อันดับรวมเท่ากับ 3 ดังนั้นหน่วยของ \\(k\\) มาจาก \\(M\\,s^{-1}/M^3\\)",
-                "en": "The overall order is 3, so the unit of \\(k\\) comes from \\(M\\,s^{-1}/M^3\\)."
+                "th": "อันดับรวมเท่ากับ 3 ดังนั้นหน่วยของ \\(k\\) คือ \\((M\\,s^{-1})/M^3\\)",
+                "en": "The overall order is 3, so the unit of \\(k\\) is \\((M\\,s^{-1})/M^3\\)."
             }
         ],
 
         "solutionTH": `
             <div>\\[
-                k=\\frac{rate}{[A]^2[B]}
+                k=\\frac{1.80\\times10^{-2}}{(0.20)^2(0.30)}
             \\]</div>
-
-            <div>\\[
-                k=
-                \\frac{1.80\\times10^{-2}}
-                {(0.20)^2(0.30)}
-            \\]</div>
-
             <div>\\[
                 (0.20)^2(0.30)=0.012
             \\]</div>
-
             <div>\\[
                 k=\\frac{0.018}{0.012}=1.5
             \\]</div>
-
-            <div class="mt-3">หน่วย:</div>
+            <div class="mt-2">หน่วย:</div>
             <div>\\[
-                \\frac{M\\,s^{-1}}{M^3}
-                =M^{-2}s^{-1}
+                \\frac{M\\,s^{-1}}{M^3}=M^{-2}s^{-1}
             \\]</div>
-
             <div class="mt-2 font-bold text-emerald-700">
                 ตอบ: \\(k=1.5\\,M^{-2}s^{-1}\\)
             </div>
@@ -1338,29 +1433,18 @@ window.QUIZ_TEMPLATE = {
 
         "solutionEN": `
             <div>\\[
-                k=\\frac{rate}{[A]^2[B]}
+                k=\\frac{1.80\\times10^{-2}}{(0.20)^2(0.30)}
             \\]</div>
-
-            <div>\\[
-                k=
-                \\frac{1.80\\times10^{-2}}
-                {(0.20)^2(0.30)}
-            \\]</div>
-
             <div>\\[
                 (0.20)^2(0.30)=0.012
             \\]</div>
-
             <div>\\[
                 k=\\frac{0.018}{0.012}=1.5
             \\]</div>
-
-            <div class="mt-3">Unit:</div>
+            <div class="mt-2">Unit:</div>
             <div>\\[
-                \\frac{M\\,s^{-1}}{M^3}
-                =M^{-2}s^{-1}
+                \\frac{M\\,s^{-1}}{M^3}=M^{-2}s^{-1}
             \\]</div>
-
             <div class="mt-2 font-bold text-emerald-700">
                 Answer: \\(k=1.5\\,M^{-2}s^{-1}\\)
             </div>
@@ -1378,181 +1462,107 @@ window.QUIZ_TEMPLATE = {
     },
 
     // =========================================================
-    // Q6 — Concentration-time graph + tangent + order
+    // Q6 — Predict a new initial rate
     // =========================================================
     {
         "id": "q6",
 
         "questionTH": `
             <div>
-                นักเรียนติดตามความเข้มข้นของ A เมื่อปฏิกิริยาดำเนินไป
-                กราฟและข้อมูลอัตราแสดงด้านล่าง
+                สำหรับปฏิกิริยาเดียวกันที่อุณหภูมิเดิม
+                \\[
+                rate=k[A]^2[B]
+                \\]
+                และ
+                \\[
+                k=1.5\\,M^{-2}s^{-1}.
+                \\]
+                การทดลองใหม่เริ่มต้นด้วย
+                \\([A]=0.40\\,M\\) และ \\([B]=0.15\\,M\\)
             </div>
-
-            <div style="max-width:620px;margin:14px auto;">
-                <svg viewBox="0 0 600 380" style="width:100%;height:auto;border:1px solid #ddd;border-radius:12px;background:white;">
-                    <line x1="80" y1="310" x2="540" y2="310" stroke="black" stroke-width="2"/>
-                    <line x1="80" y1="310" x2="80" y2="45" stroke="black" stroke-width="2"/>
-
-                    <path d="M80 70 C180 95, 300 155, 500 275" fill="none" stroke="black" stroke-width="3"/>
-
-                    <circle cx="80" cy="70" r="5" fill="black"/>
-                    <circle cx="280" cy="165" r="6" fill="black"/>
-
-                    <line x1="170" y1="105" x2="390" y2="225" stroke="black" stroke-width="2" stroke-dasharray="8 6"/>
-
-                    <line x1="65" y1="70" x2="80" y2="70" stroke="black"/>
-                    <line x1="65" y1="165" x2="80" y2="165" stroke="black"/>
-
-                    <text x="58" y="75" text-anchor="end" font-size="14">0.180</text>
-                    <text x="58" y="170" text-anchor="end" font-size="14">0.120</text>
-
-                    <text x="310" y="350" text-anchor="middle" font-size="18">Time / s</text>
-                    <text x="24" y="180" text-anchor="middle" font-size="18" transform="rotate(-90 24 180)">[A] / M</text>
-                    <text x="310" y="135" font-size="14">tangent at [A] = 0.120 M</text>
-                </svg>
-            </div>
-
-            <div style="border:1px solid #bbb;border-radius:10px;padding:12px;margin-top:10px;">
-                <div>ที่ \\([A]=0.180\\,M\\): rate = \\(4.05\\times10^{-3}\\,M\\,s^{-1}\\)</div>
-                <div>ที่ \\([A]=0.120\\,M\\): tangent ให้ rate = \\(1.80\\times10^{-3}\\,M\\,s^{-1}\\)</div>
-            </div>
-
             <div class="mt-3">
-                ถ้า \\(rate\\propto[A]^n\\) จงหา \\(n\\)
+                จงคำนวณ <b>อัตราเริ่มต้นของปฏิกิริยา</b>
             </div>
         `,
 
         "questionEN": `
             <div>
-                The concentration of A is monitored as the reaction proceeds.
-                The graph and rate data are shown below.
+                For the same reaction at the same temperature,
+                \\[
+                rate=k[A]^2[B]
+                \\]
+                and
+                \\[
+                k=1.5\\,M^{-2}s^{-1}.
+                \\]
+                A new experiment starts with
+                \\([A]=0.40\\,M\\) and \\([B]=0.15\\,M\\).
             </div>
-
-            <div style="max-width:620px;margin:14px auto;">
-                <svg viewBox="0 0 600 380" style="width:100%;height:auto;border:1px solid #ddd;border-radius:12px;background:white;">
-                    <line x1="80" y1="310" x2="540" y2="310" stroke="black" stroke-width="2"/>
-                    <line x1="80" y1="310" x2="80" y2="45" stroke="black" stroke-width="2"/>
-
-                    <path d="M80 70 C180 95, 300 155, 500 275" fill="none" stroke="black" stroke-width="3"/>
-
-                    <circle cx="80" cy="70" r="5" fill="black"/>
-                    <circle cx="280" cy="165" r="6" fill="black"/>
-
-                    <line x1="170" y1="105" x2="390" y2="225" stroke="black" stroke-width="2" stroke-dasharray="8 6"/>
-
-                    <line x1="65" y1="70" x2="80" y2="70" stroke="black"/>
-                    <line x1="65" y1="165" x2="80" y2="165" stroke="black"/>
-
-                    <text x="58" y="75" text-anchor="end" font-size="14">0.180</text>
-                    <text x="58" y="170" text-anchor="end" font-size="14">0.120</text>
-
-                    <text x="310" y="350" text-anchor="middle" font-size="18">Time / s</text>
-                    <text x="24" y="180" text-anchor="middle" font-size="18" transform="rotate(-90 24 180)">[A] / M</text>
-                    <text x="310" y="135" font-size="14">tangent at [A] = 0.120 M</text>
-                </svg>
-            </div>
-
-            <div style="border:1px solid #bbb;border-radius:10px;padding:12px;margin-top:10px;">
-                <div>At \\([A]=0.180\\,M\\): rate = \\(4.05\\times10^{-3}\\,M\\,s^{-1}\\)</div>
-                <div>At \\([A]=0.120\\,M\\): tangent rate = \\(1.80\\times10^{-3}\\,M\\,s^{-1}\\)</div>
-            </div>
-
             <div class="mt-3">
-                If \\(rate\\propto[A]^n\\), determine \\(n\\).
+                Calculate the <b>initial reaction rate</b>.
             </div>
         `,
 
         "hints": [
             {
-                "th": "เปรียบเทียบอัตราส่วนของความเข้มข้นกับอัตราส่วนของ rate",
-                "en": "Compare the concentration ratio with the rate ratio."
+                "th": "ใช้กฎอัตราที่โจทย์ให้โดยตรงและแทนความเข้มข้นของการทดลองใหม่",
+                "en": "Use the given rate law and substitute the new concentrations directly."
             },
             {
-                "th": "\\(0.180/0.120=1.50\\) และ \\((4.05\\times10^{-3})/(1.80\\times10^{-3})=2.25\\)",
-                "en": "\\(0.180/0.120=1.50\\) and \\((4.05\\times10^{-3})/(1.80\\times10^{-3})=2.25\\)."
+                "th": "ตั้งค่า \\(rate=1.5(0.40)^2(0.15)\\)",
+                "en": "Set up \\(rate=1.5(0.40)^2(0.15)\\)."
             },
             {
-                "th": "ตั้งสมการ \\(2.25=(1.50)^n\\)",
-                "en": "Set up \\(2.25=(1.50)^n\\)."
+                "th": "คำนวณ \\((0.40)^2=0.16\\) ก่อน",
+                "en": "Calculate \\((0.40)^2=0.16\\) first."
             }
         ],
 
         "solutionTH": `
-            <div>จากข้อมูล</div>
             <div>\\[
-                \\frac{[A]_1}{[A]_2}
-                =
-                \\frac{0.180}{0.120}
-                =1.50
+                rate=k[A]^2[B]
             \\]</div>
-
-            <div>และ</div>
             <div>\\[
-                \\frac{rate_1}{rate_2}
-                =
-                \\frac{4.05\\times10^{-3}}
-                {1.80\\times10^{-3}}
-                =2.25
+                rate=1.5(0.40)^2(0.15)
             \\]</div>
-
-            <div>ถ้า \\(rate\\propto[A]^n\\)</div>
-
             <div>\\[
-                2.25=(1.50)^n
+                =1.5(0.16)(0.15)
+                =0.0360\\,M\\,s^{-1}
             \\]</div>
-
-            <div>เนื่องจาก \\(1.50^2=2.25\\)</div>
-
             <div class="mt-2 font-bold text-emerald-700">
-                ตอบ: \\(n=2\\)
+                ตอบ: \\(3.60\\times10^{-2}\\,M\\,s^{-1}\\)
             </div>
         `,
 
         "solutionEN": `
-            <div>From the data</div>
             <div>\\[
-                \\frac{[A]_1}{[A]_2}
-                =
-                \\frac{0.180}{0.120}
-                =1.50
+                rate=k[A]^2[B]
             \\]</div>
-
-            <div>and</div>
             <div>\\[
-                \\frac{rate_1}{rate_2}
-                =
-                \\frac{4.05\\times10^{-3}}
-                {1.80\\times10^{-3}}
-                =2.25
+                rate=1.5(0.40)^2(0.15)
             \\]</div>
-
-            <div>If \\(rate\\propto[A]^n\\), then</div>
-
             <div>\\[
-                2.25=(1.50)^n
+                =1.5(0.16)(0.15)
+                =0.0360\\,M\\,s^{-1}
             \\]</div>
-
-            <div>Since \\(1.50^2=2.25\\),</div>
-
             <div class="mt-2 font-bold text-emerald-700">
-                Answer: \\(n=2\\)
+                Answer: \\(3.60\\times10^{-2}\\,M\\,s^{-1}\\)
             </div>
         `,
 
         "options": [
-            {"text": "\\(0\\)", "isCorrect": false},
-            {"text": "\\(\\frac12\\)", "isCorrect": false},
-            {"text": "\\(1\\)", "isCorrect": false},
-            {"text": "\\(2\\)", "isCorrect": true},
-            {"text": "\\(2.25\\)", "isCorrect": false},
-            {"text": "\\(3\\)", "isCorrect": false},
-            {"text": "Cannot be determined / ระบุไม่ได้", "isCorrect": false}
+            {"text": "\\(9.00\\times10^{-3}\\,M\\,s^{-1}\\)", "isCorrect": false},
+            {"text": "\\(1.80\\times10^{-2}\\,M\\,s^{-1}\\)", "isCorrect": false},
+            {"text": "\\(2.40\\times10^{-2}\\,M\\,s^{-1}\\)", "isCorrect": false},
+            {"text": "\\(3.60\\times10^{-2}\\,M\\,s^{-1}\\)", "isCorrect": true},
+            {"text": "\\(4.80\\times10^{-2}\\,M\\,s^{-1}\\)", "isCorrect": false},
+            {"text": "\\(7.20\\times10^{-2}\\,M\\,s^{-1}\\)", "isCorrect": false},
+            {"text": "\\(3.60\\times10^{-1}\\,M\\,s^{-1}\\)", "isCorrect": false}
         ]
     },
 
     // =========================================================
-    // Q7 — Reverse calculation
+    // Q7 — Reverse use of the rate law
     // =========================================================
     {
         "id": "q7",
@@ -1565,15 +1575,13 @@ window.QUIZ_TEMPLATE = {
                 \\]
                 โดย \\(k=2.0\\,M^{-2}s^{-1}\\)
             </div>
-
             <div class="mt-3">
                 ในการทดลองหนึ่ง \\([P]=0.25\\,M\\)
                 และวัดอัตราเริ่มต้นได้
                 \\(4.50\\times10^{-2}\\,M\\,s^{-1}\\)
             </div>
-
             <div class="mt-3">
-                จงหาความเข้มข้นเริ่มต้นของ Q
+                จงคำนวณ <b>ความเข้มข้นเริ่มต้นของ Q</b>
             </div>
         `,
 
@@ -1585,84 +1593,62 @@ window.QUIZ_TEMPLATE = {
                 \\]
                 where \\(k=2.0\\,M^{-2}s^{-1}\\).
             </div>
-
             <div class="mt-3">
                 In one experiment, \\([P]=0.25\\,M\\)
                 and the measured initial rate is
                 \\(4.50\\times10^{-2}\\,M\\,s^{-1}\\).
             </div>
-
             <div class="mt-3">
-                Determine the initial concentration of Q.
+                Calculate the <b>initial concentration of Q</b>.
             </div>
         `,
 
         "hints": [
             {
-                "th": "แทนค่าทุกอย่างที่ทราบลงใน \\(rate=k[P][Q]^2\\)",
-                "en": "Substitute all known quantities into \\(rate=k[P][Q]^2\\)."
+                "th": "แทนค่าที่ทราบทั้งหมดลงใน \\(rate=k[P][Q]^2\\)",
+                "en": "Substitute all known values into \\(rate=k[P][Q]^2\\)."
             },
             {
                 "th": "จะได้ \\(0.045=2.0(0.25)[Q]^2\\)",
                 "en": "You should obtain \\(0.045=2.0(0.25)[Q]^2\\)."
             },
             {
-                "th": "หา \\([Q]^2\\) ก่อน แล้วอย่าลืมถอดรากที่ขั้นสุดท้าย",
-                "en": "Solve for \\([Q]^2\\) first, then remember to take the square root."
+                "th": "หา \\([Q]^2\\) ก่อน แล้วจึงถอดราก",
+                "en": "Solve for \\([Q]^2\\) first, then take the square root."
             }
         ],
 
         "solutionTH": `
-            <div>เริ่มจาก</div>
-            <div>\\[
-                rate=k[P][Q]^2
-            \\]</div>
-
-            <div>แทนค่า</div>
             <div>\\[
                 0.045=2.0(0.25)[Q]^2
             \\]</div>
-
             <div>\\[
                 0.045=0.50[Q]^2
             \\]</div>
-
             <div>\\[
                 [Q]^2=0.090
             \\]</div>
-
             <div>\\[
                 [Q]=\\sqrt{0.090}=0.30\\,M
             \\]</div>
-
             <div class="mt-2 font-bold text-emerald-700">
                 ตอบ: \\([Q]=0.30\\,M\\)
             </div>
         `,
 
         "solutionEN": `
-            <div>Start with</div>
-            <div>\\[
-                rate=k[P][Q]^2
-            \\]</div>
-
-            <div>Substitute the data:</div>
             <div>\\[
                 0.045=2.0(0.25)[Q]^2
             \\]</div>
-
             <div>\\[
                 0.045=0.50[Q]^2
             \\]</div>
-
             <div>\\[
                 [Q]^2=0.090
             \\]</div>
-
             <div>\\[
                 [Q]=\\sqrt{0.090}=0.30\\,M
             \\]</div>
-
             <div class="mt-2 font-bold text-emerald-700">
                 Answer: \\([Q]=0.30\\,M\\)
             </div>
@@ -1680,111 +1666,65 @@ window.QUIZ_TEMPLATE = {
     },
 
     // =========================================================
-    // Q8 — Maxwell-Boltzmann / temperature
+    // Q8 — Temperature, k, and activation energy
     // =========================================================
     {
         "id": "q8",
 
         "questionTH": `
             <div>
-                กราฟแสดงการกระจายพลังงานของอนุภาคที่อุณหภูมิ
-                \\(T_1\\) และ \\(T_2\\) โดย \\(T_2>T_1\\)
+                กราฟแสดงการกระจายพลังงานของอนุภาคสำหรับ
+                <b>ปฏิกิริยาและเส้นทางปฏิกิริยาเดียวกัน</b>
+                ที่อุณหภูมิ \\(T_1\\) และ \\(T_2\\) โดย \\(T_2>T_1\\)
             </div>
-
-            <div style="max-width:650px;margin:14px auto;">
-                <svg viewBox="0 0 640 390" style="width:100%;height:auto;border:1px solid #ddd;border-radius:12px;background:white;">
-                    <line x1="70" y1="315" x2="575" y2="315" stroke="black" stroke-width="2"/>
-                    <line x1="70" y1="315" x2="70" y2="45" stroke="black" stroke-width="2"/>
-
-                    <path d="M75 315 C110 150, 165 80, 230 120 C310 170, 385 260, 530 310"
-                          fill="none" stroke="black" stroke-width="3"/>
-
-                    <path d="M75 315 C125 235, 205 155, 300 165 C390 180, 470 245, 555 305"
-                          fill="none" stroke="black" stroke-width="3" stroke-dasharray="9 6"/>
-
-                    <line x1="430" y1="70" x2="430" y2="315" stroke="black" stroke-width="2"/>
-
-                    <text x="430" y="55" text-anchor="middle" font-size="18">Ea</text>
-                    <text x="185" y="85" font-size="18">T₁</text>
-                    <text x="320" y="150" font-size="18">T₂</text>
-
-                    <text x="325" y="355" text-anchor="middle" font-size="18">Energy / พลังงาน</text>
-                    <text x="22" y="180" text-anchor="middle" font-size="17" transform="rotate(-90 22 180)">
-                        Number of particles
-                    </text>
-                </svg>
-            </div>
-
-            <div>
-                ข้อใดอธิบายได้ดีที่สุดว่าเหตุใดค่าคงที่อัตรา \\(k\\)
-                จึงเพิ่มขึ้นเมื่ออุณหภูมิเพิ่มจาก \\(T_1\\) เป็น \\(T_2\\)?
+            ${Q8_GRAPH}
+            <div class="mt-3">
+                ข้อใดอธิบายได้ถูกต้องที่สุดว่าเหตุใด
+                <b>ค่าคงที่อัตรา \\(k\\) จึงเพิ่มขึ้นเมื่ออุณหภูมิสูงขึ้น</b>?
             </div>
         `,
 
         "questionEN": `
             <div>
-                The graph shows particle-energy distributions at temperatures
-                \\(T_1\\) and \\(T_2\\), where \\(T_2>T_1\\).
+                The graph shows particle-energy distributions for the
+                <b>same reaction and the same reaction pathway</b>
+                at temperatures \\(T_1\\) and \\(T_2\\), where \\(T_2>T_1\\).
             </div>
-
-            <div style="max-width:650px;margin:14px auto;">
-                <svg viewBox="0 0 640 390" style="width:100%;height:auto;border:1px solid #ddd;border-radius:12px;background:white;">
-                    <line x1="70" y1="315" x2="575" y2="315" stroke="black" stroke-width="2"/>
-                    <line x1="70" y1="315" x2="70" y2="45" stroke="black" stroke-width="2"/>
-
-                    <path d="M75 315 C110 150, 165 80, 230 120 C310 170, 385 260, 530 310"
-                          fill="none" stroke="black" stroke-width="3"/>
-
-                    <path d="M75 315 C125 235, 205 155, 300 165 C390 180, 470 245, 555 305"
-                          fill="none" stroke="black" stroke-width="3" stroke-dasharray="9 6"/>
-
-                    <line x1="430" y1="70" x2="430" y2="315" stroke="black" stroke-width="2"/>
-
-                    <text x="430" y="55" text-anchor="middle" font-size="18">Ea</text>
-                    <text x="185" y="85" font-size="18">T₁</text>
-                    <text x="320" y="150" font-size="18">T₂</text>
-
-                    <text x="325" y="355" text-anchor="middle" font-size="18">Energy</text>
-                    <text x="22" y="180" text-anchor="middle" font-size="17" transform="rotate(-90 22 180)">
-                        Number of particles
-                    </text>
-                </svg>
-            </div>
-
-            <div>
-                Which statement best explains why the rate constant \\(k\\)
-                increases when the temperature rises from \\(T_1\\) to \\(T_2\\)?
+            ${Q8_GRAPH}
+            <div class="mt-3">
+                Which statement best explains why the
+                <b>rate constant \\(k\\) increases as temperature increases</b>?
             </div>
         `,
 
         "hints": [
             {
-                "th": "แยกแนวคิดเรื่องอุณหภูมิออกจากเรื่องตัวเร่งปฏิกิริยา",
+                "th": "แยกผลของอุณหภูมิออกจากผลของตัวเร่งปฏิกิริยา",
                 "en": "Separate the effect of temperature from the effect of a catalyst."
             },
             {
-                "th": "ดูพื้นที่ของกราฟที่อยู่ทางขวาของเส้น \\(E_a\\)",
-                "en": "Focus on the area of the distribution to the right of the \\(E_a\\) line."
+                "th": "พิจารณาสัดส่วนของอนุภาคที่อยู่ทางขวาของเส้น \\(E_a\\)",
+                "en": "Consider the fraction of particles lying to the right of the \\(E_a\\) line."
             },
             {
-                "th": "เมื่ออุณหภูมิสูงขึ้น สัดส่วนของอนุภาคที่มี \\(E\\ge E_a\\) เพิ่มขึ้น แต่ \\(E_a\\) ของเส้นทางเดิมไม่เปลี่ยน",
-                "en": "At higher temperature, a greater fraction of particles has \\(E\\ge E_a\\), while the activation energy of the same pathway is unchanged."
+                "th": "เมื่ออุณหภูมิสูงขึ้น สัดส่วนที่มี \\(E\\ge E_a\\) เพิ่มขึ้น แต่ \\(E_a\\) ของเส้นทางเดิมไม่เปลี่ยน",
+                "en": "At higher temperature, a greater fraction has \\(E\\ge E_a\\), while \\(E_a\\) for the same pathway is unchanged."
             }
         ],
 
         "solutionTH": `
             <div>
-                เมื่ออุณหภูมิสูงขึ้น การกระจายพลังงานกว้างขึ้นและเลื่อนไปทางพลังงานสูง
+                เมื่ออุณหภูมิสูงขึ้น การกระจายพลังงานกว้างขึ้น
+                และมีสัดส่วนอนุภาคที่อยู่ในช่วงพลังงานสูงมากขึ้น
             </div>
             <div class="mt-2">
-                ทำให้ <b>สัดส่วนของอนุภาคที่มีพลังงานอย่างน้อยเท่ากับ \\(E_a\\)</b>
-                เพิ่มขึ้น
+                ดังนั้น <b>สัดส่วนของอนุภาคที่มี \\(E\\ge E_a\\) เพิ่มขึ้น</b>
+                จึงมีการชนที่มีพลังงานเพียงพอสำหรับเกิดปฏิกิริยามากขึ้น
+                และ \\(k\\) เพิ่มขึ้น
             </div>
             <div class="mt-2">
-                จึงมีการชนที่สามารถนำไปสู่ปฏิกิริยาได้มากขึ้น และค่าคงที่อัตรา \\(k\\) เพิ่มขึ้น
-            </div>
-            <div class="mt-2">
-                จุดสำคัญคือ การเพิ่มอุณหภูมิ <b>ไม่ได้ทำให้ \\(E_a\\) ของเส้นทางเดิมลดลง</b>
+                สำหรับเส้นทางปฏิกิริยาเดิม การเพิ่มอุณหภูมิ
+                <b>ไม่ได้ทำให้ \\(E_a\\) ลดลง</b>
             </div>
             <div class="mt-2 font-bold text-emerald-700">
                 ตอบ: สัดส่วนอนุภาคที่มี \\(E\\ge E_a\\) เพิ่มขึ้น โดย \\(E_a\\) คงเดิม
@@ -1793,16 +1733,16 @@ window.QUIZ_TEMPLATE = {
 
         "solutionEN": `
             <div>
-                Increasing the temperature broadens the energy distribution and shifts more particles toward higher energies.
+                At higher temperature, the energy distribution becomes broader
+                and a larger proportion of particles occupies higher-energy states.
             </div>
             <div class="mt-2">
-                Therefore, a <b>larger fraction of particles has energy equal to or greater than \\(E_a\\)</b>.
+                Therefore, <b>a greater fraction of particles has \\(E\\ge E_a\\)</b>.
+                More collisions have sufficient energy to react, so \\(k\\) increases.
             </div>
             <div class="mt-2">
-                More collisions can therefore lead to reaction, so the rate constant \\(k\\) increases.
-            </div>
-            <div class="mt-2">
-                The key point is that increasing temperature <b>does not lower the activation energy of the original pathway</b>.
+                For the same reaction pathway, increasing temperature
+                <b>does not lower \\(E_a\\)</b>.
             </div>
             <div class="mt-2 font-bold text-emerald-700">
                 Answer: a greater fraction of particles has \\(E\\ge E_a\\), while \\(E_a\\) remains unchanged.
@@ -1823,130 +1763,68 @@ window.QUIZ_TEMPLATE = {
                 "isCorrect": false
             },
             {
-                "text": "The area under the distribution curve increases. / พื้นที่รวมใต้กราฟเพิ่มขึ้น",
+                "text": "The total area under the distribution becomes larger. / พื้นที่รวมใต้กราฟเพิ่มขึ้น",
                 "isCorrect": false
             },
             {
-                "text": "The enthalpy change becomes more negative. / ค่าเอนทัลปีของปฏิกิริยาลดลง",
+                "text": "The reaction enthalpy becomes more negative. / เอนทัลปีของปฏิกิริยามีค่าลบมากขึ้น",
                 "isCorrect": false
             },
             {
-                "text": "A catalyst is produced automatically at higher temperature. / เกิดตัวเร่งปฏิกิริยาเองเมื่ออุณหภูมิสูงขึ้น",
+                "text": "A catalyst is formed automatically at higher temperature. / เกิดตัวเร่งปฏิกิริยาเองเมื่ออุณหภูมิสูงขึ้น",
                 "isCorrect": false
             },
             {
-                "text": "Every collision becomes successful. / การชนทุกครั้งกลายเป็นการชนที่เกิดปฏิกิริยา",
+                "text": "Every collision becomes successful. / การชนทุกครั้งทำให้เกิดปฏิกิริยา",
                 "isCorrect": false
             }
         ]
     },
 
     // =========================================================
-    // Q9 — Energy profile + catalyst
+    // Q9 — Catalyst, Ea, initial rate, and ΔH
     // =========================================================
     {
         "id": "q9",
 
         "questionTH": `
             <div>
-                กราฟพลังงานต่อไปนี้แสดงเส้นทางปฏิกิริยาแบบไม่มีตัวเร่ง
-                และแบบมีตัวเร่ง
+                กราฟแสดงแผนภาพพลังงานของปฏิกิริยาเดียวกัน
+                เมื่อไม่มีตัวเร่งและเมื่อมีตัวเร่งปฏิกิริยา
+                โดยความเข้มข้นของสารตั้งต้นและอุณหภูมิคงที่
             </div>
-
-            <div style="max-width:660px;margin:14px auto;">
-                <svg viewBox="0 0 660 420" style="width:100%;height:auto;border:1px solid #ddd;border-radius:12px;background:white;">
-                    <line x1="75" y1="340" x2="600" y2="340" stroke="black" stroke-width="2"/>
-                    <line x1="75" y1="340" x2="75" y2="45" stroke="black" stroke-width="2"/>
-
-                    <line x1="90" y1="260" x2="170" y2="260" stroke="black" stroke-width="3"/>
-                    <line x1="520" y1="315" x2="590" y2="315" stroke="black" stroke-width="3"/>
-
-                    <path d="M170 260 C245 250, 280 70, 355 70 C430 80, 460 270, 520 315"
-                          fill="none" stroke="black" stroke-width="3"/>
-
-                    <path d="M170 260 C245 250, 280 155, 355 155 C430 165, 465 275, 520 315"
-                          fill="none" stroke="black" stroke-width="3" stroke-dasharray="9 6"/>
-
-                    <line x1="355" y1="70" x2="355" y2="260" stroke="#555" stroke-width="1.5" stroke-dasharray="4 4"/>
-                    <line x1="355" y1="155" x2="355" y2="260" stroke="#555" stroke-width="1.5" stroke-dasharray="4 4"/>
-
-                    <text x="118" y="247" font-size="16">Reactants = 40</text>
-                    <text x="505" y="303" font-size="16">Products = 10</text>
-
-                    <text x="365" y="65" font-size="16">120</text>
-                    <text x="365" y="150" font-size="16">80</text>
-
-                    <text x="430" y="100" font-size="15">uncatalysed</text>
-                    <text x="430" y="180" font-size="15">catalysed</text>
-
-                    <text x="335" y="385" text-anchor="middle" font-size="18">Reaction progress</text>
-                    <text x="24" y="200" text-anchor="middle" font-size="18" transform="rotate(-90 24 200)">
-                        Potential energy / kJ mol⁻¹
-                    </text>
-                </svg>
-            </div>
-
-            <div>
-                ข้อใดอธิบายผลของตัวเร่งปฏิกิริยาได้ถูกต้อง?
+            ${Q9_GRAPH}
+            <div class="mt-3">
+                ข้อใดอธิบายผลของการเติมตัวเร่งปฏิกิริยาต่อ
+                <b>อัตราเริ่มต้น, \\(E_a\\) และ \\(\\Delta H\\)</b> ได้ถูกต้อง?
             </div>
         `,
 
         "questionEN": `
             <div>
-                The energy profile below shows an uncatalysed pathway
-                and a catalysed pathway for the same reaction.
+                The graph shows energy profiles for the same reaction
+                with and without a catalyst.
+                Reactant concentrations and temperature are unchanged.
             </div>
-
-            <div style="max-width:660px;margin:14px auto;">
-                <svg viewBox="0 0 660 420" style="width:100%;height:auto;border:1px solid #ddd;border-radius:12px;background:white;">
-                    <line x1="75" y1="340" x2="600" y2="340" stroke="black" stroke-width="2"/>
-                    <line x1="75" y1="340" x2="75" y2="45" stroke="black" stroke-width="2"/>
-
-                    <line x1="90" y1="260" x2="170" y2="260" stroke="black" stroke-width="3"/>
-                    <line x1="520" y1="315" x2="590" y2="315" stroke="black" stroke-width="3"/>
-
-                    <path d="M170 260 C245 250, 280 70, 355 70 C430 80, 460 270, 520 315"
-                          fill="none" stroke="black" stroke-width="3"/>
-
-                    <path d="M170 260 C245 250, 280 155, 355 155 C430 165, 465 275, 520 315"
-                          fill="none" stroke="black" stroke-width="3" stroke-dasharray="9 6"/>
-
-                    <line x1="355" y1="70" x2="355" y2="260" stroke="#555" stroke-width="1.5" stroke-dasharray="4 4"/>
-                    <line x1="355" y1="155" x2="355" y2="260" stroke="#555" stroke-width="1.5" stroke-dasharray="4 4"/>
-
-                    <text x="118" y="247" font-size="16">Reactants = 40</text>
-                    <text x="505" y="303" font-size="16">Products = 10</text>
-
-                    <text x="365" y="65" font-size="16">120</text>
-                    <text x="365" y="150" font-size="16">80</text>
-
-                    <text x="430" y="100" font-size="15">uncatalysed</text>
-                    <text x="430" y="180" font-size="15">catalysed</text>
-
-                    <text x="335" y="385" text-anchor="middle" font-size="18">Reaction progress</text>
-                    <text x="24" y="200" text-anchor="middle" font-size="18" transform="rotate(-90 24 200)">
-                        Potential energy / kJ mol⁻¹
-                    </text>
-                </svg>
-            </div>
-
-            <div>
-                Which statement correctly describes the effect of the catalyst?
+            ${Q9_GRAPH}
+            <div class="mt-3">
+                Which statement correctly describes the effect of adding the catalyst on
+                the <b>initial rate, \\(E_a\\), and \\(\\Delta H\\)</b>?
             </div>
         `,
 
         "hints": [
             {
-                "th": "หา \\(E_a\\) จากพลังงานที่ยอดกราฟลบด้วยพลังงานของสารตั้งต้น",
-                "en": "Calculate \\(E_a\\) as the peak energy minus the reactant energy."
+                "th": "ตัวเร่งเปลี่ยนเส้นทางปฏิกิริยา ไม่ได้เปลี่ยนระดับพลังงานของสารตั้งต้นหรือผลิตภัณฑ์",
+                "en": "A catalyst changes the reaction pathway, not the energy levels of the reactants or products."
             },
             {
-                "th": "ไม่มีตัวเร่ง: \\(120-40\\) และมีตัวเร่ง: \\(80-40\\)",
-                "en": "Uncatalysed: \\(120-40\\). Catalysed: \\(80-40\\)."
+                "th": "จากกราฟ: ไม่มีตัวเร่ง \\(E_a=120-40\\); มีตัวเร่ง \\(E_a=80-40\\)",
+                "en": "From the graph: uncatalysed \\(E_a=120-40\\); catalysed \\(E_a=80-40\\)."
             },
             {
-                "th": "ค่า \\(\\Delta H\\) ขึ้นกับพลังงานผลิตภัณฑ์และสารตั้งต้น ไม่ได้ขึ้นกับเส้นทาง",
-                "en": "\\(\\Delta H\\) depends on reactant and product energies, not on the pathway."
+                "th": "\\(\\Delta H=E_{products}-E_{reactants}=10-40\\) จึงไม่ขึ้นกับเส้นทาง",
+                "en": "\\(\\Delta H=E_{products}-E_{reactants}=10-40\\), so it does not depend on the pathway."
             }
         ],
 
@@ -1956,24 +1834,27 @@ window.QUIZ_TEMPLATE = {
                 E_a=120-40=80\\,kJ\\,mol^{-1}
             \\]</div>
 
-            <div class="mt-3"><b>มีตัวเร่ง</b></div>
+            <div class="mt-2"><b>มีตัวเร่ง</b></div>
             <div>\\[
                 E_a=80-40=40\\,kJ\\,mol^{-1}
             \\]</div>
 
-            <div class="mt-3"><b>เอนทัลปีของปฏิกิริยา</b></div>
-            <div>\\[
-                \\Delta H=10-40=-30\\,kJ\\,mol^{-1}
-            \\]</div>
+            <div class="mt-2">
+                ตัวเร่งให้เส้นทางใหม่ที่มี \\(E_a\\) ต่ำลง
+                ที่อุณหภูมิและความเข้มข้นเดิมจึงมีสัดส่วนการชนที่ผ่านกำแพงพลังงานได้มากขึ้น
+                ทำให้อัตราเริ่มต้นเพิ่มขึ้น
+            </div>
 
-            <div>
-                ตัวเร่งให้เส้นทางใหม่ที่มี \\(E_a\\) ต่ำกว่า
-                แต่ไม่ได้เปลี่ยนพลังงานของสารตั้งต้นหรือผลิตภัณฑ์
-                ดังนั้น \\(\\Delta H\\) จึงไม่เปลี่ยน
+            <div class="mt-2">
+                \\[
+                \\Delta H=10-40=-30\\,kJ\\,mol^{-1}
+                \\]
+                และไม่เปลี่ยน เพราะระดับพลังงานของสารตั้งต้นและผลิตภัณฑ์เท่าเดิม
             </div>
 
             <div class="mt-2 font-bold text-emerald-700">
-                ตอบ: \\(E_a\\) ลดจาก 80 เป็น 40 kJ mol⁻¹ และ \\(\\Delta H=-30\\) kJ mol⁻¹ คงเดิม
+                ตอบ: อัตราเริ่มต้นเพิ่มขึ้น, \\(E_a:80\\rightarrow40\\,kJ\\,mol^{-1}\\),
+                และ \\(\\Delta H=-30\\,kJ\\,mol^{-1}\\) คงเดิม
             </div>
         `,
 
@@ -1983,54 +1864,58 @@ window.QUIZ_TEMPLATE = {
                 E_a=120-40=80\\,kJ\\,mol^{-1}
             \\]</div>
 
-            <div class="mt-3"><b>Catalysed pathway</b></div>
+            <div class="mt-2"><b>Catalysed pathway</b></div>
             <div>\\[
                 E_a=80-40=40\\,kJ\\,mol^{-1}
             \\]</div>
 
-            <div class="mt-3"><b>Reaction enthalpy</b></div>
-            <div>\\[
-                \\Delta H=10-40=-30\\,kJ\\,mol^{-1}
-            \\]</div>
+            <div class="mt-2">
+                The catalyst provides an alternative pathway with lower \\(E_a\\).
+                At the same temperature and reactant concentrations,
+                a larger fraction of collisions can overcome the energy barrier,
+                so the initial rate increases.
+            </div>
 
-            <div>
-                A catalyst provides an alternative pathway with a lower activation energy,
-                but it does not change the energies of the reactants or products.
-                Therefore, \\(\\Delta H\\) is unchanged.
+            <div class="mt-2">
+                \\[
+                \\Delta H=10-40=-30\\,kJ\\,mol^{-1}
+                \\]
+                and is unchanged because the reactant and product energy levels do not change.
             </div>
 
             <div class="mt-2 font-bold text-emerald-700">
-                Answer: \\(E_a\\) decreases from 80 to 40 kJ mol⁻¹ and \\(\\Delta H=-30\\) kJ mol⁻¹ remains unchanged.
+                Answer: the initial rate increases, \\(E_a:80\\rightarrow40\\,kJ\\,mol^{-1}\\),
+                and \\(\\Delta H=-30\\,kJ\\,mol^{-1}\\) remains unchanged.
             </div>
         `,
 
         "options": [
             {
-                "text": "\\(E_a:80\\rightarrow40\\,kJ\\,mol^{-1}\\), \\(\\Delta H=-30\\,kJ\\,mol^{-1}\\) unchanged",
+                "text": "Initial rate increases; \\(E_a:80\\rightarrow40\\,kJ\\,mol^{-1}\\); \\(\\Delta H=-30\\,kJ\\,mol^{-1}\\) unchanged.",
                 "isCorrect": true
             },
             {
-                "text": "\\(E_a:80\\rightarrow40\\,kJ\\,mol^{-1}\\), \\(\\Delta H: -30\\rightarrow0\\)",
+                "text": "Initial rate increases; \\(E_a:80\\rightarrow40\\,kJ\\,mol^{-1}\\); \\(\\Delta H\\) becomes 0.",
                 "isCorrect": false
             },
             {
-                "text": "\\(E_a:40\\rightarrow80\\,kJ\\,mol^{-1}\\), \\(\\Delta H=-30\\,kJ\\,mol^{-1}\\)",
+                "text": "Initial rate decreases; \\(E_a:80\\rightarrow40\\,kJ\\,mol^{-1}\\); \\(\\Delta H=-30\\,kJ\\,mol^{-1}\\).",
                 "isCorrect": false
             },
             {
-                "text": "\\(E_a=120\\,kJ\\,mol^{-1}\\), \\(\\Delta H=-30\\,kJ\\,mol^{-1}\\)",
+                "text": "Initial rate increases because \\(\\Delta H\\) becomes more negative; \\(E_a\\) is unchanged.",
                 "isCorrect": false
             },
             {
-                "text": "\\(E_a=80\\,kJ\\,mol^{-1}\\), \\(\\Delta H=+30\\,kJ\\,mol^{-1}\\)",
+                "text": "Initial rate is unchanged; \\(E_a:40\\rightarrow80\\,kJ\\,mol^{-1}\\); \\(\\Delta H=-30\\,kJ\\,mol^{-1}\\).",
+                "isCorrect": false
+            },
+            {
+                "text": "Initial rate increases; \\(E_a=120\\,kJ\\,mol^{-1}\\); \\(\\Delta H=-30\\,kJ\\,mol^{-1}\\).",
                 "isCorrect": false
             },
             {
                 "text": "The catalyst changes only \\(\\Delta H\\), not \\(E_a\\). / ตัวเร่งเปลี่ยนเฉพาะ \\(\\Delta H\\) แต่ไม่เปลี่ยน \\(E_a\\)",
-                "isCorrect": false
-            },
-            {
-                "text": "The catalyst raises both \\(E_a\\) and the reaction rate. / ตัวเร่งทำให้ทั้ง \\(E_a\\) และอัตราการเกิดปฏิกิริยาเพิ่มขึ้น",
                 "isCorrect": false
             }
         ]
