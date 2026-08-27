@@ -65,7 +65,7 @@
   </aside>
 
   <div id="restoreToast" class="restore-toast">✓ โหลดงานเดิมแล้ว / Previous work restored</div>
-  <iframe id="labFrame" title="Virtual Pressure and Buoyancy Laboratory" src="./_core-virtual-pressure-buoyancy-lab-v6.html"></iframe>
+  <iframe id="labFrame" title="Virtual Pressure and Buoyancy Laboratory" src="about:blank"></iframe>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
@@ -129,8 +129,7 @@ let replaying = false;
 let replayActions = [];
 let lastSavedScrollY = 0;
 let frameReady = false;
-let frameReadyResolve;
-const frameReadyPromise = new Promise(resolve => { frameReadyResolve = resolve; });
+const CORE_URL = "./_core-virtual-pressure-buoyancy-lab-v6.html";
 
 const fallbackAvatar = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><rect width='100%' height='100%' fill='#e2e8f0'/><circle cx='40' cy='31' r='15' fill='#94a3b8'/><path d='M14 72c2-17 13-26 26-26s24 9 26 26' fill='#94a3b8'/></svg>`);
 
@@ -297,9 +296,19 @@ function attachFrameListeners() {
   frame.contentWindow?.addEventListener("scroll", () => { const y=getScrollY(); if (Math.abs(y-lastSavedScrollY)>120) scheduleSave(1000); }, {passive:true});
 }
 
-frame.addEventListener("load", () => {
-  frameReady = true; attachFrameListeners(); frameReadyResolve();
-});
+async function loadFreshCore() {
+  frameReady = false;
+  frame.classList.remove("ready");
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => { cleanup(); reject(new Error("Lab core load timeout")); }, 15000);
+    const cleanup = () => { clearTimeout(timer); frame.removeEventListener("load", onLoad); frame.removeEventListener("error", onError); };
+    const onLoad = () => { cleanup(); frameReady = true; attachFrameListeners(); resolve(); };
+    const onError = () => { cleanup(); reject(new Error("Lab core failed to load")); };
+    frame.addEventListener("load", onLoad);
+    frame.addEventListener("error", onError);
+    frame.src = CORE_URL + "?v=" + Date.now();
+  });
+}
 
 document.addEventListener("visibilitychange", () => {
   if (!currentUser) return;
@@ -333,13 +342,13 @@ try { await setPersistence(auth,browserLocalPersistence); } catch (err) { consol
 
 onAuthStateChanged(auth, async user => {
   if (!user) {
-    currentUser=null; presenceRef=null; replayActions=[]; topbar.classList.remove("show"); frame.classList.remove("ready"); hideMonitor();
+    currentUser=null; presenceRef=null; replayActions=[]; frameReady=false; topbar.classList.remove("show"); frame.classList.remove("ready"); frame.src="about:blank"; hideMonitor();
     if (unsubPresenceList) {unsubPresenceList();unsubPresenceList=null;} setPresenceUI("OFFLINE"); setCloud("☁️ Waiting","idle"); setGateSignedOut(); return;
   }
   currentUser=user; nameEl.textContent=safeName(user); photo.src=user.photoURL || fallbackAvatar; photo.onerror=()=>{photo.src=fallbackAvatar};
   topbar.classList.add("show"); setGateLoading(); presenceStatus="ONLINE"; lastActivity=Date.now();
   await setupPresence(user); setupPresenceList(); await writePresence();
-  await frameReadyPromise;
+  try { await loadFreshCore(); } catch (err) { console.warn("lab core load",err); setCloud("⚠️ Lab load failed","error"); showError("โหลด Virtual Lab ไม่สำเร็จ / Could not load the Virtual Lab. Please refresh and try again."); return; }
   const saved = await loadProgress();
   const restored = await replaySavedState(saved);
   unlockLab(restored);
