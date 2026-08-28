@@ -340,6 +340,7 @@
       <div id="cloudLoading" class="cloud-loading">⏳ กำลังโหลดงานเดิมและคืนสถานะกิจกรรม...<br>Loading saved work and restoring completed checkpoints...</div>
       <button id="cloudRetryLoad" class="cloud-google" type="button" style="display:none;margin-top:10px">↻ ลองโหลดอีกครั้ง / Retry loading</button>
       <button id="cloudClearSave" class="cloud-google" type="button" style="display:none;margin-top:10px;border-color:#dc2626;color:#991b1b">เริ่มใหม่และล้างงาน Cloud / Start new and clear Cloud save</button>
+      <button id="cloudContinueOffline" class="cloud-google" type="button" style="display:none;margin-top:10px;border-color:#f59e0b;color:#92400e;background:#fffbeb">ทำต่อแบบ PDF โดยไม่ใช้ Cloud / Continue in PDF fallback mode</button>
       <div id="cloudError" class="cloud-error"></div>
       <div class="cloud-gate-note">☁️ ความคืบหน้าจะบันทึกอัตโนมัติใน Firebase หลังทำกิจกรรมสำคัญ หากเปิดบัญชีเดียวกันหลายอุปกรณ์ ระบบจะป้องกันงานเก่าทับงานที่ใหม่กว่า<br>Your progress saves automatically to Firebase after meaningful learning actions. If the same account is open on multiple devices, newer cloud work is protected from stale overwrite.</div>
     </div>
@@ -354,6 +355,7 @@
     </div>
     <div class="cloud-actions">
       <span id="cloudSaveState" class="cloud-mode-state" role="status" aria-live="polite">☁️ Waiting</span>
+      <button id="cloudResumeCloudBtn" class="cloud-mini" type="button" style="display:none">☁️ Retry Cloud</button>
       <button id="cloudLiveBtn" class="cloud-mini cloud-live-btn" type="button">📡 Online <span id="cloudLiveCount">0</span></button>
       <button id="cloudSignout" class="cloud-mini cloud-signout" type="button">Sign out</button>
     </div>
@@ -2964,9 +2966,9 @@ const provider = new GoogleAuthProvider();
 provider.setCustomParameters({prompt:"select_account"});
 
 const $ = id => document.getElementById(id);
-const gate=$('cloudGate'), gateTitle=$('cloudGateTitle'), gateCopy=$('cloudGateCopy'), signin=$('cloudSignin'), loading=$('cloudLoading'), retryLoad=$('cloudRetryLoad'), clearSaveBtn=$('cloudClearSave'), errorBox=$('cloudError');
+const gate=$('cloudGate'), gateTitle=$('cloudGateTitle'), gateCopy=$('cloudGateCopy'), signin=$('cloudSignin'), loading=$('cloudLoading'), retryLoad=$('cloudRetryLoad'), clearSaveBtn=$('cloudClearSave'), continueOfflineBtn=$('cloudContinueOffline'), errorBox=$('cloudError');
 const userbar=$('cloudUserbar'), photo=$('cloudPhoto'), nameEl=$('cloudName'), dot=$('cloudDot'), presenceText=$('cloudPresenceText'), saveState=$('cloudSaveState');
-const liveBtn=$('cloudLiveBtn'), liveCount=$('cloudLiveCount'), signoutBtn=$('cloudSignout'), monitor=$('cloudMonitor'), backdrop=$('cloudBackdrop'), closeMonitor=$('cloudCloseMonitor');
+const liveBtn=$('cloudLiveBtn'), liveCount=$('cloudLiveCount'), signoutBtn=$('cloudSignout'), resumeCloudBtn=$('cloudResumeCloudBtn'), monitor=$('cloudMonitor'), backdrop=$('cloudBackdrop'), closeMonitor=$('cloudCloseMonitor');
 const people=$('cloudPeople'), onlineStat=$('cloudOnlineStat'), idleStat=$('cloudIdleStat'), restoreToast=$('cloudRestoreToast');
 const labRoot=document.querySelector('main.wrap');
 const resetAllBtn=$('resetAllBtn');
@@ -2976,6 +2978,8 @@ let unsubPresence=null, unsubConnected=null, saveTimer=null, replaying=false, ac
 let lastActionSignature='';
 let authEpoch=0, lastKnownRevision=0, saveInFlight=false, saveQueued=false, dirty=false, cloudConflict=false, pendingOfflineSave=false;
 const SESSION_ID=(globalThis.crypto?.randomUUID?.()||`forces-${Date.now()}-${Math.random().toString(36).slice(2)}`).slice(0,80);
+const FALLBACK_KEY='forces-m4-pdf-fallback';
+let localFallbackMode=sessionStorage.getItem(FALLBACK_KEY)==='1';
 
 const fallbackAvatar='data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="100%" height="100%" fill="#e2e8f0"/><circle cx="40" cy="31" r="15" fill="#94a3b8"/><path d="M14 72c2-17 13-26 26-26s24 9 26 26" fill="#94a3b8"/></svg>`);
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -2983,11 +2987,12 @@ function safeName(u=currentUser){return (u?.displayName||u?.email?.split('@')[0]
 function showError(msg=''){errorBox.textContent=msg;errorBox.classList.toggle('show',Boolean(msg))}
 function setSave(text,mode='idle'){if(!saveState)return;saveState.textContent=text;saveState.style.color=mode==='ok'?'#047857':mode==='busy'?'#b45309':mode==='error'?'#be123c':'#64748b'}
 function setPresenceUI(status){dot.className='cloud-dot '+String(status).toLowerCase();presenceText.textContent=status==='ONLINE'?'🟢 Online':status==='IDLE'?'🟡 Idle':'⚪ Offline'}
-function setGateSignedOut(){document.body.classList.remove('cloud-authenticated');gate.classList.remove('hidden');signin.style.display='';signin.disabled=false;loading.style.display='none';if(retryLoad)retryLoad.style.display='none';if(clearSaveBtn)clearSaveBtn.style.display='none';showError('');gateTitle.textContent='เข้าสู่ Forces Mission / Enter Forces Mission';gateCopy.innerHTML='เข้าสู่ระบบด้วย Google เพื่อบันทึกความคืบหน้า ทำต่อจากครั้งก่อน และแสดงสถานะออนไลน์ของห้องเรียน<br>Sign in with Google to save progress, resume your previous work, and show live classroom presence.'}
-function setGateLoading(){gate.classList.remove('hidden');signin.style.display='none';loading.style.display='block';if(retryLoad)retryLoad.style.display='none';if(clearSaveBtn)clearSaveBtn.style.display='none';showError('');gateTitle.textContent='กำลังเปิดงานเดิม / Restoring your work';gateCopy.innerHTML='กำลังโหลดคำตอบและลำดับกิจกรรมจาก Firebase ก่อนเปิด Forces Mission<br>Loading your saved answers and learning sequence before opening Forces Mission.'}
+function setGateSignedOut(){document.body.classList.remove('cloud-authenticated');gate.classList.remove('hidden');signin.style.display='';signin.disabled=false;loading.style.display='none';if(retryLoad)retryLoad.style.display='none';if(clearSaveBtn)clearSaveBtn.style.display='none';if(continueOfflineBtn)continueOfflineBtn.style.display='none';if(resumeCloudBtn)resumeCloudBtn.style.display='none';showError('');gateTitle.textContent='เข้าสู่ Forces Mission / Enter Forces Mission';gateCopy.innerHTML='เข้าสู่ระบบด้วย Google เพื่อบันทึกความคืบหน้า ทำต่อจากครั้งก่อน และแสดงสถานะออนไลน์ของห้องเรียน<br>Sign in with Google to save progress, resume your previous work, and show live classroom presence.'}
+function setGateLoading(){gate.classList.remove('hidden');signin.style.display='none';loading.style.display='block';if(retryLoad)retryLoad.style.display='none';if(clearSaveBtn)clearSaveBtn.style.display='none';if(continueOfflineBtn)continueOfflineBtn.style.display='none';showError('');gateTitle.textContent='กำลังเปิดงานเดิม / Restoring your work';gateCopy.innerHTML='กำลังโหลดคำตอบและลำดับกิจกรรมจาก Firebase ก่อนเปิด Forces Mission<br>Loading your saved answers and learning sequence before opening Forces Mission.'}
 function setGateLoadFailure(message){
   document.body.classList.remove('cloud-authenticated');gate.classList.remove('hidden');loading.style.display='none';signin.style.display='none';if(retryLoad)retryLoad.style.display='flex';
   if(clearSaveBtn&&currentUser)clearSaveBtn.style.display='flex';
+  if(continueOfflineBtn)continueOfflineBtn.style.display='flex';
   gateTitle.textContent='ยังไม่เปิดกิจกรรม / Activity not opened yet';
   gateCopy.innerHTML='Cloud Resume ยังตรวจสอบไม่ผ่าน จึงยังไม่เปิดกิจกรรมเพื่อป้องกันสถานะบางส่วนบันทึกทับงานเดิม<br>Cloud Resume could not be verified, so the activity stays locked to protect the saved work.';
   showError(message||'Cloud restore failed. Please retry. / โหลดงานเดิมไม่สำเร็จ กรุณาลองใหม่');
@@ -3286,6 +3291,10 @@ if(resetAllBtn){
   resetAllBtn.addEventListener('click',async e=>{
     e.preventDefault();e.stopImmediatePropagation();
     if(resetting)return;
+    if(localFallbackMode){
+      if(window.confirm('Reset this PDF fallback attempt? Cloud progress will remain untouched. / เริ่มโหมด PDF นี้ใหม่โดยไม่กระทบงานบน Cloud หรือไม่?'))window.location.reload();
+      return;
+    }
     if(!window.confirm('Reset all progress? This also clears the cloud save. / ต้องการเริ่มกิจกรรมใหม่ทั้งหมดและล้างงานที่บันทึกบน Cloud หรือไม่?'))return;
     resetting=true;progressLoaded=false;clearTimeout(saveTimer);setSave('☁️ Clearing...','busy');
     try{if(currentUser)await set(ref(db,`quizProgress/${LAB_ID}/${currentUser.uid}`),null)}catch(err){console.warn('clear progress',err)}
@@ -3297,6 +3306,14 @@ function hideMonitor(){monitor.classList.remove('show');backdrop.classList.remov
 liveBtn.addEventListener('click',()=>{monitor.classList.add('show');backdrop.classList.add('show');monitor.setAttribute('aria-hidden','false')});
 closeMonitor.addEventListener('click',hideMonitor);backdrop.addEventListener('click',hideMonitor);document.addEventListener('keydown',e=>{if(e.key==='Escape')hideMonitor()});
 if(retryLoad)retryLoad.addEventListener('click',()=>window.location.reload());
+if(continueOfflineBtn)continueOfflineBtn.addEventListener('click',()=>{
+  sessionStorage.setItem(FALLBACK_KEY,'1');
+  window.location.reload();
+});
+if(resumeCloudBtn)resumeCloudBtn.addEventListener('click',()=>{
+  sessionStorage.removeItem(FALLBACK_KEY);
+  window.location.reload();
+});
 if(clearSaveBtn)clearSaveBtn.addEventListener('click',async()=>{
   if(!currentUser||resetting)return;
   if(!window.confirm('Start this activity again and permanently clear its saved Cloud progress? / ต้องการเริ่มกิจกรรมนี้ใหม่และล้างความคืบหน้าบน Cloud อย่างถาวรหรือไม่?'))return;
@@ -3332,6 +3349,15 @@ onAuthStateChanged(auth,async user=>{
   const epoch=++authEpoch;
   progressLoaded=false;loadFailed=false;cloudConflict=false;pendingOfflineSave=false;dirty=false;saveQueued=false;lastKnownRevision=0;
   clearTimeout(saveTimer);
+  if(localFallbackMode){
+    currentUser=user||null;loadFailed=true;presenceStatus='OFFLINE';
+    nameEl.textContent=user?safeName(user):'PDF fallback';
+    photo.src=user?.photoURL||fallbackAvatar;photo.onerror=()=>{photo.src=fallbackAvatar};
+    setPresenceUI('OFFLINE');unlockLab(false);setSave('PDF fallback · Cloud off','error');
+    if(resumeCloudBtn)resumeCloudBtn.style.display='';
+    liveBtn.disabled=true;signoutBtn.style.display='none';
+    return;
+  }
   if(!user){
     currentUser=null;presenceRef=null;actions=[];lastActionSignature='';userbar.classList.remove('show');hideMonitor();
     if(unsubPresence){unsubPresence();unsubPresence=null}if(unsubConnected){unsubConnected();unsubConnected=null}
