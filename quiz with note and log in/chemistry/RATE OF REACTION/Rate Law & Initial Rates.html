@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Scratchpad Experiment: Multiplication</title>
+    <title>Rate Law & Initial Rates</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         window.MathJax = {
@@ -12,8 +12,6 @@
         };
     </script>
     <script async id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Sarabun', 'Inter', sans-serif; background-color: #f3f4f6; }
@@ -47,305 +45,6 @@
 
         .hint-step { border-left:4px solid #f59e0b; }
 
-        /* Scratchpad add-on: full A4 + multi-page + AI that follows recent writing */
-        .scratchpad-shell {
-            border:2px solid #cbd5e1;
-            border-radius:16px;
-            overflow:hidden;
-            background:#fff;
-            margin:1rem 0 1.25rem;
-            box-shadow:0 8px 24px rgba(15,23,42,.06);
-        }
-        .scratchpad-toolbar {
-            display:flex;
-            flex-wrap:wrap;
-            align-items:center;
-            gap:7px;
-            padding:9px;
-            background:#f8fafc;
-            border-bottom:1px solid #cbd5e1;
-        }
-        .scratch-tool {
-            border:1px solid #cbd5e1;
-            background:#fff;
-            color:#334155;
-            border-radius:9px;
-            padding:7px 10px;
-            font-size:.8rem;
-            font-weight:700;
-            cursor:pointer;
-            white-space:nowrap;
-        }
-        .scratch-tool:hover { background:#f1f5f9; }
-        .scratch-tool.active {
-            border-color:#6366f1;
-            background:#eef2ff;
-            color:#4338ca;
-        }
-        .scratch-tool.copy {
-            background:#eef2ff;
-            color:#4338ca;
-            border-color:#c7d2fe;
-        }
-        .scratch-tool.page {
-            background:#ecfeff;
-            color:#155e75;
-            border-color:#a5f3fc;
-        }
-        .scratch-tool.ai-check-btn {
-            background:#f5f3ff;
-            color:#6d28d9;
-            border-color:#c4b5fd;
-        }
-        .scratch-tool.ai-check-btn:hover { background:#ede9fe; }
-        .scratch-tool.ai-check-btn:disabled {
-            opacity:.55;
-            cursor:not-allowed;
-        }
-        .scratch-tool.danger { color:#be123c; }
-        .scratch-tool:disabled {
-            opacity:.45;
-            cursor:not-allowed;
-        }
-
-        .scratch-status {
-            padding:7px 11px;
-            border-bottom:1px solid #e2e8f0;
-            font-size:.74rem;
-            font-weight:600;
-            line-height:1.55;
-        }
-
-        /* Visible workspace. The A4 sheet is larger than the viewport and scrolls. */
-        .scratch-viewport {
-            position:relative;
-            background:#dbe3ee;
-            overflow:hidden;
-        }
-        .scratch-scroll {
-            height:clamp(620px, 88vh, 1120px);
-            min-height:620px;
-            overflow-y:auto;
-            overflow-x:hidden;
-            background:#dbe3ee;
-            padding:20px;
-            overscroll-behavior:contain;
-            -webkit-overflow-scrolling:touch;
-            touch-action:pan-y;
-            scroll-behavior:smooth;
-        }
-        .scratch-sheet {
-            position:relative;
-            width:min(100%, 1000px);
-            aspect-ratio:210 / 297;
-            margin:0 auto;
-            overflow:hidden;
-            border-radius:8px;
-            box-shadow:0 8px 30px rgba(15,23,42,.20);
-            background:
-                linear-gradient(#eef2f7 1px, transparent 1px),
-                linear-gradient(90deg, #eef2f7 1px, transparent 1px),
-                #fff;
-            background-size:24px 24px;
-        }
-
-        /* Locked question/background layer. */
-        .scratch-question-bg {
-            position:absolute;
-            inset:0;
-            z-index:1;
-            padding:20px 22px;
-            pointer-events:none;
-            overflow:hidden;
-            color:#0f172a;
-            background:rgba(255,255,255,.84);
-        }
-        .scratch-question-bg.hidden { display:none; }
-        .scratch-question-bg .sq-title {
-            color:#4338ca;
-            font-weight:800;
-            font-size:.82rem;
-            margin-bottom:7px;
-        }
-        .scratch-question-bg .sq-th {
-            font-size:.95rem;
-            font-weight:700;
-            line-height:1.55;
-        }
-        .scratch-question-bg .sq-en {
-            font-size:.76rem;
-            color:#64748b;
-            line-height:1.45;
-            margin-top:5px;
-        }
-        .scratch-question-bg .sq-content {
-            margin-top:9px;
-            font-size:.72rem;
-        }
-        .scratch-question-bg .sq-content .table-wrap { margin:.35rem 0; }
-        .scratch-question-bg .sq-content .chem-table {
-            min-width:0;
-            font-size:.72rem;
-            background:#fff;
-        }
-        .scratch-question-bg .sq-content .chem-table th,
-        .scratch-question-bg .sq-content .chem-table td { padding:.24rem .38rem; }
-        .scratch-question-bg .sq-content .graph-card { margin:.35rem 0; padding:5px; }
-        .scratch-question-bg .sq-content .graph-card svg {
-            min-width:0 !important;
-            max-height:330px;
-        }
-
-        /* Ink layer */
-        #scratchpad-canvas {
-            position:absolute;
-            inset:0;
-            z-index:2;
-            width:100%;
-            height:100%;
-            display:block;
-            cursor:crosshair;
-        }
-
-        .scratch-color-dot {
-            width:13px;
-            height:13px;
-            border-radius:50%;
-            display:inline-block;
-            vertical-align:-1px;
-            margin-right:4px;
-        }
-        .scratch-page-indicator {
-            display:inline-flex;
-            align-items:center;
-            padding:6px 9px;
-            border-radius:999px;
-            background:#fff;
-            border:1px solid #cbd5e1;
-            color:#475569;
-            font-size:.75rem;
-            font-weight:800;
-        }
-
-        .scratch-scroll::-webkit-scrollbar { width:10px; }
-        .scratch-scroll::-webkit-scrollbar-thumb {
-            background:#94a3b8;
-            border-radius:999px;
-            border:2px solid #dbe3ee;
-        }
-
-        /* AI panel floats in the visible board viewport near the latest writing. */
-        .ai-feedback-panel {
-            position:absolute;
-            z-index:10;
-            width:min(410px, calc(100% - 36px));
-            max-height:min(48vh, 440px);
-            overflow:auto;
-            border:1px solid #c4b5fd;
-            border-radius:16px;
-            background:rgba(255,255,255,.97);
-            box-shadow:0 16px 38px rgba(76,29,149,.22);
-            pointer-events:auto;
-            backdrop-filter:blur(8px);
-        }
-        .ai-feedback-head {
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            gap:8px;
-            padding:10px 12px;
-            background:#f5f3ff;
-            border-bottom:1px solid #ddd6fe;
-            color:#5b21b6;
-            font-weight:800;
-            font-size:.82rem;
-        }
-        .ai-feedback-body {
-            padding:12px;
-            font-size:.82rem;
-            line-height:1.55;
-            color:#334155;
-        }
-        .ai-feedback-row + .ai-feedback-row { margin-top:9px; }
-        .ai-feedback-label {
-            font-weight:800;
-            color:#475569;
-            margin-bottom:2px;
-        }
-        .ai-anchor-note {
-            color:#8b5cf6;
-            font-size:10px;
-            font-weight:700;
-        }
-        .ai-spinner {
-            width:15px;height:15px;border-radius:50%;
-            border:2px solid #ddd6fe;border-top-color:#7c3aed;
-            animation:aiSpin .8s linear infinite;
-            display:inline-block;vertical-align:-2px;margin-right:6px;
-        }
-        @keyframes aiSpin { to { transform:rotate(360deg); } }
-
-        @media (max-width:700px) {
-            .scratch-scroll {
-                height:82vh;
-                min-height:520px;
-                padding:10px;
-            }
-            .scratch-sheet { width:100%; }
-            .scratch-tool { padding:7px 8px; font-size:.74rem; }
-            .ai-feedback-panel {
-                width:calc(100% - 24px);
-                max-height:40vh;
-            }
-        }
-
-        /* Hidden DOM used only when exporting scratchpads to PDF */
-        #scratch-export-host {
-            position:fixed;
-            left:-10000px;
-            top:0;
-            width:794px;
-            pointer-events:none;
-            z-index:-1;
-        }
-        .scratch-export-page {
-            width:794px;
-            min-height:1123px;
-            background:#fff;
-            padding:38px;
-            color:#0f172a;
-            font-family:'Sarabun','Inter',sans-serif;
-        }
-        .scratch-export-board {
-            position:relative;
-            width:100%;
-            height:720px;
-            margin-top:18px;
-            overflow:hidden;
-            border:1.5px solid #94a3b8;
-            border-radius:12px;
-            background:
-                linear-gradient(#eef2f7 1px, transparent 1px),
-                linear-gradient(90deg, #eef2f7 1px, transparent 1px),
-                #fff;
-            background-size:24px 24px;
-        }
-        .scratch-export-question {
-            position:absolute;
-            inset:0;
-            z-index:1;
-            padding:20px;
-            overflow:hidden;
-            background:rgba(255,255,255,.84);
-        }
-        .scratch-export-ink {
-            position:absolute;
-            inset:0;
-            z-index:2;
-            width:100%;
-            height:100%;
-            object-fit:fill;
-        }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes celebrate { 0%,100% { transform: rotate(-5deg) scale(1); } 50% { transform: rotate(5deg) scale(1.08); } }
@@ -473,158 +172,599 @@
         }
 
 
-        #scratchpad-canvas {
-            -webkit-user-select:none;
+
+        /* === DEV Print Pack === */
+        .dev-print-actions{
+            display:flex;
+            flex-wrap:wrap;
+            gap:8px;
+            align-items:center;
+            justify-content:flex-end;
+        }
+        .dev-print-btn{
+            border:1px solid rgba(255,255,255,.35);
+            border-radius:999px;
+            padding:8px 13px;
+            font-size:.78rem;
+            font-weight:900;
+            cursor:pointer;
+            white-space:nowrap;
+            transition:.15s ease;
+            box-shadow:0 2px 8px rgba(15,23,42,.10);
+        }
+        .dev-print-btn:hover{ transform:translateY(-1px); }
+        .dev-print-btn.worksheet{
+            background:#ffffff;
+            color:#3730a3;
+        }
+        .dev-print-btn.answer{
+            background:#fef3c7;
+            color:#92400e;
+            border-color:#fde68a;
+        }
+
+        #dev-print-host{ display:none; }
+
+        @media print {
+            body.print-pack-mode > *:not(#dev-print-host){
+                display:none !important;
+            }
+            body.print-pack-mode{
+                background:#fff !important;
+                padding:0 !important;
+                margin:0 !important;
+                display:block !important;
+            }
+            body.print-pack-mode #dev-print-host{
+                display:block !important;
+            }
+            #dev-print-host{
+                width:100%;
+                color:#000;
+                background:#fff;
+                font-family:'Sarabun','Inter',sans-serif;
+            }
+            .print-page{
+                box-sizing:border-box;
+                width:210mm;
+                min-height:297mm;
+                padding:14mm 15mm 14mm;
+                margin:0 auto;
+                background:#fff;
+                page-break-after:always;
+                break-after:page;
+            }
+            .print-page:last-child{
+                page-break-after:auto;
+                break-after:auto;
+            }
+            .print-cover{
+                min-height:260mm;
+                display:flex;
+                flex-direction:column;
+                justify-content:center;
+            }
+            .print-title{
+                font-size:22pt;
+                font-weight:900;
+                text-align:center;
+                line-height:1.25;
+                margin-bottom:4mm;
+            }
+            .print-subtitle{
+                font-size:11pt;
+                text-align:center;
+                color:#444;
+                line-height:1.5;
+            }
+            .print-meta{
+                margin-top:12mm;
+                border:1px solid #777;
+                border-radius:2mm;
+                padding:6mm;
+                font-size:11pt;
+                line-height:1.8;
+            }
+            .print-meta-row{
+                display:grid;
+                grid-template-columns:1fr 1fr;
+                gap:8mm;
+            }
+            .print-line{
+                border-bottom:1px solid #777;
+                min-height:7mm;
+                display:inline-block;
+                width:65%;
+            }
+            .print-instruction{
+                margin-top:10mm;
+                padding:5mm;
+                border:1px solid #999;
+                border-radius:2mm;
+                background:#fafafa;
+                font-size:10.5pt;
+                line-height:1.55;
+            }
+            .print-q{
+                page-break-inside:avoid;
+                break-inside:avoid;
+                margin-bottom:8mm;
+            }
+            .print-q-head{
+                font-size:13pt;
+                font-weight:900;
+                margin-bottom:2.5mm;
+                border-bottom:1px solid #bbb;
+                padding-bottom:1.5mm;
+            }
+            .print-q-th{
+                font-size:11.5pt;
+                font-weight:700;
+                line-height:1.55;
+            }
+            .print-q-en{
+                font-size:10pt;
+                color:#333;
+                line-height:1.45;
+                margin-top:1.5mm;
+            }
+            .print-options{
+                margin-top:3mm;
+                display:grid;
+                grid-template-columns:1fr;
+                gap:1.8mm;
+            }
+            .print-option{
+                border:1px solid #ccc;
+                border-radius:2mm;
+                padding:2.7mm 3mm;
+                font-size:10.5pt;
+                line-height:1.4;
+            }
+            .print-answer-box{
+                margin-top:4mm;
+                border:1.4px solid #555;
+                min-height:18mm;
+                border-radius:2mm;
+                padding:2.5mm;
+                font-size:9.5pt;
+                color:#666;
+            }
+            .print-solution{
+                margin-top:4mm;
+                border:1.5px solid #444;
+                border-radius:2mm;
+                padding:4mm;
+                background:#fafafa;
+                page-break-inside:avoid;
+                break-inside:avoid;
+            }
+            .print-solution-title{
+                font-size:11pt;
+                font-weight:900;
+                margin-bottom:2mm;
+            }
+            .print-correct{
+                font-size:10.5pt;
+                font-weight:800;
+                margin-bottom:2mm;
+            }
+            .print-solution-body{
+                font-size:9.7pt;
+                line-height:1.5;
+            }
+            .print-solution-body + .print-solution-body{
+                margin-top:3mm;
+                padding-top:3mm;
+                border-top:1px dashed #aaa;
+            }
+
+            /* Let existing tables/graphs print cleanly */
+            #dev-print-host .table-wrap,
+            #dev-print-host [style*="overflow-x:auto"]{
+                overflow:visible !important;
+            }
+            #dev-print-host table{
+                width:100% !important;
+                max-width:100% !important;
+                font-size:9.5pt !important;
+            }
+            #dev-print-host th,
+            #dev-print-host td{
+                padding:2mm !important;
+            }
+            #dev-print-host svg{
+                max-width:100% !important;
+                height:auto !important;
+            }
+            #dev-print-host mjx-container{
+                overflow:visible !important;
+            }
+        }
+
+
+        /* === AI Chat + Scratch Lite === */
+        .study-tools-stack{
+            margin-top:18px;
+            display:grid;
+            gap:14px;
+        }
+        .ai-chat-card,
+        .scratch-lite-card{
+            border:1px solid #cbd5e1;
+            border-radius:16px;
+            background:#fff;
+            overflow:hidden;
+            box-shadow:0 6px 18px rgba(15,23,42,.05);
+        }
+        .study-tool-head{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:10px;
+            flex-wrap:wrap;
+            padding:10px 12px;
+            background:#f8fafc;
+            border-bottom:1px solid #e2e8f0;
+        }
+        .study-tool-title{
+            font-size:.9rem;
+            font-weight:900;
+            color:#0f172a;
+        }
+        .study-tool-sub{
+            font-size:.7rem;
+            color:#64748b;
+            font-weight:700;
+        }
+
+        /* AI chat */
+        .ai-quick-row{
+            display:flex;
+            flex-wrap:wrap;
+            gap:6px;
+            padding:9px 10px 0;
+        }
+        .ai-quick-btn{
+            border:1px solid #ddd6fe;
+            background:#f5f3ff;
+            color:#6d28d9;
+            border-radius:999px;
+            padding:6px 9px;
+            font-size:.72rem;
+            font-weight:800;
+            cursor:pointer;
+        }
+        .ai-quick-btn:hover{ background:#ede9fe; }
+        .ai-chat-log{
+            margin:9px 10px;
+            max-height:220px;
+            overflow-y:auto;
+            border:1px solid #e2e8f0;
+            border-radius:12px;
+            background:#f8fafc;
+            padding:9px;
+        }
+        .ai-chat-empty{
+            color:#94a3b8;
+            font-size:.75rem;
+            line-height:1.55;
+            text-align:center;
+            padding:10px 4px;
+        }
+        .ai-msg{
+            max-width:88%;
+            border-radius:12px;
+            padding:8px 10px;
+            margin:5px 0;
+            font-size:.78rem;
+            line-height:1.5;
+            white-space:pre-wrap;
+            word-break:break-word;
+        }
+        .ai-msg.user{
+            margin-left:auto;
+            background:#dbeafe;
+            color:#1e3a8a;
+        }
+        .ai-msg.assistant{
+            margin-right:auto;
+            background:#fff;
+            color:#334155;
+            border:1px solid #e2e8f0;
+        }
+        .ai-msg.system{
+            margin:5px auto;
+            max-width:96%;
+            background:#fff7ed;
+            color:#9a3412;
+            border:1px solid #fed7aa;
+            font-size:.72rem;
+        }
+        .ai-chat-compose{
+            display:grid;
+            grid-template-columns:1fr auto;
+            gap:7px;
+            padding:0 10px 10px;
+        }
+        .ai-chat-input{
+            width:100%;
+            min-height:42px;
+            max-height:110px;
+            resize:vertical;
+            border:1px solid #cbd5e1;
+            border-radius:11px;
+            padding:9px 10px;
+            font:inherit;
+            font-size:.8rem;
+            outline:none;
+        }
+        .ai-chat-input:focus{
+            border-color:#8b5cf6;
+            box-shadow:0 0 0 3px rgba(139,92,246,.10);
+        }
+        .ai-send-btn{
+            align-self:end;
+            border:0;
+            border-radius:11px;
+            background:#7c3aed;
+            color:#fff;
+            padding:10px 13px;
+            font-size:.78rem;
+            font-weight:900;
+            cursor:pointer;
+        }
+        .ai-send-btn:disabled{ opacity:.55; cursor:not-allowed; }
+
+        /* Scratch Lite */
+        .scratch-lite-toolbar{
+            display:flex;
+            flex-wrap:wrap;
+            align-items:center;
+            gap:6px;
+        }
+        .scratch-lite-btn{
+            border:1px solid #cbd5e1;
+            background:#fff;
+            color:#334155;
+            border-radius:9px;
+            padding:6px 9px;
+            font-size:.72rem;
+            font-weight:850;
+            cursor:pointer;
+            white-space:nowrap;
+        }
+        .scratch-lite-btn:hover{ background:#f1f5f9; }
+        .scratch-lite-btn.active{
+            background:#e0e7ff;
+            border-color:#a5b4fc;
+            color:#3730a3;
+        }
+        .scratch-lite-btn.warn{
+            color:#be123c;
+            border-color:#fecdd3;
+            background:#fff1f2;
+        }
+        .scratch-lite-btn.print{
+            color:#075985;
+            border-color:#bae6fd;
+            background:#f0f9ff;
+        }
+        .scratch-lite-btn:disabled{ opacity:.42; cursor:not-allowed; }
+        .scratch-lite-wrap{
+            position:relative;
+            height:clamp(260px,42vh,420px);
+            max-height:50vh;
+            min-height:260px;
+            overflow:hidden;
+            background:
+              linear-gradient(#edf2f7 1px, transparent 1px),
+              linear-gradient(90deg, #edf2f7 1px, transparent 1px),
+              #fff;
+            background-size:22px 22px;
+            touch-action:none;
+            overscroll-behavior:none;
             user-select:none;
+            -webkit-user-select:none;
             -webkit-touch-callout:none;
-            -webkit-tap-highlight-color:transparent;
         }
-
-
-        /* === Stylus v3: suppress iPad/Safari Copy / Select / Look Up only on scratchpad === */
-        #scratchpad-canvas,
-        .scratch-viewport,
-        .scratch-sheet,
-        .scratch-scroll {
-            -webkit-user-select: none !important;
-            user-select: none !important;
-            -webkit-touch-callout: none !important;
-            -webkit-tap-highlight-color: transparent !important;
-            -webkit-user-drag: none !important;
-        }
-
-        #scratchpad-canvas {
-            touch-action: none !important;
-        }
-
-
-        /* === Fabric Scratchpad v1.9 === */
-        .scratch-sheet > .canvas-container {
-            position:absolute !important;
-            inset:0 !important;
-            width:100% !important;
-            height:100% !important;
-            z-index:2 !important;
-            margin:0 !important;
-            padding:0 !important;
+        #scratch-lite-canvas{
+            display:block;
+            width:100%;
+            height:100%;
             touch-action:none !important;
-            -webkit-user-select:none !important;
+            overscroll-behavior:none !important;
             user-select:none !important;
-            -webkit-touch-callout:none !important;
-        }
-
-        .scratch-sheet > .canvas-container canvas,
-        .scratch-sheet .upper-canvas,
-        .scratch-sheet .lower-canvas {
-            width:100% !important;
-            height:100% !important;
-            touch-action:none !important;
             -webkit-user-select:none !important;
-            user-select:none !important;
             -webkit-touch-callout:none !important;
             -webkit-tap-highlight-color:transparent !important;
         }
-
-
-        /* === v1.11 Fabric layer-order fix ===
-           Fabric's .upper-canvas MUST be the interactive surface.
-           The original #scratchpad-canvas becomes Fabric's lower canvas. */
-        .scratch-sheet .canvas-container #scratchpad-canvas.lower-canvas {
-            z-index:1 !important;
-            pointer-events:none !important;
-        }
-        .scratch-sheet .canvas-container .upper-canvas {
-            z-index:3 !important;
-            pointer-events:auto !important;
-            touch-action:none !important;
-        }
-
-
-        /* === v1.13 PDF answer stamp === */
-        .scratch-export-stamp {
-            position:absolute;
-            top:18px;
-            right:18px;
-            z-index:6;
-            width:136px;
-            min-height:82px;
-            padding:9px 10px 8px;
+        .scratch-lite-foot{
             display:flex;
-            flex-direction:column;
             align-items:center;
-            justify-content:center;
-            gap:2px;
-            border:4px double currentColor;
-            border-radius:18px;
-            background:rgba(255,255,255,.88);
-            box-shadow:0 2px 0 rgba(15,23,42,.06);
-            transform:rotate(-6deg);
+            justify-content:space-between;
+            gap:8px;
+            flex-wrap:wrap;
+            padding:9px 10px;
+            border-top:1px solid #e2e8f0;
+            background:#f8fafc;
+        }
+        .scratch-lite-pages{
+            display:flex;
+            gap:6px;
+            align-items:center;
+            flex-wrap:wrap;
+        }
+        .scratch-lite-page-label{
+            font-size:.72rem;
+            font-weight:900;
+            color:#475569;
+            min-width:86px;
             text-align:center;
-            line-height:1.05;
-            letter-spacing:.02em;
         }
-        .scratch-export-stamp .stamp-symbol {
-            font-family:Arial,sans-serif;
-            font-size:27px;
-            font-weight:900;
-            line-height:1;
-        }
-        .scratch-export-stamp .stamp-th {
-            font-size:18px;
-            font-weight:900;
-        }
-        .scratch-export-stamp .stamp-en {
-            font-family:Arial,sans-serif;
-            font-size:11px;
-            font-weight:900;
-            letter-spacing:.08em;
-        }
-        .scratch-export-stamp .stamp-meta {
-            margin-top:3px;
-            padding-top:4px;
-            width:100%;
-            border-top:1px solid currentColor;
-            font-family:Arial,sans-serif;
-            font-size:9px;
-            font-weight:800;
-            opacity:.8;
-        }
-        .scratch-export-stamp.correct {
-            color:#047857;
-            background:rgba(236,253,245,.92);
-        }
-        .scratch-export-stamp.incorrect {
-            color:#b91c1c;
-            background:rgba(254,242,242,.92);
-        }
-        .scratch-export-stamp.giveup {
-            color:#b45309;
-            background:rgba(255,251,235,.94);
-        }
-        .scratch-export-stamp.skipped,
-        .scratch-export-stamp.unchecked {
+        .scratch-lite-note{
+            font-size:.68rem;
+            line-height:1.4;
             color:#64748b;
-            background:rgba(248,250,252,.94);
+        }
+        @media (max-width:640px){
+            .scratch-lite-wrap{
+                height:38vh;
+                max-height:46vh;
+                min-height:250px;
+            }
+            .ai-chat-log{ max-height:190px; }
+            .ai-chat-compose{ grid-template-columns:1fr; }
+            .ai-send-btn{ width:100%; }
+        }
+
+        /* Print notes */
+        @media print{
+            body.print-notes-mode > *:not(#dev-print-host){
+                display:none !important;
+            }
+            body.print-notes-mode{
+                background:#fff !important;
+                padding:0 !important;
+                margin:0 !important;
+                display:block !important;
+            }
+            body.print-notes-mode #dev-print-host{
+                display:block !important;
+            }
+            .print-note-image{
+                display:block;
+                width:100%;
+                height:auto;
+                border:1px solid #777;
+                border-radius:2mm;
+                margin-top:4mm;
+            }
+            .print-note-caption{
+                font-size:9.5pt;
+                color:#555;
+                margin-top:2mm;
+            }
+        }
+
+
+        /* === Printable Answer Record === */
+        @media print{
+            body.print-answer-record-mode > *:not(#dev-print-host){
+                display:none !important;
+            }
+            body.print-answer-record-mode{
+                background:#fff !important;
+                padding:0 !important;
+                margin:0 !important;
+                display:block !important;
+            }
+            body.print-answer-record-mode #dev-print-host{
+                display:block !important;
+            }
+            .answer-record-header{
+                border-bottom:2px solid #111;
+                padding-bottom:5mm;
+                margin-bottom:6mm;
+            }
+            .answer-record-title{
+                font-size:18pt;
+                font-weight:900;
+                line-height:1.25;
+            }
+            .answer-record-sub{
+                font-size:9.5pt;
+                color:#444;
+                margin-top:2mm;
+                line-height:1.45;
+            }
+            .answer-record-meta{
+                display:grid;
+                grid-template-columns:1fr 1fr;
+                gap:4mm 10mm;
+                margin:5mm 0 7mm;
+                font-size:10pt;
+            }
+            .answer-record-line{
+                display:inline-block;
+                min-width:52mm;
+                border-bottom:1px solid #777;
+                height:5mm;
+                vertical-align:bottom;
+            }
+            .answer-record-item{
+                page-break-inside:avoid;
+                break-inside:avoid;
+                border:1px solid #aaa;
+                border-radius:2mm;
+                padding:4mm;
+                margin-bottom:4mm;
+            }
+            .answer-record-qno{
+                font-size:11pt;
+                font-weight:900;
+                margin-bottom:2mm;
+            }
+            .answer-record-question{
+                font-size:9.5pt;
+                line-height:1.45;
+                margin-bottom:3mm;
+            }
+            .answer-record-selected{
+                border-top:1px dashed #aaa;
+                padding-top:2.5mm;
+                font-size:10pt;
+                line-height:1.5;
+            }
+            .answer-record-selected b{
+                font-weight:900;
+            }
+            .answer-record-status{
+                margin-top:1.5mm;
+                font-size:8.8pt;
+                color:#555;
+            }
+            .answer-record-footer{
+                margin-top:7mm;
+                padding-top:4mm;
+                border-top:1px solid #aaa;
+                font-size:8.5pt;
+                color:#555;
+                line-height:1.45;
+            }
+        }
+
+
+        .scratch-lite-btn.ai{
+            color:#6d28d9;
+            border-color:#c4b5fd;
+            background:#f5f3ff;
+        }
+        .scratch-lite-btn.ai:hover{ background:#ede9fe; }
+        .scratch-lite-ai-status{
+            font-size:.68rem;
+            color:#6d28d9;
+            font-weight:800;
         }
 
 </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 </head>
 <body class="text-gray-800 min-h-screen flex flex-col items-center py-6 px-4">
+
 
 
 
 <div id="fb-gate" class="fb-gate">
   <div class="fb-card">
     <div id="fb-gate-kicker" style="font-size:12px;font-weight:900;color:#6366f1;letter-spacing:.15em;text-transform:uppercase">
-      Template v1.17 · Firebase + Scratchpad
+      Template v1.19 · Firebase + Dual AI + Scratch Lite
     </div>
     <h2 id="fb-gate-title" style="font-size:26px;font-weight:900;color:#0f172a;margin:8px 0 4px">
       เข้าสู่ Quiz / Enter Quiz
     </h2>
     <p id="fb-gate-copy" style="color:#64748b;font-size:14px;line-height:1.65;margin:0 0 18px">
       เข้าสู่ระบบด้วย Google เพื่อบันทึกความคืบหน้า Quiz และแสดงสถานะออนไลน์<br>
-      Sign in with Google to restore quiz progress and show live presence.
+      Sign in with Google to restore quiz progress, save your work, and show live presence.
     </p>
 
     <button id="fb-signin" class="fb-google">
@@ -640,8 +780,8 @@
     <div id="fb-error" class="fb-error"></div>
 
     <div style="font-size:11px;color:#94a3b8;line-height:1.55;margin-top:14px">
-      ✍️ เวอร์ชันนี้บันทึกสถานะ Quiz ขึ้น Firebase แต่ยังไม่อัปโหลดรอยปากกาไป Cloud เพื่อไม่ให้กระทบความลื่นของ Apple Pencil<br>
-      Quiz progress is cloud-saved. Handwriting remains local to this browser for now and is included when exporting PDF.
+      ☁️ เวอร์ชันนี้บันทึกความคืบหน้า Quiz ขึ้น Firebase และสามารถกลับมาทำต่อได้<br>
+      Quiz progress is saved to Firebase and can be restored when the student returns.
     </div>
   </div>
 </div>
@@ -703,6 +843,7 @@
         กำลังโหลดแบบทดสอบ... / Loading Mastery Quiz...
     </div>
 </div>
+<div id="dev-print-host" aria-hidden="true"></div>
 
 <!-- ============================================================
      ✏️✏️✏️  MASTER QUIZ TEMPLATE · EDIT ZONE  ✏️✏️✏️
@@ -1924,8 +2065,114 @@ window.QUIZ_TEMPLATE = {
     ]
 };
 
+
 // ไม่ต้องแก้บรรทัดนี้
 document.title = window.QUIZ_TEMPLATE.title;
+
+/* ============================================================
+   DEV PRINT PACK
+   - Worksheet: questions + choices + working space
+   - Answer key: questions + choices + correct answer + detailed solution
+   ============================================================ */
+window.devPrintQuiz = async function(withSolutions = false) {
+    const host = document.getElementById('dev-print-host');
+    if (!host) return;
+
+    const cfg = window.QUIZ_TEMPLATE;
+    const letters = ['A','B','C','D','E','F','G'];
+
+    const cover = `
+      <section class="print-page">
+        <div class="print-cover">
+          <div class="print-title">${cfg.title}</div>
+          <div class="print-subtitle">${cfg.subtitle || ''}</div>
+
+          <div class="print-meta">
+            <div class="print-meta-row">
+              <div>ชื่อ / Name: <span class="print-line"></span></div>
+              <div>ชั้น / Class: <span class="print-line"></span></div>
+            </div>
+            <div class="print-meta-row" style="margin-top:4mm">
+              <div>วันที่ / Date: <span class="print-line"></span></div>
+              <div>คะแนน / Score: <span class="print-line"></span></div>
+            </div>
+          </div>
+
+          <div class="print-instruction">
+            <b>${withSolutions ? 'เฉลยพร้อมวิธีทำ / Answer Key with Solutions' : 'แบบฝึกหัดสำหรับพิมพ์ / Printable Worksheet'}</b><br>
+            ${withSolutions
+              ? 'เอกสารนี้แสดงคำตอบที่ถูกและเฉลยละเอียดของทุกข้อ / This version includes the correct answer and detailed solution for every question.'
+              : 'เลือกคำตอบที่ถูกต้องที่สุดในแต่ละข้อ และแสดงวิธีทำในพื้นที่ที่กำหนด / Choose the best answer for each question and show your working in the space provided.'}
+          </div>
+        </div>
+      </section>`;
+
+    const pages = cfg.questions.map((q, qi) => {
+        const correct = q.options.find(opt => opt.isCorrect);
+        const options = q.options.map((opt, oi) => `
+          <div class="print-option">
+            <b>${letters[oi] || (oi+1)}.</b> ${opt.text}
+          </div>`).join('');
+
+        return `
+          <section class="print-page">
+            <div class="print-q">
+              <div class="print-q-head">Question ${qi + 1} / ข้อ ${qi + 1}</div>
+              <div class="print-q-th question-math">${q.questionTH}</div>
+              <div class="print-q-en question-math">${q.questionEN}</div>
+
+              <div class="print-options">${options}</div>
+
+              ${withSolutions ? `
+                <div class="print-solution">
+                  <div class="print-solution-title">เฉลย / Solution</div>
+                  <div class="print-correct">
+                    ✓ คำตอบที่ถูก / Correct answer:
+                    <span class="question-math">${correct ? correct.text : '-'}</span>
+                  </div>
+                  <div class="print-solution-body question-math">${q.solutionTH || ''}</div>
+                  <div class="print-solution-body question-math">${q.solutionEN || ''}</div>
+                </div>
+              ` : `
+                <div class="print-answer-box">
+                  พื้นที่แสดงวิธีทำ / Working:
+                </div>
+              `}
+            </div>
+          </section>`;
+    }).join('');
+
+    host.innerHTML = cover + pages;
+    host.setAttribute('aria-hidden','false');
+
+    document.body.classList.add('print-pack-mode');
+
+    try {
+        if (window.MathJax && MathJax.typesetPromise) {
+            if (MathJax.typesetClear) MathJax.typesetClear([host]);
+            await MathJax.typesetPromise([host]);
+        }
+    } catch (err) {
+        console.warn('Print MathJax:', err);
+    }
+
+    await new Promise(resolve =>
+        requestAnimationFrame(() => requestAnimationFrame(resolve))
+    );
+
+    window.print();
+};
+
+window.addEventListener('afterprint', () => {
+    document.body.classList.remove('print-pack-mode');
+    document.body.classList.remove('print-notes-mode');
+    document.body.classList.remove('print-answer-record-mode');
+    const host = document.getElementById('dev-print-host');
+    if (host) {
+        host.setAttribute('aria-hidden','true');
+        host.innerHTML = '';
+    }
+});
 </script>
 <!-- ====================== END EDIT ZONE ====================== -->
 
@@ -1958,6 +2205,10 @@ document.title = window.QUIZ_TEMPLATE.title;
 })();
 </script>
 
+
+<script>
+window.DEV_NO_LOGIN = false;
+</script>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
@@ -2041,9 +2292,38 @@ let progressSaveTimer = null;
 let currentPresence = {
   qId: "q1",
   qNo: 1,
-  activity: "VIEWING",
-  scratchPage: 1
+  activity: "VIEWING"
 };
+
+/* === DEVELOPMENT MODE: bypass Google login and Firebase gate === */
+if (window.DEV_NO_LOGIN) {
+  try {
+    gate?.classList.add("hidden");
+    userbar?.classList.remove("show");
+    if (userbar) userbar.style.display = "none";
+    if (cloudStatusEl) cloudStatusEl.textContent = "☁️ Connecting...";
+  } catch (_) {}
+
+  // Minimal no-op APIs so the quiz engine can run unchanged.
+  window.ExamatePresence = {
+    setQuizState() {},
+    setActivity() {},
+    getUser() { return null; }
+  };
+
+  window.ExamateProgress = {
+    get uid() { return null; },
+    async load() { return null; },
+    save() {},
+    async clear() {}
+  };
+
+  // Tell the quiz engine it is safe to render immediately.
+  document.addEventListener("DOMContentLoaded", () => {
+    try { gate?.classList.add("hidden"); } catch (_) {}
+  }, { once:true });
+}
+
 
 const avatar = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(
   `<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'>
@@ -2109,7 +2389,6 @@ async function writePresenceNow() {
       quizTitle: QUIZ_TITLE,
       currentQuestion: String(currentPresence.qId || "").slice(0, 32),
       questionNumber: Number(currentPresence.qNo) || 1,
-      scratchPage: Math.max(1, Number(currentPresence.scratchPage) || 1),
       activity: String(currentPresence.activity || "VIEWING").slice(0, 32),
       lastActiveAt: serverTimestamp(),
       connectedAt
@@ -2139,20 +2418,16 @@ function touchPresence(activity) {
 }
 
 window.ExamatePresence = {
-  setQuizState(qId, qNo, activity, scratchPage) {
+  setQuizState(qId, qNo, activity) {
     currentPresence = {
       qId: qId || currentPresence.qId,
       qNo: Number(qNo) || currentPresence.qNo,
-      activity: activity || currentPresence.activity,
-      scratchPage: Math.max(1, Number(scratchPage) || currentPresence.scratchPage)
+      activity: activity || currentPresence.activity
     };
     touchPresence(activity);
   },
 
-  setActivity(activity, page) {
-    if (page != null) {
-      currentPresence.scratchPage = Math.max(1, Number(page) || 1);
-    }
+  setActivity(activity) {
     touchPresence(activity);
   },
 
@@ -2243,9 +2518,7 @@ function activityText(activity) {
   return ({
     VIEWING: "👀 Viewing",
     ANSWERING: "✅ Answering",
-    WRITING: "✍️ Writing",
     READING_HINT: "💡 Hint",
-    AI_CHECK: "🤖 AI Check",
     GIVE_UP: "🏳 Give Up",
     SUBMITTED: "📤 Submitted"
   })[activity] || activity || "👀 Viewing";
@@ -2321,10 +2594,7 @@ function renderInlineMonitor() {
       </div>
 
       <div style="display:flex;justify-content:space-between;align-items:end;gap:10px;margin-top:8px">
-        <div>
-          <div class="fb-student-q">Q${Number(row.questionNumber || 1)}</div>
-          <div class="fb-student-meta">Scratchpad: Page ${Number(row.scratchPage || 1)}</div>
-        </div>
+        <div><div class="fb-student-q">Q${Number(row.questionNumber || 1)}</div></div>
         <div style="font-size:12px;font-weight:800;color:#334155;text-align:right">
           ${escapeFbHTML(activityText(row.activity))}
         </div>
@@ -2465,6 +2735,7 @@ window.ExamateProgress = {
 };
 
 signin.onclick = async () => {
+  if (window.DEV_NO_LOGIN) return;
   signin.disabled = true;
   showErr("");
 
@@ -2501,6 +2772,7 @@ signin.onclick = async () => {
 };
 
 signoutBtn.onclick = async () => {
+  if (window.DEV_NO_LOGIN) return;
   try {
     if (presRef) {
       await update(presRef, {
@@ -2520,6 +2792,7 @@ document.addEventListener("examate-progress-ready", event => {
   }
 });
 
+if (!window.DEV_NO_LOGIN) {
 try {
   await setPersistence(auth, browserLocalPersistence);
 } catch (err) {
@@ -2588,6 +2861,11 @@ onAuthStateChanged(auth, async currentUser => {
     })
   );
 });
+} else {
+  // Development build: unlock immediately, no account required.
+  gate?.classList.add("hidden");
+  userbar?.classList.remove("show");
+}
 </script>
 
 <script>
@@ -2611,31 +2889,6 @@ let state = {
     hintLevels: {},
     masteredIds: [],
     masteredAnswers: {},
-    showScratchpad: false,
-    scratchpadData: {},
-    scratchpadPages: {},
-    scratchpadPageIndex: {},
-    scratchpadCopiedQuestion: {},
-    scratchpadInputMode: 'pen',
-    scratchpadTool: 'pen',
-    scratchpadColor: '#0f172a',
-    scratchpadWidth: 2.3,
-    scratchpadUndo: {},
-    scratchpadRedo: {},
-    // Vector Ink v1: actions are strokes/erasers/clear operations.
-    // PNG is now only a checkpoint for AI/PDF/page changes, never per stroke.
-    scratchpadActions: {},
-    scratchpadRedoActions: {},
-    // Fabric Scratchpad test: editable page JSON + lightweight operation history.
-    scratchpadFabricJson: {},
-    scratchpadFabricOps: {},
-    scratchpadFabricRedoOps: {},
-    scratchpadHasInk: {},
-    scratchScrollTop: {},
-    aiAnchor: {},
-    aiFeedback: {},
-    aiLoading: {},
-    aiErrors: {},
     view: 'exam',
     startedAt: null,
     attemptStartedAt: null,
@@ -2661,8 +2914,7 @@ function cloudProgressSnapshot() {
         startedAt: state.startedAt,
         attemptStartedAt: state.attemptStartedAt,
         finishedAt: state.finishedAt,
-        attemptHistory: state.attemptHistory,
-        scratchpadPageIndex: state.scratchpadPageIndex
+        attemptHistory: state.attemptHistory
     };
 }
 
@@ -2689,15 +2941,12 @@ function applyCloudProgress(savedState) {
     state.attemptStartedAt = Number(savedState.attemptStartedAt) || Date.now();
     state.finishedAt = savedState.finishedAt ? Number(savedState.finishedAt) : null;
     state.attemptHistory = Array.isArray(savedState.attemptHistory) ? savedState.attemptHistory : [];
-    state.scratchpadPageIndex = savedState.scratchpadPageIndex && typeof savedState.scratchpadPageIndex === 'object'
-        ? savedState.scratchpadPageIndex : {};
 
-    // Phase 1.5 intentionally does not restore handwriting.
-    state.showScratchpad = false;
     return true;
 }
 
 async function bootstrapCloudProgress() {
+    if (window.DEV_NO_LOGIN) return;
     const api = window.ExamateProgress;
     const uid = api?.uid;
     if (!uid || cloudProgressBooting) return;
@@ -2764,24 +3013,6 @@ function initApp() {
     state.hintLevels = {};
     state.masteredIds = [];
     state.masteredAnswers = {};
-    state.showScratchpad = false;
-    state.scratchpadData = {};
-    state.scratchpadPages = {};
-    state.scratchpadPageIndex = {};
-    state.scratchpadCopiedQuestion = {};
-    state.scratchpadUndo = {};
-    state.scratchpadRedo = {};
-    state.scratchpadActions = {};
-    state.scratchpadRedoActions = {};
-    state.scratchpadFabricJson = {};
-    state.scratchpadFabricOps = {};
-    state.scratchpadFabricRedoOps = {};
-    state.scratchpadHasInk = {};
-    state.scratchScrollTop = {};
-    state.aiAnchor = {};
-    state.aiFeedback = {};
-    state.aiLoading = {};
-    state.aiErrors = {};
     state.currentIndex = 0;
     state.attempt = 1;
     state.view = 'exam';
@@ -2795,7 +3026,6 @@ function initApp() {
 }
 
 function prepareRetry() {
-    saveCurrentScratchpad();
     const masteredMap = new Map();
 
     // Gather every item that has already been answered correctly in any prior round.
@@ -2912,21 +3142,18 @@ window.giveUpQuestion = function(qId) {
 
 window.skipQuestion = function() {
     if (state.currentIndex < state.activeQuestions.length - 1) {
-        saveCurrentScratchpad();
-        state.currentIndex++;
+            state.currentIndex++;
         renderApp();
     }
 };
 
 window.goToQuestion = function(index) {
     // Save the currently mounted question before navigation.
-    saveCurrentScratchpad();
     state.currentIndex = index;
     renderApp();
 };
 
 window.submitAll = function() {
-    saveCurrentScratchpad();
     const submittedAt = Date.now();
     const results = evaluateCurrentAttempt();
     const correctCount = results.filter(result => result.isCorrect).length;
@@ -2950,1188 +3177,1176 @@ window.submitAll = function() {
 
 window.startRetry = function() { prepareRetry(); };
 window.restartQuiz = async function() {
-    cloudProgressReady = false;
-    cloudProgressLoadedForUid = window.ExamateProgress?.uid || null;
-    await window.ExamateProgress?.clear();
+    if (!window.DEV_NO_LOGIN) {
+        cloudProgressReady = false;
+        cloudProgressLoadedForUid = window.ExamateProgress?.uid || null;
+        await window.ExamateProgress?.clear();
+    }
     initApp();
     cloudProgressReady = true;
-    window.ExamateProgress?.save(cloudProgressSnapshot());
+    if (!window.DEV_NO_LOGIN) {
+        window.ExamateProgress?.save(cloudProgressSnapshot());
+    }
 };
 
 
-/* ================= SCRATCHPAD + AI ADD-ON ================= */
-let scratchCanvas = null;
-let scratchCtx = null;
 
-// Fabric-based scratchpad. Apple Pencil input is delegated to Fabric's PencilBrush,
-// following the simpler notebook engine used in the user's standalone board.
-let scratchFabricCanvas = null;
-let scratchFabricPageKey = '';
-// Mounted identity prevents ink from one question leaking into another
-// while renderApp() replaces the old Fabric canvas.
-let scratchFabricMountedQId = null;
-let scratchFabricMountedPageIndex = 0;
-let scratchFabricErasing = false;
-let scratchFabricObjectSeq = 0;
-let scratchFabricLoading = false;
 
-const AI_WORKER_URL = 'https://student-work-ai-checker.micksattawatbutklo.workers.dev/';
 
-function scratchCurrentQuestion() {
-    if (state.view !== 'exam') return null;
-    return state.activeQuestions[state.currentIndex] || null;
+/* ============================================================
+   AI CHAT + SCRATCH LITE
+   Independent from renderApp while the student is typing/writing.
+   ============================================================ */
+
+const AI_CHAT_URL = 'https://student-work-ai-checker.micksattawatbutklo.workers.dev/';
+
+const studyToolState = {
+    chat: {},
+    chatLoading: {},
+    scratch: {},
+    scratchTool: 'pen',
+    scratchColor: '#111827',
+    scratchWidth: 2.35
+};
+
+let scratchLiteCanvas = null;
+let scratchLiteCtx = null;
+let scratchLiteQid = null;
+let scratchLiteActiveStroke = null;
+let scratchLiteActiveInput = null;
+let scratchLiteStylusActive = false;
+let scratchLiteLastStylusAt = 0;
+let scratchLiteResizeObserver = null;
+let scratchLiteMountedHandlers = [];
+
+function stQuestion(qId) {
+    return state.activeQuestions.find(q => q.id === qId) ||
+           questionsData.find(q => q.id === qId) || null;
 }
 
-function scratchCurrentQid() {
-    const q = scratchCurrentQuestion();
-    return q ? q.id : null;
+/* ---------------- AI CHAT ---------------- */
+
+function ensureChat(qId) {
+    if (!studyToolState.chat[qId]) studyToolState.chat[qId] = [];
+    return studyToolState.chat[qId];
 }
 
-function ensureScratchPages(qId) {
-    if (!qId) return;
-    if (!Array.isArray(state.scratchpadPages[qId]) || state.scratchpadPages[qId].length === 0) {
-        state.scratchpadPages[qId] = [''];
-    }
-    if (!Number.isInteger(state.scratchpadPageIndex[qId])) {
-        state.scratchpadPageIndex[qId] = 0;
-    }
-    state.scratchpadPageIndex[qId] = Math.max(
-        0,
-        Math.min(state.scratchpadPageIndex[qId], state.scratchpadPages[qId].length - 1)
-    );
+function escapeStudyText(v) {
+    return String(v ?? '')
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;')
+      .replace(/'/g,'&#039;');
 }
 
-function scratchCurrentPageIndex(qId = scratchCurrentQid()) {
-    ensureScratchPages(qId);
-    return qId ? (state.scratchpadPageIndex[qId] || 0) : 0;
-}
+function renderChatLog(qId) {
+    const log = document.getElementById(`ai-chat-log-${qId}`);
+    if (!log) return;
 
-function scratchPageKey(qId = scratchCurrentQid(), pageIndex = scratchCurrentPageIndex(qId)) {
-    return qId ? `${qId}__page_${pageIndex}` : '';
-}
-
-function ensureScratchHistory(pageKey) {
-    if (!pageKey) return;
-    if (!state.scratchpadFabricOps[pageKey]) state.scratchpadFabricOps[pageKey] = [];
-    if (!state.scratchpadFabricRedoOps[pageKey]) state.scratchpadFabricRedoOps[pageKey] = [];
-}
-
-function getScratchPageData(qId, pageIndex) {
-    ensureScratchPages(qId);
-    return state.scratchpadPages[qId][pageIndex] || '';
-}
-
-function setScratchPageData(qId, pageIndex, dataUrl) {
-    ensureScratchPages(qId);
-    state.scratchpadPages[qId][pageIndex] = dataUrl || '';
-    if (pageIndex === 0) state.scratchpadData[qId] = dataUrl || '';
-}
-
-function scratchFabricEnsureId(obj) {
-    if (!obj) return '';
-    if (!obj.__scratchId) {
-        scratchFabricObjectSeq += 1;
-        obj.__scratchId = `ink_${Date.now()}_${scratchFabricObjectSeq}`;
-    }
-    return obj.__scratchId;
-}
-
-function scratchFabricSerializeObject(obj) {
-    return obj ? obj.toObject(['__scratchId']) : null;
-}
-
-function scratchFabricHasInk() {
-    if (!scratchFabricCanvas) return false;
-    return scratchFabricCanvas.getObjects().some(obj =>
-        obj && (obj.type === 'path' || obj.__legacyScratchInk)
-    );
-}
-
-function scratchFabricSetObjectMode() {
-    if (!scratchFabricCanvas) return;
-
-    const eraserMode = state.scratchpadTool === 'eraser';
-
-    scratchFabricCanvas.selection = false;
-    scratchFabricCanvas.skipTargetFind = !eraserMode;
-
-    scratchFabricCanvas.getObjects().forEach(obj => {
-        obj.selectable = false;
-        obj.evented = eraserMode && (obj.type === 'path' || obj.__legacyScratchInk);
-        obj.setCoords?.();
-    });
-}
-
-function scratchFabricApplyTool() {
-    if (!scratchFabricCanvas || !window.fabric) return;
-
-    scratchFabricSetObjectMode();
-
-    if (state.scratchpadTool === 'eraser') {
-        scratchFabricCanvas.isDrawingMode = false;
-        scratchFabricCanvas.defaultCursor = 'crosshair';
+    const history = ensureChat(qId);
+    if (!history.length) {
+        log.innerHTML = `
+          <div class="ai-chat-empty">
+            พิมพ์ถามเกี่ยวกับข้อนี้ได้เลย เช่น “ผมควรเริ่มจากตรงไหน?”<br>
+            Ask about the current question, e.g. “What should I do first?”
+          </div>`;
         return;
     }
 
-    // Always create a fresh PencilBrush when switching pen settings.
-    scratchFabricCanvas.freeDrawingBrush = new fabric.PencilBrush(scratchFabricCanvas);
-    scratchFabricCanvas.freeDrawingBrush.color = state.scratchpadColor || '#0f172a';
-    scratchFabricCanvas.freeDrawingBrush.width = Math.max(1.5, Number(state.scratchpadWidth) || 2.3);
-    scratchFabricCanvas.defaultCursor = 'crosshair';
+    log.innerHTML = history.map(m => `
+      <div class="ai-msg ${m.role === 'user' ? 'user' : (m.role === 'assistant' ? 'assistant' : 'system')}">
+        ${escapeStudyText(m.text)}
+      </div>`).join('');
 
-    // IMPORTANT for iPad/Safari + Fabric 5:
-    // Keep the brush armed BEFORE contact. In the user's working notebook,
-    // Fabric starts with isDrawingMode:true. Some Safari Pencil sequences can
-    // reach Fabric's touch/mouse handler before our pointerdown gate.
-    // pointerdown below only disables drawing for a finger in Pen mode.
-    scratchFabricCanvas.isDrawingMode = true;
+    log.scrollTop = log.scrollHeight;
 }
 
-function scratchFabricSaveMemory(makePng = true) {
-    if (!scratchFabricCanvas || scratchFabricLoading) return;
-
-    // Save to the Q/page this Fabric instance actually belongs to.
-    const qId = scratchFabricMountedQId;
-    const pageIndex = scratchFabricMountedPageIndex;
-    const pageKey = scratchFabricPageKey;
-
-    if (!qId || !pageKey || !Number.isInteger(pageIndex)) return;
-
-    try {
-        state.scratchpadFabricJson[pageKey] =
-            JSON.stringify(scratchFabricCanvas.toJSON(['__scratchId', '__legacyScratchInk']));
-
-        state.scratchpadHasInk[pageKey] = scratchFabricHasInk();
-
-        if (makePng) {
-            const png = scratchFabricCanvas.toDataURL({
-                format:'png',
-                multiplier:1,
-                enableRetinaScaling:false
-            });
-            setScratchPageData(qId, pageIndex, png);
-        }
-    } catch (err) {
-        console.warn('Fabric scratchpad save failed:', err);
+function setChatBusy(qId, busy) {
+    studyToolState.chatLoading[qId] = Boolean(busy);
+    const btn = document.getElementById(`ai-send-${qId}`);
+    if (btn) {
+        btn.disabled = Boolean(busy);
+        btn.textContent = busy ? 'กำลังคิด... / Thinking...' : 'ส่ง / Send';
     }
-
-    const scrollEl = document.querySelector('.scratch-scroll');
-    if (scrollEl) state.scratchScrollTop[pageKey] = scrollEl.scrollTop;
 }
 
-function saveCurrentScratchpad() {
-    scratchFabricSaveMemory(true);
-}
-
-function scratchFabricAddLegacyImage(dataUrl, done) {
-    if (!scratchFabricCanvas || !dataUrl || !window.fabric) {
-        done?.();
-        return;
-    }
-
-    fabric.Image.fromURL(dataUrl, img => {
-        if (!img || !scratchFabricCanvas) {
-            done?.();
-            return;
-        }
-
-        const scaleX = scratchFabricCanvas.getWidth() / Math.max(1, img.width || 1);
-        const scaleY = scratchFabricCanvas.getHeight() / Math.max(1, img.height || 1);
-
-        img.set({
-            left:0,
-            top:0,
-            originX:'left',
-            originY:'top',
-            scaleX,
-            scaleY,
-            selectable:false,
-            evented:false,
-            __legacyScratchInk:true
-        });
-
-        scratchFabricEnsureId(img);
-        scratchFabricCanvas.add(img);
-        scratchFabricCanvas.sendToBack(img);
-        done?.();
-    });
-}
-
-window.toggleScratchpad = function() {
-    if (state.showScratchpad) saveCurrentScratchpad();
-    state.showScratchpad = !state.showScratchpad;
-    renderApp();
-};
-
-window.copyQuestionToScratchpad = function() {
-    const qId = scratchCurrentQid();
-    if (!qId) return;
-
-    saveCurrentScratchpad();
-    ensureScratchPages(qId);
-    const pageIndex = scratchCurrentPageIndex(qId);
-    const pageKey = scratchPageKey(qId, pageIndex);
-
-    state.scratchpadCopiedQuestion[pageKey] = true;
-    state.showScratchpad = true;
-    renderApp();
-};
-
-window.setScratchInputMode = function(mode) {
-    saveCurrentScratchpad();
-    state.scratchpadInputMode = mode === 'finger' ? 'finger' : 'pen';
-    renderApp();
-};
-
-window.setScratchPen = function(color) {
-    saveCurrentScratchpad();
-    state.scratchpadTool = 'pen';
-    state.scratchpadColor = color;
-    state.scratchpadWidth = 2.3;
-    renderApp();
-};
-
-window.setScratchEraser = function() {
-    saveCurrentScratchpad();
-    state.scratchpadTool = 'eraser';
-    state.scratchpadWidth = 22;
-    renderApp();
-};
-
-window.clearScratchInk = function() {
-    if (!scratchFabricCanvas) return;
-
-    const qId = scratchCurrentQid();
-    const pageIndex = scratchCurrentPageIndex(qId);
-    const pageKey = scratchPageKey(qId, pageIndex);
-    ensureScratchHistory(pageKey);
-
-    const removed = scratchFabricCanvas.getObjects().map(scratchFabricSerializeObject).filter(Boolean);
-
-    if (removed.length) {
-        state.scratchpadFabricOps[pageKey].push({
-            type:'clear',
-            objects:removed
-        });
-        state.scratchpadFabricRedoOps[pageKey] = [];
-    }
-
-    scratchFabricCanvas.getObjects().slice().forEach(obj => scratchFabricCanvas.remove(obj));
-    scratchFabricCanvas.requestRenderAll();
-
-    state.scratchpadHasInk[pageKey] = false;
-    state.aiFeedback[pageKey] = null;
-    state.aiErrors[pageKey] = '';
-};
-
-function scratchFabricEnliven(objectData, callback) {
-    if (!objectData || !window.fabric) {
-        callback?.(null);
-        return;
-    }
-    fabric.util.enlivenObjects([objectData], objects => callback?.(objects?.[0] || null));
-}
-
-function scratchFabricFindById(id) {
-    if (!scratchFabricCanvas || !id) return null;
-    return scratchFabricCanvas.getObjects().find(obj => obj.__scratchId === id) || null;
-}
-
-window.undoScratch = function() {
-    if (!scratchFabricCanvas) return;
-
-    const qId = scratchCurrentQid();
-    const pageIndex = scratchCurrentPageIndex(qId);
-    const pageKey = scratchPageKey(qId, pageIndex);
-    ensureScratchHistory(pageKey);
-
-    const ops = state.scratchpadFabricOps[pageKey];
-    if (!ops.length) return;
-
-    const op = ops.pop();
-    state.scratchpadFabricRedoOps[pageKey].push(op);
-
-    if (op.type === 'add') {
-        const obj = scratchFabricFindById(op.id);
-        if (obj) scratchFabricCanvas.remove(obj);
-        scratchFabricCanvas.requestRenderAll();
-    } else if (op.type === 'remove') {
-        scratchFabricEnliven(op.object, obj => {
-            if (!obj || !scratchFabricCanvas) return;
-            obj.selectable = false;
-            obj.evented = state.scratchpadTool === 'eraser';
-            scratchFabricCanvas.add(obj);
-            scratchFabricCanvas.requestRenderAll();
-        });
-    } else if (op.type === 'clear') {
-        const list = op.objects || [];
-        let pending = list.length;
-        if (!pending) return;
-
-        list.forEach(data => scratchFabricEnliven(data, obj => {
-            if (obj && scratchFabricCanvas) {
-                obj.selectable = false;
-                obj.evented = state.scratchpadTool === 'eraser';
-                scratchFabricCanvas.add(obj);
-            }
-            pending -= 1;
-            if (pending <= 0 && scratchFabricCanvas) scratchFabricCanvas.requestRenderAll();
-        }));
-    }
-
-    state.scratchpadHasInk[pageKey] = true;
-};
-
-window.redoScratch = function() {
-    if (!scratchFabricCanvas) return;
-
-    const qId = scratchCurrentQid();
-    const pageIndex = scratchCurrentPageIndex(qId);
-    const pageKey = scratchPageKey(qId, pageIndex);
-    ensureScratchHistory(pageKey);
-
-    const redo = state.scratchpadFabricRedoOps[pageKey];
-    if (!redo.length) return;
-
-    const op = redo.pop();
-    state.scratchpadFabricOps[pageKey].push(op);
-
-    if (op.type === 'add') {
-        scratchFabricEnliven(op.object, obj => {
-            if (!obj || !scratchFabricCanvas) return;
-            obj.selectable = false;
-            obj.evented = state.scratchpadTool === 'eraser';
-            scratchFabricCanvas.add(obj);
-            scratchFabricCanvas.requestRenderAll();
-        });
-    } else if (op.type === 'remove') {
-        const obj = scratchFabricFindById(op.id);
-        if (obj) scratchFabricCanvas.remove(obj);
-        scratchFabricCanvas.requestRenderAll();
-    } else if (op.type === 'clear') {
-        scratchFabricCanvas.getObjects().slice().forEach(obj => scratchFabricCanvas.remove(obj));
-        scratchFabricCanvas.requestRenderAll();
-    }
-
-    state.scratchpadHasInk[pageKey] = scratchFabricHasInk();
-};
-
-window.addScratchPage = function() {
-    const qId = scratchCurrentQid();
-    if (!qId) return;
-
-    saveCurrentScratchpad();
-    ensureScratchPages(qId);
-
-    state.scratchpadPages[qId].push('');
-    state.scratchpadPageIndex[qId] = state.scratchpadPages[qId].length - 1;
-    state.showScratchpad = true;
-
-    renderApp();
-};
-
-window.previousScratchPage = function() {
-    const qId = scratchCurrentQid();
-    if (!qId) return;
-
-    saveCurrentScratchpad();
-    ensureScratchPages(qId);
-
-    const current = scratchCurrentPageIndex(qId);
-    if (current <= 0) return;
-
-    state.scratchpadPageIndex[qId] = current - 1;
-    renderApp();
-};
-
-window.nextScratchPage = function() {
-    const qId = scratchCurrentQid();
-    if (!qId) return;
-
-    saveCurrentScratchpad();
-    ensureScratchPages(qId);
-
-    const current = scratchCurrentPageIndex(qId);
-    if (current >= state.scratchpadPages[qId].length - 1) return;
-
-    state.scratchpadPageIndex[qId] = current + 1;
-    renderApp();
-};
-
-function initScratchCanvas() {
-    const rawCanvas = document.getElementById('scratchpad-canvas');
-    if (!rawCanvas) return;
-
-    if (!window.fabric || !fabric.Canvas || !fabric.PencilBrush) {
-        console.error('Fabric.js 5.3.1 is not available.');
-        const status = document.querySelector('.scratch-status');
-        if (status) {
-            status.textContent =
-                '❌ Fabric.js โหลดไม่สำเร็จ / Fabric.js failed to load. Check internet access and refresh.';
-        }
-        return;
-    }
-
-    // Dispose the old instance after renderApp replaced the DOM.
-    if (scratchFabricCanvas) {
-        try { scratchFabricCanvas.dispose(); } catch (_) {}
-        scratchFabricCanvas = null;
-    }
-
-    const sheet = rawCanvas.closest('.scratch-sheet');
-    const viewportEl = rawCanvas.closest('.scratch-viewport');
-    const scrollEl = rawCanvas.closest('.scratch-scroll') || document.querySelector('.scratch-scroll');
-    if (!sheet) return;
-
-    const width = Math.max(1, Math.round(sheet.clientWidth));
-    const height = Math.max(1, Math.round(sheet.clientHeight));
-
-    const qId = scratchCurrentQid();
-    ensureScratchPages(qId);
-    const pageIndex = scratchCurrentPageIndex(qId);
-    const pageKey = scratchPageKey(qId, pageIndex);
-    ensureScratchHistory(pageKey);
-
-    scratchFabricMountedQId = qId;
-    scratchFabricMountedPageIndex = pageIndex;
-    scratchFabricPageKey = pageKey;
-    scratchFabricLoading = true;
-
-    console.log(`📄 Scratchpad mounted: ${qId} · page ${pageIndex + 1}`);
-
-    scratchFabricCanvas = new fabric.Canvas('scratchpad-canvas', {
-        // Match the working notebook: keep PencilBrush armed before the first Pencil contact.
-        isDrawingMode:true,
-        selection:false,
-        width,
-        height,
-        backgroundColor:'rgba(0,0,0,0)',
-        allowTouchScrolling:false,
-        stopContextMenu:true,
-        preserveObjectStacking:true,
-        enableRetinaScaling:true
-    });
-
-    // Keep legacy references alive for AI/PDF helper code.
-    scratchCanvas = scratchFabricCanvas.lowerCanvasEl;
-    scratchCtx = scratchCanvas.getContext('2d');
-
-    const wrapper = scratchFabricCanvas.wrapperEl;
-    const upper = scratchFabricCanvas.upperCanvasEl;
-    const lower = scratchFabricCanvas.lowerCanvasEl;
-
-    if (wrapper) {
-        Object.assign(wrapper.style, {
-            position:'absolute',
-            inset:'0',
-            width:'100%',
-            height:'100%',
-            zIndex:'2',
-            touchAction:'none',
-            WebkitUserSelect:'none',
-            userSelect:'none',
-            WebkitTouchCallout:'none'
-        });
-    }
-
-    // Fabric creates two canvases:
-    //   lowerCanvas = visible committed drawing
-    //   upperCanvas = the actual interactive input surface
-    //
-    // IMPORTANT: #scratchpad-canvas is the LOWER canvas after Fabric wraps it.
-    // The old scratchpad CSS gave that ID z-index:2, which could place the
-    // lower canvas ABOVE Fabric's upper canvas and steal every Pencil event.
-    Object.assign(lower.style, {
-        width:'100%',
-        height:'100%',
-        touchAction:'none',
-        WebkitUserSelect:'none',
-        userSelect:'none',
-        WebkitTouchCallout:'none',
-        WebkitTapHighlightColor:'transparent',
-        zIndex:'1',
-        pointerEvents:'none'
-    });
-
-    Object.assign(upper.style, {
-        width:'100%',
-        height:'100%',
-        touchAction:'none',
-        WebkitUserSelect:'none',
-        userSelect:'none',
-        WebkitTouchCallout:'none',
-        WebkitTapHighlightColor:'transparent',
-        zIndex:'3',
-        pointerEvents:'auto'
-    });
-
-    const dbgLayer = document.getElementById('scratch-input-debug');
-    if (dbgLayer) {
-        dbgLayer.textContent = 'upper-canvas ready · waiting for Pencil';
-    }
-
-    const blockNativeCallout = e => e.preventDefault();
-    upper.addEventListener('contextmenu', blockNativeCallout, { passive:false });
-    upper.addEventListener('selectstart', blockNativeCallout, { passive:false });
-    upper.addEventListener('dragstart', blockNativeCallout, { passive:false });
-
-    // This is the key pattern copied from the working notebook:
-    // pointerdown only decides whether Fabric is allowed to draw.
-    // Fabric itself owns the actual stroke lifecycle.
-    upper.addEventListener('pointerdown', function(e) {
-        scratchFabricCanvas._lastPointerType = e.pointerType;
-
-        if (state.scratchpadTool === 'eraser') {
-            scratchFabricCanvas.isDrawingMode = false;
-            scratchFabricSetObjectMode();
-            return;
-        }
-
-        scratchFabricCanvas.skipTargetFind = true;
-        scratchFabricCanvas.selection = false;
-
-        if (state.scratchpadInputMode === 'pen') {
-            // Same pattern as the working Fabric notebook:
-            // Pencil/mouse stays armed; finger turns drawing off.
-            scratchFabricCanvas.isDrawingMode =
-                e.pointerType === 'pen' || e.pointerType === 'mouse';
-        } else {
-            scratchFabricCanvas.isDrawingMode = true;
-        }
-
-        const dbg = document.getElementById('scratch-input-debug');
-        if (dbg) {
-            dbg.textContent = `input=${e.pointerType} · drawing=${scratchFabricCanvas.isDrawingMode ? 'ON' : 'OFF'}`;
-        }
-
-        window.ExamatePresence?.setActivity('WRITING', pageIndex + 1);
-    }, true);
-
-    // Passive location tracking only. No preventDefault, no pointer capture,
-    // no custom pointer lifecycle.
-    upper.addEventListener('pointermove', function(e) {
-        if (e.pointerType !== 'pen' && e.pointerType !== 'mouse' && e.pointerType !== 'touch') return;
-        if (!viewportEl) return;
-
-        const vr = viewportEl.getBoundingClientRect();
-        state.aiAnchor[pageKey] = {
-            xRatio:Math.max(0, Math.min(1, (e.clientX - vr.left) / Math.max(1, vr.width))),
-            visibleY:Math.max(0, e.clientY - vr.top)
-        };
-    }, { passive:true });
-
-    let eraseSeen = new Set();
-
-    const removeEraserTarget = target => {
-        if (!scratchFabricCanvas || !target) return;
-        if (!(target.type === 'path' || target.__legacyScratchInk)) return;
-
-        const id = scratchFabricEnsureId(target);
-        if (eraseSeen.has(id)) return;
-        eraseSeen.add(id);
-
-        const objectData = scratchFabricSerializeObject(target);
-
-        state.scratchpadFabricOps[pageKey].push({
-            type:'remove',
-            id,
-            object:objectData
-        });
-        state.scratchpadFabricRedoOps[pageKey] = [];
-
-        scratchFabricCanvas.remove(target);
-        scratchFabricCanvas.requestRenderAll();
-        state.scratchpadHasInk[pageKey] = scratchFabricHasInk();
+window.askAIQuick = function(qId, kind) {
+    const input = document.getElementById(`ai-chat-input-${qId}`);
+    if (!input) return;
+
+    const prompts = {
+        hint: 'ช่วยใบ้ขั้นถัดไปให้หน่อย โดยยังไม่บอกคำตอบตรง ๆ / Give me the next hint without giving the answer directly.',
+        check: 'ช่วยตรวจแนวคิดของฉันหน่อย ฉันจะพิมพ์วิธีคิดต่อจากข้อความนี้: / Check my idea. I will type my reasoning after this:',
+        next: 'ตอนนี้ฉันควรทำอะไรต่อ? ช่วยบอกเพียงขั้นถัดไป / What should I do next? Tell me only the next step.',
+        explain: 'ช่วยอธิบายแนวคิดหลักที่ต้องใช้ในข้อนี้แบบกระชับ / Briefly explain the key concept needed for this question.'
     };
 
-    scratchFabricCanvas.on('mouse:down', function(opt) {
-        if (state.scratchpadTool !== 'eraser') return;
-        scratchFabricErasing = true;
-        eraseSeen = new Set();
-        removeEraserTarget(opt.target);
-    });
-
-    scratchFabricCanvas.on('mouse:move', function(opt) {
-        if (!scratchFabricErasing || state.scratchpadTool !== 'eraser') return;
-        removeEraserTarget(opt.target);
-    });
-
-    scratchFabricCanvas.on('mouse:up', function() {
-        scratchFabricErasing = false;
-        eraseSeen.clear();
-    });
-
-    let scratchCreatedPathCount = 0;
-
-    scratchFabricCanvas.on('path:created', function(opt) {
-        const path = opt?.path;
-        if (!path) return;
-
-        scratchCreatedPathCount += 1;
-        const dbg = document.getElementById('scratch-input-debug');
-        if (dbg) {
-            dbg.textContent =
-                `input=${scratchFabricCanvas._lastPointerType || '?'} · path=${scratchCreatedPathCount}`;
-        }
-
-        // Defensive palm rejection. If Fabric creates a path after a touch
-        // while Pen mode is active, delete it immediately.
-        const lastType = scratchFabricCanvas._lastPointerType;
-        if (
-            state.scratchpadInputMode === 'pen' &&
-            lastType &&
-            lastType !== 'pen' &&
-            lastType !== 'mouse'
-        ) {
-            scratchFabricCanvas.remove(path);
-            scratchFabricCanvas.requestRenderAll();
-            return;
-        }
-
-        const id = scratchFabricEnsureId(path);
-        path.selectable = false;
-        path.evented = state.scratchpadTool === 'eraser';
-
-        state.scratchpadFabricOps[pageKey].push({
-            type:'add',
-            id,
-            object:scratchFabricSerializeObject(path)
-        });
-        state.scratchpadFabricRedoOps[pageKey] = [];
-        state.scratchpadHasInk[pageKey] = true;
-
-        // Important: no PNG encoding, no JSON stringify, no renderApp here.
-        // The next Pencil stroke can begin immediately.
-        scratchFabricCanvas.requestRenderAll();
-    });
-
-    if (scrollEl) {
-        requestAnimationFrame(() => {
-            scrollEl.scrollTop = state.scratchScrollTop[pageKey] || 0;
-        });
-        scrollEl.addEventListener('scroll', () => {
-            state.scratchScrollTop[pageKey] = scrollEl.scrollTop;
-        }, { passive:true });
-    }
-
-    const finishLoading = () => {
-        if (!scratchFabricCanvas) return;
-        scratchFabricLoading = false;
-        scratchFabricCanvas.getObjects().forEach(obj => scratchFabricEnsureId(obj));
-        state.scratchpadHasInk[pageKey] = scratchFabricHasInk();
-        scratchFabricApplyTool();
-        scratchFabricCanvas.calcOffset();
-        scratchFabricCanvas.requestRenderAll();
-    };
-
-    const json = state.scratchpadFabricJson[pageKey];
-    const legacyPng = getScratchPageData(qId, pageIndex);
-
-    if (json) {
-        scratchFabricCanvas.loadFromJSON(json, finishLoading);
-    } else if (legacyPng) {
-        scratchFabricAddLegacyImage(legacyPng, finishLoading);
-    } else {
-        finishLoading();
-    }
-}
-
-function escapeHTML(value) {
-    return String(value ?? '')
-        .replace(/&/g,'&amp;')
-        .replace(/</g,'&lt;')
-        .replace(/>/g,'&gt;')
-        .replace(/"/g,'&quot;')
-        .replace(/'/g,'&#039;');
-}
-
-function aiPanelStyle(pageKey) {
-    const anchor = state.aiAnchor[pageKey] || { xRatio:0.72, visibleY:72 };
-
-    const requestedTop = Math.max(14, Math.round((anchor.visibleY || 72) + 24));
-
-    // Show on the opposite side of the writing, so it is less likely to cover it.
-    const side = (anchor.xRatio || 0) > 0.52
-        ? 'left:18px;right:auto;'
-        : 'right:18px;left:auto;';
-
-    return `top:clamp(14px, ${requestedTop}px, calc(100% - 260px));${side}`;
-}
-
-window.checkScratchpadWithAI = async function() {
-    const q = scratchCurrentQuestion();
-    if (!q) return;
-
-    const qId = q.id;
-    const pageIndex = scratchCurrentPageIndex(qId);
-    const pageKey = scratchPageKey(qId, pageIndex);
-
-    if (!state.scratchpadHasInk[pageKey]) {
-        state.aiErrors[pageKey] =
-            'เขียนวิธีทำบนหน้าปัจจุบันก่อน แล้วค่อยให้ AI ช่วยตรวจ / Write some working on the current page before asking AI to review it.';
-        state.aiFeedback[pageKey] = null;
-        renderApp();
-        return;
-    }
-
-    saveCurrentScratchpad();
-
-    state.aiLoading[pageKey] = true;
-    state.aiErrors[pageKey] = '';
-    renderApp();
-
-    try {
-        const savedDataUrl = getScratchPageData(qId, pageIndex);
-        const imageBase64 = savedDataUrl.replace(/^data:image\/png;base64,/, '');
-
-        const response = await fetch(AI_WORKER_URL, {
-            method:'POST',
-            headers:{ 'Content-Type':'application/json' },
-            body:JSON.stringify({
-                question: `${q.questionTH}\n${q.questionEN}`,
-                referenceSolution: `${q.solutionTH || ''}\n${q.solutionEN || ''}`,
-                imageBase64,
-                hintLevel: state.hintLevels[qId] || 0
-            })
-        });
-
-        const data = await response.json().catch(() => ({}));
-
-        if (!response.ok) {
-            throw new Error(data?.error || data?.detail || `HTTP ${response.status}`);
-        }
-
-        const feedback = data?.feedback || data;
-
-        if (!feedback || typeof feedback !== 'object') {
-            throw new Error('AI returned an unexpected response.');
-        }
-
-        state.aiFeedback[pageKey] = feedback;
-        state.aiErrors[pageKey] = '';
-    } catch (err) {
-        state.aiErrors[pageKey] =
-            `AI ตรวจไม่สำเร็จ / AI review failed: ${err.message || String(err)}`;
-    } finally {
-        state.aiLoading[pageKey] = false;
-        renderApp();
-    }
+    input.value = prompts[kind] || '';
+    input.focus();
+    input.setSelectionRange(input.value.length, input.value.length);
 };
 
-function renderAIFeedbackPanel(q, pageIndex) {
-    const qId = q.id;
-    const pageKey = scratchPageKey(qId, pageIndex);
-
-    const loading = Boolean(state.aiLoading[pageKey]);
-    const error = state.aiErrors[pageKey] || '';
-    const fb = state.aiFeedback[pageKey];
-
-    if (!loading && !error && !fb) return '';
-
-    if (loading) {
-        return `
-            <div class="ai-feedback-panel" style="${aiPanelStyle(pageKey)}">
-                <div class="ai-feedback-head">
-                    <span>🤖 AI กำลังตรวจ / AI Reviewing</span>
-                    <span class="ai-anchor-note">หน้า ${pageIndex+1} / Page ${pageIndex+1}</span>
-                </div>
-                <div class="ai-feedback-body">
-                    <span class="ai-spinner"></span>
-                    กำลังตรวจวิธีทำบนหน้าปัจจุบัน... / Reviewing the current scratchpad page...
-                </div>
-            </div>`;
-    }
-
-    if (error) {
-        return `
-            <div class="ai-feedback-panel" style="${aiPanelStyle(pageKey)}">
-                <div class="ai-feedback-head">
-                    <span>🤖 คำแนะนำจาก AI / AI Feedback</span>
-                    <span class="ai-anchor-note">หน้า ${pageIndex+1} / Page ${pageIndex+1}</span>
-                </div>
-                <div class="ai-feedback-body text-rose-700">${escapeHTML(error)}</div>
-            </div>`;
-    }
-
-    const status = escapeHTML(fb.status || '');
-    const correct = escapeHTML(fb.correct_so_far_th || '');
-    const issue = escapeHTML(fb.issue_th || '');
-    const hintTh = escapeHTML(fb.hint_th || '');
-    const hintEn = escapeHTML(fb.hint_en || '');
-    const confidence = Number(fb.confidence);
-
-    return `
-        <div class="ai-feedback-panel" style="${aiPanelStyle(pageKey)}">
-            <div class="ai-feedback-head">
-                <span>🤖 AI ตรวจแล้ว / AI Review</span>
-                <span class="ai-anchor-note">ใกล้จุดที่เขียนล่าสุด · หน้า ${pageIndex+1} / Near latest writing · Page ${pageIndex+1}</span>
-                ${Number.isFinite(confidence)
-                    ? `<span class="text-[10px] font-bold text-violet-500">${Math.round(confidence*100)}%</span>`
-                    : ''}
-            </div>
-
-            <div class="ai-feedback-body">
-                ${correct
-                    ? `<div class="ai-feedback-row"><div class="ai-feedback-label">✓ มาถูกทาง / Correct so far</div><div>${correct}</div></div>`
-                    : ''}
-
-                ${issue
-                    ? `<div class="ai-feedback-row"><div class="ai-feedback-label">🔎 จุดที่ควรตรวจ / Check this</div><div>${issue}</div></div>`
-                    : ''}
-
-                ${hintTh
-                    ? `<div class="ai-feedback-row"><div class="ai-feedback-label">💡 ใบ้ / Hint</div><div>${hintTh}</div></div>`
-                    : ''}
-
-                ${hintEn
-                    ? `<div class="ai-feedback-row text-slate-500"><div class="ai-feedback-label">English hint</div><div>${hintEn}</div></div>`
-                    : ''}
-
-                ${status
-                    ? `<div class="ai-feedback-row text-[11px] text-slate-400">status: ${status}</div>`
-                    : ''}
-            </div>
-        </div>`;
-}
-
-function renderScratchpad(q) {
-    const qId = q.id;
-    ensureScratchPages(qId);
-
-    const pageIndex = scratchCurrentPageIndex(qId);
-    const pageCount = state.scratchpadPages[qId].length;
-    const pageKey = scratchPageKey(qId, pageIndex);
-
-    const copied = Boolean(state.scratchpadCopiedQuestion[pageKey]);
-    const penMode = state.scratchpadInputMode === 'pen';
-
-    return `
-        <div id="scratchpad-shell" class="scratchpad-shell fade-in">
-            <div class="scratchpad-toolbar">
-                <button class="scratch-tool ${penMode ? 'active' : ''}" onclick="setScratchInputMode('pen')">
-                    ✏️ ปากกา · วางมือได้ / Pen · Palm Rejection
-                </button>
-
-                <button class="scratch-tool ${!penMode ? 'active' : ''}" onclick="setScratchInputMode('finger')">
-                    👆 นิ้ว / Finger
-                </button>
-
-                <span class="w-px h-6 bg-slate-300 mx-1"></span>
-
-                <button class="scratch-tool ${state.scratchpadTool==='pen' && state.scratchpadColor==='#0f172a' ? 'active' : ''}" onclick="setScratchPen('#0f172a')">
-                    <span class="scratch-color-dot" style="background:#0f172a"></span>ดำ / Black
-                </button>
-
-                <button class="scratch-tool ${state.scratchpadTool==='pen' && state.scratchpadColor==='#2563eb' ? 'active' : ''}" onclick="setScratchPen('#2563eb')">
-                    <span class="scratch-color-dot" style="background:#2563eb"></span>น้ำเงิน / Blue
-                </button>
-
-                <button class="scratch-tool ${state.scratchpadTool==='pen' && state.scratchpadColor==='#e11d48' ? 'active' : ''}" onclick="setScratchPen('#e11d48')">
-                    <span class="scratch-color-dot" style="background:#e11d48"></span>แดง / Red
-                </button>
-
-                <button class="scratch-tool ${state.scratchpadTool==='eraser' ? 'active' : ''}" onclick="setScratchEraser()">
-                    🧽 ลบทั้งเส้น / Stroke Eraser
-                </button>
-
-                <span class="w-px h-6 bg-slate-300 mx-1"></span>
-
-                <button class="scratch-tool" onclick="undoScratch()">↶ ย้อนกลับ / Undo</button>
-                <button class="scratch-tool" onclick="redoScratch()">↷ ทำซ้ำ / Redo</button>
-                <button class="scratch-tool danger" onclick="clearScratchInk()">🗑 ล้างหมึก / Clear Ink</button>
-
-                <button class="scratch-tool copy" onclick="copyQuestionToScratchpad()">
-                    📋 ${copied ? 'อัปเดตโจทย์ / Update Question' : 'คัดลอกโจทย์ลงหน้านี้ / Copy Question Here'}
-                </button>
-
-                <button class="scratch-tool ai-check-btn" onclick="checkScratchpadWithAI()" ${state.aiLoading[pageKey] ? 'disabled' : ''}>
-                    ${state.aiLoading[pageKey]
-                        ? '🤖 กำลังตรวจ... / Checking...'
-                        : (state.aiFeedback[pageKey]
-                            ? '🤖 ตรวจอีกครั้ง / Check Again'
-                            : '🤖 ตรวจวิธีทำ / Check Working')}
-                </button>
-
-                <span class="w-px h-6 bg-slate-300 mx-1"></span>
-
-                <button class="scratch-tool page" onclick="previousScratchPage()" ${pageIndex === 0 ? 'disabled' : ''}>
-                    ◀ หน้าก่อน / Previous Page
-                </button>
-
-                <span class="scratch-page-indicator">
-                    หน้า ${pageIndex+1}/${pageCount} · Page ${pageIndex+1}/${pageCount}
-                </span>
-
-                <button class="scratch-tool page" onclick="nextScratchPage()" ${pageIndex >= pageCount-1 ? 'disabled' : ''}>
-                    หน้าถัดไป / Next Page ▶
-                </button>
-
-                <button class="scratch-tool page" onclick="addScratchPage()">
-                    ＋ เพิ่มหน้า A4 / Add A4 Page
-                </button>
-
-                <span class="text-xs font-bold text-slate-500 ml-auto">
-                    A4 เต็มหน้า · เลื่อนลงได้ / Full A4 · Scroll ↓
-                </span>
-            </div>
-
-            <div class="scratch-status ${penMode ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}">
-                ${penMode
-                    ? '✓ Fabric Notebook Engine v1.11: แก้ลำดับชั้น Canvas แล้ว โดย Fabric upper-canvas เป็นชั้นรับ Apple Pencil และ lower-canvas ไม่รับ pointer / Fabric upper-canvas now owns input.'
-                    : 'Finger mode: Fabric PencilBrush รับนิ้วด้วย / Finger drawing enabled; palm rejection is unavailable in this mode.'}
-                · 🧪 Fabric 5.3.1 · <span id="scratch-input-debug" class="inline-block px-2 py-0.5 bg-white/80 rounded border border-current/20">waiting for Pencil</span>
-                · <span class="inline-block px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded border border-indigo-200 font-bold">
-                    กระดาษเฉพาะ Q${getQuestionNumber(q.id)} / Q${getQuestionNumber(q.id)} notebook
-                  </span>
-                · ${pageCount} หน้า A4 / ${pageCount} A4 page(s)
-                · AI ตรวจเฉพาะหน้าปัจจุบัน และ feedback จะลอยใกล้ตำแหน่งที่เขียนล่าสุด / AI checks the current page and appears near your latest writing
-            </div>
-
-            <div class="scratch-viewport">
-                <div class="scratch-scroll">
-                    <div class="scratch-sheet">
-                        <div class="scratch-question-bg ${copied ? '' : 'hidden'}">
-                            <div class="sq-title">
-                                Q${getQuestionNumber(q.id)} · หน้า ${pageIndex+1} / Page ${pageIndex+1}
-                                · โจทย์อ้างอิง / Question reference
-                            </div>
-                            <div class="sq-th question-math">${q.questionTH}</div>
-                            <div class="sq-en question-math">${q.questionEN}</div>
-                            <div class="sq-content">${q.contentHTML || ''}</div>
-                        </div>
-
-                        <canvas id="scratchpad-canvas"></canvas>
-                    </div>
-                </div>
-
-                ${renderAIFeedbackPanel(q, pageIndex)}
-            </div>
-        </div>`;
-}
-
-/* ================= END SCRATCHPAD + AI ADD-ON ================= */
-
-/* ============= PDF EXPORT AFTER CHECKING ANSWERS ============= */
-function latestStatusForQuestion(qId) {
-    for (let i = state.attemptHistory.length - 1; i >= 0; i--) {
-        const attempt = state.attemptHistory[i];
-        const found = attempt.results.find(r => r.id === qId);
-
-        if (found) {
-            if (found.isCorrect) {
-                return {
-                    kind:'correct',
-                    symbol:'✓',
-                    th:'ถูก',
-                    en:'CORRECT',
-                    text:'✓ Correct / ถูก',
-                    color:'#047857',
-                    attempt:attempt.attempt || (i + 1)
-                };
-            }
-
-            if (found.isGiveUp) {
-                return {
-                    kind:'giveup',
-                    symbol:'0',
-                    th:'ยอมแพ้',
-                    en:'GIVE UP',
-                    text:'Give Up · 0',
-                    color:'#b45309',
-                    attempt:attempt.attempt || (i + 1)
-                };
-            }
-
-            if (found.isAnswered) {
-                return {
-                    kind:'incorrect',
-                    symbol:'✕',
-                    th:'ผิด',
-                    en:'INCORRECT',
-                    text:'✕ Incorrect / ผิด',
-                    color:'#b91c1c',
-                    attempt:attempt.attempt || (i + 1)
-                };
-            }
-
-            return {
-                kind:'skipped',
-                symbol:'—',
-                th:'ข้าม',
-                en:'SKIPPED',
-                text:'Skipped / ข้าม',
-                color:'#64748b',
-                attempt:attempt.attempt || (i + 1)
-            };
-        }
-    }
+function aiQuestionContext(q) {
+    const selected = state.answers[q.id] || '';
+    const hints = q.hints || [];
+    const opened = Math.max(0, Number(state.hintLevels[q.id] || 0));
+    const shownHints = hints.slice(0, Math.min(opened, hints.length))
+        .map((h, i) => `Hint ${i+1}: ${h.th} / ${h.en}`)
+        .join('\n');
 
     return {
-        kind:'unchecked',
-        symbol:'?',
-        th:'ยังไม่ตรวจ',
-        en:'NOT CHECKED',
-        text:'Not checked / ยังไม่ตรวจ',
-        color:'#64748b',
-        attempt:null
+        quizTitle: window.QUIZ_TEMPLATE.title,
+        qId: q.id,
+        questionNumber: getQuestionNumber(q.id),
+        questionTH: q.questionTH,
+        questionEN: q.questionEN,
+        options: q.options.map(o => o.text),
+        selectedAnswer: selected,
+        hintsOpened: shownHints,
+        giveUp: Boolean(state.giveUps[q.id]),
+        referenceSolutionTH: q.solutionTH || '',
+        referenceSolutionEN: q.solutionEN || ''
     };
 }
 
-window.exportScratchpadsPDF = async function() {
-    saveCurrentScratchpad();
 
-    if (!window.html2canvas || !window.jspdf || !window.jspdf.jsPDF) {
-        alert('เครื่องมือ PDF ยังโหลดไม่เสร็จ กรุณาลองอีกครั้ง / PDF tools are still loading. Please try again.');
+function normalizeWorkerFeedback(data) {
+    const f = data?.feedback && typeof data.feedback === 'object'
+        ? data.feedback
+        : (data && typeof data === 'object' ? data : null);
+
+    if (!f) return '';
+
+    const parts = [];
+    if (typeof f.correct_so_far_th === 'string' && f.correct_so_far_th.trim()) {
+        parts.push(`✓ ${f.correct_so_far_th.trim()}`);
+    }
+    if (typeof f.issue_th === 'string' && f.issue_th.trim()) {
+        parts.push(`🔎 ${f.issue_th.trim()}`);
+    }
+    if (typeof f.hint_th === 'string' && f.hint_th.trim()) {
+        parts.push(`💡 ${f.hint_th.trim()}`);
+    }
+    if (typeof f.hint_en === 'string' && f.hint_en.trim()) {
+        parts.push(`EN: ${f.hint_en.trim()}`);
+    }
+    return parts.join('\n\n');
+}
+
+function renderTextMessageToImageBase64(message) {
+    const canvas = document.createElement('canvas');
+    const width = 1200;
+    const padding = 56;
+    const lineHeight = 40;
+    const maxTextWidth = width - padding * 2;
+
+    const ctx = canvas.getContext('2d');
+    ctx.font = '30px Arial';
+
+    const words = String(message || '').split(/\s+/);
+    const lines = [];
+    let line = '';
+
+    for (const word of words) {
+        const test = line ? `${line} ${word}` : word;
+        if (ctx.measureText(test).width > maxTextWidth && line) {
+            lines.push(line);
+            line = word;
+        } else {
+            line = test;
+        }
+    }
+    if (line) lines.push(line);
+    if (!lines.length) lines.push('(empty)');
+
+    canvas.width = width;
+    canvas.height = Math.max(320, padding * 2 + (lines.length + 4) * lineHeight);
+
+    const c = canvas.getContext('2d');
+    c.fillStyle = '#ffffff';
+    c.fillRect(0, 0, canvas.width, canvas.height);
+
+    c.fillStyle = '#111827';
+    c.font = 'bold 28px Arial';
+    c.fillText('Student chat message', padding, padding);
+
+    c.font = '24px Arial';
+    let y = padding + lineHeight * 1.8;
+    lines.forEach(t => {
+        c.fillText(t, padding, y);
+        y += lineHeight;
+    });
+
+    c.fillStyle = '#64748b';
+    c.font = '18px Arial';
+    c.fillText('Please respond as a tutor. Do not reveal the final answer unless the student has given up.', padding, y + lineHeight);
+
+    return canvas.toDataURL('image/png').replace(/^data:image\/png;base64,/, '');
+}
+
+async function callLegacyImageWorker(q, imageBase64) {
+    const response = await fetch(AI_CHAT_URL, {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json' },
+        body:JSON.stringify({
+            question: `${q.questionTH}\n${q.questionEN}`,
+            referenceSolution: `${q.solutionTH || ''}\n${q.solutionEN || ''}`,
+            imageBase64,
+            hintLevel: state.hintLevels[q.id] || 0
+        })
+    });
+
+    const data = await response.json().catch(() => null);
+    if (!response.ok) {
+        throw new Error(data?.error || data?.detail || `HTTP ${response.status}`);
+    }
+    return data;
+}
+
+
+function parseAIText(data) {
+    if (!data) return '';
+    if (typeof data === 'string') return data;
+
+    const direct = [
+        data.reply,
+        data.message,
+        data.answer,
+        data.text,
+        data.response,
+        data.output_text
+    ].find(v => typeof v === 'string' && v.trim());
+
+    if (direct) return direct.trim();
+
+    if (data.feedback && typeof data.feedback === 'object') {
+        const f = data.feedback;
+        const parts = [
+            f.correct_so_far_th,
+            f.issue_th,
+            f.hint_th,
+            f.hint_en
+        ].filter(v => typeof v === 'string' && v.trim());
+        if (parts.length) return parts.join('\n\n');
+    }
+
+    return '';
+}
+
+window.sendAIChat = async function(qId) {
+    if (studyToolState.chatLoading[qId]) return;
+
+    const q = stQuestion(qId);
+    const input = document.getElementById(`ai-chat-input-${qId}`);
+    if (!q || !input) return;
+
+    const message = input.value.trim();
+    if (!message) return;
+
+    const history = ensureChat(qId);
+    history.push({ role:'user', text:message });
+    input.value = '';
+    renderChatLog(qId);
+    setChatBusy(qId, true);
+
+    try {
+        const context = aiQuestionContext(q);
+        const payload = {
+            mode: 'text_chat',
+            userMessage: message,
+            message,
+            conversation: history.slice(-10),
+            question: `${q.questionTH}\n${q.questionEN}`,
+            referenceSolution: `${q.solutionTH || ''}\n${q.solutionEN || ''}`,
+            selectedAnswer: context.selectedAnswer,
+            hintLevel: state.hintLevels[qId] || 0,
+            giveUp: context.giveUp,
+            context
+        };
+
+        let answer = '';
+        let primaryError = null;
+
+        // First try the new text-chat payload.
+        try {
+            const response = await fetch(AI_CHAT_URL, {
+                method:'POST',
+                headers:{ 'Content-Type':'application/json' },
+                body:JSON.stringify(payload)
+            });
+
+            const data = await response.json().catch(() => null);
+
+            if (!response.ok) {
+                throw new Error(data?.error || data?.detail || `HTTP ${response.status}`);
+            }
+
+            answer = parseAIText(data) || normalizeWorkerFeedback(data);
+            if (!answer) throw new Error('No readable text from text-chat mode.');
+        } catch (err) {
+            primaryError = err;
+        }
+
+        // Compatibility fallback:
+        // Existing production Worker is image-based, so render the student's
+        // typed message into a small image and send it through the known-good contract.
+        if (!answer) {
+            const messageImageBase64 = renderTextMessageToImageBase64(message);
+            const legacyData = await callLegacyImageWorker(q, messageImageBase64);
+            answer = normalizeWorkerFeedback(legacyData) || parseAIText(legacyData);
+        }
+
+        if (!answer) {
+            throw primaryError || new Error('AI returned no readable response.');
+        }
+
+        history.push({ role:'assistant', text:answer });
+    } catch (err) {
+        history.push({
+            role:'system',
+            text:`AI chat ยังเชื่อมต่อไม่สำเร็จ / AI chat connection failed: ${err.message || String(err)}`
+        });
+    } finally {
+        setChatBusy(qId, false);
+        renderChatLog(qId);
+    }
+};
+
+window.aiChatKeydown = function(event, qId) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        window.sendAIChat(qId);
+    }
+};
+
+function renderAIChat(q) {
+    return `
+      <section class="ai-chat-card">
+        <div class="study-tool-head">
+          <div>
+            <div class="study-tool-title">💬 Ask AI · ถาม AI เกี่ยวกับข้อนี้</div>
+            <div class="study-tool-sub">
+              AI เห็นโจทย์ ตัวเลือก คำตอบที่เลือก และ Hint ที่เปิดแล้ว · AI receives the current-question context automatically
+            </div>
+          </div>
+        </div>
+
+        <div class="ai-quick-row">
+          <button class="ai-quick-btn" onclick="askAIQuick('${q.id}','hint')">💡 Give me a hint</button>
+          <button class="ai-quick-btn" onclick="askAIQuick('${q.id}','check')">🔎 Check my idea</button>
+          <button class="ai-quick-btn" onclick="askAIQuick('${q.id}','next')">🧩 What next?</button>
+          <button class="ai-quick-btn" onclick="askAIQuick('${q.id}','explain')">📖 Explain concept</button>
+        </div>
+
+        <div id="ai-chat-log-${q.id}" class="ai-chat-log"></div>
+
+        <div class="ai-chat-compose">
+          <textarea id="ai-chat-input-${q.id}"
+                    class="ai-chat-input"
+                    placeholder="พิมพ์ถาม AI... / Ask AI..."
+                    onkeydown="aiChatKeydown(event,'${q.id}')"></textarea>
+          <button id="ai-send-${q.id}" class="ai-send-btn" onclick="sendAIChat('${q.id}')">
+            ส่ง / Send
+          </button>
+        </div>
+      </section>`;
+}
+
+/* ---------------- SCRATCH STORE ---------------- */
+
+function ensureScratchQuestion(qId) {
+    if (!studyToolState.scratch[qId]) {
+        studyToolState.scratch[qId] = {
+            pageIndex:0,
+            pages:[{ strokes:[], undo:[] }]
+        };
+    }
+    const q = studyToolState.scratch[qId];
+    if (!Array.isArray(q.pages) || !q.pages.length) q.pages = [{strokes:[], undo:[]}];
+    q.pageIndex = Math.max(0, Math.min(q.pageIndex || 0, q.pages.length - 1));
+    q.pages.forEach(p => {
+        if (!Array.isArray(p.strokes)) p.strokes = [];
+        if (!Array.isArray(p.undo)) p.undo = [];
+    });
+    return q;
+}
+
+function currentScratchPage(qId) {
+    const q = ensureScratchQuestion(qId);
+    return q.pages[q.pageIndex];
+}
+
+function scratchNormalizedPoint(clientX, clientY, pressure=0.5) {
+    if (!scratchLiteCanvas) return null;
+    const r = scratchLiteCanvas.getBoundingClientRect();
+    if (!r.width || !r.height) return null;
+
+    return {
+        x:Math.max(0, Math.min(1, (clientX-r.left)/r.width)),
+        y:Math.max(0, Math.min(1, (clientY-r.top)/r.height)),
+        p:Number.isFinite(pressure) && pressure > 0 ? pressure : .5
+    };
+}
+
+function distanceToSegment(px,py,x1,y1,x2,y2) {
+    const vx=x2-x1, vy=y2-y1;
+    const wx=px-x1, wy=py-y1;
+    const c1=vx*wx+vy*wy;
+    if (c1<=0) return Math.hypot(px-x1,py-y1);
+    const c2=vx*vx+vy*vy;
+    if (c2<=c1) return Math.hypot(px-x2,py-y2);
+    const b=c1/c2;
+    const bx=x1+b*vx, by=y1+b*vy;
+    return Math.hypot(px-bx,py-by);
+}
+
+function eraseNearestStroke(qId, point) {
+    const page = currentScratchPage(qId);
+    if (!page.strokes.length) return false;
+
+    let bestIndex = -1;
+    let bestDist = Infinity;
+
+    page.strokes.forEach((stroke, si) => {
+        const pts = stroke.points || [];
+        if (pts.length === 1) {
+            const d = Math.hypot(point.x-pts[0].x, point.y-pts[0].y);
+            if (d < bestDist) { bestDist=d; bestIndex=si; }
+            return;
+        }
+        for (let i=1;i<pts.length;i++) {
+            const d=distanceToSegment(
+                point.x,point.y,
+                pts[i-1].x,pts[i-1].y,
+                pts[i].x,pts[i].y
+            );
+            if (d < bestDist) { bestDist=d; bestIndex=si; }
+        }
+    });
+
+    // Normalized threshold ~ 18-24 CSS px on typical board.
+    if (bestIndex >= 0 && bestDist < 0.045) {
+        const [removed] = page.strokes.splice(bestIndex,1);
+        page.undo.push({type:'restore', index:bestIndex, stroke:removed});
+        redrawScratchLite();
+        updateScratchButtons(qId);
+        return true;
+    }
+    return false;
+}
+
+/* ---------------- SCRATCH RENDERER ---------------- */
+
+function resizeScratchLiteCanvas() {
+    if (!scratchLiteCanvas || !scratchLiteCtx) return;
+    const r = scratchLiteCanvas.getBoundingClientRect();
+    const dpr = Math.max(1, window.devicePixelRatio || 1);
+    const w = Math.max(1, Math.round(r.width*dpr));
+    const h = Math.max(1, Math.round(r.height*dpr));
+
+    if (scratchLiteCanvas.width !== w || scratchLiteCanvas.height !== h) {
+        scratchLiteCanvas.width=w;
+        scratchLiteCanvas.height=h;
+        scratchLiteCtx.setTransform(dpr,0,0,dpr,0,0);
+        redrawScratchLite();
+    }
+}
+
+function drawStrokeOn(ctx, stroke, cssW, cssH) {
+    const pts = stroke?.points || [];
+    if (!pts.length) return;
+
+    ctx.save();
+    ctx.strokeStyle = stroke.color || '#111827';
+    ctx.fillStyle = stroke.color || '#111827';
+    ctx.lineCap='round';
+    ctx.lineJoin='round';
+    ctx.lineWidth=stroke.width || 2.35;
+
+    if (pts.length === 1) {
+        ctx.beginPath();
+        ctx.arc(pts[0].x*cssW, pts[0].y*cssH, Math.max(1,(stroke.width||2.35)/2), 0, Math.PI*2);
+        ctx.fill();
+        ctx.restore();
         return;
     }
 
-    const button = document.getElementById('export-scratchpads-btn');
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x*cssW,pts[0].y*cssH);
 
-    const exportPages = [];
-    questionsData.forEach(q => {
-        ensureScratchPages(q.id);
-        state.scratchpadPages[q.id].forEach((ink, pageIndex) => {
-            exportPages.push({ q, pageIndex, ink:ink || '' });
-        });
-    });
-
-    if (button) {
-        button.disabled = true;
-        button.textContent = `กำลังสร้าง PDF 0/${exportPages.length}... / Creating PDF 0/${exportPages.length}...`;
+    for (let i=1;i<pts.length-1;i++) {
+        const p=pts[i], n=pts[i+1];
+        const mx=(p.x+n.x)*.5*cssW;
+        const my=(p.y+n.y)*.5*cssH;
+        ctx.quadraticCurveTo(p.x*cssW,p.y*cssH,mx,my);
     }
 
-    const host = document.createElement('div');
-    host.id = 'scratch-export-host';
-    document.body.appendChild(host);
+    const last=pts[pts.length-1];
+    ctx.lineTo(last.x*cssW,last.y*cssH);
+    ctx.stroke();
+    ctx.restore();
+}
+
+function redrawScratchLite() {
+    if (!scratchLiteCanvas || !scratchLiteCtx || !scratchLiteQid) return;
+    const r=scratchLiteCanvas.getBoundingClientRect();
+    scratchLiteCtx.clearRect(0,0,r.width,r.height);
+    const page=currentScratchPage(scratchLiteQid);
+    page.strokes.forEach(stroke => drawStrokeOn(scratchLiteCtx,stroke,r.width,r.height));
+    if (scratchLiteActiveStroke) {
+        drawStrokeOn(scratchLiteCtx,scratchLiteActiveStroke,r.width,r.height);
+    }
+}
+
+function updateScratchButtons(qId) {
+    const q=ensureScratchQuestion(qId);
+    const page=q.pages[q.pageIndex];
+
+    const label=document.getElementById(`scratch-page-label-${qId}`);
+    if (label) label.textContent=`หน้า ${q.pageIndex+1}/${q.pages.length} · Page ${q.pageIndex+1}/${q.pages.length}`;
+
+    const prev=document.getElementById(`scratch-prev-${qId}`);
+    const next=document.getElementById(`scratch-next-${qId}`);
+    const undo=document.getElementById(`scratch-undo-${qId}`);
+
+    if (prev) prev.disabled=q.pageIndex<=0;
+    if (next) next.disabled=q.pageIndex>=q.pages.length-1;
+    if (undo) undo.disabled=!page.strokes.length && !page.undo.length;
+}
+
+/* ---------------- SCRATCH INPUT ---------------- */
+
+function scratchStart(qId, inputType, id, x, y, pressure=.5) {
+    const pt=scratchNormalizedPoint(x,y,pressure);
+    if (!pt) return;
+
+    scratchLiteActiveInput={id,inputType};
+
+    if (studyToolState.scratchTool === 'eraser') {
+        eraseNearestStroke(qId,pt);
+        return;
+    }
+
+    scratchLiteActiveStroke={
+        color:studyToolState.scratchColor,
+        width:studyToolState.scratchWidth,
+        input:inputType,
+        points:[pt]
+    };
+    redrawScratchLite();
+}
+
+function scratchMove(qId, inputType, id, x, y, pressure=.5) {
+    if (!scratchLiteActiveInput || scratchLiteActiveInput.id !== id) return;
+    const pt=scratchNormalizedPoint(x,y,pressure);
+    if (!pt) return;
+
+    if (studyToolState.scratchTool === 'eraser') {
+        eraseNearestStroke(qId,pt);
+        return;
+    }
+
+    if (!scratchLiteActiveStroke) return;
+    scratchLiteActiveStroke.points.push(pt);
+    redrawScratchLite();
+}
+
+function scratchEnd(qId, id) {
+    if (!scratchLiteActiveInput || scratchLiteActiveInput.id !== id) return;
+
+    if (studyToolState.scratchTool === 'pen' && scratchLiteActiveStroke) {
+        const page=currentScratchPage(qId);
+        if (scratchLiteActiveStroke.points.length) {
+            page.strokes.push(scratchLiteActiveStroke);
+            page.undo=[];
+        }
+    }
+
+    scratchLiteActiveStroke=null;
+    scratchLiteActiveInput=null;
+    redrawScratchLite();
+    updateScratchButtons(qId);
+}
+
+function addScratchHandler(target,type,fn,opts) {
+    target.addEventListener(type,fn,opts);
+    scratchLiteMountedHandlers.push(()=>target.removeEventListener(type,fn,opts));
+}
+
+function unmountScratchLiteInput() {
+    scratchLiteMountedHandlers.forEach(off => {
+        try{off();}catch(_){}
+    });
+    scratchLiteMountedHandlers=[];
+    if (scratchLiteResizeObserver) {
+        try{scratchLiteResizeObserver.disconnect();}catch(_){}
+        scratchLiteResizeObserver=null;
+    }
+    scratchLiteCanvas=null;
+    scratchLiteCtx=null;
+    scratchLiteQid=null;
+    scratchLiteActiveStroke=null;
+    scratchLiteActiveInput=null;
+}
+
+function mountScratchLite(qId) {
+    unmountScratchLiteInput();
+
+    const canvas=document.getElementById('scratch-lite-canvas');
+    if (!canvas) return;
+
+    scratchLiteCanvas=canvas;
+    scratchLiteCtx=canvas.getContext('2d',{alpha:true});
+    scratchLiteQid=qId;
+    ensureScratchQuestion(qId);
+
+    const isiOS=/iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+
+    // Block native context/select behavior in the board.
+    ['contextmenu','selectstart','dragstart'].forEach(type => {
+        addScratchHandler(canvas,type,e=>e.preventDefault(),{passive:false});
+    });
+
+    if (isiOS && 'ontouchstart' in window) {
+        const chooseTouch = (event) => {
+            const list=Array.from(event.changedTouches || []);
+            const stylus=list.find(t => t.touchType === 'stylus');
+            if (stylus) return {touch:stylus,type:'pen'};
+
+            const direct=list.find(t => !t.touchType || t.touchType === 'direct');
+            if (!direct) return null;
+
+            // Pencil gets priority. Ignore direct touches while Pencil is active
+            // and briefly after it leaves the surface.
+            if (scratchLiteStylusActive || performance.now()-scratchLiteLastStylusAt < 450) {
+                return null;
+            }
+            if ((event.touches?.length || 0) > 1) return null;
+            return {touch:direct,type:'touch'};
+        };
+
+        addScratchHandler(canvas,'touchstart',e=>{
+            e.preventDefault();
+            const picked=chooseTouch(e);
+            if (!picked) return;
+            const t=picked.touch;
+            if (picked.type==='pen') {
+                scratchLiteStylusActive=true;
+                scratchLiteLastStylusAt=performance.now();
+            }
+            scratchStart(qId,picked.type,t.identifier,t.clientX,t.clientY,t.force||.5);
+        },{passive:false});
+
+        addScratchHandler(canvas,'touchmove',e=>{
+            e.preventDefault();
+            if (!scratchLiteActiveInput) return;
+
+            const t=Array.from(e.changedTouches || []).find(
+                x=>x.identifier===scratchLiteActiveInput.id
+            );
+            if (!t) return;
+
+            if (t.touchType === 'stylus') {
+                scratchLiteStylusActive=true;
+                scratchLiteLastStylusAt=performance.now();
+            }
+
+            scratchMove(qId,scratchLiteActiveInput.inputType,t.identifier,t.clientX,t.clientY,t.force||.5);
+        },{passive:false});
+
+        const touchEnd=e=>{
+            e.preventDefault();
+            if (!scratchLiteActiveInput) return;
+
+            const t=Array.from(e.changedTouches || []).find(
+                x=>x.identifier===scratchLiteActiveInput.id
+            );
+            if (!t) return;
+
+            if (t.touchType === 'stylus' || scratchLiteActiveInput.inputType==='pen') {
+                scratchLiteStylusActive=false;
+                scratchLiteLastStylusAt=performance.now();
+            }
+            scratchEnd(qId,t.identifier);
+        };
+
+        addScratchHandler(canvas,'touchend',touchEnd,{passive:false});
+        addScratchHandler(canvas,'touchcancel',touchEnd,{passive:false});
+    } else {
+        addScratchHandler(canvas,'pointerdown',e=>{
+            e.preventDefault();
+
+            if (e.pointerType === 'pen') {
+                scratchLiteStylusActive=true;
+                scratchLiteLastStylusAt=performance.now();
+            } else if (e.pointerType === 'touch') {
+                if (scratchLiteStylusActive || performance.now()-scratchLiteLastStylusAt<450) return;
+                if (!e.isPrimary) return;
+            }
+
+            try{canvas.setPointerCapture(e.pointerId);}catch(_){}
+
+            scratchStart(
+                qId,
+                e.pointerType === 'pen' ? 'pen' : (e.pointerType === 'touch' ? 'touch' : 'mouse'),
+                e.pointerId,e.clientX,e.clientY,e.pressure||.5
+            );
+        },{passive:false});
+
+        addScratchHandler(canvas,'pointermove',e=>{
+            if (!scratchLiteActiveInput || scratchLiteActiveInput.id !== e.pointerId) return;
+            e.preventDefault();
+
+            const events=typeof e.getCoalescedEvents === 'function'
+                ? e.getCoalescedEvents()
+                : [e];
+
+            events.forEach(ev=>{
+                scratchMove(
+                    qId,
+                    scratchLiteActiveInput.inputType,
+                    e.pointerId,
+                    ev.clientX,ev.clientY,ev.pressure||.5
+                );
+            });
+        },{passive:false});
+
+        const pointerEnd=e=>{
+            if (!scratchLiteActiveInput || scratchLiteActiveInput.id !== e.pointerId) return;
+            e.preventDefault();
+            if (e.pointerType==='pen') {
+                scratchLiteStylusActive=false;
+                scratchLiteLastStylusAt=performance.now();
+            }
+            scratchEnd(qId,e.pointerId);
+        };
+
+        addScratchHandler(canvas,'pointerup',pointerEnd,{passive:false});
+        addScratchHandler(canvas,'pointercancel',pointerEnd,{passive:false});
+    }
+
+    resizeScratchLiteCanvas();
+    if (window.ResizeObserver) {
+        scratchLiteResizeObserver=new ResizeObserver(()=>{
+            resizeScratchLiteCanvas();
+            redrawScratchLite();
+        });
+        scratchLiteResizeObserver.observe(canvas.parentElement || canvas);
+    } else {
+        const onResize=()=>resizeScratchLiteCanvas();
+        addScratchHandler(window,'resize',onResize,{passive:true});
+    }
+
+    redrawScratchLite();
+    updateScratchButtons(qId);
+}
+
+window.setScratchLiteTool=function(tool){
+    studyToolState.scratchTool=tool==='eraser'?'eraser':'pen';
+    const qId=scratchLiteQid;
+    if (!qId) return;
+    document.getElementById(`scratch-pen-${qId}`)?.classList.toggle('active',studyToolState.scratchTool==='pen');
+    document.getElementById(`scratch-eraser-${qId}`)?.classList.toggle('active',studyToolState.scratchTool==='eraser');
+};
+
+window.undoScratchLite=function(qId){
+    const page=currentScratchPage(qId);
+
+    if (page.strokes.length) {
+        const stroke=page.strokes.pop();
+        page.undo.push({type:'add',stroke});
+    } else if (page.undo.length) {
+        const op=page.undo.pop();
+        if (op.type==='restore' && op.stroke) {
+            page.strokes.splice(Math.max(0,Math.min(op.index,page.strokes.length)),0,op.stroke);
+        }
+    }
+
+    redrawScratchLite();
+    updateScratchButtons(qId);
+};
+
+window.clearScratchLite=function(qId){
+    const page=currentScratchPage(qId);
+    if (!page.strokes.length) return;
+    page.undo.push({type:'clear',strokes:page.strokes.slice()});
+    page.strokes=[];
+    redrawScratchLite();
+    updateScratchButtons(qId);
+};
+
+window.prevScratchLitePage=function(qId){
+    const q=ensureScratchQuestion(qId);
+    if (q.pageIndex<=0) return;
+    q.pageIndex--;
+    redrawScratchLite();
+    updateScratchButtons(qId);
+};
+
+window.nextScratchLitePage=function(qId){
+    const q=ensureScratchQuestion(qId);
+    if (q.pageIndex>=q.pages.length-1) return;
+    q.pageIndex++;
+    redrawScratchLite();
+    updateScratchButtons(qId);
+};
+
+window.addScratchLitePage=function(qId){
+    const q=ensureScratchQuestion(qId);
+    q.pages.push({strokes:[],undo:[]});
+    q.pageIndex=q.pages.length-1;
+    redrawScratchLite();
+    updateScratchButtons(qId);
+};
+
+
+window.checkScratchLiteWithAI = async function(qId){
+    const q = stQuestion(qId);
+    if (!q) return;
+
+    const sq = ensureScratchQuestion(qId);
+    const page = sq.pages[sq.pageIndex];
+
+    if (!scratchPageHasInk(page)) {
+        alert('เขียนวิธีทำบนหน้าปัจจุบันก่อน / Write some working on the current page first.');
+        return;
+    }
+
+    const btn = document.getElementById(`scratch-ai-${qId}`);
+    const status = document.getElementById(`scratch-ai-status-${qId}`);
+
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = '🤖 กำลังตรวจ... / Checking...';
+    }
+    if (status) status.textContent = `กำลังตรวจหน้า ${sq.pageIndex+1} / Checking page ${sq.pageIndex+1}`;
 
     try {
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4', compress:true });
+        const dataUrl = scratchPageToDataURL(page, 1400, 900);
+        const imageBase64 = dataUrl.replace(/^data:image\/png;base64,/, '');
 
-        for (let i = 0; i < exportPages.length; i++) {
-            const { q, pageIndex, ink } = exportPages[i];
-            const qNo = getQuestionNumber(q.id);
-            const pageKey = scratchPageKey(q.id, pageIndex);
-            const copied = Boolean(state.scratchpadCopiedQuestion[pageKey]);
-            const status = latestStatusForQuestion(q.id);
+        const data = await callLegacyImageWorker(q, imageBase64);
+        const feedback = normalizeWorkerFeedback(data) || parseAIText(data);
 
-            if (button) {
-                button.textContent =
-                    `กำลังสร้าง PDF ${i+1}/${exportPages.length}... / Creating PDF ${i+1}/${exportPages.length}...`;
-            }
+        const history = ensureChat(qId);
+        history.push({
+            role:'system',
+            text:`📷 ตรวจภาพที่เขียน หน้า ${sq.pageIndex+1} / Image check page ${sq.pageIndex+1}`
+        });
+        history.push({
+            role:'assistant',
+            text:feedback || 'AI ตรวจแล้วแต่ไม่มีข้อความตอบกลับ / AI completed the check but returned no readable feedback.'
+        });
 
-            host.innerHTML = `
-                <div class="scratch-export-page">
-                    <div style="display:flex;justify-content:space-between;gap:16px;align-items:center;border-bottom:2px solid #e2e8f0;padding-bottom:12px;">
-                        <div>
-                            <div style="font-size:21px;font-weight:800;">
-                                Question ${qNo} · Scratchpad · Page ${pageIndex+1}
-                            </div>
-                            <div style="font-size:12px;color:#64748b;margin-top:3px;">
-                                ${window.QUIZ_TEMPLATE.title}
-                            </div>
-                        </div>
-                        <div style="font-size:14px;font-weight:800;color:${status.color};">
-                            ${status.text}
-                        </div>
-                    </div>
+        renderChatLog(qId);
+        const log = document.getElementById(`ai-chat-log-${qId}`);
+        if (log) log.scrollIntoView({behavior:'smooth', block:'nearest'});
 
-                    <div class="scratch-export-board">
-                        <div class="scratch-export-stamp ${status.kind}">
-                            <div class="stamp-symbol">${status.symbol}</div>
-                            <div class="stamp-th">${status.th}</div>
-                            <div class="stamp-en">${status.en}</div>
-                            <div class="stamp-meta">
-                                Q${qNo}${status.attempt ? ` · ATTEMPT ${status.attempt}` : ''}
-                            </div>
-                        </div>
-
-                        ${copied ? `
-                            <div class="scratch-export-question">
-                                <div style="font-size:14px;font-weight:800;color:#4338ca;margin-bottom:7px;">
-                                    Q${qNo} · Page ${pageIndex+1} · โจทย์อ้างอิง / Question reference
-                                </div>
-                                <div class="question-math" style="font-size:15px;font-weight:700;line-height:1.55;">
-                                    ${q.questionTH}
-                                </div>
-                                <div class="question-math" style="font-size:12px;color:#64748b;line-height:1.45;margin-top:5px;">
-                                    ${q.questionEN}
-                                </div>
-                                <div style="font-size:11px;margin-top:9px;">
-                                    ${q.contentHTML || ''}
-                                </div>
-                            </div>` : ''}
-
-                        ${ink
-                            ? `<img class="scratch-export-ink" src="${ink}" alt="Scratchpad ink Q${qNo} page ${pageIndex+1}">`
-                            : ''}
-                    </div>
-
-                    <div style="margin-top:14px;font-size:11px;color:#64748b;display:flex;justify-content:space-between;gap:12px;">
-                        <span>
-                            ${copied
-                                ? 'มีโจทย์เป็นพื้นหลัง / Question included as background'
-                                : 'หน้ากระดาษเปล่า / Blank working page'}
-                        </span>
-                        <span>Q${qNo} · Page ${pageIndex+1}</span>
-                    </div>
-                </div>`;
-
-            const pageEl = host.firstElementChild;
-
-            if (window.MathJax && MathJax.typesetPromise) {
-                if (MathJax.typesetClear) MathJax.typesetClear([pageEl]);
-                await MathJax.typesetPromise([pageEl]);
-            }
-
-            await new Promise(resolve =>
-                requestAnimationFrame(() => requestAnimationFrame(resolve))
-            );
-
-            const shot = await html2canvas(pageEl, {
-                scale:1.25,
-                backgroundColor:'#ffffff',
-                useCORS:true,
-                logging:false
-            });
-
-            const imgData = shot.toDataURL('image/jpeg', 0.90);
-
-            if (i > 0) pdf.addPage('a4', 'portrait');
-
-            const pageW = 210;
-            const pageH = 297;
-            const ratio = Math.min(pageW / shot.width, pageH / shot.height);
-            const drawW = shot.width * ratio;
-            const drawH = shot.height * ratio;
-
-            pdf.addImage(
-                imgData,
-                'JPEG',
-                (pageW-drawW)/2,
-                (pageH-drawH)/2,
-                drawW,
-                drawH,
-                undefined,
-                'FAST'
-            );
-        }
-
-        pdf.save('AI_Scratchpad_Multiplication_With_Answer_Stamps.pdf');
+        if (status) status.textContent = `✓ ตรวจหน้า ${sq.pageIndex+1} แล้ว / Page ${sq.pageIndex+1} checked`;
     } catch (err) {
-        console.error(err);
-        alert('สร้าง PDF ไม่สำเร็จ กรุณาลองใหม่ / PDF export failed. Please try again.');
+        const history = ensureChat(qId);
+        history.push({
+            role:'system',
+            text:`AI ตรวจภาพไม่สำเร็จ / Image check failed: ${err.message || String(err)}`
+        });
+        renderChatLog(qId);
+        if (status) status.textContent = '⚠️ ตรวจภาพไม่สำเร็จ / Check failed';
     } finally {
-        host.remove();
-
-        if (button) {
-            button.disabled = false;
-            button.textContent =
-                '📄 ส่งออกกระดานทั้งหมดเป็น PDF / Export All Scratchpads PDF';
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = '🤖 ตรวจภาพที่เขียน / Check Writing';
         }
     }
 };
-/* ================= END SCRATCHPAD ADD-ON ================= */
+
+
+function renderScratchLite(q) {
+    const sq=ensureScratchQuestion(q.id);
+    return `
+      <section class="scratch-lite-card">
+        <div class="study-tool-head">
+          <div>
+            <div class="study-tool-title">📝 พื้นที่ทด / Optional Working Area</div>
+            <div class="study-tool-sub">
+              ไม่บังคับใช้ · เขียนด้วย Apple Pencil หรือนิ้วได้ · พื้นที่นี้ไม่เลื่อนและไม่ซูม
+            </div>
+            <div id="scratch-ai-status-${q.id}" class="scratch-lite-ai-status"></div>
+          </div>
+
+          <div class="scratch-lite-toolbar">
+            <button id="scratch-pen-${q.id}" class="scratch-lite-btn ${studyToolState.scratchTool==='pen'?'active':''}" onclick="setScratchLiteTool('pen')">
+              ✏️ Pen
+            </button>
+            <button id="scratch-eraser-${q.id}" class="scratch-lite-btn ${studyToolState.scratchTool==='eraser'?'active':''}" onclick="setScratchLiteTool('eraser')">
+              🧽 Eraser
+            </button>
+            <button id="scratch-undo-${q.id}" class="scratch-lite-btn" onclick="undoScratchLite('${q.id}')">
+              ↶ Undo
+            </button>
+            <button class="scratch-lite-btn warn" onclick="clearScratchLite('${q.id}')">
+              🗑 Clear
+            </button>
+            <button id="scratch-ai-${q.id}" class="scratch-lite-btn ai" onclick="checkScratchLiteWithAI('${q.id}')">
+              🤖 ตรวจภาพที่เขียน / Check Writing
+            </button>
+          </div>
+        </div>
+
+        <div class="scratch-lite-wrap">
+          <canvas id="scratch-lite-canvas"></canvas>
+        </div>
+
+        <div class="scratch-lite-foot">
+          <div class="scratch-lite-pages">
+            <button id="scratch-prev-${q.id}" class="scratch-lite-btn" onclick="prevScratchLitePage('${q.id}')">◀</button>
+            <span id="scratch-page-label-${q.id}" class="scratch-lite-page-label">
+              หน้า ${sq.pageIndex+1}/${sq.pages.length} · Page ${sq.pageIndex+1}/${sq.pages.length}
+            </span>
+            <button id="scratch-next-${q.id}" class="scratch-lite-btn" onclick="nextScratchLitePage('${q.id}')">▶</button>
+            <button class="scratch-lite-btn" onclick="addScratchLitePage('${q.id}')">＋ เพิ่มหน้า / Add page</button>
+          </div>
+          <div class="scratch-lite-note">
+            สูงไม่เกินครึ่งจอ · เพิ่มหน้าในกรอบเดิม · พิมพ์สิ่งที่จดได้หลังส่งคำตอบทั้งหมด
+          </div>
+        </div>
+      </section>`;
+}
+
+/* ---------------- PRINT HANDWRITING ---------------- */
+
+function scratchPageHasInk(page) {
+    return Boolean(page?.strokes?.length);
+}
+
+function scratchPageToDataURL(page, width=1400, height=900) {
+    const c=document.createElement('canvas');
+    c.width=width;
+    c.height=height;
+    const ctx=c.getContext('2d');
+
+    ctx.fillStyle='#ffffff';
+    ctx.fillRect(0,0,width,height);
+
+    // subtle grid
+    ctx.strokeStyle='#edf2f7';
+    ctx.lineWidth=1;
+    const step=32;
+    for(let x=0;x<=width;x+=step){
+        ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,height);ctx.stroke();
+    }
+    for(let y=0;y<=height;y+=step){
+        ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(width,y);ctx.stroke();
+    }
+
+    page.strokes.forEach(stroke=>drawStrokeOn(ctx,stroke,width,height));
+    return c.toDataURL('image/png');
+}
+
+window.printAllScratchLiteNotes=async function(){
+    // This action is intentionally available only after Submit All,
+    // from the summary screen.
+    if (state.view !== 'summary' || !state.attemptHistory.length) {
+        alert('กรุณาส่งคำตอบทั้งหมดก่อน / Please submit all answers first.');
+        return;
+    }
+
+    const host=document.getElementById('dev-print-host');
+    if(!host) return;
+
+    const notePages=[];
+
+    questionsData.forEach(q=>{
+        const sq=ensureScratchQuestion(q.id);
+
+        sq.pages.forEach((page,pageIndex)=>{
+            if(scratchPageHasInk(page)){
+                notePages.push({
+                    q,
+                    page,
+                    pageIndex,
+                    qNo:getQuestionNumber(q.id)
+                });
+            }
+        });
+    });
+
+    if(!notePages.length){
+        alert('ยังไม่มีสิ่งที่จดในแบบทดสอบนี้ / There is no handwriting to print.');
+        return;
+    }
+
+    host.innerHTML=notePages.map(({q,page,pageIndex,qNo})=>`
+      <section class="print-page">
+        <div class="print-q-head">
+          Question ${qNo} / ข้อ ${qNo} · Notes Page ${pageIndex+1}
+        </div>
+
+        <div class="print-q-th question-math">${q.questionTH}</div>
+        <div class="print-q-en question-math">${q.questionEN}</div>
+
+        <img class="print-note-image"
+             src="${scratchPageToDataURL(page)}"
+             alt="Working Q${qNo} page ${pageIndex+1}">
+
+        <div class="print-note-caption">
+          สิ่งที่จดจาก Optional Working Area · Handwriting from the optional working area
+        </div>
+      </section>`).join('');
+
+    host.setAttribute('aria-hidden','false');
+    document.body.classList.remove('print-pack-mode');
+    document.body.classList.add('print-notes-mode');
+
+    try{
+        if(window.MathJax && MathJax.typesetPromise){
+            if(MathJax.typesetClear) MathJax.typesetClear([host]);
+            await MathJax.typesetPromise([host]);
+        }
+    }catch(err){
+        console.warn('Print notes MathJax:',err);
+    }
+
+    await new Promise(resolve=>
+        requestAnimationFrame(()=>requestAnimationFrame(resolve))
+    );
+
+    window.print();
+};
+
+/* Extend existing afterprint cleanup for note printing. */
+window.addEventListener('afterprint',()=>{
+    document.body.classList.remove('print-notes-mode');
+    const host=document.getElementById('dev-print-host');
+    if(host){
+        host.setAttribute('aria-hidden','true');
+        host.innerHTML='';
+    }
+});
+
+
+/* ---------------- PRINT ANSWER RECORD ---------------- */
+
+function answerRecordStatus(result) {
+    if (result.isGiveUp) return 'Give Up · 0';
+    if (!result.isAnswered) return 'Skipped / ข้าม';
+    return 'Recorded / บันทึกคำตอบแล้ว';
+}
+
+window.printAnswerRecord = async function(){
+    if (state.view !== 'summary' || !state.attemptHistory.length) {
+        alert('กรุณาส่งคำตอบทั้งหมดก่อน / Please submit all answers first.');
+        return;
+    }
+
+    const host = document.getElementById('dev-print-host');
+    if (!host) return;
+
+    // Use the latest submitted attempt. In retry mode, mastered questions
+    // are already carried into latest.results so the printed record remains complete.
+    const latest = state.attemptHistory[state.attemptHistory.length - 1];
+
+    const submitted = latest.results.slice().sort(
+        (a,b) => Number(a.questionNumber || 0) - Number(b.questionNumber || 0)
+    );
+
+    const rows = submitted.map(result => {
+        const q = questionsData.find(item => item.id === result.id);
+        const selected = result.isGiveUp
+            ? 'Give Up / ยอมแพ้'
+            : (result.selected || 'No answer / ไม่ได้ตอบ');
+
+        return `
+          <div class="answer-record-item">
+            <div class="answer-record-qno">
+              Question ${result.questionNumber} / ข้อ ${result.questionNumber}
+            </div>
+
+            <div class="answer-record-question question-math">
+              ${q ? q.questionTH : ''}
+              ${q ? `<div style="margin-top:1.5mm;color:#555;font-size:8.8pt">${q.questionEN}</div>` : ''}
+            </div>
+
+            <div class="answer-record-selected question-math">
+              <b>คำตอบที่บันทึก / Recorded answer:</b>
+              <div style="margin-top:1.5mm">${selected}</div>
+            </div>
+
+            <div class="answer-record-status">
+              ${answerRecordStatus(result)}
+              ${result.isCarried ? ' · Carried from an earlier correct attempt / ยกมาจากรอบก่อน' : ''}
+            </div>
+          </div>`;
+    }).join('');
+
+    host.innerHTML = `
+      <section class="print-page">
+        <div class="answer-record-header">
+          <div class="answer-record-title">
+            บันทึกคำตอบแบบทดสอบ / Quiz Answer Record
+          </div>
+          <div class="answer-record-sub">
+            ${window.QUIZ_TEMPLATE.title}<br>
+            เอกสารนี้บันทึกเฉพาะคำตอบที่ผู้เรียนส่ง ไม่แสดงเฉลยหรือคำตอบที่ถูกเพิ่มเติม<br>
+            This record contains only the learner's submitted responses and does not reveal the answer key.
+          </div>
+        </div>
+
+        <div class="answer-record-meta">
+          <div>ชื่อ / Name: <span class="answer-record-line"></span></div>
+          <div>ชั้น / Class: <span class="answer-record-line"></span></div>
+          <div>Attempt: <b>${latest.attempt}</b></div>
+          <div>Submitted items: <b>${submitted.length}</b></div>
+        </div>
+
+        ${rows}
+
+        <div class="answer-record-footer">
+          ใช้เป็นหลักฐานคำตอบหรือทางเลือกในการส่งงานได้ ·
+          This document may be used as a response record or an alternative submission copy.
+        </div>
+      </section>`;
+
+    host.setAttribute('aria-hidden','false');
+    document.body.classList.remove('print-pack-mode');
+    document.body.classList.remove('print-notes-mode');
+    document.body.classList.add('print-answer-record-mode');
+
+    try {
+        if (window.MathJax && MathJax.typesetPromise) {
+            if (MathJax.typesetClear) MathJax.typesetClear([host]);
+            await MathJax.typesetPromise([host]);
+        }
+    } catch (err) {
+        console.warn('Print answer record MathJax:', err);
+    }
+
+    await new Promise(resolve =>
+        requestAnimationFrame(() => requestAnimationFrame(resolve))
+    );
+
+    window.print();
+};
+
+window.addEventListener('afterprint',()=>{
+    document.body.classList.remove('print-answer-record-mode');
+    const host=document.getElementById('dev-print-host');
+    if(host){
+        host.setAttribute('aria-hidden','true');
+        host.innerHTML='';
+    }
+});
+
+
+function renderStudyTools(q) {
+    return `
+      <div class="study-tools-stack">
+        ${renderAIChat(q)}
+        ${renderScratchLite(q)}
+      </div>`;
+}
+
 
 function typesetMath() {
     if (window.MathJax && MathJax.typesetPromise) {
@@ -4143,11 +4358,7 @@ function typesetMath() {
 }
 
 function renderApp() {
-    // Fabric scratchpad lives inside renderApp's DOM. Persist it before replacement.
-    if (scratchFabricCanvas && !scratchFabricLoading && state.view === 'exam') {
-        scratchFabricSaveMemory(true);
-    }
-
+    unmountScratchLiteInput();
     const appDiv = document.getElementById('app');
     appDiv.innerHTML = state.view === 'exam' ? renderExamView() : renderSummaryView();
 
@@ -4158,12 +4369,10 @@ function renderApp() {
     if (state.view === 'exam') {
         const q = state.activeQuestions[state.currentIndex];
         if (q) {
-            const pageIndex = state.scratchpadPageIndex?.[q.id] || 0;
             window.ExamatePresence?.setQuizState(
                 q.id,
                 getQuestionNumber(q.id),
-                state.showScratchpad ? 'WRITING' : 'VIEWING',
-                pageIndex + 1
+                'VIEWING'
             );
         }
     } else {
@@ -4172,7 +4381,14 @@ function renderApp() {
 
     requestAnimationFrame(() => {
         typesetMath();
-        if (state.view === 'exam' && state.showScratchpad) initScratchCanvas();
+        if (state.view === 'exam') {
+            const q = state.activeQuestions[state.currentIndex];
+            if (q) {
+                renderChatLog(q.id);
+                setChatBusy(q.id, Boolean(studyToolState.chatLoading[q.id]));
+                mountScratchLite(q.id);
+            }
+        }
     });
 }
 
@@ -4319,7 +4535,15 @@ function renderExamView() {
                     ? `<p class="text-emerald-200 text-xs mt-1">✓ ผ่านแล้ว ${masteredCount} ข้อ · ต้องแก้ ${retryNeededCount} ข้อ / ${masteredCount} correct · ${retryNeededCount} to retry</p>`
                     : `<p class="text-indigo-200 text-xs mt-1">💡 Unlimited hints · ขอคำใบ้ได้ไม่จำกัด · ไม่หักคะแนน</p>`}
             </div>
-            <button onclick="submitAll()" class="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-bold py-2 px-6 rounded-full shadow-lg transition-transform hover:scale-105">ตรวจคำตอบทั้งหมด / Submit All</button>
+            <div class="dev-print-actions">
+                <button onclick="devPrintQuiz(false)" class="dev-print-btn worksheet" title="Printable worksheet">
+                    🖨️ ปริ้นออกไปทำ / Print Worksheet
+                </button>
+                <button onclick="devPrintQuiz(true)" class="dev-print-btn answer" title="Printable answer key">
+                    🖨️ ปริ้นพร้อมเฉลย / Print + Solutions
+                </button>
+                <button onclick="submitAll()" class="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-bold py-2 px-6 rounded-full shadow-lg transition-transform hover:scale-105">ตรวจคำตอบทั้งหมด / Submit All</button>
+            </div>
         </div>
 
         <div class="p-6 flex-1 bg-white overflow-y-auto fade-in">
@@ -4335,12 +4559,6 @@ function renderExamView() {
                         ${!currentMastered && hintCount ? `<span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full">💡 ขอแล้ว ${hintCount} ครั้ง</span>` : ''}
                     </div>
                     <div class="flex flex-wrap gap-2 justify-end">
-                        <button onclick="toggleScratchpad()" class="px-4 py-2 rounded-xl font-bold text-sm bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300">
-                            ✍️ ${state.showScratchpad ? 'ปิดกระดานทด / Close Scratchpad' : 'เปิดกระดานทด / Open Scratchpad'}
-                        </button>
-                        <button onclick="copyQuestionToScratchpad()" class="px-4 py-2 rounded-xl font-bold text-sm bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200">
-                            📋 คัดลอกโจทย์ลงกระดาน / Copy Question
-                        </button>
                         ${!currentMastered && !currentGivenUp ? `<button onclick="revealNextHint('${currentQ.id}')" class="px-4 py-2 rounded-xl font-bold text-sm bg-amber-100 text-amber-900 hover:bg-amber-200 border border-amber-300">💡 ขอคำใบ้เพิ่ม / More Hint #${hintCount+1}</button>` : ''}
                     </div>
                 </div>
@@ -4348,7 +4566,6 @@ function renderExamView() {
                 <h2 class="question-math text-xl font-semibold text-gray-800 mb-2 leading-relaxed">${currentQ.questionTH}</h2>
                 <p class="question-math text-md text-gray-500 mb-4 leading-relaxed">${currentQ.questionEN}</p>
                 ${currentQ.contentHTML || ''}
-                ${state.showScratchpad ? renderScratchpad(currentQ) : ''}
                 ${masteredPanel}
                 ${hintsHtml}
 
@@ -4363,6 +4580,7 @@ function renderExamView() {
                 </div>` : ''}
 
                 ${optionsHtml}
+                ${renderStudyTools(currentQ)}
             </div>
         </div>
 
@@ -4409,16 +4627,20 @@ function renderSummaryView() {
     }).join('');
 
     return `<div class="${isPerfect ? 'bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-700' : 'bg-indigo-700'} text-white px-6 py-8 text-center rounded-t-2xl"><div class="text-sm font-bold uppercase tracking-[0.25em] text-white/75 mb-2">${isPerfect ? 'Mastery Complete' : 'Mastery Check'}</div><h1 class="text-3xl font-bold mb-2">${isPerfect ? 'ทำสำเร็จ 100% แล้ว! 🎉' : `ผลการทำรอบที่ ${state.attempt}`}</h1><p class="text-white/80">${isPerfect ? `ผ่านครบทั้ง ${questionsData.length} ข้อภายใน ${state.attemptHistory.length} รอบ` : `รอบนี้ได้ ${latest.correctCount} จาก ${latest.total} ข้อ (${latest.percentage}%) · ขอคำใบ้ ${latest.hintsUsed} ครั้ง`}</p></div>
-    <div class="p-6 bg-white flex-1 overflow-y-auto fade-in">${isPerfect ? `<div class="celebration-card border border-emerald-200 rounded-2xl p-6 text-center mb-6"><div class="celebration-icon text-6xl mb-3">🏆</div><h2 class="text-2xl font-bold text-gray-800">${window.QUIZ_TEMPLATE.completionTitle}</h2><p class="text-gray-600 mt-2">ทดลองครบทั้งการเขียนบนกระดาน การตรวจแบบ Mastery และ AI ช่วยใบ้จากภาพ</p></div>` : `<div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded-r-lg"><h3 class="font-bold text-blue-800">Mastery Learning Mode Active</h3><p class="text-blue-700 text-sm mt-1">ระบบจะนำข้อที่ผิด ข้อที่ยังไม่ได้ตอบ และข้อที่กด Give Up กลับมาให้ทำใหม่ คำใบ้ขอได้ไม่จำกัด ช่วยเรียนรู้และไม่หักคะแนน</p></div>`}
+    <div class="p-6 bg-white flex-1 overflow-y-auto fade-in">${isPerfect ? `<div class="celebration-card border border-emerald-200 rounded-2xl p-6 text-center mb-6"><div class="celebration-icon text-6xl mb-3">🏆</div><h2 class="text-2xl font-bold text-gray-800">${window.QUIZ_TEMPLATE.completionTitle}</h2><p class="text-gray-600 mt-2">ทำ Mastery Quiz ครบทุกข้อแล้ว และสามารถย้อนดูประวัติแต่ละรอบได้</p></div>` : `<div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded-r-lg"><h3 class="font-bold text-blue-800">Mastery Learning Mode Active</h3><p class="text-blue-700 text-sm mt-1">ระบบจะนำข้อที่ผิด ข้อที่ยังไม่ได้ตอบ และข้อที่กด Give Up กลับมาให้ทำใหม่ คำใบ้ขอได้ไม่จำกัด ช่วยเรียนรู้และไม่หักคะแนน</p></div>`}
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8"><div class="rounded-2xl bg-indigo-50 p-4 text-center"><div class="text-2xl font-bold text-indigo-700">${state.attemptHistory.length}</div><div class="text-xs text-indigo-500 mt-1">Attempts</div></div><div class="rounded-2xl bg-emerald-50 p-4 text-center"><div class="text-xl font-bold text-emerald-700">${formatDuration(totalElapsed)}</div><div class="text-xs text-emerald-600 mt-1">Total time</div></div><div class="rounded-2xl bg-amber-50 p-4 text-center"><div class="text-2xl font-bold text-amber-700">${firstAttempt.correctCount}/${firstAttempt.total}</div><div class="text-xs text-amber-600 mt-1">First attempt · Hint requests ${firstAttempt.hintsUsed}</div></div><div class="rounded-2xl bg-violet-50 p-4 text-center"><div class="text-2xl font-bold text-violet-700">${retryCount}</div><div class="text-xs text-violet-600 mt-1">Retries</div></div></div>
     ${isPerfect ? `<div class="rounded-2xl border border-gray-200 p-5 mb-8"><h3 class="font-bold text-gray-800 mb-2">📌 สรุปเส้นทางการเรียนรู้</h3><p class="text-gray-600 text-sm leading-relaxed">${missedQuestionNumbers.length ? `เคยพลาด ${missedQuestionNumbers.length} ข้อ: ${missedQuestionNumbers.map(n=>`Q${n}`).join(', ')} และแก้ถูกครบแล้ว` : 'ตอบถูกครบทุกข้อตั้งแต่รอบแรก'}</p></div>` : `<h3 class="font-bold text-gray-800 text-lg mb-3">ผลคำตอบรอบล่าสุด</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">${currentResultHtml}</div>`}
     <h3 class="font-bold text-gray-800 text-lg mb-4">ประวัติแต่ละรอบ / Attempt History</h3><div>${historyHtml}</div></div>
     <div class="bg-gray-50 px-6 py-4 border-t">
         <div class="flex flex-wrap justify-center gap-3">
-            <button id="export-scratchpads-btn" onclick="exportScratchpadsPDF()" class="bg-slate-800 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-slate-900 transition-colors">📄 ส่งออกกระดานทั้งหมดเป็น PDF / Export All Scratchpads PDF</button>
+            <button onclick="printAllScratchLiteNotes()" class="bg-sky-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-sky-800 transition-colors">
+                🖨️ พิมพ์สิ่งที่จด / Print Working Notes
+            </button>
+            <button onclick="printAnswerRecord()" class="bg-violet-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-violet-800 transition-colors">
+                🖨️ พิมพ์บันทึกคำตอบ / Print Answer Record
+            </button>
             ${isPerfect ? `<button onclick="restartQuiz()" class="bg-green-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-green-700 transition-colors">เริ่มทำใหม่ / Restart Quiz</button>` : `<button onclick="startRetry()" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg hover:bg-indigo-700 transition-colors">แก้เฉพาะข้อที่ผิด / Retry Incorrect Questions</button>`}
         </div>
-        <div class="text-center text-xs text-slate-500 mt-2">PDF: ทุกหน้า A4 ของทุกข้อจะถูกส่งออก · Each A4 scratchpad page is exported separately</div>
     </div>`;
 }
 
