@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Projectile Motion Simulator V2 — Measurement Points</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=K2D:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#16324f; --navy2:#224b73; --blue:#2f6fa7; --blueSoft:#eaf3fb;
+  --ink:#22313f; --muted:#6b7a89; --line:#d7e0e8; --page:#f4f7fa;
+  --amber:#a96f16; --amberSoft:#fff7e8; --green:#2d7d5b; --greenSoft:#eaf7f1;
+  --red:#a33a3a; --shadow:0 12px 30px rgba(22,50,79,.08); --radius:18px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--page);color:var(--ink)}
+body{font-family:"K2D","Tahoma",sans-serif;line-height:1.5;-webkit-tap-highlight-color:transparent}
+button,input,select{font:inherit} button{touch-action:manipulation}
+.shell{width:min(1180px,calc(100% - 24px));margin:18px auto 36px}
+.topbar{
+  background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;
+  border-radius:22px;padding:19px 22px;box-shadow:var(--shadow);
+  display:flex;justify-content:space-between;gap:18px;align-items:flex-start
+}
+.brand small{display:block;opacity:.8;font-size:.86rem;letter-spacing:.04em}
+.brand h1{margin:2px 0 0;font-size:clamp(1.3rem,2.4vw,1.95rem);line-height:1.2}
+.brand .th{margin-top:4px;opacity:.94}
+.badge{border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);padding:8px 12px;border-radius:999px;white-space:nowrap;font-size:.88rem}
+.note{
+  margin-top:14px;background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+  padding:13px 16px;box-shadow:var(--shadow);display:flex;justify-content:space-between;gap:16px;align-items:center
+}
+.note strong{color:var(--navy)} .note span{color:var(--muted);font-size:.88rem}
+.grid{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(310px,.8fr);gap:14px;margin-top:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.card-head{padding:13px 15px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:center}
+.card-head h2,.card-head h3{margin:0;color:var(--navy);font-size:1.02rem}.sub{font-size:.8rem;color:var(--muted)}
+.sim-card{overflow:hidden}
+.sim-wrap{
+  position:relative;height:540px;overflow:hidden;
+  background:
+    linear-gradient(rgba(47,111,167,.055) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(47,111,167,.055) 1px,transparent 1px),
+    #fbfdff;background-size:32px 32px
+}
+#field{display:block;width:100%;height:540px;user-select:none;touch-action:none}
+.legend{position:absolute;left:14px;top:12px;display:flex;gap:7px;flex-wrap:wrap;pointer-events:none}
+.chip{display:flex;gap:6px;align-items:center;background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:999px;padding:6px 9px;font-size:.78rem}
+.dot{width:9px;height:9px;border-radius:50%}.dot.a{background:#56697c}.dot.b{background:var(--blue)}.dot.m{background:var(--green)}
+.stopTip{position:absolute;right:12px;top:12px;background:rgba(255,255,255,.94);border:1px solid #d7e3ee;border-radius:10px;padding:6px 9px;color:var(--navy);font-size:.76rem;pointer-events:none}
+.sim-footer{border-top:1px solid var(--line);padding:11px 13px;display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{min-height:42px;border:1px solid var(--line);border-radius:11px;background:#fff;color:var(--ink);padding:8px 13px;font-weight:600;cursor:pointer}
+.btn.primary{background:var(--navy);border-color:var(--navy);color:#fff}.btn.soft{background:var(--blueSoft);border-color:#c9dff1;color:var(--navy)}
+.btn.green{background:var(--green);border-color:var(--green);color:#fff}.btn.danger{border-color:#e2b7b7;color:var(--red);background:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.mode{font-size:.84rem;color:var(--muted)}
+.controls{padding:13px}
+.control{padding:12px;border:1px solid var(--line);border-radius:14px;margin-bottom:10px}
+.control label{display:flex;justify-content:space-between;gap:8px;align-items:baseline;color:var(--navy);font-weight:700;margin-bottom:8px}
+.control label span{font-size:.76rem;font-weight:500;color:var(--muted)}
+.row{display:grid;grid-template-columns:44px 1fr 44px;gap:8px;align-items:center}
+.step{height:42px;border:1px solid var(--line);border-radius:10px;background:#f8fafc;color:var(--navy);font-weight:700;cursor:pointer}
+.num,.select{height:42px;width:100%;border:1px solid #c9d6e2;border-radius:10px;text-align:center;font-weight:700;background:#fff}
+.range{width:100%;margin-top:9px;accent-color:var(--blue)}
+.help{font-size:.76rem;color:var(--muted);margin-top:6px}
+.switchRow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 2px 2px}
+.switch{position:relative;width:48px;height:28px;flex:0 0 auto}.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;inset:0;background:#bcc8d2;border-radius:999px;cursor:pointer;transition:.2s}.slider:before{content:"";position:absolute;width:22px;height:22px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.switch input:checked+.slider{background:var(--blue)}.switch input:checked+.slider:before{transform:translateX(20px)}
+.readouts{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:14px}
+.readout{background:#fff;border:1px solid var(--line);border-radius:14px;padding:11px 12px;box-shadow:var(--shadow);min-width:0}
+.readout .k{font-size:.75rem;color:var(--muted)}.readout .v{font-family:"Times New Roman",serif;font-size:1.38rem;color:var(--navy);font-weight:700}.u{font-size:.76rem;color:var(--muted);margin-left:3px}
+
+.measure-card{margin-top:14px;overflow:hidden}
+.measure-tools{padding:12px 14px;display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.measure-tools .left{display:flex;gap:8px;flex-wrap:wrap}
+.measure-tools .hint{font-size:.8rem;color:var(--muted)}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.9rem;min-width:760px}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th{background:#f8fafc;color:var(--navy);font-size:.78rem}
+th:first-child,td:first-child{text-align:center}
+tbody tr:hover{background:#fbfdff}
+.empty{text-align:center!important;color:var(--muted);padding:20px!important}
+.row-marker{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--greenSoft);color:var(--green);font-weight:700}
+.info{
+  margin-top:14px;background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:13px 15px;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:8px
+}
+.eq{border:1px solid var(--line);border-radius:11px;padding:9px;text-align:center;background:#fbfdff;color:var(--navy);font-family:"Times New Roman",serif}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.sim-wrap,#field{height:500px}.readouts{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:620px){
+ .shell{width:calc(100% - 12px);margin-top:6px}.topbar{border-radius:16px;padding:15px}.badge{display:none}.note{display:block}.note span{display:block;margin-top:3px}
+ .sim-wrap,#field{height:470px}.readouts{grid-template-columns:repeat(2,1fr)}.info{grid-template-columns:repeat(2,1fr)}.stopTip{display:none}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="topbar">
+    <div class="brand">
+      <small>INTERACTIVE PHYSICS SIMULATOR · V2</small>
+      <h1>Drop vs Horizontal Launch</h1>
+      <div class="th">ปล่อยตกตรง เทียบกับ ปล่อยพุ่งในแนวระดับ</div>
+    </div>
+    <div class="badge">V2 · Measurement Points</div>
+  </header>
+
+  <section class="note">
+    <div><strong>V2 เพิ่ม:</strong> หยุดที่ระดับใดก็ได้ แล้วบันทึกค่าจุดนั้นลงตาราง</div>
+    <span>ไม่มีคำถาม ไม่มีการตรวจคำตอบ เป็นแบบจำลองสำหรับปรับค่าและอ่านข้อมูลเท่านั้น</span>
+  </section>
+
+  <div class="grid">
+    <section class="card sim-card">
+      <div class="card-head">
+        <div><h2>Simulation Field / สนามจำลอง</h2><div class="sub">ลากเส้น STOP หรือแตะระดับบนไม้บรรทัด</div></div>
+        <div class="sub" id="scaleLabel">Auto scale</div>
+      </div>
+
+      <div class="sim-wrap">
+        <svg id="field" viewBox="0 0 820 540" aria-label="Projectile motion simulation">
+          <defs>
+            <marker id="arrowBlue" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M0 0 L10 5 L0 10 z" fill="#2f6fa7"/>
+            </marker>
+            <marker id="arrowAmber" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M0 0 L10 5 L0 10 z" fill="#a96f16"/>
+            </marker>
+            <marker id="arrowGray" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M0 0 L10 5 L0 10 z" fill="#56697c"/>
+            </marker>
+          </defs>
+
+          <line x1="86" y1="474" x2="786" y2="474" stroke="#16324f" stroke-width="3"/>
+          <line x1="86" y1="474" x2="86" y2="48" stroke="#9aabba" stroke-width="1.5"/>
+          <text x="792" y="479" fill="#6b7a89" font-size="12">x</text>
+          <text x="82" y="34" fill="#6b7a89" font-size="12">y</text>
+
+          <g id="rulerTicks"></g>
+
+          <line id="platform" x1="110" y1="90" x2="230" y2="90" stroke="#16324f" stroke-width="4" stroke-linecap="round"/>
+          <text id="heightTag" x="235" y="94" fill="#16324f" font-size="13" font-weight="700">H = 10 m</text>
+
+          <g id="recordMarkers"></g>
+
+          <g id="stopGroup" style="cursor:ns-resize">
+            <line id="stopLine" x1="86" y1="260" x2="786" y2="260" stroke="#a96f16" stroke-width="2" stroke-dasharray="8 6"/>
+            <rect id="stopHandle" x="650" y="246" width="126" height="28" rx="8" fill="#fff7e8" stroke="#d7b675"/>
+            <text id="stopText" x="713" y="265" text-anchor="middle" fill="#815514" font-size="12" font-weight="700">STOP 5.0 m</text>
+          </g>
+
+          <path id="trajectory" d="" fill="none" stroke="#8ab7d9" stroke-width="2.4" stroke-dasharray="5 5"/>
+          <line id="sameY" x1="164" y1="90" x2="258" y2="90" stroke="#8ba4ba" stroke-width="1.4" stroke-dasharray="4 4"/>
+
+          <g id="vecA"><line id="vyA" x1="152" y1="90" x2="152" y2="90" stroke="#56697c" stroke-width="3" marker-end="url(#arrowGray)"/></g>
+          <g id="vecB">
+            <line id="vxB" x1="270" y1="90" x2="330" y2="90" stroke="#2f6fa7" stroke-width="3" marker-end="url(#arrowBlue)"/>
+            <text id="vxTxt" x="336" y="84" fill="#2f6fa7" font-size="12" font-weight="700">vₓ</text>
+            <line id="vyB" x1="270" y1="90" x2="270" y2="90" stroke="#a96f16" stroke-width="3" marker-end="url(#arrowAmber)"/>
+            <text id="vyTxt" x="278" y="104" fill="#a96f16" font-size="12" font-weight="700">vᵧ</text>
+          </g>
+
+          <circle id="dropBall" cx="152" cy="90" r="11" fill="#56697c" stroke="#fff" stroke-width="3"/>
+          <circle id="launchBall" cx="270" cy="90" r="11" fill="#2f6fa7" stroke="#fff" stroke-width="3"/>
+          <text id="dropLabel" x="126" y="70" fill="#42566a" font-size="12" font-weight="700">A · DROP</text>
+          <text id="launchLabel" x="245" y="70" fill="#2f6fa7" font-size="12" font-weight="700">B · HORIZONTAL</text>
+
+          <text x="94" y="500" fill="#6b7a89" font-size="12">0 m</text>
+          <text id="landingText" x="300" y="500" fill="#6b7a89" font-size="12"></text>
+        </svg>
+
+        <div class="legend">
+          <div class="chip"><span class="dot a"></span>A: Free fall</div>
+          <div class="chip"><span class="dot b"></span>B: Horizontal launch</div>
+          <div class="chip"><span class="dot m"></span>Recorded point</div>
+        </div>
+        <div class="stopTip">ลากเส้นสีเหลืองขึ้น–ลง เพื่อเลือกความสูงที่จะหยุด</div>
+      </div>
+
+      <div class="sim-footer">
+        <div class="actions">
+          <button class="btn primary" id="startBtn">▶ Start / เริ่ม</button>
+          <button class="btn soft" id="pauseBtn" disabled>⏸ Pause / หยุด</button>
+          <button class="btn green" id="recordBtn" disabled>＋ Record point / บันทึกจุด</button>
+          <button class="btn" id="resetBtn">↺ Reset motion / เริ่มใหม่</button>
+        </div>
+        <div class="mode" id="modeText">Ready · พร้อมเริ่ม</div>
+      </div>
+    </section>
+
+    <aside class="card">
+      <div class="card-head"><div><h3>Controls / ปรับค่า</h3><div class="sub">g = 10.0 m/s² · ไม่มีแรงต้านอากาศ</div></div></div>
+      <div class="controls">
+
+        <div class="control">
+          <label>Initial height, H <span>ความสูงเริ่มต้น</span></label>
+          <div class="row">
+            <button class="step" data-kind="H" data-d="-0.5">−</button>
+            <input class="num" id="hInput" type="number" min="2" max="20" step="0.5" value="10">
+            <button class="step" data-kind="H" data-d="0.5">+</button>
+          </div>
+          <input class="range" id="hRange" type="range" min="2" max="20" step="0.5" value="10">
+          <div class="help">2–20 m · เปลี่ยน H จะล้างจุดที่บันทึกไว้</div>
+        </div>
+
+        <div class="control">
+          <label>Horizontal speed, uₓ <span>ความเร็วต้นแนวระดับ</span></label>
+          <div class="row">
+            <button class="step" data-kind="ux" data-d="-0.5">−</button>
+            <input class="num" id="uxInput" type="number" min="0" max="15" step="0.5" value="6">
+            <button class="step" data-kind="ux" data-d="0.5">+</button>
+          </div>
+          <input class="range" id="uxRange" type="range" min="0" max="15" step="0.5" value="6">
+          <div class="help">0–15 m/s · เปลี่ยน uₓ จะล้างจุดที่บันทึกไว้</div>
+        </div>
+
+        <div class="control">
+          <label>Stop height <span>หยุดที่ความสูง</span></label>
+          <div class="row">
+            <button class="step" data-kind="stop" data-d="-0.5">−</button>
+            <input class="num" id="stopInput" type="number" min="0" max="10" step="0.5" value="5">
+            <button class="step" data-kind="stop" data-d="0.5">+</button>
+          </div>
+          <input class="range" id="stopRange" type="range" min="0" max="10" step="0.5" value="5">
+          <div class="help">หยุดแบบ exact ที่ระดับนี้ แล้วกด Record point ได้</div>
+        </div>
+
+        <div class="control">
+          <label>Animation speed <span>ความเร็วการเล่น</span></label>
+          <select id="speedSelect" class="select">
+            <option value="0.5">0.5× Slow</option>
+            <option value="0.82" selected>0.82× Classroom</option>
+            <option value="1">1.0× Real-time</option>
+            <option value="1.5">1.5× Fast</option>
+          </select>
+        </div>
+
+        <div class="switchRow">
+          <div><strong style="color:var(--navy)">Compare free fall</strong><div class="help" style="margin:2px 0 0">แสดงลูก A สำหรับเปรียบเทียบ</div></div>
+          <label class="switch"><input id="compare" type="checkbox" checked><span class="slider"></span></label>
+        </div>
+        <div class="switchRow">
+          <div><strong style="color:var(--navy)">Show velocity vectors</strong><div class="help" style="margin:2px 0 0">แสดง vₓ และ vᵧ</div></div>
+          <label class="switch"><input id="vectors" type="checkbox" checked><span class="slider"></span></label>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <section class="readouts">
+    <div class="readout"><div class="k">Height y / ความสูง</div><div><span class="v" id="yOut">10.00</span><span class="u">m</span></div></div>
+    <div class="readout"><div class="k">Time t / เวลา</div><div><span class="v" id="tOut">0.00</span><span class="u">s</span></div></div>
+    <div class="readout"><div class="k">Horizontal x / ระยะ x</div><div><span class="v" id="xOut">0.00</span><span class="u">m</span></div></div>
+    <div class="readout"><div class="k">Vertical speed |vᵧ|</div><div><span class="v" id="vyOut">0.00</span><span class="u">m/s</span></div></div>
+    <div class="readout"><div class="k">Speed of B / อัตราเร็วรวม</div><div><span class="v" id="vOut">6.00</span><span class="u">m/s</span></div></div>
+  </section>
+
+  <section class="card measure-card">
+    <div class="card-head">
+      <div><h3>Measurement Table / ตารางค่าที่บันทึก</h3><div class="sub">แต่ละจุดมาจากสถานะจริงของแบบจำลอง ณ เวลานั้น</div></div>
+      <div class="sub" id="countLabel">0 points</div>
+    </div>
+    <div class="measure-tools">
+      <div class="left">
+        <button class="btn green" id="recordBtn2" disabled>＋ Record current point</button>
+        <button class="btn danger" id="clearRecordsBtn" disabled>Clear records / ล้างตาราง</button>
+      </div>
+      <div class="hint">หยุดที่ระดับหนึ่ง → บันทึก → เปลี่ยน STOP → Continue → บันทึกจุดถัดไป</div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Height y (m)</th>
+            <th>Fallen H−y (m)</th>
+            <th>Time t (s)</th>
+            <th>x (m)</th>
+            <th>|vᵧ| (m/s)</th>
+            <th>vₓ (m/s)</th>
+            <th>Speed v (m/s)</th>
+          </tr>
+        </thead>
+        <tbody id="recordBody">
+          <tr><td colspan="8" class="empty">ยังไม่มีจุดที่บันทึก / No recorded points yet</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="info">
+    <div class="eq">sᵧ = ½gt²</div>
+    <div class="eq">x = uₓt</div>
+    <div class="eq">vᵧ = gt</div>
+    <div class="eq">v = √(vₓ² + vᵧ²)</div>
+  </section>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const G=10;
+  const SVG={left:86,right:786,top:54,ground:474};
+  const AX=152, BX=270;
+  const $=id=>document.getElementById(id);
+  const E={
+    field:$("field"), ruler:$("rulerTicks"), platform:$("platform"), heightTag:$("heightTag"),
+    recordMarkers:$("recordMarkers"),
+    stopGroup:$("stopGroup"), stopLine:$("stopLine"), stopHandle:$("stopHandle"), stopText:$("stopText"),
+    trajectory:$("trajectory"), sameY:$("sameY"),
+    dropBall:$("dropBall"), launchBall:$("launchBall"), dropLabel:$("dropLabel"), launchLabel:$("launchLabel"),
+    vecA:$("vecA"), vecB:$("vecB"), vyA:$("vyA"), vxB:$("vxB"), vyB:$("vyB"), vxTxt:$("vxTxt"), vyTxt:$("vyTxt"),
+    landingText:$("landingText"), scaleLabel:$("scaleLabel"),
+    hInput:$("hInput"),hRange:$("hRange"),uxInput:$("uxInput"),uxRange:$("uxRange"),
+    stopInput:$("stopInput"),stopRange:$("stopRange"),compare:$("compare"),vectors:$("vectors"),speedSelect:$("speedSelect"),
+    startBtn:$("startBtn"),pauseBtn:$("pauseBtn"),resetBtn:$("resetBtn"),recordBtn:$("recordBtn"),recordBtn2:$("recordBtn2"),
+    clearRecordsBtn:$("clearRecordsBtn"),modeText:$("modeText"),
+    yOut:$("yOut"),tOut:$("tOut"),xOut:$("xOut"),vyOut:$("vyOut"),vOut:$("vOut"),
+    recordBody:$("recordBody"),countLabel:$("countLabel")
+  };
+
+  const S={
+    H:10,ux:6,stop:5,t:0,running:false,landed:false,hitStop:false,compare:true,showVectors:true,
+    playRate:.82,raf:null,last:null,pxY:1,pxX:1,records:[]
+  };
+
+  const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+  const fmt=(v,n=2)=>Number(v).toFixed(n);
+  const flightTime=()=>Math.sqrt(2*S.H/G);
+  const landingRange=()=>S.ux*flightTime();
+  const timeAtHeight=y=>Math.sqrt(2*clamp(S.H-y,0,S.H)/G);
+  const physics=t=>{
+    const y=Math.max(0,S.H-.5*G*t*t), vy=-G*t, x=S.ux*t;
+    return {t,y,x,vy,speed:Math.hypot(S.ux,vy)};
+  };
+
+  function scale(){
+    const r=Math.max(1,landingRange());
+    S.pxY=(SVG.ground-SVG.top)/S.H;
+    S.pxX=(SVG.right-BX-18)/Math.max(12,r*1.12);
+    E.scaleLabel.textContent=`Auto scale · H ${fmt(S.H,1)} m · landing x ${fmt(r,1)} m`;
+  }
+  const ypx=y=>SVG.ground-y*S.pxY;
+  const xpx=x=>BX+x*S.pxX;
+
+  function drawRuler(){
+    E.ruler.innerHTML="";
+    const step=S.H<=8?1:S.H<=14?2:2.5;
+    const vals=[];
+    for(let y=0;y<=S.H+1e-9;y+=step) vals.push(+y.toFixed(4));
+    if(Math.abs(vals.at(-1)-S.H)>1e-6) vals.push(S.H);
+    vals.sort((a,b)=>b-a).forEach(y=>{
+      const yp=ypx(y);
+      const g=document.createElementNS("http://www.w3.org/2000/svg","g");
+      g.style.cursor="pointer";
+      const l=document.createElementNS("http://www.w3.org/2000/svg","line");
+      l.setAttribute("x1",70);l.setAttribute("x2",86);l.setAttribute("y1",yp);l.setAttribute("y2",yp);l.setAttribute("stroke","#9aabba");
+      const t=document.createElementNS("http://www.w3.org/2000/svg","text");
+      t.setAttribute("x",64);t.setAttribute("y",yp+4);t.setAttribute("text-anchor","end");t.setAttribute("fill","#6b7a89");t.setAttribute("font-size","11");t.textContent=`${+y.toFixed(1)} m`;
+      g.append(l,t);
+      g.addEventListener("click",()=>{if(!S.running)setStop(y)});
+      E.ruler.appendChild(g);
+    });
+  }
+
+  function drawTrajectory(){
+    const tf=flightTime(), pts=[];
+    for(let i=0;i<=80;i++){
+      const p=physics(tf*i/80);
+      pts.push(`${i?"L":"M"} ${xpx(p.x).toFixed(2)} ${ypx(p.y).toFixed(2)}`);
+    }
+    E.trajectory.setAttribute("d",pts.join(" "));
+  }
+
+  function drawRecordMarkers(){
+    E.recordMarkers.innerHTML="";
+    S.records.forEach((r,i)=>{
+      const g=document.createElementNS("http://www.w3.org/2000/svg","g");
+      const py=ypx(r.y), px=xpx(r.x);
+
+      const level=document.createElementNS("http://www.w3.org/2000/svg","line");
+      level.setAttribute("x1",86);level.setAttribute("x2",px-10);
+      level.setAttribute("y1",py);level.setAttribute("y2",py);
+      level.setAttribute("stroke","#2d7d5b");level.setAttribute("stroke-width","1");
+      level.setAttribute("stroke-dasharray","3 4");level.setAttribute("opacity",".38");
+
+      const c=document.createElementNS("http://www.w3.org/2000/svg","circle");
+      c.setAttribute("cx",px);c.setAttribute("cy",py);c.setAttribute("r","7");
+      c.setAttribute("fill","#2d7d5b");c.setAttribute("stroke","#fff");c.setAttribute("stroke-width","2");
+
+      const t=document.createElementNS("http://www.w3.org/2000/svg","text");
+      t.setAttribute("x",px+10);t.setAttribute("y",py-8);t.setAttribute("fill","#2d7d5b");
+      t.setAttribute("font-size","11");t.setAttribute("font-weight","700");t.textContent=`P${i+1}`;
+
+      g.append(level,c,t);E.recordMarkers.appendChild(g);
+    });
+  }
+
+  function updateStop(){
+    const py=ypx(S.stop);
+    E.stopLine.setAttribute("y1",py);E.stopLine.setAttribute("y2",py);
+    E.stopHandle.setAttribute("y",py-14);E.stopText.setAttribute("y",py+5);
+    E.stopText.textContent=`STOP ${fmt(S.stop,1)} m`;
+  }
+
+  function render(){
+    const p=physics(S.t), py=ypx(p.y), px=xpx(p.x);
+    E.dropBall.setAttribute("cy",py);
+    E.launchBall.setAttribute("cx",px);E.launchBall.setAttribute("cy",py);
+    E.dropLabel.setAttribute("y",py-20);
+    E.launchLabel.setAttribute("x",px-25);E.launchLabel.setAttribute("y",py-20);
+    E.sameY.setAttribute("x1",AX+12);E.sameY.setAttribute("x2",Math.max(AX+16,px-12));E.sameY.setAttribute("y1",py);E.sameY.setAttribute("y2",py);
+
+    const vxl=Math.min(84,28+S.ux*4.2), vyl=Math.min(110,Math.abs(p.vy)*3);
+    E.vxB.setAttribute("x1",px);E.vxB.setAttribute("y1",py);E.vxB.setAttribute("x2",px+vxl);E.vxB.setAttribute("y2",py);
+    E.vxTxt.setAttribute("x",px+vxl+5);E.vxTxt.setAttribute("y",py-6);
+    E.vyB.setAttribute("x1",px);E.vyB.setAttribute("y1",py);E.vyB.setAttribute("x2",px);E.vyB.setAttribute("y2",py+vyl);
+    E.vyTxt.setAttribute("x",px+7);E.vyTxt.setAttribute("y",py+vyl+12);
+    E.vyA.setAttribute("x1",AX);E.vyA.setAttribute("y1",py);E.vyA.setAttribute("x2",AX);E.vyA.setAttribute("y2",py+vyl);
+
+    E.yOut.textContent=fmt(p.y);E.tOut.textContent=fmt(p.t);E.xOut.textContent=fmt(p.x);
+    E.vyOut.textContent=fmt(Math.abs(p.vy));E.vOut.textContent=fmt(p.speed);
+
+    for(const node of [E.dropBall,E.dropLabel,E.sameY]) node.style.display=S.compare?"":"none";
+    E.vecA.style.display=(S.compare&&S.showVectors)?"":"none";
+    E.vecB.style.display=S.showVectors?"":"none";
+
+    updateRecordAvailability();
+  }
+
+  function rebuild(){
+    scale();drawRuler();drawTrajectory();drawRecordMarkers();
+    const top=ypx(S.H);
+    E.platform.setAttribute("y1",top);E.platform.setAttribute("y2",top);
+    E.heightTag.setAttribute("y",top+4);E.heightTag.textContent=`H = ${fmt(S.H,1)} m`;
+    E.stopRange.max=S.H;E.stopInput.max=S.H;
+    S.stop=clamp(S.stop,0,S.H);E.stopInput.value=S.stop;E.stopRange.value=S.stop;
+    updateStop();
+    const landx=xpx(landingRange());
+    E.landingText.setAttribute("x",clamp(landx-32,290,700));E.landingText.textContent=`landing x ≈ ${fmt(landingRange(),1)} m`;
+    render();
+  }
+
+  function lockSetup(lock){
+    [E.hInput,E.hRange,E.uxInput,E.uxRange,...document.querySelectorAll('[data-kind="H"],[data-kind="ux"]')].forEach(n=>n.disabled=lock);
+  }
+
+  function updateRecordAvailability(){
+    const canRecord=!S.running && S.t>0;
+    E.recordBtn.disabled=!canRecord;
+    E.recordBtn2.disabled=!canRecord;
+    E.clearRecordsBtn.disabled=S.records.length===0;
+  }
+
+  function resetMotion(){
+    if(S.raf) cancelAnimationFrame(S.raf);
+    S.t=0;S.running=false;S.landed=false;S.hitStop=false;S.last=null;
+    lockSetup(false);E.startBtn.disabled=false;E.pauseBtn.disabled=true;E.startBtn.textContent="▶ Start / เริ่ม";E.modeText.textContent="Ready · พร้อมเริ่ม";
+    rebuild();
+  }
+
+  function clearRecords(){
+    S.records=[];
+    renderRecords();
+    drawRecordMarkers();
+    updateRecordAvailability();
+  }
+
+  function fullResetForParameterChange(){
+    clearRecords();
+    resetMotion();
+  }
+
+  function start(){
+    if(S.landed) resetMotion();
+    S.running=true;S.hitStop=false;S.last=null;
+    lockSetup(true);E.startBtn.disabled=true;E.pauseBtn.disabled=false;E.modeText.textContent="Running · กำลังเคลื่อนที่";
+    S.raf=requestAnimationFrame(frame);
+  }
+
+  function frame(ts){
+    if(!S.running)return;
+    if(S.last===null)S.last=ts;
+    const dt=Math.min(.035,(ts-S.last)/1000);S.last=ts;S.t+=dt*S.playRate;
+    const tf=flightTime(), st=timeAtHeight(S.stop);
+
+    if(!S.hitStop && S.stop<S.H && st>0 && S.t>=st){
+      S.t=st;S.running=false;S.hitStop=true;cancelAnimationFrame(S.raf);render();
+      E.startBtn.disabled=false;E.pauseBtn.disabled=true;E.startBtn.textContent="▶ Continue / เคลื่อนที่ต่อ";
+      E.modeText.textContent=`Stopped exactly at ${fmt(S.stop,1)} m · พร้อมบันทึกจุด`;
+      return;
+    }
+
+    if(S.t>=tf){
+      S.t=tf;S.running=false;S.landed=true;cancelAnimationFrame(S.raf);render();
+      lockSetup(false);E.startBtn.disabled=false;E.pauseBtn.disabled=true;E.startBtn.textContent="▶ Start again / เริ่มใหม่";
+      E.modeText.textContent="Landed together · ทั้งสองถึงพื้นพร้อมกัน";
+      return;
+    }
+    render();S.raf=requestAnimationFrame(frame);
+  }
+
+  function pause(){
+    if(!S.running)return;
+    S.running=false;cancelAnimationFrame(S.raf);E.startBtn.disabled=false;E.pauseBtn.disabled=true;E.startBtn.textContent="▶ Continue / เคลื่อนที่ต่อ";E.modeText.textContent="Paused · สามารถบันทึกค่าจุดนี้ได้";
+    render();
+  }
+
+  function setH(v){
+    if(S.running)return;
+    S.H=clamp(Number(v)||2,2,20);
+    if(S.stop>S.H)S.stop=S.H/2;
+    E.hInput.value=S.H;E.hRange.value=S.H;fullResetForParameterChange();
+  }
+  function setUx(v){
+    if(S.running)return;
+    S.ux=clamp(Number(v)||0,0,15);E.uxInput.value=S.ux;E.uxRange.value=S.ux;fullResetForParameterChange();
+  }
+  function setStop(v){
+    S.stop=clamp(Number(v)||0,0,S.H);E.stopInput.value=S.stop;E.stopRange.value=S.stop;updateStop();
+    if(S.hitStop){S.hitStop=false;E.startBtn.textContent="▶ Continue / เคลื่อนที่ต่อ";E.modeText.textContent=`Next stop: ${fmt(S.stop,1)} m`;}
+  }
+
+  function recordCurrent(){
+    if(S.running || S.t<=0) return;
+    const p=physics(S.t);
+    const duplicate=S.records.some(r=>Math.abs(r.t-p.t)<1e-6);
+    if(duplicate){
+      E.modeText.textContent="This point is already recorded · จุดนี้ถูกบันทึกแล้ว";
+      return;
+    }
+    S.records.push({
+      y:p.y,fall:S.H-p.y,t:p.t,x:p.x,vy:Math.abs(p.vy),vx:S.ux,v:p.speed
+    });
+    S.records.sort((a,b)=>a.t-b.t);
+    renderRecords();drawRecordMarkers();updateRecordAvailability();
+    E.modeText.textContent=`Recorded point P${S.records.findIndex(r=>Math.abs(r.t-p.t)<1e-6)+1} · บันทึกแล้ว`;
+  }
+
+  function renderRecords(){
+    E.countLabel.textContent=`${S.records.length} point${S.records.length===1?"":"s"}`;
+    if(!S.records.length){
+      E.recordBody.innerHTML='<tr><td colspan="8" class="empty">ยังไม่มีจุดที่บันทึก / No recorded points yet</td></tr>';
+      return;
+    }
+    E.recordBody.innerHTML=S.records.map((r,i)=>`
+      <tr>
+        <td><span class="row-marker">${i+1}</span></td>
+        <td>${fmt(r.y)}</td>
+        <td>${fmt(r.fall)}</td>
+        <td>${fmt(r.t)}</td>
+        <td>${fmt(r.x)}</td>
+        <td>${fmt(r.vy)}</td>
+        <td>${fmt(r.vx)}</td>
+        <td>${fmt(r.v)}</td>
+      </tr>`).join("");
+  }
+
+  E.hRange.addEventListener("input",e=>setH(e.target.value));E.hInput.addEventListener("change",e=>setH(e.target.value));
+  E.uxRange.addEventListener("input",e=>setUx(e.target.value));E.uxInput.addEventListener("change",e=>setUx(e.target.value));
+  E.stopRange.addEventListener("input",e=>setStop(e.target.value));E.stopInput.addEventListener("change",e=>setStop(e.target.value));
+  document.querySelectorAll(".step").forEach(b=>b.addEventListener("click",()=>{
+    const d=Number(b.dataset.d),k=b.dataset.kind;
+    if(k==="H")setH(S.H+d); else if(k==="ux")setUx(S.ux+d); else setStop(S.stop+d);
+  }));
+  E.startBtn.addEventListener("click",start);E.pauseBtn.addEventListener("click",pause);E.resetBtn.addEventListener("click",resetMotion);
+  E.recordBtn.addEventListener("click",recordCurrent);E.recordBtn2.addEventListener("click",recordCurrent);
+  E.clearRecordsBtn.addEventListener("click",clearRecords);
+  E.compare.addEventListener("change",e=>{S.compare=e.target.checked;render()});
+  E.vectors.addEventListener("change",e=>{S.showVectors=e.target.checked;render()});
+  E.speedSelect.addEventListener("change",e=>{S.playRate=Number(e.target.value)||.82});
+
+  let drag=false;
+  function point(evt){const p=E.field.createSVGPoint();p.x=evt.clientX;p.y=evt.clientY;return p.matrixTransform(E.field.getScreenCTM().inverse())}
+  function stopFromY(sy){const yw=(SVG.ground-sy)/S.pxY;setStop(Math.round(clamp(yw,0,S.H)*2)/2)}
+  E.stopGroup.addEventListener("pointerdown",e=>{if(S.running)return;drag=true;E.stopGroup.setPointerCapture?.(e.pointerId);stopFromY(point(e).y)});
+  E.field.addEventListener("pointermove",e=>{if(drag&&!S.running)stopFromY(point(e).y)});
+  E.field.addEventListener("pointerup",()=>drag=false);E.field.addEventListener("pointercancel",()=>drag=false);
+
+  renderRecords();rebuild();
+})();
+</script>
+</body>
+</html>

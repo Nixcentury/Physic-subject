@@ -157,6 +157,7 @@
     .map-step.locked{background:#e5e7eb;color:#64748b;border-color:#cbd5e1;cursor:not-allowed;opacity:.72}
     .map-step.available{background:#fff;border-color:var(--accent)}
     .map-step.done{background:var(--ok-soft);border-color:var(--ok);color:#14532d}
+    .map-step.recovered{background:#fffbeb;border-color:#f59e0b;color:#92400e}
     .map-step.current{outline:4px solid #c7d2fe;background:var(--accent-soft)}
     .map-step.current:disabled{opacity:1;cursor:default}
     .map-step .mark{font-size:.72rem;margin-left:3px}
@@ -164,6 +165,9 @@
     .nav-legend{font-size:.78rem;color:var(--muted);font-weight:750;margin-top:8px}
     .station-card.nav-clickable{cursor:pointer}
     .station-card.nav-clickable:hover{transform:translateY(-1px)}
+    .fallback-answer{border:2px solid #f59e0b;border-radius:14px;background:#fffbeb;color:#78350f;padding:13px 15px;margin:12px 0 16px;line-height:1.55}
+    .fallback-answer strong{color:#92400e}
+    body.pdf-fallback-mode .learning-map{border-color:#f59e0b;background:#fffbeb}
     @media (max-width:620px){
       .learning-map{padding:12px}
       .learning-map-head .action{width:100%}
@@ -340,7 +344,7 @@
       <div id="cloudLoading" class="cloud-loading">⏳ กำลังโหลดงานเดิมและคืนสถานะกิจกรรม...<br>Loading saved work and restoring completed checkpoints...</div>
       <button id="cloudRetryLoad" class="cloud-google" type="button" style="display:none;margin-top:10px">↻ ลองโหลดอีกครั้ง / Retry loading</button>
       <button id="cloudClearSave" class="cloud-google" type="button" style="display:none;margin-top:10px;border-color:#dc2626;color:#991b1b">เริ่มใหม่และล้างงาน Cloud / Start new and clear Cloud save</button>
-      <button id="cloudContinueOffline" class="cloud-google" type="button" style="display:none;margin-top:10px;border-color:#f59e0b;color:#92400e;background:#fffbeb">ทำต่อแบบ PDF โดยไม่ใช้ Cloud / Continue in PDF fallback mode</button>
+      <button id="cloudContinueOffline" class="cloud-google" type="button" style="display:none;margin-top:10px;border-color:#f59e0b;color:#92400e;background:#fffbeb">ทำต่อแบบ PDF · เลือกข้ามข้อได้ / PDF fallback · choose any step</button>
       <div id="cloudError" class="cloud-error"></div>
       <div class="cloud-gate-note">☁️ ความคืบหน้าจะบันทึกอัตโนมัติใน Firebase หลังทำกิจกรรมสำคัญ หากเปิดบัญชีเดียวกันหลายอุปกรณ์ ระบบจะป้องกันงานเก่าทับงานที่ใหม่กว่า<br>Your progress saves automatically to Firebase after meaningful learning actions. If the same account is open on multiple devices, newer cloud work is protected from stale overwrite.</div>
     </div>
@@ -2161,6 +2165,54 @@
       {id:'finalChallengeCard', label:'Final'}
     ];
     let navigatorCurrentId = 'foundationCard';
+    const fallbackRecoveredIds = new Set();
+    const fallbackAnswers = {
+      foundationCard:'<strong>เฉลย Foundation / Foundation answers</strong><br>1) แรงลัพธ์ = 0 N &nbsp; 2) a = 12/3 = 4.0 m/s² &nbsp; 3) แรงคู่กิริยา–ปฏิกิริยาเกิดจากปฏิสัมพันธ์เดียวกัน ขนาดเท่ากัน ทิศตรงข้าม และกระทำบนคนละวัตถุ<br>4) ยังไม่เคลื่อนที่: แรงเสียดทานสถิต; กำลังไถล: แรงเสียดทานจลน์ &nbsp; 5) เมื่อเกินแรงเสียดทานสถิตสูงสุด วัตถุเริ่มไถลและใช้แรงเสียดทานจลน์',
+      scene1A:'<strong>เฉลย 1A</strong><br>มวลทั้งสองมีขนาดความเร่งเท่ากัน เพราะเชือกเบา ตึง และไม่ยืดบังคับให้เคลื่อนร่วมกัน / |a₁| = |a₂| for a taut inextensible rope.',
+      scene1B:'<strong>เฉลย 1B</strong><br>เชือกยาวคงที่ มวลเริ่มเคลื่อนพร้อมกัน และมีขนาดความเร่งเท่ากัน / Fixed rope length; both start together with the same acceleration magnitude.',
+      scene1C:'<strong>เฉลย 1C</strong><br>m₁: F ไปขวา, T ไปซ้าย ⇒ F − T = m₁a<br>m₂: T ไปขวา ⇒ T = m₂a',
+      scene1D:'<strong>เฉลย 1D</strong><br>บวกสมการทั้งสองเพื่อตัด T: F = (m₁ + m₂)a',
+      scene1E:'<strong>เฉลย 1E</strong><br>a = 20/(2+3) = 4.0 m/s²',
+      scene1F:'<strong>เฉลย 1F</strong><br>T = m₂a = 3(4) = 12 N; ซิมควรได้ a = 4.0 m/s² และ T = 12 N',
+      scene1Conclusion:'<strong>เฉลยสรุปฐาน 1</strong><br>เชือกตึงทำให้ |a₁|=|a₂|; วิเคราะห์แรงทีละก้อน; รวมสมการหา a ก่อน แล้วกลับไปสมการหนึ่งก้อนเพื่อหา T.',
+      scene2A:'<strong>เฉลย 2A</strong><br>พื้นฝืดทำให้ความเร่งน้อยกว่าพื้นลื่น และเมื่อกล่องไถลไปขวา แรงเสียดทานจลน์ชี้ไปซ้าย.',
+      scene2B:'<strong>เฉลย 2B</strong><br>N = mg = 50 N; fₖ = μₖN = 10 N; a = (40−10)/5 = 6.0 m/s²',
+      scene2C:'<strong>เฉลย 2C</strong><br>f₁ และ f₂ ชี้ซ้าย; N₁=20 N, f₁=4 N, N₂=30 N, f₂=6 N<br>m₁: F−T−f₁=m₁a; m₂: T−f₂=m₂a',
+      scene2D:'<strong>เฉลย 2D</strong><br>รวมสมการ: F−f₁−f₂=(m₁+m₂)a ⇒ a=(30−4−6)/5=4.0 m/s²',
+      scene2E:'<strong>เฉลย 2E</strong><br>T−f₂=m₂a ⇒ T=3(4)+6=18 N; ซิมควรได้ a=4.0 m/s², T=18 N และแรงเสียดทานรวม 10 N.',
+      scene3A:'<strong>เฉลย 3A</strong><br>แรงจริงมี 3 แรง: น้ำหนัก mg, แรงปฏิกิริยาตั้งฉาก N และแรงเสียดทานจลน์ fₖ; mg sinθ และ mg cosθ เป็นองค์ประกอบ ไม่ใช่แรงใหม่.',
+      scene3B:'<strong>เฉลย 3B</strong><br>เลือกแกน x ตามพื้นเอียงและ y ตั้งฉาก; mg sin30° = 15.0 N, mg cos30° ≈ 26.0 N.',
+      scene3C:'<strong>เฉลย 3C</strong><br>วัตถุไถลลงจึง fₖ ชี้ขึ้นพื้นเอียง; จาก s=½at² ได้ a=2(2.0)/(1.5²)≈1.78 m/s².',
+      scene3D:'<strong>เฉลย 3D</strong><br>N−mg cosθ=0 ⇒ N≈26.0 N; ตามพื้นเอียง mg sinθ−fₖ=ma ⇒ fₖ≈9.7 N.',
+      scene3E:'<strong>เฉลย 3E</strong><br>μₖ=fₖ/N≈9.7/26.0≈0.37; บนพื้นเอียง N=mg cosθ เมื่อไม่มีแรงตั้งฉากอื่น และแรงเสียดทานต้านการไถล.',
+      scene4A:'<strong>เฉลย 4A</strong><br>m₁g sin37°=12 N, m₂g sin53°=40 N จึง m₂ ลงและ m₁ ขึ้น; พื้นลื่นได้ a=4.0 m/s² และ T=20 N.',
+      scene4B:'<strong>เฉลย 4B</strong><br>N₁=16 N, f₁=4 N (ลงตามพื้นเอียง); N₂=30 N, f₂=3 N (ขึ้นตามพื้นเอียง).',
+      scene4C:'<strong>เฉลย 4C</strong><br>กำหนดบวกตามการเคลื่อนที่: m₁: T−12−4=2a; m₂: 40−T−3=5a.',
+      scene4D:'<strong>เฉลย 4D</strong><br>รวมสมการได้ 40−3−12−4=7a ⇒ a=3.0 m/s²; แทนกลับได้ T=22 N.',
+      scene4Conclusion:'<strong>เฉลยสรุปฐาน 4</strong><br>เชือกตึงทำให้ขนาดความเร่งเท่ากัน; แรงเสียดทานต้านการไถลสัมพัทธ์; หลังหา a ให้กลับไปสมการของมวลหนึ่งก้อนเพื่อหา T.',
+      finalChallengeCard:'<strong>เฉลย Final Challenge</strong><br>m₂ ลงและ m₁ ขึ้น; N₁=24 N, f₁=3 N, N₂=30 N, f₂=3 N; a=2.0 m/s², T=27 N.<br>เชือกตึงทำให้ขนาดความเร่งเท่ากัน ส่วน T หายจากสมการรวมเพราะเป็นแรงภายในที่หักล้างกัน ไม่ได้แปลว่า T=0.'
+    };
+
+    function fallbackNavigationEnabled(){
+      return document.body.classList.contains('pdf-fallback-mode');
+    }
+    function revealFallbackAnswer(id){
+      const node=$(id), answer=fallbackAnswers[id];
+      if(!node || !answer || node.querySelector('.fallback-answer')) return;
+      const box=document.createElement('div');
+      box.className='fallback-answer';
+      box.dataset.fallbackAnswer=id;
+      box.innerHTML='↷ <strong>ข้อนี้ถูกข้ามตามงานเดิม จึงเปิดเฉลยให้ / Recovered skipped step</strong><br>'+answer;
+      const heading=node.querySelector('h2');
+      if(heading) heading.insertAdjacentElement('afterend',box); else node.prepend(box);
+    }
+    function recoverSkippedStepsBefore(index){
+      if(!fallbackNavigationEnabled()) return;
+      learningSteps.slice(0,index).forEach(step=>{
+        fallbackRecoveredIds.add(step.id);
+        revealFallbackAnswer(step.id);
+      });
+    }
 
     function rootForStep(id){
       if(id.startsWith('scene1')) return $('station1Root');
@@ -2174,6 +2226,7 @@
       if(id==='foundationCard') return true;
       const node=$(id), root=rootForStep(id);
       if(!node || !root || root.classList.contains('hidden')) return false;
+      if(fallbackNavigationEnabled()) return true;
       return !node.classList.contains('locked-section') && !node.classList.contains('hidden');
     }
     function highestAvailableIndex(){
@@ -2195,34 +2248,45 @@
     }
     function refreshLearningNavigator(){
       const hi=highestAvailableIndex();
+      const fallback=fallbackNavigationEnabled();
       qa('#studentNavigator .map-step').forEach(btn=>{
         const id=btn.dataset.learnTarget;
         const idx=learningSteps.findIndex(s=>s.id===id);
         const available=stepIsAvailable(id);
-        const complete=available && stepIsComplete(idx);
-        const current=available && !complete && id===navigatorCurrentId;
+        const complete=!fallback && available && stepIsComplete(idx);
+        const recovered=fallback && fallbackRecoveredIds.has(id) && !complete;
+        const current=available && !complete && !recovered && id===navigatorCurrentId;
         // Revisit mode is deliberately stricter than scene availability:
         // only completed steps are clickable from the map.
-        btn.disabled=!complete;
+        btn.disabled=fallback?false:!complete;
         btn.classList.toggle('locked',!available);
-        btn.classList.toggle('available',available && !complete);
+        btn.classList.toggle('available',available && !complete && !recovered);
         btn.classList.toggle('done',complete);
+        btn.classList.toggle('recovered',recovered);
         btn.classList.toggle('current',current);
-        const base=btn.textContent.replace(/\s*[✓●🔒]\s*$/u,'').trim();
-        btn.textContent=base + (complete?' ✓':(!available?' 🔒':(current?' ●':'')));
-        btn.setAttribute('aria-disabled',String(!complete));
+        const base=btn.textContent.replace(/\s*[✓●🔒↷]\s*$/u,'').trim();
+        btn.textContent=base + (complete?' ✓':(recovered?' ↷':(!available?' 🔒':(current?' ●':''))));
+        btn.setAttribute('aria-disabled',String(fallback?false:!complete));
       });
 
       // Station cards become revisit shortcuts only after that station is completed.
       [1,2,3,4].forEach(n=>{
         const card=$(`station${n}Nav`);
         const complete=Boolean(state[`station${n}Complete`]);
-        card.classList.toggle('nav-clickable',complete);
-        card.setAttribute('tabindex',complete?'0':'-1');
-        card.setAttribute('role',complete?'button':'group');
+        const clickable=fallback||complete;
+        card.classList.toggle('nav-clickable',clickable);
+        card.classList.toggle('locked',!clickable);
+        card.setAttribute('tabindex',clickable?'0':'-1');
+        card.setAttribute('role',clickable?'button':'group');
+        card.setAttribute('aria-disabled',String(!clickable));
       });
 
       const nextBtn=$('nextUnfinishedBtn');
+      if(fallback){
+        nextBtn.disabled=true; delete nextBtn.dataset.target;
+        nextBtn.textContent='เลือกข้อจากแผนที่ได้เอง / Choose any step above';
+        return;
+      }
       const firstUnfinished=learningSteps.find((s,i)=>stepIsAvailable(s.id) && !stepIsComplete(i));
       if(firstUnfinished){
         nextBtn.disabled=false;
@@ -2250,8 +2314,10 @@
     }
     function goToCompletedStep(id){
       const idx=learningSteps.findIndex(s=>s.id===id);
-      if(idx<0 || !stepIsComplete(idx)) return;
+      const fallback=fallbackNavigationEnabled();
+      if(idx<0 || (!fallback && !stepIsComplete(idx))) return;
       const node=$(id); if(!node)return;
+      if(fallback) recoverSkippedStepsBefore(idx);
       navigatorCurrentId=id; refreshLearningNavigator();
       node.scrollIntoView({behavior:'smooth',block:'start'});
     }
@@ -2264,6 +2330,10 @@
     [1,2,3,4].forEach(n=>{
       const card=$(`station${n}Nav`);
       const jump=()=>{
+        if(fallbackNavigationEnabled()){
+          goToCompletedStep(`scene${n}A`);
+          return;
+        }
         if(!state[`station${n}Complete`]) return;
         const candidates=learningSteps.filter((s,i)=>s.id.startsWith(`scene${n}`) && stepIsComplete(i));
         if(!candidates.length)return;
@@ -2342,7 +2412,18 @@
         });
         return {ok:missingCompleted.length===0 && unexpectedCompleted.length===0 && milestoneMismatch.length===0,missingCompleted,unexpectedCompleted,milestoneMismatch,current:now};
       },
-      refresh(){ updateProgress(); refreshLearningNavigator(); }
+      refresh(){ updateProgress(); refreshLearningNavigator(); },
+      enableFallbackNavigation(){
+        document.body.classList.add('pdf-fallback-mode');
+        ['station1Root','station2Root','station3Root','station4Root','finalChallengeRoot'].forEach(id=>$(id)?.classList.remove('hidden'));
+        document.querySelectorAll('main.wrap .locked-section').forEach(node=>node.classList.remove('locked-section'));
+        const note=document.querySelector('#studentNavigator .tiny');
+        if(note) note.textContent='PDF fallback: เลือกข้อใดก็ได้เอง เมื่อข้ามไปข้างหน้า ข้อก่อนหน้าจะแสดงเฉลย / Choose any step; earlier skipped steps reveal their answers.';
+        const legend=document.querySelector('#studentNavigator .nav-legend');
+        if(legend) legend.textContent='↷ ข้ามแล้ว เปิดเฉลย / skipped with answer   ● ข้อที่เลือกทำต่อ / selected step';
+        navigatorCurrentId='foundationCard';
+        refreshLearningNavigator();
+      }
     };
 
     // Foundation 1
@@ -2979,7 +3060,7 @@ let lastActionSignature='';
 let authEpoch=0, lastKnownRevision=0, saveInFlight=false, saveQueued=false, dirty=false, cloudConflict=false, pendingOfflineSave=false;
 const SESSION_ID=(globalThis.crypto?.randomUUID?.()||`forces-${Date.now()}-${Math.random().toString(36).slice(2)}`).slice(0,80);
 const FALLBACK_KEY='forces-m4-pdf-fallback';
-let localFallbackMode=sessionStorage.getItem(FALLBACK_KEY)==='1';
+let localFallbackMode=sessionStorage.getItem(FALLBACK_KEY)==='1'||(location.hostname==='127.0.0.1'&&new URLSearchParams(location.search).get('testFallback')==='1');
 
 const fallbackAvatar='data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="100%" height="100%" fill="#e2e8f0"/><circle cx="40" cy="31" r="15" fill="#94a3b8"/><path d="M14 72c2-17 13-26 26-26s24 9 26 26" fill="#94a3b8"/></svg>`);
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -3353,7 +3434,9 @@ onAuthStateChanged(auth,async user=>{
     currentUser=user||null;loadFailed=true;presenceStatus='OFFLINE';
     nameEl.textContent=user?safeName(user):'PDF fallback';
     photo.src=user?.photoURL||fallbackAvatar;photo.onerror=()=>{photo.src=fallbackAvatar};
-    setPresenceUI('OFFLINE');unlockLab(false);setSave('PDF fallback · Cloud off','error');
+    setPresenceUI('OFFLINE');unlockLab(false);
+    try{window.ForcesNavigatorBridge?.enableFallbackNavigation?.()}catch(e){console.warn('fallback navigation',e)}
+    setSave('PDF fallback · เลือกข้ามข้อได้ · Cloud off','error');
     if(resumeCloudBtn)resumeCloudBtn.style.display='';
     liveBtn.disabled=true;signoutBtn.style.display='none';
     return;
