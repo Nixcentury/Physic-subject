@@ -339,6 +339,7 @@
       <button id="cloudSignin" class="cloud-google" type="button"><strong style="font-size:19px">G</strong><span>เข้าสู่ระบบด้วย Google / Sign in with Google</span></button>
       <div id="cloudLoading" class="cloud-loading">⏳ กำลังโหลดงานเดิมและคืนสถานะกิจกรรม...<br>Loading saved work and restoring completed checkpoints...</div>
       <button id="cloudRetryLoad" class="cloud-google" type="button" style="display:none;margin-top:10px">↻ ลองโหลดอีกครั้ง / Retry loading</button>
+      <button id="cloudClearSave" class="cloud-google" type="button" style="display:none;margin-top:10px;border-color:#dc2626;color:#991b1b">เริ่มใหม่และล้างงาน Cloud / Start new and clear Cloud save</button>
       <div id="cloudError" class="cloud-error"></div>
       <div class="cloud-gate-note">☁️ ความคืบหน้าจะบันทึกอัตโนมัติใน Firebase หลังทำกิจกรรมสำคัญ หากเปิดบัญชีเดียวกันหลายอุปกรณ์ ระบบจะป้องกันงานเก่าทับงานที่ใหม่กว่า<br>Your progress saves automatically to Firebase after meaningful learning actions. If the same account is open on multiple devices, newer cloud work is protected from stale overwrite.</div>
     </div>
@@ -2963,7 +2964,7 @@ const provider = new GoogleAuthProvider();
 provider.setCustomParameters({prompt:"select_account"});
 
 const $ = id => document.getElementById(id);
-const gate=$('cloudGate'), gateTitle=$('cloudGateTitle'), gateCopy=$('cloudGateCopy'), signin=$('cloudSignin'), loading=$('cloudLoading'), retryLoad=$('cloudRetryLoad'), errorBox=$('cloudError');
+const gate=$('cloudGate'), gateTitle=$('cloudGateTitle'), gateCopy=$('cloudGateCopy'), signin=$('cloudSignin'), loading=$('cloudLoading'), retryLoad=$('cloudRetryLoad'), clearSaveBtn=$('cloudClearSave'), errorBox=$('cloudError');
 const userbar=$('cloudUserbar'), photo=$('cloudPhoto'), nameEl=$('cloudName'), dot=$('cloudDot'), presenceText=$('cloudPresenceText'), saveState=$('cloudSaveState');
 const liveBtn=$('cloudLiveBtn'), liveCount=$('cloudLiveCount'), signoutBtn=$('cloudSignout'), monitor=$('cloudMonitor'), backdrop=$('cloudBackdrop'), closeMonitor=$('cloudCloseMonitor');
 const people=$('cloudPeople'), onlineStat=$('cloudOnlineStat'), idleStat=$('cloudIdleStat'), restoreToast=$('cloudRestoreToast');
@@ -2982,10 +2983,11 @@ function safeName(u=currentUser){return (u?.displayName||u?.email?.split('@')[0]
 function showError(msg=''){errorBox.textContent=msg;errorBox.classList.toggle('show',Boolean(msg))}
 function setSave(text,mode='idle'){if(!saveState)return;saveState.textContent=text;saveState.style.color=mode==='ok'?'#047857':mode==='busy'?'#b45309':mode==='error'?'#be123c':'#64748b'}
 function setPresenceUI(status){dot.className='cloud-dot '+String(status).toLowerCase();presenceText.textContent=status==='ONLINE'?'🟢 Online':status==='IDLE'?'🟡 Idle':'⚪ Offline'}
-function setGateSignedOut(){document.body.classList.remove('cloud-authenticated');gate.classList.remove('hidden');signin.style.display='';signin.disabled=false;loading.style.display='none';if(retryLoad)retryLoad.style.display='none';showError('');gateTitle.textContent='เข้าสู่ Forces Mission / Enter Forces Mission';gateCopy.innerHTML='เข้าสู่ระบบด้วย Google เพื่อบันทึกความคืบหน้า ทำต่อจากครั้งก่อน และแสดงสถานะออนไลน์ของห้องเรียน<br>Sign in with Google to save progress, resume your previous work, and show live classroom presence.'}
-function setGateLoading(){gate.classList.remove('hidden');signin.style.display='none';loading.style.display='block';if(retryLoad)retryLoad.style.display='none';showError('');gateTitle.textContent='กำลังเปิดงานเดิม / Restoring your work';gateCopy.innerHTML='กำลังโหลดคำตอบและลำดับกิจกรรมจาก Firebase ก่อนเปิด Forces Mission<br>Loading your saved answers and learning sequence before opening Forces Mission.'}
+function setGateSignedOut(){document.body.classList.remove('cloud-authenticated');gate.classList.remove('hidden');signin.style.display='';signin.disabled=false;loading.style.display='none';if(retryLoad)retryLoad.style.display='none';if(clearSaveBtn)clearSaveBtn.style.display='none';showError('');gateTitle.textContent='เข้าสู่ Forces Mission / Enter Forces Mission';gateCopy.innerHTML='เข้าสู่ระบบด้วย Google เพื่อบันทึกความคืบหน้า ทำต่อจากครั้งก่อน และแสดงสถานะออนไลน์ของห้องเรียน<br>Sign in with Google to save progress, resume your previous work, and show live classroom presence.'}
+function setGateLoading(){gate.classList.remove('hidden');signin.style.display='none';loading.style.display='block';if(retryLoad)retryLoad.style.display='none';if(clearSaveBtn)clearSaveBtn.style.display='none';showError('');gateTitle.textContent='กำลังเปิดงานเดิม / Restoring your work';gateCopy.innerHTML='กำลังโหลดคำตอบและลำดับกิจกรรมจาก Firebase ก่อนเปิด Forces Mission<br>Loading your saved answers and learning sequence before opening Forces Mission.'}
 function setGateLoadFailure(message){
   document.body.classList.remove('cloud-authenticated');gate.classList.remove('hidden');loading.style.display='none';signin.style.display='none';if(retryLoad)retryLoad.style.display='flex';
+  if(clearSaveBtn&&currentUser)clearSaveBtn.style.display='flex';
   gateTitle.textContent='ยังไม่เปิดกิจกรรม / Activity not opened yet';
   gateCopy.innerHTML='Cloud Resume ยังตรวจสอบไม่ผ่าน จึงยังไม่เปิดกิจกรรมเพื่อป้องกันสถานะบางส่วนบันทึกทับงานเดิม<br>Cloud Resume could not be verified, so the activity stays locked to protect the saved work.';
   showError(message||'Cloud restore failed. Please retry. / โหลดงานเดิมไม่สำเร็จ กรุณาลองใหม่');
@@ -3193,6 +3195,8 @@ async function loadProgress(){
 }
 async function restore(saved){
   if(!saved){actions=[];lastActionSignature='';try{window.ForcesNavigatorBridge?.refresh?.()}catch{}return{restored:false,verified:true}}
+  const savedVersion=String(saved.activityVersion||'legacy');
+  const crossVersion=savedVersion!==ACTIVITY_VERSION;
   const integrity=verifySavedIntegrity(saved);
   if(!integrity.ok){
     console.warn('V8.5 saved-state integrity mismatch',integrity);
@@ -3232,16 +3236,22 @@ async function restore(saved){
     window.scrollTo({top:Number(saved.scrollY||0),behavior:'auto'});
     lastSavedScroll=Number(saved.scrollY||0);
     lastActionSignature=actions.length?JSON.stringify(actions[actions.length-1]):'';
+    // A clean action replay is authoritative when migrating an older activity
+    // version. Navigator topology may legitimately differ after a release fix.
+    if(crossVersion&&replayIssues.length===0&&!navCheck.ok){
+      try{window.ForcesNavigatorBridge?.refresh?.()}catch{}
+      navCheck={ok:true,migratedFrom:savedVersion};
+    }
     const verified=replayIssues.length===0&&Boolean(navCheck.ok);
     if(!verified){
       console.warn('V8.5 restore verification', {replayIssues,navCheck});
       setSave('⚠️ Restore check','error');
     }else{
-      setSave(integrity.legacy?'✓ Restored · legacy':'✓ Restored','ok');
+      setSave(crossVersion?`✓ Migrated from ${savedVersion}`:(integrity.legacy?'✓ Restored · legacy':'✓ Restored'),'ok');
     }
     dirty=false;
     const restored=actions.length>0||Object.keys(saved.fields||{}).some(id=>String(saved.fields[id]??'')!=='');
-    return{restored,verified};
+    return{restored,verified,migrated:verified&&crossVersion};
   }finally{replaying=false}
 }
 function recordProgressAction(button){
@@ -3287,6 +3297,13 @@ function hideMonitor(){monitor.classList.remove('show');backdrop.classList.remov
 liveBtn.addEventListener('click',()=>{monitor.classList.add('show');backdrop.classList.add('show');monitor.setAttribute('aria-hidden','false')});
 closeMonitor.addEventListener('click',hideMonitor);backdrop.addEventListener('click',hideMonitor);document.addEventListener('keydown',e=>{if(e.key==='Escape')hideMonitor()});
 if(retryLoad)retryLoad.addEventListener('click',()=>window.location.reload());
+if(clearSaveBtn)clearSaveBtn.addEventListener('click',async()=>{
+  if(!currentUser||resetting)return;
+  if(!window.confirm('Start this activity again and permanently clear its saved Cloud progress? / ต้องการเริ่มกิจกรรมนี้ใหม่และล้างความคืบหน้าบน Cloud อย่างถาวรหรือไม่?'))return;
+  resetting=true;progressLoaded=false;clearTimeout(saveTimer);clearSaveBtn.disabled=true;setSave('☁️ Clearing...','busy');
+  try{await set(ref(db,`quizProgress/${LAB_ID}/${currentUser.uid}`),null);window.location.reload()}
+  catch(e){resetting=false;clearSaveBtn.disabled=false;showError(`ล้าง Cloud save ไม่สำเร็จ / Could not clear Cloud save\n${e?.code||e?.message||'unknown'}`)}
+});
 signin.addEventListener('click',async()=>{
   signin.disabled=true;showError('');
   try{await setPersistence(auth,browserLocalPersistence);await signInWithPopup(auth,provider)}
@@ -3340,6 +3357,7 @@ onAuthStateChanged(auth,async user=>{
   progressLoaded=true;
   unlockLab(restoreResult.restored);
   if(loaded.status==='empty'){dirty=true;scheduleSave(700)}
+  else if(restoreResult.migrated){dirty=true;scheduleSave(250)}
 });
 </script>
 
