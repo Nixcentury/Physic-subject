@@ -55,15 +55,281 @@
             .graph-card svg { min-width:0 !important; }
         }
     
-        /* === Firebase Phase 1: Google Sign-In + Live Presence === */
-        .fb-gate{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(15,23,42,.74);backdrop-filter:blur(8px)}
-        .fb-gate.hidden{display:none}.fb-card{width:min(480px,100%);background:#fff;border:1px solid #e2e8f0;border-radius:24px;padding:28px;box-shadow:0 28px 80px rgba(15,23,42,.3)}
-        .fb-google{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:12px 16px;border:1px solid #cbd5e1;border-radius:14px;background:#fff;color:#0f172a;font-weight:800;cursor:pointer}.fb-google:hover{background:#f8fafc}.fb-google:disabled{opacity:.55;cursor:not-allowed}
-        .fb-error{display:none;margin-top:12px;padding:10px 12px;border:1px solid #fecdd3;border-radius:12px;background:#fff1f2;color:#be123c;font-size:.8rem;line-height:1.5}.fb-error.show{display:block}
-        .fb-userbar{position:sticky;top:0;z-index:50;width:100%;max-width:80rem;display:none;align-items:center;justify-content:space-between;gap:10px;margin:0 auto 10px;padding:8px 12px;border:1px solid #cbd5e1;border-radius:14px;background:rgba(255,255,255,.97);box-shadow:0 4px 16px rgba(15,23,42,.06);backdrop-filter:blur(8px)}
-        .fb-userbar.show{display:flex}.fb-meta{min-width:0;display:flex;align-items:center;gap:10px}.fb-avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;background:#e2e8f0;border:1px solid #cbd5e1}.fb-dot{width:10px;height:10px;border-radius:50%;display:inline-block;background:#94a3b8}.fb-dot.online{background:#10b981}.fb-dot.idle{background:#f59e0b}.fb-dot.offline{background:#94a3b8}
-        .fb-signout{border:1px solid #cbd5e1;border-radius:10px;padding:7px 10px;background:#fff;color:#475569;font-size:.76rem;font-weight:800;cursor:pointer}.fb-signout:hover{background:#f8fafc}
-        @media(max-width:640px){.fb-userbar{border-radius:0;margin-bottom:8px}.fb-email{display:none}}
+        /* === V6.6 Login Redesign: adapted from Virtual Kinetics Lab login === */
+        .fb-gate{
+            position:fixed;
+            inset:0;
+            z-index:2147483600;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:20px;
+            background:rgba(15,23,42,.78);
+            backdrop-filter:blur(10px);
+            -webkit-backdrop-filter:blur(10px);
+        }
+        .fb-gate.hidden{display:none}
+
+        .fb-auth-shell{
+            width:min(940px,100%);
+            display:grid;
+            grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);
+            border:2px solid #0f172a;
+            border-radius:26px;
+            overflow:hidden;
+            background:#fff;
+            box-shadow:0 30px 95px rgba(2,6,23,.38);
+        }
+
+        .fb-auth-visual{
+            position:relative;
+            overflow:hidden;
+            min-height:430px;
+            padding:30px;
+            color:#fff;
+            background:
+                radial-gradient(circle at 88% 8%,rgba(255,255,255,.15) 0 95px,transparent 96px),
+                radial-gradient(circle at 8% 96%,rgba(255,255,255,.10) 0 85px,transparent 86px),
+                linear-gradient(145deg,#1d4ed8 0%,#4338ca 52%,#6d28d9 100%);
+        }
+
+        .fb-auth-kicker{
+            font-size:.72rem;
+            font-weight:950;
+            letter-spacing:.15em;
+            text-transform:uppercase;
+            color:#dbeafe;
+        }
+
+        .fb-auth-visual h2{
+            font-size:clamp(1.9rem,4vw,2.75rem);
+            line-height:1.05;
+            margin:12px 0 10px;
+        }
+
+        .fb-auth-visual p{
+            margin:0;
+            color:#e2e8f0;
+            font-weight:650;
+            line-height:1.65;
+        }
+
+        .fb-boxplot-art{
+            margin:36px auto 24px;
+            width:min(360px,100%);
+            padding:18px 12px 10px;
+        }
+
+        .fb-boxplot-art svg{
+            display:block;
+            width:100%;
+            height:auto;
+            overflow:visible;
+        }
+
+        .fb-auth-badges{
+            display:flex;
+            gap:7px;
+            flex-wrap:wrap;
+            margin-top:20px;
+        }
+
+        .fb-auth-badge{
+            font-size:.72rem;
+            font-weight:850;
+            padding:6px 9px;
+            border:1px solid rgba(255,255,255,.30);
+            border-radius:999px;
+            background:rgba(255,255,255,.10);
+            color:#fff;
+        }
+
+        .fb-auth-card{
+            padding:32px;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            background:#fff;
+        }
+
+        .fb-auth-card-kicker{
+            color:#2563eb;
+            font-size:.72rem;
+            font-weight:950;
+            letter-spacing:.14em;
+            text-transform:uppercase;
+        }
+
+        .fb-auth-title{
+            font-size:1.72rem;
+            line-height:1.18;
+            font-weight:950;
+            color:#0f172a;
+            margin:7px 0 5px;
+        }
+
+        .fb-auth-copy{
+            font-size:.92rem;
+            color:#64748b;
+            line-height:1.65;
+            margin:0 0 18px;
+        }
+
+        .fb-google{
+            width:100%;
+            min-height:54px;
+            border:2px solid #cbd5e1;
+            border-radius:14px;
+            background:#fff;
+            color:#0f172a;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            gap:11px;
+            font:850 .96rem system-ui,-apple-system,"Segoe UI",sans-serif;
+            cursor:pointer;
+            box-shadow:0 2px 0 rgba(15,23,42,.03);
+        }
+
+        .fb-google:hover{
+            background:#f8fafc;
+            border-color:#94a3b8;
+        }
+
+        .fb-google:disabled{
+            opacity:.5;
+            cursor:not-allowed;
+        }
+
+        .fb-google-logo{
+            width:25px;
+            height:25px;
+            flex:0 0 auto;
+        }
+
+        .fb-auth-loading{
+            display:none;
+            margin-top:12px;
+            padding:12px 13px;
+            border:1px solid #bfdbfe;
+            border-radius:13px;
+            background:#eff6ff;
+            color:#1d4ed8;
+            font-size:.8rem;
+            font-weight:800;
+            line-height:1.55;
+        }
+
+        .fb-error{
+            display:none;
+            white-space:pre-wrap;
+            margin-top:12px;
+            padding:12px 13px;
+            border:1px solid #fecdd3;
+            border-radius:13px;
+            background:#fff1f2;
+            color:#be123c;
+            font-size:.78rem;
+            line-height:1.5;
+        }
+        .fb-error.show{display:block}
+
+        .fb-auth-local-warning{
+            display:none;
+            margin:0 0 14px;
+            padding:11px 12px;
+            border:1px solid #fde68a;
+            border-radius:12px;
+            background:#fffbeb;
+            color:#92400e;
+            font-size:.78rem;
+            font-weight:800;
+            line-height:1.5;
+        }
+        .fb-auth-local-warning.show{display:block}
+
+        .fb-auth-note{
+            margin-top:15px;
+            padding-top:13px;
+            border-top:1px solid #e2e8f0;
+            font-size:.72rem;
+            color:#94a3b8;
+            line-height:1.55;
+        }
+
+        .fb-userbar{
+            position:sticky;
+            top:0;
+            z-index:50;
+            width:100%;
+            max-width:80rem;
+            display:none;
+            align-items:center;
+            justify-content:space-between;
+            gap:10px;
+            margin:0 auto 10px;
+            padding:8px 12px;
+            border:1px solid #cbd5e1;
+            border-radius:14px;
+            background:rgba(255,255,255,.97);
+            box-shadow:0 4px 16px rgba(15,23,42,.06);
+            backdrop-filter:blur(8px);
+            -webkit-backdrop-filter:blur(8px);
+        }
+        .fb-userbar.show{display:flex}
+        .fb-meta{min-width:0;display:flex;align-items:center;gap:10px}
+        .fb-avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;background:#e2e8f0;border:1px solid #cbd5e1}
+        .fb-dot{width:10px;height:10px;border-radius:50%;display:inline-block;background:#94a3b8}
+        .fb-dot.online{background:#10b981}
+        .fb-dot.idle{background:#f59e0b}
+        .fb-dot.offline{background:#94a3b8}
+        .fb-signout{
+            border:1px solid #cbd5e1;
+            border-radius:10px;
+            padding:7px 10px;
+            background:#fff;
+            color:#475569;
+            font-size:.76rem;
+            font-weight:800;
+            cursor:pointer;
+        }
+        .fb-signout:hover{background:#f8fafc}
+
+        @media(max-width:760px){
+            .fb-auth-shell{grid-template-columns:1fr}
+            .fb-auth-visual{
+                min-height:auto;
+                padding:22px 22px 18px;
+            }
+            .fb-auth-visual h2{font-size:1.65rem}
+            .fb-auth-visual p{font-size:.82rem}
+            .fb-boxplot-art{
+                margin:16px auto 8px;
+                width:min(285px,100%);
+                padding:4px;
+            }
+            .fb-auth-badges{margin-top:10px}
+            .fb-auth-card{padding:24px}
+            .fb-userbar{border-radius:0;margin-bottom:8px}
+            .fb-email{display:none}
+        }
+
+        @media(max-width:520px){
+            .fb-gate{padding:10px}
+            .fb-auth-shell{border-radius:20px}
+            .fb-auth-visual{
+                padding:18px;
+            }
+            .fb-auth-visual p{display:none}
+            .fb-boxplot-art{margin:12px auto 3px}
+            .fb-auth-badges{display:none}
+            .fb-auth-card{padding:20px}
+            .fb-auth-title{font-size:1.45rem}
+        }
+
+        @media print{
+            .fb-gate,.fb-userbar{display:none!important}
+        }
 
 
         /* === Inline Teacher Live Monitor === */
@@ -773,42 +1039,1098 @@
             font-weight:800;
         }
 
+
+        /* ============================================================
+           DEV CONTROLLED SCROLL TEST
+           Main page does NOT vertically scroll by finger/wheel.
+           Only the custom rail/buttons change scrollTop.
+           ============================================================ */
+        html.dev-controlled-scroll,
+        html.dev-controlled-scroll body{
+            height:100%;
+            overflow:hidden !important;
+            overscroll-behavior:none !important;
+        }
+
+        body.dev-controlled-scroll{
+            position:fixed !important;
+            inset:0 !important;
+            width:100% !important;
+            height:100dvh !important;
+            min-height:0 !important;
+            margin:0 !important;
+            padding:
+                max(8px, env(safe-area-inset-top))
+                calc(max(8px, env(safe-area-inset-right)) + 58px)
+                max(8px, env(safe-area-inset-bottom))
+                max(8px, env(safe-area-inset-left)) !important;
+            box-sizing:border-box;
+            display:flex;
+            align-items:stretch;
+            justify-content:center;
+            background:#eef2ff;
+        }
+
+        body.dev-controlled-scroll #app{
+            width:100%;
+            height:100% !important;
+            max-height:100% !important;
+            min-height:0 !important;
+            overflow:hidden !important;
+        }
+
+        body.dev-controlled-scroll .controlled-scroll-viewport{
+            min-height:0 !important;
+            overflow-y:auto !important;
+            overscroll-behavior:none !important;
+            touch-action:pan-x !important;
+            -webkit-overflow-scrolling:auto !important;
+            scrollbar-width:none !important;
+        }
+
+        body.dev-controlled-scroll .controlled-scroll-viewport::-webkit-scrollbar{
+            display:none !important;
+            width:0 !important;
+            height:0 !important;
+        }
+
+        /* AI history expands into the main controlled viewport.
+           This avoids introducing a second vertical finger-scroll zone. */
+        body.dev-controlled-scroll .ai-chat-log{
+            max-height:none !important;
+            overflow:visible !important;
+        }
+
+        #dev-scroll-rail{
+            position:fixed;
+            z-index:2147483000;
+            top:max(8px, env(safe-area-inset-top));
+            right:max(6px, env(safe-area-inset-right));
+            bottom:max(8px, env(safe-area-inset-bottom));
+            width:50px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            gap:6px;
+            padding:6px 4px;
+            border:1px solid rgba(99,102,241,.34);
+            border-radius:16px;
+            background:rgba(255,255,255,.96);
+            box-shadow:0 10px 28px rgba(15,23,42,.22);
+            backdrop-filter:blur(8px);
+            -webkit-backdrop-filter:blur(8px);
+            touch-action:none !important;
+            user-select:none;
+            -webkit-user-select:none;
+            -webkit-touch-callout:none;
+        }
+
+        #dev-scroll-rail .dev-scroll-label{
+            font-size:8px;
+            line-height:1;
+            font-weight:900;
+            letter-spacing:.08em;
+            color:#4f46e5;
+            writing-mode:vertical-rl;
+            transform:rotate(180deg);
+            padding:2px 0;
+        }
+
+        .dev-scroll-step{
+            width:42px;
+            height:42px;
+            border:none;
+            border-radius:12px;
+            display:grid;
+            place-items:center;
+            background:#4f46e5;
+            color:white;
+            font-size:20px;
+            font-weight:900;
+            box-shadow:0 3px 8px rgba(79,70,229,.25);
+            touch-action:manipulation;
+            cursor:pointer;
+        }
+
+        .dev-scroll-step:active{
+            transform:scale(.94);
+            background:#3730a3;
+        }
+
+        .dev-scroll-step:disabled{
+            opacity:.30;
+            cursor:default;
+        }
+
+        #dev-scroll-track{
+            position:relative;
+            flex:1;
+            width:42px;
+            min-height:120px;
+            border-radius:14px;
+            background:#e0e7ff;
+            border:1px solid #c7d2fe;
+            overflow:hidden;
+            touch-action:none !important;
+        }
+
+        #dev-scroll-thumb{
+            position:absolute;
+            left:5px;
+            right:5px;
+            top:0;
+            min-height:54px;
+            border-radius:12px;
+            background:linear-gradient(180deg,#6366f1,#4338ca);
+            box-shadow:0 3px 10px rgba(67,56,202,.34);
+            touch-action:none !important;
+            cursor:grab;
+        }
+
+        #dev-scroll-thumb::before,
+        #dev-scroll-thumb::after{
+            content:"";
+            position:absolute;
+            left:50%;
+            width:15px;
+            height:2px;
+            border-radius:2px;
+            background:rgba(255,255,255,.82);
+            transform:translateX(-50%);
+        }
+
+        #dev-scroll-thumb::before{ top:calc(50% - 4px); }
+        #dev-scroll-thumb::after{ top:calc(50% + 3px); }
+
+        #dev-scroll-thumb.dragging{ cursor:grabbing; }
+
+        #dev-scroll-progress{
+            font-size:9px;
+            line-height:1.1;
+            font-weight:900;
+            color:#475569;
+            text-align:center;
+            min-height:20px;
+        }
+
+        #dev-no-login-badge{
+            position:fixed;
+            z-index:2147482999;
+            left:max(8px, env(safe-area-inset-left));
+            bottom:max(8px, env(safe-area-inset-bottom));
+            padding:5px 8px;
+            border-radius:999px;
+            background:#111827;
+            color:#fff;
+            font:800 10px/1.1 Sarabun,Arial,sans-serif;
+            opacity:.78;
+            pointer-events:none;
+        }
+
+        @media (max-width:640px){
+            body.dev-controlled-scroll{
+                padding-right:calc(max(5px, env(safe-area-inset-right)) + 52px) !important;
+            }
+            #dev-scroll-rail{
+                width:46px;
+                right:max(3px, env(safe-area-inset-right));
+            }
+            .dev-scroll-step{ width:38px; height:40px; }
+            #dev-scroll-track{ width:38px; }
+        }
+
+        @media print{
+            #dev-scroll-rail,
+            #dev-no-login-badge{
+                display:none !important;
+            }
+            html.dev-controlled-scroll,
+            html.dev-controlled-scroll body,
+            body.dev-controlled-scroll{
+                position:static !important;
+                width:auto !important;
+                height:auto !important;
+                overflow:visible !important;
+                padding:0 !important;
+            }
+            body.dev-controlled-scroll #app{
+                height:auto !important;
+                max-height:none !important;
+                overflow:visible !important;
+            }
+            body.dev-controlled-scroll .controlled-scroll-viewport{
+                overflow:visible !important;
+            }
+        }
+
+
+        /* ============================================================
+           DEV v1.22 · MONOCHROME / PHOTOCOPY QUIZ THEME
+           ============================================================ */
+        body.dev-monochrome{
+            background:#f3f3f3 !important;
+            color:#111 !important;
+        }
+
+        body.dev-monochrome #app{
+            border:1px solid #111 !important;
+            border-radius:8px !important;
+            box-shadow:none !important;
+            filter:none;
+        }
+
+        body.dev-monochrome .controlled-scroll-viewport{
+            background:#fff !important;
+        }
+
+        /* Compact collapsible header */
+        .quiz-topbar{
+            flex:0 0 auto;
+            background:#fff;
+            color:#111;
+            border-bottom:2px solid #111;
+            z-index:20;
+        }
+
+        .quiz-topbar-compact{
+            min-height:56px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:14px;
+            padding:10px 16px;
+        }
+
+        .quiz-topbar-main{
+            min-width:0;
+            display:flex;
+            align-items:baseline;
+            gap:10px;
+            flex-wrap:wrap;
+        }
+
+        .quiz-topbar-title{
+            margin:0;
+            font-size:1.05rem;
+            line-height:1.25;
+            font-weight:900;
+            color:#111;
+        }
+
+        .quiz-topbar-q{
+            display:inline-flex;
+            align-items:center;
+            border:1px solid #111;
+            border-radius:999px;
+            padding:3px 9px;
+            font-size:.74rem;
+            line-height:1.1;
+            font-weight:900;
+            color:#111;
+            background:#fff;
+            white-space:nowrap;
+        }
+
+        .quiz-header-toggle{
+            flex:0 0 auto;
+            min-height:38px;
+            border:1px solid #111;
+            border-radius:8px;
+            padding:7px 11px;
+            background:#fff;
+            color:#111;
+            font-size:.75rem;
+            font-weight:900;
+            cursor:pointer;
+            touch-action:manipulation;
+        }
+
+        .quiz-header-toggle:hover,
+        .quiz-header-toggle:active{
+            background:#111;
+            color:#fff;
+        }
+
+        .quiz-header-chevron{
+            display:inline-block;
+            margin-right:4px;
+            transition:transform .15s ease;
+        }
+
+        .quiz-header-toggle[aria-expanded="true"] .quiz-header-chevron{
+            transform:rotate(180deg);
+        }
+
+        .quiz-topbar-details{
+            border-top:1px solid #bbb;
+            padding:10px 16px 12px;
+            background:#f7f7f7;
+        }
+
+        .quiz-topbar-details[hidden]{
+            display:none !important;
+        }
+
+        .quiz-topbar-detail-grid{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            flex-wrap:wrap;
+        }
+
+        .quiz-topbar-meta{
+            min-width:220px;
+            flex:1 1 420px;
+            color:#333;
+            font-size:.76rem;
+            line-height:1.45;
+        }
+
+        body.dev-monochrome .dev-print-actions{
+            gap:6px;
+        }
+
+        body.dev-monochrome .dev-print-btn{
+            border:1px solid #111 !important;
+            border-radius:8px !important;
+            background:#fff !important;
+            color:#111 !important;
+            box-shadow:none !important;
+            transform:none !important;
+        }
+
+        body.dev-monochrome .dev-print-btn:hover{
+            background:#111 !important;
+            color:#fff !important;
+        }
+
+        /* Bottom action bar: all navigation and Submit live here */
+        .quiz-actionbar{
+            flex:0 0 auto;
+            background:#fafafa;
+            border-top:1px solid #111;
+            padding:9px 12px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:10px;
+            z-index:20;
+        }
+
+        .quiz-action-stats{
+            min-width:0;
+            display:flex;
+            flex-wrap:wrap;
+            gap:5px 12px;
+            font-size:.72rem;
+            line-height:1.3;
+            color:#444;
+        }
+
+        .quiz-bottom-actions{
+            flex:0 0 auto;
+            display:flex;
+            flex-wrap:wrap;
+            justify-content:flex-end;
+            gap:7px;
+        }
+
+        .quiz-action-btn{
+            min-height:40px;
+            border:1px solid #111;
+            border-radius:8px;
+            padding:8px 12px;
+            background:#fff;
+            color:#111;
+            font-size:.78rem;
+            line-height:1.15;
+            font-weight:800;
+            cursor:pointer;
+            touch-action:manipulation;
+            box-shadow:none;
+        }
+
+        .quiz-action-btn:hover:not(:disabled){
+            background:#e8e8e8;
+        }
+
+        .quiz-action-btn.primary{
+            background:#111;
+            color:#fff;
+            border-color:#111;
+            font-weight:900;
+        }
+
+        .quiz-action-btn.primary:hover:not(:disabled){
+            background:#333;
+        }
+
+        .quiz-action-btn.giveup{
+            border-style:dashed;
+        }
+
+        .quiz-action-btn:disabled{
+            opacity:.32;
+            cursor:not-allowed;
+        }
+
+        /* Make the quiz itself feel like a photocopied worksheet. */
+        body.dev-monochrome .option-btn{
+            border-radius:8px !important;
+            box-shadow:none !important;
+            transform:none !important;
+        }
+
+        body.dev-monochrome .option-btn:hover{
+            transform:none !important;
+        }
+
+        body.dev-monochrome .ai-chat-card,
+        body.dev-monochrome .scratch-lite-card,
+        body.dev-monochrome .graph-card{
+            border-radius:8px !important;
+            box-shadow:none !important;
+        }
+
+        body.dev-monochrome .study-tool-head{
+            background:#f4f4f4 !important;
+            border-bottom-color:#aaa !important;
+        }
+
+        body.dev-monochrome .study-tool-toggle,
+        body.dev-monochrome .scratch-lite-btn,
+        body.dev-monochrome .ai-quick-btn,
+        body.dev-monochrome .ai-send-btn{
+            border-color:#111 !important;
+            background:#fff !important;
+            color:#111 !important;
+            box-shadow:none !important;
+        }
+
+        body.dev-monochrome .study-tool-toggle:hover,
+        body.dev-monochrome .scratch-lite-btn:hover,
+        body.dev-monochrome .ai-quick-btn:hover,
+        body.dev-monochrome .ai-send-btn:hover{
+            background:#e8e8e8 !important;
+        }
+
+        /* Controlled scroll rail also becomes photocopy-style. */
+        body.dev-monochrome #dev-scroll-rail{
+            border-color:#111 !important;
+            background:rgba(255,255,255,.98) !important;
+            box-shadow:none !important;
+        }
+
+        body.dev-monochrome #dev-scroll-rail .dev-scroll-label,
+        body.dev-monochrome #dev-scroll-progress{
+            color:#111 !important;
+        }
+
+        body.dev-monochrome .dev-scroll-step{
+            border:1px solid #111 !important;
+            background:#111 !important;
+            color:#fff !important;
+            box-shadow:none !important;
+        }
+
+        body.dev-monochrome #dev-scroll-track{
+            border-color:#777 !important;
+            background:#e8e8e8 !important;
+        }
+
+        body.dev-monochrome #dev-scroll-thumb{
+            background:#222 !important;
+            box-shadow:none !important;
+        }
+
+        @media (max-width:760px){
+            .quiz-topbar-compact{
+                padding:8px 10px;
+            }
+            .quiz-topbar-title{
+                font-size:.92rem;
+            }
+            .quiz-topbar-q{
+                font-size:.68rem;
+            }
+            .quiz-header-toggle{
+                padding:6px 8px;
+                font-size:.68rem;
+            }
+            .quiz-topbar-details{
+                padding:8px 10px 10px;
+            }
+            .quiz-actionbar{
+                align-items:stretch;
+                flex-direction:column;
+                padding:7px 8px;
+            }
+            .quiz-action-stats{
+                font-size:.67rem;
+            }
+            .quiz-bottom-actions{
+                width:100%;
+            }
+            .quiz-action-btn{
+                flex:1 1 auto;
+                min-width:78px;
+                padding:7px 8px;
+                font-size:.71rem;
+            }
+            .quiz-action-btn.giveup{
+                flex-basis:100%;
+            }
+            .quiz-action-btn.primary{
+                flex-grow:1.3;
+            }
+        }
+
+        @media print{
+            .quiz-topbar,
+            .quiz-actionbar{
+                display:none !important;
+            }
+        }
+
+
+        /* ============================================================
+           DEV v1.23 · PAPER THEME + SEMANTIC COLOR ACCENTS
+           Neutral paper UI. Color is reserved for meaning and actions.
+           ============================================================ */
+
+        body.dev-monochrome{
+            background:#f1f1f1 !important;
+            color:#111 !important;
+        }
+
+        body.dev-monochrome #app{
+            background:#fff !important;
+            border:1px solid #222 !important;
+            box-shadow:none !important;
+            filter:none !important;
+        }
+
+        body.dev-monochrome .controlled-scroll-viewport{
+            background:#fff !important;
+        }
+
+        /* ---- Header: clean paper, tiny blue identity only ---- */
+        body.dev-monochrome .quiz-topbar{
+            background:#fff !important;
+            color:#111 !important;
+            border-bottom:2px solid #222 !important;
+        }
+
+        body.dev-monochrome .quiz-topbar-title{
+            color:#111827 !important;
+        }
+
+        body.dev-monochrome .quiz-topbar-q{
+            background:#eff6ff !important;
+            color:#1d4ed8 !important;
+            border-color:#3b82f6 !important;
+        }
+
+        body.dev-monochrome .quiz-header-toggle{
+            background:#fff !important;
+            color:#334155 !important;
+            border-color:#94a3b8 !important;
+        }
+
+        body.dev-monochrome .quiz-header-toggle:hover,
+        body.dev-monochrome .quiz-header-toggle:active{
+            background:#f1f5f9 !important;
+            color:#111827 !important;
+        }
+
+        body.dev-monochrome .quiz-topbar-details{
+            background:#fafafa !important;
+            border-top-color:#d1d5db !important;
+        }
+
+        /* ---- Print buttons keep light identity colors ---- */
+        body.dev-monochrome .dev-print-btn{
+            box-shadow:none !important;
+        }
+
+        body.dev-monochrome .dev-print-btn.worksheet{
+            background:#eef2ff !important;
+            color:#4338ca !important;
+            border-color:#6366f1 !important;
+        }
+
+        body.dev-monochrome .dev-print-btn.answer{
+            background:#fffbeb !important;
+            color:#92400e !important;
+            border-color:#f59e0b !important;
+        }
+
+        body.dev-monochrome .dev-print-btn.worksheet:hover{
+            background:#e0e7ff !important;
+            color:#3730a3 !important;
+        }
+
+        body.dev-monochrome .dev-print-btn.answer:hover{
+            background:#fef3c7 !important;
+            color:#78350f !important;
+        }
+
+        /* ---- Navigator semantic colors ---- */
+        body.dev-monochrome button.bg-blue-600{
+            background:#2563eb !important;
+            color:#fff !important;
+        }
+
+        body.dev-monochrome button.bg-blue-100{
+            background:#dbeafe !important;
+            color:#1d4ed8 !important;
+            border-color:#93c5fd !important;
+        }
+
+        body.dev-monochrome button.bg-emerald-500,
+        body.dev-monochrome button.bg-emerald-600{
+            background:#16a34a !important;
+            color:#fff !important;
+        }
+
+        body.dev-monochrome button.bg-rose-500,
+        body.dev-monochrome button.bg-rose-600{
+            background:#dc2626 !important;
+            color:#fff !important;
+        }
+
+        body.dev-monochrome button.bg-gray-200{
+            background:#e5e7eb !important;
+            color:#374151 !important;
+        }
+
+        /* ---- Q badges / result badges ---- */
+        body.dev-monochrome .bg-indigo-100{
+            background:#e0e7ff !important;
+        }
+        body.dev-monochrome .text-indigo-800{
+            color:#3730a3 !important;
+        }
+
+        body.dev-monochrome .bg-emerald-100{
+            background:#dcfce7 !important;
+        }
+        body.dev-monochrome .text-emerald-800{
+            color:#166534 !important;
+        }
+
+        body.dev-monochrome .bg-rose-100{
+            background:#ffe4e6 !important;
+        }
+        body.dev-monochrome .text-rose-800{
+            color:#9f1239 !important;
+        }
+
+        body.dev-monochrome .bg-amber-100{
+            background:#fef3c7 !important;
+        }
+        body.dev-monochrome .text-amber-800,
+        body.dev-monochrome .text-amber-900{
+            color:#92400e !important;
+        }
+
+        /* ---- Answer options ---- */
+        body.dev-monochrome .option-btn{
+            background:#fff;
+            box-shadow:none !important;
+        }
+
+        body.dev-monochrome .option-btn.bg-blue-50{
+            background:#eff6ff !important;
+            color:#1d4ed8 !important;
+            border-color:#3b82f6 !important;
+            box-shadow:inset 4px 0 0 #3b82f6 !important;
+        }
+
+        body.dev-monochrome .option-btn.bg-emerald-50{
+            background:#dcfce7 !important;
+            color:#166534 !important;
+            border-color:#16a34a !important;
+            box-shadow:inset 4px 0 0 #16a34a !important;
+        }
+
+        body.dev-monochrome .option-btn.bg-gray-50{
+            background:#f8fafc !important;
+        }
+
+        /* ---- Correct / incorrect / give-up feedback remains obvious ---- */
+        body.dev-monochrome .bg-green-50,
+        body.dev-monochrome .bg-emerald-50{
+            background:#f0fdf4 !important;
+        }
+
+        body.dev-monochrome .border-green-200,
+        body.dev-monochrome .border-green-300,
+        body.dev-monochrome .border-emerald-200,
+        body.dev-monochrome .border-emerald-300,
+        body.dev-monochrome .border-emerald-500{
+            border-color:#22c55e !important;
+        }
+
+        body.dev-monochrome .text-green-600,
+        body.dev-monochrome .text-green-700,
+        body.dev-monochrome .text-emerald-600,
+        body.dev-monochrome .text-emerald-700,
+        body.dev-monochrome .text-emerald-800{
+            color:#15803d !important;
+        }
+
+        body.dev-monochrome .bg-red-50,
+        body.dev-monochrome .bg-rose-50{
+            background:#fff1f2 !important;
+        }
+
+        body.dev-monochrome .border-red-200,
+        body.dev-monochrome .border-red-300,
+        body.dev-monochrome .border-rose-200,
+        body.dev-monochrome .border-rose-300{
+            border-color:#fb7185 !important;
+        }
+
+        body.dev-monochrome .text-red-600,
+        body.dev-monochrome .text-red-700,
+        body.dev-monochrome .text-rose-600,
+        body.dev-monochrome .text-rose-700,
+        body.dev-monochrome .text-rose-800{
+            color:#be123c !important;
+        }
+
+        /* ---- Hint scaffolds stay warm yellow/sky/violet ---- */
+        body.dev-monochrome .hint-step{
+            border-left-color:#f59e0b !important;
+        }
+
+        body.dev-monochrome .bg-amber-50{
+            background:#fffbeb !important;
+        }
+
+        body.dev-monochrome .bg-sky-50{
+            background:#f0f9ff !important;
+        }
+
+        body.dev-monochrome .border-sky-400{
+            border-color:#38bdf8 !important;
+        }
+
+        body.dev-monochrome .text-sky-900{
+            color:#0c4a6e !important;
+        }
+
+        body.dev-monochrome .bg-violet-50{
+            background:#f5f3ff !important;
+        }
+
+        body.dev-monochrome .border-violet-400{
+            border-color:#8b5cf6 !important;
+        }
+
+        body.dev-monochrome .text-violet-900,
+        body.dev-monochrome .text-violet-800,
+        body.dev-monochrome .text-violet-700{
+            color:#5b21b6 !important;
+        }
+
+        /* ---- Bottom action bar: color by purpose ---- */
+        body.dev-monochrome .quiz-actionbar{
+            background:#fafafa !important;
+            border-top:1px solid #222 !important;
+        }
+
+        body.dev-monochrome .quiz-action-btn{
+            background:#fff !important;
+            color:#111827 !important;
+            border-color:#94a3b8 !important;
+            box-shadow:none !important;
+        }
+
+        body.dev-monochrome .quiz-action-btn:hover:not(:disabled){
+            background:#f1f5f9 !important;
+        }
+
+        body.dev-monochrome .quiz-action-btn.hint{
+            background:#fffbeb !important;
+            color:#92400e !important;
+            border-color:#f59e0b !important;
+        }
+
+        body.dev-monochrome .quiz-action-btn.hint:hover:not(:disabled){
+            background:#fef3c7 !important;
+        }
+
+        body.dev-monochrome .quiz-action-btn.giveup{
+            background:#fff1f2 !important;
+            color:#be123c !important;
+            border-color:#e11d48 !important;
+            border-style:dashed !important;
+        }
+
+        body.dev-monochrome .quiz-action-btn.giveup:hover:not(:disabled){
+            background:#ffe4e6 !important;
+        }
+
+        body.dev-monochrome .quiz-action-btn[onclick*="skipQuestion"]{
+            background:#eff6ff !important;
+            color:#1d4ed8 !important;
+            border-color:#60a5fa !important;
+        }
+
+        body.dev-monochrome .quiz-action-btn[onclick*="skipQuestion"]:hover:not(:disabled){
+            background:#dbeafe !important;
+        }
+
+        body.dev-monochrome .quiz-action-btn.primary{
+            background:#2563eb !important;
+            color:#fff !important;
+            border-color:#2563eb !important;
+        }
+
+        body.dev-monochrome .quiz-action-btn.primary:hover:not(:disabled){
+            background:#1d4ed8 !important;
+        }
+
+        /* ---- AI and Scratch retain identity, but surfaces remain paper-like ---- */
+        body.dev-monochrome .ai-chat-card{
+            background:#fff !important;
+            border-color:#c4b5fd !important;
+        }
+
+        body.dev-monochrome .ai-chat-card .study-tool-title{
+            color:#6d28d9 !important;
+        }
+
+        body.dev-monochrome .ai-quick-btn,
+        body.dev-monochrome .ai-send-btn{
+            background:#faf5ff !important;
+            color:#6d28d9 !important;
+            border-color:#a78bfa !important;
+        }
+
+        body.dev-monochrome .scratch-lite-card{
+            background:#fff !important;
+            border-color:#99f6e4 !important;
+        }
+
+        body.dev-monochrome .scratch-lite-card .study-tool-title{
+            color:#0f766e !important;
+        }
+
+        /* ---- Controlled scroll rail: neutral track, blue handle/action ---- */
+        body.dev-monochrome #dev-scroll-rail{
+            background:rgba(255,255,255,.98) !important;
+            border-color:#64748b !important;
+            box-shadow:none !important;
+        }
+
+        body.dev-monochrome #dev-scroll-rail .dev-scroll-label,
+        body.dev-monochrome #dev-scroll-progress{
+            color:#334155 !important;
+        }
+
+        body.dev-monochrome .dev-scroll-step{
+            background:#334155 !important;
+            color:#fff !important;
+            border:1px solid #334155 !important;
+            box-shadow:none !important;
+        }
+
+        body.dev-monochrome #dev-scroll-track{
+            background:#e5e7eb !important;
+            border-color:#9ca3af !important;
+        }
+
+        body.dev-monochrome #dev-scroll-thumb{
+            background:#2563eb !important;
+            box-shadow:none !important;
+        }
+
+        /* Keep the actual box-plot visuals legible but less candy-colored. */
+        body.dev-monochrome svg{
+            --paper-svg-neutral:1;
+        }
+
+        @media (max-width:760px){
+            .quiz-bottom-actions{
+                gap:6px !important;
+            }
+
+            .quiz-action-btn.hint{
+                order:1;
+            }
+
+            .quiz-action-btn.giveup{
+                order:2;
+                flex-basis:auto !important;
+            }
+
+            .quiz-action-btn[onclick*="goToQuestion"]{
+                order:3;
+            }
+
+            .quiz-action-btn[onclick*="skipQuestion"]{
+                order:4;
+            }
+
+            .quiz-action-btn.primary{
+                order:5;
+                flex-basis:100% !important;
+            }
+        }
+
 </style>
 </head>
 <body class="text-gray-800 min-h-screen flex flex-col items-center py-6 px-4">
+<script>
+document.documentElement.classList.add('dev-controlled-scroll');
+document.body?.classList.add('dev-controlled-scroll');
+document.body?.classList.add('dev-monochrome');
 
+window.addEventListener('DOMContentLoaded', () => {
+    const warn = document.getElementById('fb-local-warning');
+    if (warn && location.protocol === 'file:') {
+        warn.classList.add('show');
+    }
+}, { once:true });
+</script>
 
-
-
-<div id="fb-gate" class="fb-gate">
-  <div class="fb-card">
-    <div id="fb-gate-kicker" style="font-size:12px;font-weight:900;color:#6366f1;letter-spacing:.15em;text-transform:uppercase">
-      Template v1.20 · Firebase + Dual AI + Collapsible Scratch Lite
+<div id="dev-scroll-rail" aria-label="Controlled page scroll">
+    <div class="dev-scroll-label">SCROLL</div>
+    <button id="dev-scroll-up" class="dev-scroll-step" type="button" aria-label="Scroll up">▲</button>
+    <div id="dev-scroll-track" aria-label="Drag to scroll">
+        <div id="dev-scroll-thumb" role="slider"
+             aria-label="Page position"
+             aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
     </div>
-    <h2 id="fb-gate-title" style="font-size:26px;font-weight:900;color:#0f172a;margin:8px 0 4px">
-      เข้าสู่ Quiz / Enter Quiz
-    </h2>
-    <p id="fb-gate-copy" style="color:#64748b;font-size:14px;line-height:1.65;margin:0 0 18px">
-      เข้าสู่ระบบด้วย Google เพื่อบันทึกความคืบหน้า Quiz และแสดงสถานะออนไลน์<br>
-      Sign in with Google to restore quiz progress, save your work, and show live presence.
-    </p>
+    <button id="dev-scroll-down" class="dev-scroll-step" type="button" aria-label="Scroll down">▼</button>
+    <div id="dev-scroll-progress">0%</div>
+</div>
 
-    <button id="fb-signin" class="fb-google">
-      <span style="font-size:20px;font-weight:900">G</span>
-      <span>เข้าสู่ระบบด้วย Google / Sign in with Google</span>
-    </button>
 
-    <div id="fb-auth-loading" style="display:none;margin-top:12px;padding:10px 12px;border-radius:12px;background:#eef2ff;color:#4338ca;font-size:12px;font-weight:800;line-height:1.55">
-      ⏳ กำลังโหลดความคืบหน้าจาก Cloud ก่อนเปิด Quiz...<br>
-      Loading cloud progress before the quiz is unlocked...
-    </div>
 
-    <div id="fb-error" class="fb-error"></div>
 
-    <div style="font-size:11px;color:#94a3b8;line-height:1.55;margin-top:14px">
-      ☁️ เวอร์ชันนี้บันทึกความคืบหน้า Quiz ขึ้น Firebase และสามารถกลับมาทำต่อได้<br>
-      Quiz progress is saved to Firebase and can be restored when the student returns.
-    </div>
+
+<div id="fb-gate" class="fb-gate" role="dialog" aria-modal="true" aria-labelledby="fb-gate-title">
+  <div class="fb-auth-shell">
+
+    <section class="fb-auth-visual" aria-hidden="true">
+      <div class="fb-auth-kicker">MASTERY QUIZ · STUDENT WORKSPACE</div>
+
+      <h2>
+        Box Plot Foundations<br>
+        พื้นฐาน Box Plot
+      </h2>
+
+      <p>
+        Sign in once, then continue your quiz with cloud progress,
+        live presence, hints, AI support, and an optional working area.<br>
+        เข้าสู่ระบบครั้งเดียว แล้วทำ Quiz ต่อพร้อมการบันทึกความคืบหน้า
+        สถานะออนไลน์ คำใบ้ AI และพื้นที่ทด
+      </p>
+
+      <div class="fb-boxplot-art">
+        <svg viewBox="0 0 520 220" role="img" aria-label="Decorative box plot illustration">
+          <line x1="48" y1="150" x2="472" y2="150"
+                stroke="rgba(255,255,255,.72)" stroke-width="3"/>
+
+          <g fill="rgba(255,255,255,.88)" font-size="14" font-weight="800"
+             font-family="system-ui,-apple-system,Segoe UI,sans-serif" text-anchor="middle">
+            <text x="48" y="181">0</text>
+            <text x="154" y="181">25</text>
+            <text x="260" y="181">50</text>
+            <text x="366" y="181">75</text>
+            <text x="472" y="181">100</text>
+          </g>
+
+          <g stroke="rgba(255,255,255,.75)" stroke-width="2">
+            <line x1="48" y1="143" x2="48" y2="158"/>
+            <line x1="154" y1="143" x2="154" y2="158"/>
+            <line x1="260" y1="143" x2="260" y2="158"/>
+            <line x1="366" y1="143" x2="366" y2="158"/>
+            <line x1="472" y1="143" x2="472" y2="158"/>
+          </g>
+
+          <!-- whiskers -->
+          <line x1="102" y1="95" x2="180" y2="95" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+          <line x1="102" y1="68" x2="102" y2="122" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+
+          <!-- box -->
+          <rect x="180" y="55" width="186" height="80" rx="7"
+                fill="rgba(255,255,255,.13)" stroke="#fff" stroke-width="5"/>
+
+          <!-- median -->
+          <line x1="272" y1="55" x2="272" y2="135" stroke="#fff" stroke-width="5"/>
+
+          <!-- right whisker -->
+          <line x1="366" y1="95" x2="430" y2="95" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+          <line x1="430" y1="68" x2="430" y2="122" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+
+          <!-- outlier -->
+          <circle cx="466" cy="95" r="8" fill="#fde68a" stroke="#fff" stroke-width="3"/>
+
+          <g fill="#fff" font-size="13" font-weight="900"
+             font-family="system-ui,-apple-system,Segoe UI,sans-serif" text-anchor="middle">
+            <text x="102" y="42">Min</text>
+            <text x="180" y="42">Q₁</text>
+            <text x="272" y="42">Median</text>
+            <text x="366" y="42">Q₃</text>
+            <text x="430" y="42">Max</text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="fb-auth-badges">
+        <span class="fb-auth-badge">Google Sign-In</span>
+        <span class="fb-auth-badge">Progress Restore</span>
+        <span class="fb-auth-badge">Live Presence</span>
+        <span class="fb-auth-badge">Scratch + AI</span>
+      </div>
+    </section>
+
+    <section class="fb-auth-card">
+      <div class="fb-auth-card-kicker">STUDENT ACCESS / การเข้าสู่ระบบ</div>
+
+      <h2 id="fb-gate-title" class="fb-auth-title">
+        Box Plot Foundations V6
+      </h2>
+
+      <p id="fb-gate-copy" class="fb-auth-copy">
+        เข้าสู่ระบบด้วย Google เพื่อโหลดงานเดิมก่อนเปิด Quiz และบันทึกความคืบหน้าระหว่างทำ<br>
+        Sign in with Google to restore your previous progress before the quiz opens and save progress as you work.
+      </p>
+
+      <div id="fb-local-warning" class="fb-auth-local-warning">
+        ⚠️ Google Sign-In ไม่ควรทดสอบจาก <b>file://</b><br>
+        เปิดไฟล์ผ่าน GitHub Pages หรือ localhost แล้วลองอีกครั้ง
+      </div>
+
+      <button id="fb-signin" class="fb-google" type="button">
+        <svg class="fb-google-logo" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="#4285F4" d="M21.35 12.23c0-.78-.07-1.53-.2-2.25H12v4.26h5.23a4.47 4.47 0 0 1-1.94 2.93v2.77h3.14c1.84-1.69 2.92-4.18 2.92-7.71z"/>
+          <path fill="#34A853" d="M12 21.72c2.63 0 4.84-.87 6.45-2.36l-3.14-2.77c-.87.58-1.98.93-3.31.93-2.54 0-4.69-1.72-5.46-4.03H3.3v2.86A9.74 9.74 0 0 0 12 21.72z"/>
+          <path fill="#FBBC05" d="M6.54 13.49A5.84 5.84 0 0 1 6.23 12c0-.52.11-1.03.31-1.49V7.65H3.3A9.72 9.72 0 0 0 2.28 12c0 1.57.38 3.06 1.02 4.35l3.24-2.86z"/>
+          <path fill="#EA4335" d="M12 6.48c1.43 0 2.71.49 3.72 1.45l2.79-2.79C16.83 3.58 14.63 2.28 12 2.28a9.74 9.74 0 0 0-8.7 5.37l3.24 2.86C7.31 8.2 9.46 6.48 12 6.48z"/>
+        </svg>
+        <span>Sign in with Google / เข้าสู่ระบบด้วย Google</span>
+      </button>
+
+      <div id="fb-auth-loading" class="fb-auth-loading">
+        ⏳ กำลังยืนยันตัวตนและโหลดความคืบหน้าจาก Cloud ก่อนเปิด Quiz...<br>
+        Authenticating and restoring cloud progress before the quiz unlocks...
+      </div>
+
+      <div id="fb-error" class="fb-error"></div>
+
+      <div class="fb-auth-note">
+        ☁️ Quiz progress is restored before autosave begins, helping prevent a blank session from overwriting previous work.<br>
+        ระบบจะโหลดความคืบหน้าเดิมก่อนเริ่ม autosave เพื่อช่วยป้องกันสถานะว่างทับงานเดิม
+      </div>
+    </section>
+
   </div>
 </div>
 
@@ -4985,7 +6307,7 @@ function setGateSigningIn() {
   gate.classList.remove("hidden");
   signin.style.display = "none";
   authLoading.style.display = "block";
-  gateTitle.textContent = "กำลังเปิดงานเดิม / Restoring your work";
+  gateTitle.textContent = "กำลังเปิด Box Plot Quiz / Restoring your Box Plot Quiz";
   gateCopy.innerHTML =
     "กำลังตรวจ Firebase และโหลดความคืบหน้าก่อนเปิด Quiz เพื่อป้องกันงานว่างทับข้อมูลเดิม<br>" +
     "Loading cloud progress before the quiz unlocks, so blank state cannot overwrite prior work.";
@@ -4996,7 +6318,7 @@ function setGateSignedOut() {
   signin.style.display = "";
   signin.disabled = false;
   authLoading.style.display = "none";
-  gateTitle.textContent = "เข้าสู่ Quiz / Enter Quiz";
+  gateTitle.textContent = "Box Plot Foundations V6";
   gateCopy.innerHTML =
     "เข้าสู่ระบบด้วย Google เพื่อบันทึกความคืบหน้า Quiz และแสดงสถานะออนไลน์<br>" +
     "Sign in with Google to restore quiz progress and show live presence.";
@@ -5886,6 +7208,7 @@ window.toggleStudyTool = function(tool, qId) {
     const nextOpen = !studyToolIsOpen(tool);
     studyToolState.panelOpen[tool] = nextOpen;
     updateStudyToolToggleUI(tool, qId);
+    requestAnimationFrame(() => window.refreshControlledScroll?.());
 
     if (tool === 'scratch') {
         if (nextOpen) {
@@ -7065,6 +8388,264 @@ function typesetMath() {
     }
 }
 
+
+/* ============================================================
+   DEV CONTROLLED SCROLL
+   Vertical page movement is allowed only through the custom rail.
+   ============================================================ */
+let controlledScrollViewport = null;
+let controlledScrollMutationObserver = null;
+let controlledScrollResizeObserver = null;
+let controlledScrollCleanup = [];
+let controlledScrollRAF = 0;
+
+function controlledScrollElements() {
+    return {
+        rail: document.getElementById('dev-scroll-rail'),
+        track: document.getElementById('dev-scroll-track'),
+        thumb: document.getElementById('dev-scroll-thumb'),
+        up: document.getElementById('dev-scroll-up'),
+        down: document.getElementById('dev-scroll-down'),
+        progress: document.getElementById('dev-scroll-progress')
+    };
+}
+
+function controlledScrollMax() {
+    if (!controlledScrollViewport) return 0;
+    return Math.max(0, controlledScrollViewport.scrollHeight - controlledScrollViewport.clientHeight);
+}
+
+function syncControlledScrollRail() {
+    cancelAnimationFrame(controlledScrollRAF);
+    controlledScrollRAF = requestAnimationFrame(() => {
+        const vp = controlledScrollViewport;
+        const { track, thumb, up, down, progress } = controlledScrollElements();
+        if (!vp || !track || !thumb) return;
+
+        const maxScroll = controlledScrollMax();
+        const trackH = track.clientHeight || 1;
+        const contentH = Math.max(vp.scrollHeight, vp.clientHeight, 1);
+
+        const proportional = Math.round(trackH * (vp.clientHeight / contentH));
+        const thumbH = Math.max(54, Math.min(trackH, proportional));
+        const travel = Math.max(0, trackH - thumbH);
+        const ratio = maxScroll > 0 ? Math.min(1, Math.max(0, vp.scrollTop / maxScroll)) : 0;
+
+        thumb.style.height = `${thumbH}px`;
+        thumb.style.transform = `translateY(${travel * ratio}px)`;
+        thumb.setAttribute('aria-valuenow', String(Math.round(ratio * 100)));
+
+        if (progress) progress.textContent = `${Math.round(ratio * 100)}%`;
+        if (up) up.disabled = maxScroll <= 0 || vp.scrollTop <= 1;
+        if (down) down.disabled = maxScroll <= 0 || vp.scrollTop >= maxScroll - 1;
+    });
+}
+
+function controlledScrollToRatio(ratio) {
+    if (!controlledScrollViewport) return;
+    const maxScroll = controlledScrollMax();
+    controlledScrollViewport.scrollTop = Math.max(0, Math.min(maxScroll, ratio * maxScroll));
+    syncControlledScrollRail();
+}
+
+function controlledScrollStep(direction) {
+    if (!controlledScrollViewport) return;
+    const amount = Math.max(180, controlledScrollViewport.clientHeight * 0.72);
+    controlledScrollViewport.scrollTo({
+        top: controlledScrollViewport.scrollTop + direction * amount,
+        behavior: 'smooth'
+    });
+}
+
+function isHorizontalScrollableTarget(target) {
+    return Boolean(target?.closest?.('.table-wrap, .graph-card, mjx-container'));
+}
+
+function installControlledScroll() {
+    controlledScrollCleanup.forEach(fn => {
+        try { fn(); } catch (_) {}
+    });
+    controlledScrollCleanup = [];
+
+    controlledScrollMutationObserver?.disconnect();
+    controlledScrollResizeObserver?.disconnect();
+
+    controlledScrollViewport = document.querySelector('.controlled-scroll-viewport');
+
+    const { rail, track, thumb, up, down } = controlledScrollElements();
+    if (!rail) return;
+
+    if (!controlledScrollViewport) {
+        rail.style.display = 'none';
+        return;
+    }
+
+    rail.style.display = 'flex';
+    const vp = controlledScrollViewport;
+
+    // Native vertical finger-scroll is blocked.
+    // Horizontal movement remains available for wide equations/tables.
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    const onTouchStart = (event) => {
+        if (event.touches?.length === 1) {
+            touchStartX = event.touches[0].clientX;
+            touchStartY = event.touches[0].clientY;
+        }
+    };
+
+    const onTouchMove = (event) => {
+        if (event.touches?.length !== 1) return;
+
+        const t = event.touches[0];
+        const dx = Math.abs(t.clientX - touchStartX);
+        const dy = Math.abs(t.clientY - touchStartY);
+
+        // Allow deliberate horizontal scrolling for equations/tables.
+        if (dx > dy && isHorizontalScrollableTarget(event.target)) return;
+
+        // Everything else: no native page movement.
+        event.preventDefault();
+    };
+
+    const onWheel = (event) => {
+        // DEV test intentionally disables mouse/trackpad vertical scrolling too.
+        if (Math.abs(event.deltaY) >= Math.abs(event.deltaX)) {
+            event.preventDefault();
+        }
+    };
+
+    const onScroll = () => syncControlledScrollRail();
+
+    vp.addEventListener('touchstart', onTouchStart, { passive:true });
+    vp.addEventListener('touchmove', onTouchMove, { passive:false });
+    vp.addEventListener('wheel', onWheel, { passive:false });
+    vp.addEventListener('scroll', onScroll, { passive:true });
+
+    controlledScrollCleanup.push(() => vp.removeEventListener('touchstart', onTouchStart));
+    controlledScrollCleanup.push(() => vp.removeEventListener('touchmove', onTouchMove));
+    controlledScrollCleanup.push(() => vp.removeEventListener('wheel', onWheel));
+    controlledScrollCleanup.push(() => vp.removeEventListener('scroll', onScroll));
+
+    const upHandler = () => controlledScrollStep(-1);
+    const downHandler = () => controlledScrollStep(1);
+    up?.addEventListener('click', upHandler);
+    down?.addEventListener('click', downHandler);
+
+    if (up) controlledScrollCleanup.push(() => up.removeEventListener('click', upHandler));
+    if (down) controlledScrollCleanup.push(() => down.removeEventListener('click', downHandler));
+
+    // Track tap jumps to that approximate position.
+    const trackPointerDown = (event) => {
+        if (event.target === thumb) return;
+        event.preventDefault();
+        const rect = track.getBoundingClientRect();
+        const ratio = (event.clientY - rect.top) / Math.max(1, rect.height);
+        controlledScrollToRatio(ratio);
+    };
+    track?.addEventListener('pointerdown', trackPointerDown);
+    if (track) controlledScrollCleanup.push(() => track.removeEventListener('pointerdown', trackPointerDown));
+
+    // Thumb drag.
+    let dragStartY = 0;
+    let dragStartScroll = 0;
+    let dragging = false;
+
+    const thumbPointerDown = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        dragging = true;
+        dragStartY = event.clientY;
+        dragStartScroll = vp.scrollTop;
+        thumb.classList.add('dragging');
+        try { thumb.setPointerCapture(event.pointerId); } catch (_) {}
+    };
+
+    const thumbPointerMove = (event) => {
+        if (!dragging) return;
+        event.preventDefault();
+
+        const rect = track.getBoundingClientRect();
+        const thumbH = thumb.getBoundingClientRect().height;
+        const travel = Math.max(1, rect.height - thumbH);
+        const maxScroll = controlledScrollMax();
+
+        const deltaY = event.clientY - dragStartY;
+        vp.scrollTop = dragStartScroll + (deltaY / travel) * maxScroll;
+        syncControlledScrollRail();
+    };
+
+    const thumbPointerUp = (event) => {
+        if (!dragging) return;
+        dragging = false;
+        thumb.classList.remove('dragging');
+        try { thumb.releasePointerCapture(event.pointerId); } catch (_) {}
+    };
+
+    thumb?.addEventListener('pointerdown', thumbPointerDown);
+    thumb?.addEventListener('pointermove', thumbPointerMove);
+    thumb?.addEventListener('pointerup', thumbPointerUp);
+    thumb?.addEventListener('pointercancel', thumbPointerUp);
+
+    if (thumb) {
+        controlledScrollCleanup.push(() => thumb.removeEventListener('pointerdown', thumbPointerDown));
+        controlledScrollCleanup.push(() => thumb.removeEventListener('pointermove', thumbPointerMove));
+        controlledScrollCleanup.push(() => thumb.removeEventListener('pointerup', thumbPointerUp));
+        controlledScrollCleanup.push(() => thumb.removeEventListener('pointercancel', thumbPointerUp));
+    }
+
+    // Any panel opening, AI answer, hint, etc. can change scrollHeight.
+    controlledScrollMutationObserver = new MutationObserver(() => syncControlledScrollRail());
+    controlledScrollMutationObserver.observe(vp, {
+        subtree:true,
+        childList:true,
+        attributes:true,
+        characterData:false
+    });
+
+    if ('ResizeObserver' in window) {
+        controlledScrollResizeObserver = new ResizeObserver(() => syncControlledScrollRail());
+        controlledScrollResizeObserver.observe(vp);
+    }
+
+    requestAnimationFrame(() => {
+        vp.scrollTop = Math.min(vp.scrollTop, controlledScrollMax());
+        syncControlledScrollRail();
+    });
+}
+
+window.refreshControlledScroll = syncControlledScrollRail;
+
+
+/* ============================================================
+   COMPACT HEADER STATE
+   Header starts collapsed and stays in the chosen state while
+   the quiz page remains open.
+   ============================================================ */
+const quizChromeState = {
+    headerOpen: false
+};
+
+window.toggleQuizHeader = function() {
+    quizChromeState.headerOpen = !quizChromeState.headerOpen;
+
+    const panel = document.getElementById('quiz-header-details');
+    const btn = document.getElementById('quiz-header-toggle');
+
+    if (panel) panel.hidden = !quizChromeState.headerOpen;
+
+    if (btn) {
+        btn.setAttribute('aria-expanded', String(quizChromeState.headerOpen));
+        btn.innerHTML = `
+            <span class="quiz-header-chevron">⌃</span>
+            ${quizChromeState.headerOpen ? 'ซ่อน / Hide' : 'รายละเอียด / Details'}
+        `;
+    }
+
+    requestAnimationFrame(() => window.refreshControlledScroll?.());
+};
+
 function renderApp() {
     unmountScratchLiteInput();
     const appDiv = document.getElementById('app');
@@ -7088,6 +8669,7 @@ function renderApp() {
     }
 
     requestAnimationFrame(() => {
+        installControlledScroll();
         typesetMath();
         if (state.view === 'exam') {
             const q = state.activeQuestions[state.currentIndex];
@@ -7238,27 +8820,49 @@ function renderExamView() {
         </div>` : '';
 
     return `
-        <div class="bg-indigo-700 text-white px-6 py-4 flex flex-col sm:flex-row justify-between items-center shadow-md z-10">
-            <div class="mb-2 sm:mb-0">
-                <h1 class="text-xl font-bold">${window.QUIZ_TEMPLATE.title}</h1>
-                <p class="text-indigo-200 text-xs mb-1">${questionsData.length} Questions · ${window.QUIZ_TEMPLATE.subtitle}</p>
-                <p class="text-indigo-200 text-sm">Attempt: ${state.attempt} | Question ${state.currentIndex + 1} of ${total} (Item #${getQuestionNumber(currentQ.id)})</p>
-                ${state.attempt > 1
-                    ? `<p class="text-emerald-200 text-xs mt-1">✓ ผ่านแล้ว ${masteredCount} ข้อ · ต้องแก้ ${retryNeededCount} ข้อ / ${masteredCount} correct · ${retryNeededCount} to retry</p>`
-                    : `<p class="text-indigo-200 text-xs mt-1">💡 Unlimited hints · ขอคำใบ้ได้ไม่จำกัด · ไม่หักคะแนน</p>`}
+        <div class="quiz-topbar">
+            <div class="quiz-topbar-compact">
+                <div class="quiz-topbar-main">
+                    <h1 class="quiz-topbar-title">${window.QUIZ_TEMPLATE.title}</h1>
+                    <span class="quiz-topbar-q">Q${state.currentIndex + 1}/${total}</span>
+                </div>
+
+                <button id="quiz-header-toggle"
+                        type="button"
+                        class="quiz-header-toggle"
+                        aria-controls="quiz-header-details"
+                        aria-expanded="${quizChromeState.headerOpen ? 'true' : 'false'}"
+                        onclick="toggleQuizHeader()">
+                    <span class="quiz-header-chevron">⌃</span>
+                    ${quizChromeState.headerOpen ? 'ซ่อน / Hide' : 'รายละเอียด / Details'}
+                </button>
             </div>
-            <div class="dev-print-actions">
-                <button onclick="devPrintQuiz(false)" class="dev-print-btn worksheet" title="Printable worksheet">
-                    🖨️ ปริ้นออกไปทำ / Print Worksheet
-                </button>
-                <button onclick="devPrintQuiz(true)" class="dev-print-btn answer" title="Printable answer key">
-                    🖨️ ปริ้นพร้อมเฉลย / Print + Solutions
-                </button>
-                <button onclick="submitAll()" class="bg-yellow-400 hover:bg-yellow-300 text-yellow-900 font-bold py-2 px-6 rounded-full shadow-lg transition-transform hover:scale-105">ตรวจคำตอบทั้งหมด / Submit All</button>
+
+            <div id="quiz-header-details"
+                 class="quiz-topbar-details"
+                 ${quizChromeState.headerOpen ? '' : 'hidden'}>
+                <div class="quiz-topbar-detail-grid">
+                    <div class="quiz-topbar-meta">
+                        <div><b>${questionsData.length} Questions</b> · ${window.QUIZ_TEMPLATE.subtitle}</div>
+                        <div>Attempt: ${state.attempt} · Question ${state.currentIndex + 1} of ${total} · Item #${getQuestionNumber(currentQ.id)}</div>
+                        ${state.attempt > 1
+                            ? `<div>✓ ผ่านแล้ว ${masteredCount} ข้อ · ต้องแก้ ${retryNeededCount} ข้อ / ${masteredCount} correct · ${retryNeededCount} to retry</div>`
+                            : `<div>💡 Unlimited hints · ขอคำใบ้ได้ไม่จำกัด · ไม่หักคะแนน</div>`}
+                    </div>
+
+                    <div class="dev-print-actions">
+                        <button onclick="devPrintQuiz(false)" class="dev-print-btn worksheet" title="Printable worksheet">
+                            🖨️ ปริ้นออกไปทำ / Print Worksheet
+                        </button>
+                        <button onclick="devPrintQuiz(true)" class="dev-print-btn answer" title="Printable answer key">
+                            🖨️ ปริ้นพร้อมเฉลย / Print + Solutions
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="p-6 flex-1 bg-white overflow-y-auto fade-in">
+        <div class="controlled-scroll-viewport p-6 flex-1 bg-white overflow-y-auto fade-in">
             ${navHtml}
             ${legendHtml}
 
@@ -7270,9 +8874,7 @@ function renderExamView() {
                         ${currentGivenUp ? '<span class="bg-rose-600 text-white text-xs font-bold px-3 py-1 rounded-full">🏳 Give Up · 0 pt</span>' : ''}
                         ${!currentMastered && hintCount ? `<span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full">💡 ขอแล้ว ${hintCount} ครั้ง</span>` : ''}
                     </div>
-                    <div class="flex flex-wrap gap-2 justify-end">
-                        ${!currentMastered && !currentGivenUp ? `<button onclick="revealNextHint('${currentQ.id}')" class="px-4 py-2 rounded-xl font-bold text-sm bg-amber-100 text-amber-900 hover:bg-amber-200 border border-amber-300">💡 ขอคำใบ้เพิ่ม / More Hint #${hintCount+1}</button>` : ''}
-                    </div>
+                    <div></div>
                 </div>
 
                 <h2 class="question-math text-xl font-semibold text-gray-800 mb-2 leading-relaxed">${currentQ.questionTH}</h2>
@@ -7296,21 +8898,39 @@ function renderExamView() {
             </div>
         </div>
 
-        <div class="bg-gray-50 px-6 py-4 border-t flex flex-col md:flex-row gap-3 justify-between items-center">
-            <div class="text-sm text-gray-500 font-medium flex flex-wrap gap-x-3 gap-y-1">
-                <span>Completed: <span class="text-indigo-600 font-bold">${completedCount}/${total}</span></span>
-                ${state.attempt > 1 ? `<span>✓ Mastered: <span class="text-emerald-600 font-bold">${masteredCount}</span></span>` : ''}
-                <span>Answered this round: <span class="text-blue-600">${answeredCount}</span></span>
-                <span>Give Up: <span class="text-rose-600 font-bold">${giveUpCount}</span></span>
-                ${!currentMastered ? `<span>Hint requests this item: <span class="text-amber-600 font-bold">${hintCount}</span></span>` : ''}
+        <div class="quiz-actionbar">
+            <div class="quiz-action-stats">
+                <span>Completed: <b>${completedCount}/${total}</b></span>
+                ${state.attempt > 1 ? `<span>✓ Mastered: <b>${masteredCount}</b></span>` : ''}
+                <span>Answered: <b>${answeredCount}</b></span>
+                <span>Give Up: <b>${giveUpCount}</b></span>
+                ${!currentMastered ? `<span>Hints: <b>${hintCount}</b></span>` : ''}
             </div>
 
-            <div class="flex flex-wrap justify-end gap-3">
-                ${!currentMastered && !currentGivenUp ? `<button onclick="giveUpQuestion('${currentQ.id}')" class="px-4 py-2 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg hover:bg-rose-100 font-bold">🏳 ยอมแพ้และดูเฉลย / Give Up & Show Solution (0 คะแนน / points)</button>` : ''}
-                <button onclick="goToQuestion(Math.max(0, state.currentIndex - 1))" class="px-4 py-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 font-medium ${state.currentIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''}" ${state.currentIndex === 0 ? 'disabled' : ''}>ก่อนหน้า / Previous</button>
-                ${state.currentIndex < total - 1
-                    ? `<button onclick="skipQuestion()" class="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 font-medium">ถัดไป / Next</button>`
-                    : `<button onclick="submitAll()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium">ทบทวนและส่งคำตอบ / Review & Submit</button>`}
+            <div class="quiz-bottom-actions">
+                ${!currentMastered && !currentGivenUp
+                    ? `<button onclick="revealNextHint('${currentQ.id}')" class="quiz-action-btn hint">💡 Hint #${hintCount+1}</button>`
+                    : ''}
+
+                ${!currentMastered && !currentGivenUp
+                    ? `<button onclick="giveUpQuestion('${currentQ.id}')" class="quiz-action-btn giveup">🏳 Give Up · 0 pt</button>`
+                    : ''}
+
+                <button onclick="goToQuestion(Math.max(0, state.currentIndex - 1))"
+                        class="quiz-action-btn"
+                        ${state.currentIndex === 0 ? 'disabled' : ''}>
+                    ‹ ก่อนหน้า / Previous
+                </button>
+
+                <button onclick="skipQuestion()"
+                        class="quiz-action-btn"
+                        ${state.currentIndex >= total - 1 ? 'disabled' : ''}>
+                    ถัดไป / Next ›
+                </button>
+
+                <button onclick="submitAll()" class="quiz-action-btn primary">
+                    ตรวจคำตอบทั้งหมด / Submit All
+                </button>
             </div>
         </div>`;
 }
@@ -7339,7 +8959,7 @@ function renderSummaryView() {
     }).join('');
 
     return `<div class="${isPerfect ? 'bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-700' : 'bg-indigo-700'} text-white px-6 py-8 text-center rounded-t-2xl"><div class="text-sm font-bold uppercase tracking-[0.25em] text-white/75 mb-2">${isPerfect ? 'Mastery Complete' : 'Mastery Check'}</div><h1 class="text-3xl font-bold mb-2">${isPerfect ? 'ทำสำเร็จ 100% แล้ว! 🎉' : `ผลการทำรอบที่ ${state.attempt}`}</h1><p class="text-white/80">${isPerfect ? `ผ่านครบทั้ง ${questionsData.length} ข้อภายใน ${state.attemptHistory.length} รอบ` : `รอบนี้ได้ ${latest.correctCount} จาก ${latest.total} ข้อ (${latest.percentage}%) · ขอคำใบ้ ${latest.hintsUsed} ครั้ง`}</p></div>
-    <div class="p-6 bg-white flex-1 overflow-y-auto fade-in">${isPerfect ? `<div class="celebration-card border border-emerald-200 rounded-2xl p-6 text-center mb-6"><div class="celebration-icon text-6xl mb-3">🏆</div><h2 class="text-2xl font-bold text-gray-800">${window.QUIZ_TEMPLATE.completionTitle}</h2><p class="text-gray-600 mt-2">ทำ Mastery Quiz ครบทุกข้อแล้ว และสามารถย้อนดูประวัติแต่ละรอบได้</p></div>` : `<div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded-r-lg"><h3 class="font-bold text-blue-800">Mastery Learning Mode Active</h3><p class="text-blue-700 text-sm mt-1">ระบบจะนำข้อที่ผิด ข้อที่ยังไม่ได้ตอบ และข้อที่กด Give Up กลับมาให้ทำใหม่ คำใบ้ขอได้ไม่จำกัด ช่วยเรียนรู้และไม่หักคะแนน</p></div>`}
+    <div class="controlled-scroll-viewport p-6 bg-white flex-1 overflow-y-auto fade-in">${isPerfect ? `<div class="celebration-card border border-emerald-200 rounded-2xl p-6 text-center mb-6"><div class="celebration-icon text-6xl mb-3">🏆</div><h2 class="text-2xl font-bold text-gray-800">${window.QUIZ_TEMPLATE.completionTitle}</h2><p class="text-gray-600 mt-2">ทำ Mastery Quiz ครบทุกข้อแล้ว และสามารถย้อนดูประวัติแต่ละรอบได้</p></div>` : `<div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded-r-lg"><h3 class="font-bold text-blue-800">Mastery Learning Mode Active</h3><p class="text-blue-700 text-sm mt-1">ระบบจะนำข้อที่ผิด ข้อที่ยังไม่ได้ตอบ และข้อที่กด Give Up กลับมาให้ทำใหม่ คำใบ้ขอได้ไม่จำกัด ช่วยเรียนรู้และไม่หักคะแนน</p></div>`}
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8"><div class="rounded-2xl bg-indigo-50 p-4 text-center"><div class="text-2xl font-bold text-indigo-700">${state.attemptHistory.length}</div><div class="text-xs text-indigo-500 mt-1">Attempts</div></div><div class="rounded-2xl bg-emerald-50 p-4 text-center"><div class="text-xl font-bold text-emerald-700">${formatDuration(totalElapsed)}</div><div class="text-xs text-emerald-600 mt-1">Total time</div></div><div class="rounded-2xl bg-amber-50 p-4 text-center"><div class="text-2xl font-bold text-amber-700">${firstAttempt.correctCount}/${firstAttempt.total}</div><div class="text-xs text-amber-600 mt-1">First attempt · Hint requests ${firstAttempt.hintsUsed}</div></div><div class="rounded-2xl bg-violet-50 p-4 text-center"><div class="text-2xl font-bold text-violet-700">${retryCount}</div><div class="text-xs text-violet-600 mt-1">Retries</div></div></div>
     ${isPerfect ? `<div class="rounded-2xl border border-gray-200 p-5 mb-8"><h3 class="font-bold text-gray-800 mb-2">📌 สรุปเส้นทางการเรียนรู้</h3><p class="text-gray-600 text-sm leading-relaxed">${missedQuestionNumbers.length ? `เคยพลาด ${missedQuestionNumbers.length} ข้อ: ${missedQuestionNumbers.map(n=>`Q${n}`).join(', ')} และแก้ถูกครบแล้ว` : 'ตอบถูกครบทุกข้อตั้งแต่รอบแรก'}</p></div>` : `<h3 class="font-bold text-gray-800 text-lg mb-3">ผลคำตอบรอบล่าสุด</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">${currentResultHtml}</div>`}
     <h3 class="font-bold text-gray-800 text-lg mb-4">ประวัติแต่ละรอบ / Attempt History</h3><div>${historyHtml}</div></div>
