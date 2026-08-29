@@ -1888,6 +1888,39 @@
     .lab-skip-section:hover{background:#f3e8ff;border-color:#a855f7;transform:translateY(-1px)}
     .lab-skip-section:focus-visible{outline:3px solid rgba(168,85,247,.22);outline-offset:2px}
     .lab-skip-section:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+    .lab-test-nav-backdrop{
+      display:none;position:fixed;inset:0;z-index:10005;background:rgba(15,23,42,.28);backdrop-filter:blur(2px);
+    }
+    .lab-test-nav-backdrop.show{display:block}
+    .lab-test-nav{
+      position:fixed;top:72px;right:14px;z-index:10006;width:min(520px,calc(100vw - 28px));max-height:calc(100vh - 92px);
+      overflow:auto;border:1px solid #d8b4fe;border-radius:18px;background:#fff;box-shadow:0 20px 60px rgba(59,7,100,.24);
+      display:none;
+    }
+    .lab-test-nav.show{display:block}
+    .lab-test-nav-head{
+      position:sticky;top:0;z-index:2;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+      padding:14px 14px 12px;background:linear-gradient(135deg,#4f125f,#7b2390);color:#fff;border-radius:17px 17px 0 0;
+    }
+    .lab-test-nav-close{width:34px;height:34px;border:0;border-radius:10px;background:rgba(255,255,255,.16);color:#fff;font-size:18px;font-weight:900;cursor:pointer}
+    .lab-test-nav-body{padding:12px;background:#fdfaff}
+    .lab-test-nav-group{margin-bottom:12px}
+    .lab-test-nav-group:last-child{margin-bottom:0}
+    .lab-test-nav-group-title{font-size:.72rem;font-weight:1000;letter-spacing:.08em;text-transform:uppercase;color:#6b21a8;margin:0 0 6px 2px}
+    .lab-test-nav-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+    .lab-test-dest{
+      min-width:0;text-align:left;border:1px solid #e9d5ff;border-radius:12px;background:#fff;color:#3b0764;padding:9px 10px;
+      font-size:.75rem;font-weight:900;line-height:1.35;cursor:pointer;transition:.14s ease;
+    }
+    .lab-test-dest:hover{background:#f3e8ff;border-color:#c084fc;transform:translateY(-1px)}
+    .lab-test-dest.current{background:#f3e8ff;border-color:#9333ea;box-shadow:0 0 0 2px rgba(147,51,234,.10) inset}
+    .lab-test-dest small{display:block;margin-top:2px;color:#7e22ce;font-size:.65rem;font-weight:800}
+    .lab-test-nav-note{margin-top:10px;padding:9px 10px;border:1px dashed #c084fc;border-radius:11px;background:#faf5ff;color:#6b21a8;font-size:.69rem;line-height:1.5;font-weight:800}
+    @media(max-width:640px){
+      .lab-test-nav{top:62px;right:8px;width:calc(100vw - 16px);max-height:calc(100vh - 74px)}
+      .lab-test-nav-grid{grid-template-columns:1fr}
+    }
     .lab-test-toast{
       position:fixed;left:50%;top:82px;z-index:10020;transform:translateX(-50%) translateY(-8px);
       max-width:min(620px,calc(100vw - 24px));padding:10px 14px;border:1px solid #c084fc;border-radius:12px;
@@ -1955,10 +1988,23 @@
   <div class="lab-user-actions">
     <button id="lab-live-pill" class="lab-live-pill" type="button" title="Live presence / ดูคนออนไลน์">📡 <span id="lab-live-count">0</span> online</button>
     <span id="lab-session-pill" class="lab-session-pill">Live monitor · login test</span>
-    <button id="lab-skip-section" class="lab-skip-section" type="button" title="TEST NAVIGATION: bypass the current section">⏭ <span class="lab-skip-label-long">Skip Section / </span>ข้าม Section</button>
+    <button id="lab-skip-section" class="lab-skip-section" type="button" title="TEST NAVIGATION: choose a section directly" aria-expanded="false" aria-controls="lab-test-nav">🧭 <span class="lab-skip-label-long">Go to Section / </span>ไป Section</button>
     <button id="lab-signout" class="lab-signout" type="button">Sign out / ออกจากระบบ</button>
   </div>
 </div>
+
+<div id="lab-test-nav-backdrop" class="lab-test-nav-backdrop"></div>
+<aside id="lab-test-nav" class="lab-test-nav" aria-hidden="true" aria-label="Test section navigator">
+  <div class="lab-test-nav-head">
+    <div>
+      <div style="font-size:10px;font-weight:1000;letter-spacing:.13em;color:#f5d0fe">TEST NAVIGATION · DIRECT JUMP</div>
+      <div style="font-size:18px;font-weight:1000;margin-top:2px">🧭 Open a section / เปิด Section ที่ต้องการ</div>
+      <div style="font-size:11px;color:#f5d0fe;margin-top:2px">เลือกจุดทดสอบได้โดยตรง ไม่ต้องกดข้ามทีละช่วง</div>
+    </div>
+    <button id="lab-test-nav-close" class="lab-test-nav-close" type="button" aria-label="Close test navigator">×</button>
+  </div>
+  <div class="lab-test-nav-body" id="lab-test-nav-body"></div>
+</aside>
 
 <div id="lab-monitor-backdrop" class="lab-monitor-backdrop"></div>
 <aside id="lab-monitor" class="lab-monitor" aria-hidden="true" aria-label="Live presence monitor">
@@ -6434,6 +6480,10 @@ const scratchToggle=document.getElementById('kinetics-scratch-toggle');
 const scratchPanel=document.getElementById('kinetics-scratch-panel');
 const skipSectionBtn=document.getElementById('lab-skip-section');
 const testToast=document.getElementById('lab-test-toast');
+const testNav=document.getElementById('lab-test-nav');
+const testNavBackdrop=document.getElementById('lab-test-nav-backdrop');
+const testNavClose=document.getElementById('lab-test-nav-close');
+const testNavBody=document.getElementById('lab-test-nav-body');
 
 function setAppLocked(locked){
   [appMain,scratchToggle,scratchPanel].forEach(el=>{ if(el) el.inert=!!locked; });
@@ -6441,27 +6491,34 @@ function setAppLocked(locked){
 }
 setAppLocked(true);
 
-/* === TEST NAVIGATION · Skip Section ===
-   This intentionally bypasses prerequisite locks in this login-test build.
-   Remove/hide the button before the student production build if strict sequencing is required.
+/* === TEST NAVIGATION · Direct Section Navigator ===
+   Test-only: choose any section directly instead of advancing one-by-one.
+   This bypasses prerequisite locks for isolated testing. Hide/remove before student production.
 */
 const LAB_TEST_SECTIONS=[
-  {id:'exp1',label:'Trial 1 · Prepare',checkpoint:'s1_trial1_experiment'},
-  {id:'measure',label:'Trial 1 · Measure',checkpoint:'s1_trial1_concentration'},
-  {id:'worksheetCheckpoint',label:'Checkpoint 1 · Concentration',checkpoint:'s1_trial1_concentration'},
-  {id:'rateCheckpoint',label:'Checkpoint 2 · Reaction rate',checkpoint:'s1_trial1_rate'},
-  {id:'trial2Section',label:'Trial 2',checkpoint:'s1_trial2_setup'},
-  {id:'trial3Section',label:'Trial 3',checkpoint:'s1_trial3_setup'},
-  {id:'notebookSection',label:'Observations',checkpoint:'s1_observation'},
-  {id:'trial4Section',label:'Trial 4',checkpoint:'s1_trial4_prediction'},
-  {id:'rateLawSection',label:'Checkpoint 3 · Rate law',checkpoint:'s1_rate_law'},
-  {id:'kSection',label:'Checkpoint 4 · Find k',checkpoint:'s1_k'},
-  {id:'predictionSection',label:'Final Challenge',checkpoint:'s1_predict_verify'},
-  {id:'station2Section',label:'Station 2 · Temperature',checkpoint:'s2_design'},
-  {id:'compactGraphSection',label:'Station 2 · Tangent rates',checkpoint:'s2_tangent_rates'},
-  {id:'station3Section',label:'Station 3 · Collision',checkpoint:'s3_prediction'},
-  {id:'station4Section',label:'Station 4 · Catalyst & inhibitor',checkpoint:'s4_questions'}
-].map(item=>({...item,el:document.getElementById(item.id)})).filter(item=>item.el);
+  {group:'Station 1',id:'exp1',label:'Trial 1 · Prepare',sub:'เตรียมสาร',checkpoint:'s1_trial1_experiment'},
+  {group:'Station 1',id:'measure',label:'Trial 1 · Measure',sub:'Colorimeter',checkpoint:'s1_trial1_concentration'},
+  {group:'Station 1',id:'worksheetCheckpoint',label:'Checkpoint 1',sub:'[I₂] from Abs',checkpoint:'s1_trial1_concentration'},
+  {group:'Station 1',id:'rateCheckpoint',label:'Checkpoint 2',sub:'Reaction rate',checkpoint:'s1_trial1_rate'},
+  {group:'Station 1',id:'trial2Section',label:'Trial 2',sub:'Double persulfate',checkpoint:'s1_trial2_setup'},
+  {group:'Station 1',id:'trial3Section',label:'Trial 3',sub:'Double iodide',checkpoint:'s1_trial3_setup'},
+  {group:'Station 1',id:'notebookSection',label:'Observations',sub:'Compare Trials 1–3',checkpoint:'s1_observation'},
+  {group:'Station 1',id:'trial4Section',label:'Trial 4',sub:'Predict + simulate',checkpoint:'s1_trial4_prediction'},
+  {group:'Station 1',id:'rateLawSection',label:'Checkpoint 3',sub:'Rate law',checkpoint:'s1_rate_law'},
+  {group:'Station 1',id:'kSection',label:'Checkpoint 4',sub:'Find k',checkpoint:'s1_k'},
+  {group:'Station 1',id:'predictionSection',label:'Final Challenge',sub:'Predict → simulate → verify',checkpoint:'s1_predict_verify'},
+
+  {group:'Station 2',id:'station2Section',label:'2A · Design',sub:'Temperature variable',checkpoint:'s2_design'},
+  {group:'Station 2',id:'compactGraphSection',label:'2B · Tangent Rates',sub:'20 / 30 / 40 °C',checkpoint:'s2_tangent_rates'},
+
+  {group:'Station 3',id:'station3Section',label:'3A · Collision',sub:'Energy + orientation',checkpoint:'s3_prediction'},
+  {group:'Station 3',id:'energyMountainCard',parent:'station3Section',show:true,label:'3B · Energy Mountain',sub:'Ea forward / reverse / ΔH',checkpoint:'s3_energy_profile'},
+  {group:'Station 3',id:'temperatureCard',parent:'station3Section',show:true,label:'3C · Temperature',sub:'Energy distribution',checkpoint:'s3_temperature'},
+  {group:'Station 3',id:'catalystPreviewCard',parent:'station3Section',show:true,label:'3D · Catalyst Preview',sub:'Lower Ea pathway',checkpoint:'s3_catalyst_preview'},
+
+  {group:'Station 4',id:'station4Section',label:'Station 4',sub:'Catalyst & inhibitor data',checkpoint:'s4_questions'}
+].map(item=>({...item,el:document.getElementById(item.id),parentEl:item.parent?document.getElementById(item.parent):null})).filter(item=>item.el);
+
 let testToastTimer=null;
 function showTestToast(message){
   if(!testToast) return;
@@ -6474,33 +6531,69 @@ function nearestTestSectionIndex(){
   const anchorY=150;
   let bestIndex=0,bestDistance=Infinity;
   LAB_TEST_SECTIONS.forEach((item,index)=>{
-    const rect=item.el.getBoundingClientRect();
+    const target=item.el;
+    if(!target || getComputedStyle(target).display==='none') return;
+    const rect=target.getBoundingClientRect();
     const distance=(rect.top<=anchorY&&rect.bottom>=anchorY)?0:Math.min(Math.abs(rect.top-anchorY),Math.abs(rect.bottom-anchorY));
     if(distance<bestDistance){bestDistance=distance;bestIndex=index;}
   });
   return bestIndex;
 }
-function unlockTestSection(item){
+function renderTestNavigator(){
+  if(!testNavBody) return;
+  const groups=[...new Set(LAB_TEST_SECTIONS.map(item=>item.group))];
+  const currentIndex=nearestTestSectionIndex();
+  testNavBody.innerHTML=groups.map(group=>{
+    const items=LAB_TEST_SECTIONS.map((item,index)=>({item,index})).filter(x=>x.item.group===group);
+    return `<div class="lab-test-nav-group">
+      <div class="lab-test-nav-group-title">${group}</div>
+      <div class="lab-test-nav-grid">${items.map(({item,index})=>`<button type="button" class="lab-test-dest ${index===currentIndex?'current':''}" data-test-index="${index}">${item.label}<small>${item.sub||''}</small></button>`).join('')}</div>
+    </div>`;
+  }).join('') + `<div class="lab-test-nav-note">🧪 Test only / สำหรับทดสอบเท่านั้น: การเปิดตรงจะ bypass prerequisite ของ Section นั้น แต่จะไม่กรอกคำตอบให้อัตโนมัติ</div>`;
+  testNavBody.querySelectorAll('[data-test-index]').forEach(btn=>btn.addEventListener('click',()=>{
+    const item=LAB_TEST_SECTIONS[Number(btn.dataset.testIndex)];
+    openTestSection(item);
+  }));
+}
+function openTestNavigator(){
+  if(!currentUser) return;
+  renderTestNavigator();
+  testNav?.classList.add('show');
+  testNavBackdrop?.classList.add('show');
+  testNav?.setAttribute('aria-hidden','false');
+  skipSectionBtn?.setAttribute('aria-expanded','true');
+}
+function closeTestNavigator(){
+  testNav?.classList.remove('show');
+  testNavBackdrop?.classList.remove('show');
+  testNav?.setAttribute('aria-hidden','true');
+  skipSectionBtn?.setAttribute('aria-expanded','false');
+}
+function unlockForTest(el){
+  if(!el) return;
+  el.classList.remove('locked');
+  el.querySelectorAll('.locked').forEach(node=>node.classList.remove('locked'));
+}
+function openTestSection(item){
   if(!item?.el) return;
-  item.el.classList.remove('locked');
-  item.el.querySelectorAll('.locked').forEach(el=>el.classList.remove('locked'));
+  if(item.parentEl) unlockForTest(item.parentEl);
+  unlockForTest(item.el);
+  if(item.show) item.el.classList.add('show');
+
+  // When jumping to later Station 3 cards, reveal the requested card only plus the parent.
+  // This keeps the chosen target visible without pretending earlier answers were completed.
   window.KineticsLabState?.setCheckpoint?.(item.checkpoint);
-  requestAnimationFrame(()=>{const y=item.el.getBoundingClientRect().top+window.scrollY-86;window.scrollTo({top:Math.max(0,y),behavior:'smooth'});});
-  showTestToast('⏭ TEST: '+item.label+' / ข้ามไป '+item.label);
-}
-if(skipSectionBtn){
-  skipSectionBtn.addEventListener('click',()=>{
-    if(!currentUser) return;
-    const currentIndex=nearestTestSectionIndex();
-    const nextIndex=Math.min(currentIndex+1,LAB_TEST_SECTIONS.length-1);
-    const next=LAB_TEST_SECTIONS[nextIndex];
-    if(nextIndex===currentIndex&&currentIndex===LAB_TEST_SECTIONS.length-1){
-      showTestToast('✓ TEST: อยู่ Section สุดท้ายแล้ว / Already at the last section');
-      return;
-    }
-    unlockTestSection(next);
+  closeTestNavigator();
+  requestAnimationFrame(()=>{
+    const y=item.el.getBoundingClientRect().top+window.scrollY-86;
+    window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
   });
+  showTestToast('🧭 TEST: '+item.label+' / เปิด '+item.label);
 }
+if(skipSectionBtn) skipSectionBtn.addEventListener('click',openTestNavigator);
+if(testNavClose) testNavClose.addEventListener('click',closeTestNavigator);
+if(testNavBackdrop) testNavBackdrop.addEventListener('click',closeTestNavigator);
+document.addEventListener('keydown',event=>{ if(event.key==='Escape') closeTestNavigator(); });
 
 const fallbackAvatar="data:image/svg+xml;charset=UTF-8,"+encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><rect width='100%' height='100%' fill='#e2e8f0'/><circle cx='40' cy='31' r='15' fill='#94a3b8'/><path d='M14 72c2-17 13-26 26-26s24 9 26 26' fill='#94a3b8'/></svg>`);
 let currentUser=null, presenceRef=null, connectedAt=Date.now(), presenceStatus='OFFLINE', lastActiveAt=Date.now(), presenceUnsub=null, connectedUnsub=null;
