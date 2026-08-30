@@ -1114,229 +1114,7 @@
         }
 
 
-        /* ============================================================
-           DEV CONTROLLED SCROLL TEST
-           Main page does NOT vertically scroll by finger/wheel.
-           Only the custom rail/buttons change scrollTop.
-           ============================================================ */
-        html.dev-controlled-scroll,
-        html.dev-controlled-scroll body{
-            height:100%;
-            overflow:hidden !important;
-            overscroll-behavior:none !important;
-        }
-
-        body.dev-controlled-scroll{
-            position:fixed !important;
-            inset:0 !important;
-            width:100% !important;
-            height:100dvh !important;
-            min-height:0 !important;
-            margin:0 !important;
-            padding:
-                max(8px, env(safe-area-inset-top))
-                calc(max(8px, env(safe-area-inset-right)) + 58px)
-                max(8px, env(safe-area-inset-bottom))
-                max(8px, env(safe-area-inset-left)) !important;
-            box-sizing:border-box;
-            display:flex;
-            align-items:stretch;
-            justify-content:center;
-            background:#eef2ff;
-        }
-
-        body.dev-controlled-scroll #app{
-            width:100%;
-            height:100% !important;
-            max-height:100% !important;
-            min-height:0 !important;
-            overflow:hidden !important;
-        }
-
-        body.dev-controlled-scroll .controlled-scroll-viewport{
-            min-height:0 !important;
-            overflow-y:auto !important;
-            overscroll-behavior:none !important;
-            touch-action:pan-x !important;
-            -webkit-overflow-scrolling:auto !important;
-            scrollbar-width:none !important;
-        }
-
-        body.dev-controlled-scroll .controlled-scroll-viewport::-webkit-scrollbar{
-            display:none !important;
-            width:0 !important;
-            height:0 !important;
-        }
-
-        /* AI history expands into the main controlled viewport.
-           This avoids introducing a second vertical finger-scroll zone. */
-        body.dev-controlled-scroll .ai-chat-log{
-            max-height:none !important;
-            overflow:visible !important;
-        }
-
-        #dev-scroll-rail{
-            position:fixed;
-            z-index:2147483000;
-            top:max(8px, env(safe-area-inset-top));
-            right:max(6px, env(safe-area-inset-right));
-            bottom:max(8px, env(safe-area-inset-bottom));
-            width:50px;
-            display:flex;
-            flex-direction:column;
-            align-items:center;
-            gap:6px;
-            padding:6px 4px;
-            border:1px solid rgba(99,102,241,.34);
-            border-radius:16px;
-            background:rgba(255,255,255,.96);
-            box-shadow:0 10px 28px rgba(15,23,42,.22);
-            backdrop-filter:blur(8px);
-            -webkit-backdrop-filter:blur(8px);
-            touch-action:none !important;
-            user-select:none;
-            -webkit-user-select:none;
-            -webkit-touch-callout:none;
-        }
-
-        #dev-scroll-rail .dev-scroll-label{
-            font-size:8px;
-            line-height:1;
-            font-weight:900;
-            letter-spacing:.08em;
-            color:#4f46e5;
-            writing-mode:vertical-rl;
-            transform:rotate(180deg);
-            padding:2px 0;
-        }
-
-        .dev-scroll-step{
-            width:42px;
-            height:42px;
-            border:none;
-            border-radius:12px;
-            display:grid;
-            place-items:center;
-            background:#4f46e5;
-            color:white;
-            font-size:20px;
-            font-weight:900;
-            box-shadow:0 3px 8px rgba(79,70,229,.25);
-            touch-action:manipulation;
-            cursor:pointer;
-        }
-
-        .dev-scroll-step:active{
-            transform:scale(.94);
-            background:#3730a3;
-        }
-
-        .dev-scroll-step:disabled{
-            opacity:.30;
-            cursor:default;
-        }
-
-        #dev-scroll-track{
-            position:relative;
-            flex:1;
-            width:42px;
-            min-height:120px;
-            border-radius:14px;
-            background:#e0e7ff;
-            border:1px solid #c7d2fe;
-            overflow:hidden;
-            touch-action:none !important;
-        }
-
-        #dev-scroll-thumb{
-            position:absolute;
-            left:5px;
-            right:5px;
-            top:0;
-            min-height:54px;
-            border-radius:12px;
-            background:linear-gradient(180deg,#6366f1,#4338ca);
-            box-shadow:0 3px 10px rgba(67,56,202,.34);
-            touch-action:none !important;
-            cursor:grab;
-        }
-
-        #dev-scroll-thumb::before,
-        #dev-scroll-thumb::after{
-            content:"";
-            position:absolute;
-            left:50%;
-            width:15px;
-            height:2px;
-            border-radius:2px;
-            background:rgba(255,255,255,.82);
-            transform:translateX(-50%);
-        }
-
-        #dev-scroll-thumb::before{ top:calc(50% - 4px); }
-        #dev-scroll-thumb::after{ top:calc(50% + 3px); }
-
-        #dev-scroll-thumb.dragging{ cursor:grabbing; }
-
-        #dev-scroll-progress{
-            font-size:9px;
-            line-height:1.1;
-            font-weight:900;
-            color:#475569;
-            text-align:center;
-            min-height:20px;
-        }
-
-        #dev-no-login-badge{
-            position:fixed;
-            z-index:2147482999;
-            left:max(8px, env(safe-area-inset-left));
-            bottom:max(8px, env(safe-area-inset-bottom));
-            padding:5px 8px;
-            border-radius:999px;
-            background:#111827;
-            color:#fff;
-            font:800 10px/1.1 Sarabun,Arial,sans-serif;
-            opacity:.78;
-            pointer-events:none;
-        }
-
-        @media (max-width:640px){
-            body.dev-controlled-scroll{
-                padding-right:calc(max(5px, env(safe-area-inset-right)) + 52px) !important;
-            }
-            #dev-scroll-rail{
-                width:46px;
-                right:max(3px, env(safe-area-inset-right));
-            }
-            .dev-scroll-step{ width:38px; height:40px; }
-            #dev-scroll-track{ width:38px; }
-        }
-
-        @media print{
-            #dev-scroll-rail,
-            #dev-no-login-badge{
-                display:none !important;
-            }
-            html.dev-controlled-scroll,
-            html.dev-controlled-scroll body,
-            body.dev-controlled-scroll{
-                position:static !important;
-                width:auto !important;
-                height:auto !important;
-                overflow:visible !important;
-                padding:0 !important;
-            }
-            body.dev-controlled-scroll #app{
-                height:auto !important;
-                max-height:none !important;
-                overflow:visible !important;
-            }
-            body.dev-controlled-scroll .controlled-scroll-viewport{
-                overflow:visible !important;
-            }
-        }
-
+        /* Native browser/touch scrolling is used. */
 
         /* ============================================================
            DEV v1.22 · MONOCHROME / PHOTOCOPY QUIZ THEME
@@ -1589,34 +1367,6 @@
             background:#e8e8e8 !important;
         }
 
-        /* Controlled scroll rail also becomes photocopy-style. */
-        body.dev-monochrome #dev-scroll-rail{
-            border-color:#111 !important;
-            background:rgba(255,255,255,.98) !important;
-            box-shadow:none !important;
-        }
-
-        body.dev-monochrome #dev-scroll-rail .dev-scroll-label,
-        body.dev-monochrome #dev-scroll-progress{
-            color:#111 !important;
-        }
-
-        body.dev-monochrome .dev-scroll-step{
-            border:1px solid #111 !important;
-            background:#111 !important;
-            color:#fff !important;
-            box-shadow:none !important;
-        }
-
-        body.dev-monochrome #dev-scroll-track{
-            border-color:#777 !important;
-            background:#e8e8e8 !important;
-        }
-
-        body.dev-monochrome #dev-scroll-thumb{
-            background:#222 !important;
-            box-shadow:none !important;
-        }
 
         @media (max-width:760px){
             .quiz-topbar-compact{
@@ -1995,33 +1745,6 @@
         }
 
         /* ---- Controlled scroll rail: neutral track, blue handle/action ---- */
-        body.dev-monochrome #dev-scroll-rail{
-            background:rgba(255,255,255,.98) !important;
-            border-color:#64748b !important;
-            box-shadow:none !important;
-        }
-
-        body.dev-monochrome #dev-scroll-rail .dev-scroll-label,
-        body.dev-monochrome #dev-scroll-progress{
-            color:#334155 !important;
-        }
-
-        body.dev-monochrome .dev-scroll-step{
-            background:#334155 !important;
-            color:#fff !important;
-            border:1px solid #334155 !important;
-            box-shadow:none !important;
-        }
-
-        body.dev-monochrome #dev-scroll-track{
-            background:#e5e7eb !important;
-            border-color:#9ca3af !important;
-        }
-
-        body.dev-monochrome #dev-scroll-thumb{
-            background:#2563eb !important;
-            box-shadow:none !important;
-        }
 
         /* Keep the actual box-plot visuals legible but less candy-colored. */
         body.dev-monochrome svg{
@@ -2060,8 +1783,6 @@
 </head>
 <body class="text-gray-800 min-h-screen flex flex-col items-center py-6 px-4">
 <script>
-document.documentElement.classList.add('dev-controlled-scroll');
-document.body?.classList.add('dev-controlled-scroll');
 document.body?.classList.add('dev-monochrome');
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -2071,21 +1792,6 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 }, { once:true });
 </script>
-
-<div id="dev-scroll-rail" aria-label="Controlled page scroll">
-    <div class="dev-scroll-label">SCROLL</div>
-    <button id="dev-scroll-up" class="dev-scroll-step" type="button" aria-label="Scroll up">▲</button>
-    <div id="dev-scroll-track" aria-label="Drag to scroll">
-        <div id="dev-scroll-thumb" role="slider"
-             aria-label="Page position"
-             aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
-    </div>
-    <button id="dev-scroll-down" class="dev-scroll-step" type="button" aria-label="Scroll down">▼</button>
-    <div id="dev-scroll-progress">0%</div>
-</div>
-
-
-
 
 
 <div id="fb-gate" class="fb-gate" role="dialog" aria-modal="true" aria-labelledby="fb-gate-title">
@@ -2244,7 +1950,7 @@ window.addEventListener('DOMContentLoaded', () => {
 <!-- ============================================================
    ✏️✏️✏️ MASTER QUIZ TEMPLATE · EDIT ZONE ✏️✏️✏️
 
-   Science M3 · Chapter 8 · Topic 8.2 · V8.3 MASTER TEMPLATE QA
+   Science M3 · Chapter 8 · Topic 8.2 · V8.4 NATIVE SCROLL
    Axial Tilt + Seasons + Day/Night + Solstices + Equinoxes + Polar Phenomena + Moon Phases + Tides + Moonrise/Moonset
    - 32 questions
    - bilingual TH/EN
@@ -2255,7 +1961,7 @@ window.addEventListener('DOMContentLoaded', () => {
 <script>
 
 /* ============================================================
-  TOPIC 8.2 · V8.3 · MASTER TEMPLATE QA PASS
+  TOPIC 8.2 · V8.4 · NATIVE SCROLL · NO SIDE RAIL
   Phenomena due to the Axial Tilt
   ข้อ 1–32: Axial Tilt · Seasons · Day/Night · Solstice · Equinox · Polar Phenomena · Moon Phases · Tides · Moonrise/Moonset · Catch-up details
   Content basis: Focus Smart Plus Science M3, Topic 8.2 · questions do not require external reference
@@ -6692,232 +6398,26 @@ function typesetMath() {
 
 
 /* ============================================================
-   DEV CONTROLLED SCROLL
-   Vertical page movement is allowed only through the custom rail.
+   NATIVE SCROLL
+   Custom side rail removed. The quiz now uses normal browser /
+   touch scrolling. This compatibility shim preserves calls from
+   existing panels without changing other quiz systems.
    ============================================================ */
 let controlledScrollViewport = null;
-let controlledScrollMutationObserver = null;
-let controlledScrollResizeObserver = null;
-let controlledScrollCleanup = [];
-let controlledScrollRAF = 0;
-
-function controlledScrollElements() {
-    return {
-        rail: document.getElementById('dev-scroll-rail'),
-        track: document.getElementById('dev-scroll-track'),
-        thumb: document.getElementById('dev-scroll-thumb'),
-        up: document.getElementById('dev-scroll-up'),
-        down: document.getElementById('dev-scroll-down'),
-        progress: document.getElementById('dev-scroll-progress')
-    };
-}
-
-function controlledScrollMax() {
-    if (!controlledScrollViewport) return 0;
-    return Math.max(0, controlledScrollViewport.scrollHeight - controlledScrollViewport.clientHeight);
-}
-
-function syncControlledScrollRail() {
-    cancelAnimationFrame(controlledScrollRAF);
-    controlledScrollRAF = requestAnimationFrame(() => {
-        const vp = controlledScrollViewport;
-        const { track, thumb, up, down, progress } = controlledScrollElements();
-        if (!vp || !track || !thumb) return;
-
-        const maxScroll = controlledScrollMax();
-        const trackH = track.clientHeight || 1;
-        const contentH = Math.max(vp.scrollHeight, vp.clientHeight, 1);
-
-        const proportional = Math.round(trackH * (vp.clientHeight / contentH));
-        const thumbH = Math.max(54, Math.min(trackH, proportional));
-        const travel = Math.max(0, trackH - thumbH);
-        const ratio = maxScroll > 0 ? Math.min(1, Math.max(0, vp.scrollTop / maxScroll)) : 0;
-
-        thumb.style.height = `${thumbH}px`;
-        thumb.style.transform = `translateY(${travel * ratio}px)`;
-        thumb.setAttribute('aria-valuenow', String(Math.round(ratio * 100)));
-
-        if (progress) progress.textContent = `${Math.round(ratio * 100)}%`;
-        if (up) up.disabled = maxScroll <= 0 || vp.scrollTop <= 1;
-        if (down) down.disabled = maxScroll <= 0 || vp.scrollTop >= maxScroll - 1;
-    });
-}
-
-function controlledScrollToRatio(ratio) {
-    if (!controlledScrollViewport) return;
-    const maxScroll = controlledScrollMax();
-    controlledScrollViewport.scrollTop = Math.max(0, Math.min(maxScroll, ratio * maxScroll));
-    syncControlledScrollRail();
-}
-
-function controlledScrollStep(direction) {
-    if (!controlledScrollViewport) return;
-    const amount = Math.max(180, controlledScrollViewport.clientHeight * 0.72);
-    controlledScrollViewport.scrollTo({
-        top: controlledScrollViewport.scrollTop + direction * amount,
-        behavior: 'smooth'
-    });
-}
-
-function isHorizontalScrollableTarget(target) {
-    return Boolean(target?.closest?.('.table-wrap, .graph-card, mjx-container'));
-}
 
 function installControlledScroll() {
-    controlledScrollCleanup.forEach(fn => {
-        try { fn(); } catch (_) {}
-    });
-    controlledScrollCleanup = [];
-
-    controlledScrollMutationObserver?.disconnect();
-    controlledScrollResizeObserver?.disconnect();
-
     controlledScrollViewport = document.querySelector('.controlled-scroll-viewport');
 
-    const { rail, track, thumb, up, down } = controlledScrollElements();
-    if (!rail) return;
-
-    if (!controlledScrollViewport) {
-        rail.style.display = 'none';
-        return;
+    if (controlledScrollViewport) {
+        controlledScrollViewport.style.touchAction = 'auto';
+        controlledScrollViewport.style.overscrollBehavior = 'auto';
+        controlledScrollViewport.style.webkitOverflowScrolling = 'touch';
     }
-
-    rail.style.display = 'flex';
-    const vp = controlledScrollViewport;
-
-    // Native vertical finger-scroll is blocked.
-    // Horizontal movement remains available for wide equations/tables.
-    let touchStartX = 0;
-    let touchStartY = 0;
-
-    const onTouchStart = (event) => {
-        if (event.touches?.length === 1) {
-            touchStartX = event.touches[0].clientX;
-            touchStartY = event.touches[0].clientY;
-        }
-    };
-
-    const onTouchMove = (event) => {
-        if (event.touches?.length !== 1) return;
-
-        const t = event.touches[0];
-        const dx = Math.abs(t.clientX - touchStartX);
-        const dy = Math.abs(t.clientY - touchStartY);
-
-        // Allow deliberate horizontal scrolling for equations/tables.
-        if (dx > dy && isHorizontalScrollableTarget(event.target)) return;
-
-        // Everything else: no native page movement.
-        event.preventDefault();
-    };
-
-    const onWheel = (event) => {
-        // DEV test intentionally disables mouse/trackpad vertical scrolling too.
-        if (Math.abs(event.deltaY) >= Math.abs(event.deltaX)) {
-            event.preventDefault();
-        }
-    };
-
-    const onScroll = () => syncControlledScrollRail();
-
-    vp.addEventListener('touchstart', onTouchStart, { passive:true });
-    vp.addEventListener('touchmove', onTouchMove, { passive:false });
-    vp.addEventListener('wheel', onWheel, { passive:false });
-    vp.addEventListener('scroll', onScroll, { passive:true });
-
-    controlledScrollCleanup.push(() => vp.removeEventListener('touchstart', onTouchStart));
-    controlledScrollCleanup.push(() => vp.removeEventListener('touchmove', onTouchMove));
-    controlledScrollCleanup.push(() => vp.removeEventListener('wheel', onWheel));
-    controlledScrollCleanup.push(() => vp.removeEventListener('scroll', onScroll));
-
-    const upHandler = () => controlledScrollStep(-1);
-    const downHandler = () => controlledScrollStep(1);
-    up?.addEventListener('click', upHandler);
-    down?.addEventListener('click', downHandler);
-
-    if (up) controlledScrollCleanup.push(() => up.removeEventListener('click', upHandler));
-    if (down) controlledScrollCleanup.push(() => down.removeEventListener('click', downHandler));
-
-    // Track tap jumps to that approximate position.
-    const trackPointerDown = (event) => {
-        if (event.target === thumb) return;
-        event.preventDefault();
-        const rect = track.getBoundingClientRect();
-        const ratio = (event.clientY - rect.top) / Math.max(1, rect.height);
-        controlledScrollToRatio(ratio);
-    };
-    track?.addEventListener('pointerdown', trackPointerDown);
-    if (track) controlledScrollCleanup.push(() => track.removeEventListener('pointerdown', trackPointerDown));
-
-    // Thumb drag.
-    let dragStartY = 0;
-    let dragStartScroll = 0;
-    let dragging = false;
-
-    const thumbPointerDown = (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        dragging = true;
-        dragStartY = event.clientY;
-        dragStartScroll = vp.scrollTop;
-        thumb.classList.add('dragging');
-        try { thumb.setPointerCapture(event.pointerId); } catch (_) {}
-    };
-
-    const thumbPointerMove = (event) => {
-        if (!dragging) return;
-        event.preventDefault();
-
-        const rect = track.getBoundingClientRect();
-        const thumbH = thumb.getBoundingClientRect().height;
-        const travel = Math.max(1, rect.height - thumbH);
-        const maxScroll = controlledScrollMax();
-
-        const deltaY = event.clientY - dragStartY;
-        vp.scrollTop = dragStartScroll + (deltaY / travel) * maxScroll;
-        syncControlledScrollRail();
-    };
-
-    const thumbPointerUp = (event) => {
-        if (!dragging) return;
-        dragging = false;
-        thumb.classList.remove('dragging');
-        try { thumb.releasePointerCapture(event.pointerId); } catch (_) {}
-    };
-
-    thumb?.addEventListener('pointerdown', thumbPointerDown);
-    thumb?.addEventListener('pointermove', thumbPointerMove);
-    thumb?.addEventListener('pointerup', thumbPointerUp);
-    thumb?.addEventListener('pointercancel', thumbPointerUp);
-
-    if (thumb) {
-        controlledScrollCleanup.push(() => thumb.removeEventListener('pointerdown', thumbPointerDown));
-        controlledScrollCleanup.push(() => thumb.removeEventListener('pointermove', thumbPointerMove));
-        controlledScrollCleanup.push(() => thumb.removeEventListener('pointerup', thumbPointerUp));
-        controlledScrollCleanup.push(() => thumb.removeEventListener('pointercancel', thumbPointerUp));
-    }
-
-    // Any panel opening, AI answer, hint, etc. can change scrollHeight.
-    controlledScrollMutationObserver = new MutationObserver(() => syncControlledScrollRail());
-    controlledScrollMutationObserver.observe(vp, {
-        subtree:true,
-        childList:true,
-        attributes:true,
-        characterData:false
-    });
-
-    if ('ResizeObserver' in window) {
-        controlledScrollResizeObserver = new ResizeObserver(() => syncControlledScrollRail());
-        controlledScrollResizeObserver.observe(vp);
-    }
-
-    requestAnimationFrame(() => {
-        vp.scrollTop = Math.min(vp.scrollTop, controlledScrollMax());
-        syncControlledScrollRail();
-    });
 }
 
-window.refreshControlledScroll = syncControlledScrollRail;
+window.refreshControlledScroll = function() {
+    /* Native scrolling needs no custom rail synchronization. */
+};
 
 
 /* ============================================================
