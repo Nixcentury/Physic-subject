@@ -2151,7 +2151,7 @@ window.addEventListener('DOMContentLoaded', () => {
 <!-- ============================================================
    ✏️✏️✏️ MASTER QUIZ TEMPLATE · EDIT ZONE ✏️✏️✏️
 
-   Science M3 · Chapter 8 · Topic 8.2 · V8.8 AI DIRECT ANSWER MODE
+   Science M3 · Chapter 8 · Topic 8.2 · V8.9 AI CHAT SPLIT
    Axial Tilt + Seasons + Day/Night + Solstices + Equinoxes + Polar Phenomena + Moon Phases + Tides + Moonrise/Moonset
    - 32 questions
    - bilingual TH/EN
@@ -2194,7 +2194,7 @@ window.addEventListener('DOMContentLoaded', () => {
    ============================================================ */
 
 /* ============================================================
-  TOPIC 8.2 · V8.8 · AI DIRECT ANSWER MODE
+  TOPIC 8.2 · V8.9 · AI CHAT SPLIT
   Phenomena due to the Axial Tilt
   ข้อ 1–32: Axial Tilt · Seasons · Day/Night · Solstice · Equinox · Polar Phenomena · Moon Phases · Tides · Moonrise/Moonset · Catch-up details
   Content basis: Focus Smart Plus Science M3, Topic 8.2 · questions do not require external reference
@@ -6054,6 +6054,7 @@ async function callLegacyImageWorker(q, imageBase64) {
         method:'POST',
         headers:{ 'Content-Type':'application/json' },
         body:JSON.stringify({
+            mode: 'image_check',
             question: `${q.questionTH}\n${q.questionEN}`,
             referenceSolution: `${q.solutionTH || ''}\n${q.solutionEN || ''}`,
             imageBase64,
@@ -6134,40 +6135,24 @@ window.sendAIChat = async function(qId) {
             context
         };
 
-        let answer = '';
-        let primaryError = null;
+        // V8.9: text chat NEVER falls back to the image checker.
+        // Normal student questions must stay in normal tutor-chat mode.
+        const response = await fetch(AI_CHAT_URL, {
+            method:'POST',
+            headers:{ 'Content-Type':'application/json' },
+            body:JSON.stringify(payload)
+        });
 
-        // First try the new text-chat payload.
-        try {
-            const response = await fetch(AI_CHAT_URL, {
-                method:'POST',
-                headers:{ 'Content-Type':'application/json' },
-                body:JSON.stringify(payload)
-            });
+        const data = await response.json().catch(() => null);
 
-            const data = await response.json().catch(() => null);
-
-            if (!response.ok) {
-                throw new Error(data?.error || data?.detail || `HTTP ${response.status}`);
-            }
-
-            answer = parseAIText(data) || normalizeWorkerFeedback(data);
-            if (!answer) throw new Error('No readable text from text-chat mode.');
-        } catch (err) {
-            primaryError = err;
+        if (!response.ok) {
+            throw new Error(data?.error || data?.detail || `HTTP ${response.status}`);
         }
 
-        // Compatibility fallback:
-        // Existing production Worker is image-based, so render the student's
-        // typed message into a small image and send it through the known-good contract.
-        if (!answer) {
-            const messageImageBase64 = renderTextMessageToImageBase64(message);
-            const legacyData = await callLegacyImageWorker(q, messageImageBase64);
-            answer = normalizeWorkerFeedback(legacyData) || parseAIText(legacyData);
-        }
+        const answer = parseAIText(data);
 
         if (!answer) {
-            throw primaryError || new Error('AI returned no readable response.');
+            throw new Error('AI text-chat returned no readable reply.');
         }
 
         history.push({ role:'assistant', text:answer });
