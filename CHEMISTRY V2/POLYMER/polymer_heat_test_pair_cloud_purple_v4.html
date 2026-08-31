@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Polymer Heat Test Pair Worksheet · Cloud Save</title>
+<style>
+:root{
+  --ink:#171826;
+  --muted:#687083;
+  --paper:#ffffff;
+  --bg:#faf7fc;
+  --line:#d9d4df;
+  --purple-950:#3b0a45;
+  --purple-900:#4f125f;
+  --purple-800:#651a78;
+  --purple-700:#7b2390;
+  --purple-600:#9333a8;
+  --purple-200:#d8b4fe;
+  --purple-100:#f3e8ff;
+  --purple-50:#fcf7ff;
+  --ok:#15803d;
+  --bad:#b91c1c;
+  --warn:#b45309;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:linear-gradient(180deg,#fdfaff 0%,#faf7fc 48%,#f6f4f8 100%);
+  color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI","Noto Sans Thai",Tahoma,sans-serif;
+  line-height:1.58;
+}
+.en{font-family:"Times New Roman",serif}
+.wrap{max-width:1040px;margin:0 auto;padding:22px}
+.card{
+  background:var(--paper);
+  border:2px solid var(--ink);
+  border-radius:18px;
+  padding:20px;
+  margin:16px 0;
+  box-shadow:5px 5px 0 var(--ink);
+}
+.hero{
+  background:linear-gradient(135deg,#fff 0%,#fdf8ff 62%,#f3e8ff 100%);
+}
+.eyebrow{
+  display:inline-block;padding:5px 10px;border:2px solid var(--purple-800);
+  border-radius:999px;background:var(--purple-100);color:var(--purple-900);
+  font-size:.82rem;font-weight:950;letter-spacing:.04em
+}
+h1{font-size:clamp(28px,5vw,43px);line-height:1.08;margin:14px 0 8px}
+h2{margin:0 0 10px;font-size:1.38rem}
+h3{margin:0 0 8px;font-size:1.06rem}
+.sub{color:var(--muted);font-weight:650}
+.toolbar,.actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.toolbar{margin-top:16px}
+button,a.btn{
+  border:2px solid var(--ink);border-radius:11px;padding:10px 13px;
+  background:#fff;color:var(--ink);text-decoration:none;
+  font:850 .88rem system-ui,-apple-system,"Segoe UI",sans-serif;cursor:pointer;
+  touch-action:manipulation;
+}
+button:hover,a.btn:hover{filter:brightness(.985)}
+.primary{background:var(--purple-700)!important;color:#fff!important;border-color:var(--purple-950)!important}
+.secondary-purple{background:var(--purple-100)!important;color:var(--purple-900)!important;border-color:var(--purple-800)!important}
+.answerbtn{background:#fff5cc!important}
+.student-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{font-weight:850}
+input[type=text],textarea{
+  width:100%;border:1.8px solid var(--ink);border-radius:9px;padding:9px 10px;
+  background:#fff;font:inherit;color:var(--ink)
+}
+textarea{min-height:82px;resize:vertical}
+.knowledge-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.type-card{border:2px solid var(--ink);border-radius:14px;padding:15px}
+.thermoplastic{background:#f3e8ff}
+.thermoset{background:#fdeef8}
+.note{
+  border-left:5px solid var(--purple-700);background:#faf5ff;
+  border-radius:10px;padding:12px 14px;margin-top:13px
+}
+.structures{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:13px}
+.structure{
+  border:2px solid #d8cce2;border-radius:14px;padding:12px;text-align:center;background:#fff
+}
+.structure svg{width:100%;height:130px;display:block}
+.small{font-size:.8rem;color:var(--muted);font-weight:650}
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:.9rem}
+th,td{border:1.6px solid var(--ink);padding:9px;vertical-align:top}
+th{background:#f3e8ff;font-weight:900}
+.obs-table textarea{min-height:88px}
+.obs-answer{
+  display:none;margin-top:7px;padding:8px 9px;border:1.4px dashed var(--purple-700);
+  border-radius:9px;background:#fffaf0;font-size:.82rem
+}
+body.show-answers .obs-answer{display:block}
+.q{
+  border-top:1.5px dashed #a7a0ad;padding-top:14px;margin-top:14px
+}
+.q:first-child{border-top:0;padding-top:0;margin-top:0}
+.answer-key{
+  display:none;border:2px solid var(--purple-700);border-radius:16px;
+  background:#fffaf4;padding:16px;margin-top:16px
+}
+body.show-answers .answer-key{display:block}
+.answer-table td:first-child{font-weight:900;width:18%}
+.video-box{
+  border:2px dashed var(--purple-700);border-radius:14px;background:#faf5ff;
+  padding:14px;margin-top:13px
+}
+.print-center{
+  margin-top:16px;padding:12px;border:1px solid #d8cce2;border-radius:14px;
+  background:#fdfaff;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center
+}
+.print-center-title{width:100%;font-weight:950;color:#3b0a45}
+.print-center-note{width:100%;font-size:.78rem;color:var(--muted);line-height:1.45}
+.print-btn{font-size:.82rem;padding:9px 12px}
+.print-btn.blank{background:#111827;color:#fff}
+.print-btn.answer{background:#fff3c4;color:#854d0e;border-color:#d4a017}
+.print-btn.student{background:#f3e8ff;color:#581c87;border-color:#a855f7}
+
+/* ===== Login / User Bar, adapted from chemistry template ===== */
+.lab-auth-gate{
+  position:fixed;inset:0;z-index:12000;display:flex;align-items:center;justify-content:center;
+  padding:20px;background:rgba(15,23,42,.76);backdrop-filter:blur(10px)
+}
+.lab-auth-gate.hidden{display:none}
+.lab-auth-shell{
+  width:min(920px,100%);display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);
+  border:2px solid #0f172a;border-radius:26px;overflow:hidden;background:#fff;
+  box-shadow:0 28px 90px rgba(2,6,23,.36)
+}
+.lab-auth-visual{
+  position:relative;overflow:hidden;padding:28px;color:#fff;min-height:410px;
+  background:linear-gradient(145deg,#3b0a45 0%,#5d176e 48%,#86198f 100%)
+}
+.lab-auth-visual:before,.lab-auth-visual:after{
+  content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.09)
+}
+.lab-auth-visual:before{width:240px;height:240px;right:-100px;top:-80px}
+.lab-auth-visual:after{width:180px;height:180px;left:-70px;bottom:-70px}
+.lab-auth-kicker{font-size:.72rem;font-weight:950;letter-spacing:.15em;text-transform:uppercase;color:#f5d0fe}
+.lab-auth-visual h2{font-size:clamp(1.75rem,4vw,2.55rem);line-height:1.06;margin:12px 0 10px}
+.lab-auth-visual p{margin:0;color:#f3e8ff;font-weight:650;line-height:1.65}
+.polymer-orbit{width:190px;height:170px;margin:30px auto 10px;position:relative}
+.polymer-orbit span{
+  position:absolute;width:38px;height:38px;border:4px solid #fff;border-radius:50%;
+  background:rgba(216,180,254,.22)
+}
+.polymer-orbit span:nth-child(1){left:12px;top:65px}
+.polymer-orbit span:nth-child(2){left:48px;top:40px}
+.polymer-orbit span:nth-child(3){left:86px;top:64px}
+.polymer-orbit span:nth-child(4){left:124px;top:38px}
+.polymer-orbit span:nth-child(5){left:148px;top:82px}
+.polymer-orbit:before{
+  content:"";position:absolute;left:28px;right:20px;top:82px;height:4px;background:#fff;
+  transform:rotate(-8deg);border-radius:999px
+}
+.lab-auth-badges{display:flex;gap:7px;flex-wrap:wrap;margin-top:18px}
+.lab-auth-badge{font-size:.72rem;font-weight:850;padding:6px 9px;border:1px solid rgba(255,255,255,.28);border-radius:999px;background:rgba(255,255,255,.1)}
+.lab-auth-card{padding:30px;display:flex;flex-direction:column;justify-content:center;background:#fff}
+.lab-auth-title{font-size:1.65rem;font-weight:950;color:#0f172a;margin:0 0 5px}
+.lab-auth-copy{font-size:.92rem;color:#64748b;line-height:1.65;margin:0 0 18px}
+.lab-google-btn{
+  width:100%;min-height:52px;border:2px solid #cbd5e1;border-radius:14px;background:#fff;color:#0f172a;
+  display:flex;align-items:center;justify-content:center;gap:10px;font:850 .96rem system-ui,sans-serif;cursor:pointer
+}
+.lab-google-g{
+  width:27px;height:27px;display:grid;place-items:center;border-radius:50%;
+  border:2px solid #e9d5ff;font-weight:1000;color:#7b2390;background:#fff
+}
+.lab-guest-btn{
+  width:100%;min-height:48px;margin-top:10px;border:1px dashed #a78bfa;border-radius:14px;
+  background:#faf5ff;color:#581c87;font:900 .88rem system-ui,sans-serif;cursor:pointer
+}
+.lab-guest-warning{
+  display:none;margin-top:12px;padding:13px;border:1px solid #f59e0b;border-radius:13px;
+  background:#fffbeb;color:#92400e;font-size:.78rem;font-weight:750;line-height:1.55
+}
+.lab-guest-warning.show{display:block}
+.lab-guest-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.lab-guest-confirm,.lab-guest-cancel{min-height:42px;border-radius:10px;padding:8px 11px;font-size:.76rem;font-weight:900;cursor:pointer}
+.lab-guest-confirm{border:1px solid #b45309;background:#b45309;color:#fff}
+.lab-guest-cancel{border:1px solid #cbd5e1;background:#fff;color:#475569}
+.lab-auth-loading{display:none;margin-top:12px;padding:12px 13px;border:1px solid #ddd6fe;border-radius:13px;background:#faf5ff;color:#6b21a8;font-size:.8rem;font-weight:800;line-height:1.55}
+.lab-auth-loading.show{display:block}
+.lab-auth-error{display:none;white-space:pre-wrap;margin-top:12px;padding:12px 13px;border:1px solid #fecdd3;border-radius:13px;background:#fff1f2;color:#be123c;font-size:.78rem;line-height:1.5}
+.lab-auth-error.show{display:block}
+.lab-auth-note{margin-top:15px;padding-top:13px;border-top:1px solid #e2e8f0;font-size:.72rem;color:#94a3b8;line-height:1.55}
+.lab-auth-local-warning{display:none;margin:0 0 14px;padding:11px 12px;border:1px solid #fde68a;border-radius:12px;background:#fffbeb;color:#92400e;font-size:.78rem;font-weight:800;line-height:1.5}
+.lab-auth-local-warning.show{display:block}
+.lab-userbar{
+  position:sticky;top:8px;z-index:70;max-width:1040px;margin:8px auto 0;padding:9px 12px;
+  display:none;align-items:center;justify-content:space-between;gap:10px;
+  background:rgba(255,255,255,.96);border:2px solid #ddd6fe;border-radius:15px;
+  box-shadow:0 6px 18px rgba(76,29,149,.08);backdrop-filter:blur(8px)
+}
+.lab-userbar.show{display:flex}
+.lab-user-meta{min-width:0;display:flex;align-items:center;gap:9px}
+.lab-user-avatar{width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid #d8b4fe;background:#e2e8f0}
+.lab-user-name{font-size:.82rem;font-weight:950;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
+.lab-user-email{font-size:.68rem;color:#94a3b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px}
+.lab-user-dot{width:9px;height:9px;border-radius:50%;display:inline-block;background:#94a3b8}
+.lab-user-dot.online{background:#10b981}.lab-user-dot.idle{background:#f59e0b}
+.lab-user-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+.lab-live-pill,.lab-session-pill,.lab-cloud-status{
+  font-size:.69rem;font-weight:900;padding:6px 9px;border-radius:999px;white-space:nowrap
+}
+.lab-live-pill{border:1px solid #c4b5fd;background:#faf5ff;color:#6b21a8;cursor:pointer}
+.lab-session-pill{color:#475569;background:#f8fafc;border:1px solid #e2e8f0}
+.lab-cloud-status{border:1px solid #ddd6fe;background:#faf5ff;color:#6b21a8}
+.lab-cloud-status.ok{border-color:#a7f3d0;background:#ecfdf5;color:#047857}
+.lab-cloud-status.busy{border-color:#fde68a;background:#fffbeb;color:#92400e}
+.lab-cloud-status.error{border-color:#fecdd3;background:#fff1f2;color:#be123c}
+.lab-save-now{border:1px solid #7e22ce;border-radius:10px;background:#7e22ce;color:#fff;padding:7px 10px;font-size:.72rem;font-weight:900;cursor:pointer}
+.lab-save-now:disabled{opacity:.48;cursor:not-allowed}
+.lab-signout{border:1px solid #cbd5e1;border-radius:10px;background:#fff;color:#475569;padding:7px 10px;font-size:.72rem;font-weight:850;cursor:pointer}
+#lab-guest-badge{
+  display:none;position:fixed;z-index:9996;left:8px;bottom:8px;padding:7px 10px;border:1px solid #f59e0b;
+  border-radius:999px;background:#fffbeb;color:#92400e;font:900 11px/1.2 system-ui,sans-serif;
+  box-shadow:0 3px 12px rgba(15,23,42,.12);pointer-events:none
+}
+#lab-guest-badge.show{display:block}
+.lab-userbar.guest-mode{border-color:#f59e0b;background:#fffbeb}
+
+/* live monitor */
+.lab-monitor-backdrop{display:none;position:fixed;inset:0;z-index:9997;background:rgba(15,23,42,.38);backdrop-filter:blur(2px)}
+.lab-monitor-backdrop.show{display:block}
+.lab-monitor{
+  position:fixed;top:0;right:0;z-index:9998;width:min(430px,94vw);height:100dvh;
+  transform:translateX(104%);transition:transform .22s ease;background:#f8fafc;
+  border-left:1px solid #cbd5e1;box-shadow:-18px 0 50px rgba(15,23,42,.18);
+  display:flex;flex-direction:column
+}
+.lab-monitor.show{transform:translateX(0)}
+.lab-monitor-head{padding:16px;background:linear-gradient(135deg,#4f125f,#7b2390);color:#fff;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.lab-monitor-close{width:36px;height:36px;border:0;border-radius:10px;background:rgba(255,255,255,.15);color:#fff;font-size:20px;cursor:pointer;font-weight:900}
+.lab-monitor-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px;border-bottom:1px solid #e2e8f0;background:#fff}
+.lab-monitor-stat{border:1px solid #e2e8f0;border-radius:12px;padding:9px 8px;text-align:center;background:#fff}
+.lab-monitor-stat b{display:block;font-size:20px}.lab-monitor-stat span{font-size:10px;color:#64748b}
+.lab-monitor-list{flex:1;overflow:auto;padding:10px}
+.lab-person-row{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:11px 12px;margin-bottom:8px}
+.lab-person-row.online{border-color:#d8b4fe;background:#faf5ff}.lab-person-row.idle{border-color:#fde68a;background:#fffbeb}
+.lab-person-name{font-size:14px;font-weight:900}.lab-person-meta{font-size:11px;color:#64748b;margin-top:2px}.lab-person-place{font-size:13px;font-weight:900;color:#7b2390;margin-top:6px}
+.lab-status-pill{border-radius:999px;padding:3px 7px;font-size:10px;font-weight:900}
+.lab-status-pill.online{background:#d1fae5;color:#047857}.lab-status-pill.idle{background:#fef3c7;color:#92400e}.lab-status-pill.offline{background:#e2e8f0;color:#475569}
+.lab-monitor-empty{padding:30px 14px;text-align:center;color:#64748b;font-size:13px}
+
+/* print host */
+#printHost{display:none}
+@media(max-width:780px){
+  .knowledge-grid,.student-grid,.structures{grid-template-columns:1fr}
+  .lab-auth-shell{grid-template-columns:1fr}
+  .lab-auth-visual{min-height:auto;padding:22px}
+  .polymer-orbit{display:none}
+  .lab-auth-card{padding:24px}
+  .lab-userbar{top:0;margin:0;border-radius:0;border-left:0;border-right:0}
+  .lab-user-email,.lab-session-pill{display:none}
+}
+@media print{
+  @page{size:A4 portrait;margin:9mm 10mm 10mm}
+  html,body{background:#fff!important;color:#000!important}
+  body{margin:0!important;padding:0!important}
+  main.wrap,.lab-auth-gate,.lab-userbar,.lab-monitor,.lab-monitor-backdrop,#lab-guest-badge{display:none!important}
+  body.print-mode #printHost{display:block!important;font-family:Arial,"Noto Sans Thai",Tahoma,sans-serif;color:#000;background:#fff}
+  .print-page{
+    min-height:277mm;height:277mm;position:relative;break-after:page;page-break-after:always;
+    padding:0 0 8mm;font-size:9.2pt;line-height:1.32
+  }
+  .print-page:last-child{break-after:auto;page-break-after:auto}
+  .print-head{border-bottom:2px solid #000;padding-bottom:3mm;margin-bottom:3mm}
+  .print-kicker{font-size:8pt;font-weight:800;letter-spacing:.04em}
+  .print-title{font-size:16pt;line-height:1.12;margin:1mm 0;font-weight:900}
+  .print-sub{font-size:9.5pt;font-weight:700}
+  .print-meta{display:grid;grid-template-columns:1fr 1fr;gap:5mm;margin-top:2.5mm}
+  .print-line{display:inline-block;min-width:45mm;border-bottom:1px solid #000;min-height:4mm;vertical-align:bottom}
+  .print-h2{font-size:12.5pt;font-weight:900;border-left:4px solid #000;padding-left:2mm;margin:0 0 2mm}
+  .print-box{border:1px solid #000;border-radius:1.5mm;padding:2.4mm;margin:2mm 0;break-inside:avoid}
+  .print-grid2{display:grid;grid-template-columns:1fr 1fr;gap:2.5mm}
+  .print-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:2mm}
+  .print-structure{text-align:center;border:1px solid #777;padding:1.5mm}
+  .print-structure svg{height:33mm;width:100%;display:block}
+  .print-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:8.2pt;margin:2mm 0}
+  .print-table th,.print-table td{border:1px solid #000;padding:1.5mm;vertical-align:top}
+  .print-table th{text-align:center;font-weight:900}
+  .print-blank{min-height:15mm}
+  .print-answer{font-weight:800}
+  .print-q{margin:2mm 0;break-inside:avoid}
+  .print-lines{min-height:14mm;background:repeating-linear-gradient(to bottom,transparent 0,transparent 6.3mm,#bbb 6.3mm,#bbb 6.5mm)}
+  .print-footer{position:absolute;bottom:0;left:0;right:0;border-top:1px solid #777;padding-top:1mm;font-size:7.6pt;display:flex;justify-content:space-between}
+  .print-mode-badge{display:inline-block;border:1px solid #000;border-radius:999px;padding:1mm 2mm;font-size:7.5pt;font-weight:900;margin-bottom:1.5mm}
+}
+</style>
+</head>
+<body>
+
+<!-- AUTH GATE -->
+<div id="lab-auth-gate" class="lab-auth-gate" role="dialog" aria-modal="true" aria-labelledby="lab-auth-title">
+  <div class="lab-auth-shell">
+    <section class="lab-auth-visual" aria-hidden="true">
+      <div class="lab-auth-kicker">CHEMISTRY · POLYMER HEAT TEST · CLOUD SAVE</div>
+      <h2>Enter the activity.<br>เข้าสู่กิจกรรม</h2>
+      <p>Sign in once to restore your worksheet, autosave progress, and join live presence.<br>เข้าสู่ระบบครั้งเดียวเพื่อเรียกคืนใบงาน บันทึกอัตโนมัติ และแสดงสถานะออนไลน์</p>
+      <div class="polymer-orbit"><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="lab-auth-badges">
+        <span class="lab-auth-badge">Google Sign-In</span>
+        <span class="lab-auth-badge">Popup for iPad/Safari</span>
+        <span class="lab-auth-badge">Auto Save + Restore</span>
+        <span class="lab-auth-badge">Live presence</span>
+        <span class="lab-auth-badge">Guest access</span>
+      </div>
+    </section>
+    <section class="lab-auth-card">
+      <div class="lab-auth-kicker" style="color:#7b2390">STUDENT ACCESS / การเข้าสู่ระบบ</div>
+      <h2 id="lab-auth-title" class="lab-auth-title">Polymer Heat Test</h2>
+      <p class="lab-auth-copy">เข้าสู่ระบบด้วย Google เพื่อบันทึกอัตโนมัติและเรียกคืนงานเดิม หรือเข้าแบบ Guest เพื่อทดลองโดยไม่บันทึก<br>Sign in with Google for autosave and restore, or continue as a guest without saving.</p>
+      <div id="lab-auth-local-warning" class="lab-auth-local-warning">⚠️ Google Sign-In ไม่ควรทดสอบจาก <b>file://</b><br>เปิดผ่าน GitHub Pages หรือ localhost แล้วลองอีกครั้ง</div>
+      <button id="lab-google-signin" class="lab-google-btn" type="button"><span class="lab-google-g">G</span><span>Sign in with Google / เข้าสู่ระบบด้วย Google</span></button>
+      <button id="lab-guest" class="lab-guest-btn" type="button">Continue without sign-in / เข้าแบบไม่ล็อกอิน</button>
+      <div id="lab-guest-warning" class="lab-guest-warning">
+        ⚠️ <b>Guest mode does not save progress / โหมด Guest จะไม่บันทึกงาน</b><br>
+        หากรีโหลด ปิดแท็บ หรือออกจากหน้า คำตอบอาจหายทั้งหมด<br>
+        Reloading, closing the tab, or leaving may erase your answers.
+        <div class="lab-guest-actions">
+          <button id="lab-guest-confirm" class="lab-guest-confirm" type="button">Continue without saving / ยืนยันแบบไม่บันทึก</button>
+          <button id="lab-guest-cancel" class="lab-guest-cancel" type="button">Cancel / กลับ</button>
+        </div>
+      </div>
+      <div id="lab-auth-loading" class="lab-auth-loading">⏳ กำลังยืนยันตัวตนและเรียกคืนงานเดิม...<br>Authenticating and restoring previous work...</div>
+      <div id="lab-auth-error" class="lab-auth-error"></div>
+      <div class="lab-auth-note">☁️ Google mode restores saved answers before Auto Save begins. The Save Now button is a second manual safety layer. Guest mode does not save.<br>โหมด Google จะโหลดคำตอบเดิมก่อนเริ่ม Auto Save และมีปุ่ม Save Now เป็นชั้นสำรอง ส่วน Guest ไม่บันทึกงาน</div>
+    </section>
+  </div>
+</div>
+
+<div id="lab-guest-badge">⚠️ Guest mode · ไม่บันทึก / Not saved</div>
+
+<!-- USER BAR -->
+<div id="lab-userbar" class="lab-userbar">
+  <div class="lab-user-meta">
+    <img id="lab-user-photo" class="lab-user-avatar" alt="Profile">
+    <div style="min-width:0">
+      <div style="display:flex;align-items:center;gap:7px"><span id="lab-user-dot" class="lab-user-dot"></span><span id="lab-user-name" class="lab-user-name">...</span></div>
+      <div id="lab-user-email" class="lab-user-email"></div>
+    </div>
+  </div>
+  <div class="lab-user-actions">
+    <button id="lab-live-pill" class="lab-live-pill" type="button">📡 <span id="lab-live-count">0</span> online</button>
+    <span id="lab-cloud-status" class="lab-cloud-status">☁️ Waiting / รอเข้าสู่ระบบ</span>
+    <button id="lab-save-now" class="lab-save-now" type="button" disabled>💾 Save Now / บันทึก</button>
+    <span id="lab-session-pill" class="lab-session-pill">Auto Save + Restore</span>
+    <button id="lab-signout" class="lab-signout" type="button">Sign out / ออกจากระบบ</button>
+  </div>
+</div>
+
+<!-- LIVE MONITOR -->
+<div id="lab-monitor-backdrop" class="lab-monitor-backdrop"></div>
+<aside id="lab-monitor" class="lab-monitor" aria-hidden="true">
+  <div class="lab-monitor-head">
+    <div>
+      <div style="font-size:11px;font-weight:900;letter-spacing:.13em;color:#f5d0fe">LIVE PRESENCE · SAME ACTIVITY</div>
+      <div style="font-size:20px;font-weight:900;margin-top:2px">📡 คนออนไลน์ / Live Monitor</div>
+      <div style="font-size:11px;color:#f5d0fe;margin-top:2px">Polymer Heat Test</div>
+    </div>
+    <button id="lab-monitor-close" class="lab-monitor-close" type="button">×</button>
+  </div>
+  <div class="lab-monitor-summary">
+    <div class="lab-monitor-stat"><b id="lab-mon-online">0</b><span>🟢 Online</span></div>
+    <div class="lab-monitor-stat"><b id="lab-mon-idle">0</b><span>🟡 Idle</span></div>
+    <div class="lab-monitor-stat"><b id="lab-mon-total">0</b><span>👥 Visible</span></div>
+  </div>
+  <div id="lab-monitor-list" class="lab-monitor-list"><div class="lab-monitor-empty">กำลังรอข้อมูลผู้ใช้...<br>Waiting for presence...</div></div>
+</aside>
+
+<main class="wrap" id="appMain">
+<section class="card hero" data-page-label="Home / หน้าแรก">
+  <span class="eyebrow">CHEMISTRY · PAIR WORK · POLYMER HEAT TEST</span>
+  <h1>พอลิเมอร์เมื่อได้รับความร้อน<br><span class="en">Polymers under Heating</span></h1>
+  <p class="sub">
+    ดูคลิป สังเกตพอลิเมอร์ 2 ตัวอย่าง แล้วเชื่อมโยง “พฤติกรรมเมื่อร้อน” กับ “โครงสร้างของพอลิเมอร์”<br>
+    <span class="en">Observe two polymer samples and connect their behavior on heating with polymer structure.</span>
+  </p>
+
+  <div class="toolbar">
+    <a class="btn primary" href="https://www.youtube.com/watch?v=4UFmyfDjbXw" target="_blank" rel="noopener">▶ Open video / เปิดคลิป</a>
+    <button class="answerbtn" id="toggleAnswersBtn" type="button">🔑 Show-Hide Answers / เปิด-ปิดเฉลย</button>
+  </div>
+
+  <div class="print-center">
+    <div class="print-center-title">🖨️ Print Center / ศูนย์พิมพ์เอกสาร</div>
+    <button class="print-btn blank" type="button" onclick="printPolymerPack('blank')">📄 Student Worksheet / ฉบับนักเรียน</button>
+    <button class="print-btn answer" type="button" onclick="printPolymerPack('answer')">✅ Teacher Answer Key / ฉบับครูพร้อมเฉลย</button>
+    <button class="print-btn student" type="button" onclick="printPolymerPack('student')">👤 My Current Record / บันทึกงานปัจจุบัน</button>
+    <div class="print-center-note">รูปแบบพิมพ์ A4 ขาวดำ แยกหน้าและจัดพื้นที่เขียนแบบเดียวกับระบบใน template • A4 black-and-white print pack with planned page breaks and writing space.</div>
+  </div>
+</section>
+
+<section class="card" data-page-label="Pair names / สมาชิกคู่">
+  <h2>สมาชิก / <span class="en">Pair Members</span></h2>
+  <div class="student-grid">
+    <div><label for="partner1">สมาชิกคนที่ 1 / <span class="en">Partner 1</span></label><input id="partner1" type="text"></div>
+    <div><label for="partner2">สมาชิกคนที่ 2 / <span class="en">Partner 2</span></label><input id="partner2" type="text"></div>
+  </div>
+</section>
+
+<section class="card" data-page-label="Knowledge Box / กรอบความรู้">
+  <h2>กรอบความรู้ / <span class="en">Knowledge Box</span></h2>
+  <div class="knowledge-grid">
+    <article class="type-card thermoplastic">
+      <h3>เทอร์มอพลาสติก / <span class="en">Thermoplastic</span></h3>
+      <p>เมื่อได้รับความร้อนจะ <b>อ่อนตัวหรือหลอม</b> และสามารถเปลี่ยนรูปร่างได้ เมื่อเย็นลงจะแข็งตัวอีกครั้ง จึงสามารถนำมาหลอมและขึ้นรูปใหม่ได้</p>
+      <p class="en">When heated, it <b>softens or melts</b> and can be reshaped. It hardens again on cooling, so it can be reheated and remolded.</p>
+    </article>
+    <article class="type-card thermoset">
+      <h3>เทอร์มอเซต / <span class="en">Thermoset / Thermosetting polymer</span></h3>
+      <p>เมื่อได้รับความร้อนจะ <b>ไม่อ่อนตัวและไม่หลอม</b> เพราะสายโซ่ถูกเชื่อมเป็นร่างแห หากร้อนมากอาจเปลี่ยนสี แตก ไหม้ หรือสลายตัว แทนที่จะหลอม</p>
+      <p class="en">When heated, it <b>does not soften or melt</b> because the chains form a cross-linked network. Strong heating may cause discoloration, cracking, burning, or decomposition instead of melting.</p>
+    </article>
+  </div>
+
+  <h3 style="margin-top:16px">รูปร่างโครงสร้างของสายพอลิเมอร์ / <span class="en">Polymer Chain Structures</span></h3>
+  <div class="structures">
+    <div class="structure">
+      <svg viewBox="0 0 240 120" role="img" aria-label="Linear polymer">
+        <path d="M12 63 C38 20,65 100,92 61 S145 22,172 62 S211 95,229 54" fill="none" stroke="#171826" stroke-width="6" stroke-linecap="round"/>
+      </svg>
+      <b>แบบเส้น / <span class="en">Linear</span></b>
+      <div class="small">มักพบในเทอร์มอพลาสติก<br><span class="en">Common in thermoplastics</span></div>
+    </div>
+    <div class="structure">
+      <svg viewBox="0 0 240 120" role="img" aria-label="Branched polymer">
+        <path d="M12 68 C38 28,65 100,92 62 S145 27,172 64 S211 94,229 56" fill="none" stroke="#171826" stroke-width="6" stroke-linecap="round"/>
+        <path d="M68 79 L45 42 M143 49 L165 24 M184 72 L211 42" fill="none" stroke="#171826" stroke-width="5" stroke-linecap="round"/>
+      </svg>
+      <b>แบบกิ่ง / <span class="en">Branched</span></b>
+      <div class="small">มักพบในเทอร์มอพลาสติก<br><span class="en">Common in thermoplastics</span></div>
+    </div>
+    <div class="structure">
+      <svg viewBox="0 0 240 120" role="img" aria-label="Cross-linked network polymer">
+        <path d="M15 28 C55 18,80 38,120 27 S190 18,225 30
+                 M15 60 C55 50,80 70,120 59 S190 50,225 62
+                 M15 93 C55 83,80 103,120 92 S190 83,225 95" fill="none" stroke="#171826" stroke-width="5"/>
+        <path d="M52 25 L53 57 L54 90 M102 30 L102 61 L102 95 M151 24 L151 56 L151 88 M200 24 L200 58 L201 92" fill="none" stroke="#171826" stroke-width="4"/>
+      </svg>
+      <b>แบบร่างแห / <span class="en">Cross-linked network</span></b>
+      <div class="small"><b>ใช้แทนเทอร์มอเซตในกิจกรรมนี้</b><br><span class="en"><b>Thermoset model used in this activity</b></span></div>
+    </div>
+  </div>
+
+  <div class="note">
+    <b>เชื่อมโครงสร้างกับสมบัติ / <span class="en">Structure → Property:</span></b>
+    เทอร์มอพลาสติกมักมีโซ่แบบเส้นหรือแบบกิ่ง สายโซ่จึงเคลื่อนผ่านกันได้มากขึ้นเมื่อร้อนและทำให้อ่อนตัวหรือหลอมได้
+    ส่วนเทอร์มอเซตมีจุดเชื่อมขวางเป็นร่างแห จึงไม่ไหลหลอมและขึ้นรูปใหม่
+    <br><span class="en">Thermoplastics commonly have linear or branched chains that can move more freely on heating. Thermosets have a cross-linked network that prevents flow and remelting.</span>
+  </div>
+</section>
+
+<section class="card" data-page-label="Observation Record / บันทึกผล">
+  <h2>ส่วนที่ 1 บันทึกผลการสังเกต / <span class="en">Part 1: Observation Record</span></h2>
+  <p>คลิปมี <b>2 ตัวอย่าง</b> เท่านั้น ไม่ต้องเดาชื่อ PET, PE, PP, PS ฯลฯ ให้บันทึกเฉพาะสิ่งที่สังเกตได้เมื่อได้รับความร้อน<br>
+  <span class="en">The video contains <b>two samples</b>. Do not guess PET, PE, PP, PS, etc. Record only what you observe when the samples are heated.</span></p>
+
+  <div class="video-box">
+    <b>คลิปเปิดไม่ได้ในหน้าเว็บ? / <span class="en">Video blocked inside the page?</span></b><br>
+    ใช้ปุ่ม Open video ด้านบนเพื่อเปิด YouTube โดยตรง<br>
+    <span class="en">Use the Open video button above to open YouTube directly.</span>
+  </div>
+
+  <table class="obs-table">
+    <thead>
+      <tr>
+        <th style="width:14%">ตัวอย่าง<br><span class="en">Sample</span></th>
+        <th>เมื่อได้รับความร้อน<br><span class="en">During heating</span></th>
+        <th>หลังหยุดให้ความร้อน / เย็นลง<br><span class="en">After heating / cooling</span></th>
+        <th style="width:20%">สรุปประเภท<br><span class="en">Classification</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><b>ตัวอย่างที่ 1<br><span class="en">Sample 1</span></b></td>
+        <td>
+          <textarea id="s1heat" placeholder="บันทึกสิ่งที่เห็น / Record what you see"></textarea>
+          <div class="obs-answer"><b>เฉลย / <span class="en">Answer:</span></b> อ่อนตัว โค้งงอ หรือหลอมเมื่อได้รับความร้อน และสามารถเปลี่ยนรูปร่างได้<br><span class="en">Softens, bends, or melts when heated and can be reshaped.</span></div>
+        </td>
+        <td>
+          <textarea id="s1cool" placeholder="บันทึกสิ่งที่เห็น / Record what you see"></textarea>
+          <div class="obs-answer"><b>เฉลย / <span class="en">Answer:</span></b> เมื่อเย็นลงจะแข็งตัวอีกครั้งและอาจคงรูปร่างใหม่<br><span class="en">Hardens again on cooling and may retain the new shape.</span></div>
+        </td>
+        <td>
+          <label><input type="radio" name="s1class" value="thermoplastic"> Thermoplastic</label><br>
+          <label><input type="radio" name="s1class" value="thermoset"> Thermoset</label>
+          <div class="obs-answer"><b>เฉลย / <span class="en">Answer:</span></b><br><b>Thermoplastic / เทอร์มอพลาสติก</b></div>
+        </td>
+      </tr>
+      <tr>
+        <td><b>ตัวอย่างที่ 2<br><span class="en">Sample 2</span></b></td>
+        <td>
+          <textarea id="s2heat" placeholder="บันทึกสิ่งที่เห็น / Record what you see"></textarea>
+          <div class="obs-answer"><b>เฉลย / <span class="en">Answer:</span></b> ไม่อ่อนตัวและไม่หลอม ยังคงรูปร่างเดิมเป็นส่วนใหญ่ เมื่อร้อนมากอาจเปลี่ยนสี ไหม้ หรือสลายตัว<br><span class="en">Does not soften or melt and mostly keeps its shape. Strong heating may cause discoloration, burning, or decomposition.</span></div>
+        </td>
+        <td>
+          <textarea id="s2cool" placeholder="บันทึกสิ่งที่เห็น / Record what you see"></textarea>
+          <div class="obs-answer"><b>เฉลย / <span class="en">Answer:</span></b> ไม่สามารถหลอมแล้วขึ้นรูปใหม่ได้ หลังเย็นลงยังคงเป็นของแข็งหรือมีร่องรอยจากการสลายตัวด้วยความร้อน<br><span class="en">Cannot be remelted and reshaped. After cooling it remains solid or may show signs of thermal decomposition.</span></div>
+        </td>
+        <td>
+          <label><input type="radio" name="s2class" value="thermoplastic"> Thermoplastic</label><br>
+          <label><input type="radio" name="s2class" value="thermoset"> Thermoset</label>
+          <div class="obs-answer"><b>เฉลย / <span class="en">Answer:</span></b><br><b>Thermoset / Thermosetting polymer / เทอร์มอเซต</b></div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="card" data-page-label="Evidence Questions / คำถาม">
+  <h2>ส่วนที่ 2 ตอบจากผลการสังเกต / <span class="en">Part 2: Questions from Evidence</span></h2>
+
+  <div class="q"><h3>1. ตัวอย่างที่ 1 เปลี่ยนแปลงอย่างไรเมื่อได้รับความร้อน?</h3><p class="en">How did Sample 1 change when heated?</p><textarea id="q1"></textarea></div>
+  <div class="q"><h3>2. เพราะเหตุใดจึงจัดตัวอย่างที่ 1 เป็นเทอร์มอพลาสติก?</h3><p class="en">Why is Sample 1 classified as a thermoplastic?</p><textarea id="q2"></textarea></div>
+  <div class="q"><h3>3. ตัวอย่างที่ 2 เปลี่ยนแปลงอย่างไรเมื่อได้รับความร้อน?</h3><p class="en">How did Sample 2 change when heated?</p><textarea id="q3"></textarea></div>
+  <div class="q"><h3>4. เพราะเหตุใดจึงจัดตัวอย่างที่ 2 เป็นเทอร์มอเซต?</h3><p class="en">Why is Sample 2 classified as a thermoset?</p><textarea id="q4"></textarea></div>
+  <div class="q"><h3>5. ความแตกต่างของโครงสร้างช่วยอธิบายผลการทดลองอย่างไร?</h3><p class="en">How does the difference in structure explain the observations?</p><textarea id="q5"></textarea></div>
+  <div class="q"><h3>6. ถ้าต้องการนำพอลิเมอร์กลับมาหลอมและขึ้นรูปใหม่ ควรเลือกกลุ่มใด เพราะเหตุใด?</h3><p class="en">If a polymer needs to be remelted and reshaped, which group should be chosen, and why?</p><textarea id="q6"></textarea></div>
+
+  <section class="answer-key" id="answerKey">
+    <h2>เฉลยและแนวทางการตอบ / <span class="en">Answer Key & Suggested Responses</span></h2>
+    <div class="note">
+      <b>สมมติฐานของใบงานนี้ / <span class="en">Worksheet assumption:</span></b>
+      ตัวอย่างที่ 1 = Thermoplastic และตัวอย่างที่ 2 = Thermoset โดยไม่ระบุชื่อเรซิน เพราะคลิปไม่ได้บอกชื่อชนิดพลาสติก
+      <br><span class="en">Sample 1 = Thermoplastic and Sample 2 = Thermoset. The exact resin is intentionally not named because the video does not identify it.</span>
+    </div>
+    <table class="answer-table">
+      <tbody>
+        <tr><td>1</td><td>ตัวอย่างที่ 1 อ่อนตัว โค้งงอ หรือหลอมเมื่อร้อน และสามารถเปลี่ยนรูปร่างได้<br><span class="en">Sample 1 softens, bends, or melts when heated and can change shape.</span></td></tr>
+        <tr><td>2</td><td>เป็น Thermoplastic เพราะอ่อนตัวหรือหลอมเมื่อร้อน และแข็งตัวอีกครั้งเมื่อเย็นลง<br><span class="en">It is a thermoplastic because it softens or melts on heating and hardens again on cooling.</span></td></tr>
+        <tr><td>3</td><td>ตัวอย่างที่ 2 ไม่อ่อนตัวและไม่หลอม ยังคงรูปเดิมเป็นส่วนใหญ่ และเมื่อร้อนมากอาจไหม้หรือสลายตัว<br><span class="en">Sample 2 does not soften or melt, mostly keeps its shape, and may burn or decompose under strong heating.</span></td></tr>
+        <tr><td>4</td><td>เป็น Thermoset เพราะสายพอลิเมอร์มีการเชื่อมขวางเป็นโครงสร้างร่างแห จึงไม่สามารถไหลและหลอมขึ้นรูปใหม่ได้<br><span class="en">It is a thermoset because cross-links form a network that prevents the chains from flowing and being remelted.</span></td></tr>
+        <tr><td>5</td><td>Thermoplastic มีสายโซ่แบบเส้นหรือแบบกิ่งที่เคลื่อนผ่านกันได้มากขึ้นเมื่อร้อน ส่วน Thermoset มีจุดเชื่อมขวางยึดโซ่ไว้เป็นร่างแห<br><span class="en">Thermoplastics have linear or branched chains that move more freely when heated, while thermosets have cross-links that hold the chains in a network.</span></td></tr>
+        <tr><td>6</td><td>เลือก Thermoplastic เพราะสามารถอ่อนตัวหรือหลอมเมื่อร้อน แล้วแข็งตัวใหม่เมื่อเย็น จึงนำกลับมาขึ้นรูปใหม่ได้ง่ายกว่า<br><span class="en">Choose a thermoplastic because it can soften or melt on heating and harden again on cooling, allowing it to be reshaped.</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+</section>
+
+<p class="small" style="padding:0 4px 20px">
+  หมายเหตุ / <span class="en">Note:</span> ใบงานนี้จงใจไม่ระบุ PET, PE, PP, PS หรือชื่อเรซินอื่น เพราะคลิปไม่ได้ให้ข้อมูลนั้นโดยตรง
+  <br><span class="en">This worksheet intentionally does not identify PET, PE, PP, PS, or another resin because the video does not provide that information directly.</span>
+</p>
+</main>
+
+<div id="printHost"></div>
+
+<script>
+/* ===== Worksheet state ===== */
+window.POLYMER_STATE={
+  version:1,
+  updatedAt:Date.now(),
+  currentSection:"Home / หน้าแรก",
+  inputs:{},
+  radios:{}
+};
+
+function polymerDirty(){
+  window.POLYMER_STATE.updatedAt=Date.now();
+  try{window.dispatchEvent(new CustomEvent("polymer-state-change"));}catch(_){}
+}
+function setInputState(id,value){
+  if(!id)return;
+  window.POLYMER_STATE.inputs[id]=value;
+  polymerDirty();
+}
+function setRadioState(name,value){
+  if(!name)return;
+  window.POLYMER_STATE.radios[name]=value;
+  polymerDirty();
+}
+document.addEventListener("input",e=>{
+  const el=e.target;
+  if((el.tagName==="INPUT" && el.type==="text")||el.tagName==="TEXTAREA") setInputState(el.id,el.value);
+});
+document.addEventListener("change",e=>{
+  const el=e.target;
+  if(el.matches('input[type="radio"]')) setRadioState(el.name,el.value);
+});
+document.getElementById("toggleAnswersBtn").addEventListener("click",()=>document.body.classList.toggle("show-answers"));
+
+/* current section for live presence */
+const sections=[...document.querySelectorAll("[data-page-label]")];
+const sectionObserver=new IntersectionObserver(entries=>{
+  const visible=entries.filter(x=>x.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
+  if(visible){
+    window.POLYMER_STATE.currentSection=visible.target.dataset.pageLabel||"Activity";
+    polymerDirty();
+  }
+},{threshold:[.2,.45,.7]});
+sections.forEach(s=>sectionObserver.observe(s));
+
+/* ===== Print Center ===== */
+const ANSWERS={
+  s1heat:"อ่อนตัว โค้งงอ หรือหลอมเมื่อได้รับความร้อน และสามารถเปลี่ยนรูปร่างได้ / Softens, bends, or melts when heated and can be reshaped.",
+  s1cool:"เมื่อเย็นลงจะแข็งตัวอีกครั้งและอาจคงรูปร่างใหม่ / Hardens again on cooling and may retain the new shape.",
+  s2heat:"ไม่อ่อนตัวและไม่หลอม ยังคงรูปร่างเดิมเป็นส่วนใหญ่ เมื่อร้อนมากอาจเปลี่ยนสี ไหม้ หรือสลายตัว / Does not soften or melt and mostly keeps its shape; strong heating may cause discoloration, burning, or decomposition.",
+  s2cool:"ไม่สามารถหลอมแล้วขึ้นรูปใหม่ได้ หลังเย็นลงยังคงเป็นของแข็งหรือมีร่องรอยการสลายตัว / Cannot be remelted and reshaped; after cooling it remains solid or may show thermal decomposition.",
+  q1:"ตัวอย่างที่ 1 อ่อนตัว โค้งงอ หรือหลอมเมื่อร้อน และสามารถเปลี่ยนรูปร่างได้ / Sample 1 softens, bends, or melts when heated and can change shape.",
+  q2:"เป็น Thermoplastic เพราะอ่อนตัวหรือหลอมเมื่อร้อน และแข็งตัวอีกครั้งเมื่อเย็นลง / It is a thermoplastic because it softens or melts on heating and hardens again on cooling.",
+  q3:"ตัวอย่างที่ 2 ไม่อ่อนตัวและไม่หลอม ยังคงรูปเดิมเป็นส่วนใหญ่ และเมื่อร้อนมากอาจไหม้หรือสลายตัว / Sample 2 does not soften or melt, mostly keeps its shape, and may burn or decompose under strong heating.",
+  q4:"เป็น Thermoset เพราะมีโครงสร้างร่างแหเชื่อมขวาง จึงไม่สามารถไหลและหลอมขึ้นรูปใหม่ได้ / It is a thermoset because cross-links form a network that prevents flow and remelting.",
+  q5:"Thermoplastic มักมีโซ่แบบเส้นหรือกิ่งที่เคลื่อนผ่านกันได้เมื่อร้อน ส่วน Thermoset มีจุดเชื่อมขวางยึดโซ่ไว้เป็นร่างแห / Thermoplastics commonly have linear or branched chains that move more freely on heating, while thermosets have a cross-linked network.",
+  q6:"เลือก Thermoplastic เพราะสามารถอ่อนตัวหรือหลอมเมื่อร้อน แล้วแข็งตัวใหม่เมื่อเย็น จึงขึ้นรูปใหม่ได้ / Choose a thermoplastic because it softens or melts on heating and hardens again on cooling, allowing reshaping."
+};
+
+function esc(s=""){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
+function studentInput(id){return window.POLYMER_STATE.inputs[id]||"";}
+function radioLabel(name){
+  const v=window.POLYMER_STATE.radios[name]||"";
+  return v==="thermoplastic"?"Thermoplastic / เทอร์มอพลาสติก":v==="thermoset"?"Thermoset / เทอร์มอเซต":"";
+}
+function valueFor(mode,id){
+  if(mode==="answer") return ANSWERS[id]||"";
+  if(mode==="student") return studentInput(id);
+  return "";
+}
+function classificationFor(mode,name){
+  if(mode==="answer") return name==="s1class"?"Thermoplastic / เทอร์มอพลาสติก":"Thermoset / เทอร์มอเซต";
+  if(mode==="student") return radioLabel(name);
+  return "";
+}
+function fieldBox(v, minH="15mm"){
+  return v ? `<div class="print-answer">${esc(v)}</div>` : `<div class="print-blank" style="min-height:${minH}"></div>`;
+}
+function structureSVG(kind){
+  if(kind==="linear") return `<svg viewBox="0 0 240 120"><path d="M12 63 C38 20,65 100,92 61 S145 22,172 62 S211 95,229 54" fill="none" stroke="#000" stroke-width="6" stroke-linecap="round"/></svg>`;
+  if(kind==="branched") return `<svg viewBox="0 0 240 120"><path d="M12 68 C38 28,65 100,92 62 S145 27,172 64 S211 94,229 56" fill="none" stroke="#000" stroke-width="6" stroke-linecap="round"/><path d="M68 79 L45 42 M143 49 L165 24 M184 72 L211 42" fill="none" stroke="#000" stroke-width="5" stroke-linecap="round"/></svg>`;
+  return `<svg viewBox="0 0 240 120"><path d="M15 28 C55 18,80 38,120 27 S190 18,225 30 M15 60 C55 50,80 70,120 59 S190 50,225 62 M15 93 C55 83,80 103,120 92 S190 83,225 95" fill="none" stroke="#000" stroke-width="5"/><path d="M52 25 L53 57 L54 90 M102 30 L102 61 L102 95 M151 24 L151 56 L151 88 M200 24 L200 58 L201 92" fill="none" stroke="#000" stroke-width="4"/></svg>`;
+}
+function buildPrint(mode){
+  const modeTitle=mode==="answer"?"Teacher Answer Key / ฉบับครูพร้อมเฉลย":mode==="student"?"My Current Record / บันทึกงานปัจจุบัน":"Student Worksheet / ฉบับนักเรียน";
+  const p1=mode==="student"?studentInput("partner1"):"";
+  const p2=mode==="student"?studentInput("partner2"):"";
+  const obsRows=[
+    ["1",valueFor(mode,"s1heat"),valueFor(mode,"s1cool"),classificationFor(mode,"s1class")],
+    ["2",valueFor(mode,"s2heat"),valueFor(mode,"s2cool"),classificationFor(mode,"s2class")]
+  ];
+  const qText=[
+    ["1","ตัวอย่างที่ 1 เปลี่ยนแปลงอย่างไรเมื่อได้รับความร้อน?","How did Sample 1 change when heated?","q1"],
+    ["2","เพราะเหตุใดจึงจัดตัวอย่างที่ 1 เป็นเทอร์มอพลาสติก?","Why is Sample 1 classified as a thermoplastic?","q2"],
+    ["3","ตัวอย่างที่ 2 เปลี่ยนแปลงอย่างไรเมื่อได้รับความร้อน?","How did Sample 2 change when heated?","q3"],
+    ["4","เพราะเหตุใดจึงจัดตัวอย่างที่ 2 เป็นเทอร์มอเซต?","Why is Sample 2 classified as a thermoset?","q4"],
+    ["5","ความแตกต่างของโครงสร้างช่วยอธิบายผลการทดลองอย่างไร?","How does the difference in structure explain the observations?","q5"],
+    ["6","ถ้าต้องการนำพอลิเมอร์กลับมาหลอมและขึ้นรูปใหม่ ควรเลือกกลุ่มใด เพราะเหตุใด?","If a polymer needs to be remelted and reshaped, which group should be chosen, and why?","q6"]
+  ];
+  const qHTML=qText.map(([n,th,en,id])=>`<div class="print-q"><b>${n}. ${th}</b><br><span style="font-family:'Times New Roman',serif">${en}</span>${fieldBox(valueFor(mode,id),mode==="blank"?"16mm":"10mm")}</div>`).join("");
+  return `
+  <section class="print-page">
+    <div class="print-head">
+      <span class="print-mode-badge">${esc(modeTitle)}</span>
+      <div class="print-kicker">CHEMISTRY · PAIR WORK · POLYMER HEAT TEST</div>
+      <div class="print-title">พอลิเมอร์เมื่อได้รับความร้อน · Polymers under Heating</div>
+      <div class="print-sub">Observation → Classification → Structure / การสังเกต → การจำแนก → โครงสร้าง</div>
+      <div class="print-meta">
+        <div>สมาชิก 1 / Partner 1: <span class="print-line">${esc(p1)}</span></div>
+        <div>สมาชิก 2 / Partner 2: <span class="print-line">${esc(p2)}</span></div>
+      </div>
+    </div>
+
+    <div class="print-h2">1. กรอบความรู้ / Knowledge Box</div>
+    <div class="print-grid2">
+      <div class="print-box"><b>Thermoplastic / เทอร์มอพลาสติก</b><br>เมื่อร้อนจะอ่อนตัวหรือหลอมและขึ้นรูปใหม่ได้ เมื่อเย็นจะแข็งตัวอีกครั้ง<br><span style="font-family:'Times New Roman',serif">Softens or melts on heating and hardens again on cooling, so it can be remolded.</span></div>
+      <div class="print-box"><b>Thermoset / Thermosetting polymer / เทอร์มอเซต</b><br>ไม่อ่อนตัวหรือหลอมเมื่อให้ความร้อนซ้ำ เพราะโซ่เชื่อมขวางเป็นร่างแห หากร้อนมากอาจสลายตัวหรือไหม้<br><span style="font-family:'Times New Roman',serif">Does not remelt because cross-links form a network; strong heating may cause decomposition or burning.</span></div>
+    </div>
+
+    <div class="print-grid3">
+      <div class="print-structure">${structureSVG("linear")}<b>Linear / แบบเส้น</b></div>
+      <div class="print-structure">${structureSVG("branched")}<b>Branched / แบบกิ่ง</b></div>
+      <div class="print-structure">${structureSVG("network")}<b>Cross-linked network / แบบร่างแห</b><br><small>Thermoset model / แบบจำลองเทอร์มอเซต</small></div>
+    </div>
+
+    <div class="print-h2" style="margin-top:3mm">2. บันทึกผลการสังเกต / Observation Record</div>
+    <table class="print-table">
+      <thead><tr><th style="width:10%">Sample</th><th>During heating / เมื่อได้รับความร้อน</th><th>After cooling / หลังเย็นลง</th><th style="width:19%">Classification / ประเภท</th></tr></thead>
+      <tbody>
+        ${obsRows.map(r=>`<tr><td style="text-align:center"><b>${r[0]}</b></td><td>${fieldBox(r[1],"18mm")}</td><td>${fieldBox(r[2],"18mm")}</td><td>${fieldBox(r[3],"12mm")}</td></tr>`).join("")}
+      </tbody>
+    </table>
+
+    <div class="print-footer"><span>Polymer Heat Test · Chemistry</span><span>Page 1 / 2</span></div>
+  </section>
+
+  <section class="print-page">
+    <div class="print-head">
+      <div class="print-kicker">CHEMISTRY · PAIR WORK · POLYMER HEAT TEST</div>
+      <div class="print-title">คำถามจากหลักฐาน / Questions from Evidence</div>
+      <div class="print-sub">${esc(modeTitle)}</div>
+    </div>
+    ${qHTML}
+    <div class="print-box" style="margin-top:3mm"><b>หลักการสรุป / Final reasoning pattern</b><br>สิ่งที่เห็น → จำแนก Thermoplastic/Thermoset → อธิบายด้วยโครงสร้างแบบเส้น/กิ่ง หรือร่างแหเชื่อมขวาง<br><span style="font-family:'Times New Roman',serif">Observation → classify as thermoplastic/thermoset → explain with linear/branched chains or a cross-linked network.</span></div>
+    <div class="print-footer"><span>Polymer Heat Test · Chemistry</span><span>Page 2 / 2</span></div>
+  </section>`;
+}
+window.printPolymerPack=function(mode="blank"){
+  const host=document.getElementById("printHost");
+  host.innerHTML=buildPrint(mode);
+  document.body.classList.add("print-mode");
+  setTimeout(()=>window.print(),80);
+};
+window.addEventListener("afterprint",()=>{document.body.classList.remove("print-mode");document.getElementById("printHost").innerHTML="";});
+</script>
+
+<script type="module" id="polymer-login-cloud">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, GoogleAuthProvider, onAuthStateChanged, setPersistence, browserLocalPersistence, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getDatabase, ref, set, update, get, onValue, onDisconnect, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+const FIREBASE_CONFIG={
+  apiKey:"AIzaSyDfkxDDnbzLUv85yDwqSpZwPCORx_eCGuo",
+  authDomain:"examateapp-1007d.firebaseapp.com",
+  databaseURL:"https://examateapp-1007d-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"examateapp-1007d",
+  storageBucket:"examateapp-1007d.firebasestorage.app",
+  messagingSenderId:"791216427108",
+  appId:"1:791216427108:web:ccf63a9cc416650877cf71",
+  measurementId:"G-0HPEFRXYW5"
+};
+const LAB_ID="polymer-heat-test-pair";
+const PROGRESS_ID="polymer-heat-test-pair-v1";
+const LAB_TITLE="Polymer Heat Test — Pair Observation Worksheet";
+
+const app=initializeApp(FIREBASE_CONFIG,"polymerHeatWorksheet");
+const auth=getAuth(app);
+const db=getDatabase(app);
+const provider=new GoogleAuthProvider();
+provider.setCustomParameters({prompt:"select_account"});
+
+const gate=document.getElementById("lab-auth-gate");
+const signInBtn=document.getElementById("lab-google-signin");
+const signOutBtn=document.getElementById("lab-signout");
+const guestBtn=document.getElementById("lab-guest");
+const guestWarning=document.getElementById("lab-guest-warning");
+const guestConfirm=document.getElementById("lab-guest-confirm");
+const guestCancel=document.getElementById("lab-guest-cancel");
+const guestBadge=document.getElementById("lab-guest-badge");
+const localWarning=document.getElementById("lab-auth-local-warning");
+const loading=document.getElementById("lab-auth-loading");
+const errBox=document.getElementById("lab-auth-error");
+const userbar=document.getElementById("lab-userbar");
+const photo=document.getElementById("lab-user-photo");
+const nameEl=document.getElementById("lab-user-name");
+const emailEl=document.getElementById("lab-user-email");
+const dot=document.getElementById("lab-user-dot");
+const livePill=document.getElementById("lab-live-pill");
+const liveCountEl=document.getElementById("lab-live-count");
+const cloudStatus=document.getElementById("lab-cloud-status");
+const saveNowBtn=document.getElementById("lab-save-now");
+const sessionPill=document.getElementById("lab-session-pill");
+const monitor=document.getElementById("lab-monitor");
+const monitorBackdrop=document.getElementById("lab-monitor-backdrop");
+const monitorClose=document.getElementById("lab-monitor-close");
+const monitorList=document.getElementById("lab-monitor-list");
+const monOnline=document.getElementById("lab-mon-online");
+const monIdle=document.getElementById("lab-mon-idle");
+const monTotal=document.getElementById("lab-mon-total");
+const appMain=document.getElementById("appMain");
+
+let currentUser=null;
+let progressUser=null;
+let guestMode=false;
+let cloudReady=false;
+let restoring=false;
+let saveTimer=null;
+let presenceRef=null;
+let presenceUnsub=null;
+let connectedUnsub=null;
+let presenceRows={};
+let lastActiveAt=Date.now();
+let presenceStatus="OFFLINE";
+
+const fallbackAvatar="data:image/svg+xml;charset=UTF-8,"+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="80" height="80" rx="40" fill="#f3e8ff"/><circle cx="40" cy="30" r="14" fill="#7b2390"/><path d="M17 69c3-16 13-24 23-24s20 8 23 24" fill="#7b2390"/></svg>`);
+
+function setLocked(on){if(appMain)appMain.inert=!!on}
+setLocked(true);
+function setLoading(on){loading.classList.toggle("show",!!on)}
+function setError(msg=""){errBox.textContent=msg;errBox.classList.toggle("show",!!msg)}
+function setCloud(text,kind=""){cloudStatus.textContent=text;cloudStatus.className="lab-cloud-status"+(kind?` ${kind}`:"")}
+function setDot(status){
+  dot.className="lab-user-dot "+(status==="ONLINE"?"online":status==="IDLE"?"idle":"");
+}
+function safeName(){return currentUser?.displayName||currentUser?.email||"Student"}
+function pageLabel(){return window.POLYMER_STATE?.currentSection||"Activity"}
+
+function openMonitor(){monitor.classList.add("show");monitorBackdrop.classList.add("show");monitor.setAttribute("aria-hidden","false")}
+function closeMonitor(){monitor.classList.remove("show");monitorBackdrop.classList.remove("show");monitor.setAttribute("aria-hidden","true")}
+livePill.addEventListener("click",openMonitor);
+monitorClose.addEventListener("click",closeMonitor);
+monitorBackdrop.addEventListener("click",closeMonitor);
+
+function renderMonitor(){
+  const cutoff=Date.now()-20*60*1000;
+  const rows=Object.entries(presenceRows||{}).map(([uid,v])=>({uid,...(v||{})}))
+    .filter(r=>r.status!=="OFFLINE"||Number(r.lastActiveAt||0)>=cutoff)
+    .sort((a,b)=>({ONLINE:0,IDLE:1,OFFLINE:2}[a.status]??3)-({ONLINE:0,IDLE:1,OFFLINE:2}[b.status]??3));
+  const online=rows.filter(r=>r.status==="ONLINE").length;
+  const idle=rows.filter(r=>r.status==="IDLE").length;
+  liveCountEl.textContent=String(online);
+  monOnline.textContent=String(online);monIdle.textContent=String(idle);monTotal.textContent=String(rows.length);
+  if(!rows.length){monitorList.innerHTML='<div class="lab-monitor-empty">ยังไม่มีผู้ใช้ที่มองเห็นได้<br>No visible users yet.</div>';return}
+  monitorList.innerHTML=rows.map(r=>{
+    const status=r.status||"OFFLINE";
+    const age=Math.max(0,Math.round((Date.now()-Number(r.lastActiveAt||Date.now()))/1000));
+    return `<div class="lab-person-row ${status.toLowerCase()}">
+      <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
+        <div class="lab-person-name">${String(r.name||"Student").replace(/[<>]/g,"")}</div>
+        <span class="lab-status-pill ${status.toLowerCase()}">${status}</span>
+      </div>
+      <div class="lab-person-meta">${age<60?"active now":`${Math.floor(age/60)} min ago`}</div>
+      <div class="lab-person-place">${String(r.pageLabel||"Activity").replace(/[<>]/g,"")}</div>
+    </div>`;
+  }).join("");
+}
+async function writePresence(status=presenceStatus){
+  if(!currentUser||!presenceRef)return;
+  presenceStatus=status;
+  try{
+    await set(presenceRef,{
+      uid:currentUser.uid,name:safeName(),email:currentUser.email||"",
+      status,labId:LAB_ID,labTitle:LAB_TITLE,pageLabel:pageLabel(),
+      lastActiveAt:Date.now(),connectedAt:Date.now()
+    });
+    setDot(status);
+  }catch(e){console.warn("presence",e)}
+}
+async function setupPresence(user){
+  presenceRef=ref(db,`quizPresence/${LAB_ID}/${user.uid}`);
+  try{await onDisconnect(presenceRef).update({status:"OFFLINE",lastActiveAt:serverTimestamp()})}catch(_){}
+  await writePresence("ONLINE");
+  if(presenceUnsub)presenceUnsub();
+  presenceUnsub=onValue(ref(db,`quizPresence/${LAB_ID}`),snap=>{presenceRows=snap.val()||{};renderMonitor()},()=>{presenceRows={};renderMonitor()});
+}
+
+function snapshot(){
+  return JSON.parse(JSON.stringify(window.POLYMER_STATE||{}));
+}
+function restoreUI(saved){
+  if(!saved||typeof saved!=="object")return;
+  restoring=true;
+  try{
+    window.POLYMER_STATE={
+      version:1,updatedAt:Number(saved.updatedAt)||Date.now(),
+      currentSection:saved.currentSection||"Home / หน้าแรก",
+      inputs:{...(saved.inputs||{})},radios:{...(saved.radios||{})}
+    };
+    Object.entries(window.POLYMER_STATE.inputs).forEach(([id,v])=>{
+      const el=document.getElementById(id);if(el)el.value=v??"";
+    });
+    Object.entries(window.POLYMER_STATE.radios).forEach(([name,v])=>{
+      const el=document.querySelector(`input[type="radio"][name="${CSS.escape(name)}"][value="${CSS.escape(v)}"]`);
+      if(el)el.checked=true;
+    });
+  }finally{restoring=false}
+}
+async function loadCloud(user){
+  setCloud("☁️ Loading / กำลังโหลด","busy");
+  const snap=await get(ref(db,`quizProgress/${PROGRESS_ID}/${user.uid}`));
+  if(!snap.exists())return null;
+  return snap.val()?.state||null;
+}
+async function saveCloud(manual=false){
+  if(guestMode||!progressUser||!cloudReady||restoring)return false;
+  clearTimeout(saveTimer);saveTimer=null;
+  setCloud(manual?"💾 Saving now… / กำลังบันทึก…":"☁️ Saving… / กำลังบันทึก","busy");
+  try{
+    await set(ref(db,`quizProgress/${PROGRESS_ID}/${progressUser.uid}`),{
+      version:1,labId:PROGRESS_ID,uid:progressUser.uid,name:safeName(),
+      updatedAt:serverTimestamp(),state:snapshot()
+    });
+    setCloud(manual?"✓ Saved now / บันทึกแล้ว":"✓ Auto saved / บันทึกอัตโนมัติ","ok");
+    return true;
+  }catch(e){
+    console.warn("cloud save",e);setCloud("⚠️ Save failed / บันทึกไม่ได้","error");return false
+  }
+}
+function scheduleSave(){
+  if(guestMode||!progressUser||!cloudReady||restoring)return;
+  clearTimeout(saveTimer);
+  setCloud("☁️ Saving… / กำลังบันทึก","busy");
+  saveTimer=setTimeout(()=>saveCloud(false),750);
+}
+window.addEventListener("polymer-state-change",()=>{
+  scheduleSave();
+  if(currentUser && presenceStatus==="ONLINE") writePresence("ONLINE");
+});
+saveNowBtn.addEventListener("click",()=>saveCloud(true));
+
+function setGuestUI(on){
+  guestMode=!!on;
+  guestBadge.classList.toggle("show",guestMode);
+  userbar.classList.toggle("guest-mode",guestMode);
+  if(guestMode){
+    nameEl.textContent="Guest / ไม่ล็อกอิน";emailEl.textContent="Session only · งานไม่ถูกบันทึก";
+    photo.src=fallbackAvatar;setDot("IDLE");livePill.style.display="none";
+    sessionPill.textContent="⚠️ Guest · Not saved";setCloud("⚠️ Guest · Not saved","error");
+    saveNowBtn.disabled=true;signOutBtn.textContent="Exit guest / ออกจาก Guest";
+    userbar.classList.add("show");gate.classList.add("hidden");setLocked(false);
+  }else{
+    livePill.style.display="";sessionPill.textContent="Auto Save + Restore";signOutBtn.textContent="Sign out / ออกจากระบบ";
+  }
+}
+async function enterGuest(){
+  try{await signOut(auth)}catch(_){}
+  currentUser=null;progressUser=null;cloudReady=false;
+  setGuestUI(true);
+}
+guestBtn.addEventListener("click",()=>guestWarning.classList.add("show"));
+guestCancel.addEventListener("click",()=>guestWarning.classList.remove("show"));
+guestConfirm.addEventListener("click",async()=>{guestWarning.classList.remove("show");await enterGuest()});
+
+if(location.protocol==="file:")localWarning.classList.add("show");
+signInBtn.addEventListener("click",async()=>{
+  setGuestUI(false);setError("");signInBtn.disabled=true;
+  if(location.protocol==="file:"){
+    setError("เปิดไฟล์ผ่าน GitHub Pages หรือ localhost ก่อนทดสอบ Google Sign-In\nOpen this file from GitHub Pages or localhost before testing Google Sign-In.");
+    signInBtn.disabled=false;return;
+  }
+  try{
+    setLoading(true);await setPersistence(auth,browserLocalPersistence);await signInWithPopup(auth,provider);
+  }catch(err){
+    let msg=`เข้าสู่ระบบไม่สำเร็จ / Sign-in failed\nCode: ${err?.code||"unknown"}`;
+    if(err?.code==="auth/popup-blocked")msg+="\n\nBrowser blocked the popup. Allow pop-ups and retry.";
+    if(err?.code==="auth/unauthorized-domain")msg+="\n\nAdd this GitHub Pages domain to Firebase Authentication → Authorized domains.";
+    setError(msg+"\n"+(err?.message||""));setLoading(false);signInBtn.disabled=false;
+  }
+});
+signOutBtn.addEventListener("click",async()=>{
+  if(guestMode){location.reload();return}
+  try{if(presenceRef)await update(presenceRef,{status:"OFFLINE",lastActiveAt:serverTimestamp()})}catch(_){}
+  await signOut(auth);
+});
+
+["pointerdown","keydown","touchstart"].forEach(t=>document.addEventListener(t,()=>{
+  if(!currentUser)return;
+  lastActiveAt=Date.now();
+  if(presenceStatus!=="ONLINE")writePresence("ONLINE");
+},{passive:true}));
+document.addEventListener("visibilitychange",()=>{if(currentUser)writePresence(document.visibilityState==="hidden"?"IDLE":"ONLINE")});
+setInterval(()=>{if(currentUser&&Date.now()-lastActiveAt>5*60*1000&&presenceStatus!=="IDLE")writePresence("IDLE")},30000);
+setInterval(()=>{if(currentUser&&presenceStatus==="ONLINE")writePresence("ONLINE")},60000);
+window.addEventListener("pagehide",()=>{if(currentUser&&!guestMode)writePresence("OFFLINE")});
+
+try{await setPersistence(auth,browserLocalPersistence)}catch(_){}
+onAuthStateChanged(auth,async user=>{
+  if(!user){
+    if(guestMode){setGuestUI(true);setLoading(false);signInBtn.disabled=false;return}
+    currentUser=null;progressUser=null;cloudReady=false;
+    userbar.classList.remove("show");gate.classList.remove("hidden");setLocked(true);
+    setCloud("☁️ Waiting / รอเข้าสู่ระบบ");saveNowBtn.disabled=true;setLoading(false);signInBtn.disabled=false;
+    return;
+  }
+  guestMode=false;currentUser=user;progressUser=user;cloudReady=false;
+  nameEl.textContent=user.displayName||user.email||"Student";emailEl.textContent=user.email||"";
+  photo.src=user.photoURL||fallbackAvatar;photo.onerror=()=>photo.src=fallbackAvatar;
+  userbar.classList.add("show");setLoading(true);setLocked(true);saveNowBtn.disabled=true;
+  await setupPresence(user);
+  try{
+    const saved=await loadCloud(user);
+    if(saved){restoreUI(saved);setCloud("↻ Restored / โหลดงานเดิมแล้ว","ok")}
+    else setCloud("☁️ New activity · Auto Save ON / งานใหม่","ok");
+    cloudReady=true;saveNowBtn.disabled=false;
+  }catch(e){
+    console.warn("cloud load",e);setCloud("⚠️ Cloud unavailable / Cloud ใช้ไม่ได้","error");
+  }
+  gate.classList.add("hidden");setLocked(false);setLoading(false);signInBtn.disabled=false;
+});
+</script>
+</body>
+</html>
