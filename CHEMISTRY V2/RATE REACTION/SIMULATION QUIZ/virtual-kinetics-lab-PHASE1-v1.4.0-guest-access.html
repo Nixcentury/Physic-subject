@@ -1846,6 +1846,13 @@
     .lab-live-pill{cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:inherit;transition:.16s ease}
     .lab-live-pill:hover{background:#d1fae5;border-color:#6ee7b7;transform:translateY(-1px)}
     .lab-live-pill:focus-visible{outline:3px solid rgba(16,185,129,.22);outline-offset:2px}
+    .lab-cloud-status{font-size:.69rem;font-weight:900;padding:6px 9px;border-radius:999px;white-space:nowrap;border:1px solid #ddd6fe;background:#faf5ff;color:#6b21a8}
+    .lab-cloud-status.ok{border-color:#a7f3d0;background:#ecfdf5;color:#047857}
+    .lab-cloud-status.busy{border-color:#fde68a;background:#fffbeb;color:#92400e}
+    .lab-cloud-status.error{border-color:#fecdd3;background:#fff1f2;color:#be123c}
+    .lab-save-now{border:1px solid #7e22ce;border-radius:10px;background:#7e22ce;color:#fff;padding:7px 10px;font-size:.72rem;font-weight:900;cursor:pointer;white-space:nowrap;font-family:inherit;transition:.16s ease}
+    .lab-save-now:hover:not(:disabled){background:#6b21a8;transform:translateY(-1px)}
+    .lab-save-now:disabled{opacity:.48;cursor:not-allowed;transform:none}
     .lab-monitor-backdrop{display:none;position:fixed;inset:0;z-index:9997;background:rgba(15,23,42,.38);backdrop-filter:blur(2px)}
     .lab-monitor-backdrop.show{display:block}
     .lab-monitor{position:fixed;top:0;right:0;z-index:9998;width:min(430px,94vw);height:100dvh;transform:translateX(104%);transition:transform .22s ease;background:#f8fafc;border-left:1px solid #cbd5e1;box-shadow:-18px 0 50px rgba(15,23,42,.18);display:flex;flex-direction:column}
@@ -1997,19 +2004,19 @@
 <div id="lab-auth-gate" class="lab-auth-gate" aria-modal="true" role="dialog" aria-labelledby="lab-auth-title">
   <div class="lab-auth-shell">
     <section class="lab-auth-visual" aria-hidden="true">
-      <div class="lab-auth-kicker">Virtual Kinetics Lab · Login Test</div>
+      <div class="lab-auth-kicker">Virtual Kinetics Lab · Cloud Save</div>
       <h2>Enter the lab.<br/>เข้าสู่ห้องทดลอง</h2>
-      <p>Sign in once, then test the simulator, scratchboard, and live presence in the same student workflow.<br/>เข้าสู่ระบบครั้งเดียว แล้วทดสอบ simulator กระดานทด และสถานะออนไลน์ใน workflow เดียวกัน</p>
+      <p>Sign in once to restore your lab, autosave progress, use the scratchboard, and join live presence.<br/>เข้าสู่ระบบครั้งเดียวเพื่อเรียกคืนงานเดิม บันทึกอัตโนมัติ ใช้กระดานทด และแสดงสถานะออนไลน์</p>
       <div class="lab-auth-flask">
         <div class="lab-auth-neck"></div>
         <div class="lab-auth-body"><div class="lab-auth-liquid"></div><span class="lab-auth-bubble lab-auth-b1"></span><span class="lab-auth-bubble lab-auth-b2"></span><span class="lab-auth-bubble lab-auth-b3"></span></div>
       </div>
-      <div class="lab-auth-badges"><span class="lab-auth-badge">Google Sign-In</span><span class="lab-auth-badge">Popup for iPad/Safari</span><span class="lab-auth-badge">Live presence</span><span class="lab-auth-badge">Guest access</span></div>
+      <div class="lab-auth-badges"><span class="lab-auth-badge">Google Sign-In</span><span class="lab-auth-badge">Popup for iPad/Safari</span><span class="lab-auth-badge">Live presence</span><span class="lab-auth-badge">Auto Save + Restore</span><span class="lab-auth-badge">Guest access</span></div>
     </section>
     <section class="lab-auth-card">
       <div class="lab-auth-kicker" style="color:#0f766e">STUDENT ACCESS / การเข้าสู่ระบบ</div>
       <h2 id="lab-auth-title" class="lab-auth-title">Virtual Kinetics Lab</h2>
-      <p id="lab-auth-copy" class="lab-auth-copy">เข้าสู่ระบบด้วย Google เพื่อใช้ Live Monitor และการบันทึก Cloud ในรุ่นถัดไป หรือเข้าแบบไม่ล็อกอินเพื่อทดลองกิจกรรมโดยไม่บันทึก<br/>Sign in with Google for live presence and future cloud restore, or continue as a guest to use the lab without saving.</p>
+      <p id="lab-auth-copy" class="lab-auth-copy">เข้าสู่ระบบด้วย Google เพื่อบันทึกอัตโนมัติ เรียกคืนงานเดิม และใช้ Live Monitor หรือเข้าแบบไม่ล็อกอินเพื่อทดลองโดยไม่บันทึก<br/>Sign in with Google for autosave, restore, and live presence, or continue as a guest without saving.</p>
       <div id="lab-auth-local-warning" class="lab-auth-local-warning">⚠️ Google Sign-In ไม่ควรทดสอบจาก <b>file://</b><br/>เปิดไฟล์ผ่าน GitHub Pages หรือ localhost แล้วลองอีกครั้ง</div>
       <button id="lab-google-signin" class="lab-google-btn" type="button"><span class="lab-google-g">G</span><span>Sign in with Google / เข้าสู่ระบบด้วย Google</span></button>
       <button id="lab-guest" class="lab-guest-btn" type="button">Continue without sign-in / เข้าแบบไม่ล็อกอิน</button>
@@ -2024,7 +2031,7 @@
       </div>
       <div id="lab-auth-loading" class="lab-auth-loading">⏳ กำลังยืนยันตัวตนและเชื่อมสถานะออนไลน์...<br/>Authenticating and connecting live presence...</div>
       <div id="lab-auth-error" class="lab-auth-error"></div>
-      <div class="lab-auth-note">🔐 Google mode: authentication + local browser session + live presence. Guest mode: no Firebase identity, no live presence, no saving. Cloud save/restore of the full lab state is intentionally deferred until the restore UI is fully validated.<br/>Google mode มีการยืนยันตัวตนและ Live Presence ส่วน Guest ไม่ส่งตัวตนขึ้น Firebase และไม่บันทึกงาน โดยระบบ Cloud Save/Restore เต็มรูปแบบจะเปิดหลังตรวจการคืนสถานะของทุก simulator แล้ว</div>
+      <div class="lab-auth-note">☁️ Google mode restores previous checkpoint, answers, selections and scratchboard before autosave starts. The top Save Now button is a second manual safety layer. Guest mode does not save.<br/>โหมด Google จะโหลด checkpoint คำตอบ ตัวเลือก และกระดานทดเดิมก่อนเริ่ม Auto Save และมีปุ่ม Save Now ด้านบนเป็นชั้นสำรอง ส่วน Guest ไม่บันทึกงาน</div>
     </section>
   </div>
 </div>
@@ -2041,8 +2048,10 @@
   </div>
   <div class="lab-user-actions">
     <button id="lab-live-pill" class="lab-live-pill" type="button" title="Live presence / ดูคนออนไลน์">📡 <span id="lab-live-count">0</span> online</button>
-    <span id="lab-session-pill" class="lab-session-pill">Live monitor · login test</span>
-    <button id="lab-skip-section" class="lab-skip-section" type="button" title="TEST NAVIGATION: choose a section directly" aria-expanded="false" aria-controls="lab-test-nav">🧭 <span class="lab-skip-label-long">Go to Section / </span>ไป Section</button>
+    <span id="lab-cloud-status" class="lab-cloud-status">☁️ Waiting / รอเข้าสู่ระบบ</span>
+    <button id="lab-save-now" class="lab-save-now" type="button" disabled title="Manual cloud save / บันทึก Cloud ทันที">💾 Save Now / บันทึก</button>
+    <span id="lab-session-pill" class="lab-session-pill">Auto Save + Restore</span>
+    <button id="lab-skip-section" class="lab-skip-section" type="button" title="TEST NAVIGATION: reveal previous answers and jump directly" aria-expanded="false" aria-controls="lab-test-nav">🧭 <span class="lab-skip-label-long">Jump + Reveal / </span>ข้ามไปจุดที่ต้องการ</button>
     <button id="lab-signout" class="lab-signout" type="button">Sign out / ออกจากระบบ</button>
   </div>
 </div>
@@ -2051,8 +2060,8 @@
 <aside id="lab-test-nav" class="lab-test-nav" aria-hidden="true" aria-label="Test section navigator">
   <div class="lab-test-nav-head">
     <div>
-      <div style="font-size:10px;font-weight:1000;letter-spacing:.13em;color:#f5d0fe">TEST NAVIGATION · DIRECT JUMP</div>
-      <div style="font-size:18px;font-weight:1000;margin-top:2px">🧭 Open a section / เปิด Section ที่ต้องการ</div>
+      <div style="font-size:10px;font-weight:1000;letter-spacing:.13em;color:#f5d0fe">TEST NAVIGATION · JUMP + REVEAL</div>
+      <div style="font-size:18px;font-weight:1000;margin-top:2px">🧭 Jump to a step / ข้ามไปจุดที่ต้องการ</div>
       <div style="font-size:11px;color:#f5d0fe;margin-top:2px">เลือกจุดทดสอบได้โดยตรง ไม่ต้องกดข้ามทีละช่วง</div>
     </div>
     <button id="lab-test-nav-close" class="lab-test-nav-close" type="button" aria-label="Close test navigator">×</button>
@@ -4565,6 +4574,7 @@
     }
     scratchLiteActiveStroke=null;scratchLiteActiveInput=null;redrawScratchLite();updateScratchButtons(qId);
     if(window.LAB_STATE) window.LAB_STATE.updatedAt=Date.now();
+    try{window.dispatchEvent(new CustomEvent('kinetics-state-change'));}catch(_){}
   }
 
   function addScratchHandler(target,type,fn,opts){
@@ -4659,15 +4669,15 @@
     const page=currentScratchPage(qId);
     if(page.strokes.length){const stroke=page.strokes.pop();page.undo.push({type:'add',stroke});}
     else if(page.undo.length){const op=page.undo.pop();if(op.type==='restore'&&op.stroke) page.strokes.splice(Math.max(0,Math.min(op.index,page.strokes.length)),0,op.stroke);}
-    redrawScratchLite();updateScratchButtons(qId);
+    redrawScratchLite();updateScratchButtons(qId);if(window.LAB_STATE)window.LAB_STATE.updatedAt=Date.now();try{window.dispatchEvent(new CustomEvent('kinetics-state-change'));}catch(_){}
   };
   window.clearScratchLite=function(qId){
     const page=currentScratchPage(qId);if(!page.strokes.length) return;
-    page.undo.push({type:'clear',strokes:page.strokes.slice()});page.strokes=[];redrawScratchLite();updateScratchButtons(qId);
+    page.undo.push({type:'clear',strokes:page.strokes.slice()});page.strokes=[];redrawScratchLite();updateScratchButtons(qId);if(window.LAB_STATE)window.LAB_STATE.updatedAt=Date.now();try{window.dispatchEvent(new CustomEvent('kinetics-state-change'));}catch(_){}
   };
-  window.prevScratchLitePage=function(qId){const q=ensureScratchQuestion(qId);if(q.pageIndex<=0)return;q.pageIndex--;redrawScratchLite();updateScratchButtons(qId);};
-  window.nextScratchLitePage=function(qId){const q=ensureScratchQuestion(qId);if(q.pageIndex>=q.pages.length-1)return;q.pageIndex++;redrawScratchLite();updateScratchButtons(qId);};
-  window.addScratchLitePage=function(qId){const q=ensureScratchQuestion(qId);q.pages.push({strokes:[],undo:[]});q.pageIndex=q.pages.length-1;redrawScratchLite();updateScratchButtons(qId);};
+  window.prevScratchLitePage=function(qId){const q=ensureScratchQuestion(qId);if(q.pageIndex<=0)return;q.pageIndex--;redrawScratchLite();updateScratchButtons(qId);if(window.LAB_STATE)window.LAB_STATE.updatedAt=Date.now();try{window.dispatchEvent(new CustomEvent('kinetics-state-change'));}catch(_){}};
+  window.nextScratchLitePage=function(qId){const q=ensureScratchQuestion(qId);if(q.pageIndex>=q.pages.length-1)return;q.pageIndex++;redrawScratchLite();updateScratchButtons(qId);if(window.LAB_STATE)window.LAB_STATE.updatedAt=Date.now();try{window.dispatchEvent(new CustomEvent('kinetics-state-change'));}catch(_){}};
+  window.addScratchLitePage=function(qId){const q=ensureScratchQuestion(qId);q.pages.push({strokes:[],undo:[]});q.pageIndex=q.pages.length-1;redrawScratchLite();updateScratchButtons(qId);if(window.LAB_STATE)window.LAB_STATE.updatedAt=Date.now();try{window.dispatchEvent(new CustomEvent('kinetics-state-change'));}catch(_){}};
 
   function scratchPageHasInk(page){return Boolean(page?.strokes?.length);}
   function scratchPageToDataURL(page,width=1400,height=900){
@@ -4758,7 +4768,7 @@
    Existing Station 1–4 flow remains unchanged.
    ============================================================ */
 window.LAB_CONFIG = {
-  version: "phase1-v1.3.9",
+  version: "phase1-v1.4.1",
   station1: {
     species: { answer:"iodine" },
     trial1: { absorbance:0.100, concentration:{value:4.0e-4,tolerance:2.0e-5}, rate:{value:1.0e-5,tolerance:0.08e-5} },
@@ -4835,15 +4845,19 @@ window.LAB_STATE = {
   completed:{}, inputs:{}, selections:{}, attempts:{}, collision:{low:false,wrong:false,success:false}, scratch:{}
 };
 
+function kineticsStateDirty(){
+  if(window.KINETICS_RESTORING) return;
+  try{ window.dispatchEvent(new CustomEvent('kinetics-state-change',{detail:{updatedAt:window.LAB_STATE?.updatedAt||Date.now()}})); }catch(_){}
+}
 window.KineticsLabState = {
-  setInput(id,value){ if(!id) return; window.LAB_STATE.inputs[id]=value; window.LAB_STATE.updatedAt=Date.now(); },
-  setSelection(key,value){ window.LAB_STATE.selections[key]=value; window.LAB_STATE.updatedAt=Date.now(); },
-  setCheckpoint(id){ if(id) window.LAB_STATE.currentCheckpoint=id; window.LAB_STATE.updatedAt=Date.now(); },
+  setInput(id,value){ if(!id) return; window.LAB_STATE.inputs[id]=value; window.LAB_STATE.updatedAt=Date.now(); kineticsStateDirty(); },
+  setSelection(key,value){ window.LAB_STATE.selections[key]=value; window.LAB_STATE.updatedAt=Date.now(); kineticsStateDirty(); },
+  setCheckpoint(id){ if(id) window.LAB_STATE.currentCheckpoint=id; window.LAB_STATE.updatedAt=Date.now(); kineticsStateDirty(); },
   recordAttempt(id,passed){
     const a=window.LAB_STATE.attempts[id] || {count:0,passed:false}; a.count += 1; a.passed = a.passed || !!passed;
-    window.LAB_STATE.attempts[id]=a; if(passed) window.LAB_STATE.completed[id]=true; window.LAB_STATE.updatedAt=Date.now();
+    window.LAB_STATE.attempts[id]=a; if(passed) window.LAB_STATE.completed[id]=true; window.LAB_STATE.updatedAt=Date.now(); kineticsStateDirty();
   },
-  markCollision(key){ if(key in window.LAB_STATE.collision) window.LAB_STATE.collision[key]=true; window.LAB_STATE.updatedAt=Date.now(); },
+  markCollision(key){ if(key in window.LAB_STATE.collision) window.LAB_STATE.collision[key]=true; window.LAB_STATE.updatedAt=Date.now(); kineticsStateDirty(); },
   snapshot(){ return JSON.parse(JSON.stringify(window.LAB_STATE)); }
 };
 </script><script>
@@ -6304,7 +6318,7 @@ window.KineticsLabState = {
   </script><script id="phase1-runtime">
 /* ============================================================
    PHASE 1 v1.3 — STATE CAPTURE + PRINT CENTER
-   No persistence yet. Cloud/local restore belongs to a later phase.
+   Cloud persistence is attached by the login module: restore first, then autosave + manual Save Now.
    ============================================================ */
 (() => {
   const state = window.LAB_STATE;
@@ -6543,7 +6557,8 @@ const FIREBASE_CONFIG = {
   appId: "1:791216427108:web:ccf63a9cc416650877cf71",
   measurementId: "G-0HPEFRXYW5"
 };
-const LAB_ID = "virtual-kinetics-lab-phase1-v136b";
+const LAB_ID = "virtual-kinetics-lab-rate-reaction";
+const PROGRESS_ID = "virtual-kinetics-lab-rate-reaction-v1";
 const LAB_TITLE = "Virtual Kinetics Lab — Reaction Rate Investigation";
 const app = initializeApp(FIREBASE_CONFIG, "kineticsLabV136");
 const auth = getAuth(app);
@@ -6560,6 +6575,8 @@ const guestConfirm=document.getElementById('lab-guest-confirm');
 const guestCancel=document.getElementById('lab-guest-cancel');
 const guestBadge=document.getElementById('lab-guest-badge');
 const sessionPill=document.getElementById('lab-session-pill');
+const cloudStatusEl=document.getElementById('lab-cloud-status');
+const saveNowBtn=document.getElementById('lab-save-now');
 const loading=document.getElementById('lab-auth-loading');
 const errBox=document.getElementById('lab-auth-error');
 const localWarning=document.getElementById('lab-auth-local-warning');
@@ -6598,27 +6615,27 @@ setAppLocked(true);
    This bypasses prerequisite locks for isolated testing. Hide/remove before student production.
 */
 const LAB_TEST_SECTIONS=[
-  {group:'Station 1',id:'exp1',label:'Trial 1 · Prepare',sub:'เตรียมสาร',checkpoint:'s1_trial1_experiment'},
-  {group:'Station 1',id:'measure',label:'Trial 1 · Measure',sub:'Colorimeter',checkpoint:'s1_trial1_concentration'},
-  {group:'Station 1',id:'worksheetCheckpoint',label:'Checkpoint 1',sub:'[I₂] from Abs',checkpoint:'s1_trial1_concentration'},
-  {group:'Station 1',id:'rateCheckpoint',label:'Checkpoint 2',sub:'Reaction rate',checkpoint:'s1_trial1_rate'},
-  {group:'Station 1',id:'trial2Section',label:'Trial 2',sub:'Double persulfate',checkpoint:'s1_trial2_setup'},
-  {group:'Station 1',id:'trial3Section',label:'Trial 3',sub:'Double iodide',checkpoint:'s1_trial3_setup'},
-  {group:'Station 1',id:'notebookSection',label:'Observations',sub:'Compare Trials 1–3',checkpoint:'s1_observation'},
-  {group:'Station 1',id:'trial4Section',label:'Trial 4',sub:'Predict + simulate',checkpoint:'s1_trial4_prediction'},
-  {group:'Station 1',id:'rateLawSection',label:'Checkpoint 3',sub:'Rate law',checkpoint:'s1_rate_law'},
-  {group:'Station 1',id:'kSection',label:'Checkpoint 4',sub:'Find k',checkpoint:'s1_k'},
-  {group:'Station 1',id:'predictionSection',label:'Final Challenge',sub:'Predict → simulate → verify',checkpoint:'s1_predict_verify'},
+  {group:'Station 1',id:'exp1',label:'Trial 1 · Prepare',sub:'เตรียมสาร',checkpoint:'s1_trial1_experiment',priorThrough:'s1_species'},
+  {group:'Station 1',id:'measure',label:'Trial 1 · Measure',sub:'Colorimeter',checkpoint:'s1_trial1_concentration',priorThrough:'s1_species'},
+  {group:'Station 1',id:'worksheetCheckpoint',label:'Checkpoint 1',sub:'[I₂] from Abs',checkpoint:'s1_trial1_concentration',priorThrough:'s1_species'},
+  {group:'Station 1',id:'rateCheckpoint',label:'Checkpoint 2',sub:'Reaction rate',checkpoint:'s1_trial1_rate',priorThrough:'s1_trial1_concentration'},
+  {group:'Station 1',id:'trial2Section',label:'Trial 2',sub:'Double persulfate',checkpoint:'s1_trial2_setup',priorThrough:'s1_trial1_rate'},
+  {group:'Station 1',id:'trial3Section',label:'Trial 3',sub:'Double iodide',checkpoint:'s1_trial3_setup',priorThrough:'s1_trial2_calc'},
+  {group:'Station 1',id:'notebookSection',label:'Observations',sub:'Compare Trials 1–3',checkpoint:'s1_observation',priorThrough:'s1_trial3_calc'},
+  {group:'Station 1',id:'trial4Section',label:'Trial 4',sub:'Predict + simulate',checkpoint:'s1_trial4_prediction',priorThrough:'s1_observation'},
+  {group:'Station 1',id:'rateLawSection',label:'Checkpoint 3',sub:'Rate law',checkpoint:'s1_rate_law',priorThrough:'s1_trial4_calc'},
+  {group:'Station 1',id:'kSection',label:'Checkpoint 4',sub:'Find k',checkpoint:'s1_k',priorThrough:'s1_rate_law'},
+  {group:'Station 1',id:'predictionSection',label:'Final Challenge',sub:'Predict → simulate → verify',checkpoint:'s1_predict_verify',priorThrough:'s1_k'},
 
-  {group:'Station 2',id:'station2Section',label:'2A · Design',sub:'Temperature variable',checkpoint:'s2_design'},
-  {group:'Station 2',id:'compactGraphSection',label:'2B · Tangent Rates',sub:'20 / 30 / 40 °C',checkpoint:'s2_tangent_rates'},
+  {group:'Station 2',id:'station2Section',label:'2A · Design',sub:'Temperature variable',checkpoint:'s2_design',priorThrough:'s1_verification'},
+  {group:'Station 2',id:'compactGraphSection',label:'2B · Tangent Rates',sub:'20 / 30 / 40 °C',checkpoint:'s2_tangent_rates',priorThrough:'s2_design'},
 
-  {group:'Station 3',id:'station3Section',label:'3A · Collision',sub:'Energy + orientation',checkpoint:'s3_prediction'},
-  {group:'Station 3',id:'energyMountainCard',parent:'station3Section',show:true,label:'3B · Energy Mountain',sub:'Ea forward / reverse / ΔH',checkpoint:'s3_energy_profile'},
-  {group:'Station 3',id:'temperatureCard',parent:'station3Section',show:true,label:'3C · Temperature',sub:'Energy distribution',checkpoint:'s3_temperature'},
-  {group:'Station 3',id:'catalystPreviewCard',parent:'station3Section',show:true,label:'3D · Catalyst Preview',sub:'Lower Ea pathway',checkpoint:'s3_catalyst_preview'},
+  {group:'Station 3',id:'station3Section',label:'3A · Collision',sub:'Energy + orientation',checkpoint:'s3_prediction',priorThrough:'s2_summary'},
+  {group:'Station 3',id:'energyMountainCard',parent:'station3Section',show:true,label:'3B · Energy Mountain',sub:'Ea forward / reverse / ΔH',checkpoint:'s3_energy_profile',priorThrough:'s3_conclusion'},
+  {group:'Station 3',id:'temperatureCard',parent:'station3Section',show:true,label:'3C · Temperature',sub:'Energy distribution',checkpoint:'s3_temperature',priorThrough:'s3_energy_profile'},
+  {group:'Station 3',id:'catalystPreviewCard',parent:'station3Section',show:true,label:'3D · Catalyst Preview',sub:'Lower Ea pathway',checkpoint:'s3_catalyst_preview',priorThrough:'s3_temperature'},
 
-  {group:'Station 4',id:'station4Section',label:'Station 4',sub:'Catalyst & inhibitor data',checkpoint:'s4_questions'}
+  {group:'Station 4',id:'station4Section',label:'Station 4',sub:'Catalyst & inhibitor data',checkpoint:'s4_questions',priorThrough:'s3_catalyst_preview'}
 ].map(item=>({...item,el:document.getElementById(item.id),parentEl:item.parent?document.getElementById(item.parent):null})).filter(item=>item.el);
 
 let testToastTimer=null;
@@ -6651,7 +6668,7 @@ function renderTestNavigator(){
       <div class="lab-test-nav-group-title">${group}</div>
       <div class="lab-test-nav-grid">${items.map(({item,index})=>`<button type="button" class="lab-test-dest ${index===currentIndex?'current':''}" data-test-index="${index}">${item.label}<small>${item.sub||''}</small></button>`).join('')}</div>
     </div>`;
-  }).join('') + `<div class="lab-test-nav-note">🧪 Test only / สำหรับทดสอบเท่านั้น: การเปิดตรงจะ bypass prerequisite ของ Section นั้น แต่จะไม่กรอกคำตอบให้อัตโนมัติ</div>`;
+  }).join('') + `<div class="lab-test-nav-note">🧪 Test only / สำหรับทดสอบเท่านั้น: เลือกปลายทางแล้วระบบจะเฉลยและผ่านจุดก่อนหน้าทั้งหมดให้อัตโนมัติ จากนั้นเปิดปลายทางทันที</div>`;
   testNavBody.querySelectorAll('[data-test-index]').forEach(btn=>btn.addEventListener('click',()=>{
     const item=LAB_TEST_SECTIONS[Number(btn.dataset.testIndex)];
     openTestSection(item);
@@ -6678,19 +6695,20 @@ function unlockForTest(el){
 }
 function openTestSection(item){
   if(!item?.el) return;
+  const revealed=item.priorThrough ? (window.KineticsTestReveal?.completePastSteps?.(item.priorThrough)||0) : 0;
   if(item.parentEl) unlockForTest(item.parentEl);
   unlockForTest(item.el);
   if(item.show) item.el.classList.add('show');
-
-  // When jumping to later Station 3 cards, reveal the requested card only plus the parent.
-  // This keeps the chosen target visible without pretending earlier answers were completed.
+  // Prior checker hooks finish on the next task. Set the requested checkpoint again afterward
+  // so the destination, not the last prerequisite, is what gets saved/presented.
   window.KineticsLabState?.setCheckpoint?.(item.checkpoint);
+  setTimeout(()=>window.KineticsLabState?.setCheckpoint?.(item.checkpoint),20);
   closeTestNavigator();
   requestAnimationFrame(()=>{
     const y=item.el.getBoundingClientRect().top+window.scrollY-86;
     window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
   });
-  showTestToast('🧭 TEST: '+item.label+' / เปิด '+item.label);
+  showTestToast('🧭 '+item.label+' · revealed '+revealed+' earlier steps / เฉลยจุดก่อนหน้า '+revealed+' จุด');
 }
 if(skipSectionBtn) skipSectionBtn.addEventListener('click',openTestNavigator);
 if(testNavClose) testNavClose.addEventListener('click',closeTestNavigator);
@@ -6701,6 +6719,19 @@ const fallbackAvatar="data:image/svg+xml;charset=UTF-8,"+encodeURIComponent(`<sv
 let currentUser=null, presenceRef=null, connectedAt=Date.now(), presenceStatus='OFFLINE', lastActiveAt=Date.now(), presenceUnsub=null, connectedUnsub=null;
 let presenceRows={};
 let guestMode=false;
+let progressUser=null;
+let progressSaveTimer=null;
+let cloudReady=false;
+let cloudRestoring=false;
+let lastCloudSavedAt=0;
+let cloudLoadFailed=false;
+
+function setCloudStatus(text,state='idle'){
+  if(!cloudStatusEl) return;
+  cloudStatusEl.textContent=text;
+  cloudStatusEl.className='lab-cloud-status'+(state&&state!=='idle'?' '+state:'');
+}
+function setSaveEnabled(enabled){ if(saveNowBtn) saveNowBtn.disabled=!enabled; }
 
 function setError(msg=''){errBox.textContent=msg;errBox.classList.toggle('show',Boolean(msg));}
 function setLoading(on){loading.style.display=on?'block':'none';signInBtn.style.display=on?'none':'flex';}
@@ -6802,6 +6833,164 @@ async function setupPresence(user){
   });
 }
 
+/* === CLOUD PROGRESS + TEST REVEAL HELPERS === */
+const REPLAY_STEPS=[
+  {key:'s1_species',check:'checkBtn',fill(){ clickData('.option','answer','iodine'); }},
+  {key:'s1_trial1_concentration',check:'checkConcBtn',fill(){ setField('concInput','0.0004'); }},
+  {key:'s1_trial1_rate',check:'checkRateBtn',fill(){ setField('rateInput','0.00001'); }},
+  {key:'s1_trial2_setup',check:'checkTrial2SetupBtn',fill(){ clickData('#persulfateChoices .choice-chip','value','0.040');clickData('#iodideChoices .choice-chip','value','0.020'); }},
+  {key:'s1_trial2_calc',check:'checkTrial2CalcBtn',fill(){ setField('trial2Conc','0.0008');setField('trial2Rate','0.00002'); }},
+  {key:'s1_trial3_setup',check:'checkTrial3SetupBtn',fill(){ clickData('#trial3PersulfateChoices .choice-chip','value','0.020');clickData('#trial3IodideChoices .choice-chip','value','0.040'); }},
+  {key:'s1_trial3_calc',check:'checkTrial3CalcBtn',fill(){ setField('trial3Conc','0.0008');setField('trial3Rate','0.00002'); }},
+  {key:'s1_observation',check:'checkObsBtn',fill(){ setField('obs1','persulfate');setField('obs2','double');setField('obs3','iodide');setField('obs4','double'); }},
+  {key:'s1_trial4_prediction',check:'checkPredictionBtn',fill(){ clickData('.prediction-btn','fold','4'); }},
+  {key:'s1_trial4_calc',check:'checkTrial4CalcBtn',fill(){ setField('trial4Conc','0.0016');setField('trial4Rate','0.00004'); }},
+  {key:'s1_rate_law',check:'checkLawBtn',fill(){ setField('mSelect','1');setField('nSelect','1');setField('mBuild','1');setField('nBuild','1'); }},
+  {key:'s1_k',check:'checkKBtn',fill(){ setField('kInput','0.025'); }},
+  {key:'s1_prediction',check:'checkPredRateBtn',fill(){ setField('predRate','0.00003'); }},
+  {key:'s1_verification',check:'checkVerifyBtn',fill(){ setField('verifyConc','0.0012');setField('verifyRate','0.00003'); }},
+  {key:'s2_design',check:'checkS2DesignBtn',fill(){ setField('s2Independent','temperature');setField('s2Control','concentrations');setField('s2Time','same40'); }},
+  {key:'s2_tangent_rates',check:'checkCompactRatesBtn',fill(){ setField('rate20Graph','0.000005');setField('rate30Graph','0.00001');setField('rate40Graph','0.00002'); }},
+  {key:'s2_summary',check:'checkS2SummaryBtn',fill(){ setField('s2Sum1','more');setField('s2Sum2','higher');setField('s2Sum3','k'); }},
+  {key:'s3_prediction',check:'lockPredictionsBtn',fill(){ setField('predA','no');setField('predB','no');setField('predC','react'); }},
+  {key:'s3_conclusion',check:'checkCollisionConclusionBtn',fill(){ setField('cQ1','energy');setField('cQ2','orientation');setField('cQ3','both');setField('cQ4','ea'); }},
+  {key:'s3_energy_profile',check:'checkEnergyProfileBtn',fill(){ setField('epA','reactants');setField('epB','transition');setField('epC','products');setField('epEaF','80');setField('epEaR','110');setField('epDH','-30');setField('epForwardType','exo');setField('epReverseType','endo'); }},
+  {key:'s3_temperature',check:'checkTemperatureModelBtn',fill(){ setField('tempEa','same');setField('tempFraction','more');setField('tempRate','faster'); }},
+  {key:'s3_catalyst_preview',check:'checkCatalystPreviewBtn',fill(){ setField('catEa','lower');setField('catDH','same'); }},
+  {key:'s4_questions',check:'checkStation4Btn',fill(){ setField('s4Q1','mno2');setField('s4Q2','4');setField('s4Q3','lower');setField('s4Q4','slower');setField('s4Q5','interfere'); }}
+];
+
+function setField(id,value,record=true){
+  const el=document.getElementById(id); if(!el) return;
+  el.value=String(value);
+  if(record) window.KineticsLabState?.setInput?.(id,String(value));
+  try{el.dispatchEvent(new Event('change',{bubbles:true}));}catch(_){}
+}
+function clickData(selector,dataKey,value){
+  const nodes=[...document.querySelectorAll(selector)];
+  const el=nodes.find(n=>String(n.dataset?.[dataKey]??'')===String(value));
+  if(el){ el.disabled=false; el.click(); return true; }
+  return false;
+}
+function forceCheck(id){
+  const btn=document.getElementById(id); if(!btn) return false;
+  btn.disabled=false; btn.click(); return true;
+}
+function replaySavedSelections(saved){
+  const S=saved?.selections||{};
+  if(S.species) clickData('.option','answer',S.species);
+  if(S.trial2Persulfate) clickData('#persulfateChoices .choice-chip','value',S.trial2Persulfate);
+  if(S.trial2Iodide) clickData('#iodideChoices .choice-chip','value',S.trial2Iodide);
+  if(S.trial3Persulfate) clickData('#trial3PersulfateChoices .choice-chip','value',S.trial3Persulfate);
+  if(S.trial3Iodide) clickData('#trial3IodideChoices .choice-chip','value',S.trial3Iodide);
+  if(S.predictionFold) clickData('.prediction-btn','fold',S.predictionFold);
+  if(S.collisionOrientation==='front') document.getElementById('frontBtn')?.click();
+  if(S.collisionOrientation==='side') document.getElementById('sideBtn')?.click();
+}
+function mutateLabStateFromCloud(saved){
+  if(!saved||typeof saved!=='object'||!window.LAB_STATE) return false;
+  const state=window.LAB_STATE;
+  const defaults={version:1,startedAt:Date.now(),updatedAt:Date.now(),currentCheckpoint:'s1_species',completed:{},inputs:{},selections:{},attempts:{},collision:{low:false,wrong:false,success:false},scratch:{}};
+  Object.keys(state).forEach(k=>delete state[k]);
+  Object.assign(state,defaults,JSON.parse(JSON.stringify(saved)));
+  state.completed=state.completed&&typeof state.completed==='object'?state.completed:{};
+  state.inputs=state.inputs&&typeof state.inputs==='object'?state.inputs:{};
+  state.selections=state.selections&&typeof state.selections==='object'?state.selections:{};
+  state.attempts=state.attempts&&typeof state.attempts==='object'?state.attempts:{};
+  state.collision=Object.assign({low:false,wrong:false,success:false},state.collision||{});
+  state.scratch=state.scratch&&typeof state.scratch==='object'?state.scratch:{};
+  return true;
+}
+async function hydrateLabUI(saved){
+  if(!saved) return;
+  window.KINETICS_RESTORING=true; cloudRestoring=true;
+  try{
+    Object.entries(saved.inputs||{}).forEach(([id,val])=>{const el=document.getElementById(id);if(el) el.value=String(val??'');});
+    replaySavedSelections(saved);
+    // Re-run only checkpoints that were already passed. This rebuilds locks, feedback and visible cards.
+    for(const step of REPLAY_STEPS){
+      if(saved.completed?.[step.key]){
+        const b=document.getElementById(step.check); if(b){b.disabled=false;b.click();}
+      }
+    }
+    // Restore collision completion visuals without replaying animations.
+    const C=saved.collision||{};
+    if(C.low) document.getElementById('scenarioLow')?.classList.add('done');
+    if(C.wrong) document.getElementById('scenarioWrong')?.classList.add('done');
+    if(C.success) document.getElementById('scenarioSuccess')?.classList.add('done');
+    if(C.low&&C.wrong&&C.success) document.getElementById('conclusionCard')?.classList.add('show');
+    window.LAB_STATE.currentCheckpoint=saved.currentCheckpoint||window.LAB_STATE.currentCheckpoint||'s1_species';
+  } finally {
+    // Checkpoint listeners use setTimeout(0). Let those UI-rebuild callbacks finish,
+    // then restore the exact saved bookkeeping so a reload does not inflate attempts.
+    await new Promise(r=>setTimeout(r,0));
+    window.LAB_STATE.completed=JSON.parse(JSON.stringify(saved.completed||{}));
+    window.LAB_STATE.attempts=JSON.parse(JSON.stringify(saved.attempts||{}));
+    window.LAB_STATE.currentCheckpoint=saved.currentCheckpoint||'s1_species';
+    window.LAB_STATE.updatedAt=Number(saved.updatedAt)||Date.now();
+    cloudRestoring=false; window.KINETICS_RESTORING=false;
+  }
+}
+async function loadCloudProgress(user){
+  if(!user) return null;
+  cloudLoadFailed=false;
+  setCloudStatus('☁️ Loading / กำลังโหลด','busy');
+  try{
+    const snap=await get(ref(db,`quizProgress/${PROGRESS_ID}/${user.uid}`));
+    if(!snap.exists()){setCloudStatus('☁️ New lab / งานใหม่','idle');return null;}
+    const payload=snap.val();
+    setCloudStatus('↻ Restoring / กำลังคืนงาน','busy');
+    return payload?.state||null;
+  }catch(err){cloudLoadFailed=true;console.warn('lab progress load',err);setCloudStatus('⚠️ Load failed · Save paused / โหลดไม่ได้ · หยุดเซฟ','error');return null;}
+}
+async function saveCloudProgressNow(manual=false){
+  if(guestMode||!progressUser||!cloudReady||cloudRestoring){
+    if(guestMode) setCloudStatus('⚠️ Guest · Not saved','error');
+    return false;
+  }
+  clearTimeout(progressSaveTimer); progressSaveTimer=null;
+  setCloudStatus(manual?'💾 Saving now… / กำลังบันทึก…':'☁️ Saving… / กำลังบันทึก','busy');
+  try{
+    const state=window.KineticsLabState?.snapshot?.()||JSON.parse(JSON.stringify(window.LAB_STATE||{}));
+    await set(ref(db,`quizProgress/${PROGRESS_ID}/${progressUser.uid}`),{
+      version:2,labId:PROGRESS_ID,uid:progressUser.uid,name:safeName(),updatedAt:serverTimestamp(),state
+    });
+    lastCloudSavedAt=Date.now();
+    setCloudStatus(manual?'✓ Saved now / บันทึกแล้ว':'✓ Auto saved / บันทึกอัตโนมัติ','ok');
+    return true;
+  }catch(err){console.warn('lab progress save',err);setCloudStatus('⚠️ Save failed / บันทึกไม่ได้','error');return false;}
+}
+function scheduleCloudSave(){
+  if(guestMode||!progressUser||!cloudReady||cloudRestoring) return;
+  clearTimeout(progressSaveTimer);
+  setCloudStatus('☁️ Saving… / กำลังบันทึก','busy');
+  progressSaveTimer=setTimeout(()=>saveCloudProgressNow(false),750);
+}
+window.addEventListener('kinetics-state-change',scheduleCloudSave);
+window.addEventListener('pagehide',()=>{ if(progressUser&&cloudReady&&!guestMode&&!cloudRestoring) saveCloudProgressNow(false); });
+saveNowBtn?.addEventListener('click',()=>saveCloudProgressNow(true));
+window.KineticsCloud={saveNow:()=>saveCloudProgressNow(true),schedule:scheduleCloudSave,isReady:()=>cloudReady,progressId:PROGRESS_ID};
+
+function completePastSteps(priorThrough){
+  const end=REPLAY_STEPS.findIndex(step=>step.key===priorThrough);
+  if(end<0) return 0;
+  window.KINETICS_RESTORING=true;
+  let count=0;
+  try{
+    for(let i=0;i<=end;i++){
+      const step=REPLAY_STEPS[i];
+      step.fill?.(); forceCheck(step.check);
+      window.LAB_STATE.completed[step.key]=true;
+      window.LAB_STATE.attempts[step.key]=Object.assign({},window.LAB_STATE.attempts[step.key]||{}, {count:Math.max(1,window.LAB_STATE.attempts[step.key]?.count||0),passed:true,revealedByTest:true});
+      count++;
+    }
+    window.LAB_STATE.updatedAt=Date.now();
+  } finally { window.KINETICS_RESTORING=false; }
+  try{window.dispatchEvent(new CustomEvent('kinetics-state-change'));}catch(_){}
+  return count;
+}
+window.KineticsTestReveal={completePastSteps};
+
 function setGuestUI(on){
   guestMode=!!on;
   window.GUEST_MODE=guestMode;
@@ -6814,6 +7003,7 @@ function setGuestUI(on){
     setPresenceDot('IDLE');
     if(livePill) livePill.style.display='none';
     if(sessionPill) sessionPill.textContent='⚠️ Guest · Not saved';
+    setCloudStatus('⚠️ Guest · Not saved','error');setSaveEnabled(false);cloudReady=false;progressUser=null;
     signOutBtn.textContent='Exit guest / ออกจาก Guest';
     userbar.classList.add('show');
     gate.classList.add('hidden');
@@ -6822,7 +7012,7 @@ function setGuestUI(on){
     guestBadge?.classList.remove('show');
     userbar?.classList.remove('guest-mode');
     if(livePill) livePill.style.display='';
-    if(sessionPill) sessionPill.textContent='Live monitor · login test';
+    if(sessionPill) sessionPill.textContent='Auto Save + Restore';
     signOutBtn.textContent='Sign out / ออกจากระบบ';
   }
 }
@@ -6875,7 +7065,7 @@ setInterval(()=>{if(currentUser&&presenceStatus==='ONLINE') writePresence('ONLIN
 try{await setPersistence(auth,browserLocalPersistence);}catch(err){console.warn('auth persistence',err);}
 onAuthStateChanged(auth,async user=>{
   if(!user){
-    currentUser=null;presenceRef=null;presenceStatus='OFFLINE';
+    currentUser=null;progressUser=null;cloudReady=false;presenceRef=null;presenceStatus='OFFLINE';setCloudStatus('☁️ Waiting / รอเข้าสู่ระบบ','idle');setSaveEnabled(false);
     if(presenceUnsub){presenceUnsub();presenceUnsub=null;} if(connectedUnsub){connectedUnsub();connectedUnsub=null;}
     presenceRows={};closeLabMonitor();if(liveCountEl) liveCountEl.textContent='0';renderLabMonitor();
     if(guestMode){
@@ -6886,11 +7076,21 @@ onAuthStateChanged(auth,async user=>{
     setLoading(false);signInBtn.disabled=false;return;
   }
   setGuestUI(false);
-  currentUser=user;nameEl.textContent=user.displayName||user.email||'Student';emailEl.textContent=user.email||'';photo.src=user.photoURL||fallbackAvatar;photo.onerror=()=>{photo.src=fallbackAvatar};
-  userbar.classList.add('show');setLoading(true);
+  currentUser=user;progressUser=user;cloudReady=false;nameEl.textContent=user.displayName||user.email||'Student';emailEl.textContent=user.email||'';photo.src=user.photoURL||fallbackAvatar;photo.onerror=()=>{photo.src=fallbackAvatar};
+  userbar.classList.add('show');setLoading(true);setAppLocked(true);setSaveEnabled(false);
   await setupPresence(user);
+  const savedState=await loadCloudProgress(user);
+  if(savedState){
+    mutateLabStateFromCloud(savedState);
+    await hydrateLabUI(savedState);
+    setCloudStatus('↻ Restored / โหลดงานเดิมแล้ว','ok');
+  }else if(!cloudLoadFailed){
+    setCloudStatus('☁️ New lab · Auto Save ON / งานใหม่','idle');
+  }
+  cloudReady=!cloudLoadFailed;setSaveEnabled(cloudReady);
+  if(cloudLoadFailed) setCloudStatus('⚠️ Cloud unavailable · Save paused / Cloud ใช้ไม่ได้ · หยุดเซฟ','error');
   gate.classList.add('hidden');setAppLocked(false);setLoading(false);signInBtn.disabled=false;
-  document.dispatchEvent(new CustomEvent('kinetics-auth-ready',{detail:{uid:user.uid,name:safeName()}}));
+  document.dispatchEvent(new CustomEvent('kinetics-auth-ready',{detail:{uid:user.uid,name:safeName(),restored:!!savedState}}));
 });
 
 if(window.KineticsLabState?.setCheckpoint){
