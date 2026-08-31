@@ -1567,10 +1567,11 @@
       .labprint-root *{box-sizing:border-box}
       .labprint-page{
         min-height:273mm;
+        height:273mm;
         break-after:page;page-break-after:always;
         position:relative;
-        padding:0;
-        font-size:9.5pt;line-height:1.32;
+        padding:0 0 9mm;
+        font-size:9.5pt;line-height:1.30;
       }
       .labprint-page:last-child{break-after:auto;page-break-after:auto}
       .labprint-head{border-bottom:2px solid #000;padding-bottom:4mm;margin-bottom:4mm}
@@ -1603,6 +1604,24 @@
       .labprint-check{display:inline-block;width:4mm;height:4mm;border:1px solid #000;vertical-align:-.6mm;margin-right:1mm}
       .labprint-nowrap{white-space:nowrap}
       mjx-container{font-size:96%!important}
+      .page1-print .labprint-working{height:18mm}
+      .page1-print .labprint-working.sm{height:10mm}
+      .station2-print .labprint-graph svg{max-height:45mm}
+      .station2-print .labprint-table th,.station2-print .labprint-table td{padding:1.05mm 1.1mm}
+      .station2-print .labprint-box{padding:2mm;margin:1.7mm 0}
+      .station2-print .labprint-note{font-size:7.8pt}
+      .station3-collision-print .labprint-answer-lines{height:11mm}
+      .station3-energy-print .labprint-graph svg{max-height:70mm}
+      .station3-models-print .labprint-graph.compact-print svg{max-height:51mm}
+      .station3-models-print .labprint-box{margin:1.5mm 0;padding:1.8mm}
+      .station4-print .labprint-working{height:15mm}
+      .station4-print .labprint-working.sm{height:8mm}
+      .answer-mode .labprint-page{font-size:9.1pt;line-height:1.25}
+      .answer-mode .labprint-working{height:7mm!important;background:none!important}
+      .answer-mode .labprint-answer-lines{height:auto!important;min-height:7mm!important;background:none!important;border:1px solid #777;padding:1.6mm}
+      .answer-mode .teacher-hide{display:none!important}
+      .answer-mode .labprint-box{margin:1.5mm 0}
+      .answer-mode .record-inline-solution{font-size:8.1pt;line-height:1.25;margin-top:1.2mm;padding-top:1.2mm}
     }
 
   
@@ -1785,6 +1804,29 @@
     .lab-auth-error{display:none;white-space:pre-wrap;margin-top:12px;padding:12px 13px;border:1px solid #fecdd3;border-radius:13px;background:#fff1f2;color:#be123c;font-size:.78rem;line-height:1.5}
     .lab-auth-error.show{display:block}
     .lab-auth-note{margin-top:15px;padding-top:13px;border-top:1px solid #e2e8f0;font-size:.72rem;color:#94a3b8;line-height:1.55}
+    .lab-guest-btn{
+      width:100%;min-height:48px;margin-top:10px;border:1px dashed #a78bfa;border-radius:14px;
+      background:#faf5ff;color:#581c87;font:900 .88rem system-ui,-apple-system,"Segoe UI",sans-serif;cursor:pointer;
+    }
+    .lab-guest-btn:hover{background:#f3e8ff;border-color:#7e22ce}
+    .lab-guest-warning{
+      display:none;margin-top:12px;padding:13px;border:1px solid #f59e0b;border-radius:13px;
+      background:#fffbeb;color:#92400e;font-size:.78rem;font-weight:750;line-height:1.55;
+    }
+    .lab-guest-warning.show{display:block}
+    .lab-guest-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .lab-guest-confirm,.lab-guest-cancel{min-height:42px;border-radius:10px;padding:8px 11px;font-size:.76rem;font-weight:900;cursor:pointer}
+    .lab-guest-confirm{border:1px solid #b45309;background:#b45309;color:#fff}
+    .lab-guest-cancel{border:1px solid #cbd5e1;background:#fff;color:#475569}
+    #lab-guest-badge{
+      display:none;position:fixed;z-index:2147482999;left:max(8px,env(safe-area-inset-left));bottom:max(8px,env(safe-area-inset-bottom));
+      padding:7px 10px;border:1px solid #f59e0b;border-radius:999px;background:#fffbeb;color:#92400e;
+      font:900 11px/1.2 Sarabun,Arial,sans-serif;box-shadow:0 3px 12px rgba(15,23,42,.12);pointer-events:none;
+    }
+    #lab-guest-badge.show{display:block}
+    .lab-userbar.guest-mode{border-color:#f59e0b;background:#fffbeb}
+    .lab-userbar.guest-mode #lab-user-dot{background:#f59e0b}
+    @media print{#lab-guest-badge{display:none!important}}
     .lab-auth-local-warning{display:none;margin:0 0 14px;padding:11px 12px;border:1px solid #fde68a;border-radius:12px;background:#fffbeb;color:#92400e;font-size:.78rem;font-weight:800;line-height:1.5}
     .lab-auth-local-warning.show{display:block}
 
@@ -1962,20 +2004,32 @@
         <div class="lab-auth-neck"></div>
         <div class="lab-auth-body"><div class="lab-auth-liquid"></div><span class="lab-auth-bubble lab-auth-b1"></span><span class="lab-auth-bubble lab-auth-b2"></span><span class="lab-auth-bubble lab-auth-b3"></span></div>
       </div>
-      <div class="lab-auth-badges"><span class="lab-auth-badge">Google Sign-In</span><span class="lab-auth-badge">Popup for iPad/Safari</span><span class="lab-auth-badge">Live presence</span></div>
+      <div class="lab-auth-badges"><span class="lab-auth-badge">Google Sign-In</span><span class="lab-auth-badge">Popup for iPad/Safari</span><span class="lab-auth-badge">Live presence</span><span class="lab-auth-badge">Guest access</span></div>
     </section>
     <section class="lab-auth-card">
       <div class="lab-auth-kicker" style="color:#0f766e">STUDENT ACCESS / การเข้าสู่ระบบ</div>
       <h2 id="lab-auth-title" class="lab-auth-title">Virtual Kinetics Lab</h2>
-      <p id="lab-auth-copy" class="lab-auth-copy">เข้าสู่ระบบด้วย Google เพื่อเปิดกิจกรรมและทดสอบสถานะออนไลน์<br/>Sign in with Google to unlock the activity and test live presence.</p>
+      <p id="lab-auth-copy" class="lab-auth-copy">เข้าสู่ระบบด้วย Google เพื่อใช้ Live Monitor และการบันทึก Cloud ในรุ่นถัดไป หรือเข้าแบบไม่ล็อกอินเพื่อทดลองกิจกรรมโดยไม่บันทึก<br/>Sign in with Google for live presence and future cloud restore, or continue as a guest to use the lab without saving.</p>
       <div id="lab-auth-local-warning" class="lab-auth-local-warning">⚠️ Google Sign-In ไม่ควรทดสอบจาก <b>file://</b><br/>เปิดไฟล์ผ่าน GitHub Pages หรือ localhost แล้วลองอีกครั้ง</div>
       <button id="lab-google-signin" class="lab-google-btn" type="button"><span class="lab-google-g">G</span><span>Sign in with Google / เข้าสู่ระบบด้วย Google</span></button>
+      <button id="lab-guest" class="lab-guest-btn" type="button">Continue without sign-in / เข้าแบบไม่ล็อกอิน</button>
+      <div id="lab-guest-warning" class="lab-guest-warning" role="alert">
+        ⚠️ <b>Guest mode does not save progress / โหมดไม่ล็อกอินจะไม่บันทึกงาน</b><br/>
+        งานจะอยู่เฉพาะในหน้านี้ หากรีโหลด ปิดแท็บ หรือออกจากหน้า คำตอบและกระดานทดอาจหายทั้งหมด<br/>
+        Work stays only in this page. Reloading, closing the tab, or leaving may erase answers and scratchboard notes.
+        <div class="lab-guest-actions">
+          <button id="lab-guest-confirm" class="lab-guest-confirm" type="button">Continue without saving / ยืนยันแบบไม่บันทึก</button>
+          <button id="lab-guest-cancel" class="lab-guest-cancel" type="button">Cancel / กลับ</button>
+        </div>
+      </div>
       <div id="lab-auth-loading" class="lab-auth-loading">⏳ กำลังยืนยันตัวตนและเชื่อมสถานะออนไลน์...<br/>Authenticating and connecting live presence...</div>
       <div id="lab-auth-error" class="lab-auth-error"></div>
-      <div class="lab-auth-note">🔐 Login test build: authentication + local browser session + live presence are enabled. Cloud save/restore of lab answers and handwriting is intentionally not enabled in this build yet.<br/>รุ่นทดสอบล็อกอิน: เปิดระบบยืนยันตัวตน + จำการล็อกอินในเบราว์เซอร์ + สถานะออนไลน์แล้ว แต่ยังไม่เปิด cloud save/restore ของคำตอบและลายมือในรุ่นนี้</div>
+      <div class="lab-auth-note">🔐 Google mode: authentication + local browser session + live presence. Guest mode: no Firebase identity, no live presence, no saving. Cloud save/restore of the full lab state is intentionally deferred until the restore UI is fully validated.<br/>Google mode มีการยืนยันตัวตนและ Live Presence ส่วน Guest ไม่ส่งตัวตนขึ้น Firebase และไม่บันทึกงาน โดยระบบ Cloud Save/Restore เต็มรูปแบบจะเปิดหลังตรวจการคืนสถานะของทุก simulator แล้ว</div>
     </section>
   </div>
 </div>
+
+<div id="lab-guest-badge" aria-live="polite">⚠️ Guest mode · ไม่บันทึก / Not saved</div>
 
 <div id="lab-userbar" class="lab-userbar">
   <div class="lab-user-meta">
@@ -2035,7 +2089,7 @@
         Investigation 1: How does concentration affect reaction rate?<br/>
         การสืบเสาะที่ 1: ความเข้มข้นมีผลต่ออัตราการเกิดปฏิกิริยาอย่างไร?
       </p>
-<div class="print-record-actions"><div class="print-center-title">🖨️ Print Center / ศูนย์พิมพ์เอกสาร</div><button class="print-record-btn blank" id="printBlankRecordBtn" onclick="printLabPack('blank')" type="button">📄 Blank Lab Record / ใบบันทึกเปล่า</button><button class="print-record-btn answer" id="printAnswerRecordBtn" onclick="printLabPack('answer')" type="button">✅ Filled Answer Record / ใบบันทึกพร้อมเฉลย</button><button class="print-record-btn student" id="printMyRecordBtn" onclick="printLabPack('student')" type="button">👤 My Lab Record / บันทึกงานปัจจุบัน</button><button class="print-record-btn notes" id="printWorkingNotesBtn" onclick="printLabPack('notes')" type="button">📝 Working Notes / กระดาษทด</button><div class="print-center-note">Blank = ใบเปล่า • Answer = เฉลยครบ • My Record = ค่าที่ทำอยู่ตอนนี้ • Working Notes = กระดาษทดแยกตาม Station</div></div>
+<div class="print-record-actions"><div class="print-center-title">🖨️ Print Center / ศูนย์พิมพ์เอกสาร</div><button class="print-record-btn blank" id="printBlankRecordBtn" onclick="printLabPack('blank')" type="button">📄 Student Lab Record / ฉบับนักเรียน</button><button class="print-record-btn answer" id="printAnswerRecordBtn" onclick="printLabPack('answer')" type="button">✅ Teacher Answer Key / ฉบับครูพร้อมเฉลย</button><button class="print-record-btn student" id="printMyRecordBtn" onclick="printLabPack('student')" type="button">👤 My Lab Record / บันทึกงานปัจจุบัน</button><button class="print-record-btn notes" id="printWorkingNotesBtn" onclick="printLabPack('notes')" type="button">📝 Working Notes / กระดาษทด</button><div class="print-center-note">Student = ใบบันทึกสำหรับนักเรียน • Teacher = เฉลยครบพร้อมกราฟ Station 3 • My Record = ค่าที่ทำอยู่ตอนนี้ • Working Notes = กระดาษทดแยกตาม Station</div></div>
 </section>
 <section class="card">
 <h2>Reaction / ปฏิกิริยา</h2>
@@ -3975,7 +4029,7 @@
        ========================================================== -->
 <section aria-label="Printable Lab Record" class="labprint-root" id="labPrintRecord">
 <!-- PAGE 1 -->
-<article class="labprint-page">
+<article class="labprint-page page1-print">
 <header class="labprint-head">
 <div class="labprint-kicker">VIRTUAL KINETICS LAB • PRINTABLE LAB RECORD / ใบบันทึกการทดลอง</div>
 <div class="labprint-title">Station 1 — From Measurement to Reaction Rate<br/>สถานีที่ 1 — จากการวัดสู่อัตราการเกิดปฏิกิริยา</div>
@@ -4046,8 +4100,7 @@
 </div>
 </div>
 </div>
-<div class="labprint-note"><b>Record what you observe and show your calculation. / บันทึกสิ่งที่สังเกตและแสดงวิธีคำนวณ</b></div>
-<footer class="labprint-footer"><span>Virtual Kinetics Lab • Station 1</span><span>Page 1 / 6</span></footer>
+<footer class="labprint-footer"><span>Virtual Kinetics Lab • Station 1</span><span>Page 1 / 8</span></footer>
 </article>
 <!-- PAGE 2 -->
 <article class="labprint-page">
@@ -4101,7 +4154,7 @@
 </div>
 <div class="labprint-working sm"></div>
 </div>
-<footer class="labprint-footer"><span>Virtual Kinetics Lab • Station 1</span><span>Page 2 / 6</span></footer>
+<footer class="labprint-footer"><span>Virtual Kinetics Lab • Station 1</span><span>Page 2 / 8</span></footer>
 </article>
 <!-- PAGE 3 -->
 <article class="labprint-page">
@@ -4163,11 +4216,11 @@
 </div>
 </div>
 </div>
-<div class="labprint-soft"><b>Scratch / ทดเพิ่มเติม</b><div class="labprint-working sm"></div></div>
-<footer class="labprint-footer"><span>Virtual Kinetics Lab • Station 1</span><span>Page 3 / 6</span></footer>
+<div class="labprint-soft teacher-hide"><b>Scratch / ทดเพิ่มเติม</b><div class="labprint-working sm"></div></div>
+<footer class="labprint-footer"><span>Virtual Kinetics Lab • Station 1</span><span>Page 3 / 8</span></footer>
 </article>
 <!-- PAGE 4 -->
-<article class="labprint-page">
+<article class="labprint-page station2-print">
 <header class="labprint-head">
 <div class="labprint-kicker">STATION 2 • TEMPERATURE / อุณหภูมิ</div>
 <div class="labprint-title">Instantaneous Rate from Tangent Slope<br/>อัตรา ณ ขณะหนึ่งจากความชันของเส้นสัมผัส</div>
@@ -4226,39 +4279,72 @@
         3. Since the initial concentrations are unchanged, the quantity that increases in the rate law is <span class="labprint-blank sm" data-record-key="s2_sum3_en" data-record-kind="value"></span>.<br/>
         เมื่อความเข้มข้นเริ่มต้นคงเดิม ปริมาณที่เพิ่มขึ้นในกฎอัตราคือ <span class="labprint-blank sm" data-record-key="s2_sum3_th" data-record-kind="value"></span>
 </div>
-<footer class="labprint-footer"><span>Virtual Kinetics Lab • Station 2</span><span>Page 4 / 6</span></footer>
+<footer class="labprint-footer"><span>Virtual Kinetics Lab • Station 2</span><span>Page 4 / 8</span></footer>
 </article>
 <!-- PAGE 5 -->
-<article class="labprint-page">
+<article class="labprint-page station3-collision-print">
 <header class="labprint-head">
-<div class="labprint-kicker">STATION 3 • COLLISION PLAYGROUND / สนามทดลองการชน</div>
-<div class="labprint-title">Predict → Test → Explain<br/>ทำนาย → ทดลอง → อธิบาย</div>
+<div class="labprint-kicker">STATION 3A • COLLISION PLAYGROUND / สนามทดลองการชน</div>
+<div class="labprint-title">Energy + Orientation → Effective Collision<br/>พลังงาน + แนวการชน → การชนที่มีประสิทธิผล</div>
 </header>
-<div class="labprint-soft"><b>Model note / หมายเหตุของแบบจำลอง:</b> “Correct/wrong orientation” represents whether the reactive regions approach suitably. / “แนวถูก/แนวผิด” เป็นแบบจำลองว่า บริเวณที่ทำปฏิกิริยาเข้าหากันได้เหมาะสมหรือไม่</div>
+<div class="labprint-soft"><b>Model note / หมายเหตุของแบบจำลอง:</b> “Correct/wrong orientation” represents whether the reactive regions approach suitably. / “แนวถูก/แนวผิด” เป็นแบบจำลองว่าบริเวณที่ทำปฏิกิริยาเข้าหากันได้เหมาะสมหรือไม่</div>
 <table class="labprint-table">
 <thead><tr><th style="width:9%">Case</th><th>Condition / เงื่อนไข</th><th>Prediction before COLLIDE / ทำนายก่อนชน</th><th>Observed result / ผลที่สังเกต</th><th>Explanation / อธิบาย</th></tr></thead>
 <tbody>
-<tr><td>A</td><td>Correct orientation + low energy<br/>แนวถูก + พลังงานต่ำ</td><td data-record-key="s3_predA" data-record-kind="cell" style="height:23mm"></td><td data-record-key="s3_obsA" data-record-kind="cell"></td><td data-record-key="s3_explainA" data-record-kind="cell"></td></tr>
-<tr><td>B</td><td>High energy + wrong orientation<br/>พลังงานสูง + แนวผิด</td><td data-record-key="s3_predB" data-record-kind="cell" style="height:23mm"></td><td data-record-key="s3_obsB" data-record-kind="cell"></td><td data-record-key="s3_explainB" data-record-kind="cell"></td></tr>
-<tr><td>C</td><td>High energy + correct orientation<br/>พลังงานสูง + แนวถูก</td><td data-record-key="s3_predC" data-record-kind="cell" style="height:23mm"></td><td data-record-key="s3_obsC" data-record-kind="cell"></td><td data-record-key="s3_explainC" data-record-kind="cell"></td></tr>
-</tbody>
-</table>
+<tr><td>A</td><td>Correct orientation + low energy<br/>แนวถูก + พลังงานต่ำ</td><td data-record-key="s3_predA" data-record-kind="cell" style="height:20mm"></td><td data-record-key="s3_obsA" data-record-kind="cell"></td><td data-record-key="s3_explainA" data-record-kind="cell"></td></tr>
+<tr><td>B</td><td>High energy + wrong orientation<br/>พลังงานสูง + แนวผิด</td><td data-record-key="s3_predB" data-record-kind="cell" style="height:20mm"></td><td data-record-key="s3_obsB" data-record-kind="cell"></td><td data-record-key="s3_explainB" data-record-kind="cell"></td></tr>
+<tr><td>C</td><td>High energy + correct orientation<br/>พลังงานสูง + แนวถูก</td><td data-record-key="s3_predC" data-record-kind="cell" style="height:20mm"></td><td data-record-key="s3_obsC" data-record-kind="cell"></td><td data-record-key="s3_explainC" data-record-kind="cell"></td></tr>
+</tbody></table>
 <h3 class="labprint-h3">Conclusion questions / คำถามสรุป</h3>
 <div class="labprint-q"><b>1. Why did Case A fail even though the orientation was correct?<br/>ทำไม Case A ไม่เกิดปฏิกิริยา ทั้งที่แนวการชนถูกต้อง?</b><div class="labprint-answer-lines" data-record-key="s3_cq1" data-record-kind="lines"></div></div>
 <div class="labprint-q"><b>2. Why did Case B fail even though the collision energy was high enough?<br/>ทำไม Case B ไม่เกิดปฏิกิริยา ทั้งที่พลังงานการชนเพียงพอ?</b><div class="labprint-answer-lines" data-record-key="s3_cq2" data-record-kind="lines"></div></div>
 <div class="labprint-q"><b>3. What is required for an effective collision?<br/>การชนที่มีประสิทธิผลต้องมีเงื่อนไขใด?</b><div class="labprint-answer-lines" data-record-key="s3_cq3" data-record-kind="lines"></div></div>
 <div class="labprint-q"><b>4. In the collision model, what does the energy threshold represent?<br/>ในแบบจำลองการชน เกณฑ์พลังงานแทนอะไร?</b><div class="labprint-answer-lines" data-record-key="s3_cq4" data-record-kind="lines"></div></div>
-<div class="labprint-box">
-<b>Complete the model / เติมแบบจำลอง</b><br/><br/>
-        Effective collision requires / การชนที่มีประสิทธิผลต้องมี<br/>
-<div style="text-align:center;margin:3mm 0"><span class="labprint-blank xl" data-record-key="s3_model_energy" data-record-kind="value"></span> <b>AND / และ</b> <span class="labprint-blank xl" data-record-key="s3_model_orientation" data-record-kind="value"></span></div>
-        \(T\uparrow\Rightarrow\) more particles with \(E\ge E_a\) \(\Rightarrow\) <span class="labprint-blank xl" data-record-key="s3_model_temp" data-record-kind="value"></span> \(\Rightarrow r\uparrow\)
-      </div>
-<div class="labprint-soft"><b>Scratch / ทดเพิ่มเติม</b><div class="labprint-working sm"></div></div>
-<footer class="labprint-footer"><span>Virtual Kinetics Lab • Station 3</span><span>Page 5 / 6</span></footer>
+<div class="labprint-box"><b>Complete the collision model / เติมแบบจำลองการชน</b><div style="text-align:center;margin:2mm 0"><span class="labprint-blank xl" data-record-key="s3_model_energy" data-record-kind="value"></span> <b>AND / และ</b> <span class="labprint-blank xl" data-record-key="s3_model_orientation" data-record-kind="value"></span></div></div>
+<footer class="labprint-footer"><span>Virtual Kinetics Lab • Station 3A</span><span>Page 5 / 8</span></footer>
 </article>
+
 <!-- PAGE 6 -->
-<article class="labprint-page">
+<article class="labprint-page station3-energy-print">
+<header class="labprint-head"><div class="labprint-kicker">STATION 3B • ENERGY MOUNTAIN / ภูเขาพลังงาน</div><div class="labprint-title">Read Forward and Reverse Activation Energy<br/>อ่านพลังงานก่อกัมมันต์ไปข้างหน้าและย้อนกลับ</div></header>
+<div class="labprint-soft"><b>Given / กำหนด:</b> A = 40, B = 120, C = 10 kJ mol⁻¹. Identify what A, B and C represent, then calculate the energy quantities. / ระบุว่า A, B และ C แทนอะไร แล้วคำนวณปริมาณพลังงาน</div>
+<div class="labprint-graph"><svg role="img" aria-label="Reaction energy profile A B C" viewBox="0 0 680 330">
+<line x1="70" y1="270" x2="625" y2="270" stroke="#000" stroke-width="3"/><line x1="70" y1="270" x2="70" y2="35" stroke="#000" stroke-width="3"/>
+<text x="350" y="312" text-anchor="middle" font-size="15" font-weight="700">Reaction progress / ความก้าวหน้าของปฏิกิริยา</text><text x="20" y="150" transform="rotate(-90 20 150)" text-anchor="middle" font-size="15" font-weight="700">Potential energy / พลังงานศักย์</text>
+<path d="M110 205 C205 205 245 190 310 72 C342 25 382 55 415 125 C455 205 500 228 570 235" fill="none" stroke="#000" stroke-width="5"/>
+<circle cx="110" cy="205" r="7" fill="#fff" stroke="#000" stroke-width="3"/><circle cx="338" cy="50" r="7" fill="#fff" stroke="#000" stroke-width="3"/><circle cx="570" cy="235" r="7" fill="#fff" stroke="#000" stroke-width="3"/>
+<text x="105" y="188" font-size="17" font-weight="900">A</text><text x="348" y="48" font-size="17" font-weight="900">B‡</text><text x="578" y="232" font-size="17" font-weight="900">C</text><text x="100" y="225" font-size="13">40 kJ mol⁻¹</text><text x="350" y="75" font-size="13">120 kJ mol⁻¹</text><text x="520" y="258" font-size="13">10 kJ mol⁻¹</text>
+</svg></div>
+<div class="labprint-grid3"><div class="labprint-box"><b>A represents / A แทน</b><br/><span class="labprint-blank lg" data-record-key="s3_ep_A" data-record-kind="value"></span></div><div class="labprint-box"><b>B‡ represents / B‡ แทน</b><br/><span class="labprint-blank lg" data-record-key="s3_ep_B" data-record-kind="value"></span></div><div class="labprint-box"><b>C represents / C แทน</b><br/><span class="labprint-blank lg" data-record-key="s3_ep_C" data-record-kind="value"></span></div></div>
+<table class="labprint-table"><thead><tr><th>Quantity / ปริมาณ</th><th>Working / วิธีคำนวณ</th><th>Answer / คำตอบ</th></tr></thead><tbody>
+<tr><td>Forward Eₐ / Eₐ ไปข้างหน้า</td><td>B − A = 120 − 40</td><td><span class="labprint-blank sm" data-record-key="s3_ep_eaf" data-record-kind="value"></span> kJ mol⁻¹</td></tr>
+<tr><td>Reverse Eₐ / Eₐ ย้อนกลับ</td><td>B − C = 120 − 10</td><td><span class="labprint-blank sm" data-record-key="s3_ep_ear" data-record-kind="value"></span> kJ mol⁻¹</td></tr>
+<tr><td>ΔH forward / ΔH ไปข้างหน้า</td><td>C − A = 10 − 40</td><td><span class="labprint-blank sm" data-record-key="s3_ep_dh" data-record-kind="value"></span> kJ mol⁻¹</td></tr></tbody></table>
+<div class="labprint-grid2"><div class="labprint-box"><b>Forward reaction / ปฏิกิริยาไปข้างหน้า</b><br/><span class="labprint-blank lg" data-record-key="s3_ep_forward" data-record-kind="value"></span></div><div class="labprint-box"><b>Reverse reaction / ปฏิกิริยาย้อนกลับ</b><br/><span class="labprint-blank lg" data-record-key="s3_ep_reverse" data-record-kind="value"></span></div></div>
+<div class="labprint-soft"><b>Key relationship / ความสัมพันธ์สำคัญ</b><br/>Eₐ,forward = E<sub>TS</sub> − E<sub>R</sub> • Eₐ,reverse = E<sub>TS</sub> − E<sub>P</sub> • ΔH = E<sub>P</sub> − E<sub>R</sub></div>
+<footer class="labprint-footer"><span>Virtual Kinetics Lab • Station 3B</span><span>Page 6 / 8</span></footer></article>
+
+<!-- PAGE 7 -->
+<article class="labprint-page station3-models-print">
+<header class="labprint-head"><div class="labprint-kicker">STATION 3C–3D • TEMPERATURE &amp; CATALYST / อุณหภูมิและตัวเร่ง</div><div class="labprint-title">Energy Distribution → Lower-Eₐ Pathway<br/>การกระจายพลังงาน → เส้นทางที่ Eₐ ต่ำลง</div></header>
+<h2 class="labprint-h2">3C · Temperature / อุณหภูมิ</h2>
+<div class="labprint-graph compact-print"><svg role="img" aria-label="Qualitative particle energy distribution" viewBox="0 0 680 280">
+<line x1="70" y1="225" x2="625" y2="225" stroke="#000" stroke-width="3"/><line x1="70" y1="225" x2="70" y2="30" stroke="#000" stroke-width="3"/>
+<text x="350" y="266" text-anchor="middle" font-size="15" font-weight="700">Particle energy / พลังงานของอนุภาค</text><text x="20" y="135" transform="rotate(-90 20 135)" text-anchor="middle" font-size="15" font-weight="700">Number of particles / จำนวนอนุภาค</text>
+<path d="M75 225 C115 95 175 58 230 72 C300 90 340 148 420 200 C485 221 545 225 610 225" fill="none" stroke="#000" stroke-width="4"/><path d="M75 225 C120 135 190 100 270 108 C355 116 410 155 480 194 C535 216 575 223 610 225" fill="none" stroke="#000" stroke-width="4" stroke-dasharray="10 6"/>
+<line x1="430" y1="35" x2="430" y2="225" stroke="#000" stroke-width="3" stroke-dasharray="5 5"/><text x="440" y="52" font-size="15" font-weight="900">Eₐ</text><text x="180" y="54" font-size="13" font-weight="700">lower T: solid / T ต่ำ: เส้นทึบ</text><text x="330" y="100" font-size="13" font-weight="700">higher T: dashed / T สูง: เส้นประ</text><text x="485" y="205" font-size="12" font-weight="700">E ≥ Eₐ →</text>
+</svg></div>
+<div class="labprint-grid3"><div class="labprint-box"><b>When T increases, Eₐ... / เมื่อ T เพิ่ม Eₐ...</b><br/><span class="labprint-blank lg" data-record-key="s3_temp_ea" data-record-kind="value"></span></div><div class="labprint-box"><b>Particles with E ≥ Eₐ... / อนุภาคที่มี E ≥ Eₐ...</b><br/><span class="labprint-blank lg" data-record-key="s3_temp_fraction" data-record-kind="value"></span></div><div class="labprint-box"><b>Reaction rate... / อัตราปฏิกิริยา...</b><br/><span class="labprint-blank lg" data-record-key="s3_temp_rate" data-record-kind="value"></span></div></div>
+<h2 class="labprint-h2" style="margin-top:3mm">3D · Catalyst Preview / ตัวเร่งปฏิกิริยา</h2>
+<div class="labprint-graph compact-print"><svg role="img" aria-label="Catalyzed and uncatalyzed energy profiles" viewBox="0 0 680 270">
+<line x1="70" y1="220" x2="625" y2="220" stroke="#000" stroke-width="3"/><line x1="70" y1="220" x2="70" y2="30" stroke="#000" stroke-width="3"/><text x="350" y="260" text-anchor="middle" font-size="15" font-weight="700">Reaction progress / ความก้าวหน้าของปฏิกิริยา</text><text x="20" y="130" transform="rotate(-90 20 130)" text-anchor="middle" font-size="15" font-weight="700">Potential energy / พลังงานศักย์</text>
+<path d="M105 175 C210 175 235 160 300 55 C330 15 372 35 405 95 C445 165 490 190 570 195" fill="none" stroke="#000" stroke-width="5"/><path d="M105 175 C205 175 240 158 300 115 C340 84 375 88 410 125 C455 180 500 192 570 195" fill="none" stroke="#000" stroke-width="4" stroke-dasharray="9 6"/><text x="420" y="48" font-size="13" font-weight="700">without catalyst / ไม่ใช้ตัวเร่ง</text><text x="420" y="116" font-size="13" font-weight="700">with catalyst / ใช้ตัวเร่ง</text><text x="95" y="198" font-size="12" font-weight="700">Reactants</text><text x="535" y="214" font-size="12" font-weight="700">Products</text>
+</svg></div>
+<div class="labprint-grid2"><div class="labprint-box"><b>A catalyst changes Eₐ by... / ตัวเร่งทำให้ Eₐ...</b><br/><span class="labprint-blank xl" data-record-key="s3_cat_ea" data-record-kind="value"></span></div><div class="labprint-box"><b>What happens to ΔH? / ΔH เปลี่ยนอย่างไร?</b><br/><span class="labprint-blank xl" data-record-key="s3_cat_dh" data-record-kind="value"></span></div></div>
+<div class="labprint-soft"><b>Station 3 model / แบบจำลอง Station 3</b><br/>T ↑ → more particles with E ≥ Eₐ → <span class="labprint-blank lg" data-record-key="s3_model_temp" data-record-kind="value"></span> → r ↑</div>
+<footer class="labprint-footer"><span>Virtual Kinetics Lab • Station 3C–3D</span><span>Page 7 / 8</span></footer></article>
+<!-- PAGE 8 -->
+<article class="labprint-page station4-print">
 <header class="labprint-head">
 <div class="labprint-kicker">STATION 4 • CATALYST &amp; INHIBITOR / ตัวเร่งและตัวหน่วง</div>
 <div class="labprint-title">Read Data → Calculate → Explain<br/>อ่านข้อมูล → คำนวณ → อธิบาย</div>
@@ -4295,7 +4381,7 @@
           <div class="labprint-working sm"></div>
 </div>
 </div>
-<footer class="labprint-footer"><span>Virtual Kinetics Lab • Station 4 • Activity complete</span><span>Page 6 / 6</span></footer>
+<footer class="labprint-footer"><span>Virtual Kinetics Lab • Station 4 • Activity complete</span><span>Page 8 / 8</span></footer>
 </article>
 </section><section aria-label="Dynamic Printable Lab Record" class="labprint-root labprint-dynamic" id="labPrintDynamicHost"></section>
 <script id="kinetics-scratchboard-v135">
@@ -4672,7 +4758,7 @@
    Existing Station 1–4 flow remains unchanged.
    ============================================================ */
 window.LAB_CONFIG = {
-  version: "phase1-v1.3.7",
+  version: "phase1-v1.3.9",
   station1: {
     species: { answer:"iodine" },
     trial1: { absorbance:0.100, concentration:{value:4.0e-4,tolerance:2.0e-5}, rate:{value:1.0e-5,tolerance:0.08e-5} },
@@ -4731,6 +4817,10 @@ window.LAB_CONFIG = {
     s3_cq3:"Enough energy + proper orientation / พลังงานเพียงพอ + แนวการชนเหมาะสม",
     s3_cq4:"Activation energy, Ea / พลังงานก่อกัมมันต์ Ea",
     s3_model_energy:"Ecollision ≥ Ea", s3_model_orientation:"proper orientation / แนวเหมาะสม", s3_model_temp:"more effective collisions / การชนที่มีประสิทธิผลมากขึ้น",
+    s3_ep_A:"Reactants / สารตั้งต้น", s3_ep_B:"Transition state / activated complex / สถานะแทรนซิชัน", s3_ep_C:"Products / ผลิตภัณฑ์",
+    s3_ep_eaf:"80", s3_ep_ear:"110", s3_ep_dh:"-30", s3_ep_forward:"Exothermic / คายพลังงาน", s3_ep_reverse:"Endothermic / ดูดพลังงาน",
+    s3_temp_ea:"Stays the same / คงเดิม", s3_temp_fraction:"Increase / มีมากขึ้น", s3_temp_rate:"Increases / เพิ่มขึ้น",
+    s3_cat_ea:"Lowering it via an alternative pathway / ลดลงด้วยเส้นทางปฏิกิริยาใหม่", s3_cat_dh:"Stays the same / คงเดิม",
     s4_q1:"Add MnO₂ / เติม MnO₂", s4_q2:"4",
     s4_q3:"Alternative pathway with lower Ea / เส้นทางใหม่ที่มี Ea ต่ำกว่า",
     s4_q4:"Slower / ช้าลง",
@@ -6319,6 +6409,11 @@ window.KineticsLabState = {
       case 's3_obsC': return C.success?'Reaction occurs / เกิดปฏิกิริยา':''; case 's3_explainC': return C.success?'Enough energy + proper orientation / พลังงานพอ + แนวเหมาะสม':'';
       case 's3_cq1': return selectText('cQ1'); case 's3_cq2': return selectText('cQ2'); case 's3_cq3': return selectText('cQ3'); case 's3_cq4': return selectText('cQ4');
       case 's3_model_energy': return has('s3_conclusion')?'Ecollision ≥ Ea':''; case 's3_model_orientation': return has('s3_conclusion')?'proper orientation / แนวเหมาะสม':''; case 's3_model_temp': return has('s3_temperature')?'more effective collisions / การชนที่มีประสิทธิผลมากขึ้น':'';
+      case 's3_ep_A': return selectText('epA'); case 's3_ep_B': return selectText('epB'); case 's3_ep_C': return selectText('epC');
+      case 's3_ep_eaf': return val('epEaF'); case 's3_ep_ear': return val('epEaR'); case 's3_ep_dh': return val('epDH');
+      case 's3_ep_forward': return selectText('epForwardType'); case 's3_ep_reverse': return selectText('epReverseType');
+      case 's3_temp_ea': return selectText('tempEa'); case 's3_temp_fraction': return selectText('tempFraction'); case 's3_temp_rate': return selectText('tempRate');
+      case 's3_cat_ea': return selectText('catEa'); case 's3_cat_dh': return selectText('catDH');
       case 's4_q1': return selectText('s4Q1'); case 's4_q2': return val('s4Q2'); case 's4_q3': return selectText('s4Q3'); case 's4_q4': return selectText('s4Q4'); case 's4_q5': return selectText('s4Q5');
       case 's4_catalyst_model': return has('s4_questions')?'lower-Ea pathway / เส้นทางที่ Ea ต่ำกว่า':''; case 's4_inhibitor_model': return has('s4_questions')?'interferes with reaction pathway / รบกวนเส้นทางปฏิกิริยา':'';
       default:
@@ -6357,6 +6452,7 @@ window.KineticsLabState = {
 
   function buildDynamicRecord(mode){
     host.innerHTML=rawTemplateHTML;
+    host.classList.toggle('answer-mode', mode==='answer');
     host.setAttribute('aria-hidden','false');
     fillClone(host,mode);
   }
@@ -6407,7 +6503,7 @@ window.KineticsLabState = {
   }
   function cleanup(){
     document.body.classList.remove('printing-lab-record','print-mode-blank','print-mode-dynamic');
-    host.innerHTML=''; host.setAttribute('aria-hidden','true');
+    host.innerHTML=''; host.classList.remove('answer-mode'); host.setAttribute('aria-hidden','true');
   }
 
   window.KineticsPrintCenter={
@@ -6458,6 +6554,12 @@ provider.setCustomParameters({ prompt:"select_account" });
 const gate=document.getElementById('lab-auth-gate');
 const signInBtn=document.getElementById('lab-google-signin');
 const signOutBtn=document.getElementById('lab-signout');
+const guestBtn=document.getElementById('lab-guest');
+const guestWarning=document.getElementById('lab-guest-warning');
+const guestConfirm=document.getElementById('lab-guest-confirm');
+const guestCancel=document.getElementById('lab-guest-cancel');
+const guestBadge=document.getElementById('lab-guest-badge');
+const sessionPill=document.getElementById('lab-session-pill');
 const loading=document.getElementById('lab-auth-loading');
 const errBox=document.getElementById('lab-auth-error');
 const localWarning=document.getElementById('lab-auth-local-warning');
@@ -6556,7 +6658,7 @@ function renderTestNavigator(){
   }));
 }
 function openTestNavigator(){
-  if(!currentUser) return;
+  if(!currentUser && !guestMode) return;
   renderTestNavigator();
   testNav?.classList.add('show');
   testNavBackdrop?.classList.add('show');
@@ -6598,6 +6700,7 @@ document.addEventListener('keydown',event=>{ if(event.key==='Escape') closeTestN
 const fallbackAvatar="data:image/svg+xml;charset=UTF-8,"+encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><rect width='100%' height='100%' fill='#e2e8f0'/><circle cx='40' cy='31' r='15' fill='#94a3b8'/><path d='M14 72c2-17 13-26 26-26s24 9 26 26' fill='#94a3b8'/></svg>`);
 let currentUser=null, presenceRef=null, connectedAt=Date.now(), presenceStatus='OFFLINE', lastActiveAt=Date.now(), presenceUnsub=null, connectedUnsub=null;
 let presenceRows={};
+let guestMode=false;
 
 function setError(msg=''){errBox.textContent=msg;errBox.classList.toggle('show',Boolean(msg));}
 function setLoading(on){loading.style.display=on?'block':'none';signInBtn.style.display=on?'none':'flex';}
@@ -6699,8 +6802,48 @@ async function setupPresence(user){
   });
 }
 
+function setGuestUI(on){
+  guestMode=!!on;
+  window.GUEST_MODE=guestMode;
+  guestBadge?.classList.toggle('show',guestMode);
+  userbar?.classList.toggle('guest-mode',guestMode);
+  if(guestMode){
+    nameEl.textContent='Guest / ไม่ล็อกอิน';
+    emailEl.textContent='Session only · งานไม่ถูกบันทึก';
+    photo.src=fallbackAvatar;
+    setPresenceDot('IDLE');
+    if(livePill) livePill.style.display='none';
+    if(sessionPill) sessionPill.textContent='⚠️ Guest · Not saved';
+    signOutBtn.textContent='Exit guest / ออกจาก Guest';
+    userbar.classList.add('show');
+    gate.classList.add('hidden');
+    setAppLocked(false);
+  }else{
+    guestBadge?.classList.remove('show');
+    userbar?.classList.remove('guest-mode');
+    if(livePill) livePill.style.display='';
+    if(sessionPill) sessionPill.textContent='Live monitor · login test';
+    signOutBtn.textContent='Sign out / ออกจากระบบ';
+  }
+}
+
+async function enterGuestMode(){
+  setError('');
+  // Prevent a previously remembered Firebase account from silently continuing in guest mode.
+  try{ await signOut(auth); }catch(_){ }
+  if(presenceUnsub){try{presenceUnsub();}catch(_){} presenceUnsub=null;}
+  if(connectedUnsub){try{connectedUnsub();}catch(_){} connectedUnsub=null;}
+  currentUser=null;presenceRef=null;presenceRows={};closeLabMonitor();renderLabMonitor();
+  setGuestUI(true);
+}
+
+guestBtn?.addEventListener('click',()=>{setError('');guestWarning?.classList.add('show');});
+guestCancel?.addEventListener('click',()=>guestWarning?.classList.remove('show'));
+guestConfirm?.addEventListener('click',async()=>{guestWarning?.classList.remove('show');await enterGuestMode();});
+
 if(location.protocol==='file:') localWarning.classList.add('show');
 signInBtn.addEventListener('click',async()=>{
+  setGuestUI(false);
   setError('');signInBtn.disabled=true;
   if(location.protocol==='file:'){setError('เปิดไฟล์ผ่าน GitHub Pages หรือ localhost ก่อนทดสอบ Google Sign-In\nOpen this build from GitHub Pages or localhost before testing Google Sign-In.');signInBtn.disabled=false;return;}
   try{setLoading(true);await setPersistence(auth,browserLocalPersistence);await signInWithPopup(auth,provider);}
@@ -6713,6 +6856,11 @@ signInBtn.addEventListener('click',async()=>{
 });
 
 signOutBtn.addEventListener('click',async()=>{
+  if(guestMode){
+    // Guest exit intentionally reloads so in-memory answers/scratch do not leak into a later signed-in session.
+    location.reload();
+    return;
+  }
   try{if(presenceRef) await update(presenceRef,{status:'OFFLINE',lastActiveAt:serverTimestamp()});}catch{}
   await signOut(auth);
 });
@@ -6729,10 +6877,15 @@ onAuthStateChanged(auth,async user=>{
   if(!user){
     currentUser=null;presenceRef=null;presenceStatus='OFFLINE';
     if(presenceUnsub){presenceUnsub();presenceUnsub=null;} if(connectedUnsub){connectedUnsub();connectedUnsub=null;}
-    presenceRows={};closeLabMonitor();userbar.classList.remove('show');gate.classList.remove('hidden');setPresenceDot('OFFLINE');if(liveCountEl) liveCountEl.textContent='0';renderLabMonitor();
-    setAppLocked(true);
+    presenceRows={};closeLabMonitor();if(liveCountEl) liveCountEl.textContent='0';renderLabMonitor();
+    if(guestMode){
+      setGuestUI(true);
+      setLoading(false);signInBtn.disabled=false;return;
+    }
+    userbar.classList.remove('show');gate.classList.remove('hidden');setPresenceDot('OFFLINE');setAppLocked(true);
     setLoading(false);signInBtn.disabled=false;return;
   }
+  setGuestUI(false);
   currentUser=user;nameEl.textContent=user.displayName||user.email||'Student';emailEl.textContent=user.email||'';photo.src=user.photoURL||fallbackAvatar;photo.onerror=()=>{photo.src=fallbackAvatar};
   userbar.classList.add('show');setLoading(true);
   await setupPresence(user);
@@ -6748,7 +6901,7 @@ if(window.KineticsLabState?.setCheckpoint){
   };
 }
 
-window.KineticsAuth={getUser:()=>currentUser,labId:LAB_ID};
+window.KineticsAuth={getUser:()=>currentUser,isGuest:()=>guestMode,labId:LAB_ID};
 </script>
 
 </body>
