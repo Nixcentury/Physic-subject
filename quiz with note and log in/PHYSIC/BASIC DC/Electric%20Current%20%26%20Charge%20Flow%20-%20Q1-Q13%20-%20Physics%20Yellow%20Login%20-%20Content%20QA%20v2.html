@@ -2151,2203 +2151,502 @@ window.addEventListener('DOMContentLoaded', () => {
 <!-- ============================================================
    ✏️✏️✏️ MASTER QUIZ TEMPLATE · EDIT ZONE ✏️✏️✏️
 
-   Science M3 · Chapter 8 · Topic 8.2 · V8.9 AI CHAT SPLIT
-   Axial Tilt + Seasons + Day/Night + Solstices + Equinoxes + Polar Phenomena + Moon Phases + Tides + Moonrise/Moonset
-   - 32 questions
+   Physics · Electric Current, Area & Drift Speed
+   กระแสไฟฟ้า · พื้นที่หน้าตัด · ความเร็วลอยเลื่อน
+   - 13 questions
    - bilingual TH/EN
    - 7 choices per question
    - shared inline SVG visuals
-   - self-contained question wording; source-grounded content from Topic 8.2
+   - REVIEW CHECK includes explicit question links (Q1–Q13)
    ============================================================ -->
 <script>
+
+/* ============================================================
+   PHYSICS LOGIN THEME · YELLOW / GOLD
+   Appearance only. Engine remains untouched.
+   ============================================================ */
+(function applyPhysicsYellowLoginTheme(){
+  const css = `
+    .fb-auth-visual{
+      color:#111827 !important;
+      background:
+        radial-gradient(circle at 88% 8%,rgba(255,255,255,.30) 0 95px,transparent 96px),
+        radial-gradient(circle at 8% 96%,rgba(255,255,255,.22) 0 85px,transparent 86px),
+        linear-gradient(145deg,#facc15 0%,#f59e0b 56%,#d97706 100%) !important;
+    }
+    .fb-auth-kicker{ color:#422006 !important; }
+    .fb-auth-visual h2{ color:#111827 !important; }
+    .fb-auth-visual p{ color:#422006 !important; }
+    .fb-auth-badge{
+      color:#422006 !important;
+      border-color:rgba(66,32,6,.32) !important;
+      background:rgba(255,255,255,.28) !important;
+    }
+    .fb-auth-card-kicker{ color:#b45309 !important; }
+  `;
+  const style = document.createElement('style');
+  style.id = 'physics-yellow-login-theme';
+  style.textContent = css;
+  document.head.appendChild(style);
+})();
+
 
 /* ============================================================
    QUICK EDIT MAP / แผนที่แก้ Quiz เรื่องใหม่
 
    แก้เฉพาะใน MASTER QUIZ TEMPLATE · EDIT ZONE นี้เท่านั้น
-
-   STEP 1  LOGIN VISUAL
-           แก้ LOGIN_VISUAL_SVG
-
-   STEP 2  QUESTION VISUALS
-           แก้/เพิ่ม Shared SVG ที่ใช้ในโจทย์
-
-   STEP 3  QUIZ INFO + BRANDING
-           แก้ quizId, branding, title, subtitle,
-           completionTitle, loginVisualAlt
-
-   STEP 4  REVIEW CHECK
-           แก้ reviewCheck ให้ครอบคลุมสิ่งที่ต้องรู้ก่อนสอบ
-
-   STEP 5  QUESTIONS
-           แก้เฉพาะ questions: [ ... ]
-
-   กติกา Question:
-   - id ไม่ซ้ำ
-   - questionTH + questionEN
-   - hints อย่างน้อย 3
-   - solutionTH + solutionEN
-   - options 7 ตัวเลือก
-   - isCorrect:true เพียง 1 ตัวเลือก
-
-   ห้ามย้าย/แก้ engine นอก END EDIT ZONE
    ============================================================ */
-
-/* ============================================================
-  TOPIC 8.2 · V8.9 · AI CHAT SPLIT
-  Phenomena due to the Axial Tilt
-  ข้อ 1–32: Axial Tilt · Seasons · Day/Night · Solstice · Equinox · Polar Phenomena · Moon Phases · Tides · Moonrise/Moonset · Catch-up details
-  Content basis: Focus Smart Plus Science M3, Topic 8.2 · questions do not require external reference
-  ============================================================ */
 
 /* ============================================================
    SECTION 1 · LOGIN VISUAL / ภาพหน้าล็อกอิน
    ============================================================ */
-
-/* ============================================================
-  LOGIN VISUAL / ภาพหน้าล็อกอิน
-  เปลี่ยนภาพนี้เมื่อทำ Quiz เรื่องใหม่ โดยไม่ต้องแตะ engine
-  ============================================================ */
-
 const LOGIN_VISUAL_SVG = `
-<svg viewBox="0 0 560 260"
-     style="display:block;width:100%;height:auto;overflow:visible;"
-     role="img"
-     aria-label="Sun, tilted Earth and Moon">
-
+<svg viewBox="0 0 560 280" style="display:block;width:100%;height:auto;overflow:visible;" role="img" aria-label="Battery, conducting wire, current arrow and drifting electrons">
   <defs>
-    <marker id="loginArrow82" markerWidth="9" markerHeight="9"
-            refX="7" refY="3" orient="auto">
-      <path d="M0,0 L0,6 L8,3 z" fill="rgba(255,255,255,.92)"/>
+    <marker id="currentArrowEC" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#fff"/>
     </marker>
   </defs>
+  <rect x="68" y="92" width="86" height="96" rx="14" fill="rgba(255,255,255,.12)" stroke="#fff" stroke-width="4"/>
+  <line x1="89" y1="126" x2="89" y2="154" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+  <line x1="78" y1="140" x2="100" y2="140" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+  <line x1="122" y1="130" x2="122" y2="150" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+  <text x="111" y="214" text-anchor="middle" font-size="14" font-weight="900" fill="#fff" style="font-family:Sarabun,Arial,sans-serif;">BATTERY</text>
 
-  <g transform="translate(78 130)">
-    <circle r="37" fill="#fde68a" stroke="#fff" stroke-width="4"/>
-    ${Array.from({length:12},(_,i)=>{
-      const a=i*Math.PI/6;
-      const x1=Math.cos(a)*48, y1=Math.sin(a)*48;
-      const x2=Math.cos(a)*65, y2=Math.sin(a)*65;
-      return `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}"
-                    x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}"
-                    stroke="rgba(255,255,255,.86)" stroke-width="4"
-                    stroke-linecap="round"/>`;
-    }).join("")}
-    <text x="0" y="6" text-anchor="middle" font-size="16" font-weight="900"
-          fill="#92400e" style="font-family:Sarabun,Arial,sans-serif;">SUN</text>
+  <path d="M154 116 H430 Q474 116 474 158 Q474 200 430 200 H154" fill="none" stroke="rgba(255,255,255,.94)" stroke-width="15" stroke-linecap="round"/>
+  <path d="M170 100 H408" fill="none" stroke="#fff" stroke-width="4" marker-end="url(#currentArrowEC)"/>
+  <text x="290" y="82" text-anchor="middle" font-size="15" font-weight="900" fill="#fff" style="font-family:Sarabun,Arial,sans-serif;">Conventional current I</text>
+
+  <g fill="#dbeafe" stroke="#fff" stroke-width="1.2">
+    <circle cx="195" cy="116" r="7"/><circle cx="245" cy="116" r="7"/><circle cx="300" cy="116" r="7"/><circle cx="355" cy="116" r="7"/><circle cx="410" cy="116" r="7"/>
+    <circle cx="430" cy="200" r="7"/><circle cx="375" cy="200" r="7"/><circle cx="320" cy="200" r="7"/><circle cx="265" cy="200" r="7"/><circle cx="210" cy="200" r="7"/>
   </g>
-
-  <g stroke="rgba(255,255,255,.55)" stroke-width="2.5"
-     marker-end="url(#loginArrow82)">
-    <line x1="145" y1="94" x2="240" y2="94"/>
-    <line x1="151" y1="130" x2="240" y2="130"/>
-    <line x1="145" y1="166" x2="240" y2="166"/>
+  <g font-size="11" font-weight="900" fill="#1e3a8a" style="font-family:Arial,sans-serif;">
+    <text x="195" y="120" text-anchor="middle">−</text><text x="245" y="120" text-anchor="middle">−</text><text x="300" y="120" text-anchor="middle">−</text><text x="355" y="120" text-anchor="middle">−</text><text x="410" y="120" text-anchor="middle">−</text>
+    <text x="430" y="204" text-anchor="middle">−</text><text x="375" y="204" text-anchor="middle">−</text><text x="320" y="204" text-anchor="middle">−</text><text x="265" y="204" text-anchor="middle">−</text><text x="210" y="204" text-anchor="middle">−</text>
   </g>
-
-  <circle cx="320" cy="130" r="69"
-          fill="rgba(219,234,254,.22)" stroke="#fff" stroke-width="4"/>
-  <path d="M260 119 Q320 146 380 119" fill="none"
-        stroke="rgba(255,255,255,.66)" stroke-width="2.2"
-        stroke-dasharray="6 5"/>
-  <line x1="286" y1="43" x2="354" y2="217"
-        stroke="#fff" stroke-width="4" stroke-linecap="round"/>
-  <circle cx="286" cy="43" r="5" fill="#fff"/>
-  <circle cx="354" cy="217" r="5" fill="#fff"/>
-  <path d="M288 94 q18-16 35-6 q7 7-3 17 q-18 8-32-11z"
-        fill="rgba(255,255,255,.30)"/>
-  <path d="M337 139 q20-8 29 6 q-4 21-22 25 q-14-10-7-31z"
-        fill="rgba(255,255,255,.26)"/>
-
-  <text x="320" y="238" text-anchor="middle" font-size="14" font-weight="900"
-        fill="#fff" style="font-family:Sarabun,Arial,sans-serif;">
-    23.5° axial tilt / แกนโลกเอียง
-  </text>
-
-  <ellipse cx="320" cy="130" rx="155" ry="104" fill="none"
-           stroke="rgba(255,255,255,.33)" stroke-width="2.2"
-           stroke-dasharray="8 7"/>
-
-  <circle cx="467" cy="88" r="25" fill="#e5e7eb" stroke="#fff" stroke-width="3"/>
-  <path d="M455 76 q10-7 18 1 q-3 7-11 7 q-6-1-7-8z" fill="#cbd5e1"/>
-  <path d="M468 94 q7-4 12 2 q-3 7-10 5 q-5-2-2-7z" fill="#cbd5e1"/>
-  <text x="467" y="126" text-anchor="middle" font-size="13" font-weight="900"
-        fill="#fff" style="font-family:Sarabun,Arial,sans-serif;">MOON</text>
-
-  <path d="M430 188 C470 166 488 134 484 109" fill="none"
-        stroke="rgba(255,255,255,.82)" stroke-width="3"
-        marker-end="url(#loginArrow82)"/>
-
-  <g font-size="12" font-weight="850" fill="rgba(255,255,255,.94)"
-     style="font-family:Sarabun,Arial,sans-serif;">
-    <text x="190" y="28">Seasons</text>
-    <text x="385" y="28">Moon phases</text>
-    <text x="438" y="224">Tides</text>
-  </g>
+  <path d="M403 224 H224" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="3" marker-end="url(#currentArrowEC)"/>
+  <text x="315" y="252" text-anchor="middle" font-size="14" font-weight="850" fill="#fff" style="font-family:Sarabun,Arial,sans-serif;">electron drift / การลอยเลื่อนของอิเล็กตรอน</text>
+  <text x="280" y="272" text-anchor="middle" font-size="12" fill="rgba(255,255,255,.88)" style="font-family:Sarabun,Arial,sans-serif;">I = Q/t = neAvᵈ</text>
 </svg>`;
 
 /* ============================================================
-   SECTION 2 · QUESTION VISUALS / SVG ที่ใช้ในโจทย์
+   SECTION 2 · SHARED QUESTION VISUALS
    ============================================================ */
-
-const AXIAL_TILT_SVG = `
+const WIRE_AREA_SVG = `
 <div style="max-width:760px;margin:14px auto;">
-<svg viewBox="0 0 760 360"
-   style="width:100%;height:auto;border:1px solid #d1d5db;border-radius:14px;background:white;"
-   role="img"
-   aria-label="Earth with a tilted rotational axis and a vertical reference line">
- <defs>
-  <marker id="arrTilt" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
-   <path d="M0,0 L0,6 L9,3 z" fill="#334155"/>
-  </marker>
- </defs>
-
- <text x="380" y="36" text-anchor="middle" font-size="19" font-weight="800" fill="#0f172a"
-    style="font-family:Sarabun,Arial,sans-serif;">Earth's axial tilt / การเอียงของแกนโลก</text>
-
- <!-- vertical reference -->
- <line x1="380" y1="62" x2="380" y2="306" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="8 7"/>
- <text x="394" y="78" font-size="14" fill="#64748b" style="font-family:Sarabun,Arial,sans-serif;">reference</text>
-
- <!-- Earth -->
- <circle cx="380" cy="184" r="92" fill="#eff6ff" stroke="#334155" stroke-width="3"/>
- <path d="M296 170 Q380 205 464 170" fill="none" stroke="#64748b" stroke-width="2.2" stroke-dasharray="6 5"/>
- <text x="380" y="214" text-anchor="middle" font-size="15" fill="#475569"
-    style="font-family:Sarabun,Arial,sans-serif;">Equator / เส้นศูนย์สูตร</text>
-
- <!-- tilted axis -->
- <line x1="325" y1="61" x2="435" y2="307" stroke="#111827" stroke-width="5"/>
- <circle cx="380" cy="184" r="5" fill="#111827"/>
- <text x="304" y="58" text-anchor="middle" font-size="17" font-weight="800" fill="#111827">N</text>
- <text x="452" y="322" text-anchor="middle" font-size="17" font-weight="800" fill="#111827">S</text>
-
- <!-- angle cue -->
- <path d="M380 100 A58 58 0 0 0 355 106" fill="none" stroke="#2563eb" stroke-width="4"/>
- <text x="344" y="104" text-anchor="end" font-size="22" font-weight="900" fill="#1d4ed8">?</text>
-
- <text x="380" y="340" text-anchor="middle" font-size="14" fill="#64748b"
-    style="font-family:Sarabun,Arial,sans-serif;">The axis passes through the Earth and remains tilted while Earth revolves around the Sun.</text>
+<svg viewBox="0 0 760 350" style="width:100%;height:auto;border:1px solid #d1d5db;border-radius:14px;background:white;" role="img" aria-label="Two circular wire cross sections with diameters d and 2d">
+  <text x="380" y="34" text-anchor="middle" font-size="19" font-weight="800" fill="#0f172a" style="font-family:Sarabun,Arial,sans-serif;">Diameter and cross-sectional area / เส้นผ่านศูนย์กลางและพื้นที่หน้าตัด</text>
+  <g transform="translate(220 185)">
+    <circle r="50" fill="#eff6ff" stroke="#2563eb" stroke-width="3"/>
+    <line x1="-50" y1="0" x2="50" y2="0" stroke="#111827" stroke-width="2.5"/>
+    <line x1="-50" y1="-8" x2="-50" y2="8" stroke="#111827" stroke-width="2.5"/>
+    <line x1="50" y1="-8" x2="50" y2="8" stroke="#111827" stroke-width="2.5"/>
+    <text x="0" y="-68" text-anchor="middle" font-size="18" font-weight="900" fill="#111827">Wire A</text>
+    <text x="0" y="8" text-anchor="middle" font-size="18" font-weight="900" fill="#1d4ed8">d</text>
+  </g>
+  <g transform="translate(540 185)">
+    <circle r="100" fill="#f0fdf4" stroke="#16a34a" stroke-width="3"/>
+    <line x1="-100" y1="0" x2="100" y2="0" stroke="#111827" stroke-width="2.5"/>
+    <line x1="-100" y1="-8" x2="-100" y2="8" stroke="#111827" stroke-width="2.5"/>
+    <line x1="100" y1="-8" x2="100" y2="8" stroke="#111827" stroke-width="2.5"/>
+    <text x="0" y="-116" text-anchor="middle" font-size="18" font-weight="900" fill="#111827">Wire B</text>
+    <text x="0" y="8" text-anchor="middle" font-size="18" font-weight="900" fill="#166534">2d</text>
+  </g>
+  <text x="380" y="330" text-anchor="middle" font-size="15" fill="#64748b" style="font-family:Sarabun,Arial,sans-serif;">For a circular wire: A = πd²/4</text>
 </svg>
 </div>`;
 
-const SEASONS_ORBIT_SVG = `
-<div style="max-width:820px;margin:14px auto;">
-<svg viewBox="0 0 820 520"
-   style="width:100%;height:auto;border:1px solid #d1d5db;border-radius:14px;background:white;"
-   role="img"
-   aria-label="Earth at four positions around the Sun with its axis tilted in the same direction">
- <defs>
-  <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
-   <stop offset="0%" stop-color="#fef3c7"/>
-   <stop offset="100%" stop-color="#f59e0b"/>
-  </radialGradient>
- </defs>
-
- <text x="410" y="34" text-anchor="middle" font-size="19" font-weight="800" fill="#0f172a"
-    style="font-family:Sarabun,Arial,sans-serif;">Earth's revolution and axial tilt / การโคจรและแกนเอียงของโลก</text>
-
- <ellipse cx="410" cy="270" rx="285" ry="176" fill="none" stroke="#cbd5e1" stroke-width="3" stroke-dasharray="10 8"/>
- <circle cx="410" cy="270" r="55" fill="url(#sunGlow)" stroke="#d97706" stroke-width="3"/>
- <text x="410" y="276" text-anchor="middle" font-size="18" font-weight="900" fill="#7c2d12">SUN</text>
-
- <!-- Position A: left, north tilted toward Sun -->
- <g transform="translate(125 270)">
-  <circle cx="0" cy="0" r="45" fill="#eff6ff" stroke="#334155" stroke-width="2.5"/>
-  <line x1="-23" y1="-58" x2="23" y2="58" stroke="#111827" stroke-width="4"/>
-  <text x="-30" y="-62" font-size="14" font-weight="900">N</text>
-  <text x="28" y="69" font-size="14" font-weight="900">S</text>
-  <text x="0" y="-78" text-anchor="middle" font-size="18" font-weight="900" fill="#1d4ed8">A</text>
- </g>
-
- <!-- Position B: top -->
- <g transform="translate(410 94)">
-  <circle cx="0" cy="0" r="45" fill="#eff6ff" stroke="#334155" stroke-width="2.5"/>
-  <line x1="-23" y1="-58" x2="23" y2="58" stroke="#111827" stroke-width="4"/>
-  <text x="-30" y="-62" font-size="14" font-weight="900">N</text>
-  <text x="28" y="69" font-size="14" font-weight="900">S</text>
-  <text x="0" y="-78" text-anchor="middle" font-size="18" font-weight="900" fill="#1d4ed8">B</text>
- </g>
-
- <!-- Position C: right, north tilted away from Sun -->
- <g transform="translate(695 270)">
-  <circle cx="0" cy="0" r="45" fill="#eff6ff" stroke="#334155" stroke-width="2.5"/>
-  <line x1="-23" y1="-58" x2="23" y2="58" stroke="#111827" stroke-width="4"/>
-  <text x="-30" y="-62" font-size="14" font-weight="900">N</text>
-  <text x="28" y="69" font-size="14" font-weight="900">S</text>
-  <text x="0" y="-78" text-anchor="middle" font-size="18" font-weight="900" fill="#1d4ed8">C</text>
- </g>
-
- <!-- Position D: bottom -->
- <g transform="translate(410 446)">
-  <circle cx="0" cy="0" r="45" fill="#eff6ff" stroke="#334155" stroke-width="2.5"/>
-  <line x1="-23" y1="-58" x2="23" y2="58" stroke="#111827" stroke-width="4"/>
-  <text x="-30" y="-62" font-size="14" font-weight="900">N</text>
-  <text x="28" y="69" font-size="14" font-weight="900">S</text>
-  <text x="0" y="-78" text-anchor="middle" font-size="18" font-weight="900" fill="#1d4ed8">D</text>
- </g>
-
- <text x="410" y="505" text-anchor="middle" font-size="14" fill="#64748b"
-    style="font-family:Sarabun,Arial,sans-serif;">Notice: the axes remain parallel, pointing in the same direction throughout the orbit.</text>
-</svg>
-</div>`;
-
-const DAY_NIGHT_SVG = `
-<div style="max-width:760px;margin:14px auto;">
-<svg viewBox="0 0 760 340"
-   style="width:100%;height:auto;border:1px solid #d1d5db;border-radius:14px;background:white;"
-   role="img"
-   aria-label="Sun illuminating one half of Earth while Earth rotates">
- <defs>
-  <clipPath id="earthClip"><circle cx="520" cy="170" r="92"/></clipPath>
-  <marker id="rotArrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
-   <path d="M0,0 L0,6 L9,3 z" fill="#2563eb"/>
-  </marker>
- </defs>
- <text x="380" y="34" text-anchor="middle" font-size="19" font-weight="800" fill="#0f172a"
-    style="font-family:Sarabun,Arial,sans-serif;">Day and night / กลางวันและกลางคืน</text>
-
- <circle cx="130" cy="170" r="54" fill="#fde68a" stroke="#d97706" stroke-width="3"/>
- <text x="130" y="176" text-anchor="middle" font-size="17" font-weight="900" fill="#7c2d12">SUN</text>
-
- <g stroke="#f59e0b" stroke-width="3" opacity=".65">
-  <line x1="194" y1="112" x2="412" y2="112"/>
-  <line x1="194" y1="145" x2="412" y2="145"/>
-  <line x1="194" y1="178" x2="412" y2="178"/>
-  <line x1="194" y1="211" x2="412" y2="211"/>
-  <line x1="194" y1="244" x2="412" y2="244"/>
- </g>
-
- <circle cx="520" cy="170" r="92" fill="#e5e7eb" stroke="#334155" stroke-width="3"/>
- <rect x="428" y="78" width="92" height="184" fill="#fff7ed" clip-path="url(#earthClip)"/>
- <rect x="520" y="78" width="92" height="184" fill="#334155" clip-path="url(#earthClip)" opacity=".88"/>
- <text x="474" y="176" text-anchor="middle" font-size="16" font-weight="900" fill="#92400e">DAY</text>
- <text x="566" y="176" text-anchor="middle" font-size="16" font-weight="900" fill="#ffffff">NIGHT</text>
-
- <path d="M455 75 C515 25 605 55 626 120" fill="none" stroke="#2563eb" stroke-width="4" marker-end="url(#rotArrow)"/>
- <text x="555" y="52" text-anchor="middle" font-size="15" font-weight="800" fill="#1d4ed8"
-    style="font-family:Sarabun,Arial,sans-serif;">rotation / การหมุน</text>
-</svg>
-</div>`;
-
-const SUN_PATH_SVG = `
-<div style="max-width:780px;margin:14px auto;">
-<svg viewBox="0 0 780 390"
-   style="width:100%;height:auto;border:1px solid #d1d5db;border-radius:14px;background:white;"
-   role="img"
-   aria-label="Two apparent Sun paths across the sky, one high and one low">
- <defs>
-  <marker id="pathArrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
-   <path d="M0,0 L0,6 L9,3 z" fill="#334155"/>
-  </marker>
- </defs>
- <text x="390" y="34" text-anchor="middle" font-size="19" font-weight="800" fill="#0f172a"
-    style="font-family:Sarabun,Arial,sans-serif;">Apparent path of the Sun / เส้นทางปรากฏของดวงอาทิตย์</text>
- <line x1="70" y1="310" x2="710" y2="310" stroke="#334155" stroke-width="3"/>
- <text x="72" y="336" font-size="14" fill="#64748b">East</text>
- <text x="678" y="336" font-size="14" fill="#64748b">West</text>
-
- <path d="M100 300 Q390 55 680 300" fill="none" stroke="#2563eb" stroke-width="5" marker-end="url(#pathArrow)"/>
- <path d="M140 300 Q390 175 640 300" fill="none" stroke="#64748b" stroke-width="5" stroke-dasharray="10 7" marker-end="url(#pathArrow)"/>
-
- <circle cx="390" cy="96" r="18" fill="#fde68a" stroke="#d97706" stroke-width="2"/>
- <circle cx="390" cy="238" r="15" fill="#fde68a" stroke="#d97706" stroke-width="2"/>
- <text x="390" y="72" text-anchor="middle" font-size="17" font-weight="900" fill="#1d4ed8">Path A</text>
- <text x="390" y="214" text-anchor="middle" font-size="17" font-weight="900" fill="#475569">Path B</text>
-</svg>
-</div>`;
-
-const SOLSTICE_EQUINOX_SVG = `
-<div style="max-width:820px;margin:14px auto;">
-<svg viewBox="0 0 820 520"
-   style="width:100%;height:auto;border:1px solid #d1d5db;border-radius:14px;background:white;"
-   role="img"
-   aria-label="Four key dates in Earth's yearly orbit: 20 March, 21 June, 22 September, and 21 December">
- <text x="410" y="34" text-anchor="middle" font-size="19" font-weight="800" fill="#0f172a"
-    style="font-family:Sarabun,Arial,sans-serif;">Key dates in the year / วันสำคัญระหว่างปี</text>
- <ellipse cx="410" cy="270" rx="285" ry="176" fill="none" stroke="#cbd5e1" stroke-width="3"/>
- <circle cx="410" cy="270" r="52" fill="#fde68a" stroke="#d97706" stroke-width="3"/>
- <text x="410" y="276" text-anchor="middle" font-size="17" font-weight="900" fill="#7c2d12">SUN</text>
-
- <g transform="translate(125 270)">
-  <circle r="38" fill="#eff6ff" stroke="#334155" stroke-width="2.5"/>
-  <line x1="-19" y1="-50" x2="19" y2="50" stroke="#111827" stroke-width="3.5"/>
-  <text x="0" y="-58" text-anchor="middle" font-size="16" font-weight="900" fill="#1d4ed8">21 June</text>
- </g>
- <g transform="translate(695 270)">
-  <circle r="38" fill="#eff6ff" stroke="#334155" stroke-width="2.5"/>
-  <line x1="-19" y1="-50" x2="19" y2="50" stroke="#111827" stroke-width="3.5"/>
-  <text x="0" y="-58" text-anchor="middle" font-size="16" font-weight="900" fill="#1d4ed8">21 December</text>
- </g>
- <g transform="translate(410 94)">
-  <circle r="38" fill="#eff6ff" stroke="#334155" stroke-width="2.5"/>
-  <line x1="-19" y1="-50" x2="19" y2="50" stroke="#111827" stroke-width="3.5"/>
-  <text x="0" y="-58" text-anchor="middle" font-size="16" font-weight="900" fill="#1d4ed8">20 March</text>
- </g>
- <g transform="translate(410 446)">
-  <circle r="38" fill="#eff6ff" stroke="#334155" stroke-width="2.5"/>
-  <line x1="-19" y1="-50" x2="19" y2="50" stroke="#111827" stroke-width="3.5"/>
-  <text x="0" y="68" text-anchor="middle" font-size="16" font-weight="900" fill="#1d4ed8">22 September</text>
- </g>
-</svg>
-</div>`;
-
-
-
-/* ============================================================
-  ROUND 2–4 SHARED SVG VISUALS
-  Polar phenomena · Moon phases · Tides · Moonrise/Moonset
-  ============================================================ */
-
-const POLAR_PHENOMENA_SVG = `
-<div style="max-width:780px;margin:14px auto;">
-<svg viewBox="0 0 780 350"
-   style="width:100%;height:auto;border:1px solid #d1d5db;border-radius:14px;background:white;"
-   role="img"
-   aria-label="Two polar-region scenes showing continuous daylight and continuous darkness">
- <text x="390" y="34" text-anchor="middle" font-size="19" font-weight="800" fill="#0f172a"
-    style="font-family:Sarabun,Arial,sans-serif;">Polar phenomena / ปรากฏการณ์บริเวณขั้วโลก</text>
-
- <rect x="38" y="62" width="330" height="235" rx="16" fill="#fff7ed" stroke="#cbd5e1" stroke-width="2"/>
- <circle cx="202" cy="145" r="35" fill="#fde68a" stroke="#d97706" stroke-width="3"/>
- <path d="M72 246 Q202 180 334 246" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
- <text x="202" y="280" text-anchor="middle" font-size="16" font-weight="900" fill="#92400e"
-    style="font-family:Sarabun,Arial,sans-serif;">Scene A · Sun visible for 24 h</text>
-
- <rect x="412" y="62" width="330" height="235" rx="16" fill="#1f2937" stroke="#64748b" stroke-width="2"/>
- <circle cx="578" cy="145" r="33" fill="#f8fafc" opacity=".85"/>
- <circle cx="592" cy="135" r="33" fill="#1f2937"/>
- <circle cx="485" cy="110" r="3" fill="#fff"/><circle cx="670" cy="128" r="3" fill="#fff"/>
- <circle cx="627" cy="92" r="2.5" fill="#fff"/><circle cx="520" cy="170" r="2.5" fill="#fff"/>
- <path d="M446 246 Q578 180 708 246" fill="#334155" stroke="#94a3b8" stroke-width="2"/>
- <text x="578" y="280" text-anchor="middle" font-size="16" font-weight="900" fill="#ffffff"
-    style="font-family:Sarabun,Arial,sans-serif;">Scene B · Night lasts for 24 h</text>
-
- <text x="390" y="326" text-anchor="middle" font-size="14" fill="#64748b"
-    style="font-family:Sarabun,Arial,sans-serif;">Identify each phenomenon and the solstice associated with it.</text>
-</svg>
-</div>`;
-
-const MOON_LIGHT_SVG = `
-<div style="max-width:760px;margin:14px auto;">
-<svg viewBox="0 0 760 310"
-   style="width:100%;height:auto;border:1px solid #d1d5db;border-radius:14px;background:white;"
-   role="img"
-   aria-label="Sunlight travels from the Sun to the Moon and reflected light travels from the Moon to Earth">
- <defs>
-  <marker id="moonLightArrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
-   <path d="M0,0 L0,6 L9,3 z" fill="#334155"/>
-  </marker>
- </defs>
- <text x="380" y="34" text-anchor="middle" font-size="19" font-weight="800" fill="#0f172a"
-    style="font-family:Sarabun,Arial,sans-serif;">Why can we see the Moon? / เหตุใดเราจึงมองเห็นดวงจันทร์</text>
- <circle cx="120" cy="155" r="50" fill="#fde68a" stroke="#d97706" stroke-width="3"/>
- <text x="120" y="161" text-anchor="middle" font-size="16" font-weight="900" fill="#7c2d12">SUN</text>
- <circle cx="385" cy="155" r="42" fill="#f8fafc" stroke="#64748b" stroke-width="3"/>
- <text x="385" y="161" text-anchor="middle" font-size="15" font-weight="900" fill="#334155">MOON</text>
- <circle cx="640" cy="155" r="48" fill="#eff6ff" stroke="#2563eb" stroke-width="3"/>
- <text x="640" y="161" text-anchor="middle" font-size="15" font-weight="900" fill="#1d4ed8">EARTH</text>
- <line x1="178" y1="132" x2="330" y2="132" stroke="#f59e0b" stroke-width="5" marker-end="url(#moonLightArrow)"/>
- <line x1="432" y1="182" x2="580" y2="182" stroke="#94a3b8" stroke-width="5" marker-end="url(#moonLightArrow)"/>
- <text x="254" y="112" text-anchor="middle" font-size="14" fill="#92400e">sunlight</text>
- <text x="507" y="214" text-anchor="middle" font-size="14" fill="#475569">reflected light</text>
-</svg>
-</div>`;
-
-const MOON_PHASES_ORBIT_SVG = `
-<div style="max-width:820px;margin:14px auto;">
-<svg viewBox="0 0 820 560"
-   style="width:100%;height:auto;border:1px solid #d1d5db;border-radius:14px;background:white;"
-   role="img"
-   aria-label="Moon at eight labeled positions around Earth with the Sun to the right">
- <text x="410" y="34" text-anchor="middle" font-size="19" font-weight="800" fill="#0f172a"
-    style="font-family:Sarabun,Arial,sans-serif;">Moon's revolution around Earth / การโคจรของดวงจันทร์รอบโลก</text>
- <ellipse cx="360" cy="295" rx="225" ry="200" fill="none" stroke="#cbd5e1" stroke-width="2.5" stroke-dasharray="9 7"/>
-
- <circle cx="360" cy="295" r="52" fill="#eff6ff" stroke="#2563eb" stroke-width="3"/>
- <text x="360" y="301" text-anchor="middle" font-size="16" font-weight="900" fill="#1d4ed8">EARTH</text>
-
- <circle cx="730" cy="295" r="58" fill="#fde68a" stroke="#d97706" stroke-width="3"/>
- <text x="730" y="301" text-anchor="middle" font-size="16" font-weight="900" fill="#7c2d12">SUN</text>
- <g stroke="#f59e0b" stroke-width="2.5" opacity=".55">
-  <line x1="663" y1="245" x2="595" y2="245"/><line x1="663" y1="278" x2="595" y2="278"/>
-  <line x1="663" y1="311" x2="595" y2="311"/><line x1="663" y1="344" x2="595" y2="344"/>
- </g>
-
- <!-- A: between Earth and Sun -->
- <g transform="translate(585 295)"><circle r="25" fill="#d1d5db" stroke="#475569" stroke-width="2"/><text y="-38" text-anchor="middle" font-size="18" font-weight="900" fill="#111827">A</text></g>
- <!-- B: upper-right -->
- <g transform="translate(520 154)"><circle r="25" fill="#d1d5db" stroke="#475569" stroke-width="2"/><text y="-38" text-anchor="middle" font-size="18" font-weight="900" fill="#111827">B</text></g>
- <!-- C: top -->
- <g transform="translate(360 95)"><circle r="25" fill="#d1d5db" stroke="#475569" stroke-width="2"/><text y="-38" text-anchor="middle" font-size="18" font-weight="900" fill="#111827">C</text></g>
- <!-- D: upper-left -->
- <g transform="translate(200 154)"><circle r="25" fill="#d1d5db" stroke="#475569" stroke-width="2"/><text y="-38" text-anchor="middle" font-size="18" font-weight="900" fill="#111827">D</text></g>
- <!-- E: opposite Sun -->
- <g transform="translate(135 295)"><circle r="25" fill="#d1d5db" stroke="#475569" stroke-width="2"/><text y="-38" text-anchor="middle" font-size="18" font-weight="900" fill="#111827">E</text></g>
- <!-- F: lower-left -->
- <g transform="translate(200 436)"><circle r="25" fill="#d1d5db" stroke="#475569" stroke-width="2"/><text y="44" text-anchor="middle" font-size="18" font-weight="900" fill="#111827">F</text></g>
- <!-- G: bottom -->
- <g transform="translate(360 495)"><circle r="25" fill="#d1d5db" stroke="#475569" stroke-width="2"/><text y="44" text-anchor="middle" font-size="18" font-weight="900" fill="#111827">G</text></g>
- <!-- H: lower-right -->
- <g transform="translate(520 436)"><circle r="25" fill="#d1d5db" stroke="#475569" stroke-width="2"/><text y="44" text-anchor="middle" font-size="18" font-weight="900" fill="#111827">H</text></g>
-
- <text x="410" y="548" text-anchor="middle" font-size="14" fill="#64748b"
-    style="font-family:Sarabun,Arial,sans-serif;">Positions are labeled A–H so you must reason from the Sun–Earth–Moon geometry.</text>
-</svg>
-</div>`;
-
-const TIDES_BULGE_SVG = `
+const NARROW_WIRE_SVG = `
 <div style="max-width:800px;margin:14px auto;">
-<svg viewBox="0 0 800 390"
-   style="width:100%;height:auto;border:1px solid #d1d5db;border-radius:14px;background:white;"
-   role="img"
-   aria-label="Earth with tidal bulges toward and away from the Moon, with points A B C D around Earth">
- <text x="400" y="34" text-anchor="middle" font-size="19" font-weight="800" fill="#0f172a"
-    style="font-family:Sarabun,Arial,sans-serif;">Occurrence of tides / การเกิดน้ำขึ้นน้ำลง</text>
-
- <ellipse cx="360" cy="205" rx="150" ry="88" fill="#dbeafe" stroke="#2563eb" stroke-width="3"/>
- <circle cx="360" cy="205" r="76" fill="#eff6ff" stroke="#334155" stroke-width="3"/>
- <text x="360" y="211" text-anchor="middle" font-size="17" font-weight="900" fill="#1d4ed8">EARTH</text>
-
- <circle cx="680" cy="205" r="46" fill="#f8fafc" stroke="#64748b" stroke-width="3"/>
- <text x="680" y="211" text-anchor="middle" font-size="15" font-weight="900" fill="#334155">MOON</text>
- <line x1="625" y1="205" x2="520" y2="205" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="8 6"/>
-
- <g font-size="20" font-weight="900" fill="#111827" style="font-family:Sarabun,Arial,sans-serif;">
-  <text x="193" y="212">A</text>
-  <text x="354" y="101">B</text>
-  <text x="513" y="212">C</text>
-  <text x="354" y="321">D</text>
- </g>
- <text x="400" y="360" text-anchor="middle" font-size="14" fill="#64748b"
-    style="font-family:Sarabun,Arial,sans-serif;">The blue shape represents the ocean bulges.</text>
+<svg viewBox="0 0 800 350" style="width:100%;height:auto;border:1px solid #d1d5db;border-radius:14px;background:white;" role="img" aria-label="Continuous conductor with a wide section P and narrow section Q carrying the same steady current">
+  <defs><marker id="wireArrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#2563eb"/></marker></defs>
+  <text x="400" y="34" text-anchor="middle" font-size="19" font-weight="800" fill="#0f172a" style="font-family:Sarabun,Arial,sans-serif;">Same material · steady current / วัสดุเดียวกัน · กระแสคงตัว</text>
+  <path d="M80 116 H320 L405 150 H720 V200 H405 L320 234 H80 Z" fill="#f8fafc" stroke="#334155" stroke-width="3"/>
+  <line x1="115" y1="175" x2="675" y2="175" stroke="#2563eb" stroke-width="4" marker-end="url(#wireArrow)"/>
+  <text x="385" y="156" text-anchor="middle" font-size="15" font-weight="900" fill="#1d4ed8">same current I</text>
+  <text x="205" y="98" text-anchor="middle" font-size="18" font-weight="900" fill="#111827">P · wide</text>
+  <text x="570" y="128" text-anchor="middle" font-size="18" font-weight="900" fill="#111827">Q · narrow</text>
+  <g fill="#0f766e">
+    <circle cx="145" cy="145" r="5"/><circle cx="190" cy="205" r="5"/><circle cx="240" cy="145" r="5"/><circle cx="285" cy="205" r="5"/>
+    <circle cx="470" cy="164" r="5"/><circle cx="530" cy="187" r="5"/><circle cx="590" cy="164" r="5"/><circle cx="650" cy="187" r="5"/>
+  </g>
+  <text x="400" y="292" text-anchor="middle" font-size="15" fill="#475569" style="font-family:Sarabun,Arial,sans-serif;">I = neAvᵈ ⇒ for the same material and steady I, smaller A requires larger vᵈ.</text>
+  <text x="400" y="318" text-anchor="middle" font-size="14" fill="#64748b" style="font-family:Sarabun,Arial,sans-serif;">Iₚ = I_Q and Aₚvₚ = A_Qv_Q</text>
 </svg>
 </div>`;
 
-const SPRING_NEAP_SVG = `
-<div style="max-width:840px;margin:14px auto;">
-<svg viewBox="0 0 840 440"
-   style="width:100%;height:auto;border:1px solid #d1d5db;border-radius:14px;background:white;"
-   role="img"
-   aria-label="Two Sun Earth Moon arrangements: aligned and at right angles">
- <text x="420" y="34" text-anchor="middle" font-size="19" font-weight="800" fill="#0f172a"
-    style="font-family:Sarabun,Arial,sans-serif;">Sun–Earth–Moon arrangements / ตำแหน่งดวงอาทิตย์–โลก–ดวงจันทร์</text>
-
- <rect x="34" y="62" width="372" height="320" rx="16" fill="#fafafa" stroke="#cbd5e1" stroke-width="2"/>
- <text x="220" y="91" text-anchor="middle" font-size="18" font-weight="900" fill="#111827">Diagram A</text>
- <circle cx="95" cy="220" r="44" fill="#fde68a" stroke="#d97706" stroke-width="3"/>
- <text x="95" y="226" text-anchor="middle" font-size="13" font-weight="900" fill="#7c2d12">SUN</text>
- <circle cx="220" cy="220" r="42" fill="#eff6ff" stroke="#2563eb" stroke-width="3"/>
- <text x="220" y="226" text-anchor="middle" font-size="13" font-weight="900" fill="#1d4ed8">EARTH</text>
- <circle cx="344" cy="220" r="32" fill="#f8fafc" stroke="#64748b" stroke-width="3"/>
- <text x="344" y="226" text-anchor="middle" font-size="12" font-weight="900" fill="#334155">MOON</text>
- <line x1="140" y1="220" x2="177" y2="220" stroke="#94a3b8" stroke-width="2.5"/>
- <line x1="263" y1="220" x2="311" y2="220" stroke="#94a3b8" stroke-width="2.5"/>
- <text x="220" y="345" text-anchor="middle" font-size="14" fill="#64748b">All three bodies are in a line.</text>
-
- <rect x="434" y="62" width="372" height="320" rx="16" fill="#fafafa" stroke="#cbd5e1" stroke-width="2"/>
- <text x="620" y="91" text-anchor="middle" font-size="18" font-weight="900" fill="#111827">Diagram B</text>
- <circle cx="500" cy="270" r="44" fill="#fde68a" stroke="#d97706" stroke-width="3"/>
- <text x="500" y="276" text-anchor="middle" font-size="13" font-weight="900" fill="#7c2d12">SUN</text>
- <circle cx="620" cy="270" r="42" fill="#eff6ff" stroke="#2563eb" stroke-width="3"/>
- <text x="620" y="276" text-anchor="middle" font-size="13" font-weight="900" fill="#1d4ed8">EARTH</text>
- <circle cx="620" cy="145" r="32" fill="#f8fafc" stroke="#64748b" stroke-width="3"/>
- <text x="620" y="151" text-anchor="middle" font-size="12" font-weight="900" fill="#334155">MOON</text>
- <line x1="545" y1="270" x2="577" y2="270" stroke="#94a3b8" stroke-width="2.5"/>
- <line x1="620" y1="228" x2="620" y2="178" stroke="#94a3b8" stroke-width="2.5"/>
- <path d="M586 236 L586 202 L620 202" fill="none" stroke="#111827" stroke-width="2.5"/>
- <text x="620" y="345" text-anchor="middle" font-size="14" fill="#64748b">Sun and Moon are at right angles to Earth.</text>
+const SERIES_MATERIALS_SVG = `
+<div style="max-width:800px;margin:14px auto;">
+<svg viewBox="0 0 800 330" style="width:100%;height:auto;border:1px solid #d1d5db;border-radius:14px;background:white;" role="img" aria-label="Copper and silver wires of equal diameter connected in series">
+  <defs><marker id="seriesArrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#2563eb"/></marker></defs>
+  <text x="400" y="34" text-anchor="middle" font-size="19" font-weight="800" fill="#0f172a" style="font-family:Sarabun,Arial,sans-serif;">Different materials in series / ลวดต่างวัสดุต่ออนุกรม</text>
+  <rect x="95" y="125" width="300" height="78" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="3"/>
+  <rect x="395" y="125" width="310" height="78" rx="12" fill="#f8fafc" stroke="#64748b" stroke-width="3"/>
+  <text x="245" y="158" text-anchor="middle" font-size="18" font-weight="900" fill="#9a3412">Copper / Cu</text>
+  <text x="245" y="184" text-anchor="middle" font-size="14" fill="#7c2d12">n = 8.5×10²⁸ m⁻³</text>
+  <text x="550" y="158" text-anchor="middle" font-size="18" font-weight="900" fill="#334155">Silver / Ag</text>
+  <text x="550" y="184" text-anchor="middle" font-size="14" fill="#475569">n = 5.9×10²⁸ m⁻³</text>
+  <line x1="135" y1="95" x2="665" y2="95" stroke="#2563eb" stroke-width="4" marker-end="url(#seriesArrow)"/>
+  <text x="400" y="77" text-anchor="middle" font-size="15" font-weight="900" fill="#1d4ed8">same series current I · equal diameter ⇒ equal A</text>
+  <text x="400" y="257" text-anchor="middle" font-size="15" fill="#475569" style="font-family:Sarabun,Arial,sans-serif;">n_Cu v_Cu = n_Ag v_Ag</text>
+  <text x="400" y="286" text-anchor="middle" font-size="14" fill="#64748b" style="font-family:Sarabun,Arial,sans-serif;">Lower carrier density requires a larger drift speed for the same current.</text>
 </svg>
 </div>`;
 
-const MOONRISE_TIMELINE_SVG = `
-<div style="max-width:840px;margin:14px auto;">
-<svg viewBox="0 0 840 430"
-   style="width:100%;height:auto;border:1px solid #d1d5db;border-radius:14px;background:white;"
-   role="img"
-   aria-label="Timeline of approximate rise highest and set times for four major Moon phases">
- <text x="420" y="34" text-anchor="middle" font-size="19" font-weight="800" fill="#0f172a"
-    style="font-family:Sarabun,Arial,sans-serif;">Moonrise and moonset timing / เวลาขึ้นและตกของดวงจันทร์</text>
+const STRETCHED_WIRE_SVG = `
+<div style="max-width:820px;margin:14px auto;">
+<svg viewBox="0 0 820 380" style="width:100%;height:auto;border:1px solid #d1d5db;border-radius:14px;background:white;" role="img" aria-label="Wire before and after being stretched to twice its length at constant volume">
+  <defs><marker id="stretchArrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker></defs>
+  <text x="410" y="34" text-anchor="middle" font-size="19" font-weight="800" fill="#0f172a" style="font-family:Sarabun,Arial,sans-serif;">Stretching a wire at constant volume / การยืดลวดโดยปริมาตรคงที่</text>
+  <text x="82" y="104" font-size="16" font-weight="900" fill="#111827">Before</text>
+  <rect x="160" y="78" width="250" height="58" rx="29" fill="#dbeafe" stroke="#2563eb" stroke-width="3"/>
+  <line x1="160" y1="158" x2="410" y2="158" stroke="#334155" stroke-width="2" marker-end="url(#stretchArrow)"/>
+  <text x="285" y="180" text-anchor="middle" font-size="14" fill="#475569">L₁</text>
+  <text x="440" y="111" font-size="14" fill="#475569">area A₁</text>
 
- <g font-size="14" fill="#475569" font-weight="800" style="font-family:Sarabun,Arial,sans-serif;">
-  <text x="250" y="78" text-anchor="middle">Morning / เช้า</text>
-  <text x="405" y="78" text-anchor="middle">Midday / เที่ยงวัน</text>
-  <text x="560" y="78" text-anchor="middle">Sunset / พระอาทิตย์ตก</text>
-  <text x="715" y="78" text-anchor="middle">Midnight / เที่ยงคืน</text>
- </g>
- <line x1="180" y1="95" x2="760" y2="95" stroke="#cbd5e1" stroke-width="2"/>
- <g stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="5 5">
-  <line x1="250" y1="95" x2="250" y2="390"/><line x1="405" y1="95" x2="405" y2="390"/>
-  <line x1="560" y1="95" x2="560" y2="390"/><line x1="715" y1="95" x2="715" y2="390"/>
- </g>
+  <text x="82" y="266" font-size="16" font-weight="900" fill="#111827">After</text>
+  <rect x="160" y="243" width="500" height="29" rx="14.5" fill="#dcfce7" stroke="#16a34a" stroke-width="3"/>
+  <line x1="160" y1="300" x2="660" y2="300" stroke="#334155" stroke-width="2" marker-end="url(#stretchArrow)"/>
+  <text x="410" y="323" text-anchor="middle" font-size="14" fill="#475569">L₂ = 2L₁</text>
+  <text x="690" y="264" font-size="14" fill="#475569">A₂ = A₁/2</text>
 
- <g font-size="15" font-weight="900" fill="#111827" style="font-family:Sarabun,Arial,sans-serif;">
-  <text x="42" y="145">New Moon</text>
-  <text x="42" y="215">New Half</text>
-  <text x="42" y="285">Full Moon</text>
-  <text x="42" y="355">Old Half</text>
- </g>
-
- <!-- show only three landmarks per row using symbols -->
- <g font-size="13" font-weight="800" style="font-family:Sarabun,Arial,sans-serif;">
-  <circle cx="250" cy="140" r="10" fill="#2563eb"/><text x="250" y="165" text-anchor="middle" fill="#1d4ed8">rise</text>
-  <circle cx="405" cy="140" r="10" fill="#16a34a"/><text x="405" y="165" text-anchor="middle" fill="#166534">highest</text>
-  <circle cx="560" cy="140" r="10" fill="#dc2626"/><text x="560" y="165" text-anchor="middle" fill="#991b1b">set</text>
-
-  <circle cx="405" cy="210" r="10" fill="#2563eb"/><text x="405" y="235" text-anchor="middle" fill="#1d4ed8">rise</text>
-  <circle cx="560" cy="210" r="10" fill="#16a34a"/><text x="560" y="235" text-anchor="middle" fill="#166534">highest</text>
-  <circle cx="715" cy="210" r="10" fill="#dc2626"/><text x="715" y="235" text-anchor="middle" fill="#991b1b">set</text>
-
-  <circle cx="560" cy="280" r="10" fill="#2563eb"/><text x="560" y="305" text-anchor="middle" fill="#1d4ed8">rise</text>
-  <circle cx="715" cy="280" r="10" fill="#16a34a"/><text x="715" y="305" text-anchor="middle" fill="#166534">highest</text>
-  <circle cx="250" cy="280" r="10" fill="#dc2626"/><text x="250" y="305" text-anchor="middle" fill="#991b1b">set*</text>
-
-  <circle cx="715" cy="350" r="10" fill="#2563eb"/><text x="715" y="375" text-anchor="middle" fill="#1d4ed8">rise</text>
-  <circle cx="250" cy="350" r="10" fill="#16a34a"/><text x="250" y="375" text-anchor="middle" fill="#166534">highest*</text>
-  <circle cx="405" cy="350" r="10" fill="#dc2626"/><text x="405" y="375" text-anchor="middle" fill="#991b1b">set</text>
- </g>
-
- <text x="420" y="414" text-anchor="middle" font-size="12" fill="#64748b"
-    style="font-family:Sarabun,Arial,sans-serif;">*The timeline wraps across midnight: Full Moon sets at sunrise; Old Half is highest at sunrise.</text>
+  <text x="410" y="355" text-anchor="middle" font-size="14" font-weight="800" fill="#7c3aed" style="font-family:Sarabun,Arial,sans-serif;">AL = constant ⇒ R = ρL/A ⇒ R₂ = 4R₁</text>
 </svg>
 </div>`;
 
 /* ============================================================
-   SECTION 3 · QUIZ INFO + BRANDING / ข้อมูล Quiz และหน้าล็อกอิน
-
-   ตอนสร้างเรื่องใหม่:
-   - เปลี่ยน quizId ให้ไม่ซ้ำกับ Quiz อื่น
-   - เปลี่ยน branding ทั้ง EN/TH
-   - เปลี่ยน loginVisual / loginVisualAlt
-   - เปลี่ยน title / subtitle / completionTitle
+   SECTION 3 · QUIZ INFO + BRANDING
    ============================================================ */
-
 window.QUIZ_TEMPLATE = {
-  quizId: "science-m3-ch8-topic8-2-v5-catchup-final",
+  quizId: "physics-electric-current-charge-flow-drift-speed-v1",
 
-  /* ---------------------------------------------------------
-     QUIZ BRANDING / ข้อมูลที่เปลี่ยนตามบทเรียน
-     ชื่อ Browser + Login + Restore อ่านจากส่วนนี้
-     --------------------------------------------------------- */
   branding: {
-    browserTitle: "Topic 8.2 · Axial Tilt and Moon’s Revolution",
-
-    loginKicker: "SCIENCE · MATHAYOM 3",
-
-    loginTitleEN: "Axial Tilt and Moon’s Revolution",
-    loginTitleTH: "การเอียงของแกนโลกและการโคจรของดวงจันทร์",
-
-    loginDescriptionEN: "Explore how Earth’s axial tilt and the Moon’s revolution lead to seasons, changing day length, Moon phases, tides, and changing moonrise times.",
-    loginDescriptionTH: "เรียนรู้ว่าการเอียงของแกนโลกและการโคจรของดวงจันทร์ทำให้เกิดฤดูกาล ความยาวกลางวันและกลางคืนที่เปลี่ยนไป ข้างขึ้นข้างแรม น้ำขึ้นน้ำลง และเวลาขึ้นของดวงจันทร์ที่เปลี่ยนไปอย่างไร",
-
-    accessTitleEN: "Topic 8.2 · Axial Tilt and Moon’s Revolution",
-    accessTitleTH: "หัวข้อ 8.2 · การเอียงของแกนโลกและการโคจรของดวงจันทร์",
-
-    accessDescriptionEN: "Sign in with Google to save and restore progress and show live presence, or continue as a guest without saving.",
-    accessDescriptionTH: "เข้าสู่ระบบด้วย Google เพื่อบันทึกและเรียกคืนความคืบหน้าและแสดงสถานะออนไลน์ หรือเข้าแบบไม่ล็อกอินโดยงานจะไม่ถูกบันทึก",
-
-    restoringTitleEN: "Restoring Topic 8.2 Quiz",
-    restoringTitleTH: "กำลังเปิด Quiz หัวข้อ 8.2",
-
-    restoringDescriptionEN: "Loading cloud progress before the quiz unlocks so a blank session cannot overwrite previous work.",
-    restoringDescriptionTH: "กำลังโหลดความคืบหน้าจาก Cloud ก่อนเปิด Quiz เพื่อป้องกันสถานะว่างทับงานเดิม"
+    browserTitle: "Electric Current & Charge Flow",
+    loginKicker: "PHYSICS · ELECTRICITY",
+    loginTitleEN: "Electric Current & Charge Flow",
+    loginTitleTH: "กระแสไฟฟ้าและการไหลของประจุ",
+    loginDescriptionEN: "Build a problem-solving path from current and cross-sectional area to electron drift speed, number density, charge flow, and stretched-wire resistance.",
+    loginDescriptionTH: "ฝึกเชื่อมเส้นทางการแก้โจทย์จากกระแสและพื้นที่หน้าตัด ไปสู่ความเร็วลอยเลื่อน ความหนาแน่นจำนวนอิเล็กตรอน ปริมาณประจุ และลวดที่ถูกยืด",
+    accessTitleEN: "Electric Current, Area & Drift Speed",
+    accessTitleTH: "กระแสไฟฟ้า พื้นที่หน้าตัด และความเร็วลอยเลื่อน",
+    accessDescriptionEN: "Sign in with Google to save and restore progress, or continue as a guest without saving.",
+    accessDescriptionTH: "เข้าสู่ระบบด้วย Google เพื่อบันทึกและเรียกคืนความคืบหน้า หรือเข้าแบบ Guest โดยไม่บันทึกงาน",
+    restoringTitleEN: "Restoring Electricity Quiz",
+    restoringTitleTH: "กำลังเปิด Quiz เรื่องกระแสไฟฟ้า",
+    restoringDescriptionEN: "Loading cloud progress before the quiz unlocks.",
+    restoringDescriptionTH: "กำลังโหลดความคืบหน้าจาก Cloud ก่อนเปิด Quiz"
   },
 
   loginVisual: LOGIN_VISUAL_SVG,
-  loginVisualAlt: "Sun, tilted Earth and Moon / ดวงอาทิตย์ โลกที่มีแกนเอียง และดวงจันทร์",
+  loginVisualAlt: "Battery, conducting wire, conventional current and electron drift / แบตเตอรี่ ลวดตัวนำ กระแสแบบดั้งเดิม และการลอยเลื่อนของอิเล็กตรอน",
 
-  title: "Topic 8.2: Axial Tilt & Moon’s Revolution / หัวข้อ 8.2: การเอียงของแกนโลกและการโคจรของดวงจันทร์",
-
-  subtitle: "Axial Tilt · Seasons · Day & Night · Solstices · Equinoxes · Polar Phenomena · Moon Phases · Tides · Moonrise & Moonset / แกนโลกเอียง · ฤดูกาล · กลางวันและกลางคืน · วันอายัน · วันวิษุวัต · ปรากฏการณ์บริเวณขั้วโลก · ข้างขึ้นข้างแรม · น้ำขึ้นน้ำลง · เวลาขึ้นและตกของดวงจันทร์",
-
-  completionTitle: "Topic 8.2 Complete! / ผ่านหัวข้อ 8.2 ครบแล้ว!",
-
+  title: "Electric Current & Charge Flow / กระแสไฟฟ้าและการไหลของประจุ",
+  subtitle: "Current · Circular Area · Drift Speed · Number Density · Charge · Stretched Wire / กระแส · พื้นที่หน้าตัดวงกลม · ความเร็วลอยเลื่อน · ความหนาแน่นจำนวน · ประจุ · ลวดยืด",
+  completionTitle: "Electric Current & Charge Flow Complete! / ผ่านเรื่องกระแสไฟฟ้าและการไหลของประจุแล้ว!",
 
   /* =========================================================
-     SECTION 4 · REVIEW CHECK / เนื้อหาจำเป็นก่อนสอบ
-
-     PURPOSE:
-     - สรุป 2 ภาษาสำหรับอ่านก่อนสอบ
-     - ต้องมีข้อมูลเพียงพอให้ตอบ Quiz ทุกข้อได้
-     - ไม่ใช่เฉลยรายข้อ
-     - เวลาเปลี่ยนบทใหม่ ให้แก้ reviewCheck คู่กับ questions
-
-     COVERAGE RULE:
-     REVIEW CHECK ต้องรองรับ Q1–Q32 ครบทุกข้อ
+     SECTION 4 · REVIEW CHECK
+     Every heading includes the related quiz question(s).
      ========================================================= */
   reviewCheck: {
-    titleEN: "REVIEW CHECK · Topic 8.2",
-    titleTH: "REVIEW CHECK · หัวข้อ 8.2",
-    subtitleEN: "Essential knowledge before the assessment",
-    subtitleTH: "สาระจำเป็นที่ต้องรู้ก่อนสอบ",
-
+    titleEN: "REVIEW CHECK · Electric Current & Charge Flow",
+    titleTH: "REVIEW CHECK · กระแสไฟฟ้าและการไหลของประจุ",
+    subtitleEN: "Problem-solving map for Q1–Q13",
+    subtitleTH: "แผนแก้โจทย์สำหรับข้อ Q1–Q13",
     html: `
 <article class="review-check-content">
-
   <header class="review-check-header">
-    <div class="review-check-kicker">REVIEW CHECK · TOPIC 8.2</div>
-    <h1>Axial Tilt and Moon’s Revolution</h1>
-    <h2>การเอียงของแกนโลกและการโคจรของดวงจันทร์</h2>
-    <p class="review-check-intro">
-      <strong>EN:</strong> Read this before the assessment. You should be able to explain each relationship, not only memorize isolated facts.<br>
-      <strong>TH:</strong> อ่านส่วนนี้ก่อนสอบ เป้าหมายคืออธิบายความสัมพันธ์ได้ ไม่ใช่เพียงจำข้อเท็จจริงแยกเป็นข้อ ๆ
-    </p>
+    <div class="review-check-kicker">REVIEW CHECK · ELECTRIC CURRENT, AREA & DRIFT SPEED</div>
+    <h1>Electric Current & Charge Flow</h1>
+    <h2>กระแสไฟฟ้า พื้นที่หน้าตัด และความเร็วลอยเลื่อน</h2>
+    <p class="review-check-intro"><strong>EN:</strong> Use this as a route map. First identify what is given, then choose the shortest valid chain of equations.<br><strong>TH:</strong> ใช้สรุปนี้เป็นแผนที่เดินโจทย์ เริ่มจากดูว่าโจทย์ให้ตัวแปรอะไร แล้วเลือกสายสมการที่สั้นและถูกต้องที่สุด</p>
   </header>
 
-  <!-- Covers Q1–Q3 -->
   <section class="review-check-section">
-    <h3>1. Earth’s axial tilt / การเอียงของแกนโลก</h3>
-    <p><strong>EN:</strong> Earth rotates around an imaginary axis that passes through the North Pole, the centre of Earth and the South Pole. The axis is tilted by about <strong>23.5°</strong> and keeps pointing in nearly the same direction while Earth revolves around the Sun.</p>
-    <p><strong>TH:</strong> โลกหมุนรอบแกนสมมติที่ผ่านขั้วโลกเหนือ ศูนย์กลางโลก และขั้วโลกใต้ แกนโลกเอียงประมาณ <strong>23.5°</strong> และยังคงชี้ไปเกือบทิศเดิมขณะที่โลกโคจรรอบดวงอาทิตย์</p>
-    <div class="review-check-key">
-      <strong>Must know / ต้องรู้</strong>
-      <ul>
-        <li>Axial tilt contributes to seasons. / การเอียงของแกนโลกมีส่วนทำให้เกิดฤดูกาล</li>
-        <li>Axial tilt also causes daytime and nighttime lengths to change during the year. / การเอียงของแกนโลกทำให้ความยาวกลางวันและกลางคืนเปลี่ยนไปตามช่วงของปี</li>
-      </ul>
-    </div>
+    <h3>1. Electric current & Ohm’s law / กระแสไฟฟ้าและกฎของโอห์ม (Q1–Q2, Q8, Q10, Q13)</h3>
+    <p><strong>EN:</strong> Current is charge passing a cross-section per unit time. If potential difference and resistance are known, use Ohm’s law.</p>
+    <p><strong>TH:</strong> กระแสไฟฟ้าคือปริมาณประจุที่ผ่านพื้นที่หน้าตัดต่อหนึ่งหน่วยเวลา ถ้ารู้ความต่างศักย์และความต้านทาน ให้ใช้กฎของโอห์ม</p>
+    <div class="review-check-key">\\[\\boxed{I=\\frac{Q}{t}},\\qquad \\boxed{Q=It}\\]\\[\\boxed{V=IR},\\qquad \\boxed{I=\\frac{V}{R}}\\]</div>
+    <p><strong>Route / เส้นทาง:</strong> \\(V,R\\rightarrow I\\) (Q1–Q2), \\(I,t\\rightarrow Q\\) (Q8), \\(Q,t\\rightarrow I\\) (Q10), and same \\(V\\) with changed \\(R\\rightarrow I\\) (Q13).</p>
   </section>
 
-  <!-- Covers Q4–Q8 -->
   <section class="review-check-section">
-    <h3>2. Seasons / ฤดูกาล</h3>
-    <p><strong>EN:</strong> Seasons are caused by the <strong>combined effects of Earth’s axial tilt and Earth’s revolution around the Sun</strong>. A hemisphere tilted toward the Sun receives more direct sunlight and experiences summer, while the opposite hemisphere experiences winter.</p>
-    <p><strong>TH:</strong> ฤดูกาลเกิดจาก <strong>ผลร่วมของการเอียงของแกนโลกและการโคจรของโลกรอบดวงอาทิตย์</strong> ซีกโลกที่เอียงเข้าหาดวงอาทิตย์ได้รับแสงโดยตรงมากกว่าและเป็นฤดูร้อน ขณะที่อีกซีกโลกเป็นฤดูหนาว</p>
-
-    <table class="review-check-table">
-      <thead>
-        <tr>
-          <th>Months / เดือน</th>
-          <th>Northern Hemisphere / ซีกโลกเหนือ</th>
-          <th>Southern Hemisphere / ซีกโลกใต้</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>Mar–May</td><td>Spring / ใบไม้ผลิ</td><td>Autumn / ใบไม้ร่วง</td></tr>
-        <tr><td>Jun–Aug</td><td>Summer / ร้อน</td><td>Winter / หนาว</td></tr>
-        <tr><td>Sep–Nov</td><td>Autumn / ใบไม้ร่วง</td><td>Spring / ใบไม้ผลิ</td></tr>
-        <tr><td>Dec–Feb</td><td>Winter / หนาว</td><td>Summer / ร้อน</td></tr>
-      </tbody>
-    </table>
-
-    <div class="review-check-key">
-      <strong>Key relationship / ความสัมพันธ์สำคัญ</strong>
-      <p>Northern and Southern Hemispheres have opposite seasons. / ซีกโลกเหนือและซีกโลกใต้มีฤดูกาลตรงข้ามกัน</p>
-    </div>
-
-    <p><strong>EN:</strong> Countries such as Japan and Korea have four distinct seasons. Thailand is close to the equator, so the four seasons are not as distinct.</p>
-    <p><strong>TH:</strong> ประเทศอย่างญี่ปุ่นและเกาหลีมี 4 ฤดูเด่นชัด ขณะที่ประเทศไทยอยู่ใกล้เส้นศูนย์สูตรจึงไม่เห็น 4 ฤดูเด่นชัดแบบเดียวกัน</p>
-
-    <p><strong>EN:</strong> Seasonal changes affect clothing, activities and animals. Winter often involves thicker clothing, and some animals migrate or hibernate. Summer is associated with thinner clothing and activities such as going to the beach.</p>
-    <p><strong>TH:</strong> ฤดูกาลส่งผลต่อเสื้อผ้า กิจกรรม และสัตว์ ฤดูหนาวมักใช้เสื้อผ้าหนา และสัตว์บางชนิดอพยพหรือจำศีล ส่วนฤดูร้อนมักใช้เสื้อผ้าบางและทำกิจกรรม เช่น ไปชายหาด</p>
+    <h3>2. Circular cross-sectional area / พื้นที่หน้าตัดลวดวงกลม (Q3, Q5)</h3>
+    <p><strong>EN:</strong> For a circular wire, area depends on the square of radius or diameter. Doubling diameter does <strong>not</strong> double area.</p>
+    <p><strong>TH:</strong> พื้นที่หน้าตัดของลวดวงกลมขึ้นกับกำลังสองของรัศมีหรือเส้นผ่านศูนย์กลาง ดังนั้นเส้นผ่านศูนย์กลางเพิ่ม 2 เท่า พื้นที่ไม่ได้เพิ่มเพียง 2 เท่า</p>
+    <div class="review-check-key">\\[\\boxed{A=\\pi r^2=\\frac{\\pi d^2}{4}}\\]\\[\\boxed{\\frac{A_2}{A_1}=\\left(\\frac{d_2}{d_1}\\right)^2}\\]</div>
+    <p><strong>Route / เส้นทาง:</strong> \\(d\\rightarrow r\\rightarrow A\\) before using drift-speed equations (Q5).</p>
   </section>
 
-  <!-- Covers Q9–Q11 -->
   <section class="review-check-section">
-    <h3>3. Day and night / กลางวันและกลางคืน</h3>
-    <p><strong>EN:</strong> Earth’s <strong>rotation</strong> causes day and night. One complete rotation takes about <strong>24 hours</strong>. Half of Earth faces the Sun and experiences day, while the other half experiences night.</p>
-    <p><strong>TH:</strong> การ <strong>หมุนรอบตัวเองของโลก</strong> ทำให้เกิดกลางวันและกลางคืน โลกหมุนครบหนึ่งรอบใช้เวลาประมาณ <strong>24 ชั่วโมง</strong> ด้านที่หันเข้าหาดวงอาทิตย์เป็นกลางวัน ส่วนอีกด้านเป็นกลางคืน</p>
-
-    <table class="review-check-table">
-      <thead>
-        <tr>
-          <th>Season / ฤดู</th>
-          <th>Daytime / กลางวัน</th>
-          <th>Sun at noon / ดวงอาทิตย์ตอนเที่ยง</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>Summer / ร้อน</td><td>Longer / ยาวกว่า</td><td>Higher / อยู่สูงกว่า</td></tr>
-        <tr><td>Winter / หนาว</td><td>Shorter / สั้นกว่า</td><td>Lower / อยู่ต่ำกว่า</td></tr>
-      </tbody>
-    </table>
-
-    <p><strong>EN:</strong> Because Earth is tilted, not every place receives exactly 12 hours of day and 12 hours of night throughout the year.</p>
-    <p><strong>TH:</strong> เพราะแกนโลกเอียง จึงไม่ใช่ทุกพื้นที่ที่จะมีกลางวัน 12 ชั่วโมงและกลางคืน 12 ชั่วโมงตลอดทั้งปี</p>
+    <h3>3. Current and drift speed / กระแสและความเร็วลอยเลื่อน (Q4–Q10)</h3>
+    <p><strong>EN:</strong> The microscopic current relation connects carrier number density \\(n\\), electron charge \\(e\\), cross-sectional area \\(A\\), and mean drift speed \\(v_d\\).</p>
+    <p><strong>TH:</strong> สมการกระแสระดับจุลภาคเชื่อมความหนาแน่นจำนวนพาหะ \\(n\\), ประจุอิเล็กตรอน \\(e\\), พื้นที่หน้าตัด \\(A\\) และความเร็วลอยเลื่อนเฉลี่ย \\(v_d\\)</p>
+    <div class="review-check-key">\\[\\boxed{I=neAv_d}\\qquad \\boxed{v_d=\\frac{I}{neA}}\\]\\[e=1.60\\times10^{-19}\\,\\mathrm C\\]</div>
+    <p><strong>Physics note / หมายเหตุฟิสิกส์:</strong> Here \\(e\\) is the <strong>magnitude of the electron charge</strong>, and \\(v_d\\) is the <strong>magnitude of the mean drift speed</strong>. For electrons, conventional current is opposite to electron drift.<br><strong>ในหัวข้อนี้</strong> \\(e\\) คือ <strong>ขนาดของประจุอิเล็กตรอน</strong> และใช้ \\(v_d\\) เป็น <strong>ขนาดของความเร็วลอยเลื่อนเฉลี่ย</strong> โดยทิศกระแสแบบดั้งเดิมตรงข้ามกับทิศ drift ของอิเล็กตรอน</p>
+    <p><strong>Route / เส้นทาง:</strong> \\(I,n,A\\rightarrow v_d\\) (Q5, Q10); \\(n,A,v_d\\rightarrow I\\) (Q7–Q8).</p>
   </section>
 
-  <!-- Covers Q12–Q15 and Q29 -->
   <section class="review-check-section">
-    <h3>4. Solstices, equinoxes and polar phenomena / อายัน วิษุวัต และปรากฏการณ์ขั้วโลก</h3>
-
-    <table class="review-check-table">
-      <thead>
-        <tr>
-          <th>Date / วันที่โดยประมาณ</th>
-          <th>Northern Hemisphere / ซีกโลกเหนือ</th>
-          <th>Southern Hemisphere / ซีกโลกใต้</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>21 June</td><td>Summer solstice / ครีษมายัน</td><td>Winter solstice / เหมายัน</td></tr>
-        <tr><td>21 December</td><td>Winter solstice / เหมายัน</td><td>Summer solstice / ครีษมายัน</td></tr>
-        <tr><td>20 March</td><td>Vernal equinox / วสันตวิษุวัต</td><td>Autumnal equinox / ศารทวิษุวัต</td></tr>
-        <tr><td>22 September</td><td>Autumnal equinox / ศารทวิษุวัต</td><td>Vernal equinox / วสันตวิษุวัต</td></tr>
-      </tbody>
-    </table>
-
-    <div class="review-check-key">
-      <strong>Solstice / อายัน</strong>
-      <ul>
-        <li>Summer solstice gives the longest daytime of the year in that hemisphere. / ครีษมายันเป็นวันที่กลางวันยาวที่สุดของปีในซีกโลกนั้น</li>
-        <li>Winter solstice gives the shortest daytime of the year in that hemisphere. / เหมายันเป็นวันที่กลางวันสั้นที่สุดของปีในซีกโลกนั้น</li>
-      </ul>
-    </div>
-
-    <div class="review-check-key">
-      <strong>Equinox / วิษุวัต</strong>
-      <ul>
-        <li>The Sun is positioned above the equator. / ดวงอาทิตย์อยู่เหนือบริเวณเส้นศูนย์สูตร</li>
-        <li>Day and night are approximately equal in length. / กลางวันและกลางคืนมีความยาวใกล้เคียงกัน</li>
-        <li>The word <em>equinox</em> comes from Latin meaning “equality of day and night”. / คำว่า <em>equinox</em> มาจากภาษาละตินที่มีความหมายเกี่ยวกับความเท่ากันของกลางวันและกลางคืน</li>
-      </ul>
-    </div>
-
-    <p><strong>EN:</strong> Near polar regions, the Sun may remain visible for 24 hours around the summer solstice. This is called the <strong>midnight Sun</strong>. Around the winter solstice, darkness may last 24 hours, producing a <strong>polar night</strong>. Examples include Finland, Greenland and Alaska.</p>
-    <p><strong>TH:</strong> บริเวณใกล้ขั้วโลกอาจเห็นดวงอาทิตย์ตลอด 24 ชั่วโมงในช่วงใกล้ครีษมายัน เรียกว่า <strong>midnight Sun</strong> และในช่วงใกล้เหมายันอาจมืดตลอด 24 ชั่วโมง เรียกว่า <strong>polar night</strong> ตัวอย่างพื้นที่ในบทเรียน ได้แก่ ฟินแลนด์ กรีนแลนด์ และอะแลสกา</p>
+    <h3>4. Same wire, different area / ลวดเส้นเดียวแต่พื้นที่ต่างกัน (Q4, Q6)</h3>
+    <p><strong>EN:</strong> In one continuous conductor carrying steady current, the same current passes every cross-section. If the material is the same, \\(n\\) is also unchanged.</p>
+    <p><strong>TH:</strong> ในตัวนำเส้นเดียวที่มีกระแสคงตัว กระแสที่ผ่านทุกหน้าตัดเท่ากัน และถ้าวัสดุเหมือนกัน \\(n\\) ก็เท่ากัน</p>
+    <div class="review-check-key">\\[I_1=I_2\\]\\[A_1v_1=A_2v_2\\]\\[\\boxed{v_d\\propto\\frac{1}{A}}\\]</div>
+    <p><strong>Do not confuse / อย่าสับสน:</strong> smaller area does <strong>not</strong> mean smaller steady current in the same continuous wire. It means larger drift speed.</p>
   </section>
 
-  <!-- Covers Q16–Q21 and Q30 -->
   <section class="review-check-section">
-    <h3>5. Moonlight and Moon phases / แสงของดวงจันทร์และข้างขึ้นข้างแรม</h3>
-    <p><strong>EN:</strong> The Moon does <strong>not produce its own visible light</strong>. We see the Moon because it <strong>reflects sunlight</strong>. As the Moon revolves around Earth, we see different portions of its illuminated half, producing Moon phases.</p>
-    <p><strong>TH:</strong> ดวงจันทร์ <strong>ไม่ได้สร้างแสงที่มองเห็นได้เอง</strong> เรามองเห็นดวงจันทร์เพราะมัน <strong>สะท้อนแสงจากดวงอาทิตย์</strong> เมื่อดวงจันทร์โคจรรอบโลก เราจะเห็นส่วนที่ได้รับแสงแตกต่างกัน จึงเกิดข้างขึ้นข้างแรม</p>
-
-    <div class="review-check-sequence">
-      <strong>Phase sequence / ลำดับเฟส</strong><br>
-      New Moon → New Crescent → New Half → New Gibbous → Full Moon → Old Gibbous → Old Half → Old Crescent → New Moon
-    </div>
-
-    <ul>
-      <li><strong>One complete phase cycle ≈ 29.5 days.</strong> / รอบข้างขึ้นข้างแรมหนึ่งรอบใช้เวลาประมาณ <strong>29.5 วัน</strong></li>
-      <li>In one complete phase cycle, the Moon moves around Earth once. / ในหนึ่งรอบข้างขึ้นข้างแรม ดวงจันทร์เคลื่อนที่รอบโลกหนึ่งรอบ</li>
-      <li>At New Moon, the Moon is between Earth and the Sun, and the side facing Earth is dark. / ขณะ New Moon ดวงจันทร์อยู่ระหว่างโลกกับดวงอาทิตย์ และด้านที่หันหาโลกมืด</li>
-    </ul>
-
-    <p><strong>EN:</strong> Moon phases have been used to develop lunar calendars and to determine dates for religious activities and astrology. The English word <strong>month</strong> is historically related to <strong>moon</strong>, and early month counting could run from one New Moon to the next. Islamic and Chinese calendars are examples that use the Moon’s motion.</p>
-    <p><strong>TH:</strong> ข้างขึ้นข้างแรมถูกใช้ในการสร้างปฏิทินจันทรคติ ใช้กำหนดวันของกิจกรรมทางศาสนาและโหราศาสตร์ คำภาษาอังกฤษ <strong>month</strong> มีความเกี่ยวข้องทางประวัติศาสตร์กับคำว่า <strong>moon</strong> และการนับเดือนในยุคแรกอาจนับจาก New Moon หนึ่งครั้งถึง New Moon ครั้งถัดไป ปฏิทินอิสลามและปฏิทินจีนเป็นตัวอย่างของปฏิทินที่ใช้การเคลื่อนที่ของดวงจันทร์</p>
+    <h3>5. Unit conversions for drift problems / การแปลงหน่วยในโจทย์ drift (Q5, Q7–Q8)</h3>
+    <div class="review-check-key">\\[1\\,\\mathrm{mm}=10^{-3}\\,\\mathrm m\\]\\[\\boxed{1\\,\\mathrm{mm^2}=10^{-6}\\,\\mathrm{m^2}}\\]\\[1\\,\\mathrm{mm/s}=10^{-3}\\,\\mathrm{m/s}\\]</div>
+    <p><strong>EN:</strong> Convert before substituting into \\(I=neAv_d\\). Area conversion is squared, so it is a common source of powers-of-ten errors.</p>
+    <p><strong>TH:</strong> แปลงหน่วยก่อนแทนค่าใน \\(I=neAv_d\\) โดยเฉพาะพื้นที่มีการยกกำลังสอง จึงเป็นจุดที่ผิดเลขชี้กำลังได้ง่าย</p>
   </section>
 
-  <!-- Covers Q22 and Q31 -->
   <section class="review-check-section">
-    <h3>6. Tides / น้ำขึ้นน้ำลง</h3>
-    <p><strong>EN:</strong> Tides are the alternate rising and falling of ocean water. In this topic, tides are explained mainly by the <strong>Moon’s gravitational force</strong>. Ocean water forms a bulge on the side facing the Moon and another bulge on the opposite side.</p>
-    <p><strong>TH:</strong> น้ำขึ้นน้ำลงคือการที่ระดับน้ำทะเลสูงขึ้นและลดลงสลับกัน ในหัวข้อนี้อธิบายโดยเน้น <strong>แรงโน้มถ่วงของดวงจันทร์</strong> น้ำทะเลนูนขึ้นด้านที่หันเข้าหาดวงจันทร์และอีกด้านที่อยู่ตรงข้าม</p>
-
-    <div class="review-check-key">
-      <strong>Tidal diagram rule / กฎการอ่านภาพน้ำขึ้นน้ำลง</strong>
-      <p>If the tidal bulges are labelled A and C, then <strong>A and C are high tides</strong>, while the positions between the bulges, B and D, are <strong>low tides</strong>.</p>
-      <p>ถ้าในภาพส่วนที่นูนถูกกำกับเป็น A และ C จะเป็น <strong>น้ำขึ้น</strong> ส่วนตำแหน่งระหว่างส่วนที่นูน B และ D จะเป็น <strong>น้ำลง</strong></p>
-    </div>
-
-    <p><strong>EN:</strong> Earth rotates faster than the Moon revolves around Earth. As Earth rotates through the two tidal bulges and the two low-water regions, a place normally experiences about <strong>two high tides and two low tides each day</strong>.</p>
-    <p><strong>TH:</strong> โลกหมุนรอบตัวเองเร็วกว่าที่ดวงจันทร์โคจรรอบโลก เมื่อพื้นที่หนึ่งบนโลกหมุนผ่านบริเวณน้ำที่นูนขึ้นสองด้านและบริเวณน้ำต่ำสองด้าน จึงมักเกิด <strong>น้ำขึ้น 2 ครั้งและน้ำลง 2 ครั้งต่อวัน</strong></p>
+    <h3>6. Different materials in series / ลวดต่างวัสดุต่ออนุกรม (Q9)</h3>
+    <p><strong>EN:</strong> Series connection gives the same current. Equal diameters give equal areas. Therefore a material with lower carrier density needs a larger drift speed.</p>
+    <p><strong>TH:</strong> การต่ออนุกรมทำให้กระแสเท่ากัน และเส้นผ่านศูนย์กลางเท่ากันทำให้พื้นที่เท่ากัน ดังนั้นวัสดุที่มีความหนาแน่นจำนวนพาหะต่ำกว่าจะต้องมี drift speed สูงกว่า</p>
+    <div class="review-check-key">\\[I_1=I_2,\\qquad A_1=A_2\\]\\[n_1v_1=n_2v_2\\]\\[\\boxed{\\frac{v_2}{v_1}=\\frac{n_1}{n_2}}\\]</div>
   </section>
 
-  <!-- Covers Q23–Q24 and Q28 -->
   <section class="review-check-section">
-    <h3>7. Spring tide and neap tide / น้ำเกิดและน้ำตาย</h3>
-
-    <table class="review-check-table">
-      <thead>
-        <tr>
-          <th>Feature / ลักษณะ</th>
-          <th>Spring tide / น้ำเกิด</th>
-          <th>Neap tide / น้ำตาย</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>Moon phase / เฟสดวงจันทร์</td><td>New Moon or Full Moon</td><td>New Half or Old Half Moon</td></tr>
-        <tr><td>Arrangement / การจัดแนว</td><td>Sun, Earth and Moon are approximately aligned / อยู่เกือบแนวเดียวกัน</td><td>Sun and Moon are at right angles as viewed from Earth / ดวงอาทิตย์และดวงจันทร์ทำมุมฉากเมื่อมองจากโลก</td></tr>
-        <tr><td>Tidal range / ช่วงต่างระดับน้ำ</td><td><strong>Largest / มากที่สุด</strong></td><td><strong>Smallest / น้อยที่สุด</strong></td></tr>
-        <tr><td>High and low tide / น้ำขึ้นและน้ำลง</td><td>Very high highs and very low lows / น้ำขึ้นสูงมากและน้ำลงต่ำมาก</td><td>Less extreme / แตกต่างกันน้อยกว่า</td></tr>
-      </tbody>
-    </table>
-
-    <div class="review-check-key">
-      <strong>Memory aid / ตัวช่วยจำ</strong>
-      <p>Spring = Strong range · Neap = Narrow range</p>
-    </div>
+    <h3>7. Finding number density from total electrons / หา number density จากจำนวนอิเล็กตรอนทั้งหมด (Q10)</h3>
+    <p><strong>EN:</strong> Number density means number of free electrons per unit volume. For a uniform wire, volume is \\(AL\\).</p>
+    <p><strong>TH:</strong> number density คือจำนวนอิเล็กตรอนอิสระต่อหนึ่งหน่วยปริมาตร สำหรับลวดสม่ำเสมอ ปริมาตรเท่ากับ \\(AL\\)</p>
+    <div class="review-check-key">\\[\\boxed{n=\\frac{N}{AL}}\\]</div>
+    <p><strong>Q10 route / เส้นทาง Q10:</strong> \\(N,A,L\\rightarrow n\\) and \\(Q,t\\rightarrow I\\), then combine \\(n,I,A\\rightarrow v_d\\).</p>
   </section>
 
-  <!-- Covers Q25 -->
   <section class="review-check-section">
-    <h3>8. Why tides matter / ความสำคัญของน้ำขึ้นน้ำลง</h3>
-    <p><strong>EN:</strong> Tides and tidal streams help circulate ocean water and bring fresh water and food to some areas. Tides affect beach ecosystems and are important for navigation through coastal waterways, fishing and water sports.</p>
-    <p><strong>TH:</strong> น้ำขึ้นน้ำลงและกระแสน้ำจากน้ำขึ้นน้ำลงช่วยหมุนเวียนน้ำทะเลและนำแหล่งอาหารหรือน้ำใหม่เข้าสู่บางบริเวณ น้ำขึ้นน้ำลงมีผลต่อระบบนิเวศชายหาด และมีความสำคัญต่อการเดินเรือในทางน้ำชายฝั่ง การประมง และกีฬาทางน้ำ</p>
+    <h3>8. Electric current is not electron drift speed / กระแสไม่ใช่ความเร็วอิเล็กตรอน (Q11)</h3>
+    <div class="review-check-key">\\[\\boxed{\\text{electric current}\\neq\\text{electron drift speed}}\\]</div>
+    <p><strong>EN:</strong> Current measures charge passing per unit time. Drift speed is the average net speed of the charge carriers. A lamp responds quickly because electrons are already present throughout the conducting circuit and the <strong>change in electric field propagates rapidly through the circuit</strong>.</p>
+    <p><strong>TH:</strong> กระแสคือปริมาณประจุที่ผ่านต่อเวลา ส่วน drift speed คือความเร็วสุทธิเฉลี่ยของพาหะประจุ หลอดไฟตอบสนองเร็วเพราะมีอิเล็กตรอนอยู่ทั่วตัวนำอยู่แล้ว และ <strong>การเปลี่ยนแปลงของสนามไฟฟ้าแพร่ผ่านวงจรอย่างรวดเร็ว</strong></p>
   </section>
 
-  <!-- Covers Q26–Q28 and Q32 -->
   <section class="review-check-section">
-    <h3>9. Moonrise and moonset / เวลาขึ้นและตกของดวงจันทร์</h3>
-    <p><strong>EN:</strong> The Moon does not rise at the same time every day. Viewed from Earth, the Moon moves about <strong>12° eastward each day</strong>. Earth therefore needs to rotate a little farther before the Moon appears at the same position in the sky, so the Moon rises about <strong>50 minutes later each day</strong>.</p>
-    <p><strong>TH:</strong> ดวงจันทร์ไม่ได้ขึ้นเวลาเดิมทุกวัน เมื่อมองจากโลก ดวงจันทร์เคลื่อนไปทางตะวันออกประมาณ <strong>12° ต่อวัน</strong> โลกจึงต้องหมุนเพิ่มอีกเล็กน้อยก่อนที่ดวงจันทร์จะกลับมาอยู่ในตำแหน่งเดิมบนท้องฟ้า ทำให้ดวงจันทร์ขึ้นช้าลงประมาณ <strong>50 นาทีต่อวัน</strong></p>
-
-    <table class="review-check-table">
-      <thead>
-        <tr>
-          <th>Moon phase / เฟส</th>
-          <th>Rises / ขึ้น</th>
-          <th>Highest / สูงสุดบนท้องฟ้า</th>
-          <th>Sets / ตก</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>New Moon</td><td>Morning / เช้า</td><td>Noon / เที่ยง</td><td>Evening / เย็น</td></tr>
-        <tr><td>New Half Moon</td><td>Middle of day / กลางวัน</td><td>Sunset / พระอาทิตย์ตก</td><td>Middle of night / กลางคืน</td></tr>
-        <tr><td>Full Moon</td><td>Sunset / พระอาทิตย์ตก</td><td>Middle of night / กลางคืน</td><td>Sunrise / พระอาทิตย์ขึ้น</td></tr>
-        <tr><td>Old Half Moon</td><td>Middle of night / กลางคืน</td><td>Sunrise / พระอาทิตย์ขึ้น</td><td>Middle of day / กลางวัน</td></tr>
-      </tbody>
-    </table>
+    <h3>9. Stretching a wire at constant volume / ยืดลวดโดยปริมาตรคงที่ (Q12–Q13)</h3>
+    <p><strong>EN:</strong> Do not change \\(L\\) in the resistance formula while pretending \\(A\\) is unchanged. Constant volume links the two.</p>
+    <p><strong>TH:</strong> ห้ามเพิ่ม \\(L\\) ในสูตรความต้านทานโดยถือว่า \\(A\\) คงเดิม เพราะเมื่อปริมาตรคงที่ ความยาวและพื้นที่หน้าตัดเปลี่ยนสัมพันธ์กัน</p>
+    <div class="review-check-key">\\[AL=\\text{constant}\\]\\[L_2=kL_1\\Rightarrow A_2=\\frac{A_1}{k}\\]\\[R=\\rho\\frac{L}{A}\\Rightarrow \\boxed{R_2=k^2R_1}\\]\\[V\\text{ same}\\Rightarrow I=\\frac VR\\Rightarrow \\boxed{I_2=\\frac{I_1}{k^2}}\\]</div>
+    <div class="review-check-sequence"><strong>For Q12–Q13 when \\(k=2\\):</strong><br>\\[\\boxed{L\\times2\\rightarrow A\\times\\frac12\\rightarrow R\\times4\\rightarrow I\\times\\frac14}\\]</div>
   </section>
 
   <section class="review-check-section review-check-final">
-    <h3>Before the exam: do not confuse these / ก่อนสอบ อย่าสับสนคู่เหล่านี้</h3>
-    <ul>
-      <li><strong>Earth’s rotation → day and night.</strong> / โลกหมุนรอบตัวเอง → กลางวันและกลางคืน</li>
-      <li><strong>Axial tilt + Earth’s revolution → seasons.</strong> / แกนโลกเอียง + โลกโคจรรอบดวงอาทิตย์ → ฤดูกาล</li>
-      <li><strong>Moon reflects sunlight → we can see the Moon.</strong> / ดวงจันทร์สะท้อนแสงอาทิตย์ → เรามองเห็นดวงจันทร์</li>
-      <li><strong>Moon’s revolution → Moon phases, tides and changing moonrise/moonset times.</strong> / ดวงจันทร์โคจรรอบโลก → ข้างขึ้นข้างแรม น้ำขึ้นน้ำลง และเวลาขึ้นตกที่เปลี่ยนไป</li>
-      <li><strong>Spring tide = largest tidal range.</strong> / น้ำเกิด = ช่วงต่างระดับน้ำมากที่สุด</li>
-      <li><strong>Neap tide = smallest tidal range.</strong> / น้ำตาย = ช่วงต่างระดับน้ำน้อยที่สุด</li>
-      <li><strong>Full Moon: sunset → middle of night → sunrise.</strong></li>
-      <li><strong>Moon rises ≈ 50 minutes later each day.</strong> / ดวงจันทร์ขึ้นช้าลงประมาณ 50 นาทีต่อวัน</li>
-    </ul>
+    <h3>Problem-solving map / แผนเดินโจทย์ (Q1–Q13)</h3>
+    <table class="review-check-table">
+      <thead><tr><th>Given / โจทย์ให้</th><th>Route / เส้นทาง</th><th>Questions / ข้อ</th></tr></thead>
+      <tbody>
+        <tr><td>\\(V,R\\)</td><td>\\(V,R\\rightarrow I\\)</td><td>Q1–Q2</td></tr>
+        <tr><td>diameter \\(d\\)</td><td>\\(d\\rightarrow A\\)</td><td>Q3, Q5</td></tr>
+        <tr><td>same wire, two areas</td><td>\\(I_1=I_2\\rightarrow A_1v_1=A_2v_2\\)</td><td>Q4, Q6</td></tr>
+        <tr><td>\\(I,n,A\\)</td><td>\\(I,n,A\\rightarrow v_d\\)</td><td>Q5, Q10</td></tr>
+        <tr><td>\\(n,A,v_d\\)</td><td>\\(n,A,v_d\\rightarrow I\\)</td><td>Q7–Q8</td></tr>
+        <tr><td>\\(I,t\\)</td><td>\\(I,t\\rightarrow Q\\)</td><td>Q8</td></tr>
+        <tr><td>same \\(I,A\\), different \\(n\\)</td><td>\\(n_1v_1=n_2v_2\\)</td><td>Q9</td></tr>
+        <tr><td>\\(N,A,L\\) and \\(Q,t\\)</td><td>\\(N,A,L\\rightarrow n\\); \\(Q,t\\rightarrow I\\); combine to \\(v_d\\)</td><td>Q10</td></tr>
+        <tr><td>concept</td><td>current \\(\\neq\\) drift speed</td><td>Q11</td></tr>
+        <tr><td>stretched wire</td><td>\\(L\\uparrow\\rightarrow A\\downarrow\\rightarrow R\\uparrow\\rightarrow I\\downarrow\\)</td><td>Q12–Q13</td></tr>
+      </tbody>
+    </table>
   </section>
-
-</article>
-`
+</article>`
   },
 
   /* =========================================================
-     SECTION 5 · QUESTIONS / เนื้อหาโจทย์
-
-     EDITING CHECKLIST PER QUESTION:
-     id | questionTH | questionEN | hints | solutionTH |
-     solutionEN | options
-
-     options = 7 ตัวเลือก และ isCorrect:true เพียง 1 ตัว
+     SECTION 5 · QUESTIONS Q1–Q13
      ========================================================= */
   questions: [
-
-  // =========================================================
-  // Q1 — Axial tilt angle
-  // =========================================================
-  {
-    "id": "q1",
-    "questionTH": `
-      <div>พิจารณาภาพการเอียงของแกนโลก</div>
-      ${AXIAL_TILT_SVG}
-      <div class="mt-3">
-        แกนโลกเอียงจากแนวอ้างอิงประมาณกี่องศา?
-      </div>
-    `,
-    "questionEN": `
-      <div>Consider the diagram of Earth's tilted axis.</div>
-      ${AXIAL_TILT_SVG}
-      <div class="mt-3">
-        approximately how much is Earth's axis tilted from the reference direction?
-      </div>
-    `,
-    "hints": [
-      {"th":"ค่ามุมนี้มากกว่า 20° แต่น้อยกว่า 30°","en":"This angle is greater than 20° but less than 30°."},
-      {"th":"เป็นค่ามาตรฐานที่มักเขียนประมาณยี่สิบสามองศาครึ่ง","en":"It is commonly written as about twenty-three and a half degrees."},
-      {"th":"ใช้ค่ามาตรฐานของแกนโลกใน Quiz นี้: 23.5°","en":"Use the standard axial-tilt value used in this quiz: 23.5°."}
-    ],
-    "solutionTH": `
-      <div>แกนโลกมีการเอียงประมาณ
-        \\[23.5^\\circ\\]
-      </div>
-      <div class="mt-2">การเอียงนี้เรียกว่า <b>axial tilt</b> หรือการเอียงของแกนโลก และมีผลสำคัญต่อฤดูกาลและความยาวของกลางวันกับกลางคืน</div>
-      <div class="mt-2 font-bold text-emerald-700">ตอบ: \\(23.5^\\circ\\)</div>
-    `,
-    "solutionEN": `
-      <div>Earth's axis is tilted by approximately
-        \\[23.5^\\circ.\\]
-      </div>
-      <div class="mt-2">This is called the <b>axial tilt</b>. It is important for seasons and for differences in the lengths of daytime and nighttime.</div>
-      <div class="mt-2 font-bold text-emerald-700">Answer: \\(23.5^\\circ\\)</div>
-    `,
-    "options": [
-      {"text":"\\(0^\\circ\\)","isCorrect":false},
-      {"text":"\\(11.5^\\circ\\)","isCorrect":false},
-      {"text":"\\(23.5^\\circ\\)","isCorrect":true},
-      {"text":"\\(45^\\circ\\)","isCorrect":false},
-      {"text":"\\(66.5^\\circ\\)","isCorrect":false},
-      {"text":"\\(90^\\circ\\)","isCorrect":false},
-      {"text":"\\(180^\\circ\\)","isCorrect":false}
-    ]
-  },
-
-  // =========================================================
-  // Q2 — Meaning of Earth's axis
-  // =========================================================
-  {
-    "id": "q2",
-    "questionTH": `
-      <div>พิจารณาเส้นแกนในภาพ</div>
-      ${AXIAL_TILT_SVG}
-      <div class="mt-3">ข้อใดอธิบาย <b>แกนของโลก (Earth's axis)</b> ได้ถูกต้องที่สุด?</div>
-    `,
-    "questionEN": `
-      <div>Consider the axis shown in the diagram.</div>
-      ${AXIAL_TILT_SVG}
-      <div class="mt-3">Which statement best describes <b>Earth's axis</b>?</div>
-    `,
-    "hints": [
-      {"th":"แกนโลกไม่ใช่วัตถุจริง แต่เป็นเส้นสมมติ","en":"Earth's axis is not a physical rod; it is an imaginary line."},
-      {"th":"เส้นนี้เกี่ยวข้องกับขั้วโลกเหนือและขั้วโลกใต้","en":"The line is associated with the North Pole and South Pole."},
-      {"th":"เส้นสมมตินี้ผ่าน North Pole → ศูนย์กลางโลก → South Pole","en":"The imaginary line passes North Pole → Earth's center → South Pole."}
-    ],
-    "solutionTH": `
-      <div>แกนโลกคือ <b>เส้นสมมติ</b> ที่ผ่านขั้วโลกเหนือ ศูนย์กลางของโลก และขั้วโลกใต้</div>
-      <div class="mt-2">โลกหมุนรอบเส้นสมมตินี้</div>
-      <div class="mt-2 font-bold text-emerald-700">ตอบ: เส้นสมมติที่ผ่านขั้วโลกเหนือ ศูนย์กลางโลก และขั้วโลกใต้</div>
-    `,
-    "solutionEN": `
-      <div>Earth's axis is an <b>imaginary line</b> passing through the North Pole, the center of Earth, and the South Pole.</div>
-      <div class="mt-2">Earth rotates about this imaginary axis.</div>
-      <div class="mt-2 font-bold text-emerald-700">Answer: the imaginary line through the North Pole, Earth's center, and the South Pole.</div>
-    `,
-    "options": [
-      {"text":"เส้นสมมติที่ผ่านขั้วโลกเหนือ ศูนย์กลางโลก และขั้วโลกใต้ / An imaginary line through the North Pole, Earth's center, and the South Pole.","isCorrect":true},
-      {"text":"เส้นจริงที่เชื่อมโลกกับดวงอาทิตย์ / A physical line joining Earth to the Sun.","isCorrect":false},
-      {"text":"เส้นรอบวงที่แบ่งโลกเป็นกลางวันและกลางคืนเสมอ / A circular line that permanently divides day and night.","isCorrect":false},
-      {"text":"เส้นทางที่โลกใช้โคจรรอบดวงอาทิตย์ / The path Earth follows around the Sun.","isCorrect":false},
-      {"text":"เส้นศูนย์สูตรของโลก / Earth's equator.","isCorrect":false},
-      {"text":"เส้นที่ผ่านดวงจันทร์และโลก / A line passing through the Moon and Earth.","isCorrect":false},
-      {"text":"เส้นที่เปลี่ยนตำแหน่งทุก 24 ชั่วโมง / A line that changes position every 24 hours.","isCorrect":false}
-    ]
-  },
-
-  // =========================================================
-  // Q3 — Axis direction during revolution
-  // =========================================================
-  {
-    "id": "q3",
-    "questionTH": `
-      <div>ภาพแสดงโลกที่ตำแหน่งต่าง ๆ ระหว่างโคจรรอบดวงอาทิตย์</div>
-      ${SEASONS_ORBIT_SVG}
-      <div class="mt-3">ข้อใดอธิบายทิศของแกนโลกตลอดหนึ่งปีได้ถูกต้อง?</div>
-    `,
-    "questionEN": `
-      <div>The diagram shows Earth at different positions while revolving around the Sun.</div>
-      ${SEASONS_ORBIT_SVG}
-      <div class="mt-3">Which statement correctly describes the direction of Earth's axis throughout a year?</div>
-    `,
-    "hints": [
-      {"th":"สังเกตว่าเส้นแกนทั้งสี่ตำแหน่งในภาพขนานกัน","en":"Notice that the axes at all four positions are parallel."},
-      {"th":"แกนโลกไม่ได้หันเข้าหาดวงอาทิตย์ตลอดเวลา","en":"Earth's axis does not keep turning to face the Sun."},
-      {"th":"แกนยังเอียงไปในทิศเดิมตลอดปี","en":"the axis remains tilted in the same direction throughout the year."}
-    ],
-    "solutionTH": `
-      <div>ขณะที่โลกโคจรรอบดวงอาทิตย์ <b>แกนโลกยังคงเอียงไปในทิศทางเดิมตลอดทั้งปี</b></div>
-      <div class="mt-2">จึงมีบางช่วงที่ซีกโลกเหนือเอียงเข้าหาดวงอาทิตย์ และอีกประมาณหกเดือนต่อมาก็เอียงออกจากดวงอาทิตย์</div>
-      <div class="mt-2 font-bold text-emerald-700">ตอบ: แกนโลกเอียงไปในทิศเดิมตลอดปี</div>
-    `,
-    "solutionEN": `
-      <div>As Earth revolves around the Sun, <b>its axis remains tilted in the same direction throughout the year</b>.</div>
-      <div class="mt-2">Therefore, at one part of the orbit the Northern Hemisphere tilts toward the Sun, and about six months later it tilts away.</div>
-      <div class="mt-2 font-bold text-emerald-700">Answer: the axis stays tilted in the same direction throughout the year.</div>
-    `,
-    "options": [
-      {"text":"แกนโลกเอียงไปในทิศเดิมตลอดปี / The axis stays tilted in the same direction throughout the year.","isCorrect":true},
-      {"text":"แกนโลกหันขั้วเหนือเข้าหาดวงอาทิตย์ตลอดปี / The North Pole always points toward the Sun.","isCorrect":false},
-      {"text":"แกนโลกตั้งตรงในเดือนมีนาคมและกันยายน / The axis becomes vertical in March and September.","isCorrect":false},
-      {"text":"แกนโลกสลับทิศทุกเดือน / The axis reverses direction every month.","isCorrect":false},
-      {"text":"แกนโลกไม่เอียงในฤดูหนาว / The axis is not tilted in winter.","isCorrect":false},
-      {"text":"แกนโลกหมุนหนึ่งรอบรอบดวงอาทิตย์ทุก 24 ชั่วโมง / The axis revolves once around the Sun every 24 hours.","isCorrect":false},
-      {"text":"แกนโลกเอียงตามตำแหน่งของดวงจันทร์ / The axis tilts according to the Moon's position.","isCorrect":false}
-    ]
-  },
-
-  // =========================================================
-  // Q4 — Cause of seasons
-  // =========================================================
-  {
-    "id": "q4",
-    "questionTH": `
-      <div>ข้อใดอธิบาย <b>สาเหตุของฤดูกาล</b> ได้ถูกต้องที่สุด?</div>
-      ${SEASONS_ORBIT_SVG}
-    `,
-    "questionEN": `
-      <div>Which statement best explains the <b>cause of seasons</b>?</div>
-      ${SEASONS_ORBIT_SVG}
-    `,
-    "hints": [
-      {"th":"ฤดูกาลไม่ได้เกิดจากการหมุนรอบตัวเองเพียงอย่างเดียว","en":"Seasons are not caused by Earth's rotation alone."},
-      {"th":"แนวคิดสำคัญสองอย่างที่ต้องพิจารณาร่วมกันคือ: axial tilt และ revolution","en":"Two ideas must be considered together: axial tilt and revolution."},
-      {"th":"คำตอบต้องมีทั้งการเอียงของแกนโลกและการโคจรรอบดวงอาทิตย์","en":"The answer must include both Earth's axial tilt and its revolution around the Sun."}
-    ],
-    "solutionTH": `
-      <div>ฤดูกาลเกิดจาก <b>ผลร่วมของการเอียงของแกนโลกและการโคจรของโลกรอบดวงอาทิตย์</b></div>
-      <div class="mt-2">การเอียงทำให้ในแต่ละช่วงของวงโคจร ซีกโลกต่าง ๆ รับแสงจากดวงอาทิตย์ไม่เท่ากัน</div>
-      <div class="mt-2 font-bold text-emerald-700">ตอบ: Axial tilt + Earth's revolution around the Sun</div>
-    `,
-    "solutionEN": `
-      <div>Seasons are caused by the <b>combined effects of Earth's axial tilt and Earth's revolution around the Sun</b>.</div>
-      <div class="mt-2">Because the axis is tilted, different hemispheres receive different amounts of sunlight at different parts of the orbit.</div>
-      <div class="mt-2 font-bold text-emerald-700">Answer: axial tilt + Earth's revolution around the Sun.</div>
-    `,
-    "options": [
-      {"text":"การเอียงของแกนโลก + การโคจรรอบดวงอาทิตย์ / Earth's axial tilt + revolution around the Sun.","isCorrect":true},
-      {"text":"การหมุนรอบตัวเองของโลกเพียงอย่างเดียว / Earth's rotation only.","isCorrect":false},
-      {"text":"การโคจรรอบดวงอาทิตย์เพียงอย่างเดียวโดยไม่เกี่ยวกับแกนเอียง / Revolution alone, with no effect from axial tilt.","isCorrect":false},
-      {"text":"ระยะห่างระหว่างโลกกับดวงอาทิตย์เท่านั้น / Only the Earth–Sun distance.","isCorrect":false},
-      {"text":"การโคจรของดวงจันทร์รอบโลก / The Moon's revolution around Earth.","isCorrect":false},
-      {"text":"เงาของโลกบังแสงอาทิตย์ในบางเดือน / Earth's shadow blocking sunlight in some months.","isCorrect":false},
-      {"text":"ความเร็วการหมุนของโลกเปลี่ยนทุกฤดู / Earth's rotation speed changing each season.","isCorrect":false}
-    ]
-  },
-
-  // =========================================================
-  // Q5 — Hemisphere tilted toward Sun
-  // =========================================================
-  {
-    "id": "q5",
-    "questionTH": `
-      <div>ที่ตำแหน่ง <b>A</b> ในภาพ ขั้วเหนือของโลกเอียงเข้าหาดวงอาทิตย์</div>
-      ${SEASONS_ORBIT_SVG}
-      <div class="mt-3">ชุดข้อความใดถูกต้องที่สุด?</div>
-    `,
-    "questionEN": `
-      <div>At position <b>A</b>, Earth's North Pole is tilted toward the Sun.</div>
-      ${SEASONS_ORBIT_SVG}
-      <div class="mt-3">Which combination of statements is most accurate?</div>
-    `,
-    "hints": [
-      {"th":"ซีกโลกที่เอียงเข้าหาดวงอาทิตย์ได้รับแสงมากกว่า","en":"The hemisphere tilted toward the Sun receives more sunlight."},
-      {"th":"เมื่อซีกโลกเหนือเอียงเข้าหาดวงอาทิตย์ ซีกโลกใต้จะเอียงออก","en":"When the Northern Hemisphere tilts toward the Sun, the Southern Hemisphere tilts away."},
-      {"th":"ดังนั้นเหนือเป็น summer และใต้เป็น winter","en":"Therefore, the north is in summer and the south is in winter."}
-    ],
-    "solutionTH": `
-      <div>เมื่อซีกโลกเหนือเอียงเข้าหาดวงอาทิตย์ จะได้รับแสงมากกว่าและเป็น <b>ฤดูร้อน</b></div>
-      <div class="mt-2">ในเวลาเดียวกัน ซีกโลกใต้เอียงออกจากดวงอาทิตย์และเป็น <b>ฤดูหนาว</b></div>
-      <div class="mt-2 font-bold text-emerald-700">ตอบ: Northern Hemisphere = summer; Southern Hemisphere = winter</div>
-    `,
-    "solutionEN": `
-      <div>When the Northern Hemisphere tilts toward the Sun, it receives more sunlight and experiences <b>summer</b>.</div>
-      <div class="mt-2">At the same time, the Southern Hemisphere tilts away from the Sun and experiences <b>winter</b>.</div>
-      <div class="mt-2 font-bold text-emerald-700">Answer: Northern Hemisphere = summer; Southern Hemisphere = winter.</div>
-    `,
-    "options": [
-      {"text":"เหนือ: summer, ใต้: winter / North: summer, South: winter.","isCorrect":true},
-      {"text":"เหนือ: winter, ใต้: summer / North: winter, South: summer.","isCorrect":false},
-      {"text":"ทั้งสองซีกเป็น summer / Both hemispheres are in summer.","isCorrect":false},
-      {"text":"ทั้งสองซีกเป็น winter / Both hemispheres are in winter.","isCorrect":false},
-      {"text":"เหนือ: spring, ใต้: spring / North: spring, South: spring.","isCorrect":false},
-      {"text":"เหนือ: autumn, ใต้: autumn / North: autumn, South: autumn.","isCorrect":false},
-      {"text":"ฤดูกาลของทั้งสองซีกไม่เกี่ยวกับทิศการเอียง / Seasons in both hemispheres are unrelated to the tilt direction.","isCorrect":false}
-    ]
-  },
-
-  // =========================================================
-  // Q6 — June to August
-  // =========================================================
-  {
-    "id": "q6",
-    "questionTH": `
-      <div>พิจารณาตำแหน่งโลกในวันที่ใกล้ <b>21 June</b> ซึ่งซีกโลกเหนือเอียงเข้าหาดวงอาทิตย์</div>
-      ${SOLSTICE_EQUINOX_SVG}
-      <div class="mt-3">ช่วง <b>June–August</b> ตรงกับฤดูกาลใดในซีกโลกเหนือและซีกโลกใต้?</div>
-    `,
-    "questionEN": `
-      <div>Consider Earth's position near <b>21 June</b>, when the Northern Hemisphere is tilted toward the Sun.</div>
-      ${SOLSTICE_EQUINOX_SVG}
-      <div class="mt-3">Which seasons occur during <b>June–August</b> in the Northern and Southern Hemispheres?</div>
-    `,
-    "hints": [
-      {"th":"ช่วงกลางปีซีกโลกเหนือเอียงเข้าหาดวงอาทิตย์มากกว่า","en":"Around the middle of the year, the Northern Hemisphere is tilted more toward the Sun."},
-      {"th":"ฤดูกาลของสองซีกโลกตรงข้ามกัน","en":"The seasons in the two hemispheres are opposite."},
-      {"th":"June–August: เหนือ summer, ใต้ winter","en":"June–August: north summer, south winter."}
-    ],
-    "solutionTH": `
-      <div>ช่วง June–August :</div>
-      <div class="mt-2"><b>Northern Hemisphere:</b> Summer</div>
-      <div><b>Southern Hemisphere:</b> Winter</div>
-      <div class="mt-2 font-bold text-emerald-700">ตอบ: Northern summer / Southern winter</div>
-    `,
-    "solutionEN": `
-      <div>During June–August:</div>
-      <div class="mt-2"><b>Northern Hemisphere:</b> Summer</div>
-      <div><b>Southern Hemisphere:</b> Winter</div>
-      <div class="mt-2 font-bold text-emerald-700">Answer: Northern summer / Southern winter.</div>
-    `,
-    "options": [
-      {"text":"Northern: Summer · Southern: Winter / เหนือ: ฤดูร้อน · ใต้: ฤดูหนาว","isCorrect":true},
-      {"text":"Northern: Winter · Southern: Summer / เหนือ: ฤดูหนาว · ใต้: ฤดูร้อน","isCorrect":false},
-      {"text":"Northern: Spring · Southern: Autumn / เหนือ: ฤดูใบไม้ผลิ · ใต้: ฤดูใบไม้ร่วง","isCorrect":false},
-      {"text":"Northern: Autumn · Southern: Spring / เหนือ: ฤดูใบไม้ร่วง · ใต้: ฤดูใบไม้ผลิ","isCorrect":false},
-      {"text":"Both: Summer / ทั้งสองซีก: ฤดูร้อน","isCorrect":false},
-      {"text":"Both: Winter / ทั้งสองซีก: ฤดูหนาว","isCorrect":false},
-      {"text":"Both: Spring / ทั้งสองซีก: ฤดูใบไม้ผลิ","isCorrect":false}
-    ]
-  },
-
-  // =========================================================
-  // Q7 — December to February
-  // =========================================================
-  {
-    "id": "q7",
-    "questionTH": `
-      <div>พิจารณาตำแหน่งโลกในวันที่ใกล้ <b>21 December</b> ซึ่งซีกโลกเหนือเอียงออกจากดวงอาทิตย์</div>
-      ${SOLSTICE_EQUINOX_SVG}
-      <div class="mt-3">ช่วง <b>December–February</b> ตรงกับฤดูกาลใดในซีกโลกเหนือและซีกโลกใต้?</div>
-    `,
-    "questionEN": `
-      <div>Consider Earth's position near <b>21 December</b>, when the Northern Hemisphere is tilted away from the Sun.</div>
-      ${SOLSTICE_EQUINOX_SVG}
-      <div class="mt-3">Which seasons occur during <b>December–February</b> in the Northern and Southern Hemispheres?</div>
-    `,
-    "hints": [
-      {"th":"ช่วงนี้ซีกโลกเหนือเอียงออกจากดวงอาทิตย์","en":"During this period, the Northern Hemisphere is tilted away from the Sun."},
-      {"th":"ซีกโลกใต้จึงเอียงเข้าหาดวงอาทิตย์","en":"The Southern Hemisphere is therefore tilted toward the Sun."},
-      {"th":"เหนือ winter, ใต้ summer","en":"North winter, south summer."}
-    ],
-    "solutionTH": `
-      <div>ช่วง December–February :</div>
-      <div class="mt-2"><b>Northern Hemisphere:</b> Winter</div>
-      <div><b>Southern Hemisphere:</b> Summer</div>
-      <div class="mt-2 font-bold text-emerald-700">ตอบ: Northern winter / Southern summer</div>
-    `,
-    "solutionEN": `
-      <div>During December–February:</div>
-      <div class="mt-2"><b>Northern Hemisphere:</b> Winter</div>
-      <div><b>Southern Hemisphere:</b> Summer</div>
-      <div class="mt-2 font-bold text-emerald-700">Answer: Northern winter / Southern summer.</div>
-    `,
-    "options": [
-      {"text":"Northern: Winter · Southern: Summer / เหนือ: ฤดูหนาว · ใต้: ฤดูร้อน","isCorrect":true},
-      {"text":"Northern: Summer · Southern: Winter / เหนือ: ฤดูร้อน · ใต้: ฤดูหนาว","isCorrect":false},
-      {"text":"Northern: Autumn · Southern: Spring / เหนือ: ฤดูใบไม้ร่วง · ใต้: ฤดูใบไม้ผลิ","isCorrect":false},
-      {"text":"Northern: Spring · Southern: Autumn / เหนือ: ฤดูใบไม้ผลิ · ใต้: ฤดูใบไม้ร่วง","isCorrect":false},
-      {"text":"Both: Summer / ทั้งสองซีก: ฤดูร้อน","isCorrect":false},
-      {"text":"Both: Winter / ทั้งสองซีก: ฤดูหนาว","isCorrect":false},
-      {"text":"Both: Autumn / ทั้งสองซีก: ฤดูใบไม้ร่วง","isCorrect":false}
-    ]
-  },
-
-      // =========================================================
-    // Q8 — Seasonal details: equator, people, and animals
-    // =========================================================
     {
-      "id": "q8",
-      "questionTH": `
-        <div>ข้อใดเป็นชุดข้อความที่ <b>สอดคล้องกันทั้งหมด</b> เกี่ยวกับฤดูกาล?</div>
-      `,
-      "questionEN": `
-        <div>Which set of statements is <b>fully consistent</b> with seasonal patterns?</div>
-      `,
-      "hints": [
-        {"th":"ประเทศไทยอยู่ใกล้เส้นศูนย์สูตร จึงไม่พบสี่ฤดูกาลที่เด่นชัดเหมือนประเทศอย่างญี่ปุ่นและเกาหลี","en":"Thailand is near the equator, so it does not experience four distinct seasons like countries such as Japan and Korea."},
-        {"th":"ฤดูหนาวสัมพันธ์กับอากาศหนาว เสื้อผ้าหนา และสัตว์บางชนิดอพยพหรือจำศีล","en":"Winter is associated with colder conditions, thicker clothing, and some animals migrating or hibernating."},
-        {"th":"ฤดูร้อนสัมพันธ์กับอากาศอุ่นกว่า เสื้อผ้าบางลง และกิจกรรมชายหาด","en":"Summer is associated with warmer conditions, thinner clothing, and beach activities."}
+      id: "q1",
+      questionTH: `<div>ลวดมีความต้านทาน \\(6.0\\,\\Omega\\) ต่อกับความต่างศักย์ \\(18\\,\\mathrm V\\) จงหากระแสไฟฟ้า</div>`,
+      questionEN: `<div>A wire has a resistance of \\(6.0\\,\\Omega\\) and is connected across a potential difference of \\(18\\,\\mathrm V\\). Find the current.</div>`,
+      hints: [
+        {th:"โจทย์ให้ V และ R จึงใช้กฎของโอห์ม",en:"The problem gives V and R, so use Ohm's law."},
+        {th:"จัดรูปเป็น \\(I=V/R\\)",en:"Rearrange to \\(I=V/R\\)."},
+        {th:"แทนค่า \\(I=18/6.0\\)",en:"Substitute \\(I=18/6.0\\)."}
       ],
-      "solutionTH": `
-        <div>ชุดที่สอดคล้องกันคือ:</div>
-        <div class="mt-2">• ประเทศไทยอยู่ใกล้เส้นศูนย์สูตร จึงไม่พบสี่ฤดูกาลที่เด่นชัดแบบประเทศอย่างญี่ปุ่นและเกาหลี</div>
-        <div>• ในฤดูหนาว ผู้คนสวมเสื้อผ้าหนา และสัตว์บางชนิดอพยพไปพื้นที่อุ่นกว่าหรือจำศีล</div>
-        <div>• ในฤดูร้อน ผู้คนสวมเสื้อผ้าบางลงและทำกิจกรรมชายหาดได้มากขึ้น</div>
-        <div class="mt-2 font-bold text-emerald-700">ตอบ: ชุดข้อความทั้งหมดข้างต้นที่สอดคล้องกัน</div>
-      `,
-      "solutionEN": `
-        <div>The consistent set is:</div>
-        <div class="mt-2">• Thailand is near the equator, so it does not experience four distinct seasons like countries such as Japan and Korea.</div>
-        <div>• In winter, people wear thicker clothing, and some animals migrate to warmer places or hibernate.</div>
-        <div>• In summer, people wear thinner clothing and may take part in beach activities.</div>
-        <div class="mt-2 font-bold text-emerald-700">Answer: the set containing all three consistent statements.</div>
-      `,
-      "options": [
-        {"text":"Japan/Korea → four distinct seasons; Thailand near equator → no four distinct seasons; winter → thick clothes + some animals migrate/hibernate; summer → thinner clothes + beach activities / ญี่ปุ่น-เกาหลี → 4 ฤดูเด่นชัด; ไทยใกล้เส้นศูนย์สูตร → ไม่มี 4 ฤดูเด่นชัด; winter → เสื้อหนา+สัตว์บางชนิดอพยพ/จำศีล; summer → เสื้อบาง+กิจกรรมชายหาด","isCorrect":true},
-        {"text":"Thailand near equator → four seasons more distinct; winter → thinner clothes; summer → hibernation / ไทยใกล้เส้นศูนย์สูตร → สี่ฤดูเด่นกว่า; winter → เสื้อบาง; summer → จำศีล","isCorrect":false},
-        {"text":"Thailand near North Pole → no seasons; winter → beach activities; summer → thick clothes / ไทยใกล้ขั้วโลกเหนือ → ไม่มีฤดู; winter → ชายหาด; summer → เสื้อหนา","isCorrect":false},
-        {"text":"Thailand near equator → polar night; winter → Sun higher at noon; summer → Sun lower at noon / ไทยใกล้เส้นศูนย์สูตร → polar night; winter → ดวงอาทิตย์สูงกว่า; summer → ต่ำกว่า","isCorrect":false},
-        {"text":"Thailand near equator → seasons caused by Moon; winter → animals never change behavior; summer → thick clothes / ไทยใกล้เส้นศูนย์สูตร → ฤดูเกิดจากดวงจันทร์; winter → สัตว์ไม่เปลี่ยนพฤติกรรม; summer → เสื้อหนา","isCorrect":false},
-        {"text":"Thailand near equator → four equal seasons; winter → longer daytime; summer → shorter daytime / ไทยใกล้เส้นศูนย์สูตร → สี่ฤดูเท่ากัน; winter → กลางวันยาวกว่า; summer → กลางวันสั้นกว่า","isCorrect":false},
-        {"text":"Seasonal changes affect only humans, not animals / การเปลี่ยนฤดูกาลมีผลเฉพาะมนุษย์ ไม่ส่งผลต่อสัตว์","isCorrect":false}
+      solutionTH: `<div>ใช้ \\[I=\\frac VR\\] ดังนั้น \\[I=\\frac{18}{6.0}=3.0\\,\\mathrm A\\]</div><div class="mt-2 font-bold text-emerald-700">ตอบ: \\(3.0\\,\\mathrm A\\)</div>`,
+      solutionEN: `<div>Use \\[I=\\frac VR\\] so \\[I=\\frac{18}{6.0}=3.0\\,\\mathrm A.\\]</div><div class="mt-2 font-bold text-emerald-700">Answer: \\(3.0\\,\\mathrm A\\)</div>`,
+      options: [
+        {text:"\\(0.33\\,\\mathrm A\\)",isCorrect:false},{text:"\\(1.5\\,\\mathrm A\\)",isCorrect:false},{text:"\\(2.0\\,\\mathrm A\\)",isCorrect:false},{text:"\\(3.0\\,\\mathrm A\\)",isCorrect:true},{text:"\\(6.0\\,\\mathrm A\\)",isCorrect:false},{text:"\\(12\\,\\mathrm A\\)",isCorrect:false},{text:"\\(108\\,\\mathrm A\\)",isCorrect:false}
       ]
     },
-
-// =========================================================
-  // Q9 — Cause of day and night
-  // =========================================================
-  {
-    "id": "q9",
-    "questionTH": `
-      <div>พิจารณาภาพ</div>
-      ${DAY_NIGHT_SVG}
-      <div class="mt-3">ข้อใดอธิบายการเกิด <b>กลางวันและกลางคืน</b> ได้ถูกต้อง?</div>
-    `,
-    "questionEN": `
-      <div>Consider the diagram.</div>
-      ${DAY_NIGHT_SVG}
-      <div class="mt-3">Which statement correctly explains <b>day and night</b>?</div>
-    `,
-    "hints": [
-      {"th":"ในเวลาใดเวลาหนึ่ง ดวงอาทิตย์ส่องโลกได้เพียงประมาณครึ่งหนึ่ง","en":"At any one time, sunlight illuminates only about half of Earth."},
-      {"th":"โลกหมุนรอบแกนของตนเอง","en":"Earth rotates about its own axis."},
-      {"th":"ด้านที่หันเข้าหาดวงอาทิตย์เป็นกลางวัน ส่วนด้านตรงข้ามเป็นกลางคืน","en":"The side facing the Sun has day, while the opposite side has night."}
-    ],
-    "solutionTH": `
-      <div>กลางวันและกลางคืนเกิดจาก <b>การหมุนรอบตัวเองของโลก</b></div>
-      <div class="mt-2">ในขณะหนึ่ง มีเพียงครึ่งโลกที่หันเข้าหาดวงอาทิตย์และได้รับแสง จึงเป็นกลางวัน ส่วนอีกด้านอยู่ในความมืดและเป็นกลางคืน</div>
-      <div class="mt-2 font-bold text-emerald-700">ตอบ: โลกหมุนรอบตัวเอง และแต่ละครั้งมีเพียงครึ่งโลกที่รับแสงอาทิตย์</div>
-    `,
-    "solutionEN": `
-      <div>Day and night are caused by <b>Earth's rotation</b>.</div>
-      <div class="mt-2">At any one time, only half of Earth faces the Sun and receives sunlight, producing daytime; the opposite side is in darkness and experiences nighttime.</div>
-      <div class="mt-2 font-bold text-emerald-700">Answer: Earth rotates, while only one half is illuminated at a time.</div>
-    `,
-    "options": [
-      {"text":"โลกหมุนรอบตัวเอง และด้านที่หันเข้าหาดวงอาทิตย์เป็นกลางวัน / Earth rotates; the side facing the Sun experiences daytime.","isCorrect":true},
-      {"text":"โลกโคจรรอบดวงอาทิตย์หนึ่งรอบทุกวัน / Earth revolves around the Sun once each day.","isCorrect":false},
-      {"text":"ดวงอาทิตย์โคจรรอบโลกทุก 24 ชั่วโมง / The Sun revolves around Earth every 24 hours.","isCorrect":false},
-      {"text":"ดวงจันทร์บังดวงอาทิตย์ทุกคืน / The Moon blocks the Sun every night.","isCorrect":false},
-      {"text":"แกนโลกสลับทิศวันละครั้ง / Earth's axis reverses direction once a day.","isCorrect":false},
-      {"text":"โลกหยุดรับแสงอาทิตย์ในเวลากลางคืนทั้งใบ / All of Earth stops receiving sunlight at night.","isCorrect":false},
-      {"text":"กลางวันกลางคืนเกิดจากฤดูกาลเท่านั้น / Day and night are caused only by seasons.","isCorrect":false}
-    ]
-  },
-
-  // =========================================================
-  // Q10 — Rotation period
-  // =========================================================
-  {
-    "id": "q10",
-    "questionTH": `
-      <div>โลกใช้เวลาประมาณเท่าใดในการ <b>หมุนรอบแกนของตนเองครบหนึ่งรอบ</b>?</div>
-    `,
-    "questionEN": `
-      <div>Approximately how long does Earth take to <b>complete one rotation on its axis</b>?</div>
-    `,
-    "hints": [
-      {"th":"เวลานี้สัมพันธ์กับหนึ่งวัน","en":"This time corresponds to one day."},
-      {"th":"หนึ่งวันมี 24 ชั่วโมง","en":"One day has 24 hours."},
-      {"th":"โลกใช้เวลาประมาณ 24 ชั่วโมงต่อการหมุนหนึ่งรอบ","en":"Earth takes about 24 hours for one complete rotation."}
-    ],
-    "solutionTH": `
-      <div>โลกใช้เวลาประมาณ
-        \\[24\text{ hours}\\]
-        หรือ <b>1 วัน</b> ในการหมุนรอบแกนของตนเองครบหนึ่งรอบ
-      </div>
-      <div class="mt-2 font-bold text-emerald-700">ตอบ: 24 ชั่วโมง</div>
-    `,
-    "solutionEN": `
-      <div>Earth takes approximately
-        \\[24\text{ hours}\\]
-        or <b>one day</b> to complete one rotation on its axis.
-      </div>
-      <div class="mt-2 font-bold text-emerald-700">Answer: 24 hours.</div>
-    `,
-    "options": [
-      {"text":"6 hours / 6 ชั่วโมง","isCorrect":false},
-      {"text":"12 hours / 12 ชั่วโมง","isCorrect":false},
-      {"text":"18 hours / 18 ชั่วโมง","isCorrect":false},
-      {"text":"24 hours / 24 ชั่วโมง","isCorrect":true},
-      {"text":"48 hours / 48 ชั่วโมง","isCorrect":false},
-      {"text":"29.5 days / 29.5 วัน","isCorrect":false},
-      {"text":"365 days / 365 วัน","isCorrect":false}
-    ]
-  },
-
-  // =========================================================
-  // Q11 — Summer vs winter Sun path and day length
-  // =========================================================
-  {
-    "id": "q11",
-    "questionTH": `
-      <div>ภาพแสดงเส้นทางปรากฏของดวงอาทิตย์สองแบบในท้องฟ้า</div>
-      ${SUN_PATH_SVG}
-      <div class="mt-3">ข้อใดจับคู่ <b>Path A</b> และ <b>Path B</b> กับฤดูและความยาวกลางวันได้ถูกต้อง?</div>
-    `,
-    "questionEN": `
-      <div>The diagram shows two apparent paths of the Sun across the sky.</div>
-      ${SUN_PATH_SVG}
-      <div class="mt-3">Which option correctly matches <b>Path A</b> and <b>Path B</b> with the season and daytime length ?</div>
-    `,
-    "hints": [
-      {"th":"ใน summer ดวงอาทิตย์ขึ้นสูงกว่าในตอนเที่ยง","en":"In summer, the Sun rises higher at noon."},
-      {"th":"ใน summer กลางวันยาวกว่ากลางคืน ส่วน winter กลางวันสั้นกว่า","en":"In summer, daytime is longer; in winter, daytime is shorter."},
-      {"th":"Path A สูงกว่า → summer; Path B ต่ำกว่า → winter","en":"Path A is higher → summer; Path B is lower → winter."}
-    ],
-    "solutionTH": `
-      <div>ใน <b>summer</b> ดวงอาทิตย์มีเส้นทางสูงกว่าและช่วงกลางวันยาวกว่า ส่วนใน <b>winter</b> ดวงอาทิตย์มีเส้นทางต่ำกว่าและช่วงกลางวันสั้นกว่า</div>
-      <div class="mt-2">ดังนั้น <b>Path A = summer / longer daytime</b> และ <b>Path B = winter / shorter daytime</b></div>
-      <div class="mt-2 font-bold text-emerald-700">ตอบ: A = summer + longer day; B = winter + shorter day</div>
-    `,
-    "solutionEN": `
-      <div>in <b>summer</b> the Sun follows a higher path and daytime is longer. In <b>winter</b> the Sun follows a lower path and daytime is shorter.</div>
-      <div class="mt-2">Therefore, <b>Path A = summer / longer daytime</b> and <b>Path B = winter / shorter daytime</b>.</div>
-      <div class="mt-2 font-bold text-emerald-700">Answer: A = summer + longer day; B = winter + shorter day.</div>
-    `,
-    "options": [
-      {"text":"A: summer + longer daytime; B: winter + shorter daytime / A: ฤดูร้อน+กลางวันยาวกว่า; B: ฤดูหนาว+กลางวันสั้นกว่า","isCorrect":true},
-      {"text":"A: winter + shorter daytime; B: summer + longer daytime / A: ฤดูหนาว+กลางวันสั้นกว่า; B: ฤดูร้อน+กลางวันยาวกว่า","isCorrect":false},
-      {"text":"A: summer + shorter daytime; B: winter + longer daytime / A: ฤดูร้อน+กลางวันสั้นกว่า; B: ฤดูหนาว+กลางวันยาวกว่า","isCorrect":false},
-      {"text":"A: winter + longer daytime; B: summer + shorter daytime / A: ฤดูหนาว+กลางวันยาวกว่า; B: ฤดูร้อน+กลางวันสั้นกว่า","isCorrect":false},
-      {"text":"A และ B เป็น summer ทั้งคู่ / Both A and B are summer paths.","isCorrect":false},
-      {"text":"A และ B เป็น winter ทั้งคู่ / Both A and B are winter paths.","isCorrect":false},
-      {"text":"ความสูงของเส้นทางดวงอาทิตย์ไม่เกี่ยวกับฤดูกาล/ The Sun's path height is unrelated to season .","isCorrect":false}
-    ]
-  },
-
-  // =========================================================
-  // Q12 — 21 June solstice
-  // =========================================================
-  {
-    "id": "q12",
-    "questionTH": `
-      <div>พิจารณาวันสำคัญในภาพ</div>
-      ${SOLSTICE_EQUINOX_SVG}
-      <div class="mt-3">ข้อใดอธิบายเหตุการณ์ประมาณ <b>21 June</b> ได้ถูกต้องที่สุด?</div>
-    `,
-    "questionEN": `
-      <div>Consider the key dates in the diagram.</div>
-      ${SOLSTICE_EQUINOX_SVG}
-      <div class="mt-3">Which statement most accurately describes approximately <b>21 June</b>?</div>
-    `,
-    "hints": [
-      {"th":"21 June เกี่ยวข้องกับ solstice ไม่ใช่ equinox","en":"21 June is associated with a solstice, not an equinox."},
-      {"th":"ในซีกโลกเหนือเป็นช่วงเริ่ม summer","en":"In the Northern Hemisphere, it marks the start of summer ."},
-      {"th":"Northern = summer solstice + longest day; Southern = winter solstice","en":"Northern = summer solstice + longest day; Southern = winter solstice."}
-    ],
-    "solutionTH": `
-      <div>ประมาณ <b>21 June</b>:</div>
-      <div class="mt-2">• Northern Hemisphere = <b>summer solstice</b> และเป็นวันที่กลางวันยาวที่สุดของซีกโลกเหนือ</div>
-      <div>• Southern Hemisphere = <b>winter solstice</b></div>
-      <div class="mt-2 font-bold text-emerald-700">ตอบ: Northern summer solstice / longest day; Southern winter solstice</div>
-    `,
-    "solutionEN": `
-      <div>Around <b>21 June</b>:</div>
-      <div class="mt-2">• Northern Hemisphere = <b>summer solstice</b> and its longest day.</div>
-      <div>• Southern Hemisphere = <b>winter solstice</b>.</div>
-      <div class="mt-2 font-bold text-emerald-700">Answer: Northern summer solstice / longest day; Southern winter solstice.</div>
-    `,
-    "options": [
-      {"text":"Northern: summer solstice + longest day; Southern: winter solstice / เหนือ: summer solstice+กลางวันยาวที่สุด; ใต้: winter solstice","isCorrect":true},
-      {"text":"Northern: winter solstice + shortest day; Southern: summer solstice / เหนือ: winter solstice+กลางวันสั้นที่สุด; ใต้: summer solstice","isCorrect":false},
-      {"text":"Both hemispheres: equinox with equal day and night / ทั้งสองซีก: equinox กลางวันเท่ากลางคืน","isCorrect":false},
-      {"text":"Northern: autumnal equinox; Southern: vernal equinox / เหนือ: autumnal equinox; ใต้: vernal equinox","isCorrect":false},
-      {"text":"Northern: vernal equinox; Southern: autumnal equinox / เหนือ: vernal equinox; ใต้: autumnal equinox","isCorrect":false},
-      {"text":"Both hemispheres have their shortest day / ทั้งสองซีกมีกลางวันสั้นที่สุดพร้อมกัน","isCorrect":false},
-      {"text":"The axial tilt becomes zero on this date / แกนโลกไม่เอียงในวันนี้","isCorrect":false}
-    ]
-  },
-
-  // =========================================================
-  // Q13 — 21 December solstice
-  // =========================================================
-  {
-    "id": "q13",
-    "questionTH": `
-      <div>พิจารณาวันสำคัญในภาพ</div>
-      ${SOLSTICE_EQUINOX_SVG}
-      <div class="mt-3">ข้อใดอธิบายเหตุการณ์ประมาณ <b>21 December</b> ได้ถูกต้องที่สุด?</div>
-    `,
-    "questionEN": `
-      <div>Consider the key dates in the diagram.</div>
-      ${SOLSTICE_EQUINOX_SVG}
-      <div class="mt-3">Which statement most accurately describes approximately <b>21 December</b>?</div>
-    `,
-    "hints": [
-      {"th":"หกเดือนหลัง 21 June บทบาทของสองซีกโลกจะสลับกัน","en":"Six months after 21 June, the roles of the two hemispheres are reversed."},
-      {"th":"ซีกโลกเหนือเริ่ม winter","en":"The Northern Hemisphere begins winter."},
-      {"th":"Northern = winter solstice + shortest day; Southern = summer solstice","en":"Northern = winter solstice + shortest day; Southern = summer solstice."}
-    ],
-    "solutionTH": `
-      <div>ประมาณ <b>21 December</b>:</div>
-      <div class="mt-2">• Northern Hemisphere = <b>winter solstice</b> และเป็นวันที่กลางวันสั้นที่สุดของซีกโลกเหนือ</div>
-      <div>• Southern Hemisphere = <b>summer solstice</b></div>
-      <div class="mt-2 font-bold text-emerald-700">ตอบ: Northern winter solstice / shortest day; Southern summer solstice</div>
-    `,
-    "solutionEN": `
-      <div>Around <b>21 December</b>:</div>
-      <div class="mt-2">• Northern Hemisphere = <b>winter solstice</b> and its shortest day.</div>
-      <div>• Southern Hemisphere = <b>summer solstice</b>.</div>
-      <div class="mt-2 font-bold text-emerald-700">Answer: Northern winter solstice / shortest day; Southern summer solstice.</div>
-    `,
-    "options": [
-      {"text":"Northern: winter solstice + shortest day; Southern: summer solstice / เหนือ: winter solstice+กลางวันสั้นที่สุด; ใต้: summer solstice","isCorrect":true},
-      {"text":"Northern: summer solstice + longest day; Southern: winter solstice / เหนือ: summer solstice+กลางวันยาวที่สุด; ใต้: winter solstice","isCorrect":false},
-      {"text":"Both hemispheres: equinox with equal day and night / ทั้งสองซีก: equinox กลางวันเท่ากลางคืน","isCorrect":false},
-      {"text":"Northern: vernal equinox; Southern: autumnal equinox / เหนือ: vernal equinox; ใต้: autumnal equinox","isCorrect":false},
-      {"text":"Northern: autumnal equinox; Southern: vernal equinox / เหนือ: autumnal equinox; ใต้: vernal equinox","isCorrect":false},
-      {"text":"Both hemispheres have their longest day / ทั้งสองซีกมีกลางวันยาวที่สุดพร้อมกัน","isCorrect":false},
-      {"text":"Earth stops revolving around the Sun on this date / โลกหยุดโคจรรอบดวงอาทิตย์ในวันนี้","isCorrect":false}
-    ]
-  },
-
-      // =========================================================
-    // Q14 — Equinoxes: dates + hemispheres + equal day/night
-    // =========================================================
     {
-      "id": "q14",
-      "questionTH": `
-        <div>พิจารณาวันสำคัญในภาพ</div>
-        ${SOLSTICE_EQUINOX_SVG}
-        <div class="mt-3">ข้อใดจับคู่ <b>equinox</b> ทั้งสองวันกับซีกโลกและความยาวกลางวัน–กลางคืนได้ครบถ้วน?</div>
-      `,
-      "questionEN": `
-        <div>Consider the key dates in the diagram.</div>
-        ${SOLSTICE_EQUINOX_SVG}
-        <div class="mt-3">Which option completely matches the two <b>equinoxes</b> with the hemispheres and day–night length?</div>
-      `,
-      "hints": [
-        {"th":"Equinox เกิดประมาณ 20 March และ 22 September","en":"Equinoxes occur around 20 March and 22 September."},
-        {"th":"20 March: Northern = vernal; Southern = autumnal","en":"20 March: Northern = vernal; Southern = autumnal."},
-        {"th":"22 September สลับกัน และทั้งสองวันมีช่วงกลางวันกับกลางคืนยาวเท่ากันในทั้งสองซีกโลก","en":"On 22 September the names reverse, and on both dates day and night are equal in length in both hemispheres."}
+      id: "q2",
+      questionTH: `<div>ลวด A ต่อกับ \\(12\\,\\mathrm V\\) และมี \\(R_A=4.0\\,\\Omega\\) ส่วนลวด B ต่อกับ \\(24\\,\\mathrm V\\) และมี \\(R_B=6.0\\,\\Omega\\) ลวดใดมีกระแสมากกว่า และ \\(I_B/I_A\\) เท่าใด?</div>`,
+      questionEN: `<div>Wire A is connected across \\(12\\,\\mathrm V\\) with \\(R_A=4.0\\,\\Omega\\). Wire B is connected across \\(24\\,\\mathrm V\\) with \\(R_B=6.0\\,\\Omega\\). Which wire carries the greater current, and what is \\(I_B/I_A\\)?</div>`,
+      hints: [
+        {th:"หากระแสของแต่ละเส้นด้วย \\(I=V/R\\)",en:"Find each current using \\(I=V/R\\)."},
+        {th:"\\(I_A=12/4\\) และ \\(I_B=24/6\\)",en:"\\(I_A=12/4\\) and \\(I_B=24/6\\)."},
+        {th:"ได้ \\(I_A=3\\,A\\), \\(I_B=4\\,A\\) แล้วจึงหาอัตราส่วน",en:"You get \\(I_A=3\\,A\\), \\(I_B=4\\,A\\); then form the ratio."}
       ],
-      "solutionTH": `
-        <div><b>20 March</b>: ซีกโลกเหนือ = vernal equinox; ซีกโลกใต้ = autumnal equinox</div>
-        <div class="mt-2"><b>22 September</b>: ซีกโลกเหนือ = autumnal equinox; ซีกโลกใต้ = vernal equinox</div>
-        <div class="mt-2">ทั้งสองวัน ดวงอาทิตย์อยู่เหนือบริเวณเส้นศูนย์สูตร และทั้งสองซีกโลกมีช่วงกลางวันกับกลางคืนยาวเท่ากัน</div>
-        <div class="mt-2 font-bold text-emerald-700">ตอบ: 20 Mar = N vernal/S autumnal; 22 Sep = N autumnal/S vernal; day = night</div>
-      `,
-      "solutionEN": `
-        <div><b>20 March</b>: Northern Hemisphere = vernal equinox; Southern Hemisphere = autumnal equinox.</div>
-        <div class="mt-2"><b>22 September</b>: Northern Hemisphere = autumnal equinox; Southern Hemisphere = vernal equinox.</div>
-        <div class="mt-2">On both dates, the Sun is positioned above the equator and both hemispheres have equal lengths of day and night.</div>
-        <div class="mt-2 font-bold text-emerald-700">Answer: 20 Mar = N vernal/S autumnal; 22 Sep = N autumnal/S vernal; day = night.</div>
-      `,
-      "options": [
-        {"text":"20 Mar: N vernal, S autumnal; 22 Sep: N autumnal, S vernal; day = night on both / 20 มี.ค.: เหนือ vernal ใต้ autumnal; 22 ก.ย.: เหนือ autumnal ใต้ vernal; ทั้งสองวันกลางวัน=กลางคืน","isCorrect":true},
-        {"text":"20 Mar: N autumnal, S vernal; 22 Sep: N vernal, S autumnal; day = night on both / สลับชื่อของทั้งสองวัน","isCorrect":false},
-        {"text":"20 Mar and 22 Sep are both summer solstices / 20 มี.ค. และ 22 ก.ย. เป็น summer solstice ทั้งคู่","isCorrect":false},
-        {"text":"20 Mar: both hemispheres vernal; 22 Sep: both hemispheres autumnal / 20 มี.ค. ทั้งสองซีก vernal; 22 ก.ย. ทั้งสองซีก autumnal","isCorrect":false},
-        {"text":"Equinoxes occur on 21 Jun and 21 Dec, with equal day and night / Equinox เกิด 21 มิ.ย. และ 21 ธ.ค. กลางวัน=กลางคืน","isCorrect":false},
-        {"text":"20 Mar: longest day in the North; 22 Sep: shortest day in the North / 20 มี.ค. กลางวันยาวสุด; 22 ก.ย. กลางวันสั้นสุดในซีกเหนือ","isCorrect":false},
-        {"text":"At equinox Earth's axis becomes untilted / วัน equinox แกนโลกหยุดเอียง","isCorrect":false}
+      solutionTH: `<div>\\[I_A=\\frac{12}{4}=3\\,\\mathrm A,\\qquad I_B=\\frac{24}{6}=4\\,\\mathrm A\\]\\[\\frac{I_B}{I_A}=\\frac43\\]</div><div class="mt-2 font-bold text-emerald-700">ตอบ: B มีกระแสมากกว่า และ \\(I_B/I_A=4/3\\)</div>`,
+      solutionEN: `<div>\\[I_A=\\frac{12}{4}=3\\,\\mathrm A,\\qquad I_B=\\frac{24}{6}=4\\,\\mathrm A\\]\\[\\frac{I_B}{I_A}=\\frac43\\]</div><div class="mt-2 font-bold text-emerald-700">Answer: Wire B carries the greater current and \\(I_B/I_A=4/3\\).</div>`,
+      options: [
+        {text:"Wire A; \\(I_B/I_A=3/4\\) / ลวด A; \\(3/4\\)",isCorrect:false},
+        {text:"Wire A; \\(I_B/I_A=4/3\\) / ลวด A; \\(4/3\\)",isCorrect:false},
+        {text:"Wire B; \\(I_B/I_A=4/3\\) / ลวด B; \\(4/3\\)",isCorrect:true},
+        {text:"Wire B; \\(I_B/I_A=3/2\\) / ลวด B; \\(3/2\\)",isCorrect:false},
+        {text:"Equal currents; ratio = 1 / กระแสเท่ากัน; อัตราส่วน 1",isCorrect:false},
+        {text:"Wire B; ratio = 2 / ลวด B; อัตราส่วน 2",isCorrect:false},
+        {text:"Cannot compare without wire length / เปรียบเทียบไม่ได้ถ้าไม่รู้ความยาวลวด",isCorrect:false}
       ]
     },
-
-// =========================================================
-  // Q15 — Polar phenomena: midnight Sun and polar night
-  // =========================================================
-  {
-    "id": "q15",
-    "questionTH": `
-      <div>พิจารณาภาพปรากฏการณ์บริเวณขั้วโลก</div>
-      ${POLAR_PHENOMENA_SVG}
-      <div class="mt-3">ข้อใดจับคู่ <b>Scene A</b> และ <b>Scene B</b> กับช่วงเวลาที่เกิดได้ถูกต้อง?</div>
-    `,
-    "questionEN": `
-      <div>Consider the polar-region phenomena below.</div>
-      ${POLAR_PHENOMENA_SVG}
-      <div class="mt-3">Which option correctly matches <b>Scene A</b> and <b>Scene B</b> with when they occur?</div>
-    `,
-    "hints": [
-      {"th":"ในบริเวณขั้วโลก รอบ summer solstice ดวงอาทิตย์อาจมองเห็นต่อเนื่อง 24 ชั่วโมง","en":"In polar regions, around the summer solstice the Sun can remain visible for 24 hours."},
-      {"th":"ปรากฏการณ์ที่เห็นดวงอาทิตย์ 24 ชั่วโมงเรียกว่า midnight Sun","en":"The phenomenon in which the Sun remains visible for 24 hours is called the midnight Sun."},
-      {"th":"รอบ winter solstice อาจเกิด polar night ซึ่งกลางคืนยาว 24 ชั่วโมง","en":"Around the winter solstice, polar night may occur, with darkness lasting 24 hours."}
-    ],
-    "solutionTH": `
-      <div><b>Scene A</b> คือ <b>midnight Sun</b> เกิดบริเวณขั้วโลกประมาณช่วง summer solstice เมื่อดวงอาทิตย์ยังมองเห็นได้ตลอด 24 ชั่วโมง ตัวอย่างบริเวณที่กล่าวถึง ได้แก่ Finland, Greenland และ Alaska</div>
-      <div class="mt-2"><b>Scene B</b> คือ <b>polar night</b> เกิดประมาณช่วง winter solstice เมื่อกลางคืนยาว 24 ชั่วโมง</div>
-      <div class="mt-2 font-bold text-emerald-700">ตอบ: A = midnight Sun / summer solstice; B = polar night / winter solstice</div>
-    `,
-    "solutionEN": `
-      <div><b>Scene A</b> is the <b>midnight Sun</b>, which occurs in polar regions around the summer solstice when the Sun remains visible for 24 hours. Examples named in the topic include Finland, Greenland, and Alaska.</div>
-      <div class="mt-2"><b>Scene B</b> is <b>polar night</b>, which occurs around the winter solstice when night lasts for 24 hours.</div>
-      <div class="mt-2 font-bold text-emerald-700">Answer: A = midnight Sun / summer solstice; B = polar night / winter solstice.</div>
-    `,
-    "options": [
-      {"text":"A = midnight Sun around summer solstice; B = polar night around winter solstice / A = midnight Sun ช่วง summer solstice; B = polar night ช่วง winter solstice","isCorrect":true},
-      {"text":"A = polar night around summer solstice; B = midnight Sun around winter solstice / A = polar night ช่วง summer solstice; B = midnight Sun ช่วง winter solstice","isCorrect":false},
-      {"text":"A and B both occur only at equinox / A และ B เกิดเฉพาะวัน equinox","isCorrect":false},
-      {"text":"A = equinox; B = solstice / A = equinox; B = solstice","isCorrect":false},
-      {"text":"A occurs because Earth stops rotating; B because Earth rotates faster / A เกิดเพราะโลกหยุดหมุน; B เพราะโลกหมุนเร็วขึ้น","isCorrect":false},
-      {"text":"Both scenes are caused by the Moon's revolution / ทั้งสองภาพเกิดจากการโคจรของดวงจันทร์","isCorrect":false},
-      {"text":"A and B are normal 12-hour day and 12-hour night / A และ B คือกลางวัน 12 ชม. กลางคืน 12 ชม. ปกติ","isCorrect":false}
-    ]
-  },
-
-  // =========================================================
-  // Q16 — Phenomena caused by the Moon's revolution
-  // =========================================================
-  {
-    "id": "q16",
-    "questionTH": `
-      <div>ดวงจันทร์โคจรรอบโลกอย่างต่อเนื่อง ข้อใดเป็นชุดปรากฏการณ์ที่สัมพันธ์กับการโคจรนี้?</div>
-    `,
-    "questionEN": `
-      <div>The Moon continuously revolves around Earth. Which set of phenomena is associated with this revolution?</div>
-    `,
-    "hints": [
-      {"th":"มองหาชุดที่เกี่ยวข้องกับรูปร่างที่มองเห็นของดวงจันทร์ ระดับน้ำทะเล และเวลาที่ดวงจันทร์ขึ้น","en":"Look for the set involving the Moon's changing appearance, ocean levels, and the time the Moon rises."},
-      {"th":"สามคำสำคัญคือ Moon phases, tides และ different times of moonrise and moonset","en":"The three key terms are Moon phases, tides, and different times of moonrise and moonset."},
-      {"th":"อย่าสับสนกับ seasons และ day/night ซึ่งอยู่ฝั่งการเอียงของแกนโลกและการหมุนของโลก","en":"Do not confuse these with seasons and day/night, which belong to Earth's axial tilt and rotation."}
-    ],
-    "solutionTH": `
-      <div> <b>การโคจรของดวงจันทร์รอบโลก</b> ทำให้เกิด</div>
-      <div class="mt-2">• Moon phases / ข้างขึ้นข้างแรม</div>
-      <div>• Tides / น้ำขึ้นน้ำลง</div>
-      <div>• Different times of moonrise and moonset / เวลาขึ้นและตกของดวงจันทร์ที่แตกต่างกัน</div>
-      <div class="mt-2 font-bold text-emerald-700">ตอบ: Moon phases + tides + different moonrise/moonset times</div>
-    `,
-    "solutionEN": `
-      <div>the <b>Moon's revolution around Earth</b> causes:</div>
-      <div class="mt-2">• Moon phases</div><div>• Tides</div><div>• Different times of moonrise and moonset</div>
-      <div class="mt-2 font-bold text-emerald-700">Answer: Moon phases + tides + different moonrise/moonset times.</div>
-    `,
-    "options": [
-      {"text":"Moon phases + tides + different moonrise/moonset times / ข้างขึ้นข้างแรม + น้ำขึ้นน้ำลง + เวลาขึ้นตกของดวงจันทร์ต่างกัน","isCorrect":true},
-      {"text":"Seasons + solstices + equinoxes / ฤดูกาล + solstice + equinox","isCorrect":false},
-      {"text":"Day and night + seasons + eclipses / กลางวันกลางคืน + ฤดูกาล + อุปราคา","isCorrect":false},
-      {"text":"Only tides / น้ำขึ้นน้ำลงเท่านั้น","isCorrect":false},
-      {"text":"Only Moon phases / ข้างขึ้นข้างแรมเท่านั้น","isCorrect":false},
-      {"text":"Earth's axial tilt + seasons + tides / แกนโลกเอียง + ฤดูกาล + น้ำขึ้นน้ำลง","isCorrect":false},
-      {"text":"Midnight Sun + polar night + tides / midnight Sun + polar night + น้ำขึ้นน้ำลง","isCorrect":false}
-    ]
-  },
-
-  // =========================================================
-  // Q17 — Moon reflects sunlight
-  // =========================================================
-  {
-    "id": "q17",
-    "questionTH": `
-      <div>พิจารณาเส้นทางของแสงในภาพ</div>
-      ${MOON_LIGHT_SVG}
-      <div class="mt-3">เหตุใดเราจึงมองเห็นดวงจันทร์จากโลก?</div>
-    `,
-    "questionEN": `
-      <div>Consider the light path in the diagram.</div>
-      ${MOON_LIGHT_SVG}
-      <div class="mt-3">Why can we see the Moon from Earth?</div>
-    `,
-    "hints": [
-      {"th":"ดวงจันทร์ไม่ได้สร้างแสงของตัวเอง","en":"the Moon does not produce its own light."},
-      {"th":"แสงเริ่มต้นจากดวงอาทิตย์แล้วตกกระทบผิวดวงจันทร์","en":"Light starts at the Sun and falls on the Moon's surface."},
-      {"th":"ส่วนของแสงที่สะท้อนจากดวงจันทร์เข้าสู่ตาเราทำให้เรามองเห็นมัน","en":"Reflected sunlight from the Moon reaches us, allowing us to see it."}
-    ],
-    "solutionTH": `
-      <div>ดวงจันทร์ <b>ไม่ได้ผลิตแสงเอง</b> เรามองเห็นดวงจันทร์เพราะผิวดวงจันทร์ <b>สะท้อนแสงจากดวงอาทิตย์</b> มายังโลก</div>
-      <div class="mt-2 font-bold text-emerald-700">ตอบ: ดวงจันทร์สะท้อนแสงจากดวงอาทิตย์</div>
-    `,
-    "solutionEN": `
-      <div>The Moon <b>does not produce its own light</b>. We see it because its surface <b>reflects sunlight</b> toward Earth.</div>
-      <div class="mt-2 font-bold text-emerald-700">Answer: the Moon reflects light from the Sun.</div>
-    `,
-    "options": [
-      {"text":"The Moon reflects sunlight toward Earth / ดวงจันทร์สะท้อนแสงจากดวงอาทิตย์มายังโลก","isCorrect":true},
-      {"text":"The Moon produces its own visible light / ดวงจันทร์สร้างแสงที่มองเห็นได้เอง","isCorrect":false},
-      {"text":"Earth shines light onto the Moon / โลกส่องแสงไปยังดวงจันทร์","isCorrect":false},
-      {"text":"The Moon glows because of tides / ดวงจันทร์เรืองแสงเพราะน้ำขึ้นน้ำลง","isCorrect":false},
-      {"text":"The Moon stores sunlight during daytime and releases it at night / ดวงจันทร์เก็บแสงตอนกลางวันแล้วปล่อยตอนกลางคืน","isCorrect":false},
-      {"text":"Moon phases are caused by Earth's shadow every night / ข้างขึ้นข้างแรมเกิดจากเงาโลกทุกคืน","isCorrect":false},
-      {"text":"The Moon is visible only because it is closer to Earth than the Sun / มองเห็นดวงจันทร์เพราะอยู่ใกล้โลกกว่าดวงอาทิตย์เท่านั้น","isCorrect":false}
-    ]
-  },
-
-  // =========================================================
-  // Q18 — New Moon from geometry
-  // =========================================================
-  {
-    "id": "q18",
-    "questionTH": `
-      <div>ภาพแสดงดวงจันทร์ 8 ตำแหน่งรอบโลก โดยดวงอาทิตย์อยู่ทางขวา</div>
-      ${MOON_PHASES_ORBIT_SVG}
-      <div class="mt-3">ที่ตำแหน่ง <b>A</b> ดวงจันทร์อยู่ระหว่างโลกกับดวงอาทิตย์ ข้อใดถูกต้อง?</div>
-    `,
-    "questionEN": `
-      <div>The diagram shows eight Moon positions around Earth, with the Sun on the right.</div>
-      ${MOON_PHASES_ORBIT_SVG}
-      <div class="mt-3">At position <b>A</b>, the Moon is between Earth and the Sun. Which statement is correct?</div>
-    `,
-    "hints": [
-      {"th":"เมื่อดวงจันทร์อยู่ระหว่างดวงอาทิตย์กับโลก ด้านที่หันมาหาโลกไม่ได้รับแสงโดยตรง","en":"When the Moon is between the Sun and Earth, the side facing Earth is not directly illuminated."},
-      {"th":"จากโลกจึงมองไม่เห็นส่วนสว่างของดวงจันทร์","en":"From Earth, we therefore cannot see the illuminated side."},
-      {"th":"ระยะนี้เรียกว่า New Moon","en":"This phase is called New Moon."}
-    ],
-    "solutionTH": `
-      <div>ที่ตำแหน่ง A ดวงจันทร์อยู่ระหว่างดวงอาทิตย์กับโลก ด้านสว่างหันไปทางดวงอาทิตย์ ส่วนด้านที่หันมาหาโลกมืด จึงมองไม่เห็นดวงจันทร์</div>
-      <div class="mt-2 font-bold text-emerald-700">ตอบ: New Moon / จันทร์ดับ</div>
-    `,
-    "solutionEN": `
-      <div>At position A, the Moon lies between the Sun and Earth. The illuminated side faces the Sun, while the side facing Earth is dark, so the Moon is not visible.</div>
-      <div class="mt-2 font-bold text-emerald-700">Answer: New Moon.</div>
-    `,
-    "options": [
-      {"text":"New Moon; the side facing Earth is dark / New Moon; ด้านที่หันหาโลกมืด","isCorrect":true},
-      {"text":"Full Moon; the whole visible side is lit / Full Moon; ด้านที่มองเห็นสว่างเต็มดวง","isCorrect":false},
-      {"text":"New Half Moon; half of the visible side is lit / New Half Moon; เห็นสว่างครึ่งดวง","isCorrect":false},
-      {"text":"Old Half Moon; half of the visible side is lit / Old Half Moon; เห็นสว่างครึ่งดวงข้างแรม","isCorrect":false},
-      {"text":"New Gibbous Moon; almost the whole visible side is lit / New Gibbous Moon; เห็นเกือบเต็มดวงข้างขึ้น","isCorrect":false},
-      {"text":"This position always causes an eclipse and is not a Moon phase / ตำแหน่งนี้ต้องเกิดอุปราคาเสมอและไม่ใช่ข้างขึ้นข้างแรม","isCorrect":false},
-      {"text":"The Moon disappears because it stops reflecting light completely / ดวงจันทร์หายไปเพราะหยุดสะท้อนแสงทั้งหมด","isCorrect":false}
-    ]
-  },
-
-  // =========================================================
-  // Q19 — Waxing sequence to Full Moon
-  // =========================================================
-  {
-    "id": "q19",
-    "questionTH": `
-      <div>หลัง <b>New Moon</b> พื้นที่สว่างของดวงจันทร์ที่มองเห็นจากโลกจะค่อย ๆ เพิ่มขึ้น ข้อใดเรียงลำดับไปจนถึง <b>Full Moon</b> ได้ถูกต้อง?</div>
-    `,
-    "questionEN": `
-      <div>After the <b>New Moon</b> the visible illuminated area gradually increases. Which sequence correctly leads to the Full Moon?</div>
-    `,
-    "hints": [
-      {"th":"เริ่มจากจันทร์เสี้ยวข้างขึ้น แล้วจึงครึ่งดวงข้างขึ้น","en":"Start with New Crescent Moon, then New Half Moon."},
-      {"th":"ก่อนเต็มดวงจะเป็น New Gibbous Moon","en":"The phase just before Full Moon is New Gibbous Moon."},
-      {"th":"ลำดับคือ Crescent → Half → Gibbous → Full","en":"The order is Crescent → Half → Gibbous → Full."}
-    ],
-    "solutionTH": `
-      <div>เมื่อส่วนสว่างเพิ่มขึ้น ลำดับคือ</div>
-      <div class="mt-2 font-bold">New Moon → New Crescent Moon → New Half Moon → New Gibbous Moon → Full Moon</div>
-      <div class="mt-2 font-bold text-emerald-700">ตอบ: New Crescent → New Half → New Gibbous → Full</div>
-    `,
-    "solutionEN": `
-      <div>As the visible illuminated area increases, the sequence is:</div>
-      <div class="mt-2 font-bold">New Moon → New Crescent Moon → New Half Moon → New Gibbous Moon → Full Moon.</div>
-      <div class="mt-2 font-bold text-emerald-700">Answer: New Crescent → New Half → New Gibbous → Full.</div>
-    `,
-    "options": [
-      {"text":"New Crescent → New Half → New Gibbous → Full Moon / จันทร์เสี้ยวข้างขึ้น → ครึ่งดวงข้างขึ้น → เกือบเต็มดวงข้างขึ้น → จันทร์เพ็ญ","isCorrect":true},
-      {"text":"New Half → New Crescent → Full → New Gibbous / ครึ่งดวงข้างขึ้น → เสี้ยวข้างขึ้น → เต็มดวง → เกือบเต็มข้างขึ้น","isCorrect":false},
-      {"text":"Old Crescent → Old Half → Old Gibbous → Full / เสี้ยวข้างแรม → ครึ่งดวงข้างแรม → เกือบเต็มข้างแรม → เต็มดวง","isCorrect":false},
-      {"text":"New Gibbous → New Half → New Crescent → Full / เกือบเต็มข้างขึ้น → ครึ่งดวงข้างขึ้น → เสี้ยวข้างขึ้น → เต็มดวง","isCorrect":false},
-      {"text":"Full → New Gibbous → New Half → New Crescent / เต็มดวง → เกือบเต็มข้างขึ้น → ครึ่งดวงข้างขึ้น → เสี้ยวข้างขึ้น","isCorrect":false},
-      {"text":"New Crescent → Old Half → New Gibbous → Full / เสี้ยวข้างขึ้น → ครึ่งดวงข้างแรม → เกือบเต็มข้างขึ้น → เต็มดวง","isCorrect":false},
-      {"text":"New Moon → Full Moon directly with no intermediate phases / จันทร์ดับ → จันทร์เพ็ญโดยไม่มีระยะกลาง","isCorrect":false}
-    ]
-  },
-
-  // =========================================================
-  // Q20 — Waning sequence back to New Moon
-  // =========================================================
-  {
-    "id": "q20",
-    "questionTH": `
-      <div>หลัง <b>Full Moon</b> พื้นที่สว่างที่มองเห็นจากโลกจะค่อย ๆ ลดลง ข้อใดเป็นลำดับที่ถูกต้องจนกลับสู่ New Moon?</div>
-    `,
-    "questionEN": `
-      <div>After the <b>Full Moon</b>, the visible illuminated area gradually decreases. Which sequence correctly returns to the New Moon?</div>
-    `,
-    "hints": [
-      {"th":"หลัง Full Moon เริ่มจาก Old Gibbous Moon","en":"After Full Moon, the next named phase is Old Gibbous Moon."},
-      {"th":"จากนั้นเป็น Old Half Moon แล้ว Old Crescent Moon","en":"Then come Old Half Moon and Old Crescent Moon."},
-      {"th":"สุดท้ายกลับเป็น New Moon","en":"Finally, the cycle returns to New Moon."}
-    ],
-    "solutionTH": `
-      <div>ลำดับข้างแรมคือ</div>
-      <div class="mt-2 font-bold">Full Moon → Old Gibbous Moon → Old Half Moon → Old Crescent Moon → New Moon</div>
-      <div class="mt-2 font-bold text-emerald-700">ตอบ: Old Gibbous → Old Half → Old Crescent → New Moon</div>
-    `,
-    "solutionEN": `
-      <div>The waning sequence is:</div>
-      <div class="mt-2 font-bold">Full Moon → Old Gibbous Moon → Old Half Moon → Old Crescent Moon → New Moon.</div>
-      <div class="mt-2 font-bold text-emerald-700">Answer: Old Gibbous → Old Half → Old Crescent → New Moon.</div>
-    `,
-    "options": [
-      {"text":"Old Gibbous → Old Half → Old Crescent → New Moon / เกือบเต็มข้างแรม → ครึ่งดวงข้างแรม → เสี้ยวข้างแรม → จันทร์ดับ","isCorrect":true},
-      {"text":"Old Half → Old Gibbous → Old Crescent → New Moon / ครึ่งดวงข้างแรม → เกือบเต็มข้างแรม → เสี้ยวข้างแรม → จันทร์ดับ","isCorrect":false},
-      {"text":"New Gibbous → New Half → New Crescent → New Moon / เกือบเต็มข้างขึ้น → ครึ่งดวงข้างขึ้น → เสี้ยวข้างขึ้น → จันทร์ดับ","isCorrect":false},
-      {"text":"Old Crescent → Old Half → Old Gibbous → New Moon / เสี้ยวข้างแรม → ครึ่งดวงข้างแรม → เกือบเต็มข้างแรม → จันทร์ดับ","isCorrect":false},
-      {"text":"Full Moon → New Moon directly / จันทร์เพ็ญ → จันทร์ดับทันที","isCorrect":false},
-      {"text":"New Crescent → Old Gibbous → Old Half → New Moon / เสี้ยวข้างขึ้น → เกือบเต็มข้างแรม → ครึ่งดวงข้างแรม → จันทร์ดับ","isCorrect":false},
-      {"text":"The illuminated area keeps increasing after Full Moon / หลังจันทร์เพ็ญพื้นที่สว่างยังเพิ่มต่อไป","isCorrect":false}
-    ]
-  },
-
-      // =========================================================
-    // Q21 — Moon phase cycle + lunar calendar uses
-    // =========================================================
     {
-      "id": "q21",
-      "questionTH": `
-        <div>หนึ่งรอบของข้างขึ้นข้างแรมเริ่มจาก <b>New Moon</b> และวนกลับสู่ New Moon อีกครั้ง</div>
-        <div class="mt-3">ข้อใดอธิบายทั้ง <b>ระยะเวลาของวัฏจักร</b> และ <b>การนำข้างขึ้นข้างแรมไปใช้</b> ได้ครบถ้วนที่สุด?</div>
-      `,
-      "questionEN": `
-        <div>A complete Moon-phase cycle runs from one <b>New Moon</b> to the next.</div>
-        <div class="mt-3">Which statement most completely describes both the <b>cycle length</b> and the <b>uses of Moon phases</b>?</div>
-      `,
-      "hints": [
-        {"th":"หนึ่งรอบใช้เวลาประมาณ 29.5 วัน","en":"One complete cycle takes about 29.5 days."},
-        {"th":"ในหนึ่งรอบสมบูรณ์ ดวงจันทร์เคลื่อนรอบโลกหนึ่งครั้ง","en":"In one complete cycle, the Moon moves around Earth once."},
-        {"th":"ข้างขึ้นข้างแรมเคยใช้สร้างปฏิทินจันทรคติ กำหนดวันกิจกรรมทางศาสนา และใช้ในโหราศาสตร์","en":"Moon phases were used to derive lunar calendars, determine dates of religious activities, and in astrology."}
+      id: "q3",
+      questionTH: `<div>ลวด B มีเส้นผ่านศูนย์กลางเป็น 2 เท่าของลวด A จงหา \\(A_B/A_A\\)</div>${WIRE_AREA_SVG}`,
+      questionEN: `<div>Wire B has twice the diameter of Wire A. Determine \\(A_B/A_A\\).</div>${WIRE_AREA_SVG}`,
+      hints: [
+        {th:"พื้นที่หน้าตัดวงกลมขึ้นกับกำลังสองของเส้นผ่านศูนย์กลาง",en:"Circular cross-sectional area depends on the square of diameter."},
+        {th:"ใช้ \\(A\\propto d^2\\)",en:"Use \\(A\\propto d^2\\)."},
+        {th:"\\(A_B/A_A=(2d/d)^2=2^2\\)",en:"\\(A_B/A_A=(2d/d)^2=2^2\\)."}
       ],
-      "solutionTH": `
-        <div>วัฏจักรข้างขึ้นข้างแรมหนึ่งรอบใช้เวลาประมาณ <b>29.5 วัน</b> และเกิดซ้ำ โดยในหนึ่งรอบสมบูรณ์ดวงจันทร์เคลื่อนรอบโลกหนึ่งครั้ง</div>
-        <div class="mt-2">ข้างขึ้นข้างแรมเคยถูกใช้สร้าง <b>ปฏิทินจันทรคติ</b> ใช้กำหนดวันของกิจกรรมทางศาสนา และใช้ในโหราศาสตร์</div>
-        <div class="mt-2 font-bold text-emerald-700">ตอบ: 29.5 วัน + ดวงจันทร์รอบโลกหนึ่งครั้ง + ใช้กับปฏิทินจันทรคติ/วันทางศาสนา/โหราศาสตร์</div>
-      `,
-      "solutionEN": `
-        <div>A full Moon-phase cycle takes about <b>29.5 days</b> and then repeats. In one complete cycle, the Moon moves around Earth once.</div>
-        <div class="mt-2">Moon phases were used to derive <b>lunar calendars</b>, determine dates of religious activities, and in astrology.</div>
-        <div class="mt-2 font-bold text-emerald-700">Answer: 29.5 days + one revolution around Earth + lunar calendar/religious-date/astrology uses.</div>
-      `,
-      "options": [
-        {"text":"About 29.5 days; Moon moves around Earth once; used for lunar calendars, religious dates, and astrology / ประมาณ 29.5 วัน; ดวงจันทร์รอบโลกหนึ่งครั้ง; ใช้กับปฏิทินจันทรคติ วันกิจกรรมทางศาสนา และโหราศาสตร์","isCorrect":true},
-        {"text":"24 hours; Earth moves around the Moon once; used for seasons / 24 ชั่วโมง; โลกโคจรรอบดวงจันทร์; ใช้กำหนดฤดูกาล","isCorrect":false},
-        {"text":"365 days; Moon moves around the Sun once; used only for weather / 365 วัน; ดวงจันทร์รอบดวงอาทิตย์; ใช้เฉพาะพยากรณ์อากาศ","isCorrect":false},
-        {"text":"7 days; one complete phase cycle equals one week / 7 วัน; หนึ่งรอบเท่ากับหนึ่งสัปดาห์","isCorrect":false},
-        {"text":"29.5 hours; Moon revolves around Earth once / 29.5 ชั่วโมง; ดวงจันทร์รอบโลกหนึ่งครั้ง","isCorrect":false},
-        {"text":"About 29.5 days, but Moon phases have no calendar use / ประมาณ 29.5 วัน แต่ไม่เกี่ยวกับปฏิทิน","isCorrect":false},
-        {"text":"The cycle has no regular duration and is unrelated to human calendars or activities / รอบไม่มีระยะเวลาคงที่และไม่เกี่ยวข้องกับปฏิทินหรือกิจกรรมมนุษย์","isCorrect":false}
+      solutionTH: `<div>\\[\\frac{A_B}{A_A}=\\left(\\frac{d_B}{d_A}\\right)^2=2^2=4\\]</div><div class="mt-2">จุดสำคัญ: diameter ×2 แต่ area ×4</div><div class="mt-2 font-bold text-emerald-700">ตอบ: \\(4\\)</div>`,
+      solutionEN: `<div>\\[\\frac{A_B}{A_A}=\\left(\\frac{d_B}{d_A}\\right)^2=2^2=4\\]</div><div class="mt-2">Key idea: diameter ×2 but area ×4.</div><div class="mt-2 font-bold text-emerald-700">Answer: \\(4\\)</div>`,
+      options: [{text:"\\(1/4\\)",isCorrect:false},{text:"\\(1/2\\)",isCorrect:false},{text:"\\(1\\)",isCorrect:false},{text:"\\(2\\)",isCorrect:false},{text:"\\(4\\)",isCorrect:true},{text:"\\(8\\)",isCorrect:false},{text:"\\(16\\)",isCorrect:false}]
+    },
+    {
+      id: "q4",
+      questionTH: `<div>ลวดต่อเนื่องเส้นเดียวทำจากวัสดุเดียวกัน โดยช่วง Q มีพื้นที่หน้าตัด \\(A_Q=\\frac13A_P\\) และมีกระแสคงตัว จงหา \\(v_Q/v_P\\)</div>${NARROW_WIRE_SVG}`,
+      questionEN: `<div>A continuous wire is made of the same material throughout. At section Q, \\(A_Q=\\frac13A_P\\). The steady current is the same through both sections. Find \\(v_Q/v_P\\).</div>${NARROW_WIRE_SVG}`,
+      hints: [
+        {th:"วัสดุเดียวกันทำให้ n เท่ากัน และลวดต่อเนื่องทำให้ I เท่ากัน",en:"Same material means equal n; one continuous steady conductor means equal I."},
+        {th:"จาก \\(I=neAv_d\\) จึงได้ \\(A_Pv_P=A_Qv_Q\\)",en:"From \\(I=neAv_d\\), \\(A_Pv_P=A_Qv_Q\\)."},
+        {th:"\\(v_Q/v_P=A_P/A_Q=A_P/(A_P/3)\\)",en:"\\(v_Q/v_P=A_P/A_Q=A_P/(A_P/3)\\)."}
+      ],
+      solutionTH: `<div>\\[A_Pv_P=A_Qv_Q\\]\\[\\frac{v_Q}{v_P}=\\frac{A_P}{A_Q}=\\frac{A_P}{A_P/3}=3\\]</div><div class="mt-2 font-bold text-emerald-700">ตอบ: \\(v_Q/v_P=3\\)</div>`,
+      solutionEN: `<div>\\[A_Pv_P=A_Qv_Q\\]\\[\\frac{v_Q}{v_P}=\\frac{A_P}{A_Q}=\\frac{A_P}{A_P/3}=3\\]</div><div class="mt-2 font-bold text-emerald-700">Answer: \\(v_Q/v_P=3\\)</div>`,
+      options: [{text:"\\(1/9\\)",isCorrect:false},{text:"\\(1/3\\)",isCorrect:false},{text:"\\(1\\)",isCorrect:false},{text:"\\(3\\)",isCorrect:true},{text:"\\(6\\)",isCorrect:false},{text:"\\(9\\)",isCorrect:false},{text:"Current must decrease, so the ratio cannot be found / กระแสต้องลดลงจึงหาอัตราส่วนไม่ได้",isCorrect:false}]
+    },
+    {
+      id: "q5",
+      questionTH: `<div>ลวดทองแดงมีเส้นผ่านศูนย์กลาง \\(d=2.00\\,\\mathrm{mm}\\) มีกระแส \\(I=2.72\\,\\mathrm A\\) และมีความหนาแน่นจำนวนอิเล็กตรอนอิสระ \\(n=8.5\\times10^{28}\\,\\mathrm{m^{-3}}\\) กำหนด \\(e=1.60\\times10^{-19}\\,\\mathrm C\\) จงหาความเร็วลอยเลื่อนเฉลี่ย \\(v_d\\)</div>`,
+      questionEN: `<div>A copper wire has diameter \\(d=2.00\\,\\mathrm{mm}\\), carries \\(I=2.72\\,\\mathrm A\\), and has free-electron number density \\(n=8.5\\times10^{28}\\,\\mathrm{m^{-3}}\\). Using \\(e=1.60\\times10^{-19}\\,\\mathrm C\\), calculate the mean drift speed.</div>`,
+      hints: [
+        {th:"เส้นทางคือ \\(d\\rightarrow r\\rightarrow A\\rightarrow v_d\\)",en:"Use the route \\(d\\rightarrow r\\rightarrow A\\rightarrow v_d\\)."},
+        {th:"\\(r=1.00\\times10^{-3}\\,m\\) และ \\(A=\\pi r^2\\)",en:"\\(r=1.00\\times10^{-3}\\,m\\) and \\(A=\\pi r^2\\)."},
+        {th:"ใช้ \\(v_d=I/(neA)\\)",en:"Use \\(v_d=I/(neA)\\)."}
+      ],
+      solutionTH: `<div>\\[r=1.00\\times10^{-3}\\,\\mathrm m\\]\\[A=\\pi r^2=3.14\\times10^{-6}\\,\\mathrm{m^2}\\]\\[v_d=\\frac{2.72}{(8.5\\times10^{28})(1.60\\times10^{-19})(3.14\\times10^{-6})}\\approx6.37\\times10^{-5}\\,\\mathrm{m/s}\\]</div><div class="mt-2 font-bold text-emerald-700">ตอบ: \\(6.37\\times10^{-5}\\,\\mathrm{m/s}\\)</div>`,
+      solutionEN: `<div>\\[r=1.00\\times10^{-3}\\,\\mathrm m\\]\\[A=\\pi r^2=3.14\\times10^{-6}\\,\\mathrm{m^2}\\]\\[v_d=\\frac{2.72}{(8.5\\times10^{28})(1.60\\times10^{-19})(3.14\\times10^{-6})}\\approx6.37\\times10^{-5}\\,\\mathrm{m/s}\\]</div><div class="mt-2 font-bold text-emerald-700">Answer: \\(6.37\\times10^{-5}\\,\\mathrm{m/s}\\)</div>`,
+      options: [{text:"\\(6.37\\times10^{-7}\\,\\mathrm{m/s}\\)",isCorrect:false},{text:"\\(6.37\\times10^{-6}\\,\\mathrm{m/s}\\)",isCorrect:false},{text:"\\(6.37\\times10^{-5}\\,\\mathrm{m/s}\\)",isCorrect:true},{text:"\\(6.37\\times10^{-4}\\,\\mathrm{m/s}\\)",isCorrect:false},{text:"\\(3.18\\times10^{-5}\\,\\mathrm{m/s}\\)",isCorrect:false},{text:"\\(1.27\\times10^{-4}\\,\\mathrm{m/s}\\)",isCorrect:false},{text:"\\(2.72\\,\\mathrm{m/s}\\)",isCorrect:false}]
+    },
+    {
+      id: "q6",
+      questionTH: `<div>ลวดเส้นเดียวทำจากวัสดุเดียวกัน ช่วง Q มีพื้นที่หน้าตัด \\(0.40\\) เท่าของช่วง P จงเปรียบเทียบ \\(I_Q\\) กับ \\(I_P\\) และ \\(v_Q\\) กับ \\(v_P\\)</div>${NARROW_WIRE_SVG}`,
+      questionEN: `<div>A conductor is made of the same material throughout. Section Q has an area equal to \\(0.40\\) times the area of section P. Compare \\(I_Q\\) with \\(I_P\\), and \\(v_Q\\) with \\(v_P\\).</div>${NARROW_WIRE_SVG}`,
+      hints: [
+        {th:"steady current ในลวดต่อเนื่องทำให้ \\(I_Q=I_P\\)",en:"Steady current in one continuous conductor gives \\(I_Q=I_P\\)."},
+        {th:"วัสดุเดียวกันจึงใช้ \\(A_Pv_P=A_Qv_Q\\)",en:"Same material allows \\(A_Pv_P=A_Qv_Q\\)."},
+        {th:"\\(v_Q/v_P=A_P/(0.40A_P)=2.5\\)",en:"\\(v_Q/v_P=A_P/(0.40A_P)=2.5\\)."}
+      ],
+      solutionTH: `<div>\\[I_Q=I_P\\]\\[\\frac{v_Q}{v_P}=\\frac{A_P}{0.40A_P}=2.5\\]</div><div class="mt-2">พื้นที่ลดไม่ได้แปลว่ากระแสลดในลวดต่อเนื่องที่ steady state</div><div class="mt-2 font-bold text-emerald-700">ตอบ: \\(I_Q=I_P\\), \\(v_Q=2.5v_P\\)</div>`,
+      solutionEN: `<div>\\[I_Q=I_P\\]\\[\\frac{v_Q}{v_P}=\\frac{A_P}{0.40A_P}=2.5\\]</div><div class="mt-2">A smaller area does not mean a smaller steady current in one continuous conductor.</div><div class="mt-2 font-bold text-emerald-700">Answer: \\(I_Q=I_P\\), \\(v_Q=2.5v_P\\)</div>`,
+      options: [
+        {text:"\\(I_Q=I_P\\), \\(v_Q=2.5v_P\\)",isCorrect:true},{text:"\\(I_Q=0.40I_P\\), \\(v_Q=v_P\\)",isCorrect:false},{text:"\\(I_Q=0.40I_P\\), \\(v_Q=2.5v_P\\)",isCorrect:false},{text:"\\(I_Q=I_P\\), \\(v_Q=0.40v_P\\)",isCorrect:false},{text:"\\(I_Q=2.5I_P\\), \\(v_Q=v_P\\)",isCorrect:false},{text:"\\(I_Q=I_P\\), \\(v_Q=v_P\\)",isCorrect:false},{text:"Both current and drift speed decrease by 0.40 / ทั้งกระแสและ drift speed ลดเหลือ 0.40 เท่า",isCorrect:false}
       ]
     },
-
-// =========================================================
-  // Q22 — Tidal bulges and daily tides
-  // =========================================================
-  {
-    "id": "q22",
-    "questionTH": `
-      <div>พิจารณาภาพการเกิดน้ำขึ้นน้ำลง</div>
-      ${TIDES_BULGE_SVG}
-      <div class="mt-3">ข้อใดอธิบายตำแหน่ง <b>A, B, C, D</b> และจำนวนครั้งของน้ำขึ้นน้ำลงต่อวันได้ถูกต้อง?</div>
-    `,
-    "questionEN": `
-      <div>Consider the tide diagram.</div>
-      ${TIDES_BULGE_SVG}
-      <div class="mt-3">Which statement correctly describes positions <b>A, B, C, D</b> and the daily number of high and low tides ?</div>
-    `,
-    "hints": [
-      {"th":"บริเวณที่มหาสมุทรโป่งออกสองด้านเป็นบริเวณน้ำขึ้น","en":"The two ocean bulges are high-tide regions."},
-      {"th":"ในภาพ A และ C อยู่ตามแนว bulges ส่วน B และ D อยู่ตั้งฉากกับแนว bulges","en":"In the diagram, A and C lie along the bulges, while B and D lie perpendicular to them."},
-      {"th":"แต่ละบริเวณบนโลกมีน้ำขึ้น 2 ครั้งและน้ำลง 2 ครั้งต่อวัน","en":"each place experiences two high tides and two low tides each day."}
-    ],
-    "solutionTH": `
-      <div>แรงโน้มถ่วงของดวงจันทร์ทำให้น้ำโป่งออกด้านที่หันเข้าหาดวงจันทร์ และมีอีก bulge ที่ด้านตรงข้าม</div>
-      <div class="mt-2"><b>A และ C = high tides</b>; <b>B และ D = low tides</b></div>
-      <div class="mt-2">เมื่อโลกหมุน แต่ละบริเวณจึงผ่านบริเวณน้ำขึ้นและน้ำลง ทำให้เกิดน้ำขึ้น 2 ครั้งและน้ำลง 2 ครั้งต่อวัน</div>
-      <div class="mt-2 font-bold text-emerald-700">ตอบ: A,C high; B,D low; 2 high + 2 low per day</div>
-    `,
-    "solutionEN": `
-      <div>The Moon's gravity produces an ocean bulge toward the Moon and another bulge on the opposite side.</div>
-      <div class="mt-2"><b>A and C = high tides</b>; <b>B and D = low tides</b>.</div>
-      <div class="mt-2">As Earth rotates, each place passes through these regions, giving two high tides and two low tides each day .</div>
-      <div class="mt-2 font-bold text-emerald-700">Answer: A,C high; B,D low; 2 high + 2 low per day.</div>
-    `,
-    "options": [
-      {"text":"A,C = high tide; B,D = low tide; about 2 high and 2 low tides each day / A,C น้ำขึ้น; B,D น้ำลง; วันละ 2 น้ำขึ้น + 2 น้ำลง","isCorrect":true},
-      {"text":"A,C = low tide; B,D = high tide; 2 high and 2 low per day / A,C น้ำลง; B,D น้ำขึ้น; วันละ 2+2","isCorrect":false},
-      {"text":"Only C has high tide because it faces the Moon / มีน้ำขึ้นเฉพาะ C เพราะหันหาดวงจันทร์","isCorrect":false},
-      {"text":"Only A has high tide because it is opposite the Moon / มีน้ำขึ้นเฉพาะ A เพราะอยู่ตรงข้ามดวงจันทร์","isCorrect":false},
-      {"text":"A,B,C,D all have high tide at the same time / A,B,C,D น้ำขึ้นพร้อมกันทั้งหมด","isCorrect":false},
-      {"text":"Each place has only one high tide and one low tide per day / แต่ละที่มีน้ำขึ้น 1 ครั้ง น้ำลง 1 ครั้งต่อวัน","isCorrect":false},
-      {"text":"Tides are caused mainly by Earth's axial tilt / น้ำขึ้นน้ำลงเกิดหลัก ๆ จากการเอียงของแกนโลก","isCorrect":false}
-    ]
-  },
-
-  // =========================================================
-  // Q23 — Spring tide
-  // =========================================================
-  {
-    "id": "q23",
-    "questionTH": `
-      <div>พิจารณาตำแหน่งดวงอาทิตย์ โลก และดวงจันทร์</div>
-      ${SPRING_NEAP_SVG}
-      <div class="mt-3">ข้อใดอธิบาย <b>Diagram A</b> ได้ถูกต้อง?</div>
-    `,
-    "questionEN": `
-      <div>Consider the Sun–Earth–Moon arrangements.</div>
-      ${SPRING_NEAP_SVG}
-      <div class="mt-3">Which statement correctly describes <b>Diagram A</b>?</div>
-    `,
-    "hints": [
-      {"th":"Diagram A แสดงวัตถุทั้งสามอยู่ในแนวเส้นตรง","en":"Diagram A shows the three bodies aligned in a straight line."},
-      {"th":"เมื่อเป็น New Moon หรือ Full Moon แรงโน้มถ่วงของดวงอาทิตย์และดวงจันทร์เสริมกัน","en":"At New Moon or Full Moon, the gravitational effects of the Sun and Moon combine."},
-      {"th":"ผลคือ high tide สูงมาก low tide ต่ำมาก เรียกว่า spring tide","en":"The result is very high high tides and very low low tides, called spring tides."}
-    ],
-    "solutionTH": `
-      <div>Diagram A แสดงดวงอาทิตย์ โลก และดวงจันทร์เรียงอยู่ในแนวเดียวกัน</div>
-      <div class="mt-2">สถานการณ์นี้เกิดในช่วง <b>New Moon หรือ Full Moon</b> และแรงโน้มถ่วงของดวงอาทิตย์กับดวงจันทร์เสริมกัน</div>
-      <div class="mt-2">จึงเกิด <b>spring tide</b> ซึ่งมี high tide สูงมาก และ low tide ต่ำมาก หรือมีความต่างระดับน้ำขึ้น-น้ำลงมาก</div>
-      <div class="mt-2 font-bold text-emerald-700">ตอบ: Spring tide; New/Full Moon; largest tidal difference</div>
-    `,
-    "solutionEN": `
-      <div>Diagram A shows the Sun, Earth, and Moon in a straight line.</div>
-      <div class="mt-2">This occurs at <b>New Moon or Full Moon</b>, when the gravitational effects of the Sun and Moon combine.</div>
-      <div class="mt-2">The result is a <b>spring tide</b>, with very high high tides and very low low tides, giving a large tidal difference.</div>
-      <div class="mt-2 font-bold text-emerald-700">Answer: Spring tide; New/Full Moon; largest tidal difference.</div>
-    `,
-    "options": [
-      {"text":"Spring tide: New Moon or Full Moon; bodies aligned; very high highs and very low lows / น้ำเกิด: New/Full Moon; เรียงแนวเดียว; น้ำขึ้นสูงมากน้ำลงต่ำมาก","isCorrect":true},
-      {"text":"Neap tide: New Moon or Full Moon; bodies aligned; smallest tidal difference / น้ำตาย: New/Full Moon; เรียงแนวเดียว; ต่างระดับน้อยสุด","isCorrect":false},
-      {"text":"Spring tide occurs only during the spring season / น้ำเกิดเกิดเฉพาะฤดูใบไม้ผลิ","isCorrect":false},
-      {"text":"No tide occurs because the forces cancel completely / ไม่เกิดน้ำขึ้นน้ำลงเพราะแรงหักล้างหมด","isCorrect":false},
-      {"text":"Neap tide occurs because Sun and Moon are at right angles / น้ำตายเกิดเพราะ Sun-Moon ทำมุมฉาก","isCorrect":false},
-      {"text":"Spring tide happens only at New Half Moon / น้ำเกิดเกิดเฉพาะ New Half Moon","isCorrect":false},
-      {"text":"Diagram A represents an equinox, not a tide condition / Diagram A เป็น equinox ไม่เกี่ยวกับน้ำขึ้นน้ำลง","isCorrect":false}
-    ]
-  },
-
-  // =========================================================
-  // Q24 — Neap tide
-  // =========================================================
-  {
-    "id": "q24",
-    "questionTH": `
-      <div>ใช้ภาพเดิม</div>
-      ${SPRING_NEAP_SVG}
-      <div class="mt-3">ข้อใดอธิบาย <b>Diagram B</b> ได้ถูกต้อง?</div>
-    `,
-    "questionEN": `
-      <div>Use the same diagram.</div>
-      ${SPRING_NEAP_SVG}
-      <div class="mt-3">Which statement correctly describes <b>Diagram B</b>?</div>
-    `,
-    "hints": [
-      {"th":"Diagram B แสดงแนวดวงอาทิตย์และดวงจันทร์ทำมุมฉากเมื่อมองจากโลก","en":"Diagram B shows the Sun and Moon at right angles as viewed from Earth."},
-      {"th":"สถานการณ์นี้สัมพันธ์กับ New Half Moon หรือ Old Half Moon","en":"This arrangement corresponds to New Half Moon or Old Half Moon."},
-      {"th":"ผลคือความแตกต่างระหว่าง high tide และ low tide เล็กลง เรียกว่า neap tide","en":"The difference between high and low tide becomes smaller; this is a neap tide."}
-    ],
-    "solutionTH": `
-      <div>Diagram B แสดงดวงอาทิตย์และดวงจันทร์ทำมุมฉากกับโลก</div>
-      <div class="mt-2">เกิดในช่วง <b>New Half Moon หรือ Old Half Moon</b> ผลของแรงโน้มถ่วงของดวงอาทิตย์และดวงจันทร์หักล้างกันบางส่วน</div>
-      <div class="mt-2">จึงเกิด <b>neap tide</b> ซึ่งมีความแตกต่างระหว่าง high tide และ low tide น้อยลง</div>
-      <div class="mt-2 font-bold text-emerald-700">ตอบ: Neap tide; half-moon phases; smaller tidal difference</div>
-    `,
-    "solutionEN": `
-      <div>Diagram B shows the Sun and Moon at right angles to Earth.</div>
-      <div class="mt-2">This occurs at <b>New Half Moon or Old Half Moon</b> , when the gravitational effects partly cancel.</div>
-      <div class="mt-2">The result is a <b>neap tide</b>, with a smaller difference between high and low tide.</div>
-      <div class="mt-2 font-bold text-emerald-700">Answer: Neap tide; half-moon phases; smaller tidal difference.</div>
-    `,
-    "options": [
-      {"text":"Neap tide: New Half or Old Half Moon; Sun and Moon at right angles; smaller tidal difference / น้ำตาย: จันทร์ครึ่งดวง; ทำมุมฉาก; ต่างระดับน้อยลง","isCorrect":true},
-      {"text":"Spring tide: New Half or Old Half Moon; right angle; very large tidal difference / น้ำเกิด: จันทร์ครึ่งดวง; ทำมุมฉาก; ต่างระดับมาก","isCorrect":false},
-      {"text":"Neap tide: New or Full Moon; all three bodies aligned / น้ำตาย: New/Full Moon; เรียงแนวเดียว","isCorrect":false},
-      {"text":"No tides occur during half-moon phases / ช่วงครึ่งดวงไม่มีน้ำขึ้นน้ำลงเลย","isCorrect":false},
-      {"text":"Neap tide means both high and low tide are exactly zero / น้ำตายหมายถึงระดับน้ำขึ้นและน้ำลงเป็นศูนย์","isCorrect":false},
-      {"text":"Diagram B is a solstice arrangement / Diagram B เป็นตำแหน่ง solstice","isCorrect":false},
-      {"text":"The Moon's gravity becomes zero in Diagram B / แรงโน้มถ่วงของดวงจันทร์เป็นศูนย์ใน Diagram B","isCorrect":false}
-    ]
-  },
-
-  // =========================================================
-  // Q25 — Importance of tides
-  // =========================================================
-  {
-    "id": "q25",
-    "questionTH": `
-      <div>น้ำขึ้นน้ำลงทำให้เกิดกระแสน้ำที่ช่วยหมุนเวียนมหาสมุทร มีผลต่อระบบนิเวศชายหาด และความรู้เรื่องน้ำขึ้นน้ำลงใช้ในการเดินเรือชายฝั่ง การประมง และกีฬาทางน้ำ</div>
-      <div class="mt-3">ข้อใด <b>ไม่ใช่</b> ประโยชน์หรือความสำคัญที่สอดคล้องกับข้อมูลข้างต้น?</div>
-    `,
-    "questionEN": `
-      <div>Tides create tidal streams that help circulate ocean water, affect beach ecosystems, and tide knowledge is useful for coastal navigation, fishing, and water sports.</div>
-      <div class="mt-3">Which option is <b>NOT</b> consistent with the information above?</div>
-    `,
-    "hints": [
-      {"th":"ข้อมูลสำคัญคือ tidal streams ที่ช่วยหมุนเวียนมหาสมุทรและนำอาหารกับน้ำใหม่ไปยังพื้นที่ต่าง ๆ","en":"The relevant information includes tidal streams that circulate the ocean and bring fresh food and water to other areas."},
-      {"th":"ยังกล่าวถึงระบบนิเวศชายหาด การเดินเรือ การประมง และกีฬาทางน้ำ","en":"It also mentions beach ecology, navigation, fishing, and water-related sports."},
-      {"th":"มองหาตัวเลือกที่เป็นเรื่องฤดูกาล ไม่ได้เกี่ยวกับน้ำขึ้นน้ำลง","en":"Look for the option about seasons rather than tides."}
-    ],
-    "solutionTH": `
-      <div>ความสำคัญของน้ำขึ้นน้ำลง ได้แก่ การหมุนเวียนมหาสมุทร การนำอาหารและน้ำใหม่ไปยังพื้นที่อื่น ระบบนิเวศชายหาด การเดินเรือ การประมง และกีฬาทางน้ำ</div>
-      <div class="mt-2"><b>การทำให้เกิดฤดูกาลทั้งสี่</b> ไม่ได้เป็นผลของน้ำขึ้นน้ำลง แต่เกี่ยวข้องกับการเอียงของแกนโลกและการโคจรรอบดวงอาทิตย์</div>
-      <div class="mt-2 font-bold text-emerald-700">ตอบ: ทำให้เกิดฤดูกาลทั้งสี่</div>
-    `,
-    "solutionEN": `
-      <div>Tide-related importance and applications include ocean circulation, transport of fresh food and water, beach ecology, ship navigation, fishing, and water-related sports.</div>
-      <div class="mt-2"><b>Causing the four seasons</b> is not a function of tides; seasons are linked to Earth's axial tilt and revolution around the Sun.</div>
-      <div class="mt-2 font-bold text-emerald-700">Answer: causing the four seasons.</div>
-    `,
-    "options": [
-      {"text":"Creating the four seasons / ทำให้เกิดฤดูกาลทั้งสี่","isCorrect":true},
-      {"text":"Creating tidal streams that circulate ocean water / ทำให้เกิดกระแสน้ำขึ้นน้ำลงช่วยหมุนเวียนน้ำทะเล","isCorrect":false},
-      {"text":"Bringing fresh food and water to other areas / นำอาหารและน้ำใหม่ไปยังพื้นที่อื่น","isCorrect":false},
-      {"text":"Supporting beach ecosystems whose organisms adapt to daily tides / สนับสนุนระบบนิเวศชายหาดที่สิ่งมีชีวิตปรับตัวต่อน้ำขึ้นน้ำลง","isCorrect":false},
-      {"text":"Helping navigation through coastal waterways / ช่วยการเดินเรือผ่านทางน้ำชายฝั่ง","isCorrect":false},
-      {"text":"Helping fishing activities / ช่วยกิจกรรมการประมง","isCorrect":false},
-      {"text":"Supporting some water-related sport activities / เกี่ยวข้องกับกีฬาทางน้ำบางประเภท","isCorrect":false}
-    ]
-  },
-
-  // =========================================================
-  // Q26 — Moon shifts eastward and rises later each day
-  // =========================================================
-  {
-    "id": "q26",
-    "questionTH": `
-      <div>จากโลก เราเห็นดวงจันทร์เคลื่อนไปทางทิศตะวันออกประมาณเท่าใดต่อวัน และมีผลต่อเวลาขึ้นอย่างไร?</div>
-    `,
-    "questionEN": `
-      <div>As viewed from Earth, approximately how far does the Moon move eastward each day, and how does this affect its rise time?</div>
-    `,
-    "hints": [
-      {"th":"ดวงจันทร์เคลื่อนไปทางตะวันออกประมาณ 12° ต่อวัน","en":"The Moon moves eastward by about 12° per day."},
-      {"th":"ดวงจันทร์โคจรรอบโลกและเมื่อมองจากโลก ตำแหน่งของมันเลื่อนไปทางทิศตะวันออกทุกวัน","en":"The Moon revolves around Earth and, as viewed from Earth, its position shifts eastward each day."},
-      {"th":"เวลาขึ้นจึงช้าลงประมาณ 50 นาทีในแต่ละวัน","en":"Therefore, the Moon rises about 50 minutes later each day."}
-    ],
-    "solutionTH": `
-      <div>เมื่อมองจากโลก ดวงจันทร์เคลื่อนไปทางทิศตะวันออกประมาณ <b>12° ต่อวัน</b></div>
-      <div class="mt-2">ดังนั้นในแต่ละวันดวงจันทร์จะขึ้น <b>ช้าลงประมาณ 50 นาที</b></div>
-      <div class="mt-2 font-bold text-emerald-700">ตอบ: 12° eastward per day; rises ~50 min later each day</div>
-    `,
-    "solutionEN": `
-      <div>As viewed from Earth, the Moon moves about <b>12° eastward each day</b>.</div>
-      <div class="mt-2">Therefore, it rises about <b>50 minutes later each day</b>.</div>
-      <div class="mt-2 font-bold text-emerald-700">Answer: 12° eastward per day; rises about 50 minutes later each day.</div>
-    `,
-    "options": [
-      {"text":"About 12° eastward per day; rises about 50 min later each day / ประมาณ 12° ไปตะวันออกต่อวัน; ขึ้นช้าลงประมาณ 50 นาทีต่อวัน","isCorrect":true},
-      {"text":"About 12° westward per day; rises 50 min earlier / ประมาณ 12° ไปตะวันตก; ขึ้นเร็วขึ้น 50 นาที","isCorrect":false},
-      {"text":"About 50° eastward per day; rises 12 min later / ประมาณ 50° ไปตะวันออก; ขึ้นช้าลง 12 นาที","isCorrect":false},
-      {"text":"About 1° eastward per day; rise time never changes / ประมาณ 1° ไปตะวันออก; เวลาขึ้นไม่เปลี่ยน","isCorrect":false},
-      {"text":"About 24° eastward per day; rises 24 hours later / ประมาณ 24° ไปตะวันออก; ขึ้นช้าลง 24 ชั่วโมง","isCorrect":false},
-      {"text":"The Moon stays fixed relative to the stars each day / ดวงจันทร์อยู่ตำแหน่งเดิมเทียบกับดาวทุกวัน","isCorrect":false},
-      {"text":"The rise time changes only because Earth's axis is tilted / เวลาขึ้นเปลี่ยนเพราะแกนโลกเอียงเท่านั้น","isCorrect":false}
-    ]
-  },
-
-      // =========================================================
-    // Q27 — Moonrise / highest / moonset for four key phases
-    // =========================================================
     {
-      "id": "q27",
-      "questionTH": `
-        <div>พิจารณาตารางเวลาโดยประมาณของดวงจันทร์ 4 ระยะหลัก</div>
-        ${MOONRISE_TIMELINE_SVG}
-        <div class="mt-3">ข้อใดจับคู่ <b>เวลาขึ้น → เวลาสูงที่สุด → เวลาตก</b> ของทั้ง 4 ระยะได้ถูกต้องทั้งหมด?</div>
-      `,
-      "questionEN": `
-        <div>Consider the approximate timing diagram for four major Moon phases.</div>
-        ${MOONRISE_TIMELINE_SVG}
-        <div class="mt-3">Which option correctly matches <b>rise → highest → set</b> times for all four phases?</div>
-      `,
-      "hints": [
-        {"th":"New Moon: ขึ้นเช้า → สูงสุดเที่ยง → ตกเย็น","en":"New Moon: rises in the morning → highest at noon → sets in the evening."},
-        {"th":"New Half: ขึ้นกลางวัน → สูงสุดพระอาทิตย์ตก → ตกประมาณเที่ยงคืน; Full Moon: ขึ้นพระอาทิตย์ตก → สูงสุดกลางดึก → ตกพระอาทิตย์ขึ้น","en":"New Half: midday → sunset → midnight; Full Moon: sunset → midnight → sunrise."},
-        {"th":"Old Half: ขึ้นประมาณเที่ยงคืน → สูงสุดพระอาทิตย์ขึ้น → ตกประมาณเที่ยงวัน","en":"Old Half: midnight → sunrise → midday."}
+      id: "q7",
+      questionTH: `<div>ลวดโลหะมี \\(n=5.9\\times10^{28}\\,\\mathrm{m^{-3}}\\), \\(A=3.0\\,\\mathrm{mm^2}\\) และ \\(v_d=0.20\\,\\mathrm{mm/s}\\) จงหากระแสไฟฟ้า กำหนด \\(e=1.60\\times10^{-19}\\,\\mathrm C\\)</div>`,
+      questionEN: `<div>A metal wire has \\(n=5.9\\times10^{28}\\,\\mathrm{m^{-3}}\\), \\(A=3.0\\,\\mathrm{mm^2}\\), and \\(v_d=0.20\\,\\mathrm{mm/s}\\). Calculate the current. Use \\(e=1.60\\times10^{-19}\\,\\mathrm C\\).</div>`,
+      hints: [
+        {th:"แปลง \\(A=3.0\\times10^{-6}\\,m^2\\)",en:"Convert \\(A=3.0\\times10^{-6}\\,m^2\\)."},
+        {th:"แปลง \\(v_d=2.0\\times10^{-4}\\,m/s\\)",en:"Convert \\(v_d=2.0\\times10^{-4}\\,m/s\\)."},
+        {th:"ใช้ \\(I=neAv_d\\)",en:"Use \\(I=neAv_d\\)."}
       ],
-      "solutionTH": `
-        <div><b>New Moon:</b> เช้า → เที่ยงวัน → เย็น</div>
-        <div><b>New Half Moon:</b> กลางวัน → พระอาทิตย์ตก → เที่ยงคืน</div>
-        <div><b>Full Moon:</b> พระอาทิตย์ตก → กลางดึก → พระอาทิตย์ขึ้น</div>
-        <div><b>Old Half Moon:</b> เที่ยงคืน → พระอาทิตย์ขึ้น → เที่ยงวัน</div>
-        <div class="mt-2">จันทร์ดับมองไม่เห็นแม้จะมีเวลาขึ้นและตกตามตำแหน่งของมัน ส่วน Old Half อาจสังเกตยากเมื่อตกในช่วงกลางวัน</div>
-        <div class="mt-2 font-bold text-emerald-700">ตอบ: New = morning/noon/evening; New Half = midday/sunset/midnight; Full = sunset/midnight/sunrise; Old Half = midnight/sunrise/midday</div>
-      `,
-      "solutionEN": `
-        <div><b>New Moon:</b> morning → noon → evening.</div>
-        <div><b>New Half Moon:</b> midday → sunset → midnight.</div>
-        <div><b>Full Moon:</b> sunset → middle of the night → sunrise.</div>
-        <div><b>Old Half Moon:</b> midnight → sunrise → midday.</div>
-        <div class="mt-2">The New Moon cannot be seen even though it has these rise/set times; the Old Half Moon may be difficult to notice when it is in the daytime sky.</div>
-        <div class="mt-2 font-bold text-emerald-700">Answer: New = morning/noon/evening; New Half = midday/sunset/midnight; Full = sunset/midnight/sunrise; Old Half = midnight/sunrise/midday.</div>
-      `,
-      "options": [
-        {"text":"New: morning→noon→evening; New Half: midday→sunset→midnight; Full: sunset→midnight→sunrise; Old Half: midnight→sunrise→midday / New: เช้า→เที่ยง→เย็น; New Half: กลางวัน→พระอาทิตย์ตก→เที่ยงคืน; Full: พระอาทิตย์ตก→กลางดึก→พระอาทิตย์ขึ้น; Old Half: เที่ยงคืน→พระอาทิตย์ขึ้น→เที่ยงวัน","isCorrect":true},
-        {"text":"New: sunset→midnight→sunrise; New Half: midday→sunset→midnight; Full: morning→noon→evening; Old Half: midnight→sunrise→midday / สลับ New กับ Full","isCorrect":false},
-        {"text":"New: morning→sunset→midnight; New Half: midday→noon→evening; Full: sunset→sunrise→midday; Old Half: midnight→midday→sunset / ลำดับ highest ผิดทุกระยะ","isCorrect":false},
-        {"text":"All four phases rise in the morning and set in the evening / ทั้งสี่ระยะขึ้นเช้าและตกเย็นเหมือนกัน","isCorrect":false},
-        {"text":"New: morning→noon→evening; New Half: midnight→sunrise→midday; Full: sunset→midnight→sunrise; Old Half: midday→sunset→midnight / สลับ New Half กับ Old Half","isCorrect":false},
-        {"text":"New: midnight→sunrise→midday; New Half: sunset→midnight→sunrise; Full: midday→sunset→midnight; Old Half: morning→noon→evening / เลื่อนทุกระยะผิดตำแหน่ง","isCorrect":false},
-        {"text":"Moonrise and moonset times are identical for every phase / เวลาขึ้นและตกเหมือนกันทุกระยะ","isCorrect":false}
+      solutionTH: `<div>\\[A=3.0\\times10^{-6}\\,\\mathrm{m^2},\\qquad v_d=2.0\\times10^{-4}\\,\\mathrm{m/s}\\]\\[I=(5.9\\times10^{28})(1.60\\times10^{-19})(3.0\\times10^{-6})(2.0\\times10^{-4})\\approx5.66\\,\\mathrm A\\]</div><div class="mt-2 font-bold text-emerald-700">ตอบ: \\(5.66\\,\\mathrm A\\)</div>`,
+      solutionEN: `<div>\\[A=3.0\\times10^{-6}\\,\\mathrm{m^2},\\qquad v_d=2.0\\times10^{-4}\\,\\mathrm{m/s}\\]\\[I=(5.9\\times10^{28})(1.60\\times10^{-19})(3.0\\times10^{-6})(2.0\\times10^{-4})\\approx5.66\\,\\mathrm A\\]</div><div class="mt-2 font-bold text-emerald-700">Answer: \\(5.66\\,\\mathrm A\\)</div>`,
+      options: [{text:"\\(0.566\\,\\mathrm A\\)",isCorrect:false},{text:"\\(1.89\\,\\mathrm A\\)",isCorrect:false},{text:"\\(3.00\\,\\mathrm A\\)",isCorrect:false},{text:"\\(5.66\\,\\mathrm A\\)",isCorrect:true},{text:"\\(9.44\\,\\mathrm A\\)",isCorrect:false},{text:"\\(56.6\\,\\mathrm A\\)",isCorrect:false},{text:"\\(566\\,\\mathrm A\\)",isCorrect:false}]
+    },
+    {
+      id: "q8",
+      questionTH: `<div>ลวดมี \\(n=8.0\\times10^{28}\\,\\mathrm{m^{-3}}\\), \\(A=1.5\\,\\mathrm{mm^2}\\), \\(v_d=0.25\\,\\mathrm{mm/s}\\) และมีกระแสไหลเป็นเวลา \\(10\\,\\mathrm s\\) จงหาประจุทั้งหมดที่ผ่านหน้าตัด กำหนด \\(e=1.60\\times10^{-19}\\,\\mathrm C\\)</div>`,
+      questionEN: `<div>A wire has \\(n=8.0\\times10^{28}\\,\\mathrm{m^{-3}}\\), \\(A=1.5\\,\\mathrm{mm^2}\\), and \\(v_d=0.25\\,\\mathrm{mm/s}\\). The current flows for \\(10\\,\\mathrm s\\). Calculate the total charge passing through the cross-section. Use \\(e=1.60\\times10^{-19}\\,\\mathrm C\\).</div>`,
+      hints: [
+        {th:"อย่าหาสูตรเดียว ให้ทำสองขั้น: \\(n,A,v_d\\rightarrow I\\) แล้ว \\(I,t\\rightarrow Q\\)",en:"Do not search for one giant formula. Use two stages: \\(n,A,v_d\\rightarrow I\\), then \\(I,t\\rightarrow Q\\)."},
+        {th:"แปลง \\(A=1.5\\times10^{-6}\\,m^2\\), \\(v_d=2.5\\times10^{-4}\\,m/s\\)",en:"Convert \\(A=1.5\\times10^{-6}\\,m^2\\), \\(v_d=2.5\\times10^{-4}\\,m/s\\)."},
+        {th:"จะได้ \\(I=4.8\\,A\\) แล้วใช้ \\(Q=It\\)",en:"You should get \\(I=4.8\\,A\\), then use \\(Q=It\\)."}
+      ],
+      solutionTH: `<div>\\[I=neAv_d=(8.0\\times10^{28})(1.60\\times10^{-19})(1.5\\times10^{-6})(2.5\\times10^{-4})=4.8\\,\\mathrm A\\]\\[Q=It=(4.8)(10)=48\\,\\mathrm C\\]</div><div class="mt-2 font-bold text-emerald-700">ตอบ: \\(48\\,\\mathrm C\\)</div>`,
+      solutionEN: `<div>\\[I=neAv_d=(8.0\\times10^{28})(1.60\\times10^{-19})(1.5\\times10^{-6})(2.5\\times10^{-4})=4.8\\,\\mathrm A\\]\\[Q=It=(4.8)(10)=48\\,\\mathrm C\\]</div><div class="mt-2 font-bold text-emerald-700">Answer: \\(48\\,\\mathrm C\\)</div>`,
+      options: [{text:"\\(0.48\\,\\mathrm C\\)",isCorrect:false},{text:"\\(4.8\\,\\mathrm C\\)",isCorrect:false},{text:"\\(12\\,\\mathrm C\\)",isCorrect:false},{text:"\\(24\\,\\mathrm C\\)",isCorrect:false},{text:"\\(48\\,\\mathrm C\\)",isCorrect:true},{text:"\\(96\\,\\mathrm C\\)",isCorrect:false},{text:"\\(480\\,\\mathrm C\\)",isCorrect:false}]
+    },
+    {
+      id: "q9",
+      questionTH: `<div>ลวดทองแดงและลวดเงินต่ออนุกรมกันและมีเส้นผ่านศูนย์กลางเท่ากัน กำหนด \\(n_{\\rm Cu}=8.5\\times10^{28}\\,\\mathrm{m^{-3}}\\) และ \\(n_{\\rm Ag}=5.9\\times10^{28}\\,\\mathrm{m^{-3}}\\) จงเปรียบเทียบ mean drift speed</div>${SERIES_MATERIALS_SVG}`,
+      questionEN: `<div>A copper wire and a silver wire are connected in series and have equal diameters. Given \\(n_{\\rm Cu}=8.5\\times10^{28}\\,\\mathrm{m^{-3}}\\) and \\(n_{\\rm Ag}=5.9\\times10^{28}\\,\\mathrm{m^{-3}}\\), compare their mean drift speeds.</div>${SERIES_MATERIALS_SVG}`,
+      hints: [
+        {th:"ต่ออนุกรมจึงมีกระแสเท่ากัน และ diameter เท่ากันจึง A เท่ากัน",en:"Series means equal current; equal diameter means equal area."},
+        {th:"จาก \\(I=neAv_d\\) ได้ \\(n_{Cu}v_{Cu}=n_{Ag}v_{Ag}\\)",en:"From \\(I=neAv_d\\), \\(n_{Cu}v_{Cu}=n_{Ag}v_{Ag}\\)."},
+        {th:"\\(v_{Ag}/v_{Cu}=n_{Cu}/n_{Ag}=8.5/5.9\\)",en:"\\(v_{Ag}/v_{Cu}=n_{Cu}/n_{Ag}=8.5/5.9\\)."}
+      ],
+      solutionTH: `<div>\\[\\frac{v_{\\rm Ag}}{v_{\\rm Cu}}=\\frac{n_{\\rm Cu}}{n_{\\rm Ag}}=\\frac{8.5}{5.9}\\approx1.44\\]</div><div class="mt-2">Silver มี \\(n\\) ต่ำกว่า จึงต้องมี drift speed สูงกว่าเพื่อให้กระแสเท่ากัน</div><div class="mt-2 font-bold text-emerald-700">ตอบ: \\(v_{\\rm Ag}\\approx1.44v_{\\rm Cu}\\)</div>`,
+      solutionEN: `<div>\\[\\frac{v_{\\rm Ag}}{v_{\\rm Cu}}=\\frac{n_{\\rm Cu}}{n_{\\rm Ag}}=\\frac{8.5}{5.9}\\approx1.44\\]</div><div class="mt-2">Silver has the lower carrier density, so it needs the larger drift speed for the same current.</div><div class="mt-2 font-bold text-emerald-700">Answer: \\(v_{\\rm Ag}\\approx1.44v_{\\rm Cu}\\)</div>`,
+      options: [{text:"\\(v_{Ag}=0.69v_{Cu}\\)",isCorrect:false},{text:"\\(v_{Ag}=v_{Cu}\\)",isCorrect:false},{text:"\\(v_{Ag}=1.18v_{Cu}\\)",isCorrect:false},{text:"\\(v_{Ag}\\approx1.44v_{Cu}\\)",isCorrect:true},{text:"\\(v_{Ag}=2.00v_{Cu}\\)",isCorrect:false},{text:"\\(v_{Cu}\\approx1.44v_{Ag}\\)",isCorrect:false},{text:"Drift speed cannot differ in series / drift speed ต่างกันไม่ได้เมื่อต่ออนุกรม",isCorrect:false}]
+    },
+    {
+      id: "q10",
+      questionTH: `<div>ลวดสม่ำเสมอยาว \\(L=2.40\\,\\mathrm m\\) มีพื้นที่หน้าตัด \\(A=1.20\\times10^{-6}\\,\\mathrm{m^2}\\) และมี free electrons ทั้งหมด \\(N=2.448\\times10^{23}\\) ตัว มีประจุ \\(180\\,\\mathrm C\\) ผ่านลวดในเวลา \\(150\\,\\mathrm s\\) จงหา mean drift speed กำหนด \\(e=1.60\\times10^{-19}\\,\\mathrm C\\)</div>`,
+      questionEN: `<div>A uniform wire has \\(L=2.40\\,\\mathrm m\\), \\(A=1.20\\times10^{-6}\\,\\mathrm{m^2}\\), and contains \\(N=2.448\\times10^{23}\\) free electrons. A charge of \\(180\\,\\mathrm C\\) passes through the wire in \\(150\\,\\mathrm s\\). Calculate the mean drift speed. Use \\(e=1.60\\times10^{-19}\\,\\mathrm C\\).</div>`,
+      hints: [
+        {th:"แตกโจทย์เป็นสองสาย: \\(N,A,L\\rightarrow n\\) และ \\(Q,t\\rightarrow I\\)",en:"Split the problem into two branches: \\(N,A,L\\rightarrow n\\) and \\(Q,t\\rightarrow I\\)."},
+        {th:"ใช้ \\(n=N/(AL)\\) และ \\(I=Q/t\\)",en:"Use \\(n=N/(AL)\\) and \\(I=Q/t\\)."},
+        {th:"เมื่อได้ \\(n=8.50\\times10^{28}\\,m^{-3}\\), \\(I=1.20\\,A\\) แล้วใช้ \\(v_d=I/(neA)\\)",en:"After finding \\(n=8.50\\times10^{28}\\,m^{-3}\\) and \\(I=1.20\\,A\\), use \\(v_d=I/(neA)\\)."}
+      ],
+      solutionTH: `<div>\\[AL=(1.20\\times10^{-6})(2.40)=2.88\\times10^{-6}\\,\\mathrm{m^3}\\]\\[n=\\frac{2.448\\times10^{23}}{2.88\\times10^{-6}}=8.50\\times10^{28}\\,\\mathrm{m^{-3}}\\]\\[I=\\frac{180}{150}=1.20\\,\\mathrm A\\]\\[v_d=\\frac{1.20}{(8.50\\times10^{28})(1.60\\times10^{-19})(1.20\\times10^{-6})}\\approx7.35\\times10^{-5}\\,\\mathrm{m/s}\\]</div><div class="mt-2 font-bold text-emerald-700">ตอบ: \\(7.35\\times10^{-5}\\,\\mathrm{m/s}\\)</div>`,
+      solutionEN: `<div>\\[AL=(1.20\\times10^{-6})(2.40)=2.88\\times10^{-6}\\,\\mathrm{m^3}\\]\\[n=\\frac{2.448\\times10^{23}}{2.88\\times10^{-6}}=8.50\\times10^{28}\\,\\mathrm{m^{-3}}\\]\\[I=\\frac{180}{150}=1.20\\,\\mathrm A\\]\\[v_d=\\frac{1.20}{(8.50\\times10^{28})(1.60\\times10^{-19})(1.20\\times10^{-6})}\\approx7.35\\times10^{-5}\\,\\mathrm{m/s}\\]</div><div class="mt-2 font-bold text-emerald-700">Answer: \\(7.35\\times10^{-5}\\,\\mathrm{m/s}\\)</div>`,
+      options: [{text:"\\(7.35\\times10^{-7}\\,\\mathrm{m/s}\\)",isCorrect:false},{text:"\\(7.35\\times10^{-6}\\,\\mathrm{m/s}\\)",isCorrect:false},{text:"\\(7.35\\times10^{-5}\\,\\mathrm{m/s}\\)",isCorrect:true},{text:"\\(7.35\\times10^{-4}\\,\\mathrm{m/s}\\)",isCorrect:false},{text:"\\(1.20\\times10^{-5}\\,\\mathrm{m/s}\\)",isCorrect:false},{text:"\\(8.50\\times10^{-5}\\,\\mathrm{m/s}\\)",isCorrect:false},{text:"\\(1.20\\,\\mathrm{m/s}\\)",isCorrect:false}]
+    },
+    {
+      id: "q11",
+      questionTH: `<div>เมื่อปิดสวิตช์ หลอดไฟติดเกือบทันที แม้ความเร็วลอยเลื่อนเฉลี่ยของอิเล็กตรอนในสายไฟจะมีค่าน้อยมาก ข้อใดอธิบายได้ดีที่สุด?</div>`,
+      questionEN: `<div>A lamp lights almost immediately after a switch is closed, even though the mean drift speed of electrons in the wire is very small. Which explanation is best?</div>`,
+      hints: [
+        {th:"อย่าสับสนความเร็วการตอบสนองของวงจรกับ drift speed ของอิเล็กตรอนแต่ละตัว",en:"Do not confuse the circuit's rapid response with the drift speed of an individual electron."},
+        {th:"อิเล็กตรอนมีอยู่ทั่วสายตัวนำก่อนปิดสวิตช์อยู่แล้ว",en:"Electrons are already present throughout the conducting wire before the switch is closed."},
+        {th:"เมื่อปิดสวิตช์ การเปลี่ยนแปลงของสนามไฟฟ้าแพร่ผ่านวงจรอย่างรวดเร็ว ไม่ต้องรออิเล็กตรอนตัวหนึ่ง drift จากแบตเตอรี่ถึงหลอด",en:"When the switch closes, the change in electric field propagates rapidly through the circuit; no single electron must drift from the battery to the lamp first."}
+      ],
+      solutionTH: `<div>อิเล็กตรอนมีอยู่ทั่วตัวนำในวงจรอยู่แล้ว เมื่อปิดสวิตช์ <b>การเปลี่ยนแปลงของสนามไฟฟ้าแพร่ผ่านวงจรอย่างรวดเร็ว</b> ทำให้ประจุที่มีอยู่แล้วทั่ววงจรเริ่มตอบสนอง หลอดไฟจึงติดได้โดยไม่ต้องรอให้อิเล็กตรอนตัวใดตัวหนึ่ง drift จากแบตเตอรี่ไปถึงหลอด</div><div class="mt-2">\\[\\boxed{\\text{current}\\neq\\text{drift speed}}\\]</div><div class="mt-2 font-bold text-emerald-700">ตอบ: อิเล็กตรอนมีอยู่ทั่ววงจรแล้ว และการเปลี่ยนแปลงของสนามไฟฟ้าแพร่ผ่านวงจรอย่างรวดเร็ว</div>`,
+      solutionEN: `<div>Electrons are already present throughout the conducting circuit. When the switch closes, the <b>change in electric field propagates rapidly through the circuit</b>, causing charges already present throughout the circuit to respond. The lamp therefore does not have to wait for one electron to drift from the battery to the lamp.</div><div class="mt-2">\\[\\boxed{\\text{current}\\neq\\text{drift speed}}\\]</div><div class="mt-2 font-bold text-emerald-700">Answer: electrons are already throughout the circuit, and the electric-field change propagates rapidly.</div>`,
+      options: [
+        {text:"Electrons are already throughout the circuit; the electric-field change propagates rapidly / อิเล็กตรอนมีอยู่ทั่ววงจรแล้ว และการเปลี่ยนแปลงของสนามไฟฟ้าแพร่ผ่านวงจรอย่างรวดเร็ว",isCorrect:true},
+        {text:"Individual electrons travel through the wire at nearly the speed of light / อิเล็กตรอนแต่ละตัวเคลื่อนที่ในลวดเกือบเท่าความเร็วแสง",isCorrect:false},
+        {text:"New electrons are created by the battery when the switch closes / แบตเตอรี่สร้างอิเล็กตรอนใหม่เมื่อปิดสวิตช์",isCorrect:false},
+        {text:"The same electrons jump directly from the battery to the lamp / อิเล็กตรอนตัวเดิมกระโดดจากแบตเตอรี่ไปหลอดโดยตรง",isCorrect:false},
+        {text:"Drift speed is numerically equal to electric current / drift speed มีค่าเท่ากับกระแสไฟฟ้า",isCorrect:false},
+        {text:"The lamp stores electrons and releases light before current flows / หลอดเก็บอิเล็กตรอนไว้และปล่อยแสงก่อนกระแสไหล",isCorrect:false},
+        {text:"Electron drift is unnecessary in a metal circuit / การ drift ของอิเล็กตรอนไม่มีความจำเป็นในวงจรโลหะ",isCorrect:false}
       ]
     },
-
-// =========================================================
-  // Q28 — Cross-topic integration: Full Moon + tide + timing
-  // =========================================================
-  {
-    "id": "q28",
-    "questionTH": `
-      <div>คืนหนึ่งนักเรียนสังเกตเห็น <b>Full Moon</b> กำลังขึ้นใกล้เวลาพระอาทิตย์ตก</div>
-      ${SPRING_NEAP_SVG}
-      ${MOONRISE_TIMELINE_SVG}
-      <div class="mt-3">จากสถานการณ์และภาพ ข้อใดเป็นชุดข้อสรุปที่สอดคล้องกันทั้งหมด?</div>
-    `,
-    "questionEN": `
-      <div>One evening, a student observes a <b>Full Moon</b> rising near sunset.</div>
-      ${SPRING_NEAP_SVG}
-      ${MOONRISE_TIMELINE_SVG}
-      <div class="mt-3">Using the situation and diagrams, which set of conclusions is fully consistent?</div>
-    `,
-    "hints": [
-      {"th":"Full Moon เป็นหนึ่งในสองระยะที่สัมพันธ์กับ spring tide","en":"Full Moon is one of the two phases associated with spring tides."},
-      {"th":"Spring tide เกิดเมื่อ Sun–Earth–Moon อยู่ในแนวเดียวกันและความต่าง high/low tide มาก","en":"A spring tide occurs when the Sun–Earth–Moon system is aligned, giving a large difference between high and low tide."},
-      {"th":"Full Moon ขึ้นช่วง sunset อยู่สูงสุดกลางดึก และตกช่วง sunrise","en":"A Full Moon rises around sunset, is highest around midnight, and sets around sunrise."}
-    ],
-    "solutionTH": `
-      <div>เมื่อเป็น <b>Full Moon</b>:</div>
-      <div class="mt-2">• ดวงอาทิตย์ โลก และดวงจันทร์อยู่ในแนวเดียวกันตามแผนภาพ spring tide</div>
-      <div>• เกิด <b>spring tide</b> ซึ่งมีความต่างระหว่าง high tide และ low tide มาก</div>
-      <div>• ดวงจันทร์ขึ้นช่วง sunset อยู่สูงสุดกลางดึก และตกช่วง sunrise</div>
-      <div class="mt-2 font-bold text-emerald-700">ตอบ: Full Moon + spring tide + rises sunset + highest midnight + sets sunrise</div>
-    `,
-    "solutionEN": `
-      <div>At a <b>Full Moon</b>:</div>
-      <div class="mt-2">• the Sun, Earth, and Moon are aligned in the spring-tide arrangement</div>
-      <div>• a <b>spring tide</b> occurs, producing a large difference between high and low tide</div>
-      <div>• the Moon rises around sunset, is highest around midnight, and sets around sunrise</div>
-      <div class="mt-2 font-bold text-emerald-700">Answer: Full Moon + spring tide + rises sunset + highest midnight + sets sunrise.</div>
-    `,
-    "options": [
-      {"text":"Spring tide; bodies aligned; large tidal difference; Moon highest around midnight and sets near sunrise / น้ำเกิด; เรียงแนวเดียว; ต่างระดับมาก; สูงสุดกลางดึกและตกใกล้พระอาทิตย์ขึ้น","isCorrect":true},
-      {"text":"Neap tide; bodies at right angles; smallest tidal difference; Moon highest at noon / น้ำตาย; ทำมุมฉาก; ต่างระดับน้อย; สูงสุดเที่ยงวัน","isCorrect":false},
-      {"text":"Spring tide; bodies at right angles; Moon sets at midnight / น้ำเกิด; ทำมุมฉาก; ดวงจันทร์ตกเที่ยงคืน","isCorrect":false},
-      {"text":"Neap tide; bodies aligned; Moon highest at sunrise / น้ำตาย; เรียงแนวเดียว; สูงสุดตอนพระอาทิตย์ขึ้น","isCorrect":false},
-      {"text":"No tide; Full Moon has no gravitational effect / ไม่มีน้ำขึ้นน้ำลง; Full Moon ไม่มีผลแรงโน้มถ่วง","isCorrect":false},
-      {"text":"Equinox; equal day and night causes Full Moon / equinox; กลางวันเท่ากลางคืนทำให้เกิด Full Moon","isCorrect":false},
-      {"text":"Polar night; the Full Moon causes 24-hour darkness / polar night; Full Moon ทำให้มืด 24 ชั่วโมง","isCorrect":false}
-    ]
-  },
-
-  // =========================================================
-  // Q29 — Meaning of the word equinox
-  // =========================================================
-  {
-    "id": "q29",
-    "questionTH": `
-      <div><b>Equinox</b> เป็นคำที่มาจากภาษาละติน ข้อใดให้ทั้งความหมายของคำและลักษณะของวันดังกล่าวได้สอดคล้องกัน?</div>
-    `,
-    "questionEN": `
-      <div>The word <b>equinox</b> comes from Latin. Which option correctly matches the meaning of the word with the feature of an equinox?</div>
-    `,
-    "hints": [
-      {"th":"คำนี้มีความหมายเกี่ยวกับความเท่าเทียมกันของกลางวันและกลางคืน","en":"The word refers to equality of day and night."},
-      {"th":"Equinox เกิดประมาณ 20 March และ 22 September","en":"Equinoxes occur around 20 March and 22 September."},
-      {"th":"ในสองวันนี้ ทั้งสองซีกโลกมีช่วงกลางวันและกลางคืนยาวเท่ากัน","en":"On these two dates, both hemispheres have equal lengths of day and night."}
-    ],
-    "solutionTH": `
-      <div>คำว่า <b>equinox</b> มาจากภาษาละตินและหมายถึง <b>“ความเท่าเทียมกันของกลางวันและกลางคืน”</b></div>
-      <div class="mt-2">จึงสอดคล้องกับวันที่ทั้งสองซีกโลกมีช่วงกลางวันและกลางคืนยาวเท่ากัน ซึ่งเกิดประมาณ 20 March และ 22 September</div>
-      <div class="mt-2 font-bold text-emerald-700">ตอบ: equality of day and night + day and night are equal in length</div>
-    `,
-    "solutionEN": `
-      <div>The word <b>equinox</b> comes from Latin and means <b>“equality of day and night.”</b></div>
-      <div class="mt-2">This matches the two dates, around 20 March and 22 September, when both hemispheres have equal lengths of day and night.</div>
-      <div class="mt-2 font-bold text-emerald-700">Answer: equality of day and night + equal lengths of day and night.</div>
-    `,
-    "options": [
-      {"text":"Equality of day and night; day and night are equal in length / ความเท่าเทียมกันของกลางวันและกลางคืน; กลางวันและกลางคืนยาวเท่ากัน","isCorrect":true},
-      {"text":"Longest day; daylight lasts 24 hours everywhere / วันที่ยาวที่สุด; ทุกที่มีกลางวัน 24 ชั่วโมง","isCorrect":false},
-      {"text":"Shortest day; nighttime lasts 24 hours everywhere / วันที่สั้นที่สุด; ทุกที่มีกลางคืน 24 ชั่วโมง","isCorrect":false},
-      {"text":"Equal seasons; all four seasons have equal length / ฤดูกาลเท่ากัน; ทั้ง 4 ฤดูยาวเท่ากัน","isCorrect":false},
-      {"text":"Earth without axial tilt; the axis becomes vertical / โลกไม่มีแกนเอียง; แกนโลกตั้งตรง","isCorrect":false},
-      {"text":"Full Moon; the whole Moon is illuminated toward Earth / จันทร์เพ็ญ; ด้านที่เห็นสว่างเต็มดวง","isCorrect":false},
-      {"text":"High tide and low tide are equal / ระดับน้ำขึ้นและน้ำลงเท่ากัน","isCorrect":false}
-    ]
-  },
-
-  // =========================================================
-  // Q30 — Month, Moon, and lunar calendars
-  // =========================================================
-  {
-    "id": "q30",
-    "questionTH": `
-      <div>พิจารณาข้อความเกี่ยวกับความสัมพันธ์ระหว่างคำว่า <b>month</b> กับการเคลื่อนที่ของดวงจันทร์</div>
-      <div class="mt-3">ข้อใดเป็นชุดข้อมูลที่สอดคล้องกันทั้งหมด?</div>
-    `,
-    "questionEN": `
-      <div>Consider the relationship between the word <b>month</b> and the motion of the Moon.</div>
-      <div class="mt-3">Which set of statements is fully consistent?</div>
-    `,
-    "hints": [
-      {"th":"คำว่า month มาจากคำภาษาอังกฤษโบราณที่มีความหมายว่า moon","en":"The word month comes from an old English word meaning moon."},
-      {"th":"ในสมัยแรก หนึ่งเดือนใช้ช่วงเวลาระหว่าง New Moon สองครั้ง","en":"In early times, a month was the length of time between New Moons."},
-      {"th":"ปฏิทินอิสลามและปฏิทินจีนยังอ้างอิงการเคลื่อนที่ของดวงจันทร์","en":"Islamic and Chinese calendars are still based on the movement of the Moon."}
-    ],
-    "solutionTH": `
-      <div>คำว่า <b>month</b> มาจากคำภาษาอังกฤษโบราณที่หมายถึง <b>moon</b></div>
-      <div class="mt-2">ในสมัยแรก หนึ่งเดือนในปฏิทินหมายถึงช่วงเวลาระหว่าง <b>New Moon สองครั้ง</b> ซึ่งเป็นแนวคิดของ lunar calendar</div>
-      <div class="mt-2">ปฏิทินอิสลามและปฏิทินจีนยังอ้างอิงการเคลื่อนที่ของดวงจันทร์</div>
-      <div class="mt-2 font-bold text-emerald-700">ตอบ: month ↔ moon; New Moon to New Moon; Islamic and Chinese calendars</div>
-    `,
-    "solutionEN": `
-      <div>The word <b>month</b> comes from an old English word meaning <b>moon</b>.</div>
-      <div class="mt-2">In early times, one calendar month was the length of time between <b>two New Moons</b>, forming a lunar-calendar idea.</div>
-      <div class="mt-2">Islamic and Chinese calendars are still based on the movement of the Moon.</div>
-      <div class="mt-2 font-bold text-emerald-700">Answer: month ↔ moon; New Moon to New Moon; Islamic and Chinese calendars.</div>
-    `,
-    "options": [
-      {"text":"month comes from a word meaning moon; early month = time between New Moons; Islamic and Chinese calendars use Moon movement / month มาจากคำที่หมายถึง moon; เดือนยุคแรก = ช่วงระหว่าง New Moon; ปฏิทินอิสลามและจีนอิงการเคลื่อนที่ของดวงจันทร์","isCorrect":true},
-      {"text":"month comes from Sun; early month = one Earth rotation; only the solar calendar uses Moon movement / month มาจาก Sun; เดือน = โลกหมุน 1 รอบ; มีเฉพาะปฏิทินสุริยคติที่ใช้ดวงจันทร์","isCorrect":false},
-      {"text":"month comes from tide; early month = time between spring tides; Chinese calendar ignores the Moon / month มาจาก tide; เดือน = ช่วงระหว่าง spring tide; ปฏิทินจีนไม่ใช้ดวงจันทร์","isCorrect":false},
-      {"text":"month means season; one month = one season / month แปลว่าฤดูกาล; 1 เดือน = 1 ฤดู","isCorrect":false},
-      {"text":"A lunar calendar is based only on Earth's axial tilt / ปฏิทินจันทรคติอิงเฉพาะการเอียงของแกนโลก","isCorrect":false},
-      {"text":"A lunar calendar is the time between two equinoxes / ปฏิทินจันทรคติคือช่วงระหว่าง equinox สองครั้ง","isCorrect":false},
-      {"text":"New Moon has no connection with early calendar months / New Moon ไม่เกี่ยวข้องกับเดือนในปฏิทินยุคแรก","isCorrect":false}
-    ]
-  },
-
-  // =========================================================
-  // Q31 — Continuous tide cycle and relative motions
-  // =========================================================
-  {
-    "id": "q31",
-    "questionTH": `
-      <div>น้ำในมหาสมุทรเคลื่อนสลับจาก high tide → low tide → high tide อย่างต่อเนื่อง</div>
-      ${TIDES_BULGE_SVG}
-      <div class="mt-3">ข้อใดอธิบายความสัมพันธ์ระหว่างการหมุนของโลก การโคจรของดวงจันทร์ และจำนวนครั้งของน้ำขึ้นน้ำลงต่อวันได้ครบถ้วน?</div>
-    `,
-    "questionEN": `
-      <div>Ocean water continually changes from high tide → low tide → high tide.</div>
-      ${TIDES_BULGE_SVG}
-      <div class="mt-3">Which statement completely describes the relationship between Earth's rotation, the Moon's revolution, and the daily tide pattern?</div>
-    `,
-    "hints": [
-      {"th":"ในข้อมูลนี้ โลกหมุนเร็วกว่าการโคจรของดวงจันทร์","en":"In this description, Earth rotates faster than the Moon revolves."},
-      {"th":"เมื่อโลกหมุน แต่ละบริเวณผ่านแนวส่วนโป่งของน้ำและแนวที่ระดับน้ำต่ำกว่า","en":"As Earth rotates, each place passes through the ocean-bulge regions and the lower-tide regions."},
-      {"th":"แต่ละบริเวณจึงเกิด high tide 2 ครั้งและ low tide 2 ครั้งต่อวัน","en":"Each place therefore experiences two high tides and two low tides each day."}
-    ],
-    "solutionTH": `
-      <div>โลก <b>หมุนเร็วกว่าการโคจรของดวงจันทร์</b> เมื่อโลกหมุน แต่ละบริเวณจึงผ่านบริเวณน้ำขึ้นและน้ำลงสลับกัน</div>
-      <div class="mt-2">ผลคือแต่ละบริเวณบนโลกเกิด <b>น้ำขึ้น 2 ครั้งและน้ำลง 2 ครั้งต่อวัน</b> และมหาสมุทรเคลื่อนจาก high tide ไป low tide แล้วกลับสู่ high tide อย่างต่อเนื่อง</div>
-      <div class="mt-2 font-bold text-emerald-700">ตอบ: Earth rotates faster than Moon revolves → 2 high + 2 low tides each day</div>
-    `,
-    "solutionEN": `
-      <div>Earth <b>rotates faster than the Moon revolves</b>. As Earth rotates, each place passes alternately through high-tide and low-tide regions.</div>
-      <div class="mt-2">Thus each place experiences <b>two high tides and two low tides each day</b>, with the ocean continually moving from high tide to low tide and back to high tide.</div>
-      <div class="mt-2 font-bold text-emerald-700">Answer: Earth rotates faster than Moon revolves → 2 high + 2 low tides each day.</div>
-    `,
-    "options": [
-      {"text":"Earth rotates faster than the Moon revolves; each place gets 2 high + 2 low tides per day / โลกหมุนเร็วกว่าดวงจันทร์โคจร; แต่ละที่มีน้ำขึ้น 2 + น้ำลง 2 ครั้งต่อวัน","isCorrect":true},
-      {"text":"The Moon revolves faster than Earth rotates; each place gets only one high tide / ดวงจันทร์โคจรเร็วกว่าโลกหมุน; แต่ละที่มีน้ำขึ้นครั้งเดียว","isCorrect":false},
-      {"text":"Earth does not rotate; tides stay fixed at one location / โลกไม่หมุน; น้ำขึ้นน้ำลงอยู่ที่เดิม","isCorrect":false},
-      {"text":"Earth's axial tilt alone creates two tides per day / การเอียงของแกนโลกเพียงอย่างเดียวทำให้เกิดน้ำขึ้นลงวันละสองครั้ง","isCorrect":false},
-      {"text":"Every place has 2 high tides but no low tides / ทุกที่มีน้ำขึ้น 2 ครั้งแต่ไม่มีน้ำลง","isCorrect":false},
-      {"text":"Every place has 1 high + 1 low tide per week / ทุกที่มีน้ำขึ้น 1 + น้ำลง 1 ครั้งต่อสัปดาห์","isCorrect":false},
-      {"text":"High and low tides do not alternate / น้ำขึ้นและน้ำลงไม่สลับกัน","isCorrect":false}
-    ]
-  },
-
-  // =========================================================
-  // Q32 — Why Moon rise/set times differ from day to day
-  // =========================================================
-  {
-    "id": "q32",
-    "questionTH": `
-      <div>ดวงจันทร์ขึ้นและตกทุกวัน แต่ไม่ได้ขึ้นตอนเช้าและตกตอนเย็นในเวลาแบบเดียวกับดวงอาทิตย์ทุกวัน</div>
-      <div class="mt-3">ข้อใดอธิบายสถานการณ์นี้ได้ครบถ้วนที่สุด?</div>
-    `,
-    "questionEN": `
-      <div>The Moon rises and sets every day, but it does not always rise in the morning and set in the evening in the same pattern as the Sun.</div>
-      <div class="mt-3">Which statement most completely describes this situation?</div>
-    `,
-    "hints": [
-      {"th":"ดวงจันทร์โคจรรอบโลก ขณะที่โลกโคจรรอบดวงอาทิตย์","en":"The Moon revolves around Earth while Earth revolves around the Sun."},
-      {"th":"เมื่อมองจากโลก ดวงจันทร์เลื่อนไปทางตะวันออกประมาณ 12° ต่อวัน","en":"As viewed from Earth, the Moon shifts about 12° eastward each day."},
-      {"th":"ดังนั้นดวงจันทร์ขึ้นช้าลงประมาณ 50 นาทีในแต่ละวัน","en":"Therefore, the Moon rises about 50 minutes later each day."}
-    ],
-    "solutionTH": `
-      <div>ดวงจันทร์ <b>โคจรรอบโลก</b> และในเวลาเดียวกันโลกกับดวงจันทร์เคลื่อนรอบดวงอาทิตย์</div>
-      <div class="mt-2">เมื่อมองจากโลก ดวงจันทร์เลื่อนไปทางทิศตะวันออกประมาณ <b>12° ต่อวัน</b> จึงขึ้นช้าลงประมาณ <b>50 นาทีต่อวัน</b></div>
-      <div class="mt-2">จึงไม่ควรคาดว่าดวงจันทร์จะขึ้นเช้าและตกเย็นเหมือนดวงอาทิตย์ทุกวัน</div>
-      <div class="mt-2 font-bold text-emerald-700">ตอบ: Moon revolves Earth + shifts ~12° east/day + rises ~50 min later/day</div>
-    `,
-    "solutionEN": `
-      <div>The Moon <b>revolves around Earth</b>, while Earth and the Moon move around the Sun.</div>
-      <div class="mt-2">As viewed from Earth, the Moon shifts about <b>12° eastward per day</b>, so it rises about <b>50 minutes later each day</b>.</div>
-      <div class="mt-2">Therefore, the Moon does not follow the same morning-rise/evening-set pattern as the Sun every day.</div>
-      <div class="mt-2 font-bold text-emerald-700">Answer: Moon revolves Earth + shifts ~12° east/day + rises ~50 min later/day.</div>
-    `,
-    "options": [
-      {"text":"Moon revolves Earth; it shifts ~12° east/day and rises ~50 min later/day / ดวงจันทร์โคจรรอบโลก; เลื่อนไปตะวันออก ~12°/วัน และขึ้นช้าลง ~50 นาที/วัน","isCorrect":true},
-      {"text":"Moon stays fixed; Earth's axial tilt alone changes moonrise by 50 min / ดวงจันทร์อยู่กับที่; แกนโลกเอียงทำให้เวลาขึ้นเปลี่ยน 50 นาที","isCorrect":false},
-      {"text":"Moon moves ~12° west/day and rises 50 min earlier / ดวงจันทร์ไปตะวันตก ~12°/วัน และขึ้นเร็วขึ้น 50 นาที","isCorrect":false},
-      {"text":"Moon rises only once every 29.5 days / ดวงจันทร์ขึ้นเพียงครั้งเดียวทุก 29.5 วัน","isCorrect":false},
-      {"text":"Moonrise changes because spring tides push the Moon eastward / เวลาขึ้นเปลี่ยนเพราะ spring tide ดันดวงจันทร์ไปตะวันออก","isCorrect":false},
-      {"text":"Moon always rises in the morning and sets in the evening / ดวงจันทร์ขึ้นเช้าและตกเย็นเสมอ","isCorrect":false},
-      {"text":"Moonrise is controlled by solstices and equinoxes only / เวลาขึ้นของดวงจันทร์กำหนดด้วย solstice และ equinox เท่านั้น","isCorrect":false}
-    ]
-  }
-
+    {
+      id: "q12",
+      questionTH: `<div>ลวดสม่ำเสมอถูกยืดจนความยาวใหม่เป็น 2 เท่าของเดิม โดยปริมาตรและ resistivity คงที่ จงหา \\(R_{new}/R_{old}\\)</div>${STRETCHED_WIRE_SVG}`,
+      questionEN: `<div>A uniform wire is stretched until its new length is twice its original length. The volume and resistivity remain constant. Determine \\(R_{new}/R_{old}\\).</div>${STRETCHED_WIRE_SVG}`,
+      hints: [
+        {th:"ห้ามดู L อย่างเดียว ต้องเริ่มจาก volume constant: \\(A_{old}L_{old}=A_{new}L_{new}\\)",en:"Do not change L alone. Start with constant volume: \\(A_{old}L_{old}=A_{new}L_{new}\\)."},
+        {th:"เมื่อ \\(L_{new}=2L_{old}\\) จะได้ \\(A_{new}=A_{old}/2\\)",en:"If \\(L_{new}=2L_{old}\\), then \\(A_{new}=A_{old}/2\\)."},
+        {th:"แทนใน \\(R=\\rho L/A\\): length ×2 และ area ×1/2",en:"Substitute into \\(R=\\rho L/A\\): length ×2 and area ×1/2."}
+      ],
+      solutionTH: `<div>ปริมาตรคงที่: \\[A_{old}L_{old}=A_{new}(2L_{old})\\Rightarrow A_{new}=\\frac12A_{old}\\] แล้ว \\[\\frac{R_{new}}{R_{old}}=\\frac{2L_{old}}{L_{old}}\\frac{A_{old}}{A_{old}/2}=2\\times2=4\\]</div><div class="mt-2 font-bold text-emerald-700">ตอบ: \\(R_{new}=4R_{old}\\)</div>`,
+      solutionEN: `<div>Constant volume gives \\[A_{old}L_{old}=A_{new}(2L_{old})\\Rightarrow A_{new}=\\frac12A_{old}.\\] Then \\[\\frac{R_{new}}{R_{old}}=\\frac{2L_{old}}{L_{old}}\\frac{A_{old}}{A_{old}/2}=2\\times2=4.\\]</div><div class="mt-2 font-bold text-emerald-700">Answer: \\(R_{new}=4R_{old}\\)</div>`,
+      options: [{text:"\\(1/4\\)",isCorrect:false},{text:"\\(1/2\\)",isCorrect:false},{text:"\\(1\\)",isCorrect:false},{text:"\\(2\\)",isCorrect:false},{text:"\\(4\\)",isCorrect:true},{text:"\\(8\\)",isCorrect:false},{text:"\\(16\\)",isCorrect:false}]
+    },
+    {
+      id: "q13",
+      questionTH: `<div>ใช้สถานการณ์ต่อจาก Q12 หลังยืดลวดแล้ว นำลวดต่อกับความต่างศักย์คงเดิมเท่ากับก่อนยืด จงหา \\(I_{new}/I_{old}\\)</div>${STRETCHED_WIRE_SVG}`,
+      questionEN: `<div>Continue from Q12. After stretching, the wire is connected across the same constant potential difference as before. Determine \\(I_{new}/I_{old}\\).</div>${STRETCHED_WIRE_SVG}`,
+      hints: [
+        {th:"จาก Q12 ได้ \\(R_{new}=4R_{old}\\)",en:"From Q12, \\(R_{new}=4R_{old}\\)."},
+        {th:"เมื่อ V คงที่ \\(I=V/R\\) ดังนั้น \\(I\\propto1/R\\)",en:"With the same V, \\(I=V/R\\), so \\(I\\propto1/R\\)."},
+        {th:"\\(I_{new}/I_{old}=R_{old}/R_{new}=1/4\\)",en:"\\(I_{new}/I_{old}=R_{old}/R_{new}=1/4\\)."}
+      ],
+      solutionTH: `<div>จาก Q12 \\[R_{new}=4R_{old}\\] และเมื่อความต่างศักย์คงเดิม \\[\\frac{I_{new}}{I_{old}}=\\frac{R_{old}}{R_{new}}=\\frac14\\]</div><div class="mt-2">เส้นทางเต็ม: \\[L\\times2\\rightarrow A\\times\\frac12\\rightarrow R\\times4\\rightarrow I\\times\\frac14\\]</div><div class="mt-2 font-bold text-emerald-700">ตอบ: \\(I_{new}=\\frac14I_{old}\\)</div>`,
+      solutionEN: `<div>From Q12, \\[R_{new}=4R_{old}.\\] With the same potential difference, \\[\\frac{I_{new}}{I_{old}}=\\frac{R_{old}}{R_{new}}=\\frac14.\\]</div><div class="mt-2">Full chain: \\[L\\times2\\rightarrow A\\times\\frac12\\rightarrow R\\times4\\rightarrow I\\times\\frac14\\]</div><div class="mt-2 font-bold text-emerald-700">Answer: \\(I_{new}=\\frac14I_{old}\\)</div>`,
+      options: [{text:"\\(1/16\\)",isCorrect:false},{text:"\\(1/8\\)",isCorrect:false},{text:"\\(1/4\\)",isCorrect:true},{text:"\\(1/2\\)",isCorrect:false},{text:"\\(1\\)",isCorrect:false},{text:"\\(2\\)",isCorrect:false},{text:"\\(4\\)",isCorrect:false}]
+    }
   ]
 };
 </script>
