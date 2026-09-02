@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Wave Motion Simulator · Round 9.2b Physics Yellow Login + Cloud Save</title>
+<style>
+:root{
+  --ink:#0f172a;--muted:#64748b;--line:#cbd5e1;--paper:#fff;--bg:#eef2f7;
+  --navy:#173b67;--blue:#2563eb;--cyan:#0891b2;--soft:#eff6ff;--amber:#b7791f;
+  --ok:#15803d;--danger:#b91c1c;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:K2D,system-ui,-apple-system,"Segoe UI",sans-serif;background:linear-gradient(#f8fafc,#edf2f7);color:var(--ink)}
+button,input{font:inherit}
+button{touch-action:manipulation}
+.wrap{max-width:1240px;margin:auto;padding:20px}
+.hero,.card{background:#fff;border:2px solid var(--ink);border-radius:20px;box-shadow:5px 5px 0 var(--ink)}
+.hero{padding:20px;margin-bottom:16px}
+.kicker{display:inline-block;border:2px solid var(--ink);border-radius:999px;background:#dbeafe;padding:5px 10px;font-size:.78rem;font-weight:950}
+h1{font-size:clamp(28px,4vw,48px);line-height:1.05;margin:12px 0 6px}
+.sub{color:var(--muted);font-weight:700;margin:0}
+.mode-tabs{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+.btn,.mode-btn{border:2px solid var(--ink);border-radius:12px;padding:10px 13px;background:#fff;color:var(--ink);font-weight:900;cursor:pointer}
+.mode-btn.active,.btn.primary{background:var(--navy);color:#fff}
+.btn.blue{background:var(--blue);color:#fff}.btn.cyan{background:var(--cyan);color:#fff}.btn.amber{background:#fff7ed;color:#92400e;border-color:#b45309}.btn.ghost{background:#fff}.btn.small{padding:7px 9px;font-size:.8rem}
+.card{padding:16px;margin:16px 0}
+.mode-panel{display:none}.mode-panel.active{display:block}
+.section-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;margin-bottom:12px}.section-head h2,.section-head h3{margin:0}.tiny{font-size:.78rem;color:var(--muted);font-weight:700}.badge{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:4px 8px;background:#f8fafc;font-size:.72rem;font-weight:900}
+.water-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(250px,.5fr);gap:14px}
+.stage{position:relative;border:2px solid var(--line);border-radius:16px;overflow:hidden;background:#f8fbff;min-height:420px}
+#waterSvg,#stringSvg,.graph-svg{width:100%;display:block}
+.controls{border:2px solid #bae6fd;border-radius:16px;padding:14px;background:#f0f9ff}.control-title{font-weight:950;margin-bottom:8px}.choice-row,.action-row{display:flex;gap:8px;flex-wrap:wrap}.height-btn.selected{background:#cffafe;border-color:#0e7490;color:#155e75}.info-box{margin-top:12px;border-left:5px solid var(--cyan);padding:10px 12px;background:#ecfeff;border-radius:10px;font-size:.9rem}
+.cross-section{display:none;margin-top:14px;border:2px solid var(--line);border-radius:16px;padding:12px;background:#fff}.cross-section.show{display:block}
+.string-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.time-read{font-weight:950;padding:7px 10px;border:2px solid var(--line);border-radius:10px;background:#f8fafc}.scrubber-row{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;margin-top:10px}.scrubber-row input{width:100%}
+.graph-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}.graph-card{border:2px solid var(--line);border-radius:16px;padding:12px;background:#fff;min-width:0}.graph-card h3{margin:0 0 2px}.graph-shell{position:relative;min-height:290px}.graph-svg{height:290px}.graph-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.measurement-read{margin-top:8px;padding:9px 10px;border:1px dashed #94a3b8;border-radius:10px;background:#f8fafc;font-size:.86rem;font-weight:800}
+.graph-svg{touch-action:pan-y;user-select:none;-webkit-user-select:none}.measure-help{margin-top:7px;font-size:.74rem;color:#64748b;font-weight:750;line-height:1.45}.guide-btn.active{background:#f1f5f9;border-color:#64748b;color:#334155}.measure-btn.active{background:#fff7ed;border-color:#b45309;color:#92400e}.qa-panel{display:none;margin-top:12px;border:2px dashed #7c3aed;border-radius:14px;padding:11px 12px;background:#faf5ff;color:#581c87;font:800 .76rem/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}.qa-panel.show{display:block}.sync-pill{display:inline-flex;align-items:center;gap:5px;border:1px solid #86efac;border-radius:999px;background:#f0fdf4;color:#166534;padding:3px 7px;font-size:.68rem;font-weight:900;margin-left:6px}
+.calc{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}.calc-box{border:2px solid var(--line);border-radius:16px;padding:14px;background:#fbfdff}.calc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.ans{display:grid;grid-template-columns:auto 1fr auto;gap:7px;align-items:center}.ans input{width:100%;min-width:0;border:2px solid var(--ink);border-radius:10px;padding:9px;text-align:center;font-weight:900}.formula{display:flex;gap:18px;flex-wrap:wrap;margin-top:10px;font-family:"Times New Roman",serif;font-size:1.25rem;font-weight:700}.bottom-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;justify-content:flex-end}
+.measure-toolkit{margin-top:14px;border:2px solid #bfdbfe;border-radius:18px;padding:14px;background:linear-gradient(180deg,#f8fbff,#fff)}
+.measure-toolkit-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:10px}.measure-toolkit-head h3{margin:0}.measure-tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.measure-tool{border:2px solid var(--line);border-radius:14px;background:#fff;padding:12px;min-width:0}.measure-tool.wave-count{border-color:#a5b4fc;background:#f8faff}.measure-icon{font-size:1.25rem}.measure-name{font-weight:950;margin-top:2px}.measure-value{font-size:clamp(1.15rem,2vw,1.5rem);font-weight:950;margin:7px 0 3px;letter-spacing:.01em}.measure-detail{font-size:.75rem;color:var(--muted);font-weight:750;line-height:1.45}.counter-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.counter-status{display:inline-flex;align-items:center;gap:6px;border:1px solid #cbd5e1;border-radius:999px;padding:4px 8px;font-size:.7rem;font-weight:900;background:#fff}.counter-status.running{border-color:#86efac;background:#f0fdf4;color:#166534}.counter-dot{width:8px;height:8px;border-radius:50%;background:#94a3b8}.counter-status.running .counter-dot{background:#22c55e;box-shadow:0 0 0 4px #dcfce7}.counter-read-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}.counter-read{border:1px solid #dbeafe;border-radius:10px;padding:8px;background:#fff;text-align:center}.counter-read b{display:block;font-size:1.15rem}.counter-flash{animation:counterFlash .35s ease}@keyframes counterFlash{0%{box-shadow:0 0 0 0 #60a5fa66}50%{box-shadow:0 0 0 8px #60a5fa22}100%{box-shadow:0 0 0 0 transparent}}
+@media(max-width:850px){.measure-tools{grid-template-columns:1fr}.counter-read-grid{grid-template-columns:1fr 1fr}}
+/* Round 8 · measure-from-here + P state + flick */
+.r8-actionbar{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-top:10px;padding:10px;border:2px solid #dbeafe;border-radius:14px;background:#f8fbff}
+.r8-actionbar .label{font-size:.72rem;font-weight:950;color:#475569;margin-right:2px}
+.btn.green{background:#15803d;color:#fff;border-color:#14532d}.btn.red{background:#b91c1c;color:#fff;border-color:#7f1d1d}.btn.purple{background:#7e22ce;color:#fff;border-color:#581c87}
+.source-mode{display:inline-flex;align-items:center;gap:6px;border:1px solid #cbd5e1;border-radius:999px;padding:5px 8px;background:#fff;font-size:.72rem;font-weight:900;color:#475569}.source-mode.pulse{border-color:#c4b5fd;background:#faf5ff;color:#6b21a8}
+.live-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:10px;margin-top:10px}.live-card{border:2px solid var(--line);border-radius:15px;background:#fff;padding:12px;min-width:0}.live-card.phase{border-color:#fdba74;background:#fffdf7}.live-card.measure{border-color:#93c5fd;background:#f8fbff}.live-title{display:flex;justify-content:space-between;gap:8px;align-items:center;font-weight:950;margin-bottom:8px}.state-pill{font-size:.68rem;font-weight:950;padding:4px 7px;border-radius:999px;border:1px solid #cbd5e1;background:#f8fafc}.state-pill.paused{border-color:#fdba74;background:#fffbeb;color:#92400e}.p-read-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.p-read{border:1px solid #e2e8f0;border-radius:10px;padding:8px;background:#fff}.p-read span{display:block;font-size:.68rem;color:#64748b;font-weight:800}.p-read b{display:block;margin-top:2px;font-size:1rem}.phase-state{margin-top:8px;border:1px dashed #f59e0b;border-radius:10px;padding:8px;background:#fff;font-size:.77rem;font-weight:850;line-height:1.45}
+.session-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.session-read{border:1px solid #dbeafe;border-radius:10px;background:#fff;padding:8px;text-align:center}.session-read span{display:block;font-size:.66rem;color:#64748b;font-weight:800}.session-read b{display:block;margin-top:2px;font-size:1rem}.session-note{margin-top:7px;font-size:.72rem;color:#64748b;font-weight:750;line-height:1.45}.measure-running{animation:measurePulse 1.2s infinite}@keyframes measurePulse{50%{box-shadow:0 0 0 5px #bfdbfe55}}
+.trial-log{margin-top:12px;border:2px solid #cbd5e1;border-radius:15px;background:#fff;overflow:hidden}.trial-log-head{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:10px 12px;background:#f8fafc;border-bottom:1px solid #e2e8f0;flex-wrap:wrap}.trial-log-head h3{margin:0;font-size:1rem}.trial-table-wrap{overflow-x:auto}.trial-table{width:100%;min-width:760px;border-collapse:collapse;font-size:.78rem}.trial-table th,.trial-table td{border-bottom:1px solid #e2e8f0;padding:8px;text-align:center}.trial-table th{background:#fff;font-weight:950}.trial-table tbody tr:last-child td{border-bottom:0}.trial-empty{padding:14px;text-align:center;color:#64748b;font-size:.78rem;font-weight:750}
+#driverHit{cursor:ns-resize;touch-action:none}#driverKnob{pointer-events:none;filter:drop-shadow(0 2px 2px #0f172a22)}.driver-tip{font-size:11px;font-weight:900;fill:#475569}.pulse-note{font-size:.7rem;color:#6b21a8;font-weight:800}.yt-session-label{font-size:10px;font-weight:950}
+@media(max-width:850px){.live-grid{grid-template-columns:1fr}.session-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.p-read-grid{grid-template-columns:1fr 1fr}.r8-actionbar{align-items:stretch}.r8-actionbar .btn{flex:1 1 46%}}
+/* Notes dock */
+.notes-fab{position:fixed;right:18px;bottom:18px;z-index:9000;border:2px solid #172554;border-radius:999px;padding:11px 15px;background:#1e3a8a;color:#fff;font-weight:950;box-shadow:0 12px 32px #0f172a33;cursor:pointer}.notes-fab.hidden{display:none}
+.notes-shell{position:fixed;left:50%;bottom:10px;z-index:8999;width:min(1040px,calc(100vw - 20px));transform:translate(-50%,115%);opacity:0;pointer-events:none;transition:.22s ease}.notes-shell.show{transform:translate(-50%,0);opacity:1;pointer-events:auto}.notes-dock{border:2px solid #172554;border-radius:18px;background:#fff;box-shadow:0 20px 60px #0f172a44;overflow:hidden}.notes-top{padding:9px 11px;background:#eff6ff;border-bottom:1px solid #bfdbfe;display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}.notes-title{font-weight:950}.notes-toolbar{display:flex;gap:6px;flex-wrap:wrap}.tool.active{background:#dbeafe;border-color:#3b82f6}.note-sheet{position:relative;height:clamp(300px,48vh,470px);overflow:hidden;background:linear-gradient(#e5e7eb 1px,transparent 1px),linear-gradient(90deg,#e5e7eb 1px,transparent 1px),#fff;background-size:22px 22px;touch-action:none}.note-object-layer,.note-ink{position:absolute;inset:0;width:100%;height:100%}.note-object-layer{z-index:1}.note-ink{z-index:2;touch-action:none}.note-obj{position:absolute;border:2px solid transparent;border-radius:10px;background:#fff;overflow:hidden;box-shadow:0 2px 8px #0f172a18;touch-action:none}.note-obj.selected{border-color:#2563eb;box-shadow:0 0 0 3px #bfdbfe}.note-obj .obj-label{position:absolute;top:4px;left:4px;background:#fff;border:1px solid #cbd5e1;border-radius:999px;padding:2px 6px;font-size:10px;font-weight:900;z-index:2}.note-obj svg{width:100%;height:100%;display:block}.note-resize{display:none;position:absolute;width:22px;height:22px;right:-2px;bottom:-2px;border:2px solid #1d4ed8;border-radius:8px 0 8px 0;background:#dbeafe;z-index:5;cursor:nwse-resize;touch-action:none}.note-obj.selected .note-resize{display:block}.note-resize:after{content:'↘';position:absolute;inset:0;display:grid;place-items:center;font-size:13px;font-weight:950;color:#1e3a8a}.notes-selection{font-size:.72rem;font-weight:850;color:#475569;padding:5px 8px;border:1px solid #cbd5e1;border-radius:999px;background:#fff}.notes-foot{padding:8px 10px;border-top:1px solid #e2e8f0;background:#f8fafc;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center}.page-controls{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.page-label{font-size:.78rem;font-weight:900;min-width:90px;text-align:center}
+.toast{position:fixed;left:50%;top:18px;z-index:9500;transform:translateX(-50%) translateY(-12px);opacity:0;pointer-events:none;background:#0f172a;color:#fff;border-radius:12px;padding:9px 13px;font-weight:850;font-size:.82rem;transition:.18s}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:850px){.water-grid,.graph-grid,.calc{grid-template-columns:1fr}.stage{min-height:340px}.graph-shell,.graph-svg{min-height:260px;height:260px}.wrap{padding:12px}.notes-shell{bottom:5px;width:calc(100vw - 10px)}.notes-fab{right:10px;bottom:10px}.note-sheet{height:48vh}}
+@media(max-width:520px){.calc-grid{grid-template-columns:1fr}.hero,.card{border-radius:14px;box-shadow:3px 3px 0 var(--ink)}.stage{min-height:300px}}
+@media print{body *{visibility:hidden!important}.notes-shell,.notes-shell *{visibility:visible!important}.notes-shell{position:absolute!important;left:0!important;top:0!important;bottom:auto!important;width:100%!important;transform:none!important;opacity:1!important}.notes-top,.notes-foot{display:none!important}.notes-dock{border:0!important;box-shadow:none!important}.note-sheet{height:255mm!important;background:#fff!important;border:0!important}}
+
+/* ===== Round 8.1 · Simplified student measurement UI ===== */
+#stepBtn,.source-mode,.r8-actionbar,.scrubber-row,#sessionCard,.measure-toolkit,.trial-log{display:none!important}
+#guideX,#guideT,#measureT,#tRead,#tHelp{display:none!important}
+#driverHit{pointer-events:none!important;cursor:default!important}.driver-tip{display:none!important}
+body.flick-enabled #driverHit{pointer-events:auto!important;cursor:ns-resize!important}
+body.flick-enabled .driver-tip{display:block!important}
+.live-grid{grid-template-columns:1fr;margin-top:10px}
+#pStateCard{display:none}
+body.show-p-readout #pStateCard{display:block}
+.simple-measure-panel{margin-top:12px;border:2px solid #93c5fd;border-radius:17px;background:linear-gradient(180deg,#f8fbff,#fff);padding:13px}
+.simple-measure-head{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.simple-measure-head h3{margin:0;font-size:1.06rem}
+.simple-measure-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.simple-measure-card{border:2px solid #dbeafe;border-radius:14px;background:#fff;padding:12px;min-width:0}
+.simple-measure-card.distance{border-color:#fed7aa;background:#fffdf8}
+.simple-measure-card.time{border-color:#bfdbfe;background:#f8fbff}
+.simple-measure-title{font-weight:950;margin-bottom:6px}
+.simple-values{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.simple-value{border:1px solid #e2e8f0;border-radius:10px;padding:8px;background:#fff;text-align:center}
+.simple-value span{display:block;font-size:.68rem;color:#64748b;font-weight:800}.simple-value b{display:block;margin-top:2px;font-size:1.12rem}
+.simple-measure-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+.simple-measure-btn.measuring{background:#b91c1c;color:#fff;border-color:#7f1d1d}
+.simple-hint{margin-top:8px;font-size:.75rem;color:#64748b;font-weight:750;line-height:1.5}
+.formula-strip{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;padding:9px 11px;border:1px dashed #94a3b8;border-radius:12px;background:#f8fafc;font-family:"Times New Roman",serif;font-size:1.05rem;font-weight:700}
+.advanced-tools{margin-top:10px;border:1px solid #ddd6fe;border-radius:12px;background:#faf5ff;padding:7px 10px}.advanced-tools summary{cursor:pointer;font-weight:900;color:#6b21a8}.advanced-tools .advanced-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}.advanced-note{font-size:.72rem;color:#6b21a8;font-weight:750;margin-top:6px}
+.graph-card .graph-actions{align-items:center}
+#measureX{background:#fff7ed;border-color:#b45309;color:#92400e}
+@media(max-width:760px){.simple-measure-grid{grid-template-columns:1fr}.simple-values{grid-template-columns:1fr 1fr}}
+
+
+/* ===== Round 9 · Play once, measure directly ===== */
+.string-toolbar{position:sticky;top:8px;z-index:15;background:rgba(255,255,255,.96);padding:8px;border:1px solid #dbeafe;border-radius:13px;backdrop-filter:blur(8px)}
+#playBtn{background:#1d4ed8;color:#fff;border-color:#1e3a8a}
+#pauseBtn{background:#fff7ed;border-color:#f59e0b;color:#92400e}
+.simple-measure-panel{box-shadow:0 4px 0 rgba(59,130,246,.08)}
+.simple-measure-card.distance,.simple-measure-card.time{position:relative;overflow:hidden}
+.simple-measure-card.distance:before,.simple-measure-card.time:before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:#f59e0b}
+.simple-measure-card.time:before{background:#2563eb}
+.r9-mini-flow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:9px;padding:8px 10px;border-radius:12px;background:#f8fafc;border:1px solid #e2e8f0;font-size:.76rem;font-weight:850;color:#475569}
+.r9-mini-flow b{color:#0f172a}
+.r9-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 7px;border-radius:999px;border:1px solid #cbd5e1;background:#fff}
+#xRead{background:#fffdf7;border-color:#fdba74}
+#pStateCard{animation:fadeInR9 .16s ease}@keyframes fadeInR9{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.graph-card:first-child{border-color:#fed7aa}.graph-card:last-child{border-color:#bae6fd}
+#captureString{display:none!important}
+@media(max-width:760px){.string-toolbar{position:static}.r9-mini-flow{align-items:flex-start}}
+
+
+
+/* ===== Round 9.2 · Physics Login + Cloud Save ===== */
+body.wave-auth-locked{overflow:hidden}
+.wave-auth-gate{
+  position:fixed;inset:0;z-index:15000;display:flex;align-items:center;justify-content:center;
+  padding:20px;background:rgba(15,23,42,.78);backdrop-filter:blur(10px);
+}
+.wave-auth-gate.hidden{display:none}
+.wave-auth-shell{
+  width:min(940px,100%);display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);
+  border:2px solid #0f172a;border-radius:26px;overflow:hidden;background:#fff;
+  box-shadow:0 30px 95px rgba(2,6,23,.38)
+}
+.wave-auth-visual{
+  position:relative;overflow:hidden;min-height:430px;padding:30px;color:#fff;
+  background:linear-gradient(145deg,#0f2f57 0%,#174d85 53%,#2563eb 100%)
+}
+.wave-auth-visual:before,.wave-auth-visual:after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.08)}
+.wave-auth-visual:before{width:260px;height:260px;right:-110px;top:-85px}.wave-auth-visual:after{width:190px;height:190px;left:-70px;bottom:-75px}
+.wave-auth-kicker{font-size:.72rem;font-weight:950;letter-spacing:.14em;text-transform:uppercase;color:#bfdbfe}
+.wave-auth-visual h2{font-size:clamp(1.8rem,4vw,2.7rem);line-height:1.06;margin:12px 0 10px}
+.wave-auth-visual p{margin:0;color:#e2e8f0;font-weight:650;line-height:1.65}
+.wave-auth-wave{position:relative;height:150px;margin:38px 0 12px}
+.wave-auth-wave svg{width:100%;height:100%;display:block;overflow:visible}
+.wave-auth-badges{display:flex;gap:7px;flex-wrap:wrap;margin-top:20px}
+.wave-auth-badge{font-size:.72rem;font-weight:850;padding:6px 9px;border:1px solid rgba(255,255,255,.28);border-radius:999px;background:rgba(255,255,255,.1)}
+.wave-auth-card{padding:32px;display:flex;flex-direction:column;justify-content:center;background:#fff}
+.wave-auth-card .wave-auth-kicker{color:#2563eb}.wave-auth-title{font-size:1.7rem;font-weight:950;color:#0f172a;margin:6px 0}
+.wave-auth-copy{font-size:.92rem;color:#64748b;line-height:1.65;margin:0 0 18px}
+.wave-google-btn{width:100%;min-height:52px;border:2px solid #cbd5e1;border-radius:14px;background:#fff;color:#0f172a;display:flex;align-items:center;justify-content:center;gap:10px;font-weight:900;cursor:pointer}
+.wave-google-btn:hover{background:#f8fafc;border-color:#94a3b8}.wave-google-btn:disabled{opacity:.5;cursor:not-allowed}
+.wave-google-g{width:28px;height:28px;display:grid;place-items:center;border:2px solid #dbeafe;border-radius:50%;font-weight:1000;color:#2563eb;background:#fff}
+.wave-guest-btn{width:100%;min-height:48px;margin-top:10px;border:1px dashed #f59e0b;border-radius:14px;background:#fffbeb;color:#92400e;font-weight:900;cursor:pointer}
+.wave-guest-warning{display:none;margin-top:12px;padding:13px;border:1px solid #f59e0b;border-radius:13px;background:#fffbeb;color:#92400e;font-size:.78rem;font-weight:750;line-height:1.55}.wave-guest-warning.show{display:block}
+.wave-guest-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.wave-guest-confirm,.wave-guest-cancel{min-height:42px;border-radius:10px;padding:8px 11px;font-size:.76rem;font-weight:900;cursor:pointer}.wave-guest-confirm{border:1px solid #b45309;background:#b45309;color:#fff}.wave-guest-cancel{border:1px solid #cbd5e1;background:#fff;color:#475569}
+.wave-auth-loading{display:none;margin-top:12px;padding:12px 13px;border:1px solid #bfdbfe;border-radius:13px;background:#eff6ff;color:#1d4ed8;font-size:.8rem;font-weight:800;line-height:1.55}.wave-auth-loading.show{display:block}
+.wave-auth-error{display:none;white-space:pre-wrap;margin-top:12px;padding:12px 13px;border:1px solid #fecdd3;border-radius:13px;background:#fff1f2;color:#be123c;font-size:.78rem;line-height:1.5}.wave-auth-error.show{display:block}
+.wave-auth-local{display:none;margin:0 0 14px;padding:11px 12px;border:1px solid #fde68a;border-radius:12px;background:#fffbeb;color:#92400e;font-size:.78rem;font-weight:800;line-height:1.5}.wave-auth-local.show{display:block}
+.wave-auth-note{margin-top:15px;padding-top:13px;border-top:1px solid #e2e8f0;font-size:.72rem;color:#94a3b8;line-height:1.55}
+.wave-userbar{position:sticky;top:8px;z-index:120;max-width:1240px;margin:8px auto 0;padding:9px 12px;display:none;align-items:center;justify-content:space-between;gap:10px;background:rgba(255,255,255,.97);border:2px solid #bfdbfe;border-radius:15px;box-shadow:0 6px 18px rgba(15,23,42,.09);backdrop-filter:blur(8px)}
+.wave-userbar.show{display:flex}.wave-user-meta{min-width:0;display:flex;align-items:center;gap:9px}.wave-user-avatar{width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid #cbd5e1;background:#e2e8f0}.wave-user-name{font-size:.82rem;font-weight:950;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:230px}.wave-user-email{font-size:.68rem;color:#94a3b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:270px}.wave-user-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end}.wave-cloud-status,.wave-session-pill{font-size:.69rem;font-weight:900;padding:6px 9px;border-radius:999px;white-space:nowrap}.wave-cloud-status{border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8}.wave-cloud-status.ok{border-color:#a7f3d0;background:#ecfdf5;color:#047857}.wave-cloud-status.busy{border-color:#fde68a;background:#fffbeb;color:#92400e}.wave-cloud-status.error{border-color:#fecdd3;background:#fff1f2;color:#be123c}.wave-session-pill{color:#475569;background:#f8fafc;border:1px solid #e2e8f0}.wave-save-now{border:1px solid #1d4ed8;border-radius:10px;background:#2563eb;color:#fff;padding:7px 10px;font-size:.72rem;font-weight:900;cursor:pointer}.wave-save-now:disabled{opacity:.45;cursor:not-allowed}.wave-signout{border:1px solid #cbd5e1;border-radius:10px;background:#fff;color:#475569;padding:7px 10px;font-size:.72rem;font-weight:850;cursor:pointer}
+.wave-guest-badge{display:none;position:fixed;z-index:14900;left:max(8px,env(safe-area-inset-left));bottom:max(8px,env(safe-area-inset-bottom));padding:7px 10px;border:1px solid #f59e0b;border-radius:999px;background:#fffbeb;color:#92400e;font:900 11px/1.2 K2D,Arial,sans-serif;box-shadow:0 3px 12px rgba(15,23,42,.12);pointer-events:none}.wave-guest-badge.show{display:block}
+.wave-userbar.guest-mode{border-color:#f59e0b;background:#fffbeb}
+@media(max-width:760px){.wave-auth-shell{grid-template-columns:1fr}.wave-auth-visual{min-height:auto;padding:22px}.wave-auth-wave{height:90px;margin:20px 0 8px}.wave-auth-card{padding:24px}.wave-userbar{top:0;margin:0;border-radius:0;border-left:0;border-right:0}.wave-user-email,.wave-session-pill{display:none}}
+@media print{.wave-auth-gate,.wave-userbar,.wave-guest-badge{display:none!important}}
+
+
+/* ===== Round 9.2b · Physics Yellow Theme ===== */
+:root{
+  --navy:#1f2937;
+  --blue:#ca8a04;
+  --soft:#fffbeb;
+  --amber:#a16207;
+}
+body{
+  background:linear-gradient(180deg,#fffdf2 0%,#fffbea 48%,#f8fafc 100%);
+}
+.kicker{
+  background:#fef3c7;
+  border-color:#713f12;
+  color:#713f12;
+}
+.mode-btn.active,.btn.primary{
+  background:#facc15;
+  color:#111827;
+  border-color:#713f12;
+}
+.btn.blue{
+  background:#eab308;
+  color:#111827;
+  border-color:#713f12;
+}
+.time-read{
+  background:#fffbea;
+  border-color:#fde68a;
+}
+
+/* Login / Authentication */
+.wave-auth-gate{
+  background:rgba(17,24,39,.72);
+}
+.wave-auth-shell{
+  border-color:#422006;
+  box-shadow:0 28px 90px rgba(66,32,6,.34);
+}
+.wave-auth-visual{
+  color:#111827;
+  background:
+    radial-gradient(circle at 85% 12%,rgba(255,255,255,.40),transparent 27%),
+    linear-gradient(145deg,#fde047 0%,#facc15 48%,#eab308 100%);
+}
+.wave-auth-visual:before,.wave-auth-visual:after{
+  background:rgba(255,255,255,.20);
+}
+.wave-auth-visual .wave-auth-kicker{
+  color:#713f12;
+}
+.wave-auth-visual p{
+  color:#422006;
+}
+.wave-auth-badge{
+  color:#422006;
+  border-color:rgba(66,32,6,.28);
+  background:rgba(255,255,255,.30);
+}
+.wave-auth-wave line{
+  stroke:rgba(66,32,6,.28)!important;
+}
+.wave-auth-wave path{
+  stroke:#422006!important;
+}
+.wave-auth-wave circle{
+  fill:#fff7ed!important;
+  stroke:#422006!important;
+}
+.wave-auth-wave text{
+  fill:#422006!important;
+}
+.wave-auth-card{
+  background:#fffef8;
+}
+.wave-auth-card .wave-auth-kicker{
+  color:#a16207;
+}
+.wave-auth-title{
+  color:#111827;
+}
+.wave-google-btn{
+  border-color:#eab308;
+  background:#fff;
+  color:#111827;
+}
+.wave-google-btn:hover{
+  background:#fffbeb;
+  border-color:#ca8a04;
+}
+.wave-google-g{
+  color:#a16207;
+  border-color:#fde68a;
+  background:#fffdf2;
+}
+.wave-guest-btn{
+  border-color:#d6b66a;
+  background:#fffdf7;
+  color:#713f12;
+}
+.wave-guest-btn:hover{
+  background:#fef3c7;
+  border-color:#ca8a04;
+}
+.wave-auth-loading{
+  border-color:#fde68a;
+  background:#fffbeb;
+  color:#854d0e;
+}
+.wave-auth-note{
+  border-top-color:#fde68a;
+  color:#78716c;
+}
+
+/* Signed-in bar */
+.wave-userbar{
+  border-color:#facc15;
+  background:rgba(255,254,248,.97);
+}
+.wave-cloud-status{
+  border-color:#fde68a;
+  background:#fffbeb;
+  color:#854d0e;
+}
+.wave-save-now{
+  border-color:#713f12;
+  background:#facc15;
+  color:#111827;
+}
+.wave-save-now:hover:not(:disabled){
+  background:#eab308;
+}
+.wave-session-pill{
+  border-color:#fde68a;
+  background:#fffdf2;
+  color:#713f12;
+}
+
+</style>
+</head>
+<body class="wave-auth-locked">
+
+<div id="wave-auth-gate" class="wave-auth-gate" role="dialog" aria-modal="true" aria-labelledby="wave-auth-title">
+  <div class="wave-auth-shell">
+    <section class="wave-auth-visual" aria-hidden="true">
+      <div class="wave-auth-kicker">INTERACTIVE PHYSICS · YELLOW · CLOUD SAVE</div>
+      <h2>Enter the wave lab.<br/>เข้าสู่แบบจำลองคลื่น</h2>
+      <p>Sign in once to restore your measurement setup and working notes across sessions.<br/>เข้าสู่ระบบครั้งเดียวเพื่อเรียกคืนการวัดและกระดานทดจากครั้งก่อน</p>
+      <div class="wave-auth-wave">
+        <svg viewBox="0 0 520 170" role="img" aria-label="Travelling wave illustration">
+          <line x1="15" y1="86" x2="505" y2="86" stroke="rgba(255,255,255,.32)" stroke-width="2" stroke-dasharray="8 7"/>
+          <path d="M18 86 C55 18 92 18 129 86 S203 154 240 86 S314 18 351 86 S425 154 502 86" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+          <circle cx="351" cy="86" r="10" fill="#fbbf24" stroke="#fff" stroke-width="3"/><text x="370" y="75" fill="#fde68a" font-size="18" font-weight="900">P</text>
+          <path d="M450 30 h44 l-12 -10 m12 10 l-12 10" fill="none" stroke="#fde68a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="wave-auth-badges"><span class="wave-auth-badge">Google Sign-In</span><span class="wave-auth-badge">Popup for iPad/Safari</span><span class="wave-auth-badge">Auto Save + Restore</span><span class="wave-auth-badge">Guest access</span></div>
+    </section>
+    <section class="wave-auth-card">
+      <div class="wave-auth-kicker">STUDENT ACCESS / การเข้าสู่ระบบ</div>
+      <h2 id="wave-auth-title" class="wave-auth-title">Wave Motion Simulator</h2>
+      <p class="wave-auth-copy">เข้าสู่ระบบด้วย Google เพื่อบันทึกและเรียกคืน Wave Case, จุดวัด Start/End และ Working Notes หรือเข้าแบบ Guest เพื่อทดลองโดยไม่บันทึก<br/>Sign in with Google to save and restore your wave setup and notes, or continue as a guest without saving.</p>
+      <div id="wave-auth-local" class="wave-auth-local">⚠️ Google Sign-In ไม่ทำงานจาก <b>file://</b><br/>กรุณาเปิดผ่าน GitHub Pages หรือ localhost เพื่อทดสอบระบบล็อกอิน</div>
+      <button id="wave-google-signin" class="wave-google-btn" type="button"><span class="wave-google-g">G</span><span>Sign in with Google / เข้าสู่ระบบด้วย Google</span></button>
+      <button id="wave-guest" class="wave-guest-btn" type="button">Continue without sign-in / เข้าแบบไม่ล็อกอิน</button>
+      <div id="wave-guest-warning" class="wave-guest-warning" role="alert">⚠️ <b>Guest mode does not save / Guest จะไม่บันทึกงาน</b><br/>หากรีโหลดหรือปิดแท็บ การวัดและกระดานทดอาจหายทั้งหมด
+        <div class="wave-guest-actions"><button id="wave-guest-confirm" class="wave-guest-confirm" type="button">Continue without saving / ยืนยัน</button><button id="wave-guest-cancel" class="wave-guest-cancel" type="button">Cancel / กลับ</button></div>
+      </div>
+      <div id="wave-auth-loading" class="wave-auth-loading">⏳ Authenticating and restoring your wave workspace…<br/>กำลังเข้าสู่ระบบและเรียกคืนงานเดิม…</div>
+      <div id="wave-auth-error" class="wave-auth-error"></div>
+      <div class="wave-auth-note">☁️ Cloud restore finishes <b>before</b> autosave begins, so an empty page cannot overwrite previous work. Guest mode stays only in this browser tab.<br/>ระบบจะโหลดงานเดิมให้เสร็จก่อนเริ่ม Auto Save เพื่อป้องกันหน้าว่างเขียนทับงานเดิม</div>
+    </section>
+  </div>
+</div>
+<div id="wave-guest-badge" class="wave-guest-badge">⚠️ Guest mode · Not saved / ไม่บันทึก</div>
+<div id="wave-userbar" class="wave-userbar">
+  <div class="wave-user-meta"><img id="wave-user-photo" class="wave-user-avatar" alt="Profile"/><div style="min-width:0"><div id="wave-user-name" class="wave-user-name">…</div><div id="wave-user-email" class="wave-user-email"></div></div></div>
+  <div class="wave-user-actions"><span id="wave-cloud-status" class="wave-cloud-status">☁️ Waiting / รอเข้าสู่ระบบ</span><button id="wave-save-now" class="wave-save-now" type="button" disabled>💾 Save Now / บันทึก</button><span id="wave-session-pill" class="wave-session-pill">Auto Save + Restore</span><button id="wave-signout" class="wave-signout" type="button">Sign out / ออกจากระบบ</button></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<main class="wrap">
+  <section class="hero">
+    <span class="kicker">INTERACTIVE PHYSICS SIMULATOR · ROUND 9.1 · PLAY ONCE · MEASURE DIRECTLY</span>
+    <h1>Wave Motion & Wave Speed<br>คลื่นและความเร็วคลื่น</h1>
+    <p class="sub">Observe → Measure → Record · สังเกต → วัด → บันทึก</p>
+    <div class="mode-tabs">
+      <button class="mode-btn active" data-mode="water">🌊 Water Ripple / คลื่นผิวน้ำ</button>
+      <button class="mode-btn" data-mode="string">🪢 String & Graphs / เชือกและกราฟ</button>
+    </div>
+  </section>
+
+  <section id="mode-water" class="mode-panel active">
+    <div class="card">
+      <div class="section-head"><div><h2>Water Ripple / คลื่นผิวน้ำ</h2><div class="tiny">Intro only · ใช้สร้างภาพก่อนเข้าสู่การวัดกราฟ</div></div><span class="badge">Idealized model / แบบจำลองอุดมคติ</span></div>
+      <div class="water-grid">
+        <div class="stage">
+          <svg id="waterSvg" viewBox="0 0 800 430" role="img" aria-label="Water ripple simulation">
+            <defs><radialGradient id="waterGrad"><stop offset="0" stop-color="#e0f2fe"/><stop offset="1" stop-color="#bae6fd"/></radialGradient></defs>
+            <rect x="0" y="0" width="800" height="430" fill="url(#waterGrad)"/>
+            <g opacity=".4" stroke="#7dd3fc" stroke-width="1"><path d="M0 80 H800M0 160H800M0 240H800M0 320H800"/><path d="M120 0V430M240 0V430M360 0V430M480 0V430M600 0V430M720 0V430"/></g>
+            <ellipse cx="400" cy="238" rx="215" ry="76" fill="#0ea5e91a" stroke="#0284c7" stroke-width="2"/>
+            <g id="rippleGroup" fill="none" stroke="#0369a1" stroke-width="4" opacity="0"></g>
+            <g id="stone" transform="translate(400 75)"><circle r="18" fill="#64748b" stroke="#0f172a" stroke-width="3"/><path d="M-6 -4 Q0 -12 8 -5" fill="none" stroke="#cbd5e1" stroke-width="2"/></g>
+            <circle cx="400" cy="238" r="5" fill="#0f172a"/>
+            <line id="crossLine" x1="400" y1="238" x2="690" y2="238" stroke="#b45309" stroke-width="4" stroke-dasharray="10 8" opacity="0"/>
+            <text id="crossText" x="545" y="222" text-anchor="middle" font-size="16" font-weight="900" fill="#92400e" opacity="0">Cross-section / แนวหน้าตัด</text>
+          </svg>
+        </div>
+        <aside class="controls">
+          <div class="control-title">Drop height / ระดับปล่อยหิน</div>
+          <div class="choice-row">
+            <button class="btn height-btn" data-height="low">Low / ต่ำ</button>
+            <button class="btn height-btn selected" data-height="medium">Medium / กลาง</button>
+            <button class="btn height-btn" data-height="high">High / สูง</button>
+          </div>
+          <div class="action-row" style="margin-top:12px">
+            <button class="btn cyan" id="dropStone">● Drop Stone / ปล่อยหิน</button>
+            <button class="btn" id="pauseWater">⏸ Pause / หยุด</button>
+            <button class="btn" id="resetWater">↻ Reset</button>
+          </div>
+          <div class="action-row" style="margin-top:10px"><button class="btn amber" id="showCross">🔍 View Cross-section / ดูหน้าตัด</button></div>
+          <div class="info-box">Higher drop height makes the disturbance more visible in this model, but this intro does not ask students to calculate wave speed.<br><b>ปล่อยสูงขึ้นทำให้การรบกวนเด่นขึ้นในแบบจำลองนี้ แต่ส่วนนี้ยังไม่ใช้คำนวณความเร็วคลื่น</b></div>
+        </aside>
+      </div>
+      <div class="cross-section" id="crossSection">
+        <div class="section-head"><div><h3>Idealized cross-section / หน้าตัดคลื่นแบบอุดมคติ</h3><div class="tiny">Not a sine-function lesson · ยังไม่ใช่บทเรียนเรื่องฟังก์ชันไซน์</div></div></div>
+        <svg viewBox="0 0 820 250" style="width:100%;display:block">
+          <rect width="820" height="250" fill="#fff"/>
+          <line x1="55" y1="130" x2="775" y2="130" stroke="#94a3b8" stroke-width="2"/>
+          <path d="M55 130 C115 45 175 45 235 130 S355 215 415 130 S535 45 595 130 S715 215 775 130" fill="none" stroke="#0284c7" stroke-width="6" stroke-linecap="round"/>
+          <text x="145" y="52" font-weight="900">Crest / ยอดคลื่น</text><text x="322" y="224" font-weight="900">Trough / ท้องคลื่น</text><text x="635" y="118" fill="#64748b" font-weight="800">Equilibrium / แนวสมดุล</text>
+        </svg>
+        <button class="btn primary" id="goString">Continue to String & Graphs →</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="mode-string" class="mode-panel">
+    <div class="card">
+      <div class="section-head">
+        <div><h2>String & Graphs / เชือกและกราฟ</h2><div class="tiny">Main learning: T, f, λ, v</div></div>
+        <div class="string-toolbar"><span class="badge" id="caseLabel">Wave Case W01</span><button class="btn" id="newWave">🎲 New Wave</button></div>
+      </div>
+      <div class="stage" style="min-height:auto">
+        <svg id="stringSvg" viewBox="0 0 1000 300" role="img" aria-label="Travelling wave on a string">
+          <rect width="1000" height="300" fill="#f8fbff"/>
+          <g stroke="#e2e8f0" stroke-width="1"><path d="M70 60H955M70 120H955M70 180H955M70 240H955"/><path d="M150 25V270M300 25V270M450 25V270M600 25V270M750 25V270M900 25V270"/></g>
+          <line x1="70" y1="150" x2="955" y2="150" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 6"/>
+          <text x="28" y="153" font-size="14" font-weight="900">Driver</text><line x1="65" y1="115" x2="65" y2="185" stroke="#0f172a" stroke-width="4"/><path d="M58 122 L65 110 L72 122 M58 178 L65 190 L72 178" fill="none" stroke="#0f172a" stroke-width="3"/>
+          <rect id="driverHit" x="28" y="60" width="90" height="180" rx="18" fill="transparent" aria-label="Drag driver to flick the string"/>
+          <circle id="driverKnob" cx="85" cy="150" r="11" fill="#7e22ce" stroke="#0f172a" stroke-width="3"/>
+          <text class="driver-tip" x="92" y="273">Drag & release / ลากแล้วปล่อยเพื่อสะบัด</text>
+          <path id="stringPath" fill="none" stroke="#2563eb" stroke-width="6" stroke-linecap="round"/>
+          <line id="pGuide" x1="0" y1="35" x2="0" y2="265" stroke="#f59e0b" stroke-width="2" stroke-dasharray="6 6"/>
+          <circle id="pDot" r="9" fill="#f59e0b" stroke="#0f172a" stroke-width="3"/>
+          <text id="pText" font-size="15" font-weight="950" fill="#92400e">P</text>
+          <path d="M875 78 L925 78" stroke="#0f172a" stroke-width="3"/><path d="M915 70L927 78L915 86" fill="none" stroke="#0f172a" stroke-width="3"/><text x="900" y="62" text-anchor="middle" font-size="14" font-weight="900">Wave travels / คลื่นเคลื่อนที่</text>
+        </svg>
+      </div>
+      <div class="string-toolbar" style="margin-top:10px">
+        <button class="btn blue" id="playBtn">▶ Play / เล่นต่อเนื่อง</button>
+        <button class="btn" id="pauseBtn">⏸ Pause / หยุดดู</button>
+        <button class="btn" id="stepBtn">▷| Step</button>
+        <button class="btn" id="resetBtn">↻ Reset</button>
+        <span class="time-read" id="timeRead">t = 0.00 s</span>
+        <span class="source-mode" id="sourceModeBadge">〰 Continuous wave / คลื่นต่อเนื่อง</span>
+      </div>
+
+      <section class="simple-measure-panel" aria-label="Simple wave measurement">
+        <div class="simple-measure-head">
+          <div><h3>📏 Measure the continuous wave / วัดคลื่นต่อเนื่อง</h3><div class="tiny">กด Play ครั้งเดียวให้คลื่นวิ่งต่อเนื่อง แล้วใช้เครื่องมือ 2 แบบ: เลือกช่วงระยะ + นับจำนวนลูกคลื่นเต็ม และจับเวลา + จำนวนยอดคลื่นผ่าน P</div></div>
+          <span class="badge">No answer checking / ไม่มีตรวจคำตอบ</span>
+        </div>
+        <div class="r9-mini-flow"><span class="r9-chip"><b>1</b> ▶ Play once</span><span>→</span><span class="r9-chip"><b>2</b> 📏 Choose distance</span><span>→</span><span class="r9-chip"><b>3</b> ⏱ Start/Stop at P</span><span>→</span><span class="r9-chip"><b>4</b> Calculate λ, T, f, v</span></div>
+        <div class="simple-measure-grid">
+          <div class="simple-measure-card distance">
+            <div class="simple-measure-title">📏 Distance measurement / วัดตามระยะทาง</div>
+            <div class="simple-values">
+              <div class="simple-value"><span>Selected distance / ระยะที่เลือก</span><b id="simpleDx">—</b></div>
+              <div class="simple-value"><span>Complete waves / จำนวนลูกคลื่นเต็ม</span><b id="simpleNx">—</b></div>
+            </div>
+            <div class="simple-measure-actions"><button class="btn small amber" id="simpleDistanceMeasure">📏 Choose measurement range / เลือกช่วงที่ต้องการวัด</button></div>
+            <div class="simple-hint" id="simpleDistanceHint">ลาก Start และ End เพื่อเลือกช่วงที่ต้องการวัด หากจุดปลายตรงกับส่วนซ้ำกันของคลื่น ระบบจะแสดงจำนวนลูกคลื่นเต็ม เพื่อใช้หา λ จากระยะ ÷ จำนวนลูกคลื่น</div>
+          </div>
+          <div class="simple-measure-card time">
+            <div class="simple-measure-title">🌊 Waves passing point P / จับเวลาและนับลูกคลื่นที่ผ่าน P</div>
+            <div class="simple-values">
+              <div class="simple-value"><span>Elapsed time / เวลาที่จับ</span><b id="simpleElapsed">0.00 s</b></div>
+              <div class="simple-value"><span>Crests passed P / ลูกคลื่นที่ผ่าน</span><b id="simpleWaves">0</b></div>
+            </div>
+            <div class="simple-measure-actions"><button class="btn small blue simple-measure-btn" id="simpleMeasureSession">⏱ Start time + wave count / เริ่มจับเวลาและนับคลื่น</button></div>
+            <div class="simple-hint" id="simpleMeasureHint">กดเริ่มวัดเมื่อใดก็ได้ คลื่นจะเล่นต่อเนื่องและระบบจะจับเวลา + นับยอดคลื่นที่ผ่าน P อัตโนมัติ</div>
+          </div>
+        </div>
+        <div class="formula-strip"><span>λ = Δx ÷ N<sub>x</sub> · ความยาวคลื่น</span><span>T = Δt ÷ N<sub>t</sub> · คาบ</span><span>f = N<sub>t</sub> ÷ Δt · ความถี่</span><span>v = fλ · ความเร็วคลื่น</span></div>
+        <details class="advanced-tools"><summary>⚡ ทดลองเพิ่มเติม: สะบัดเชือก / Optional flick mode</summary><div class="advanced-row"><button class="btn small purple" id="simpleFlickOnce">⚡ Flick Once</button><button class="btn small" id="toggleDragFlick">✋ Enable drag-to-flick</button><button class="btn small" id="simpleContinuous">〰 Back to Continuous</button></div><div class="advanced-note">ส่วนนี้เป็นเครื่องมือเสริม ไม่จำเป็นต่อการวัดความเร็วคลื่นหลัก</div></details>
+      </section>
+      <div class="r8-actionbar">
+        <span class="label">MEASURE FROM THIS FRAME / เริ่มวัดจากภาพนี้</span>
+        <button class="btn small green" id="setStartHere">📍 Set Start Here / เริ่มวัดตรงนี้</button>
+        <button class="btn small red" id="stopMeasureSession">⏹ Stop + Record / หยุดและบันทึก</button>
+        <button class="btn small" id="continuousMode">〰 Continuous / คลื่นต่อเนื่อง</button>
+        <button class="btn small purple" id="flickOnce">⚡ Flick Once / สะบัดหนึ่งครั้ง</button>
+        <span class="pulse-note">หรือจับ Driver ในภาพแล้วลากขึ้น/ลงก่อนปล่อย · Or drag the Driver directly.</span>
+      </div>
+      <div class="scrubber-row"><span class="tiny">0 s</span><input id="timeSlider" type="range" min="0" max="6" step="0.01" value="0"><span class="tiny" id="timeMaxLabel">6.0 s</span></div>
+
+      <div class="live-grid">
+        <div class="live-card phase" id="pStateCard">
+          <div class="live-title"><span>Point P / สถานะจุด P</span><span class="state-pill" id="pStateBadge">LIVE</span></div>
+          <div class="p-read-grid">
+            <div class="p-read"><span>Displacement / การกระจัด</span><b id="pDisp">yP = 0.00 cm</b></div>
+            <div class="p-read"><span>Amplitude / แอมพลิจูด</span><b id="pAmp">A = 3.00 cm</b></div>
+            <div class="p-read"><span>Phase at P / เฟสที่ P</span><b id="pPhase">0°</b></div>
+            <div class="p-read"><span>Motion / การเคลื่อนที่</span><b id="pMotion">—</b></div>
+          </div>
+          <div class="phase-state" id="pPhaseState">Point P readout follows the same wave shown above. / ค่าของ P เชื่อมกับคลื่นด้านบนโดยตรง</div>
+        </div>
+        <div class="live-card measure" id="sessionCard">
+          <div class="live-title"><span>Measurement Session / ช่วงการวัด</span><span class="state-pill" id="sessionBadge">READY</span></div>
+          <div class="session-grid">
+            <div class="session-read"><span>Start / เริ่ม</span><b id="sessionStart">—</b></div>
+            <div class="session-read"><span>Elapsed / เวลาที่ผ่าน</span><b id="sessionElapsed">0.00 s</b></div>
+            <div class="session-read"><span>Waves passed P</span><b id="sessionWaves">0</b></div>
+            <div class="session-read"><span>Stop / หยุด</span><b id="sessionStop">—</b></div>
+          </div>
+          <div class="session-note" id="sessionNote">Pause anywhere, choose <b>Set Start Here</b>, then Play. Stop after 1, 2, 3… waves have passed P.<br>หยุดตรงใดก็ได้ ตั้งจุดเริ่ม แล้วเล่นต่อ จากนั้นหยุดเมื่อคลื่นผ่าน P ตามจำนวนที่ต้องการ</div>
+        </div>
+      </div>
+
+      <div class="graph-grid">
+        <article class="graph-card">
+          <div class="section-head"><div><h3>Displacement–Distance</h3><div class="tiny">หลายตำแหน่ง · เวลาเดียวกัน / Many positions · one instant</div></div><span class="badge">y–x</span></div>
+          <div class="graph-shell"><svg id="yxGraph" class="graph-svg" viewBox="0 0 600 310"></svg></div>
+          <div class="graph-actions"><button class="btn small measure-btn" id="measureX">📏 Choose range / เลือกช่วงวัด</button><button class="btn small guide-btn" id="guideX">○ Reference points</button><button class="btn small" id="importX">📥 Add to Notes</button></div>
+          <div class="measurement-read" id="xRead">ยังไม่ได้เลือกช่วงวัด / Measurement range is off.</div>
+          <div class="measure-help" id="xHelp">ลาก Start และ End เพื่อเลือกช่วงวัด ควรเลือกจากส่วนหนึ่งของคลื่นไปยังส่วนซ้ำกัน เช่น ยอดถึงยอด · Drag Start and End between matching points such as crest to crest.</div>
+        </article>
+        <article class="graph-card">
+          <div class="section-head"><div><h3>Displacement–Time</h3><div class="tiny">หนึ่งตำแหน่ง · หลายเวลา / One position · many times</div></div><span class="badge">y–t</span></div>
+          <div class="graph-shell"><svg id="ytGraph" class="graph-svg" viewBox="0 0 600 310"></svg></div>
+          <div class="graph-actions"><button class="btn small measure-btn" id="measureT">⏱ Choose time interval</button><button class="btn small guide-btn" id="guideT">○ Reference points</button><button class="btn small" id="importT">📥 Add to Notes</button><span class="tiny">ใช้ตัวนับที่จุด P ด้านบนสำหรับ Δt และจำนวนลูกคลื่น</span></div>
+          <div class="measurement-read" id="tRead">ยังไม่ได้เลือกช่วงวัด / Measurement range is off.</div>
+          <div class="measure-help" id="tHelp">เปิดเครื่องมือเวลา แล้วแตะกราฟหรือลาก Start/End เพื่อกำหนดช่วงเวลา · Tap the graph or drag Start/End to capture a time interval.</div>
+        </article>
+      </div>
+
+      <section class="measure-toolkit" aria-label="Wave measurement toolkit">
+        <div class="measure-toolkit-head">
+          <div><h3>Measurement Toolkit / เครื่องมือวัดคลื่น</h3><div class="tiny">รอบนี้ยังไม่มีแบบฝึกหัดหรือการตรวจคำตอบ · Measurement only, no exercise/checking yet.</div></div>
+          <span class="badge">Distance · Time · Wave count</span>
+        </div>
+        <div class="measure-tools">
+          <div class="measure-tool">
+            <div class="measure-icon">📏</div><div class="measure-name">Distance interval / ช่วงระยะทาง</div>
+            <div class="measure-value" id="distanceToolValue">Δx = —</div>
+            <div class="measure-detail">ใช้ Start/End บนกราฟ y–x เพื่อเลือกช่วงระยะทางจริงบนแกน x<br>Use Start/End on the y–x graph to choose a distance interval.</div>
+          </div>
+          <div class="measure-tool">
+            <div class="measure-icon">⏱️</div><div class="measure-name">Time interval / ช่วงเวลา</div>
+            <div class="measure-value" id="timeToolValue">Δt = —</div>
+            <div class="measure-detail">ใช้ Start/End บนกราฟ y–t เพื่อเลือกช่วงเวลา<br>Use Start/End on the y–t graph to choose a time interval.</div>
+          </div>
+          <div class="measure-tool wave-count" id="waveCounterCard">
+            <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start"><div><div class="measure-icon">🌊</div><div class="measure-name">Waves passing P / จำนวนลูกคลื่นผ่านจุด P</div></div><span class="counter-status" id="waveCounterStatus"><span class="counter-dot"></span><span>Ready / พร้อม</span></span></div>
+            <div class="counter-read-grid"><div class="counter-read"><span class="tiny">Elapsed time / เวลาที่นับ</span><b id="waveCountTime">0.00 s</b></div><div class="counter-read"><span class="tiny">Crests passed / ลูกคลื่นที่ผ่าน</span><b id="waveCountN">0</b></div></div>
+            <div class="counter-actions"><button class="btn small blue" id="startWaveCount">📍 Start from here</button><button class="btn small" id="stopWaveCount">⏹ Stop + Record</button><button class="btn small" id="resetWaveCount">↻ Reset counter</button></div>
+            <div class="measure-detail" style="margin-top:7px">นับ 1 ครั้งเมื่อยอดคลื่นหนึ่งยอดผ่านจุด P · One count is recorded each time one crest passes point P.</div>
+          </div>
+        </div>
+        <div id="measureSummary" class="tiny" style="margin-top:10px;font-weight:850">Δx = — · Δt = — · N = 0 waves</div>
+      </section>
+      <section class="trial-log" aria-label="Measurement trial log">
+        <div class="trial-log-head"><div><h3>Measurement Log / บันทึกการวัดหลายรอบ</h3><div class="tiny">แต่ละแถวเกิดจาก Set Start Here → Stop + Record · ไม่มีการตรวจคำตอบ</div></div><button class="btn small" id="clearTrialLog">Clear Log / ล้างตาราง</button></div>
+        <div class="trial-table-wrap"><table class="trial-table" id="trialTable"><thead><tr><th>#</th><th>Start t / s</th><th>Stop t / s</th><th>Δt / s</th><th>Waves N</th><th>Phase P at stop</th><th>Motion of P</th></tr></thead><tbody id="trialTableBody"></tbody></table><div class="trial-empty" id="trialEmpty">No recorded measurements yet / ยังไม่มีข้อมูลการวัด</div></div>
+      </section>
+      <div class="bottom-actions"><button class="btn primary" id="importBoth">📥 Send both graphs to Notes / ส่งสองกราฟเข้าโน้ต</button><button class="btn" id="captureString">📌 Capture String</button><button class="btn" id="openNotesInline">📝 Open Notes</button></div>
+      <div id="qaPanel" class="qa-panel" aria-live="polite"></div>
+    </div>
+  </section>
+</main>
+
+<button id="notesFab" class="notes-fab">📝 Notes / กระดานทด</button>
+<div id="notesShell" class="notes-shell" aria-hidden="true">
+  <div class="notes-dock">
+    <div class="notes-top"><div><div class="notes-title">📝 Working Notes / กระดานทด</div><div class="tiny">กราฟเป็นวัตถุแยกจากลายมือ · เลือกกราฟเพื่อย้ายหรือย่อ/ขยาย</div></div><div class="notes-toolbar"><button class="btn small tool active" data-tool="pen">✏ Pen</button><button class="btn small tool" data-tool="eraser">🧽 Eraser</button><button class="btn small tool" data-tool="select">☝ Select</button><button class="btn small" id="undoNote">↶ Undo</button><button class="btn small" id="clearInk">Clear Ink</button><button class="btn small" id="clearPage">Clear Page</button><button class="btn small" id="deleteObject">🗑 Delete Object</button><button class="btn small" id="printNotes">🖨 Print</button><button class="btn small" id="closeNotes">× Close</button><span id="notesSelection" class="notes-selection">No object selected / ยังไม่ได้เลือกวัตถุ</span></div></div>
+    <div class="note-sheet" id="noteSheet"><div id="noteObjectLayer" class="note-object-layer"></div><canvas id="noteInk" class="note-ink"></canvas></div>
+    <div class="notes-foot"><div class="page-controls"><button class="btn small" id="prevPage">◀</button><span class="page-label" id="pageLabel">Page 1 / 1</span><button class="btn small" id="nextPage">▶</button><button class="btn small" id="addPage">＋ Add page</button></div><span class="tiny">Apple Pencil / touch / mouse · Round 9 · play once + distance/wave count + notes</span></div>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+const $ = s => document.querySelector(s); const $$ = s => [...document.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+function toast(msg){const el=$('#toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),1600)}
+
+// ---------------- Modes ----------------
+function setMode(mode){$$('.mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));$$('.mode-panel').forEach(p=>p.classList.remove('active'));$('#mode-'+mode).classList.add('active');if(mode==='string') renderAll();}
+$$('.mode-btn').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));$('#goString').addEventListener('click',()=>setMode('string'));
+
+// ---------------- Water ----------------
+let waterHeight='medium', waterTimer=null, waterPaused=false, ripplePhase=0;
+$$('.height-btn').forEach(b=>b.addEventListener('click',()=>{$$('.height-btn').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');waterHeight=b.dataset.height;}));
+function waterFrame(){ if(waterPaused) return; ripplePhase += .018; const g=$('#rippleGroup'); g.innerHTML=''; const amp={low:.65,medium:.82,high:1}[waterHeight]; for(let i=0;i<5;i++){const p=(ripplePhase-i*.18)%1;if(p<0) continue; const rx=35+p*235, ry=12+p*76; const e=document.createElementNS(NS,'ellipse');e.setAttribute('cx','400');e.setAttribute('cy','238');e.setAttribute('rx',rx);e.setAttribute('ry',ry);e.setAttribute('opacity',Math.max(0,(1-p)*amp));g.appendChild(e);}g.setAttribute('opacity','1'); waterTimer=requestAnimationFrame(waterFrame);}
+$('#dropStone').addEventListener('click',()=>{cancelAnimationFrame(waterTimer);waterPaused=false;ripplePhase=0;const stone=$('#stone');stone.style.transition='transform .55s cubic-bezier(.4,0,.7,1)';stone.setAttribute('transform','translate(400 215)');setTimeout(()=>{stone.style.transition='';waterFrame();},560)});
+$('#pauseWater').addEventListener('click',()=>{waterPaused=!waterPaused;$('#pauseWater').textContent=waterPaused?'▶ Resume / เล่นต่อ':'⏸ Pause / หยุด';if(!waterPaused) waterFrame();});
+$('#resetWater').addEventListener('click',()=>{cancelAnimationFrame(waterTimer);waterPaused=false;ripplePhase=0;$('#rippleGroup').innerHTML='';$('#stone').setAttribute('transform','translate(400 75)');$('#crossLine').setAttribute('opacity','0');$('#crossText').setAttribute('opacity','0');$('#crossSection').classList.remove('show');});
+$('#showCross').addEventListener('click',()=>{$('#crossLine').setAttribute('opacity','1');$('#crossText').setAttribute('opacity','1');$('#crossSection').classList.add('show');});
+
+// ---------------- Wave engine ----------------
+const cases=[
+ {id:'W01',T:2,lambda:4,A:0.75,Acm:3.0,xMax:11,tMax:6,xMajor:2,xMinor:.5,xSnap:.1,tMajor:1,tMinor:.5,tSnap:.05},
+ {id:'W02',T:1,lambda:3,A:0.72,Acm:2.5,xMax:10,tMax:4,xMajor:2,xMinor:.5,xSnap:.1,tMajor:.5,tMinor:.25,tSnap:.05},
+ {id:'W03',T:.5,lambda:2,A:0.68,Acm:2.0,xMax:7,tMax:2,xMajor:1,xMinor:.5,xSnap:.1,tMajor:.5,tMinor:.25,tSnap:.05},
+ {id:'W04',T:2.5,lambda:5,A:0.78,Acm:3.5,xMax:13,tMax:7.5,xMajor:2.5,xMinor:.5,xSnap:.1,tMajor:1.5,tMinor:.5,tSnap:.05}
+];
+let ci=0, sim={t:0,playing:false,last:0}, measure={x:{on:false,A:null,B:null},t:{on:false,A:null,B:null}}, guides={x:false,t:false};
+let sourceMode='continuous';
+let pulse={amp:.72,sign:1,width:.8};
+let manualFlick={dragging:false,offset:0};
+const waveCounter={running:false,elapsed:0,count:0,startLocalT:0,nextCrestAfterStart:0,lastRenderedCount:0};
+const measurementSession={active:false,hasStart:false,startT:null,stopT:null,startPhase:null,stopPhase:null,stopMotion:'—'};
+const trialLog=[];
+function resetWaveCounter(){waveCounter.running=false;waveCounter.elapsed=0;waveCounter.count=0;waveCounter.startLocalT=sim.t;waveCounter.nextCrestAfterStart=0;waveCounter.lastRenderedCount=0}
+function resetMeasurementSession(clearStart=true){resetWaveCounter();measurementSession.active=false;if(clearStart){measurementSession.hasStart=false;measurementSession.startT=null;measurementSession.stopT=null;measurementSession.startPhase=null;measurementSession.stopPhase=null;measurementSession.stopMotion='—'}}
+function timeToNextCrest(c,startT){const xp=c.xMax*.42;let q=xp/c.lambda-startT/c.T-.25;let frac=((q%1)+1)%1;if(frac<1e-7)frac=1;return frac*c.T}
+function phaseInfo(t=sim.t,c=C()){
+  const xp=c.xMax*.42,theta=2*Math.PI*(xp/c.lambda-t/c.T),deg=((theta*180/Math.PI)%360+360)%360;
+  const yNorm=c.A*Math.sin(theta), yCm=(yNorm/c.A)*c.Acm, deriv=-Math.cos(theta);
+  let motion=Math.abs(deriv)<.04?'turning / จุดกลับตัว':(deriv>0?'moving up / กำลังขึ้น':'moving down / กำลังลง');
+  let position=Math.abs(yNorm)<.025?'at equilibrium / ที่แนวสมดุล':(yNorm>0?'above equilibrium / เหนือแนวสมดุล':'below equilibrium / ใต้แนวสมดุล');
+  let landmark='between key positions / อยู่ระหว่างตำแหน่งสำคัญ';
+  const near=(a,b,tol=8)=>Math.abs((((a-b)+540)%360)-180)<tol;
+  if(near(deg,90))landmark='crest / ยอดคลื่น'; else if(near(deg,270))landmark='trough / ท้องคลื่น'; else if(near(deg,0))landmark='equilibrium crossing / ผ่านแนวสมดุล'; else if(near(deg,180))landmark='equilibrium crossing / ผ่านแนวสมดุล';
+  return {deg,yNorm,yCm,motion,position,landmark};
+}
+function setStartHere(){
+  if(sourceMode!=='continuous'){toast('Use Continuous Wave for cycle counting / ใช้โหมดคลื่นต่อเนื่องสำหรับการนับรอบ');return}
+  const c=C(),ph=phaseInfo();measurementSession.active=true;measurementSession.hasStart=true;measurementSession.startT=sim.t;measurementSession.stopT=null;measurementSession.startPhase=ph.deg;measurementSession.stopPhase=null;measurementSession.stopMotion='—';
+  waveCounter.running=true;waveCounter.elapsed=0;waveCounter.count=0;waveCounter.lastRenderedCount=0;waveCounter.startLocalT=sim.t;waveCounter.nextCrestAfterStart=timeToNextCrest(c,sim.t);renderAll();toast('Start point set here / ตั้งจุดเริ่มวัดตรงนี้แล้ว')
+}
+function stopAndRecord(){
+  if(!measurementSession.active){toast('Set Start Here first / กดเริ่มวัดตรงนี้ก่อน');return}
+  waveCounter.running=false;measurementSession.active=false;sim.playing=false;const ph=phaseInfo();measurementSession.stopT=sim.t;measurementSession.stopPhase=ph.deg;measurementSession.stopMotion=ph.motion;
+  trialLog.push({n:trialLog.length+1,startT:measurementSession.startT,stopT:measurementSession.stopT,elapsed:waveCounter.elapsed,waves:waveCounter.count,phase:ph.deg,motion:ph.motion});renderAll();toast('Measurement recorded / บันทึกการวัดแล้ว')
+}
+function armWaveCounter(){setStartHere()}
+function stopWaveCounter(){stopAndRecord()}
+function advanceWaveCounter(dt){if(!waveCounter.running||dt<=0)return;const c=C();waveCounter.elapsed+=dt;const first=waveCounter.nextCrestAfterStart;let n=0;if(waveCounter.elapsed+1e-8>=first)n=1+Math.floor((waveCounter.elapsed-first+1e-8)/c.T);if(n>waveCounter.count){waveCounter.count=n;const card=$('#waveCounterCard');card?.classList.remove('counter-flash');void card?.offsetWidth;card?.classList.add('counter-flash')}}
+const qaMode=()=>new URLSearchParams(location.search).get('qa')==='1'||location.hash==='#qa';
+function C(){return cases[ci]}
+function waveY(x,t,c=C()){return c.A*Math.sin(2*Math.PI*(x/c.lambda-t/c.T));}
+function pulseY(x,t,c=C(),p=pulse){const v=c.lambda/c.T,center=v*t,width=p.width||Math.max(.35,c.lambda*.18);return (p.sign||1)*(p.amp||c.A)*Math.exp(-Math.pow((x-center)/width,2));}
+function displayY(x,t,c=C(),mode=sourceMode,p=pulse){return mode==='pulse'?pulseY(x,t,c,p):waveY(x,t,c)}
+function launchPulse(amp=.75,sign=1){resetMeasurementSession(true);sourceMode='pulse';pulse={amp:Math.max(.25,Math.min(.95,amp)),sign:sign||1,width:Math.max(.35,C().lambda*.18)};sim.t=0;sim.playing=true;sim.last=0;renderAll();requestAnimationFrame(loop);toast('Single pulse launched / สะบัดเกิดพัลส์หนึ่งลูก')}
+function returnContinuous(){sourceMode='continuous';manualFlick.offset=0;sim.playing=false;sim.last=0;renderAll();toast('Continuous wave / กลับสู่คลื่นต่อเนื่อง')}
+const stringBox={x0:85,x1:950,y0:150,amp:92};
+function sx(x){return stringBox.x0+(x/C().xMax)*(stringBox.x1-stringBox.x0)} function sy(y){return stringBox.y0-y*stringBox.amp}
+function pathForString(t){let d='';for(let i=0;i<=240;i++){const x=C().xMax*i/240;d+=(i?'L':'M')+sx(x).toFixed(2)+' '+sy(displayY(x,t)).toFixed(2)+' ';}return d}
+function renderString(){const c=C();$('#stringPath').setAttribute('d',pathForString(sim.t));const xp=c.xMax*.42, yp=displayY(xp,sim.t),X=sx(xp),Y=sy(yp);$('#pDot').setAttribute('cx',X);$('#pDot').setAttribute('cy',Y);$('#pGuide').setAttribute('x1',X);$('#pGuide').setAttribute('x2',X);$('#pText').setAttribute('x',X+12);$('#pText').setAttribute('y',Y-12);const driverY=manualFlick.dragging?150+manualFlick.offset:sy(displayY(0,sim.t));$('#driverKnob').setAttribute('cy',Math.max(70,Math.min(230,driverY)))}
+function graphTransform(kind){const c=C();return {L:54,R:580,T:24,B:260,xMin:0,xMax:kind==='x'?c.xMax:c.tMax,yMin:-1,yMax:1}}
+function gx(v,tr){return tr.L+(v-tr.xMin)/(tr.xMax-tr.xMin)*(tr.R-tr.L)} function gy(v,tr){return tr.B-(v-tr.yMin)/(tr.yMax-tr.yMin)*(tr.B-tr.T)}
+function svgEl(tag,attrs={}){const e=document.createElementNS(NS,tag);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));return e}
+function fmtTick(v){const a=Math.abs(v);if(a<1e-9)return '0';return Number(v.toFixed(a<1?2:1)).toString()}
+function tickSpec(kind,c){return kind==='x'?{major:c.xMajor,minor:c.xMinor,snap:c.xSnap}:{major:c.tMajor,minor:c.tMinor,snap:c.tSnap}}
+function featurePoints(kind,c,time){const out=[];if(kind==='x'){
+  for(let n=-20;n<=20;n++){
+    const crest=c.lambda*(time/c.T+.25+n), trough=c.lambda*(time/c.T+.75+n);
+    if(crest>=0&&crest<=c.xMax)out.push({v:crest,y:c.A,type:'crest'});
+    if(trough>=0&&trough<=c.xMax)out.push({v:trough,y:-c.A,type:'trough'});
+  }
+}else{
+  const xp=c.xMax*.42;
+  for(let n=-20;n<=20;n++){
+    const crest=c.T*(xp/c.lambda-.25-n), trough=c.T*(xp/c.lambda-.75-n);
+    if(crest>=0&&crest<=c.tMax)out.push({v:crest,y:c.A,type:'crest'});
+    if(trough>=0&&trough<=c.tMax)out.push({v:trough,y:-c.A,type:'trough'});
+  }
+}return out.sort((a,b)=>a.v-b.v)}
+function renderGraph(svg,kind,forNote=false,snapshot=null){const c=snapshot?.case||C(), time=snapshot?.time??sim.t, tr={L:54,R:580,T:24,B:260,xMin:0,xMax:kind==='x'?c.xMax:c.tMax,yMin:-1,yMax:1}, spec=tickSpec(kind,c);svg.innerHTML='';svg.appendChild(svgEl('rect',{x:tr.L,y:tr.T,width:tr.R-tr.L,height:tr.B-tr.T,fill:'#fff',stroke:'#cbd5e1'}));
+ // Minor grid first: useful for reading, but intentionally unlabeled.
+ for(let x=0;x<=tr.xMax+.0001;x+=spec.minor){const X=gx(x,tr);svg.appendChild(svgEl('line',{x1:X,y1:tr.T,x2:X,y2:tr.B,stroke:'#f1f5f9','stroke-width':1}))}
+ // Major grid + numeric scale.
+ for(let x=0;x<=tr.xMax+.0001;x+=spec.major){const X=gx(x,tr);svg.appendChild(svgEl('line',{x1:X,y1:tr.T,x2:X,y2:tr.B,stroke:'#dbe3ee','stroke-width':1.25}));const tx=svgEl('text',{x:X,y:282,'text-anchor':'middle','font-size':'12',fill:'#334155'});tx.textContent=fmtTick(x);svg.appendChild(tx)}
+ [-1,-.5,0,.5,1].forEach(y=>{const Y=gy(y,tr);svg.appendChild(svgEl('line',{x1:tr.L,y1:Y,x2:tr.R,y2:Y,stroke:y===0?'#94a3b8':'#e5e7eb','stroke-width':y===0?2:1}));});
+ svg.appendChild(svgEl('line',{x1:tr.L,y1:tr.B,x2:tr.R,y2:tr.B,stroke:'#0f172a','stroke-width':2}));svg.appendChild(svgEl('line',{x1:tr.L,y1:tr.T,x2:tr.L,y2:tr.B,stroke:'#0f172a','stroke-width':2}));
+ const mode=snapshot?.sourceMode||sourceMode,pstate=snapshot?.pulse||pulse;let d='';for(let i=0;i<=240;i++){const xv=tr.xMax*i/240;let y;if(kind==='x')y=displayY(xv,time,c,mode,pstate);else y=mode==='pulse'?pulseY(c.xMax*.42,xv,c,pstate):c.A*Math.sin(2*Math.PI*((c.xMax*.42)/c.lambda-xv/c.T));d+=(i?'L':'M')+gx(xv,tr).toFixed(2)+' '+gy(y,tr).toFixed(2)+' ';}svg.appendChild(svgEl('path',{d,fill:'none',stroke:kind==='x'?'#2563eb':'#0891b2','stroke-width':4,'stroke-linecap':'round'}));
+ const xlabel=svgEl('text',{x:(tr.L+tr.R)/2,y:305,'text-anchor':'middle','font-size':'13','font-weight':'900'});xlabel.textContent=kind==='x'?'distance x / m':'time t / s';svg.appendChild(xlabel);
+ const ylab=svgEl('text',{x:17,y:145,transform:'rotate(-90 17 145)','text-anchor':'middle','font-size':'13','font-weight':'900'});ylab.textContent='displacement y';svg.appendChild(ylab);
+ // Optional neutral reference points: only show repeated high/low positions, never λ or T.
+ const showGuides=snapshot?.guides??guides[kind];if(showGuides){featurePoints(kind,c,time).forEach(p=>{svg.appendChild(svgEl('circle',{cx:gx(p.v,tr),cy:gy(p.y,tr),r:4.5,fill:'#fff',stroke:'#64748b','stroke-width':2,opacity:.88}))})}
+ // Link point P across string, y-x, and y-t representations.
+ const xp=c.xMax*.42, yp=displayY(xp,time,c,mode,pstate);
+ if(kind==='x'){
+   const Xp=gx(xp,tr),Yp=gy(yp,tr);svg.appendChild(svgEl('line',{x1:Xp,y1:tr.T,x2:Xp,y2:tr.B,stroke:'#f59e0b','stroke-width':1.5,'stroke-dasharray':'5 5',opacity:.55}));svg.appendChild(svgEl('circle',{cx:Xp,cy:Yp,r:6.5,fill:'#f59e0b',stroke:'#0f172a','stroke-width':2}));const pt=svgEl('text',{x:Xp+9,y:Yp-8,'font-size':'11','font-weight':'950',fill:'#92400e'});pt.textContent='P';svg.appendChild(pt)
+ }else{
+   const current=mode==='continuous'?(((time%c.tMax)+c.tMax)%c.tMax):Math.min(time,c.tMax),Xc=gx(current,tr),Yc=gy(yp,tr);svg.appendChild(svgEl('line',{x1:Xc,y1:tr.T,x2:Xc,y2:tr.B,stroke:'#f59e0b','stroke-width':2.5,'stroke-dasharray':'7 6'}));svg.appendChild(svgEl('circle',{cx:Xc,cy:Yc,r:6.5,fill:'#f59e0b',stroke:'#0f172a','stroke-width':2}));
+   const sess=snapshot?.session||measurementSession;if(sess?.hasStart&&sess.startT!=null){
+     const drawSess=(v,label,color)=>{if(v==null||v<tr.xMin||v>tr.xMax)return;const X=gx(v,tr);svg.appendChild(svgEl('line',{x1:X,y1:tr.T,x2:X,y2:tr.B,stroke:color,'stroke-width':2,'stroke-dasharray':'4 4'}));const tx=svgEl('text',{x:X+4,y:tr.T+17,'font-size':'10','font-weight':'950',fill:color});tx.textContent=label;svg.appendChild(tx)};
+     drawSess(sess.startT,'START','#15803d');drawSess(sess.stopT,'STOP','#b91c1c');
+   }
+ }
+ const mset=snapshot?.markers || measure[kind]; if(mset?.on){['A','B'].forEach((name,idx)=>{let v=mset[name];if(v==null) v=tr.xMax*(idx?0.65:0.25);const X=gx(v,tr);
+   const hit=svgEl('line',{x1:X,y1:tr.T,x2:X,y2:tr.B,stroke:'transparent','stroke-width':28,'data-marker':name,style:'cursor:ew-resize;touch-action:none'});svg.appendChild(hit);
+   const line=svgEl('line',{x1:X,y1:tr.T,x2:X,y2:tr.B,stroke:'#b45309','stroke-width':3,'data-marker':name,'pointer-events':'none'});svg.appendChild(line);
+   const markerLabel=name==='A'?'Start':'End';const handle=svgEl('g',{'data-marker':name,style:'cursor:ew-resize;touch-action:none',tabindex:forNote?'-1':'0',role:'slider','aria-label':markerLabel,'aria-valuemin':tr.xMin,'aria-valuemax':tr.xMax,'aria-valuenow':v});handle.appendChild(svgEl('rect',{x:X-24,y:tr.T-7,width:48,height:24,rx:10,fill:'#fffbeb',stroke:'#b45309','stroke-width':2.2}));const tx=svgEl('text',{x:X,y:tr.T+9,'text-anchor':'middle','font-size':'10.5','font-weight':'950',fill:'#92400e','pointer-events':'none'});tx.textContent=markerLabel;handle.appendChild(tx);svg.appendChild(handle);
+   if(!forNote){const start=e=>startMarkerDrag(e,kind,name,svg,tr,spec.snap);handle.addEventListener('pointerdown',start);hit.addEventListener('pointerdown',start);handle.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight'].includes(e.key))return;e.preventDefault();const dir=e.key==='ArrowRight'?1:-1,step=spec.snap*(e.shiftKey?5:1);measure[kind][name]=Number(Math.max(tr.xMin,Math.min(tr.xMax,v+dir*step)).toFixed(3));renderAll()})}
+ });if(forNote&&mset.A!=null&&mset.B!=null){const delta=Math.abs(mset.B-mset.A),unit=kind==='x'?'m':'s',prefix=kind==='x'?'x':'t';const box=svgEl('rect',{x:315,y:31,width:257,height:28,rx:8,fill:'#fffbeb',stroke:'#f59e0b'});svg.appendChild(box);const summary=svgEl('text',{x:443.5,y:49,'text-anchor':'middle','font-size':'10.5','font-weight':'900',fill:'#92400e'});summary.textContent=`Start=${Math.min(mset.A,mset.B).toFixed(2)} ${unit}   End=${Math.max(mset.A,mset.B).toFixed(2)} ${unit}   ${kind==='x'?'Distance':'Time'}=${delta.toFixed(2)} ${unit}`;svg.appendChild(summary)}}
+ if(forNote){const tag=svgEl('text',{x:66,y:45,'font-size':'10.5','font-weight':'900',fill:'#475569'});tag.textContent=`${c.id} · ${mode==='pulse'?'pulse':'continuous'} · snapshot t=${time.toFixed(2)} s`;svg.appendChild(tag)}
+}
+function pointerValue(ev,svg,tr,snap){const rect=svg.getBoundingClientRect();let px=(ev.clientX-rect.left)*(600/rect.width),val=tr.xMin+(px-tr.L)/(tr.R-tr.L)*(tr.xMax-tr.xMin);val=Math.max(tr.xMin,Math.min(tr.xMax,val));return Number((Math.round(val/snap)*snap).toFixed(3))}
+function startMarkerDrag(e,kind,name,svg,tr,snap){e.preventDefault();e.stopPropagation();sim.playing=false;svg.setPointerCapture?.(e.pointerId);function move(ev){ev.preventDefault();measure[kind][name]=pointerValue(ev,svg,tr,snap);renderAll()}function up(ev){try{svg.releasePointerCapture?.(ev.pointerId)}catch{}svg.removeEventListener('pointermove',move);svg.removeEventListener('pointerup',up);svg.removeEventListener('pointercancel',up)}svg.addEventListener('pointermove',move,{passive:false});svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',up)}
+function graphTapPlace(e,kind,svg){if(!measure[kind].on||e.target.closest?.('[data-marker]'))return;const c=C(),tr=graphTransform(kind),spec=tickSpec(kind,c);const val=pointerValue(e,svg,tr,spec.snap),m=measure[kind],nearest=Math.abs(val-m.A)<=Math.abs(val-m.B)?'A':'B';m[nearest]=val;sim.playing=false;renderAll();toast(`${nearest==='A'?'Start':'End'} → ${val.toFixed(kind==='x'?1:2)} ${kind==='x'?'m':'s'}`)}
+function ensureMarkers(kind){const tr=graphTransform(kind);measure[kind].on=!measure[kind].on;if(measure[kind].on){sim.playing=false;if(measure[kind].A==null){const spec=tickSpec(kind,C());measure[kind].A=Number((Math.round((tr.xMax*.25)/spec.snap)*spec.snap).toFixed(3));measure[kind].B=Number((Math.round((tr.xMax*.65)/spec.snap)*spec.snap).toFixed(3));}toast('Paused for measurement / หยุดเพื่อวัดค่า')}renderAll()}
+$('#measureX').addEventListener('click',()=>ensureMarkers('x'));$('#measureT').addEventListener('click',()=>ensureMarkers('t'));
+$('#yxGraph').addEventListener('pointerdown',e=>graphTapPlace(e,'x',$('#yxGraph')),{passive:false});$('#ytGraph').addEventListener('pointerdown',e=>graphTapPlace(e,'t',$('#ytGraph')),{passive:false});
+$('#guideX').addEventListener('click',()=>{guides.x=!guides.x;renderAll()});$('#guideT').addEventListener('click',()=>{guides.t=!guides.t;renderAll()});
+function sessionSnapshot(){return {active:measurementSession.active,hasStart:measurementSession.hasStart,startT:measurementSession.startT,stopT:measurementSession.stopT,startPhase:measurementSession.startPhase,stopPhase:measurementSession.stopPhase,stopMotion:measurementSession.stopMotion}}
+function renderTrialLog(){const body=$('#trialTableBody'),empty=$('#trialEmpty');body.innerHTML='';trialLog.forEach(r=>{const tr=document.createElement('tr');const cells=[r.n,r.startT.toFixed(2),r.stopT.toFixed(2),r.elapsed.toFixed(2),r.waves,`${r.phase.toFixed(0)}°`,r.motion];cells.forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.appendChild(td)});body.appendChild(tr)});empty.style.display=trialLog.length?'none':'block'}
+function updatePointAndSession(){const c=C(),ph=phaseInfo(),badge=$('#pStateBadge');badge.textContent=sim.playing?'LIVE':'PAUSED';badge.classList.toggle('paused',!sim.playing);$('#pAmp').textContent=`A = ${c.Acm.toFixed(2)} cm`;if(sourceMode==='continuous'){$('#pDisp').textContent=`yP = ${ph.yCm>=0?'+':''}${ph.yCm.toFixed(2)} cm`;$('#pPhase').textContent=`${ph.deg.toFixed(0)}°`;$('#pMotion').textContent=ph.motion;$('#pPhaseState').textContent=`${ph.position} · ${ph.landmark}`}else{const yp=displayY(c.xMax*.42,sim.t),ycm=(yp/c.A)*c.Acm;$('#pDisp').textContent=`yP = ${ycm>=0?'+':''}${ycm.toFixed(2)} cm`;$('#pPhase').textContent='— (pulse)';$('#pMotion').textContent=Math.abs(yp)<.02?'near equilibrium / ใกล้สมดุล':'pulse passing / พัลส์กำลังผ่าน';$('#pPhaseState').textContent='Phase is not used for a single pulse. / พัลส์เดี่ยวไม่ใช้ค่าเฟสแบบคลื่นต่อเนื่อง'}
+ const sb=$('#sessionBadge'),card=$('#sessionCard');sb.textContent=measurementSession.active?'MEASURING':(measurementSession.hasStart?'STOPPED':'READY');sb.classList.toggle('paused',!measurementSession.active&&measurementSession.hasStart);card.classList.toggle('measure-running',measurementSession.active);$('#sessionStart').textContent=measurementSession.hasStart?measurementSession.startT.toFixed(2)+' s':'—';$('#sessionElapsed').textContent=waveCounter.elapsed.toFixed(2)+' s';$('#sessionWaves').textContent=String(waveCounter.count);$('#sessionStop').textContent=measurementSession.stopT!=null?measurementSession.stopT.toFixed(2)+' s':'—';
+ const sm=$('#sourceModeBadge');sm.classList.toggle('pulse',sourceMode==='pulse');sm.textContent=sourceMode==='pulse'?'⚡ Pulse / พัลส์เดี่ยว':'〰 Continuous wave / คลื่นต่อเนื่อง';renderTrialLog()}
+function updateReads(){const mx=measure.x,mt=measure.t;
+ $('#measureX').classList.toggle('active',mx.on);$('#measureT').classList.toggle('active',mt.on);$('#measureX').textContent=mx.on?'📏 Hide range':'📏 Choose range';$('#measureT').textContent=mt.on?'⏱ Hide interval':'⏱ Choose time interval';$('#guideX').classList.toggle('active',guides.x);$('#guideT').classList.toggle('active',guides.t);$('#guideX').textContent=guides.x?'● Hide reference points':'○ Reference points';$('#guideT').textContent=guides.t?'● Hide reference points':'○ Reference points';
+ const dx=mx.on?Math.abs(mx.B-mx.A):null,dt=mt.on?Math.abs(mt.B-mt.A):null;
+ if(mx.on){const a=Math.min(mx.A,mx.B),b=Math.max(mx.A,mx.B);$('#xRead').innerHTML=`Start = ${a.toFixed(2)} m &nbsp; End = ${b.toFixed(2)} m &nbsp; Distance = <b>${dx.toFixed(2)} m</b>`}else $('#xRead').textContent='ยังไม่ได้เลือกช่วงวัด / Measurement range is off.';
+ if(mt.on){const a=Math.min(mt.A,mt.B),b=Math.max(mt.A,mt.B);$('#tRead').innerHTML=`Start = ${a.toFixed(2)} s &nbsp; End = ${b.toFixed(2)} s &nbsp; Time interval = <b>${dt.toFixed(2)} s</b>`}else $('#tRead').textContent='ยังไม่ได้เลือกช่วงวัด / Measurement range is off.';
+ $('#distanceToolValue').textContent='Δx = '+(dx!=null?dx.toFixed(2)+' m':'—');$('#timeToolValue').textContent='Δt = '+(dt!=null?dt.toFixed(2)+' s':'—');$('#waveCountTime').textContent=waveCounter.elapsed.toFixed(2)+' s';$('#waveCountN').textContent=String(waveCounter.count);const stat=$('#waveCounterStatus');stat.classList.toggle('running',waveCounter.running);stat.querySelector('span:last-child').textContent=waveCounter.running?'Counting / กำลังนับ':(waveCounter.elapsed>0?'Stopped / หยุดแล้ว':'Ready / พร้อม');
+ $('#measureSummary').textContent=`Δx = ${dx!=null?dx.toFixed(2)+' m':'—'} · Δt = ${dt!=null?dt.toFixed(2)+' s':'—'} · N = ${waveCounter.count} wave${waveCounter.count===1?'':'s'}`;updatePointAndSession()
+}
+function updateQA(){const panel=$('#qaPanel');if(!qaMode()){panel.classList.remove('show');return}const c=C(),xp=c.xMax*.42,yp=displayY(xp,sim.t),f=1/c.T,v=f*c.lambda;panel.classList.add('show');panel.innerHTML=`DEV QA · ${c.id}<span class="sync-pill">✓ linked state</span><br>P: x=${xp.toFixed(3)} m, y=${yp.toFixed(6)} · t=${sim.t.toFixed(3)} s<br>truth (hidden from student): T=${c.T} s · f=${f.toFixed(4)} Hz · λ=${c.lambda} m · v=${v.toFixed(4)} m/s<br>grid: x major/minor/snap=${c.xMajor}/${c.xMinor}/${c.xSnap} · t major/minor/snap=${c.tMajor}/${c.tMinor}/${c.tSnap}<br>source=${sourceMode} · counter: running=${waveCounter.running} · elapsed=${waveCounter.elapsed.toFixed(3)} s · crests=${waveCounter.count} · first crest after=${waveCounter.nextCrestAfterStart.toFixed(3)} s`}
+document.addEventListener('keydown',e=>{if(e.ctrlKey&&e.shiftKey&&e.key.toLowerCase()==='q'){if(location.hash==='#qa')history.replaceState(null,'',location.pathname+location.search);else location.hash='qa';renderAll()}});
+
+// ---------------- Round 8.1 simplified measurement bridge ----------------
+let dragFlickEnabled=false;
+function distanceWaveStatus(dx,c){
+  if(dx==null||dx<=0)return {ready:false,n:0,raw:0};
+  const raw=dx/c.lambda, n=Math.round(raw);
+  // Treat the range as a whole-number wave span only when Start/End are close
+  // to the same phase position. This prevents confusing values such as 1.10 waves.
+  const tolerance=Math.max(0.035, (c.xSnap/c.lambda)*0.60);
+  return {ready:n>=1&&Math.abs(raw-n)<=tolerance,n,raw};
+}
+function updateSimpleMeasurement(){
+  const mx=measure.x,c=C();
+  const dx=(mx.on&&mx.A!=null&&mx.B!=null)?Math.abs(mx.B-mx.A):null;
+  const waveStatus=distanceWaveStatus(dx,c);
+  const dxEl=$('#simpleDx'),nxEl=$('#simpleNx'),elEl=$('#simpleElapsed'),nwEl=$('#simpleWaves'),btn=$('#simpleMeasureSession');
+  if(dxEl)dxEl.textContent=dx!=null?dx.toFixed(2)+' m':'—';
+  if(nxEl){
+    if(dx==null) nxEl.textContent='—';
+    else if(waveStatus.ready) nxEl.textContent=`${waveStatus.n} wave${waveStatus.n===1?'':'s'}`;
+    else nxEl.textContent='Adjust End / เลื่อน End';
+  }
+  const dh=$('#simpleDistanceHint');
+  if(dh){
+    if(dx==null) dh.textContent='ลาก Start และ End เพื่อเลือกช่วงวัด เช่น ยอดถึงยอด หรือท้องถึงท้อง';
+    else if(waveStatus.ready) dh.textContent=`✓ ช่วงนี้ครอบคลุม ${waveStatus.n} ลูกคลื่นเต็ม ใช้ระยะที่เลือก ÷ จำนวนลูกคลื่นเพื่อหา λ ได้`;
+    else dh.textContent='เลื่อน End ไปยังส่วนซ้ำกันของคลื่นกับ Start เช่น ยอด→ยอด หรือท้อง→ท้อง แล้วระบบจะแสดงจำนวนลูกคลื่นเต็ม';
+  }
+  if(elEl)elEl.textContent=waveCounter.elapsed.toFixed(2)+' s';
+  if(nwEl)nwEl.textContent=String(waveCounter.count);
+  if(btn){btn.classList.toggle('measuring',measurementSession.active);btn.textContent=measurementSession.active?'⏹ Stop measurement / หยุดวัด':'⏱ Start time + wave count / เริ่มจับเวลาและนับคลื่น';}
+  const hint=$('#simpleMeasureHint');if(hint)hint.textContent=measurementSession.active?'กำลังจับเวลาและนับยอดคลื่นที่ผ่าน P อัตโนมัติ · ปล่อยให้ผ่านหลายลูกแล้วกดหยุด':'กดเริ่มวัดเมื่อใดก็ได้ คลื่นจะเล่นต่อเนื่องและระบบจะจับเวลา + นับยอดคลื่นที่ผ่าน P อัตโนมัติ';
+}
+
+
+function renderR9DistanceOverlay(){
+  const svg=$('#yxGraph'),m=measure.x;if(!svg||!m.on||m.A==null||m.B==null)return;
+  const c=C(),tr=graphTransform('x'),a=Math.min(m.A,m.B),b=Math.max(m.A,m.B),dx=b-a,status=distanceWaveStatus(dx,c);
+  const x1=gx(a,tr),x2=gx(b,tr),y=248;
+  svg.appendChild(svgEl('line',{x1,y1:y,x2,y2:y,stroke:'#b45309','stroke-width':3}));
+  svg.appendChild(svgEl('line',{x1,y1:y-8,x2:x1,y2:y+8,stroke:'#b45309','stroke-width':3}));
+  svg.appendChild(svgEl('line',{x1:x2,y1:y-8,x2:x2,y2:y+8,stroke:'#b45309','stroke-width':3}));
+  const tx=svgEl('text',{x:(x1+x2)/2,y:y-10,'text-anchor':'middle','font-size':'11.5','font-weight':'950',fill:status.ready?'#166534':'#92400e'});
+  tx.textContent=status.ready?`${dx.toFixed(2)} m · ${status.n} complete wave${status.n===1?'':'s'}`:`${dx.toFixed(2)} m · move End to a matching point`;
+  svg.appendChild(tx);
+}
+
+function renderAll(){const c=C();$('#caseLabel').textContent='Wave Case '+c.id;$('#timeSlider').max=c.tMax;$('#timeSlider').value=sourceMode==='continuous'?(((sim.t%c.tMax)+c.tMax)%c.tMax):Math.min(sim.t,c.tMax);$('#timeMaxLabel').textContent=c.tMax.toFixed(1)+' s';$('#timeRead').textContent='t = '+sim.t.toFixed(2)+' s';renderString();renderGraph($('#yxGraph'),'x');renderR9DistanceOverlay();renderGraph($('#ytGraph'),'t');updateReads();updateSimpleMeasurement();updateQA()}
+function loop(ts){if(!sim.playing)return;if(!sim.last)sim.last=ts;const dt=Math.min(.04,(ts-sim.last)/1000);sim.last=ts;advanceWaveCounter(dt);sim.t+=dt;if(sourceMode==='pulse'&&sim.t>C().tMax){sim.t=C().tMax;sim.playing=false}renderAll();if(sim.playing)requestAnimationFrame(loop)}
+$('#playBtn').addEventListener('click',()=>{if(sim.playing)return;if(sourceMode==='pulse'&&sim.t>=C().tMax-.001)sim.t=0;sim.playing=true;sim.last=0;requestAnimationFrame(loop)});$('#pauseBtn').addEventListener('click',()=>{sim.playing=false;renderAll()});$('#stepBtn').addEventListener('click',()=>{sim.playing=false;const old=sim.t;sim.t=Math.min(C().tMax,sim.t+.05);advanceWaveCounter(sim.t-old);renderAll()});$('#resetBtn').addEventListener('click',()=>{sim.playing=false;sim.t=0;resetMeasurementSession(true);sourceMode='continuous';manualFlick.offset=0;renderAll()});$('#timeSlider').addEventListener('input',e=>{sim.playing=false;if(waveCounter.running){waveCounter.running=false;measurementSession.active=false;toast('Measurement stopped after manual time change / หยุดการวัดเมื่อเลื่อนเวลาเอง')}sim.t=Number(e.target.value);renderAll()});$('#newWave').addEventListener('click',()=>{ci=(ci+1)%cases.length;sim.playing=false;sim.t=0;sourceMode='continuous';measure={x:{on:false,A:null,B:null},t:{on:false,A:null,B:null}};resetMeasurementSession(true);renderAll();toast('New Wave / เปลี่ยนคลื่นแล้ว')});
+$('#setStartHere').addEventListener('click',setStartHere);$('#stopMeasureSession').addEventListener('click',stopAndRecord);$('#startWaveCount').addEventListener('click',setStartHere);$('#stopWaveCount').addEventListener('click',stopAndRecord);$('#resetWaveCount').addEventListener('click',()=>{resetMeasurementSession(true);renderAll();toast('Wave counter reset / รีเซ็ตตัวนับแล้ว')});$('#continuousMode').addEventListener('click',returnContinuous);$('#flickOnce').addEventListener('click',()=>launchPulse(C().A,1));$('#clearTrialLog').addEventListener('click',()=>{trialLog.length=0;renderAll();toast('Measurement log cleared / ล้างบันทึกการวัดแล้ว')});
+// Manual driver flick: drag vertically, release to launch a single pulse.
+const driverHit=$('#driverHit');driverHit.addEventListener('pointerdown',e=>{if(!dragFlickEnabled)return;e.preventDefault();sim.playing=false;manualFlick.dragging=true;manualFlick.offset=0;driverHit.setPointerCapture?.(e.pointerId);const rect=$('#stringSvg').getBoundingClientRect(),scale=300/rect.height,startY=(e.clientY-rect.top)*scale;function move(ev){ev.preventDefault();const y=(ev.clientY-rect.top)*scale;manualFlick.offset=Math.max(-80,Math.min(80,y-startY));renderString()}function up(ev){try{driverHit.releasePointerCapture?.(ev.pointerId)}catch{}driverHit.removeEventListener('pointermove',move);driverHit.removeEventListener('pointerup',up);driverHit.removeEventListener('pointercancel',up);const off=manualFlick.offset;manualFlick.dragging=false;manualFlick.offset=0;if(Math.abs(off)<8){renderAll();return}const amp=.3+.65*Math.min(1,Math.abs(off)/80),sign=off<0?1:-1;launchPulse(amp,sign)}driverHit.addEventListener('pointermove',move,{passive:false});driverHit.addEventListener('pointerup',up);driverHit.addEventListener('pointercancel',up)},{passive:false});
+
+
+// Round 8.1 main student controls
+$('#simpleDistanceMeasure').addEventListener('click',()=>{if(!measure.x.on){ensureMarkers('x')}else{measure.x.on=false;renderAll();toast('Distance markers hidden / ซ่อนจุดวัดระยะแล้ว')}});
+$('#simpleMeasureSession').addEventListener('click',()=>{
+  if(measurementSession.active){stopAndRecord();document.body.classList.add('show-p-readout');return}
+  if(sourceMode!=='continuous')returnContinuous();
+  document.body.classList.remove('show-p-readout');
+  setStartHere();
+  if(!sim.playing){sim.playing=true;sim.last=0;requestAnimationFrame(loop)}
+});
+$('#simpleFlickOnce').addEventListener('click',()=>{$('#flickOnce').click()});
+$('#simpleContinuous').addEventListener('click',()=>{$('#continuousMode').click();document.body.classList.remove('flick-enabled');dragFlickEnabled=false});
+$('#toggleDragFlick').addEventListener('click',e=>{dragFlickEnabled=!dragFlickEnabled;document.body.classList.toggle('flick-enabled',dragFlickEnabled);e.currentTarget.textContent=dragFlickEnabled?'✋ Drag-to-flick ON':'✋ Enable drag-to-flick';toast(dragFlickEnabled?'Drag the Driver and release / ลาก Driver แล้วปล่อย':'Drag flick disabled / ปิดการสะบัดด้วยการลาก')});
+// Contextual P readout: only show after the learner deliberately pauses/stops.
+$('#pauseBtn').addEventListener('click',()=>document.body.classList.add('show-p-readout'));
+$('#playBtn').addEventListener('click',()=>document.body.classList.remove('show-p-readout'));
+$('#resetBtn').addEventListener('click',()=>document.body.classList.remove('show-p-readout'));
+$('#newWave').addEventListener('click',()=>document.body.classList.remove('show-p-readout'));
+
+// ---------------- Notes · Round 7 measurement snapshots ----------------
+const notes={tool:'pen',page:0,pages:[{strokes:[],objects:[],history:[]}],selected:null,activeStroke:null};
+const sheet=$('#noteSheet'), ink=$('#noteInk'), ctx=ink.getContext('2d'), objLayer=$('#noteObjectLayer');
+function currentPage(){return notes.pages[notes.page]}
+function openNotes(){$('#notesShell').classList.add('show');$('#notesShell').setAttribute('aria-hidden','false');$('#notesFab').classList.add('hidden');requestAnimationFrame(()=>{resizeInk();renderNoteObjects();redrawInk()})}function closeNotes(){$('#notesShell').classList.remove('show');$('#notesShell').setAttribute('aria-hidden','true');$('#notesFab').classList.remove('hidden')}
+$('#notesFab').addEventListener('click',openNotes);$('#openNotesInline').addEventListener('click',openNotes);$('#closeNotes').addEventListener('click',closeNotes);
+function setTool(tool){notes.tool=tool;$$('.tool').forEach(b=>b.classList.toggle('active',b.dataset.tool===tool));ink.style.pointerEvents=tool==='select'?'none':'auto';objLayer.style.pointerEvents=tool==='select'?'auto':'none';renderNoteObjects()}
+$$('.tool').forEach(b=>b.addEventListener('click',()=>setTool(b.dataset.tool)));
+function resizeInk(){const r=sheet.getBoundingClientRect(),dpr=Math.max(1,window.devicePixelRatio||1);ink.width=Math.round(r.width*dpr);ink.height=Math.round(r.height*dpr);ink.style.width=r.width+'px';ink.style.height=r.height+'px';ctx.setTransform(dpr,0,0,dpr,0,0);redrawInk()}
+new ResizeObserver(resizeInk).observe(sheet);
+function normPoint(e){const r=ink.getBoundingClientRect();return {x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height,p:e.pressure||.5}}
+function distPointSeg(p,a,b){const vx=b.x-a.x,vy=b.y-a.y,wx=p.x-a.x,wy=p.y-a.y,c1=vx*wx+vy*wy;if(c1<=0)return Math.hypot(p.x-a.x,p.y-a.y);const c2=vx*vx+vy*vy;if(c2<=c1)return Math.hypot(p.x-b.x,p.y-b.y);const t=c1/c2;return Math.hypot(p.x-(a.x+t*vx),p.y-(a.y+t*vy))}
+function eraseAt(p){const pg=currentPage();for(let i=pg.strokes.length-1;i>=0;i--){const st=pg.strokes[i];let hit=false;for(let j=1;j<st.points.length;j++){if(distPointSeg(p,st.points[j-1],st.points[j])<.035){hit=true;break}}if(hit){pg.history.push({type:'erase',stroke:st,index:i});pg.strokes.splice(i,1);redrawInk();break}}}
+ink.addEventListener('pointerdown',e=>{if(notes.tool==='select')return;e.preventDefault();ink.setPointerCapture?.(e.pointerId);const p=normPoint(e);if(notes.tool==='eraser'){eraseAt(p);return}notes.activeStroke={points:[p],width:2.4,color:'#111827'};redrawInk()},{passive:false});
+ink.addEventListener('pointermove',e=>{if(!(e.buttons||e.pressure>0))return;const p=normPoint(e);if(notes.tool==='eraser'){eraseAt(p);return}if(notes.activeStroke){notes.activeStroke.points.push(p);redrawInk()}});function endInk(e){if(notes.activeStroke){const pg=currentPage();pg.strokes.push(notes.activeStroke);pg.history.push({type:'draw'});notes.activeStroke=null;redrawInk()}}ink.addEventListener('pointerup',endInk);ink.addEventListener('pointercancel',endInk);ink.addEventListener('contextmenu',e=>e.preventDefault());
+function drawStroke(st,w,h){if(!st.points.length)return;ctx.beginPath();st.points.forEach((p,i)=>{const x=p.x*w,y=p.y*h;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.strokeStyle=st.color||'#111827';ctx.lineWidth=st.width||2.4;ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke()}
+function redrawInk(){const r=ink.getBoundingClientRect();ctx.clearRect(0,0,r.width,r.height);currentPage().strokes.forEach(st=>drawStroke(st,r.width,r.height));if(notes.activeStroke)drawStroke(notes.activeStroke,r.width,r.height)}
+function serializeCase(){return JSON.parse(JSON.stringify(C()))}
+function addGraphObject(kind){const pg=currentPage(), idx=pg.objects.length;const snap={kind,case:serializeCase(),time:sim.t,sourceMode,pulse:JSON.parse(JSON.stringify(pulse)),session:sessionSnapshot(),markers:JSON.parse(JSON.stringify(measure[kind])),guides:guides[kind],x:idx%2===0?.04:.53,y:.05+Math.floor(idx/2)*.43,w:.43,h:.36,id:'o'+Date.now()+Math.random()};pg.objects.push(snap);pg.history.push({type:'addObject',id:snap.id});renderNoteObjects();openNotes();toast((kind==='x'?'y–x':'y–t')+' → Notes')}
+function addStringObject(){const pg=currentPage(),idx=pg.objects.length;const obj={kind:'string',case:serializeCase(),time:sim.t,sourceMode,pulse:JSON.parse(JSON.stringify(pulse)),session:sessionSnapshot(),counter:{elapsed:waveCounter.elapsed,count:waveCounter.count},x:.06,y:.08+idx*.06,w:.82,h:.32,id:'o'+Date.now()+Math.random()};pg.objects.push(obj);pg.history.push({type:'addObject',id:obj.id});renderNoteObjects();openNotes();toast('String snapshot → Notes')}
+$('#importX').addEventListener('click',()=>addGraphObject('x'));$('#importT').addEventListener('click',()=>addGraphObject('t'));$('#importBoth').addEventListener('click',()=>{const pg=currentPage(),base=Date.now();const common={case:serializeCase(),time:sim.t,sourceMode,pulse:JSON.parse(JSON.stringify(pulse)),session:sessionSnapshot()};const ox={kind:'x',...common,markers:JSON.parse(JSON.stringify(measure.x)),guides:guides.x,x:.04,y:.06,w:.43,h:.36,id:'o'+base+'x'};const ot={kind:'t',...common,markers:JSON.parse(JSON.stringify(measure.t)),guides:guides.t,x:.53,y:.06,w:.43,h:.36,id:'o'+base+'t'};pg.objects.push(ox,ot);pg.history.push({type:'addObjects',ids:[ox.id,ot.id]});notes.selected=null;openNotes();renderNoteObjects();toast('y–x + y–t → Notes')});$('#captureString').addEventListener('click',addStringObject);
+function makeGraphSvg(kind,obj){const svg=svgEl('svg',{viewBox:'0 0 600 310'});renderGraph(svg,kind,true,{case:obj.case,time:obj.time,markers:obj.markers,guides:obj.guides});return svg}
+function makeStringSvg(obj){const svg=svgEl('svg',{viewBox:'0 0 1000 300'});svg.appendChild(svgEl('rect',{width:1000,height:300,fill:'#f8fbff'}));svg.appendChild(svgEl('line',{x1:70,y1:150,x2:955,y2:150,stroke:'#94a3b8','stroke-width':2,'stroke-dasharray':'7 6'}));let d='';for(let i=0;i<=240;i++){const x=obj.case.xMax*i/240,X=85+(x/obj.case.xMax)*865,Y=150-displayY(x,obj.time,obj.case,obj.sourceMode||'continuous',obj.pulse||pulse)*92;d+=(i?'L':'M')+X+' '+Y+' '}svg.appendChild(svgEl('path',{d,fill:'none',stroke:'#2563eb','stroke-width':7,'stroke-linecap':'round'}));const xp=obj.case.xMax*.42,Xp=85+(xp/obj.case.xMax)*865,Yp=150-displayY(xp,obj.time,obj.case,obj.sourceMode||'continuous',obj.pulse||pulse)*92;svg.appendChild(svgEl('line',{x1:Xp,y1:42,x2:Xp,y2:258,stroke:'#f59e0b','stroke-width':2,'stroke-dasharray':'6 6'}));svg.appendChild(svgEl('circle',{cx:Xp,cy:Yp,r:10,fill:'#f59e0b',stroke:'#0f172a','stroke-width':3}));const ptxt=svgEl('text',{x:Xp+14,y:Yp-12,'font-size':'16','font-weight':'950',fill:'#92400e'});ptxt.textContent='P';svg.appendChild(ptxt);const label=svgEl('text',{x:500,y:28,'text-anchor':'middle','font-size':'20','font-weight':'900'});label.textContent='String snapshot / ภาพเชือก';svg.appendChild(label);const meta=svgEl('text',{x:500,y:286,'text-anchor':'middle','font-size':'13','font-weight':'850',fill:'#475569'});meta.textContent=`${obj.case.id} · ${obj.sourceMode==='pulse'?'pulse':'continuous'} · t=${obj.time.toFixed(2)} s · A=${(obj.case.Acm||3).toFixed(2)} cm${obj.counter&&obj.counter.elapsed>0?` · count Δt=${obj.counter.elapsed.toFixed(2)} s · N=${obj.counter.count}`:''}`;svg.appendChild(meta);return svg}
+function renderNoteObjects(){objLayer.innerHTML='';const pg=currentPage();const selectedObj=pg.objects.find(o=>o.id===notes.selected);$('#notesSelection').textContent=selectedObj?`Selected: ${selectedObj.kind==='string'?'String':selectedObj.kind==='x'?'y–x':'y–t'} · drag to move · ↘ resize`:'No object selected / ยังไม่ได้เลือกวัตถุ';pg.objects.forEach(obj=>{const el=document.createElement('div');el.className='note-obj'+(notes.selected===obj.id?' selected':'');el.dataset.id=obj.id;el.style.left=(obj.x*100)+'%';el.style.top=(obj.y*100)+'%';el.style.width=(obj.w*100)+'%';el.style.height=(obj.h*100)+'%';const lab=document.createElement('div');lab.className='obj-label';lab.textContent=obj.kind==='string'?'String':obj.kind==='x'?'y–x':'y–t';el.appendChild(lab);el.appendChild(obj.kind==='string'?makeStringSvg(obj):makeGraphSvg(obj.kind,obj));const handle=document.createElement('div');handle.className='note-resize';handle.setAttribute('aria-label','Resize object');el.appendChild(handle);if(notes.tool==='select'){el.addEventListener('pointerdown',ev=>{if(ev.target.closest('.note-resize'))return;startObjectDrag(ev,obj)});handle.addEventListener('pointerdown',ev=>startObjectResize(ev,obj));el.addEventListener('click',()=>{notes.selected=obj.id;renderNoteObjects()})}objLayer.appendChild(el)})}
+function startObjectDrag(e,obj){e.preventDefault();notes.selected=obj.id;renderNoteObjects();const r=sheet.getBoundingClientRect(),start={x:e.clientX,y:e.clientY,ox:obj.x,oy:obj.y};function move(ev){obj.x=Math.max(0,Math.min(1-obj.w,start.ox+(ev.clientX-start.x)/r.width));obj.y=Math.max(0,Math.min(1-obj.h,start.oy+(ev.clientY-start.y)/r.height));renderNoteObjects()}function up(){document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',up);if(Math.abs(obj.x-start.ox)>.001||Math.abs(obj.y-start.oy)>.001)currentPage().history.push({type:'moveObject',id:obj.id,from:{x:start.ox,y:start.oy}})}document.addEventListener('pointermove',move,{passive:false});document.addEventListener('pointerup',up,{once:true})}
+function startObjectResize(e,obj){e.preventDefault();e.stopPropagation();notes.selected=obj.id;const r=sheet.getBoundingClientRect(),start={x:e.clientX,y:e.clientY,w:obj.w,h:obj.h};const ratio=obj.w/obj.h;function move(ev){ev.preventDefault();let nw=start.w+(ev.clientX-start.x)/r.width;nw=Math.max(.24,Math.min(.92-obj.x,nw));let nh=nw/ratio;if(obj.y+nh>.96){nh=.96-obj.y;nw=nh*ratio}obj.w=nw;obj.h=nh;renderNoteObjects()}function up(){document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',up);if(Math.abs(obj.w-start.w)>.001)currentPage().history.push({type:'resizeObject',id:obj.id,from:{w:start.w,h:start.h}})}document.addEventListener('pointermove',move,{passive:false});document.addEventListener('pointerup',up,{once:true})}
+$('#deleteObject').addEventListener('click',()=>{if(!notes.selected){toast('Select a graph first / เลือกกราฟก่อน');return}const pg=currentPage(),i=pg.objects.findIndex(o=>o.id===notes.selected);if(i>=0){const obj=pg.objects[i];pg.history.push({type:'deleteObject',obj,index:i});pg.objects.splice(i,1);notes.selected=null;renderNoteObjects()}});
+$('#undoNote').addEventListener('click',()=>{const pg=currentPage(),a=pg.history.pop();if(!a)return;if(a.type==='draw'){pg.strokes.pop()}else if(a.type==='erase'){pg.strokes.splice(a.index,0,a.stroke)}else if(a.type==='addObject'){pg.objects=pg.objects.filter(o=>o.id!==a.id)}else if(a.type==='addObjects'){pg.objects=pg.objects.filter(o=>!a.ids.includes(o.id))}else if(a.type==='deleteObject'){pg.objects.splice(a.index,0,a.obj)}else if(a.type==='moveObject'){const o=pg.objects.find(x=>x.id===a.id);if(o){o.x=a.from.x;o.y=a.from.y}}else if(a.type==='resizeObject'){const o=pg.objects.find(x=>x.id===a.id);if(o){o.w=a.from.w;o.h=a.from.h}}else if(a.type==='clearInk'){pg.strokes=a.strokes}else if(a.type==='clearPage'){pg.strokes=a.strokes;pg.objects=a.objects}notes.selected=null;redrawInk();renderNoteObjects()});
+$('#clearInk').addEventListener('click',()=>{const pg=currentPage();if(!pg.strokes.length)return;pg.history.push({type:'clearInk',strokes:JSON.parse(JSON.stringify(pg.strokes))});pg.strokes=[];redrawInk();toast('Ink cleared · Undo available')});
+$('#clearPage').addEventListener('click',()=>{const pg=currentPage();if(!pg.strokes.length&&!pg.objects.length)return;if(!confirm('Clear this whole note page? / ล้างทั้งหน้ากระดานนี้?'))return;pg.history.push({type:'clearPage',strokes:JSON.parse(JSON.stringify(pg.strokes)),objects:JSON.parse(JSON.stringify(pg.objects))});pg.strokes=[];pg.objects=[];notes.selected=null;redrawInk();renderNoteObjects();toast('Page cleared · Undo available')});
+function updatePage(){notes.selected=null;$('#pageLabel').textContent=`Page ${notes.page+1} / ${notes.pages.length}`;$('#prevPage').disabled=notes.page===0;$('#nextPage').disabled=notes.page===notes.pages.length-1;renderNoteObjects();redrawInk()}
+$('#addPage').addEventListener('click',()=>{notes.pages.push({strokes:[],objects:[],history:[]});notes.page=notes.pages.length-1;updatePage()});$('#prevPage').addEventListener('click',()=>{if(notes.page>0){notes.page--;updatePage()}});$('#nextPage').addEventListener('click',()=>{if(notes.page<notes.pages.length-1){notes.page++;updatePage()}});
+$('#printNotes').addEventListener('click',()=>window.print());
+setTool('pen');updatePage();
+
+// ===== Round 9.2 · Cloud state bridge =====
+function cloudCleanPage(pg){
+  return {
+    strokes:JSON.parse(JSON.stringify(pg?.strokes||[])),
+    objects:JSON.parse(JSON.stringify(pg?.objects||[]))
+  };
+}
+window.WaveSimulatorCloudBridge={
+  snapshot(){
+    const activeMode=document.querySelector('.mode-btn.active')?.dataset?.mode||'water';
+    return {
+      version:1,
+      mode:activeMode,
+      caseIndex:ci,
+      sourceMode:sourceMode==='pulse'?'continuous':sourceMode,
+      measure:JSON.parse(JSON.stringify(measure)),
+      guides:JSON.parse(JSON.stringify(guides)),
+      trialLog:JSON.parse(JSON.stringify(trialLog)),
+      notes:{page:notes.page,pages:notes.pages.map(cloudCleanPage)}
+    };
+  },
+  restore(saved){
+    if(!saved||typeof saved!=='object')return false;
+    sim.playing=false;sim.t=0;sim.last=0;resetMeasurementSession(true);manualFlick.offset=0;
+    const n=Number(saved.caseIndex);ci=Number.isFinite(n)?Math.max(0,Math.min(cases.length-1,Math.trunc(n))):0;
+    sourceMode='continuous';
+    if(saved.measure&&typeof saved.measure==='object'){
+      measure={
+        x:Object.assign({on:false,A:null,B:null},saved.measure.x||{}),
+        t:Object.assign({on:false,A:null,B:null},saved.measure.t||{})
+      };
+    }
+    if(saved.guides&&typeof saved.guides==='object')guides={x:!!saved.guides.x,t:!!saved.guides.t};
+    trialLog.length=0;if(Array.isArray(saved.trialLog))saved.trialLog.forEach(x=>trialLog.push(x));
+    if(saved.notes&&Array.isArray(saved.notes.pages)&&saved.notes.pages.length){
+      notes.pages=saved.notes.pages.map(pg=>({strokes:Array.isArray(pg?.strokes)?pg.strokes:[],objects:Array.isArray(pg?.objects)?pg.objects:[],history:[]}));
+      notes.page=Math.max(0,Math.min(notes.pages.length-1,Number(saved.notes.page)||0));
+      notes.selected=null;notes.activeStroke=null;
+    }
+    updatePage();
+    setMode(saved.mode==='string'?'string':'water');
+    renderAll();
+    return true;
+  }
+};
+
+renderAll();
+})();
+</script>
+
+
+<script type="module" id="wave-login-cloud-v1">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, GoogleAuthProvider, onAuthStateChanged, setPersistence, browserLocalPersistence, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getDatabase, ref, set, get, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+const FIREBASE_CONFIG={
+  apiKey:"AIzaSyDfkxDDnbzLUv85yDwqSpZwPCORx_eCGuo",
+  authDomain:"examateapp-1007d.firebaseapp.com",
+  databaseURL:"https://examateapp-1007d-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"examateapp-1007d",
+  storageBucket:"examateapp-1007d.firebasestorage.app",
+  messagingSenderId:"791216427108",
+  appId:"1:791216427108:web:ccf63a9cc416650877cf71",
+  measurementId:"G-0HPEFRXYW5"
+};
+const PROGRESS_ID="wave-motion-simulator-speed-r9-2";
+const LAB_TITLE="Wave Motion Simulator — Wave Speed";
+const app=initializeApp(FIREBASE_CONFIG,"waveMotionR92");
+const auth=getAuth(app),db=getDatabase(app),provider=new GoogleAuthProvider();provider.setCustomParameters({prompt:"select_account"});
+
+const gate=document.getElementById('wave-auth-gate'),signInBtn=document.getElementById('wave-google-signin'),guestBtn=document.getElementById('wave-guest'),guestWarning=document.getElementById('wave-guest-warning'),guestConfirm=document.getElementById('wave-guest-confirm'),guestCancel=document.getElementById('wave-guest-cancel'),loading=document.getElementById('wave-auth-loading'),errorBox=document.getElementById('wave-auth-error'),localWarn=document.getElementById('wave-auth-local'),userbar=document.getElementById('wave-userbar'),photo=document.getElementById('wave-user-photo'),nameEl=document.getElementById('wave-user-name'),emailEl=document.getElementById('wave-user-email'),cloudEl=document.getElementById('wave-cloud-status'),saveBtn=document.getElementById('wave-save-now'),signOutBtn=document.getElementById('wave-signout'),sessionPill=document.getElementById('wave-session-pill'),guestBadge=document.getElementById('wave-guest-badge');
+const labMain=document.querySelector('main.wrap'),notesFab=document.getElementById('notesFab'),notesShell=document.getElementById('notesShell');
+const fallbackAvatar='data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="100%" height="100%" fill="#e2e8f0"/><circle cx="40" cy="31" r="15" fill="#94a3b8"/><path d="M14 72c2-17 13-26 26-26s24 9 26 26" fill="#94a3b8"/></svg>`);
+let currentUser=null,guestMode=false,cloudReady=false,restoring=false,lastSerialized='',saveTimer=null;
+function lockApp(on){[labMain,notesFab,notesShell].forEach(el=>{if(el)el.inert=!!on});document.body.classList.toggle('wave-auth-locked',!!on)}
+function setError(msg=''){errorBox.textContent=msg;errorBox.classList.toggle('show',!!msg)}
+function setLoading(on){loading.classList.toggle('show',!!on);signInBtn.disabled=!!on}
+function setCloud(text,tone=''){cloudEl.textContent=text;cloudEl.className='wave-cloud-status'+(tone?' '+tone:'')}
+function setSaveEnabled(on){saveBtn.disabled=!on}
+function safeName(){return (currentUser?.displayName||currentUser?.email?.split('@')[0]||'Student').slice(0,80)}
+function snapshot(){return window.WaveSimulatorCloudBridge?.snapshot?.()||{version:1}}
+function progressRef(uid){return ref(db,`quizProgress/${PROGRESS_ID}/${uid}`)}
+async function loadCloud(user){
+  setCloud('☁️ Loading / กำลังโหลด','busy');
+  const snap=await get(progressRef(user.uid));
+  if(!snap.exists()){setCloud('☁️ New workspace / งานใหม่','');return null}
+  setCloud('↻ Restoring / กำลังคืนงาน','busy');return snap.val()?.state||null;
+}
+async function saveCloud(manual=false){
+  if(guestMode||!currentUser||!cloudReady||restoring)return false;
+  clearTimeout(saveTimer);saveTimer=null;setCloud(manual?'💾 Saving now… / กำลังบันทึก…':'☁️ Saving… / กำลังบันทึก','busy');
+  try{
+    const state=snapshot();await set(progressRef(currentUser.uid),{version:1,labId:PROGRESS_ID,labTitle:LAB_TITLE,uid:currentUser.uid,name:safeName(),updatedAt:serverTimestamp(),state});
+    lastSerialized=JSON.stringify(state);setCloud(manual?'✓ Saved now / บันทึกแล้ว':'✓ Auto saved / บันทึกอัตโนมัติ','ok');return true;
+  }catch(err){console.warn('wave cloud save',err);setCloud('⚠️ Save failed / บันทึกไม่ได้','error');return false}
+}
+function scheduleIfChanged(){
+  if(!cloudReady||guestMode||restoring||!currentUser)return;
+  let now='';try{now=JSON.stringify(snapshot())}catch{return}
+  if(now===lastSerialized)return;clearTimeout(saveTimer);setCloud('☁️ Changes pending / รอบันทึก','busy');saveTimer=setTimeout(()=>saveCloud(false),900);
+}
+setInterval(scheduleIfChanged,2500);
+saveBtn.addEventListener('click',()=>saveCloud(true));
+window.addEventListener('pagehide',()=>{if(currentUser&&cloudReady&&!guestMode&&!restoring)saveCloud(false)});
+
+function guestUI(on){
+  guestMode=!!on;window.GUEST_MODE=guestMode;guestBadge.classList.toggle('show',guestMode);userbar.classList.toggle('guest-mode',guestMode);
+  if(on){nameEl.textContent='Guest / ไม่ล็อกอิน';emailEl.textContent='Session only · งานไม่ถูกบันทึก';photo.src=fallbackAvatar;sessionPill.textContent='⚠️ Guest · Not saved';setCloud('⚠️ Guest · Not saved','error');setSaveEnabled(false);signOutBtn.textContent='Exit guest / ออกจาก Guest';userbar.classList.add('show');gate.classList.add('hidden');lockApp(false)}
+  else{guestBadge.classList.remove('show');userbar.classList.remove('guest-mode');sessionPill.textContent='Auto Save + Restore';signOutBtn.textContent='Sign out / ออกจากระบบ'}
+}
+guestBtn.addEventListener('click',()=>{setError('');guestWarning.classList.add('show')});guestCancel.addEventListener('click',()=>guestWarning.classList.remove('show'));
+guestConfirm.addEventListener('click',async()=>{guestWarning.classList.remove('show');try{await signOut(auth)}catch{}currentUser=null;cloudReady=false;guestUI(true)});
+if(location.protocol==='file:')localWarn.classList.add('show');
+signInBtn.addEventListener('click',async()=>{
+  guestUI(false);setError('');
+  if(location.protocol==='file:'){setError('Google Sign-In ต้องเปิดจาก GitHub Pages หรือ localhost\nOpen this file through GitHub Pages or localhost before testing Google Sign-In.');return}
+  try{setLoading(true);await setPersistence(auth,browserLocalPersistence);await signInWithPopup(auth,provider)}catch(err){const code=err?.code||'unknown';let msg=`เข้าสู่ระบบไม่สำเร็จ / Sign-in failed\nCode: ${code}`;if(code==='auth/popup-blocked')msg+='\n\nBrowser blocked the popup. Allow pop-ups temporarily and retry.';if(code==='auth/unauthorized-domain')msg+='\n\nAdd this GitHub Pages domain in Firebase Authentication → Authorized domains.';setError(msg+'\n'+(err?.message||''));setLoading(false)}
+});
+signOutBtn.addEventListener('click',async()=>{if(guestMode){location.reload();return}try{await saveCloud(true)}catch{}await signOut(auth)});
+
+try{await setPersistence(auth,browserLocalPersistence)}catch(err){console.warn('wave auth persistence',err)}
+onAuthStateChanged(auth,async user=>{
+  if(!user){currentUser=null;cloudReady=false;setSaveEnabled(false);if(guestMode)return;userbar.classList.remove('show');gate.classList.remove('hidden');lockApp(true);setCloud('☁️ Waiting / รอเข้าสู่ระบบ','');setLoading(false);return}
+  guestUI(false);currentUser=user;cloudReady=false;restoring=true;lockApp(true);setLoading(true);setSaveEnabled(false);
+  nameEl.textContent=user.displayName||user.email||'Student';emailEl.textContent=user.email||'';photo.src=user.photoURL||fallbackAvatar;photo.onerror=()=>{photo.src=fallbackAvatar};userbar.classList.add('show');
+  try{
+    const saved=await loadCloud(user);if(saved)window.WaveSimulatorCloudBridge?.restore?.(saved);
+    lastSerialized=JSON.stringify(snapshot());setCloud(saved?'↻ Restored / โหลดงานเดิมแล้ว':'☁️ New workspace / งานใหม่','ok');cloudReady=true;setSaveEnabled(true);gate.classList.add('hidden');lockApp(false);
+  }catch(err){console.warn('wave cloud restore',err);setCloud('⚠️ Restore failed · Save paused / โหลดไม่ได้ · หยุดเซฟ','error');cloudReady=false;setSaveEnabled(false);gate.classList.add('hidden');lockApp(false)}
+  finally{restoring=false;setLoading(false)}
+});
+window.WaveCloud={saveNow:()=>saveCloud(true),progressId:PROGRESS_ID,isReady:()=>cloudReady};
+</script>
+
+</body>
+</html>
