@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Chemical Equilibrium Simulator V2.3 · Purple QA Fixed</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=K2D:wght@400;500;600;700&display=swap" rel="stylesheet"><style>
+:root{--navy:#4b235f;--navy2:#6d3d8f;--teal:#7650a8;--ink:#2f2935;--muted:#756d7c;--line:#ddd5e4;--paper:#fff;--page:#f3eef7;--green:#4f7f68;--greenSoft:#edf7f1;--amber:#9a6b24;--amberSoft:#fff8e9;--red:#a44343;--brown:#9d5732;--grey:#837989;--blue:#7650a8;--shadow:0 8px 22px rgba(75,35,95,.10)}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:var(--page);color:var(--ink)}body{font-family:"K2D",Tahoma,sans-serif;overflow:hidden;-webkit-tap-highlight-color:transparent}button{font:inherit;touch-action:manipulation}.app{height:100dvh;min-height:620px;display:grid;grid-template-rows:auto auto minmax(0,1fr);gap:8px;padding:8px;max-width:1360px;margin:auto}.top{min-height:52px;background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border-radius:14px;padding:8px 13px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:var(--shadow)}.brand small{display:block;font-size:.68rem;opacity:.78;letter-spacing:.05em}.brand b{font-size:1.05rem}.brand span{font-size:.76rem;opacity:.88;margin-left:8px}.station-switch{display:flex;gap:6px}.station-tab{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.08);color:#fff;border-radius:10px;padding:7px 10px;min-height:38px;cursor:pointer;font-weight:700;font-size:.78rem}.station-tab.active{background:#fff;color:var(--navy)}.context-strip{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px 10px;min-height:38px}.equation{font-family:"Times New Roman",serif;font-weight:700;color:var(--navy);font-size:1.22rem;white-space:nowrap}.equation-note{font-size:.72rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.equation-view{display:flex;gap:4px}.seg{border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 8px;font-size:.7rem;cursor:pointer}.seg.active{background:#f1e9f7;border-color:#cbb4dc;color:#5b2d73;font-weight:700}.workspace{min-height:0;display:grid;grid-template-columns:minmax(0,1.67fr) minmax(330px,.93fr);gap:8px}.lab,.monitor{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);min-height:0;overflow:hidden}.lab{display:grid;grid-template-rows:minmax(0,1fr) auto auto}.vessel-wrap{min-height:0;padding:8px;position:relative;background:linear-gradient(rgba(57,116,166,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(57,116,166,.04) 1px,transparent 1px),#fbfdfe;background-size:28px 28px}.chamber-box{height:100%;min-height:285px;border:1px solid #cad7de;border-radius:12px;overflow:hidden;background:#f9fcfd}.chamber-canvas{display:block;width:100%;height:100%}.lab-status{position:absolute;left:18px;top:16px;background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:10px;padding:6px 9px;font-size:.72rem;max-width:55%}.lab-status b{color:var(--navy)}.control-deck{border-top:1px solid var(--line);padding:8px;background:#fbfdfe}.deck-top{display:flex;gap:6px;align-items:center;justify-content:space-between;margin-bottom:7px}.transport{display:flex;gap:5px}.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:9px;min-height:38px;padding:6px 9px;font-weight:650;cursor:pointer;font-size:.75rem}.btn.primary{background:var(--navy);border-color:var(--navy);color:#fff}.btn.soft{background:#f1eaf7;border-color:#d9c9e7;color:var(--navy)}.btn.green{background:var(--green);border-color:var(--green);color:#fff}.btn:disabled{opacity:.38;cursor:not-allowed}.mode{font-size:.69rem;color:var(--muted)}.chem-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}.chem-action-group{border:1px solid var(--line);border-radius:10px;padding:6px;background:#fff;min-width:0}.chem-action-group h4{margin:0 0 5px;font-size:.72rem;color:var(--navy)}.chem-action-pair{display:grid;grid-template-columns:1fr 1fr;gap:4px}.chem-action-pair .btn{min-height:34px;padding:5px;font-size:.68rem}.n2o4{border-top:3px solid #87959e}.no2{border-top:3px solid var(--brown)}.pressure{border-top:3px solid var(--blue)}.inline-temp{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.temp-btn{border:1px solid var(--line);border-radius:10px;background:#fff;padding:6px;min-height:48px;cursor:pointer;font-weight:700;color:var(--navy)}.temp-btn span{display:block;color:var(--muted);font-size:.64rem;font-weight:500}.temp-btn.active{background:#fff7e7;border-color:#e3bd72}.deck-foot{border-top:1px solid var(--line);padding:6px 9px;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:.69rem}.lock-pill{background:#edf3f6;border:1px solid var(--line);border-radius:999px;padding:4px 8px;font-weight:700;color:var(--navy);white-space:nowrap}.observe-actions{display:flex;gap:4px}.observe-actions .btn{min-height:29px;padding:3px 6px;font-size:.64rem}.monitor{padding:8px;display:grid;grid-template-rows:auto auto auto auto minmax(0,1fr);gap:6px}.live-head{display:grid;grid-template-columns:1fr 1.2fr;gap:6px}.status-box{border:1px solid var(--line);border-radius:10px;padding:6px 8px;background:#fbfdfe}.status-box.good{background:var(--greenSoft);border-color:#b9ddcd}.status-box.warn{background:var(--amberSoft);border-color:#ead2aa}.status-box .k{font-size:.58rem;color:var(--muted);font-weight:700}.status-box .v{font-size:.83rem;font-weight:700;color:var(--navy);line-height:1.2}.time-card .v{font-family:"Times New Roman",serif;font-size:1.2rem}.metric-stack{display:grid;grid-template-columns:1fr 1fr;gap:6px}.metric{border:1px solid var(--line);border-radius:10px;padding:6px 8px;min-width:0}.metric .k{font-size:.58rem;color:var(--muted);font-weight:700}.metric .v{font-family:"Times New Roman",serif;font-size:1.14rem;color:var(--navy);font-weight:700;white-space:nowrap}.trend{font-family:"K2D",sans-serif;font-size:.61rem;font-weight:700}.trend.up{color:var(--green)}.trend.down{color:var(--red)}.trend.flat{color:var(--muted)}.pressure-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.pressure-grid .metric .v{font-size:.92rem}.rate-k-wrap{display:grid;grid-template-columns:1.25fr .9fr;gap:6px}.rate-box,.k-box{border:1px solid var(--line);border-radius:10px;padding:6px;background:#fbfdfe}.rate-pair{display:grid;grid-template-columns:1fr 1fr;gap:5px}.rate-mini{border:1px solid var(--line);border-radius:8px;padding:5px;background:#fff}.rate-mini .rate-label{font-size:.55rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rate-mini b{font-family:"Times New Roman",serif;font-size:.9rem;color:var(--navy)}.bar{height:5px;background:#e7edf0;border-radius:99px;overflow:hidden}.bar span{display:block;height:100%;background:var(--teal);width:0}.bar.rev span{background:var(--brown)}.equal-line{text-align:center;font-size:.68rem;font-weight:700;color:var(--navy);margin-top:4px}.k-values{display:grid;grid-template-columns:1fr 1fr;gap:4px}.k-value{border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px}.k-value span{display:block;font-size:.55rem;color:var(--muted)}.k-value b{font-family:"Times New Roman",serif;color:var(--navy);font-size:.88rem}.k-note{font-size:.55rem;color:var(--muted);margin-top:4px}.graphs{min-height:0;display:grid;grid-template-rows:1fr 1fr;gap:5px}.mini-graph{min-height:0;border:1px solid var(--line);border-radius:10px;display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden;background:#fff}.graph-head{display:flex;align-items:center;justify-content:space-between;padding:4px 6px;border-bottom:1px solid var(--line);font-size:.62rem;font-weight:700;color:var(--navy)}.zoom-btn{border:1px solid var(--line);background:#fff;border-radius:7px;padding:2px 5px;font-size:.6rem;cursor:pointer}.graph-canvas{width:100%;height:100%;min-height:85px;display:block}.disturb-story{font-size:.61rem;color:#536872;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.zoom-overlay[hidden]{display:none}.zoom-overlay{position:fixed;inset:0;background:rgba(17,34,45,.52);z-index:50;display:grid;place-items:center;padding:24px}.zoom-card{width:min(980px,95vw);height:min(690px,86vh);background:#fff;border-radius:16px;border:1px solid var(--line);box-shadow:0 25px 70px rgba(0,0,0,.24);display:grid;grid-template-rows:auto auto minmax(0,1fr);overflow:hidden}.zoom-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line);font-weight:700;color:var(--navy)}.zoom-head-actions{display:flex;align-items:center;gap:6px}.zoom-range{display:flex;gap:4px}.zoom-range[hidden]{display:none}.zoom-range-btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 8px;font-size:.7rem;cursor:pointer;color:var(--navy)}.zoom-range-btn.active{background:#f1e9f7;border-color:#cbb4dc;font-weight:700}.zoom-close{border:1px solid var(--line);background:#fff;border-radius:9px;padding:5px 9px;cursor:pointer}.zoom-insight{padding:9px 12px;border-bottom:1px solid var(--line);background:#f8fbfc}.zoom-insight[hidden]{display:none}.zoom-insight-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px}.zoom-insight-title b{color:var(--navy);font-size:.88rem}.zoom-insight-title span{font-size:.67rem;color:var(--muted)}.zoom-insight-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.zoom-insight-card{display:grid;grid-template-columns:54px minmax(0,1fr);gap:8px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:10px;padding:7px 9px;min-width:0}.zoom-insight-card svg{width:54px;height:30px}.zoom-insight-card .name{font-size:.7rem;font-weight:700;color:var(--navy)}.zoom-insight-card .numbers{font-family:"Times New Roman",serif;font-weight:700;font-size:.9rem;color:var(--ink);white-space:nowrap}.zoom-insight-card .explain{font-size:.64rem;color:var(--muted);line-height:1.25}.zoom-tip{margin-top:6px;font-size:.68rem;color:#4f6572}.zoom-tip b{color:var(--navy)}.zoom-canvas{width:100%;height:100%;display:block}@media(max-width:650px){.zoom-card{height:min(720px,92vh)}.zoom-insight-grid{grid-template-columns:1fr}.zoom-insight-card{grid-template-columns:46px minmax(0,1fr)}.zoom-insight-card svg{width:46px}.zoom-range-btn{padding:4px 6px;font-size:.62rem}}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}@media(max-width:900px),(orientation:portrait){body{overflow:auto}.app{height:auto;min-height:100vh}.workspace{grid-template-columns:1fr}.monitor{min-height:620px}.chamber-box{min-height:390px}.graphs{min-height:260px}.top{align-items:flex-start}.brand span{display:block;margin-left:0}.station-switch{flex-wrap:wrap}}@media(max-width:560px){.chem-actions{grid-template-columns:1fr}.metric-stack{grid-template-columns:1fr 1fr}.rate-k-wrap{grid-template-columns:1fr}.context-strip{align-items:flex-start;flex-direction:column}.equation-view{width:100%}.seg{flex:1}.station-tab{padding:6px;font-size:.68rem}}
+
+.metric.pulse{outline:2px solid rgba(109,61,143,.42);box-shadow:0 0 0 4px rgba(109,61,143,.10);transition:outline-color .2s,box-shadow .2s}
+#recordBtn{display:none}
+
+/* ===== V2.4 · Chemistry Purple Working Notes ===== */
+.notes-fab{
+  position:fixed;right:16px;bottom:16px;z-index:9000;
+  border:1.5px solid #4b235f;border-radius:999px;
+  padding:10px 14px;background:#5f2f78;color:#fff;
+  font-weight:800;box-shadow:0 10px 28px rgba(75,35,95,.25);cursor:pointer
+}
+.notes-fab.hidden{display:none}
+.notes-shell{
+  position:fixed;left:50%;bottom:10px;z-index:8999;
+  width:min(1040px,calc(100vw - 20px));
+  transform:translate(-50%,115%);opacity:0;pointer-events:none;
+  transition:.22s ease
+}
+.notes-shell.show{transform:translate(-50%,0);opacity:1;pointer-events:auto}
+.notes-dock{
+  border:2px solid #4b235f;border-radius:16px;background:#fff;
+  box-shadow:0 18px 55px rgba(45,25,55,.30);overflow:hidden
+}
+.notes-top{
+  padding:9px 11px;background:#f4edf8;border-bottom:1px solid #d8c7e3;
+  display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap
+}
+.notes-title{font-weight:800;color:#4b235f}
+.notes-toolbar{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.note-tool.active{background:#ede2f4;border-color:#7b4c96;color:#4b235f}
+.note-sheet{
+  position:relative;height:clamp(300px,50vh,480px);overflow:hidden;
+  background:
+    linear-gradient(#ece7ef 1px,transparent 1px),
+    linear-gradient(90deg,#ece7ef 1px,transparent 1px),#fff;
+  background-size:22px 22px;touch-action:none
+}
+.note-object-layer,.note-ink{position:absolute;inset:0;width:100%;height:100%}
+.note-object-layer{z-index:1}.note-ink{z-index:2;touch-action:none}
+.note-obj{
+  position:absolute;border:2px solid transparent;border-radius:10px;background:#fff;
+  overflow:hidden;box-shadow:0 2px 8px rgba(31,20,36,.12);touch-action:none
+}
+.note-obj.selected{border-color:#6d3d8f;box-shadow:0 0 0 3px #eadff1}
+.note-obj canvas{width:100%;height:100%;display:block}
+.note-obj .obj-label{
+  position:absolute;top:4px;left:4px;background:#fff;border:1px solid #d9cce1;
+  border-radius:999px;padding:2px 6px;font-size:10px;font-weight:800;z-index:2;color:#4b235f
+}
+.note-resize{
+  display:none;position:absolute;width:22px;height:22px;right:-2px;bottom:-2px;
+  border:2px solid #6d3d8f;border-radius:8px 0 8px 0;background:#eadff1;
+  z-index:5;cursor:nwse-resize;touch-action:none
+}
+.note-obj.selected .note-resize{display:block}
+.note-resize:after{
+  content:'↘';position:absolute;inset:0;display:grid;place-items:center;
+  font-size:13px;font-weight:900;color:#4b235f
+}
+.notes-selection{
+  font-size:.68rem;font-weight:750;color:#67566f;padding:5px 8px;
+  border:1px solid #d7cedc;border-radius:999px;background:#fff
+}
+.notes-foot{
+  padding:8px 10px;border-top:1px solid #e4dce8;background:#faf8fb;
+  display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center
+}
+.page-controls{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.page-label{font-size:.76rem;font-weight:800;min-width:90px;text-align:center}
+.note-import-btn{
+  border:1px solid #d6c7df;background:#fff;border-radius:7px;padding:2px 5px;
+  font-size:.58rem;cursor:pointer;color:#4b235f
+}
+.note-toast{
+  position:fixed;left:50%;top:18px;z-index:9500;
+  transform:translateX(-50%) translateY(-12px);opacity:0;pointer-events:none;
+  background:#3d234a;color:#fff;border-radius:10px;padding:8px 12px;
+  font-weight:750;font-size:.76rem;transition:.18s
+}
+.note-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:700px){
+  .notes-shell{bottom:5px;width:calc(100vw - 10px)}
+  .notes-fab{right:9px;bottom:9px}
+  .note-sheet{height:50vh}
+}
+@media print{
+  body.notes-printing *{visibility:hidden!important}
+  body.notes-printing .notes-shell,
+  body.notes-printing .notes-shell *{visibility:visible!important}
+  body.notes-printing .notes-shell{
+    position:absolute!important;left:0!important;top:0!important;bottom:auto!important;
+    width:100%!important;transform:none!important;opacity:1!important
+  }
+  body.notes-printing .notes-top,
+  body.notes-printing .notes-foot{display:none!important}
+  body.notes-printing .notes-dock{border:0!important;box-shadow:none!important}
+  body.notes-printing .note-sheet{height:255mm!important;background:#fff!important;border:0!important}
+}
+
+</style></head>
+<body><main class="app">
+<header class="top"><div class="brand"><small>INTERACTIVE CHEMISTRY · V2.3 · QA FIXED</small><b>Chemical Equilibrium Console</b><span>N₂O₄ / NO₂ · จอทดลองเดียวแบบ iPad</span></div><div class="station-switch" role="tablist"><button class="station-tab active" id="tab1" type="button">Station 1 · Substance + Pressure</button><button class="station-tab" id="tab2" type="button">Station 2 · Temperature</button></div></header>
+<section class="context-strip"><div><div class="equation" id="reactionEquation">N₂O₄(g) ⇌ 2NO₂(g)</div><div class="equation-note" id="heatDirectionLabel">Temperature locked · อุณหภูมิคงที่</div></div><div class="equation-view" id="equationViewWrap" hidden><button class="seg active" id="viewEndo" type="button">Endothermic → / ดูดความร้อน</button><button class="seg" id="viewExo" type="button">Exothermic → / คายความร้อน</button></div><div class="equation-note" id="stationSubtitle">Composition + Pressure · T locked</div></section>
+<section class="workspace">
+  <section class="lab">
+    <div class="vessel-wrap"><div class="chamber-box"><canvas id="chamberCanvas" class="chamber-canvas"></canvas></div><div class="lab-status"><b>LIVE REACTION VESSEL</b><div>อนุภาคยังเคลื่อนที่แม้เข้าสู่สมดุล</div></div></div>
+    <div class="control-deck">
+      <div class="deck-top"><div class="transport"><button class="btn primary" id="runBtn" type="button">▶ Start</button><button class="btn soft" id="pauseBtn" type="button" disabled>⏸ Pause</button><button class="btn" id="resetBtn" type="button">↺ Reset</button><button class="btn green" id="recordBtn" type="button" disabled>● Record Eq.</button></div><div class="mode" id="modeText">Ready · พร้อมเริ่ม</div></div>
+      <div id="station1InlineControls"><div class="chem-actions"><div class="chem-action-group n2o4"><h4>N₂O₄ · Reactant</h4><div class="chem-action-pair"><button class="btn disturbance" data-action="addN2O4">💉 + เติม</button><button class="btn disturbance" data-action="removeN2O4">⇡ − ดูดออก</button></div></div><div class="chem-action-group no2"><h4>NO₂ · Product</h4><div class="chem-action-pair"><button class="btn disturbance" data-action="addNO2">💉 + เติม</button><button class="btn disturbance" data-action="removeNO2">⇡ − ดูดออก</button></div></div><div class="chem-action-group pressure"><h4>Pressure · via Volume</h4><div class="chem-action-pair"><button class="btn disturbance" data-action="compress">⇩ Compress</button><button class="btn disturbance" data-action="expand">⇧ Expand</button></div></div></div></div>
+      <div id="station2InlineControls" hidden><div class="inline-temp"><button class="temp-btn disturbance" data-temp="273.15">❄️ Cold<span>273 K · 0°C</span></button><button class="temp-btn disturbance active" data-temp="298.15">🌡️ Room<span>298 K · 25°C</span></button><button class="temp-btn disturbance" data-temp="323.15">🔥 Hot<span>323 K · 50°C</span></button></div></div>
+    </div>
+    <div class="deck-foot"><div><span id="lockTitle">Temperature locked</span> · <span id="lockSub">คงอุณหภูมิ</span> <span class="lock-pill" id="lockValue">298 K 🔒</span></div><div class="observe-actions"><span id="stableText">0.0 s stable</span><button class="btn" id="add10Btn" disabled>+10 s</button><button class="btn" id="add30Btn" disabled>+30 s</button><button class="btn" id="add60Btn" disabled>+60 s</button></div></div>
+  </section>
+  <aside class="monitor">
+    <div class="live-head"><div class="status-box time-card"><div class="k">TIME / เวลา</div><div class="v"><span id="timeOut">0.0</span> s</div></div><div class="status-box warn" id="statusBox"><div class="k">SYSTEM STATUS</div><div class="v" id="statusText">System adjusting</div><div id="statusTH" class="k">กำลังเข้าสู่สมดุล</div><div id="eqOut" class="sr-only">No</div></div></div>
+    <div class="metric-stack"><div class="metric" id="meterN2O4"><div class="k">[N₂O₄] · reactant</div><div class="v"><span id="cN2O4Out">0.0890</span> M</div><div class="trend flat" id="cN2O4Trend2">— คงที่</div></div><div class="metric" id="meterNO2"><div class="k">[NO₂] · product</div><div class="v"><span id="cNO2Out">0.0000</span> M</div><div class="trend flat" id="cNO2Trend2">— คงที่</div></div></div>
+    <div class="pressure-grid"><div class="metric"><div class="k">P(N₂O₄)</div><div class="v"><span id="pN2O4Out">0.000</span> atm</div></div><div class="metric"><div class="k">P(NO₂)</div><div class="v"><span id="pNO2Out">0.000</span> atm</div></div><div class="metric" id="meterPressure"><div class="k">P TOTAL</div><div class="v"><span id="pTotalOut">0.000</span> atm</div><div class="trend flat" id="pTotalTrend2">—</div></div></div>
+    <div class="rate-k-wrap"><div class="rate-box"><div class="rate-pair"><div class="rate-mini"><div class="rate-label" id="rfLabel">Forward</div><b id="rfText">0.0000</b><div class="bar"><span id="rfBar"></span></div></div><div class="rate-mini"><div class="rate-label" id="rrLabel">Reverse</div><b id="rrText">0.0000</b><div class="bar rev"><span id="rrBar"></span></div></div></div><div class="status-box" id="equalBox"><div class="equal-line" id="equalText">rᶠ ≠ rʳ</div></div></div><div class="k-box"><div class="k-values"><div class="k-value"><span>Kc</span><b id="kcValue">waiting…</b></div><div class="k-value"><span>Kp</span><b id="kpValue">waiting…</b></div></div><div class="k-note" id="kReadyText">รอสมดุล</div></div></div>
+    <div class="graphs"><div class="mini-graph"><div class="graph-head"><span>Concentration vs Time</span><div style="display:flex;gap:4px"><button class="note-import-btn" id="noteConcBtn" type="button">＋ Notes</button><button class="zoom-btn" id="zoomConcBtn">🔍 Zoom</button></div></div><canvas id="concGraph" class="graph-canvas"></canvas></div><div class="mini-graph"><div class="graph-head"><span>Forward / Reverse Rate</span><div style="display:flex;gap:4px"><button class="note-import-btn" id="noteRateBtn" type="button">＋ Notes</button><button class="zoom-btn" id="zoomRateBtn">🔍 Zoom</button></div></div><canvas id="rateGraph" class="graph-canvas"></canvas></div></div>
+    <div class="disturb-story" id="disturbanceStory"><b>เริ่มต้น:</b> 100% N₂O₄</div>
+  </aside>
+</section>
+<div class="sr-only"><div id="equalBoxHidden"></div><div id="observeProgress"></div><div id="observeTargetText"></div><div id="station1Controls"></div><div id="station2Controls"></div><span id="miniT"></span><span id="miniV"></span><span id="miniP"></span><span id="miniStable"></span><span id="cNO2Big"></span><span id="cN2O4Big"></span><span id="pTotalBig"></span><span id="pNO2MiniBig"></span><span id="pN2O4MiniBig"></span><span id="cNO2Trend"></span><span id="cN2O4Trend"></span><span id="pTotalTrend"></span><span id="kcNO2"></span><span id="kcN2O4"></span><span id="kpNO2"></span><span id="kpN2O4"></span><button id="recordBtn2"></button><button id="clearRecordsBtn"></button><span id="countLabel"></span><table><tbody id="recordBody"></tbody></table></div>
+<div class="zoom-overlay" id="zoomOverlay" hidden><section class="zoom-card">
+  <div class="zoom-head"><span id="zoomTitle">Graph</span><div class="zoom-head-actions"><div class="zoom-range" id="zoomRange" hidden><button class="zoom-range-btn active" id="zoomStartBtn">ช่วงต้น</button><button class="zoom-range-btn" id="zoomAllBtn">ทั้งหมด</button></div><button class="zoom-close" id="zoomClose">✕ Close</button></div></div>
+  <div class="zoom-insight" id="zoomInsight" hidden>
+    <div class="zoom-insight-title"><b>🔎 สังเกตช่วงต้นของปฏิกิริยา</b><span>Guided observation · ช่วงต้นอัตรายังไม่เท่ากัน และนั่นคือสิ่งที่ควรเห็น</span></div>
+    <div class="zoom-insight-grid">
+      <div class="zoom-insight-card"><svg id="zoomForwardIcon" viewBox="0 0 54 30" aria-hidden="true"><polyline points="3,5 13,8 24,13 36,19 51,24" fill="none" stroke="#287b78" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M44 20 L51 24 L44 27" fill="none" stroke="#287b78" stroke-width="2"/></svg><div><div class="name">Forward rate / อัตราไปข้างหน้า</div><div class="numbers" id="zoomForwardNumbers">กำลังเก็บข้อมูล…</div><div class="explain" id="zoomForwardExplain">เริ่มสูง แล้วค่อย ๆ ลดลงเมื่อ N₂O₄ ถูกใช้</div></div></div>
+      <div class="zoom-insight-card"><svg id="zoomReverseIcon" viewBox="0 0 54 30" aria-hidden="true"><polyline points="3,25 13,23 24,18 36,12 51,6" fill="none" stroke="#9d5732" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M44 3 L51 6 L46 12" fill="none" stroke="#9d5732" stroke-width="2"/></svg><div><div class="name">Reverse rate / อัตราย้อนกลับ</div><div class="numbers" id="zoomReverseNumbers">กำลังเก็บข้อมูล…</div><div class="explain" id="zoomReverseExplain">เริ่มต่ำ แล้วค่อย ๆ เพิ่มขึ้นเมื่อ NO₂ เกิดมากขึ้น</div></div></div>
+    </div>
+    <div class="zoom-tip" id="zoomTip"><b>ดูเส้นช่วงต้น:</b> เส้นหนึ่งลาดลงและอีกเส้นลาดขึ้น ก่อนที่อัตราทั้งสองจะค่อย ๆ เข้าใกล้กันจนเท่ากันที่สมดุล</div>
+  </div>
+  <canvas id="zoomGraph" class="zoom-canvas"></canvas>
+</section></div>
+<script>(() => {
+  "use strict";
+  const R_ATM = 0.082057;           // L atm mol^-1 K^-1
+  const R_J = 8.314462618;          // J mol^-1 K^-1
+  const T_REF = 298.15;
+  const KC_REF = 0.00600;           // educational calibration at 298 K
+  const KP_REF = KC_REF * R_ATM * T_REF;
+  const DH = 57200;                 // J mol^-1, N2O4 -> 2NO2 (endothermic)
+  const KF_REF = 0.045;             // s^-1, visual kinetics calibration
+  const EA_F = 70000;               // J mol^-1, visual kinetics calibration
+  const V_MIN = 0.62, V_MAX = 1.38;
+  const SIM_SPEED = 0.65;          // slower classroom pacing so the relaxation is visible
+  const SAMPLE_EVERY = 0.08;
+  const CONFIRM_WINDOW = 1.6;
+  const MIN_ADJUST_TIME = 4.0;      // simulated seconds before a new equilibrium can be confirmed
+  const RATE_EPS = 0.0015;
+  const CONC_RATE_EPS = 0.000025;    // M s^-1; concentration must be essentially flat
+  const DISTURB_MOL = 0.030;
+
+  const $ = id => document.getElementById(id);
+  const E = {
+    tab1:$("tab1"), tab2:$("tab2"), stationSubtitle:$("stationSubtitle"), chamber:$("chamberCanvas"),
+    statusBox:$("statusBox"), statusText:$("statusText"), statusTH:$("statusTH"), equalBox:$("equalBox"), equalText:$("equalText"),
+    rfText:$("rfText"), rrText:$("rrText"), rfBar:$("rfBar"), rrBar:$("rrBar"), stableText:$("stableText"), observeProgress:$("observeProgress"), observeTargetText:$("observeTargetText"),
+    add10Btn:$("add10Btn"), add30Btn:$("add30Btn"), add60Btn:$("add60Btn"), runBtn:$("runBtn"), pauseBtn:$("pauseBtn"), resetBtn:$("resetBtn"), recordBtn:$("recordBtn"), recordBtn2:$("recordBtn2"), modeText:$("modeText"),
+    station1Controls:$("station1Controls"), station2Controls:$("station2Controls"), station1InlineControls:$("station1InlineControls"), station2InlineControls:$("station2InlineControls"), lockTitle:$("lockTitle"), lockSub:$("lockSub"), lockValue:$("lockValue"),
+    miniT:$("miniT"), miniV:$("miniV"), miniP:$("miniP"), miniStable:$("miniStable"),
+    timeOut:$("timeOut"), cNO2Out:$("cNO2Out"), cN2O4Out:$("cN2O4Out"), pNO2Out:$("pNO2Out"), pN2O4Out:$("pN2O4Out"), pTotalOut:$("pTotalOut"), eqOut:$("eqOut"),
+    cNO2Big:$("cNO2Big"), cN2O4Big:$("cN2O4Big"), pTotalBig:$("pTotalBig"), pNO2MiniBig:$("pNO2MiniBig"), pN2O4MiniBig:$("pN2O4MiniBig"), cNO2Trend:$("cNO2Trend"), cN2O4Trend:$("cN2O4Trend"), pTotalTrend:$("pTotalTrend"), cNO2Trend2:$("cNO2Trend2"), cN2O4Trend2:$("cN2O4Trend2"), pTotalTrend2:$("pTotalTrend2"),
+    meterNO2:$("meterNO2"), meterN2O4:$("meterN2O4"), meterPressure:$("meterPressure"), disturbanceStory:$("disturbanceStory"), kReadyText:$("kReadyText"), kcNO2:$("kcNO2"), kcN2O4:$("kcN2O4"), kpNO2:$("kpNO2"), kpN2O4:$("kpN2O4"), concGraph:$("concGraph"), rateGraph:$("rateGraph"), recordBody:$("recordBody"), countLabel:$("countLabel"), clearRecordsBtn:$("clearRecordsBtn"),
+    kcValue:$("kcValue"), kpValue:$("kpValue"), reactionEquation:$("reactionEquation"), heatDirectionLabel:$("heatDirectionLabel"), equationViewWrap:$("equationViewWrap"), viewEndo:$("viewEndo"), viewExo:$("viewExo"), rfLabel:$("rfLabel"), rrLabel:$("rrLabel"), zoomOverlay:$("zoomOverlay"), zoomGraph:$("zoomGraph"), zoomTitle:$("zoomTitle"), zoomClose:$("zoomClose"), zoomConcBtn:$("zoomConcBtn"), zoomRateBtn:$("zoomRateBtn"), zoomInsight:$("zoomInsight"), zoomRange:$("zoomRange"), zoomStartBtn:$("zoomStartBtn"), zoomAllBtn:$("zoomAllBtn"), zoomForwardNumbers:$("zoomForwardNumbers"), zoomReverseNumbers:$("zoomReverseNumbers"), zoomForwardExplain:$("zoomForwardExplain"), zoomReverseExplain:$("zoomReverseExplain"), zoomTip:$("zoomTip"), zoomForwardIcon:$("zoomForwardIcon"), zoomReverseIcon:$("zoomReverseIcon")
+  };
+
+  const state = {
+    station:1, running:false, t:0, T:T_REF, V:1.00,
+    n2:0.000, n4:0.089,
+    rf:0, rr:0, equilibrium:false, confirmAccum:0, stableTime:0, observeTarget:15,
+    lastSampleT:-1, history:[], events:[], records:[], lastDisturbance:"Initial / เริ่มต้น",
+    dragPiston:false, prevConc:null, raf:0, lastReal:0, trendRef:null, trendLastT:-1, trends:{c2:0,c4:0,p:0}, pulse:{target:"",message:"",until:0}, lastPerturbT:0, graphFocus:{target:"",label:"",startT:0}, equationView:"endo", zoomType:"", zoomWindow:"start"
+  };
+
+  // Each station keeps its own independent timeline, graph and equilibrium state.
+  const stationMemory={1:null,2:null};
+
+  function kpAt(T){ return KP_REF * Math.exp((-DH/R_J) * (1/T - 1/T_REF)); }
+  function kcAt(T){ return kpAt(T) / (R_ATM*T); }
+  function kfAt(T){ return KF_REF * Math.exp((-EA_F/R_J) * (1/T - 1/T_REF)); }
+  function krAt(T){ return kfAt(T) / kcAt(T); }
+  function conc(){ return {c2:state.n2/state.V, c4:state.n4/state.V}; }
+  function rates(){ const c=conc(); return {rf:kfAt(state.T)*c.c4, rr:krAt(state.T)*c.c2*c.c2}; }
+  function pressures(){ const c=conc(); return {p2:c.c2*R_ATM*state.T, p4:c.c4*R_ATM*state.T}; }
+  function totalPressure(){ const p=pressures(); return p.p2+p.p4; }
+  function clamp(x,a,b){ return Math.max(a,Math.min(b,x)); }
+
+  function reset(station=state.station){
+    state.station=station; state.running=false; state.t=0; state.T=T_REF; state.V=1.00;
+    state.n2=0.000; state.n4=0.089; state.rf=0; state.rr=0; state.equilibrium=false; state.confirmAccum=0; state.stableTime=0; state.observeTarget=15;
+    state.lastSampleT=-1; state.history=[]; state.events=[]; state.lastDisturbance="Initial / เริ่มต้น"; state.prevConc=null; state.lastReal=0; state.trendRef=null; state.trendLastT=-1; state.trends={c2:0,c4:0,p:0}; state.pulse={target:"",message:"",until:0}; state.lastPerturbT=0; state.graphFocus={target:"",label:"",startT:0}; state.equationView="endo"; state.zoomType=""; state.zoomWindow="start";
+    if(station===2){ state.V=1.00; state.T=T_REF; }
+    // Calculate the true initial rates BEFORE storing the first graph point.
+    // Starting from pure N₂O₄ means forward rate > 0 while reverse rate = 0.
+    const initialRates=rates(); state.rf=initialRates.rf; state.rr=initialRates.rr;
+    addEvent("Start");
+    sample(true); updateStationUI(); updateUI(); drawAll();
+  }
+
+  function updateEquationView(){
+    const reverse=state.station===2 && state.equationView==="exo";
+    if(E.equationViewWrap) E.equationViewWrap.hidden=state.station!==2;
+    if(E.viewEndo) E.viewEndo.classList.toggle("active",!reverse);
+    if(E.viewExo) E.viewExo.classList.toggle("active",reverse);
+    if(state.station===1){
+      E.reactionEquation.textContent="N₂O₄(g) ⇌ 2NO₂(g)";
+      E.heatDirectionLabel.textContent="Temperature locked · อุณหภูมิคงที่";
+      E.rfLabel.textContent="Forward · N₂O₄ → 2NO₂";
+      E.rrLabel.textContent="Reverse · 2NO₂ → N₂O₄";
+    }else if(!reverse){
+      E.reactionEquation.textContent="N₂O₄(g) + heat ⇌ 2NO₂(g)";
+      E.heatDirectionLabel.textContent="Forward = endothermic · ไปข้างหน้าเป็นดูดความร้อน";
+      E.rfLabel.textContent="Forward · endothermic";
+      E.rrLabel.textContent="Reverse · exothermic";
+    }else{
+      E.reactionEquation.textContent="2NO₂(g) ⇌ N₂O₄(g) + heat";
+      E.heatDirectionLabel.textContent="Forward = exothermic · ไปข้างหน้าเป็นคายความร้อน";
+      E.rfLabel.textContent="Forward · exothermic";
+      E.rrLabel.textContent="Reverse · endothermic";
+    }
+  }
+
+  function updateStationUI(){
+    const s1=state.station===1;
+    E.tab1.classList.toggle("active",s1); E.tab2.classList.toggle("active",!s1);
+    E.tab1.setAttribute("aria-selected",String(s1)); E.tab2.setAttribute("aria-selected",String(!s1));
+    E.station1Controls.hidden=true; E.station2Controls.hidden=true; E.station1InlineControls.hidden=!s1; E.station2InlineControls.hidden=s1;
+    if(s1){
+      E.stationSubtitle.textContent="Composition + Pressure · T locked";
+      E.lockTitle.textContent="Temperature locked"; E.lockSub.textContent="เปลี่ยนสารและปริมาตรได้ แต่อุณหภูมิคงที่"; E.lockValue.textContent=`${Math.round(state.T)} K 🔒`;
+    }else{
+      E.stationSubtitle.textContent="Temperature · V locked";
+      E.lockTitle.textContent="Volume locked"; E.lockSub.textContent="ภาชนะปิดแข็ง เปลี่ยนเฉพาะอุณหภูมิ"; E.lockValue.textContent=`${state.V.toFixed(2)} L 🔒`;
+    }
+    document.querySelectorAll('.temp-btn').forEach(b=>b.classList.toggle('active',Math.abs(Number(b.dataset.temp)-state.T)<0.2));
+    updateEquationView();
+  }
+
+  function snapshotStation(){
+    const keep=["t","T","V","n2","n4","rf","rr","equilibrium","confirmAccum","stableTime","observeTarget","lastSampleT","lastDisturbance","prevConc","trendRef","trendLastT","trends","pulse","lastPerturbT","graphFocus","equationView"];
+    const snap={running:state.running,history:state.history.map(x=>({...x})),events:state.events.map(x=>({...x}))};
+    keep.forEach(k=>{ const v=state[k]; snap[k]=(v&&typeof v==="object")?JSON.parse(JSON.stringify(v)):v; });
+    return snap;
+  }
+  function saveCurrentStation(){ stationMemory[state.station]=snapshotStation(); }
+  function restoreStation(station){
+    const snap=stationMemory[station];
+    if(!snap){ reset(station); return; }
+    const resume=!!snap.running;
+    Object.assign(state,snap,{station,running:false,raf:0,lastReal:0,zoomType:"",zoomWindow:"start"});
+    updateStationUI(); updateUI(); drawAll();
+    if(resume) setRunning(true); else setRunning(false);
+  }
+  function switchStation(station){
+    if(station===state.station) return;
+    if(state.raf){ cancelAnimationFrame(state.raf); state.raf=0; }
+    saveCurrentStation();
+    restoreStation(station);
+  }
+
+  function setRunning(on){
+    state.running=on; E.runBtn.disabled=on; E.pauseBtn.disabled=!on;
+    E.modeText.textContent=on?"Running · กำลังจำลอง":"Paused · หยุดชั่วคราว";
+    if(on){ state.lastReal=performance.now(); if(!state.raf) state.raf=requestAnimationFrame(loop); }
+    updateControls();
+  }
+
+  function disturb(label, fn){
+    if(!state.equilibrium) return;
+    const c0=conc(), p0=totalPressure(), v0=state.V, T0=state.T;
+
+    // Keep a sample immediately BEFORE and immediately AFTER the disturbance
+    // at the same simulation time. This makes the concentration graph show
+    // the physically correct vertical jump first, followed by chemical relaxation.
+    sample(true);
+    fn();
+    const c1=conc(), p1=totalPressure(), v1=state.V, T1=state.T;
+    let target="", message="";
+    if(label==="+ N₂O₄"){
+      target="n2o4"; message=`เพิ่มสารตั้งต้น N₂O₄ → ระบบใช้สารที่เติม → สมดุลเลื่อนไปขวา → NO₂ เกิดเพิ่ม`;
+    }else if(label==="− N₂O₄"){
+      target="n2o4"; message=`ลดสารตั้งต้น N₂O₄ → ระบบสร้าง N₂O₄ กลับ → สมดุลเลื่อนไปซ้าย`;
+    }else if(label==="+ NO₂"){
+      target="no2"; message=`เพิ่มผลิตภัณฑ์ NO₂ → ระบบใช้ NO₂ → สมดุลเลื่อนไปซ้าย → N₂O₄ เกิดเพิ่ม`;
+    }else if(label==="− NO₂"){
+      target="no2"; message=`ลดผลิตภัณฑ์ NO₂ → ระบบสร้าง NO₂ เพิ่ม → สมดุลเลื่อนไปขวา`;
+    }else if(label.includes("Compress")){
+      target="pressure"; message=`เพิ่มความดัน: V↓, P↑ → ระบบเลื่อนไปฝั่งโมลแก๊สน้อย → ซ้าย → N₂O₄ เกิดเพิ่ม`;
+    }else if(label.includes("Expand")){
+      target="pressure"; message=`ลดความดัน: V↑, P↓ → ระบบเลื่อนไปฝั่งโมลแก๊สมาก → ขวา → NO₂ เกิดเพิ่ม`;
+    }else if(Math.abs(T1-T0)>0.2){
+      const hotter=T1>T0;
+      const reverseView=state.station===2 && state.equationView==="exo";
+      if(hotter){
+        message=reverseView
+          ? `เพิ่มอุณหภูมิ → ไปทางดูดความร้อน → เลื่อนไปซ้ายตามสมการที่แสดง → NO₂ เกิดเพิ่ม`
+          : `เพิ่มอุณหภูมิ → ไปทางดูดความร้อน → เลื่อนไปขวา → NO₂ เกิดเพิ่ม`;
+      }else{
+        message=reverseView
+          ? `ลดอุณหภูมิ → ไปทางคายความร้อน → เลื่อนไปขวาตามสมการที่แสดง → N₂O₄ เกิดเพิ่ม`
+          : `ลดอุณหภูมิ → ไปทางคายความร้อน → เลื่อนไปซ้าย → N₂O₄ เกิดเพิ่ม`;
+      }
+    }else{
+      message=`รบกวนระบบ: ${label}`;
+    }
+    state.pulse={target,message,until:state.t+8.0};
+    state.graphFocus={target,label,startT:state.t};
+    state.lastDisturbance=label; state.equilibrium=false; state.confirmAccum=0; state.stableTime=0; state.observeTarget=15; state.lastPerturbT=state.t;
+    addEvent(label); sample(true); setRunning(true); updateUI();
+  }
+
+  function doAction(action){
+    if(action==="addN2O4") disturb("+ N₂O₄",()=>{state.n4+=DISTURB_MOL});
+    if(action==="removeN2O4") disturb("− N₂O₄",()=>{state.n4=Math.max(0.004,state.n4-DISTURB_MOL)});
+    if(action==="addNO2") disturb("+ NO₂",()=>{state.n2+=2*DISTURB_MOL});
+    if(action==="removeNO2") disturb("− NO₂",()=>{state.n2=Math.max(0.004,state.n2-2*DISTURB_MOL)});
+    if(action==="compress") disturb("Compress / บีบ",()=>{state.V=clamp(state.V*0.80,V_MIN,V_MAX)});
+    if(action==="expand") disturb("Expand / ขยาย",()=>{state.V=clamp(state.V*1.25,V_MIN,V_MAX)});
+  }
+
+  function changeTemperature(T){
+    if(state.station!==2 || !state.equilibrium || Math.abs(T-state.T)<0.2) return;
+    const old=Math.round(state.T), neo=Math.round(T);
+    disturb(`${old} K → ${neo} K`,()=>{state.T=T});
+    updateStationUI();
+  }
+
+  function integrate(dt){
+    const maxStep=0.018;
+    let remain=dt;
+    while(remain>0){
+      const h=Math.min(maxStep,remain); const r=rates();
+      const net=r.rf-r.rr; // mol L^-1 s^-1 in reaction extent concentration
+      let dxi=net*state.V*h;
+      // Stoichiometric bounds: forward extent (+) consumes N₂O₄; reverse extent (−) consumes NO₂.
+      dxi=Math.max(dxi,-state.n2*0.49);
+      dxi=Math.min(dxi,state.n4*0.98);
+      state.n4-=dxi; state.n2+=2*dxi;
+      remain-=h;
+    }
+    const r=rates(); state.rf=r.rf; state.rr=r.rr;
+    state.t+=dt;
+    evaluateEquilibrium(dt);
+    sample(false);
+  }
+
+  function evaluateEquilibrium(dt){
+    const c=conc();
+    const scale=Math.max(state.rf,state.rr,1e-8);
+    const net=Math.abs(state.rf-state.rr);
+    const rateClose=net/scale < RATE_EPS;
+    // For N₂O₄ ⇌ 2NO₂, the largest concentration drift is 2|r_f-r_r|.
+    // Using a rate of change instead of per-frame ΔC prevents a fast animation from
+    // being mislabeled as “constant concentration”.
+    const concentrationDriftRate=2*net;
+    const concClose=concentrationDriftRate < CONC_RATE_EPS;
+    const hadTimeToAdjust=(state.t-state.lastPerturbT)>=MIN_ADJUST_TIME;
+    if(rateClose && concClose && hadTimeToAdjust){ state.confirmAccum+=dt; }
+    else { state.confirmAccum=Math.max(0,state.confirmAccum-dt*1.5); }
+    if(!state.equilibrium && state.confirmAccum>=CONFIRM_WINDOW){
+      state.equilibrium=true; state.stableTime=0; state.confirmAccum=CONFIRM_WINDOW; addEvent("Equilibrium"); sample(true);
+    }
+    if(state.equilibrium){ state.stableTime+=dt; }
+    state.prevConc={...c};
+  }
+
+  function sample(force){
+    if(!force && state.t-state.lastSampleT<SAMPLE_EVERY) return;
+    state.lastSampleT=state.t; const c=conc();
+    state.history.push({t:state.t,c2:c.c2,c4:c.c4,rf:state.rf,rr:state.rr});
+    if(state.history.length>2400) state.history.shift();
+  }
+  function addEvent(label){ state.events.push({t:state.t,label}); if(state.events.length>30) state.events.shift(); }
+
+  function loop(now){
+    if(!state.running){ state.raf=0; drawAll(); return; }
+    const realDt=state.lastReal?Math.min(0.05,(now-state.lastReal)/1000):0.016; state.lastReal=now;
+    integrate(realDt*SIM_SPEED); updateUI(); drawAll(); state.raf=requestAnimationFrame(loop);
+  }
+
+  function updateControls(){
+    const can=state.equilibrium;
+    document.querySelectorAll('.disturbance').forEach(b=>{ b.disabled=!can; });
+    E.recordBtn.disabled=!can; E.recordBtn2.disabled=!can;
+    E.add10Btn.disabled=!can; E.add30Btn.disabled=!can; E.add60Btn.disabled=!can;
+    E.clearRecordsBtn.disabled=state.records.length===0;
+  }
+
+  function updateTrendState(c,pTotal){
+    if(state.trendLastT < 0 || state.t-state.trendLastT >= 0.45){
+      if(state.trendRef){
+        const epsC=0.00010, epsP=0.004;
+        const sign=(d,e)=> d>e?1:d<-e?-1:0;
+        state.trends.c2=sign(c.c2-state.trendRef.c2,epsC);
+        state.trends.c4=sign(c.c4-state.trendRef.c4,epsC);
+        state.trends.p=sign(pTotal-state.trendRef.p,epsP);
+      }
+      state.trendRef={c2:c.c2,c4:c.c4,p:pTotal}; state.trendLastT=state.t;
+    }
+    if(state.equilibrium) state.trends={c2:0,c4:0,p:0};
+  }
+  function paintTrend(el,dir){
+    if(!el) return; el.classList.remove('up','down','flat');
+    if(dir>0){el.classList.add('up'); el.textContent='↑ กำลังเพิ่ม';}
+    else if(dir<0){el.classList.add('down'); el.textContent='↓ กำลังลด';}
+    else {el.classList.add('flat'); el.textContent='— คงที่';}
+  }
+
+  function updateDisturbanceStory(c,p,pTot){
+    [E.meterNO2,E.meterN2O4,E.meterPressure].forEach(el=>el&&el.classList.remove('pulse'));
+    if(state.pulse && state.t<=state.pulse.until){
+      if(state.pulse.target==='no2') E.meterNO2.classList.add('pulse');
+      if(state.pulse.target==='n2o4') E.meterN2O4.classList.add('pulse');
+      if(state.pulse.target==='pressure') E.meterPressure.classList.add('pulse');
+    }
+    if(state.equilibrium){
+      E.disturbanceStory.innerHTML=`<b>สมดุลใหม่คงที่แล้ว ✓</b> [NO₂] = ${c.c2.toFixed(4)} M · [N₂O₄] = ${c.c4.toFixed(4)} M · Pรวม = ${pTot.toFixed(3)} atm · ตอนนี้ rᶠ = rʳ`;
+      E.kcNO2.textContent=c.c2.toFixed(4); E.kcN2O4.textContent=c.c4.toFixed(4); E.kpNO2.textContent=p.p2.toFixed(3); E.kpN2O4.textContent=p.p4.toFixed(3);
+    }else{
+      const tr2=state.trends.c2>0?'NO₂ ↑':state.trends.c2<0?'NO₂ ↓':'NO₂ ≈ คงที่';
+      const tr4=state.trends.c4>0?'N₂O₄ ↑':state.trends.c4<0?'N₂O₄ ↓':'N₂O₄ ≈ คงที่';
+      const lead=(state.pulse&&state.pulse.message)?state.pulse.message:'เริ่มจาก 100% N₂O₄';
+      E.disturbanceStory.innerHTML=`<b>${lead}</b><br>กำลังปรับตัว: ${tr4} · ${tr2} → รอจน rᶠ และ rʳ เท่ากันที่สมดุลใหม่`;
+      E.kcNO2.textContent='—'; E.kcN2O4.textContent='—'; E.kpNO2.textContent='—'; E.kpN2O4.textContent='—';
+    }
+  }
+
+  function updateUI(){
+    const c=conc(), p=pressures(), pTot=p.p2+p.p4; updateTrendState(c,pTot);
+    E.timeOut.textContent=state.t.toFixed(1); E.cNO2Out.textContent=c.c2.toFixed(4); E.cN2O4Out.textContent=c.c4.toFixed(4);
+    E.pNO2Out.textContent=p.p2.toFixed(3); E.pN2O4Out.textContent=p.p4.toFixed(3); E.pTotalOut.textContent=pTot.toFixed(3); E.miniT.textContent=`${Math.round(state.T)} K`; E.miniV.textContent=`${state.V.toFixed(2)} L`; E.miniP.textContent=`${pTot.toFixed(2)} atm`; E.miniStable.textContent=`${state.stableTime.toFixed(1)} s`;
+    E.cNO2Big.textContent=c.c2.toFixed(4); E.cN2O4Big.textContent=c.c4.toFixed(4); E.pTotalBig.textContent=pTot.toFixed(3); E.pNO2MiniBig.textContent=p.p2.toFixed(3); E.pN2O4MiniBig.textContent=p.p4.toFixed(3);
+    paintTrend(E.cNO2Trend,state.trends.c2); paintTrend(E.cNO2Trend2,state.trends.c2); paintTrend(E.cN2O4Trend,state.trends.c4); paintTrend(E.cN2O4Trend2,state.trends.c4); paintTrend(E.pTotalTrend,state.trends.p); paintTrend(E.pTotalTrend2,state.trends.p);
+    const reverseView=state.station===2 && state.equationView==="exo";
+    const shownRf=reverseView?state.rr:state.rf, shownRr=reverseView?state.rf:state.rr;
+    E.rfText.textContent=shownRf.toFixed(5); E.rrText.textContent=shownRr.toFixed(5);
+    const rmax=Math.max(shownRf,shownRr,0.0001); E.rfBar.style.width=`${100*shownRf/rmax}%`; E.rrBar.style.width=`${100*shownRr/rmax}%`;
+    E.stableText.textContent=`${state.stableTime.toFixed(1)} / ${state.observeTarget} s stable`; E.observeTargetText.textContent=`Observation target: ${state.observeTarget} s`;
+    E.observeProgress.style.width=`${100*clamp(state.stableTime/state.observeTarget,0,1)}%`;
+    if(state.equilibrium){
+      E.statusBox.className="status-box good"; E.statusText.textContent="Dynamic equilibrium"; E.statusTH.textContent="สมดุลไดนามิก · ความเข้มข้นคงที่";
+      E.equalBox.className="status-box good"; E.equalText.textContent="rᶠ = rʳ"; E.eqOut.textContent="YES ✓"; E.modeText.textContent=state.running?"Equilibrium maintained · สมดุลคงอยู่":"Equilibrium paused · หยุดภาพที่สมดุล";
+    }else{
+      E.statusBox.className="status-box warn"; E.statusText.textContent="System adjusting"; E.statusTH.textContent="ระบบกำลังปรับเข้าสู่สมดุล";
+      E.equalBox.className="status-box"; E.equalText.textContent="rᶠ ≠ rʳ"; E.eqOut.textContent="No";
+    }
+    if(state.equilibrium){
+      let kcv=kcAt(state.T), kpv=kpAt(state.T);
+      if(reverseView){ kcv=1/kcv; kpv=1/kpv; }
+      E.kcValue.textContent=kcv<0.01?kcv.toExponential(3):kcv.toFixed(4);
+      E.kpValue.textContent=kpv<0.01?kpv.toExponential(3):kpv.toFixed(4);
+      E.kReadyText.textContent=reverseView?"equilibrium · K ของสมการที่แสดง":"equilibrium confirmed";
+    }else{
+      E.kcValue.textContent="waiting…"; E.kpValue.textContent="waiting…"; E.kReadyText.textContent="รอสมดุล";
+    }
+    if(state.station===1) E.lockValue.textContent=`${Math.round(state.T)} K 🔒`; else E.lockValue.textContent=`${state.V.toFixed(2)} L 🔒`;
+    updateDisturbanceStory(c,p,pTot); updateControls(); updateStationUI();
+  }
+
+  function recordEquilibrium(){
+    if(!state.equilibrium) return;
+    const c=conc(), p=pressures();
+    state.records.push({station:state.station,dist:state.lastDisturbance,T:state.T,V:state.V,c2:c.c2,c4:c.c4,p2:p.p2,p4:p.p4,stable:state.stableTime});
+    renderRecords();
+  }
+  function renderRecords(){
+    E.countLabel.textContent=`${state.records.length} record${state.records.length===1?'':'s'}`;
+    if(!state.records.length){ E.recordBody.innerHTML='<tr><td colspan="10" class="empty">ยังไม่มีข้อมูลสมดุลที่บันทึก / No equilibrium records yet</td></tr>'; }
+    else{
+      E.recordBody.innerHTML=state.records.map((r,i)=>`<tr><td><span class="row-marker">${i+1}</span></td><td>Station ${r.station}</td><td>${r.dist}</td><td>${r.T.toFixed(1)}</td><td>${r.V.toFixed(2)}</td><td>${r.c2.toFixed(5)}</td><td>${r.c4.toFixed(5)}</td><td>${r.p2.toFixed(4)}</td><td>${r.p4.toFixed(4)}</td><td>${r.stable.toFixed(1)}</td></tr>`).join('');
+    }
+    updateControls();
+  }
+
+  // Canvas utilities
+  function fitCanvas(canvas){ const dpr=Math.min(2,window.devicePixelRatio||1); const rect=canvas.getBoundingClientRect(); const w=Math.max(2,Math.round(rect.width*dpr)),h=Math.max(2,Math.round(rect.height*dpr)); if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;} const ctx=canvas.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0); return {ctx,w:rect.width,h:rect.height}; }
+
+  const particles=Array.from({length:72},(_,i)=>({x:(i*37%97)/100,y:(i*53%89)/100,vx:0.018+((i%7)-3)*0.003,vy:0.014+((i%5)-2)*0.003}));
+  function drawChamber(){
+    const {ctx,w,h}=fitCanvas(E.chamber); ctx.clearRect(0,0,w,h);
+    const c=conc(); const frac2=clamp(c.c2/(c.c2+c.c4+1e-9),0,1); const brownAlpha=clamp(0.03+(c.c2/0.090)*0.48,0.03,0.66);
+    const top = state.station===1 ? 42 + (state.V-1.0)/(V_MAX-V_MIN)*(-85) : 42;
+    const vesselTop=clamp(top,18,112), left=45,right=w-35,bottom=h-34;
+    // bath for station 2
+    if(state.station===2){ const bathY=bottom-85; ctx.fillStyle=state.T<285?'rgba(105,165,205,.12)':state.T>310?'rgba(218,140,80,.13)':'rgba(120,170,150,.10)'; ctx.fillRect(18,bathY,w-36,h-bathY-8); ctx.fillStyle='#607580'; ctx.font='12px K2D, sans-serif'; ctx.fillText(state.T<285?'COLD BATH / อ่างเย็น':state.T>310?'HOT BATH / อ่างร้อน':'ROOM BATH / อุณหภูมิห้อง',28,h-16); }
+    // gas tint
+    ctx.fillStyle=`rgba(143,76,38,${brownAlpha})`; ctx.fillRect(left,vesselTop,right-left,bottom-vesselTop);
+    // vessel
+    ctx.strokeStyle='#526b78'; ctx.lineWidth=2; ctx.strokeRect(left,vesselTop,right-left,bottom-vesselTop);
+    // piston / lid
+    ctx.fillStyle='#d6dee3'; ctx.fillRect(left-6,vesselTop-11,right-left+12,12); ctx.strokeStyle='#526b78'; ctx.strokeRect(left-6,vesselTop-11,right-left+12,12);
+    if(state.station===1){ ctx.fillStyle='#7a8b95'; ctx.fillRect(w/2-9,4,18,Math.max(8,vesselTop-15)); ctx.fillStyle='#18354a'; ctx.font='700 11px K2D, sans-serif'; ctx.fillText('PRESSURE CONTROL · USE BUTTONS BELOW',left+8,vesselTop-18); }
+    else { ctx.fillStyle='#18354a'; ctx.font='700 11px K2D, sans-serif'; ctx.fillText('RIGID VESSEL · V LOCKED',left+8,vesselTop-18); }
+    // particle motion is visual only; abundance follows composition
+    const now=state.t; const usableH=bottom-vesselTop-16, usableW=right-left-16;
+    particles.forEach((p,i)=>{
+      const px=left+8+((p.x+now*p.vx)%1)*usableW; const py=vesselTop+8+((p.y+now*p.vy)%1)*usableH;
+      const isNO2=((i*0.618033+frac2*1.7)%1)<frac2;
+      if(isNO2){
+        ctx.fillStyle='#9e5430'; ctx.beginPath();ctx.arc(px,py,4.2,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle='#c9784b';ctx.beginPath();ctx.arc(px+5.5,py,2.4,0,Math.PI*2);ctx.fill();
+      }else{
+        ctx.fillStyle='#8e9aa3';ctx.beginPath();ctx.arc(px-3,py,3.6,0,Math.PI*2);ctx.arc(px+3,py,3.6,0,Math.PI*2);ctx.fill();
+      }
+    });
+    // arrows showing continuing reactions
+    ctx.fillStyle='rgba(255,255,255,.88)'; roundRect(ctx,left+12,bottom-48,Math.min(300,right-left-24),34,9,true,false); ctx.fillStyle='#294454';ctx.font='12px K2D, sans-serif';ctx.fillText('N₂O₄ → 2NO₂     AND     2NO₂ → N₂O₄',left+23,bottom-27);
+    // equilibrium pulse icon
+    if(state.equilibrium){ ctx.fillStyle='#2f7d5e';ctx.beginPath();ctx.arc(right-18,vesselTop+18,7,0,Math.PI*2);ctx.fill(); }
+  }
+  function roundRect(ctx,x,y,w,h,r,fill,stroke){ if(w<2*r)r=w/2;if(h<2*r)r=h/2;ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();if(fill)ctx.fill();if(stroke)ctx.stroke(); }
+
+  function drawGraph(canvas,type){
+    const {ctx,w,h}=fitCanvas(canvas); ctx.clearRect(0,0,w,h); const pad={l:48,r:14,t:15,b:32}; const pw=w-pad.l-pad.r,ph=h-pad.t-pad.b;
+    ctx.fillStyle='#fbfdfe';ctx.fillRect(pad.l,pad.t,pw,ph);ctx.strokeStyle='#d8e2e7';ctx.lineWidth=1;
+    for(let i=0;i<=4;i++){const y=pad.t+ph*i/4;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();}
+    const hist=state.history; const isZoom=(canvas===E.zoomGraph); let tMax=Math.max(30,state.t+3), tMin=Math.max(0,tMax-120);
+    if(isZoom && type==='rate' && state.zoomWindow==='start'){
+      tMin=0; tMax=Math.max(8,Math.min(18,state.t>0?state.t+1:8));
+    }
+    const visible=hist.filter(d=>d.t>=tMin && d.t<=tMax);
+    let yMax;
+    if(type==='conc'){
+      yMax=0.1;
+      visible.forEach(d=>{yMax=Math.max(yMax,d.c2,d.c4)});
+      yMax*=1.15;
+    }else{
+      yMax=0;
+      visible.forEach(d=>{yMax=Math.max(yMax,d.rf,d.rr)});
+      yMax=Math.max(0.0005,yMax*1.18);
+    }
+    const X=t=>pad.l+(t-tMin)/(tMax-tMin)*pw, Y=v=>pad.t+ph-(v/yMax)*ph;
+    ctx.fillStyle='#6d7b86';ctx.font='10px K2D, sans-serif';ctx.fillText(type==='conc'?'M':'M s⁻¹',8,15);ctx.fillText('time / เวลา (s)',w-92,h-8);
+    for(let i=0;i<=4;i++){const val=yMax*(4-i)/4;ctx.fillText(val.toFixed(type==='conc'?3:3),5,pad.t+ph*i/4+3);}
+    // event markers: show exactly where the instantaneous disturbance happened.
+    state.events.filter(e=>e.t>=tMin&&e.t<=tMax).forEach(ev=>{
+      const x=X(ev.t);ctx.strokeStyle='rgba(169,111,22,.58)';ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,pad.t+ph);ctx.stroke();ctx.setLineDash([]);
+      if(ev.label!=="Start" && ev.label!=="Equilibrium") {
+        ctx.save();ctx.fillStyle='#8a5a16';ctx.font='9px K2D, sans-serif';
+        const lab=ev.label.length>17?ev.label.slice(0,17)+'…':ev.label;
+        const tx=Math.min(Math.max(pad.l+2,x+3),w-pad.r-86);ctx.fillText(lab,tx,pad.t+11);ctx.restore();
+      }
+    });
+    function line(key,color){ if(visible.length<2)return;ctx.strokeStyle=color;ctx.lineWidth=2.2;ctx.beginPath();visible.forEach((d,i)=>{const x=X(d.t),y=Y(d[key]);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke(); }
+    if(type==='conc'){ line('c2','#9e5430'); line('c4','#657985'); }
+    else { const reverse=state.station===2 && state.equationView==='exo'; if(reverse){ line('rr','#267a78'); line('rf','#9e5430'); } else { line('rf','#267a78'); line('rr','#9e5430'); } }
+
+    // Automatic post-disturbance magnifier. The real N₂O₄/NO₂ system can
+    // relax by only a small absolute amount after adding N₂O₄, so this inset
+    // reveals the correct spike → gradual return without altering the chemistry.
+    if(type==='conc' && (state.graphFocus.target==='n2o4' || state.graphFocus.target==='no2')){
+      const key=state.graphFocus.target==='n2o4'?'c4':'c2';
+      const species=state.graphFocus.target==='n2o4'?'[N₂O₄]':'[NO₂]';
+      const start=state.graphFocus.startT;
+      const z=hist.filter(d=>d.t>=start-0.001);
+      if(z.length>=2 && state.t-start<=35){
+        const iw=Math.min(220,pw*0.46), ih=Math.min(112,ph*0.48);
+        const ix=w-pad.r-iw-6, iy=pad.t+6;
+        let zmin=Infinity,zmax=-Infinity; z.forEach(d=>{zmin=Math.min(zmin,d[key]);zmax=Math.max(zmax,d[key]);});
+        const span=Math.max(0.00035,zmax-zmin); zmin=Math.max(0,zmin-span*0.18); zmax+=span*0.18;
+        ctx.save();
+        ctx.fillStyle='rgba(255,255,255,.96)'; ctx.strokeStyle='#9fb3bf'; ctx.lineWidth=1;
+        roundRect(ctx,ix,iy,iw,ih,9,true,true);
+        ctx.fillStyle='#314c5d';ctx.font='700 9px K2D, sans-serif';ctx.fillText(`ZOOM ${species} · spike → new equilibrium`,ix+8,iy+14);
+        ctx.font='8px K2D, sans-serif';ctx.fillStyle='#6d7b86';ctx.fillText(`${zmax.toFixed(4)} M`,ix+6,iy+28);ctx.fillText(`${zmin.toFixed(4)} M`,ix+6,iy+ih-8);
+        const zx0=ix+48, zy0=iy+24, zpw=iw-56, zph=ih-34;
+        const zt0=start, zt1=Math.max(start+1,state.t);
+        const ZX=t=>zx0+(t-zt0)/(zt1-zt0)*zpw, ZY=v=>zy0+zph-(v-zmin)/(zmax-zmin)*zph;
+        ctx.strokeStyle='#dbe4e9';ctx.beginPath();ctx.moveTo(zx0,zy0+zph);ctx.lineTo(zx0+zpw,zy0+zph);ctx.stroke();
+        ctx.strokeStyle=key==='c4'?'#657985':'#9e5430';ctx.lineWidth=2.2;ctx.beginPath();
+        z.forEach((d,i)=>{const x=ZX(d.t),y=ZY(d[key]);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.stroke();
+        ctx.strokeStyle='rgba(169,111,22,.7)';ctx.setLineDash([3,3]);const ex=ZX(start);ctx.beginPath();ctx.moveTo(ex,zy0);ctx.lineTo(ex,zy0+zph);ctx.stroke();ctx.setLineDash([]);
+        ctx.fillStyle='#8a5a16';ctx.font='8px K2D, sans-serif';ctx.fillText('เติม/รบกวน',Math.min(ex+3,zx0+zpw-44),zy0+9);
+        ctx.restore();
+      }
+    }
+
+    if(isZoom && type==='rate' && state.zoomWindow==='start' && visible.length>=3){
+      const first=visible[0]; const probe=visible.find(d=>d.t>=Math.min(6,tMax*0.45)) || visible[Math.min(visible.length-1,Math.floor(visible.length*0.45))];
+      const reverse=state.station===2 && state.equationView==='exo';
+      const f0=reverse?first.rr:first.rf, f1=reverse?probe.rr:probe.rf;
+      const r0=reverse?first.rf:first.rr, r1=reverse?probe.rf:probe.rr;
+      const arrow=(a,b)=>b<a?'↓':b>a?'↑':'—';
+      ctx.save();
+      ctx.fillStyle='rgba(255,255,255,.94)';ctx.strokeStyle='#a9bac4';ctx.lineWidth=1;roundRect(ctx,pad.l+12,pad.t+10,Math.min(315,pw*.42),66,10,true,true);
+      ctx.fillStyle='#4b235f';ctx.font='700 11px K2D, sans-serif';ctx.fillText('ช่วงต้น (ยังไม่สมดุล): ดูอัตราตามสมการที่แสดง',pad.l+23,pad.t+28);
+      ctx.font='10px K2D, sans-serif';ctx.fillStyle='#7650a8';ctx.fillText(`Forward ${f0.toFixed(5)} → ${f1.toFixed(5)}  ${arrow(f0,f1)}`,pad.l+23,pad.t+46);
+      ctx.fillStyle='#9d5732';ctx.fillText(`Reverse ${r0.toFixed(5)} → ${r1.toFixed(5)}  ${arrow(r0,r1)}`,pad.l+23,pad.t+62);
+      ctx.restore();
+    }
+
+    ctx.strokeStyle='#7d8d96';ctx.lineWidth=1.1;ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,pad.t+ph);ctx.lineTo(w-pad.r,pad.t+ph);ctx.stroke();
+  }
+  function updateZoomInsight(){
+    if(!E.zoomInsight) return;
+    const show=state.zoomType==='rate'; E.zoomInsight.hidden=!show; E.zoomRange.hidden=!show;
+    if(!show) return;
+    E.zoomStartBtn.classList.toggle('active',state.zoomWindow==='start'); E.zoomAllBtn.classList.toggle('active',state.zoomWindow==='all');
+    const h=state.history;
+    if(h.length<2){ E.zoomForwardNumbers.textContent='กำลังเก็บข้อมูล…'; E.zoomReverseNumbers.textContent='กำลังเก็บข้อมูล…'; return; }
+    const first=h[0]; const probe=h.find(d=>d.t>=Math.min(6,Math.max(2,state.t*0.35))) || h[Math.min(h.length-1,Math.max(1,Math.floor(h.length*0.35)))];
+    const reverseView=state.station===2 && state.equationView==='exo';
+    const f0=reverseView?first.rr:first.rf, f1=reverseView?probe.rr:probe.rf;
+    const r0=reverseView?first.rf:first.rr, r1=reverseView?probe.rf:probe.rr;
+    const arrow=(a,b)=>b<a?'↓':b>a?'↑':'—';
+    E.zoomForwardNumbers.textContent=`${f0.toFixed(5)} → ${f1.toFixed(5)} M s⁻¹ ${arrow(f0,f1)}`;
+    E.zoomReverseNumbers.textContent=`${r0.toFixed(5)} → ${r1.toFixed(5)} M s⁻¹ ${arrow(r0,r1)}`;
+    E.zoomForwardExplain.textContent=f1<f0?'อัตราไปข้างหน้าค่อย ๆ ลดลง':f1>f0?'อัตราไปข้างหน้าค่อย ๆ เพิ่มขึ้น':'อัตราไปข้างหน้าเกือบคงที่';
+    E.zoomReverseExplain.textContent=r1<r0?'อัตราย้อนกลับค่อย ๆ ลดลง':r1>r0?'อัตราย้อนกลับค่อย ๆ เพิ่มขึ้น':'อัตราย้อนกลับเกือบคงที่';
+    if(E.zoomForwardIcon) E.zoomForwardIcon.style.transform=reverseView?'scaleY(-1)':'';
+    if(E.zoomReverseIcon) E.zoomReverseIcon.style.transform=reverseView?'scaleY(-1)':'';
+    if(state.zoomWindow==='start'){
+      E.zoomTip.innerHTML=`<b>ช่วงต้นยังไม่ใช่สมดุล:</b> Forward และ Reverse ยังไม่ต้องเท่ากัน ให้ดูว่าทั้งสองอัตราค่อย ๆ เปลี่ยนและเข้าใกล้กันตามสมการที่กำลังแสดง`;
+    }else{
+      E.zoomTip.innerHTML=state.equilibrium?'<b>ที่สมดุล:</b> Forward rate = Reverse rate และความเข้มข้นคงที่ แม้ปฏิกิริยาทั้งสองทิศยังเกิดอยู่':'<b>กำลังเข้าสู่สมดุล:</b> Forward และ Reverse ค่อย ๆ เข้าใกล้กัน';
+    }
+  }
+  function drawAll(){ drawChamber(); drawGraph(E.concGraph,'conc'); drawGraph(E.rateGraph,'rate'); if(state.zoomType && E.zoomGraph){ updateZoomInsight(); drawGraph(E.zoomGraph,state.zoomType); } }
+  function openZoom(type){ state.zoomType=type; state.zoomWindow=type==='rate'?'start':'all'; E.zoomTitle.textContent=type==='conc'?"Concentration vs Time · ความเข้มข้นกับเวลา":"Forward & Reverse Rates · อัตราไปข้างหน้าและย้อนกลับ"; E.zoomOverlay.hidden=false; updateZoomInsight(); requestAnimationFrame(drawAll); }
+  function closeZoom(){ state.zoomType=""; E.zoomOverlay.hidden=true; }
+  function setZoomWindow(mode){ state.zoomWindow=mode; updateZoomInsight(); drawAll(); }
+
+  // Pressure is controlled by the large Compress / Expand buttons in the integrated control deck.
+  E.runBtn.addEventListener('click',()=>setRunning(true)); E.pauseBtn.addEventListener('click',()=>setRunning(false));
+  E.resetBtn.addEventListener('click',()=>{ reset(state.station); stationMemory[state.station]=snapshotStation(); });
+  E.tab1.addEventListener('click',()=>switchStation(1)); E.tab2.addEventListener('click',()=>switchStation(2));
+  document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',()=>doAction(b.dataset.action)));
+  document.querySelectorAll('[data-temp]').forEach(b=>b.addEventListener('click',()=>changeTemperature(Number(b.dataset.temp))));
+  E.viewEndo.addEventListener('click',()=>{ if(state.station===2){state.equationView='endo';updateUI();drawAll();} });
+  E.viewExo.addEventListener('click',()=>{ if(state.station===2){state.equationView='exo';updateUI();drawAll();} });
+  E.zoomConcBtn.addEventListener('click',()=>openZoom('conc')); E.zoomRateBtn.addEventListener('click',()=>openZoom('rate')); E.zoomClose.addEventListener('click',closeZoom); E.zoomStartBtn.addEventListener('click',()=>setZoomWindow('start')); E.zoomAllBtn.addEventListener('click',()=>setZoomWindow('all'));
+  E.zoomOverlay.addEventListener('click',e=>{if(e.target===E.zoomOverlay)closeZoom();});
+  E.add10Btn.addEventListener('click',()=>{state.observeTarget+=10;updateUI()}); E.add30Btn.addEventListener('click',()=>{state.observeTarget+=30;updateUI()}); E.add60Btn.addEventListener('click',()=>{state.observeTarget+=60;updateUI()});
+  E.recordBtn.addEventListener('click',recordEquilibrium); E.recordBtn2.addEventListener('click',recordEquilibrium);
+  E.clearRecordsBtn.addEventListener('click',()=>{state.records=[];renderRecords()});
+  window.addEventListener('resize',drawAll);
+  document.addEventListener('visibilitychange',()=>{ if(document.hidden && state.running) state.lastReal=performance.now(); });
+
+  // Initialize rates before first paint
+  const r0=rates();state.rf=r0.rf;state.rr=r0.rr;sample(true);renderRecords();reset(1);stationMemory[1]=snapshotStation();
+})();</script></main>
+<button id="notesFab" class="notes-fab" type="button">📝 Notes / สมุดโน้ต</button>
+<div id="notesShell" class="notes-shell" aria-hidden="true">
+  <div class="notes-dock">
+    <div class="notes-top">
+      <div>
+        <div class="notes-title">📝 Working Notes / สมุดโน้ต</div>
+        <div class="equation-note">เขียนคำนวณ วาดกราฟ หรือส่งกราฟจาก Simulation เข้ามาไว้ในหน้าเดียวกัน</div>
+      </div>
+      <div class="notes-toolbar">
+        <button class="btn note-tool active" data-note-tool="pen" type="button">✏ Pen</button>
+        <button class="btn note-tool" data-note-tool="eraser" type="button">⌫ Eraser</button>
+        <button class="btn note-tool" data-note-tool="select" type="button">☝ Select</button>
+        <button class="btn" id="undoNote" type="button">↶ Undo</button>
+        <button class="btn" id="clearInk" type="button">Clear Ink</button>
+        <button class="btn" id="deleteNoteObject" type="button">Delete Object</button>
+        <button class="btn" id="printNotes" type="button">🖨 Print</button>
+        <button class="btn" id="closeNotes" type="button">✕ Close</button>
+        <span id="notesSelection" class="notes-selection">No object selected</span>
+      </div>
+    </div>
+    <div class="note-sheet" id="noteSheet">
+      <div id="noteObjectLayer" class="note-object-layer"></div>
+      <canvas id="noteInk" class="note-ink"></canvas>
+    </div>
+    <div class="notes-foot">
+      <div class="page-controls">
+        <button class="btn" id="prevNotePage" type="button">◀</button>
+        <span class="page-label" id="notePageLabel">Page 1 / 1</span>
+        <button class="btn" id="nextNotePage" type="button">▶</button>
+        <button class="btn" id="addNotePage" type="button">＋ Add page</button>
+      </div>
+      <span class="equation-note">Apple Pencil / touch / mouse · สมุดโน้ตไม่กระทบค่าของ Simulation</span>
+    </div>
+  </div>
+</div>
+<div class="note-toast" id="noteToast"></div>
+
+
+<script>
+(() => {
+  "use strict";
+  const $n = id => document.getElementById(id);
+  const notes = {
+    tool:"pen", page:0,
+    pages:[{strokes:[],objects:[],history:[]}],
+    selected:null, activeStroke:null
+  };
+
+  const shell=$n("notesShell"), fab=$n("notesFab"), sheet=$n("noteSheet"),
+        ink=$n("noteInk"), layer=$n("noteObjectLayer"), ctx=ink.getContext("2d");
+
+  function toastNote(msg){
+    const el=$n("noteToast"); el.textContent=msg; el.classList.add("show");
+    clearTimeout(toastNote.t); toastNote.t=setTimeout(()=>el.classList.remove("show"),1400);
+  }
+  function page(){ return notes.pages[notes.page]; }
+  function openNotes(){
+    shell.classList.add("show"); shell.setAttribute("aria-hidden","false"); fab.classList.add("hidden");
+    requestAnimationFrame(()=>{resizeInk();renderObjects();redrawInk();});
+  }
+  function closeNotes(){
+    shell.classList.remove("show"); shell.setAttribute("aria-hidden","true"); fab.classList.remove("hidden");
+  }
+  fab.addEventListener("click",openNotes); $n("closeNotes").addEventListener("click",closeNotes);
+
+  function setTool(tool){
+    notes.tool=tool;
+    document.querySelectorAll("[data-note-tool]").forEach(b=>b.classList.toggle("active",b.dataset.noteTool===tool));
+    ink.style.pointerEvents=tool==="select"?"none":"auto";
+    layer.style.pointerEvents=tool==="select"?"auto":"none";
+    renderObjects();
+  }
+  document.querySelectorAll("[data-note-tool]").forEach(b=>b.addEventListener("click",()=>setTool(b.dataset.noteTool)));
+
+  function resizeInk(){
+    const r=sheet.getBoundingClientRect(), dpr=Math.max(1,window.devicePixelRatio||1);
+    ink.width=Math.round(r.width*dpr); ink.height=Math.round(r.height*dpr);
+    ink.style.width=r.width+"px"; ink.style.height=r.height+"px";
+    ctx.setTransform(dpr,0,0,dpr,0,0); redrawInk();
+  }
+  new ResizeObserver(resizeInk).observe(sheet);
+
+  function point(ev){
+    const r=ink.getBoundingClientRect();
+    return {x:(ev.clientX-r.left)/r.width,y:(ev.clientY-r.top)/r.height};
+  }
+  function dseg(p,a,b){
+    const vx=b.x-a.x,vy=b.y-a.y,wx=p.x-a.x,wy=p.y-a.y,c1=vx*wx+vy*wy;
+    if(c1<=0)return Math.hypot(p.x-a.x,p.y-a.y);
+    const c2=vx*vx+vy*vy;if(c2<=c1)return Math.hypot(p.x-b.x,p.y-b.y);
+    const t=c1/c2;return Math.hypot(p.x-(a.x+t*vx),p.y-(a.y+t*vy));
+  }
+  function eraseAt(p){
+    const pg=page();
+    for(let i=pg.strokes.length-1;i>=0;i--){
+      const st=pg.strokes[i]; let hit=false;
+      for(let j=1;j<st.points.length;j++) if(dseg(p,st.points[j-1],st.points[j])<.035){hit=true;break}
+      if(hit){pg.history.push({type:"erase",stroke:st,index:i});pg.strokes.splice(i,1);redrawInk();break}
+    }
+  }
+  ink.addEventListener("pointerdown",ev=>{
+    if(notes.tool==="select")return; ev.preventDefault(); ink.setPointerCapture?.(ev.pointerId);
+    const p=point(ev); if(notes.tool==="eraser"){eraseAt(p);return}
+    notes.activeStroke={points:[p],width:2.25,color:"#161219"}; redrawInk();
+  },{passive:false});
+  ink.addEventListener("pointermove",ev=>{
+    if(!(ev.buttons||ev.pressure>0))return; const p=point(ev);
+    if(notes.tool==="eraser"){eraseAt(p);return}
+    if(notes.activeStroke){notes.activeStroke.points.push(p);redrawInk();}
+  });
+  function endInk(){
+    if(!notes.activeStroke)return;
+    page().strokes.push(notes.activeStroke); page().history.push({type:"draw"});
+    notes.activeStroke=null; redrawInk();
+  }
+  ink.addEventListener("pointerup",endInk); ink.addEventListener("pointercancel",endInk);
+  ink.addEventListener("contextmenu",e=>e.preventDefault());
+
+  function drawStroke(st,w,h){
+    if(!st.points.length)return; ctx.beginPath();
+    st.points.forEach((p,i)=>{const x=p.x*w,y=p.y*h;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});
+    ctx.strokeStyle=st.color;ctx.lineWidth=st.width;ctx.lineCap="round";ctx.lineJoin="round";ctx.stroke();
+  }
+  function redrawInk(){
+    const r=ink.getBoundingClientRect();ctx.clearRect(0,0,r.width,r.height);
+    page().strokes.forEach(s=>drawStroke(s,r.width,r.height));
+    if(notes.activeStroke)drawStroke(notes.activeStroke,r.width,r.height);
+  }
+
+  function canvasSnapshot(source){
+    const snap=document.createElement("canvas");
+    const sw=source.width, sh=source.height;
+    snap.width=sw; snap.height=sh;
+    snap.getContext("2d").drawImage(source,0,0);
+    return snap.toDataURL("image/png");
+  }
+  function addGraph(kind){
+    const source=kind==="conc"?$n("concGraph"):$n("rateGraph");
+    const pg=page(),idx=pg.objects.length;
+    const obj={
+      id:"g"+Date.now()+Math.random(),kind,
+      img:canvasSnapshot(source),
+      x:idx%2===0?.04:.53,y:.05+Math.floor(idx/2)*.42,w:.43,h:.34
+    };
+    pg.objects.push(obj);pg.history.push({type:"addObject",id:obj.id});notes.selected=null;
+    openNotes();renderObjects();toastNote(kind==="conc"?"Concentration graph added":"Rate graph added");
+  }
+  $n("noteConcBtn").addEventListener("click",()=>addGraph("conc"));
+  $n("noteRateBtn").addEventListener("click",()=>addGraph("rate"));
+
+  function renderObjects(){
+    layer.innerHTML="";
+    const pg=page(),selected=pg.objects.find(o=>o.id===notes.selected);
+    $n("notesSelection").textContent=selected?(selected.kind==="conc"?"Selected: Concentration graph":"Selected: Rate graph"):"No object selected";
+    pg.objects.forEach(obj=>{
+      const el=document.createElement("div");el.className="note-obj"+(notes.selected===obj.id?" selected":"");el.dataset.id=obj.id;
+      el.style.left=obj.x*100+"%";el.style.top=obj.y*100+"%";el.style.width=obj.w*100+"%";el.style.height=obj.h*100+"%";
+      const lab=document.createElement("div");lab.className="obj-label";lab.textContent=obj.kind==="conc"?"Concentration":"Rates";el.appendChild(lab);
+      const img=document.createElement("img");img.src=obj.img;img.alt=lab.textContent+" graph";img.style.width="100%";img.style.height="100%";img.style.objectFit="contain";el.appendChild(img);
+      const handle=document.createElement("div");handle.className="note-resize";el.appendChild(handle);
+      if(notes.tool==="select"){
+        el.addEventListener("click",()=>{notes.selected=obj.id;renderObjects()});
+        el.addEventListener("pointerdown",ev=>{if(ev.target.closest(".note-resize"))return;dragObj(ev,obj)});
+        handle.addEventListener("pointerdown",ev=>resizeObj(ev,obj));
+      }
+      layer.appendChild(el);
+    });
+  }
+  function dragObj(ev,obj){
+    ev.preventDefault();notes.selected=obj.id;
+    const r=sheet.getBoundingClientRect(),s={x:ev.clientX,y:ev.clientY,ox:obj.x,oy:obj.y};
+    function move(e){obj.x=Math.max(0,Math.min(1-obj.w,s.ox+(e.clientX-s.x)/r.width));obj.y=Math.max(0,Math.min(1-obj.h,s.oy+(e.clientY-s.y)/r.height));renderObjects()}
+    function up(){document.removeEventListener("pointermove",move);document.removeEventListener("pointerup",up);page().history.push({type:"move",id:obj.id,from:{x:s.ox,y:s.oy}})}
+    document.addEventListener("pointermove",move,{passive:false});document.addEventListener("pointerup",up,{once:true});
+  }
+  function resizeObj(ev,obj){
+    ev.preventDefault();ev.stopPropagation();notes.selected=obj.id;
+    const r=sheet.getBoundingClientRect(),ratio=obj.w/obj.h,s={x:ev.clientX,w:obj.w,h:obj.h};
+    function move(e){let nw=Math.max(.22,Math.min(.94-obj.x,s.w+(e.clientX-s.x)/r.width));let nh=nw/ratio;if(obj.y+nh>.96){nh=.96-obj.y;nw=nh*ratio}obj.w=nw;obj.h=nh;renderObjects()}
+    function up(){document.removeEventListener("pointermove",move);document.removeEventListener("pointerup",up);page().history.push({type:"resize",id:obj.id,from:{w:s.w,h:s.h}})}
+    document.addEventListener("pointermove",move,{passive:false});document.addEventListener("pointerup",up,{once:true});
+  }
+
+  $n("deleteNoteObject").addEventListener("click",()=>{
+    if(!notes.selected){toastNote("Select a graph first");return}
+    const pg=page(),i=pg.objects.findIndex(o=>o.id===notes.selected);
+    if(i>=0){const obj=pg.objects[i];pg.history.push({type:"delete",obj,index:i});pg.objects.splice(i,1);notes.selected=null;renderObjects();}
+  });
+  $n("undoNote").addEventListener("click",()=>{
+    const pg=page(),a=pg.history.pop();if(!a)return;
+    if(a.type==="draw")pg.strokes.pop();
+    else if(a.type==="erase")pg.strokes.splice(a.index,0,a.stroke);
+    else if(a.type==="addObject")pg.objects=pg.objects.filter(o=>o.id!==a.id);
+    else if(a.type==="delete")pg.objects.splice(a.index,0,a.obj);
+    else if(a.type==="move"){const o=pg.objects.find(x=>x.id===a.id);if(o){o.x=a.from.x;o.y=a.from.y}}
+    else if(a.type==="resize"){const o=pg.objects.find(x=>x.id===a.id);if(o){o.w=a.from.w;o.h=a.from.h}}
+    else if(a.type==="clearInk")pg.strokes=a.strokes;
+    notes.selected=null;redrawInk();renderObjects();
+  });
+  $n("clearInk").addEventListener("click",()=>{
+    const pg=page();if(!pg.strokes.length)return;
+    pg.history.push({type:"clearInk",strokes:JSON.parse(JSON.stringify(pg.strokes))});pg.strokes=[];redrawInk();
+  });
+
+  function updatePage(){
+    notes.selected=null;$n("notePageLabel").textContent=`Page ${notes.page+1} / ${notes.pages.length}`;
+    $n("prevNotePage").disabled=notes.page===0;$n("nextNotePage").disabled=notes.page===notes.pages.length-1;
+    renderObjects();redrawInk();
+  }
+  $n("addNotePage").addEventListener("click",()=>{notes.pages.push({strokes:[],objects:[],history:[]});notes.page=notes.pages.length-1;updatePage()});
+  $n("prevNotePage").addEventListener("click",()=>{if(notes.page>0){notes.page--;updatePage()}});
+  $n("nextNotePage").addEventListener("click",()=>{if(notes.page<notes.pages.length-1){notes.page++;updatePage()}});
+
+  $n("printNotes").addEventListener("click",()=>{
+    document.body.classList.add("notes-printing");window.print();setTimeout(()=>document.body.classList.remove("notes-printing"),250);
+  });
+  window.addEventListener("resize",()=>{if(shell.classList.contains("show"))resizeInk();});
+  setTool("pen");updatePage();
+
+  // Simple browser-session persistence for the notebook itself.
+  const SAVE_KEY="chem-equilibrium-v24-notes";
+  function saveNotes(){
+    try{
+      localStorage.setItem(SAVE_KEY,JSON.stringify({page:notes.page,pages:notes.pages.map(p=>({strokes:p.strokes,objects:p.objects}))}));
+    }catch{}
+  }
+  function loadNotes(){
+    try{
+      const s=JSON.parse(localStorage.getItem(SAVE_KEY)||"null");
+      if(s&&Array.isArray(s.pages)&&s.pages.length){
+        notes.pages=s.pages.map(p=>({strokes:Array.isArray(p.strokes)?p.strokes:[],objects:Array.isArray(p.objects)?p.objects:[],history:[]}));
+        notes.page=Math.max(0,Math.min(notes.pages.length-1,Number(s.page)||0));updatePage();
+      }
+    }catch{}
+  }
+  loadNotes();
+  setInterval(saveNotes,1800);
+  window.addEventListener("beforeunload",saveNotes);
+})();
+</script>
+
+</body></html>
