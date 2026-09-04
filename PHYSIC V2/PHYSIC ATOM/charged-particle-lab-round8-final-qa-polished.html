@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Charged Particle Lab · Round 8 · Final QA</title>
+<style>
+:root{
+  --ink:#111827;--muted:#667085;--line:#d6dbe3;--paper:#fff;--page:#f5f6f8;
+  --navy:#22334d;--navy2:#314967;--yellow:#facc15;--yellow2:#eab308;--yellowSoft:#fff8d6;
+  --green:#26734d;--greenSoft:#eef8f2;--amber:#9a6700;--red:#b42318;--blue:#3169a8;
+  --shadow:0 8px 24px rgba(17,24,39,.09)
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--page);color:var(--ink)}
+body{font-family:K2D,system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;-webkit-tap-highlight-color:transparent}
+button,input{font:inherit}button{touch-action:manipulation}
+.app{max-width:1380px;margin:auto;padding:10px;display:grid;grid-template-rows:auto auto auto;gap:9px;min-height:100vh}
+.top{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border-radius:15px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;gap:12px;box-shadow:var(--shadow)}
+.brand small{display:block;font-size:.68rem;font-weight:850;letter-spacing:.09em;color:#fde68a}.brand b{font-size:1.08rem}.brand span{font-size:.76rem;opacity:.86;margin-left:8px}
+.station-switch{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.station-tab{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.08);color:#fff;border-radius:10px;padding:7px 10px;min-height:40px;font-weight:850;font-size:.76rem;cursor:pointer}.station-tab.active{background:var(--yellow);border-color:#fde047;color:#27210a}.station-tab:focus-visible,.btn:focus-visible,.chip:focus-visible,.notes-btn:focus-visible{outline:3px solid rgba(250,204,21,.35);outline-offset:2px}
+.context-strip{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:7px 11px;min-height:42px}.context-main{min-width:0}.context-title{font-weight:950;color:var(--navy)}.context-sub{font-size:.73rem;color:var(--muted);font-weight:700}.round-pill{flex:none;border:1px solid #e5b800;border-radius:999px;background:var(--yellowSoft);color:#6f5200;padding:5px 9px;font-size:.68rem;font-weight:900}
+.workspace{display:grid;grid-template-columns:minmax(0,1.68fr) minmax(320px,.92fr);gap:9px;min-height:620px}.lab,.monitor{background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow);overflow:hidden;min-width:0}.lab{display:grid;grid-template-rows:minmax(390px,1fr) auto auto}.stage-wrap{position:relative;padding:9px;background:linear-gradient(rgba(49,105,168,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(49,105,168,.045) 1px,transparent 1px),#fbfcfe;background-size:28px 28px}.stage{height:100%;min-height:390px;border:1px solid #cbd3df;border-radius:13px;background:#fff;overflow:hidden}.stage-panel{display:none;height:100%}.stage-panel.active{display:block}.stage svg{width:100%;height:100%;min-height:390px;display:block}.stage-status{position:absolute;left:20px;top:18px;border:1px solid var(--line);background:rgba(255,255,255,.94);border-radius:10px;padding:7px 10px;font-size:.72rem;max-width:min(58%,420px);box-shadow:0 4px 12px rgba(17,24,39,.05)}.stage-status b{display:block;color:var(--navy);font-size:.76rem}.stage-status span{color:var(--muted);font-weight:700}
+.control-deck{border-top:1px solid var(--line);padding:9px;background:#fbfcfe}.deck-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}.deck-head b{color:var(--navy)}.preview-note{font-size:.68rem;color:#805b00;background:#fff8d6;border:1px solid #f2d161;border-radius:999px;padding:4px 8px;font-weight:850}.controls-panel{display:none}.controls-panel.active{display:block}.control-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.control-group{border:1px solid var(--line);background:#fff;border-radius:11px;padding:8px;min-width:0}.control-group h4{margin:0 0 6px;color:var(--navy);font-size:.73rem}.choice-row,.action-row{display:flex;gap:5px;flex-wrap:wrap}.chip,.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:9px;min-height:36px;padding:6px 9px;font-weight:800;font-size:.7rem;cursor:pointer}.chip.selected{background:var(--yellowSoft);border-color:#e9bd20;color:#6b5100}.btn.primary{background:var(--yellow);border-color:#b98e00;color:#241c00}.btn.dark{background:var(--navy);border-color:var(--navy);color:#fff}.btn.soft{background:#f5f7fa}.btn:disabled{opacity:.48;cursor:not-allowed}.range-line{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}.range-line input{width:100%;accent-color:#d7a900}.read-mini{border:1px solid #e3e7ed;border-radius:9px;background:#f8fafc;padding:5px 7px;font-size:.7rem;font-weight:900;white-space:nowrap}.deck-foot{border-top:1px solid var(--line);padding:7px 9px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:.69rem}.foot-state{color:var(--muted);font-weight:750}.foot-actions{display:flex;gap:5px;flex-wrap:wrap}
+.monitor{padding:9px;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;gap:7px}.monitor-title{display:flex;justify-content:space-between;gap:8px;align-items:center}.monitor-title b{color:var(--navy)}.monitor-title span{font-size:.65rem;font-weight:850;color:#805b00;background:var(--yellowSoft);border:1px solid #f1d35f;border-radius:999px;padding:4px 7px}.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.metric{border:1px solid var(--line);border-radius:10px;padding:7px 8px;background:#fbfcfe;min-width:0}.metric .k{font-size:.58rem;color:var(--muted);font-weight:850;letter-spacing:.02em}.metric .v{margin-top:2px;font-family:"Times New Roman",serif;font-size:1.05rem;font-weight:800;color:var(--navy);overflow-wrap:anywhere}.metric.full{grid-column:1/-1}.metric.highlight{background:var(--yellowSoft);border-color:#eed16b}.monitor-story{border:1px solid var(--line);border-radius:11px;padding:9px;background:#fff;min-height:150px}.monitor-story h3{margin:0 0 6px;font-size:.8rem;color:var(--navy)}.monitor-story p{margin:.35rem 0;font-size:.72rem;color:var(--muted);line-height:1.5}.story-list{margin:7px 0 0;padding-left:1.1rem;font-size:.72rem;color:#3e4b5e}.story-list li{margin:.38rem 0}.solution-shell{border:1px solid #ead17b;border-radius:11px;background:#fffdf2;overflow:hidden}.solution-shell summary{cursor:pointer;padding:8px 10px;font-size:.72rem;font-weight:900;color:#705100}.solution-body{padding:0 10px 10px;font-size:.72rem;color:#665f4a;line-height:1.55}.solution-body b{color:#3b3215}.formula{font-family:"Times New Roman",serif;font-size:1.02rem;color:var(--navy);font-weight:700;text-align:center;padding:6px;border:1px dashed #c8b55d;border-radius:8px;background:#fff;margin:6px 0}
+.bottom-log{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:9px}.log-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.log-head b{color:var(--navy)}.log-head span{font-size:.68rem;color:var(--muted);font-weight:750}.log-placeholder{margin-top:7px;border:1px dashed #cbd3df;border-radius:10px;padding:10px;color:#7a8492;font-size:.72rem;text-align:center;background:#fafbfc}
+
+/* ===== Round 2 · Station 1 Energy Physics ===== */
+.s1-speed-control{display:none;margin-top:7px}.s1-speed-control.show{display:block}
+.s1-speed-control .range-line{grid-template-columns:minmax(0,1fr) auto}
+.s1-transport{display:flex;gap:5px;flex-wrap:wrap}
+.s1-live-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:7px}
+.s1-live-mini{border:1px solid #e4e7ec;border-radius:9px;padding:6px;background:#f8fafc;text-align:center;min-width:0}
+.s1-live-mini span{display:block;font-size:.58rem;color:var(--muted);font-weight:850}.s1-live-mini b{display:block;margin-top:2px;font-family:"Times New Roman",serif;color:var(--navy);font-size:.86rem;overflow-wrap:anywhere}
+.energy-bar-shell{height:9px;border:1px solid #d6bf58;border-radius:999px;background:#fff;overflow:hidden;margin-top:6px}.energy-bar-fill{height:100%;width:0;background:linear-gradient(90deg,#fde68a,#eab308);transition:width .08s linear}
+.slowmo-badge{font-size:11px;font-weight:900;fill:#7a5b00}
+.s1-run-complete{animation:s1Pulse .55s ease}@keyframes s1Pulse{50%{box-shadow:0 0 0 5px rgba(250,204,21,.22)}}
+.trail-dot{transition:opacity .12s ease}
+@media(max-width:700px){.s1-live-strip{grid-template-columns:1fr 1fr}.s1-live-mini:last-child{grid-column:1/-1}}
+
+
+/* ===== Round 3 · Station 1 Record + Compare + Dynamic Solution ===== */
+.s1-r3-actions{display:flex;gap:6px;flex-wrap:wrap}
+.btn.green{background:var(--green);border-color:#1f6342;color:#fff}
+.btn.transfer{background:#eef4ff;border-color:#9bb9dd;color:#214f85}
+.btn.record-ready{box-shadow:0 0 0 3px rgba(38,115,77,.10)}
+.trial-table-wrap{margin-top:8px;overflow-x:auto;border:1px solid var(--line);border-radius:11px}
+.trial-table{width:100%;min-width:760px;border-collapse:collapse;font-size:.7rem}
+.trial-table th,.trial-table td{padding:8px 7px;border-bottom:1px solid #e7eaf0;text-align:center;white-space:nowrap}
+.trial-table th{background:#f8fafc;color:var(--navy);font-weight:950}
+.trial-table tbody tr:last-child td{border-bottom:0}
+.trial-table tbody tr:hover{background:#fffdf3}
+.trial-num{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:999px;background:var(--yellowSoft);border:1px solid #e7c846;font-weight:950;color:#6a5000}
+.log-tools{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.compare-insight{margin-top:8px;padding:9px 10px;border:1px solid #cdd9e8;border-left:5px solid var(--blue);border-radius:10px;background:#f8fbff;color:#41546b;font-size:.72rem;line-height:1.5;font-weight:750}
+.compare-insight.good{border-color:#b8dbc9;border-left-color:var(--green);background:var(--greenSoft);color:#28543d}
+.transfer-note{display:none;margin-top:6px;border:1px solid #b9cce3;border-radius:9px;background:#f4f8ff;padding:6px 8px;color:#315b89;font-size:.68rem;font-weight:850}
+.transfer-note.show{display:block}
+.solution-step{border:1px solid #e8dfbd;border-radius:9px;background:#fff;padding:7px 8px;margin:6px 0}
+.solution-step .step-k{font-size:.62rem;font-weight:950;color:#826200;letter-spacing:.04em}
+.solution-step .step-copy{margin-top:3px;color:#625b47;line-height:1.5}
+.solution-answer{border:2px solid #e4bd27;border-radius:10px;background:#fff8cf;padding:8px;text-align:center;color:#4c3b00;font-weight:950;margin-top:7px}
+@media(max-width:700px){.s1-r3-actions>*{flex:1 1 46%}.log-tools{width:100%;justify-content:space-between}}
+
+
+/* ===== Round 4 · Thomson CRT Physics ===== */
+.s2-control-grid{grid-template-columns:1fr 1fr 1.05fr 1.2fr}
+.s2-field-group{border-color:#c5d7ea;background:#f8fbff}
+.s2-power-group{border-color:#ead17b;background:#fffdf3}
+.s2-power-state{display:inline-flex;align-items:center;gap:6px;margin-top:6px;padding:5px 8px;border:1px solid #d7dce5;border-radius:999px;background:#f8fafc;color:#667085;font-size:.67rem;font-weight:950}
+.s2-power-state.on{border-color:#b7dbc9;background:var(--greenSoft);color:#24613f}
+.s2-power-dot{width:8px;height:8px;border-radius:50%;background:#98a2b3}
+.s2-power-state.on .s2-power-dot{background:#28a269;box-shadow:0 0 0 4px rgba(40,162,105,.12)}
+.s2-field-read{display:grid;grid-template-columns:1fr auto;gap:7px;align-items:center;margin-top:4px}
+.s2-field-read input{width:100%;accent-color:#3169a8}
+.s2-dir-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border:1px solid #c7d4e3;border-radius:999px;background:#f5f9ff;color:#315b89;font-size:.67rem;font-weight:950;margin-top:6px}
+.s2-speed-source{margin-top:6px;border:1px solid #d9e2ee;border-radius:9px;padding:6px 8px;background:#f8fbff;color:#405c7c;font-size:.68rem;font-weight:850;line-height:1.4}
+.s2-speed-source.good{border-color:#b8dbc9;background:var(--greenSoft);color:#28543d}
+.s2-future{display:none}
+body.s2-active .s2-future{display:inline-flex}
+body.s2-active #recordS1Trial,body.s2-active #useSpeedS2{display:none}
+body:not(.s1-active) #recordS1Trial,body:not(.s1-active) #useSpeedS2{display:none}
+body.s1-active .s2-future{display:none}
+.s2-observation-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:8px}
+.s2-observation{border:1px solid var(--line);border-radius:10px;padding:8px;background:#fbfcfe}
+.s2-observation span{display:block;font-size:.6rem;color:var(--muted);font-weight:850}
+.s2-observation b{display:block;margin-top:3px;color:var(--navy);font-size:.76rem}
+.s2-observation-note{margin-top:8px;border:1px solid #c7d7e8;border-left:5px solid #3169a8;border-radius:10px;background:#f8fbff;padding:9px 10px;color:#40556f;font-size:.72rem;font-weight:760;line-height:1.5}
+#s2BeamPath{transition:opacity .18s}
+#s2ScreenSpot{transition:opacity .18s}
+.s2-beam-live{filter:drop-shadow(0 0 5px rgba(250,204,21,.72))}
+.s2-screen-live{filter:drop-shadow(0 0 7px rgba(250,204,21,.85))}
+@media(max-width:1080px){.s2-control-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.s2-control-grid,.s2-observation-grid{grid-template-columns:1fr}}
+
+
+/* ===== Round 4.1 · S1 acceleration + MathJax ===== */
+.math-eq{font-size:1.05rem;line-height:1.5;overflow-x:auto;padding:3px 0}
+.math-eq mjx-container{margin:.25rem 0!important}
+.math-block{margin:7px 0;border:1px solid #eadfba;border-radius:9px;background:#fffef8;padding:8px 10px;overflow-x:auto}
+.s1-dimension{font-size:12px;font-weight:900;fill:#315b89}
+.accel-badge{display:inline-flex;align-items:center;gap:5px;border:1px solid #bad1ea;border-radius:999px;background:#f4f9ff;color:#315b89;padding:4px 7px;font-size:.65rem;font-weight:950}
+.solution-two-way{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.solution-route{border:1px solid #d8e3ef;border-radius:10px;background:#f9fbfe;padding:8px}
+.solution-route b{color:#274f7a}
+@media(max-width:760px){.solution-two-way{grid-template-columns:1fr}}
+
+
+/* ===== Round 4.1.1 · QA reliability ===== */
+.mathjax-status{position:absolute;right:10px;bottom:8px;font-size:.58rem;color:#8a94a3;font-weight:750;pointer-events:none}
+button:disabled{filter:saturate(.55)}
+
+
+/* ===== Round 5 · Thomson radius measurement + e/m ===== */
+.s2-radius-panel{
+  display:none;margin-top:8px;border:2px solid #e2b626;border-radius:12px;
+  background:#fffdf3;padding:9px 10px
+}
+.s2-radius-panel.show{display:block}
+.s2-radius-head{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}
+.s2-radius-head b{color:#654d00}
+.s2-radius-read{font-weight:950;color:#654d00}
+.s2-radius-slider{display:grid;grid-template-columns:auto minmax(120px,1fr) auto;gap:8px;align-items:center;margin-top:7px}
+.s2-radius-slider input{width:100%;accent-color:#b88900}
+.s2-match-meter{height:8px;border-radius:99px;background:#ece8d8;overflow:hidden;margin-top:8px}
+.s2-match-meter span{display:block;height:100%;width:0;background:#b88900;transition:width .12s}
+.s2-radius-feedback{
+  margin-top:7px;border:1px solid #e3d5a0;border-radius:9px;background:#fff;padding:7px 8px;
+  color:#665f47;font-size:.69rem;font-weight:820;line-height:1.45
+}
+.s2-radius-feedback.good{border-color:#a9d8bf;background:#edf8f2;color:#23563a}
+.s2-radius-feedback.warn{border-color:#edcf85;background:#fff8df;color:#765b00}
+#s2MeasureCircle{pointer-events:none}
+#s2MeasureHandle{pointer-events:none}
+#s2MeasureLabel{pointer-events:none}
+.s2-measure-on #s2MeasureCircle{opacity:.95}
+.s2-measure-on #s2MeasureHandle,.s2-measure-on #s2MeasureLabel{opacity:1}
+.s2-measure-match #s2MeasureCircle{stroke:#258458}
+.s2-measure-match #s2MeasureHandle{fill:#258458}
+.s2-trial-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:8px}
+.s2-trial-table-wrap{margin-top:8px;overflow-x:auto;border:1px solid var(--line);border-radius:11px}
+.s2-trial-table{width:100%;min-width:900px;border-collapse:collapse;font-size:.69rem}
+.s2-trial-table th,.s2-trial-table td{padding:8px 7px;border-bottom:1px solid #e7eaf0;text-align:center;white-space:nowrap}
+.s2-trial-table th{background:#f8fafc;color:var(--navy);font-weight:950}
+.s2-trial-table tbody tr:last-child td{border-bottom:0}
+.s2-constant-note{
+  margin-top:8px;padding:9px 10px;border:1px solid #c7d7e8;border-left:5px solid #3169a8;
+  border-radius:10px;background:#f8fbff;color:#40556f;font-size:.72rem;font-weight:760;line-height:1.5
+}
+.s2-constant-note.good{border-color:#abd8c0;border-left-color:#258458;background:#edf8f2;color:#24553a}
+.s2-em-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 7px;border-radius:999px;border:1px solid #bad1ea;background:#f4f9ff;color:#315b89;font-weight:950;font-size:.65rem}
+@media(max-width:650px){.s2-radius-slider{grid-template-columns:1fr}.s2-radius-slider>span{text-align:center}}
+
+
+/* ===== Round 6 · Millikan Oil Drop Force Balance ===== */
+.s3-control-grid{grid-template-columns:1.05fr 1.15fr 1.15fr 1fr}
+.s3-drop-group{border-color:#d7dee8;background:#fbfcfe}.s3-plate-group{border-color:#ead17b;background:#fffdf3}
+.s3-force-group{border-color:#bfd4e9;background:#f8fbff}.s3-xray-group{border-color:#dac7e8;background:#fcf8ff}
+.s3-readline{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:6px}.s3-readline b{color:var(--navy)}
+.s3-state-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border:1px solid #d0d7e0;border-radius:999px;background:#f8fafc;color:#667085;font-size:.68rem;font-weight:950}
+.s3-state-pill.rise{border-color:#b9d7ea;background:#eef8ff;color:#245d83}.s3-state-pill.fall{border-color:#ebc2b8;background:#fff2ef;color:#854331}.s3-state-pill.balance{border-color:#abd8c0;background:#edf8f2;color:#24553a}
+.s3-balance-wrap{margin-top:8px}.s3-balance-bar{position:relative;height:16px;border-radius:99px;background:linear-gradient(90deg,#f6d2ca 0 45%,#eef2f6 45% 55%,#cae3f4 55% 100%);border:1px solid #c8d0da}
+.s3-balance-mid{position:absolute;left:50%;top:-4px;bottom:-4px;width:2px;background:#3a4655}.s3-balance-marker{position:absolute;top:50%;left:50%;width:14px;height:14px;border-radius:50%;background:#22334d;border:2px solid #fff;transform:translate(-50%,-50%);transition:left .16s}
+.s3-balance-labels{display:flex;justify-content:space-between;margin-top:3px;color:#7a8492;font-size:.59rem;font-weight:850}
+.s3-measure-card{margin-top:8px;border:1px solid #d5dce5;border-radius:10px;background:#fff;padding:8px}.s3-measure-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.s3-measure-cell{border:1px solid #e3e7ed;border-radius:8px;background:#f9fafb;padding:7px}.s3-measure-cell span{display:block;color:#7a8492;font-size:.58rem;font-weight:850}.s3-measure-cell b{display:block;margin-top:2px;color:#22334d;font-size:.73rem}
+.s3-force-note{margin-top:8px;border:1px solid #c7d7e8;border-left:5px solid #3169a8;border-radius:10px;background:#f8fbff;padding:9px 10px;color:#40556f;font-size:.72rem;font-weight:760;line-height:1.5}.s3-force-note.good{border-color:#abd8c0;border-left-color:#258458;background:#edf8f2;color:#24553a}
+.s3-observation-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:8px}.s3-observation{border:1px solid var(--line);border-radius:10px;padding:8px;background:#fbfcfe}.s3-observation span{display:block;font-size:.6rem;color:var(--muted);font-weight:850}.s3-observation b{display:block;margin-top:3px;color:var(--navy);font-size:.76rem}
+#s3DropLive{transition:cy .16s}@media(max-width:1080px){.s3-control-grid{grid-template-columns:1fr 1fr}}@media(max-width:620px){.s3-control-grid,.s3-measure-grid,.s3-observation-grid{grid-template-columns:1fr}}
+
+
+/* ===== Round 7 · X-ray, quantization, elementary charge, final synthesis ===== */
+.s3-xray-live{border-color:#c8a6dc;background:#fcf8ff}
+.s3-xray-flash{animation:s3Flash .55s ease-out}
+@keyframes s3Flash{0%{opacity:.15}35%{opacity:1}100%{opacity:.15}}
+.s3-charge-status{margin-top:7px;border:1px solid #dbc9e7;border-radius:9px;background:#fff;padding:7px 8px;color:#694d7d;font-size:.68rem;font-weight:850;line-height:1.45}
+.s3-charge-status.changed{border-color:#c8a6dc;background:#f9f1ff}
+.s3-trial-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:8px}
+.s3-trial-table-wrap{margin-top:8px;overflow-x:auto;border:1px solid var(--line);border-radius:11px}
+.s3-trial-table{width:100%;min-width:900px;border-collapse:collapse;font-size:.69rem}
+.s3-trial-table th,.s3-trial-table td{padding:8px 7px;border-bottom:1px solid #e7eaf0;text-align:center;white-space:nowrap}
+.s3-trial-table th{background:#f8fafc;color:var(--navy);font-weight:950}
+.s3-trial-table tbody tr:last-child td{border-bottom:0}
+.s3-evidence{margin-top:8px;padding:10px;border:1px solid #c7d7e8;border-left:5px solid #3169a8;border-radius:10px;background:#f8fbff;color:#40556f;font-size:.72rem;font-weight:760;line-height:1.55}
+.s3-evidence.good{border-color:#abd8c0;border-left-color:#258458;background:#edf8f2;color:#24553a}
+.s3-q-chip-wrap{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.s3-q-chip{padding:5px 7px;border:1px solid #cdd8e5;border-radius:999px;background:#fff;font-size:.66rem;font-weight:900;color:#334b68}
+.s3-synthesis{margin-top:9px;border:2px solid #e2b626;border-radius:12px;background:#fffdf3;padding:10px}
+.s3-synthesis h4{margin:0 0 7px;color:#604900;font-size:.83rem}
+.s3-synthesis-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.s3-synthesis-cell{border:1px solid #eadfae;border-radius:9px;background:#fff;padding:8px}
+.s3-synthesis-cell span{display:block;font-size:.58rem;color:#7a6b35;font-weight:850}
+.s3-synthesis-cell b{display:block;margin-top:3px;color:#3d3312;font-size:.75rem}
+.s3-pulse-count{display:inline-flex;align-items:center;padding:4px 7px;border:1px solid #dbc9e7;border-radius:999px;background:#fff;color:#694d7d;font-size:.63rem;font-weight:950}
+@media(max-width:700px){.s3-synthesis-grid{grid-template-columns:1fr}}
+
+
+/* ===== Round 8 · Final QA + responsive/touch polish ===== */
+.app>*{min-width:0}
+.bottom-log,.trial-table-wrap,.s2-trial-table-wrap,.s3-trial-table-wrap{min-width:0;max-width:100%}
+input[type="range"]{min-height:38px;touch-action:pan-x}
+@media (pointer:coarse){
+  .btn,.chip,.notes-btn,.station-tab{min-height:44px}
+  input[type="range"]{min-height:46px}
+}
+@media(max-width:620px){
+  .round-pill{font-size:.6rem;padding:4px 7px}
+  .deck-foot{align-items:stretch}
+  .foot-actions{width:100%}
+  .foot-actions .btn{flex:1 1 46%}
+  .stage-status{max-width:78%;font-size:.66rem}
+  .notes-toolbar{width:100%}
+  .notes-toolbar .notes-btn{flex:1 1 auto}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}
+}
+
+/* Notes Select mode */
+.notes-shell.select-mode .note-object-layer{pointer-events:auto}
+.notes-shell.select-mode .note-ink{pointer-events:none}
+.snapshot-card{pointer-events:none;user-select:none}
+.notes-shell.select-mode .snapshot-card{pointer-events:auto;cursor:grab}
+.notes-shell.select-mode .snapshot-card:active{cursor:grabbing}
+.snap-resize{
+  display:none;position:absolute;right:4px;bottom:4px;width:22px;height:22px;min-height:22px;
+  padding:0;border:1px solid #8c7420;border-radius:6px;background:#fff4ad;color:#5f4b00;
+  font-size:13px;font-weight:950;cursor:nwse-resize
+}
+.notes-shell.select-mode .snap-resize{display:grid;place-items:center}
+.snapshot-card.selected-snapshot{outline:3px solid rgba(49,105,168,.30);outline-offset:2px}
+
+/* Notes dock */
+.notes-fab{position:fixed;right:16px;bottom:16px;z-index:9000;border:2px solid #6b5200;border-radius:999px;padding:11px 15px;background:var(--yellow);color:#241c00;font-weight:950;box-shadow:0 12px 30px rgba(17,24,39,.22);cursor:pointer}.notes-fab.hidden{display:none}.notes-shell{position:fixed;left:50%;bottom:8px;z-index:8999;width:min(1060px,calc(100vw - 16px));transform:translate(-50%,115%);opacity:0;pointer-events:none;transition:.22s ease}.notes-shell.show{transform:translate(-50%,0);opacity:1;pointer-events:auto}.notes-dock{border:2px solid var(--navy);border-radius:18px;background:#fff;box-shadow:0 20px 60px rgba(17,24,39,.28);overflow:hidden}.notes-top{padding:9px 11px;background:#fff9db;border-bottom:1px solid #ecd36d;display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}.notes-title{font-weight:950;color:var(--navy)}.notes-sub{font-size:.68rem;color:var(--muted);font-weight:700}.notes-toolbar,.notes-stations,.page-controls{display:flex;gap:5px;flex-wrap:wrap;align-items:center}.notes-btn{border:1px solid #cdd4df;background:#fff;color:#344054;border-radius:8px;min-height:35px;padding:5px 8px;font-size:.69rem;font-weight:850;cursor:pointer}.notes-btn.active{background:#fff3a5;border-color:#d7aa00;color:#644b00}.notes-station.active{background:var(--navy);border-color:var(--navy);color:#fff}.notes-sheet{position:relative;height:clamp(300px,47vh,480px);overflow:hidden;background:linear-gradient(#e8ebef 1px,transparent 1px),linear-gradient(90deg,#e8ebef 1px,transparent 1px),#fff;background-size:22px 22px;touch-action:none}.note-object-layer,.note-ink{position:absolute;inset:0;width:100%;height:100%}.note-object-layer{z-index:1;pointer-events:none}.note-ink{z-index:2;touch-action:none}.snapshot-card{position:absolute;left:4%;top:5%;width:44%;min-height:110px;border:2px solid #d9bd43;border-radius:12px;background:#fffdf1;padding:10px;box-shadow:0 2px 8px rgba(17,24,39,.08);font-size:.72rem;color:#3d4654}.snapshot-card b{display:block;color:var(--navy);margin-bottom:4px}.snapshot-card .snap-k{font-size:.62rem;color:#7c6b24;font-weight:900;letter-spacing:.05em}.notes-foot{padding:7px 9px;border-top:1px solid #e5e7eb;background:#f8fafc;display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}.page-label{font-size:.7rem;font-weight:900;color:#475467;min-width:84px;text-align:center}.notes-state{font-size:.68rem;color:#667085;font-weight:750}
+.toast{position:fixed;left:50%;top:18px;z-index:9500;transform:translateX(-50%) translateY(-10px);opacity:0;pointer-events:none;background:#111827;color:#fff;border-radius:10px;padding:8px 12px;font-size:.76rem;font-weight:850;transition:.16s}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:940px){.workspace{grid-template-columns:1fr}.lab{min-height:680px}.monitor{min-height:420px}.top{align-items:flex-start}.brand span{display:block;margin-left:0}.control-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.app{padding:6px}.top{border-radius:11px;flex-direction:column}.station-switch{width:100%;justify-content:stretch}.station-tab{flex:1 1 30%;padding:6px 5px;font-size:.67rem}.context-strip{align-items:flex-start}.context-sub{white-space:normal}.workspace{min-height:0}.lab{min-height:0}.stage-wrap{padding:6px}.stage,.stage svg{min-height:330px}.control-grid,.metric-grid{grid-template-columns:1fr}.metric.full{grid-column:auto}.notes-shell{width:calc(100vw - 8px);bottom:4px}.notes-sheet{height:48vh}.notes-fab{right:9px;bottom:9px}.snapshot-card{width:88%}}
+@media print{body>*:not(.notes-shell){display:none!important}.notes-shell{position:static!important;transform:none!important;opacity:1!important;pointer-events:auto!important;width:100%!important}.notes-top,.notes-foot{display:none!important}.notes-dock{border:0!important;box-shadow:none!important}.notes-sheet{height:255mm!important;background:#fff!important}}
+</style>
+
+<script>
+window.MathJax={
+  tex:{
+    inlineMath:[['\\(','\\)']],
+    displayMath:[['\\[','\\]']],
+    packages:{'[+]':['ams']}
+  },
+  svg:{fontCache:'global'}
+};
+</script>
+<script async id="mathjax-loader" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+</head>
+<body>
+<div class="toast" id="toast" aria-live="polite"></div>
+<main class="app">
+  <header class="top">
+    <div class="brand"><small>INTERACTIVE PHYSICS · FINAL QA BUILD</small><b>Charged Particle Lab</b><span>Energy → Thomson → Millikan</span></div>
+    <nav class="station-switch" aria-label="Simulation stations">
+      <button class="station-tab active" data-station="1" type="button">1 · Energy</button>
+      <button class="station-tab" data-station="2" type="button">2 · Thomson</button>
+      <button class="station-tab" data-station="3" type="button">3 · Millikan</button>
+    </nav>
+  </header>
+
+  <section class="context-strip">
+    <div class="context-main"><div class="context-title" id="contextTitle">Station 1 · Energy & Accelerating Charge</div><div class="context-sub" id="contextSub">เตรียมแนวคิดเรื่องพลังงานไฟฟ้าและการเปลี่ยนความเร็วของอนุภาคมีประจุ</div></div>
+    <span class="round-pill">NO LOGIN · LOCAL SIMULATION</span>
+  </section>
+
+  <section class="workspace">
+    <section class="lab">
+      <div class="stage-wrap">
+        <div class="stage">
+          <div class="stage-panel active" data-stage="1">
+            <svg id="s1Svg" viewBox="0 0 900 460" role="img" aria-label="Accelerating negative charge between electric plates">
+              <defs>
+                <marker id="s1ArrowLeft" markerWidth="8" markerHeight="8" refX="1" refY="4" orient="auto"><path d="M8 0 L0 4 L8 8" fill="none" stroke="#8c6a00" stroke-width="2"/></marker>
+                <marker id="s1ArrowRight" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8" fill="none" stroke="#3169a8" stroke-width="2"/></marker>
+              </defs>
+              <rect width="900" height="460" fill="#fbfcfe"/>
+              <text x="450" y="43" text-anchor="middle" font-size="23" font-weight="900" fill="#22334d">Accelerating Charge / การเร่งอนุภาคมีประจุ</text>
+              <text x="450" y="66" text-anchor="middle" font-size="12" font-weight="850" fill="#7a5b00">Negative particle · electron properties used for the numerical model</text>
+              <rect x="118" y="118" width="664" height="170" rx="24" fill="#fff" stroke="#aeb8c5" stroke-width="3"/>
+              <line x1="194" y1="137" x2="194" y2="270" stroke="#22334d" stroke-width="12"/>
+              <line x1="708" y1="137" x2="708" y2="270" stroke="#22334d" stroke-width="12"/>
+              <text x="194" y="105" text-anchor="middle" font-size="19" font-weight="900">− plate</text><text x="708" y="105" text-anchor="middle" font-size="19" font-weight="900">+ plate</text>
+              <line x1="205" y1="292" x2="697" y2="292" stroke="#3169a8" stroke-width="2"/>
+              <line x1="205" y1="285" x2="205" y2="299" stroke="#3169a8" stroke-width="2"/>
+              <line x1="697" y1="285" x2="697" y2="299" stroke="#3169a8" stroke-width="2"/>
+              <text x="451" y="309" text-anchor="middle" class="s1-dimension">Plate separation d = 0.100 m</text>
+              <line x1="650" y1="166" x2="250" y2="166" stroke="#f0c400" stroke-width="4" stroke-dasharray="10 8" marker-end="url(#s1ArrowLeft)"/>
+              <text x="450" y="151" text-anchor="middle" font-size="14" font-weight="850" fill="#725800">Electric field E points ←</text>
+              <line x1="255" y1="249" x2="340" y2="249" stroke="#3169a8" stroke-width="4" marker-end="url(#s1ArrowRight)"/>
+              <text x="300" y="269" text-anchor="middle" font-size="12" font-weight="900" fill="#3169a8">electron force / acceleration →</text>
+              <g id="s1Trail" opacity=".46" fill="#facc15">
+                <circle class="trail-dot" cx="260" cy="208" r="3" opacity="0"/><circle class="trail-dot" cx="325" cy="208" r="4" opacity="0"/><circle class="trail-dot" cx="400" cy="208" r="5" opacity="0"/><circle class="trail-dot" cx="490" cy="208" r="6" opacity="0"/><circle class="trail-dot" cx="592" cy="208" r="7" opacity="0"/>
+              </g>
+              <g id="s1Particle" transform="translate(260 208)"><circle r="16" fill="#facc15" stroke="#111827" stroke-width="3"/><text x="0" y="6" text-anchor="middle" font-size="18" font-weight="1000">−</text></g>
+              <line id="s1VelocityArrow" x1="260" y1="321" x2="260" y2="321" stroke="#3169a8" stroke-width="5" marker-end="url(#s1ArrowRight)"/>
+              <text id="s1VelocityLabel" x="260" y="344" text-anchor="middle" font-size="13" font-weight="900" fill="#3169a8">v = 0</text>
+              <g transform="translate(280 350)">
+                <path d="M0 28 H46" stroke="#22334d" stroke-width="4"/><g id="s1BatteryCells"></g><path d="M210 28 H340" stroke="#22334d" stroke-width="4"/>
+                <text x="170" y="76" text-anchor="middle" font-size="17" font-weight="900" fill="#22334d">Battery / แบตเตอรี่</text><text id="s1BatteryLabel" x="170" y="100" text-anchor="middle" font-size="17" font-weight="900" fill="#9a6700">1000 V</text>
+              </g>
+              <g transform="translate(600 342)"><rect x="0" y="0" width="180" height="62" rx="11" fill="#fff8d6" stroke="#d2b64a"/><text x="90" y="23" text-anchor="middle" class="slowmo-badge">SLOW-MOTION VIEW</text><text x="90" y="43" text-anchor="middle" font-size="11" font-weight="800" fill="#74672b">numbers = physical values</text><text x="90" y="56" text-anchor="middle" font-size="10" font-weight="750" fill="#74672b">animation intentionally slowed</text></g>
+            </svg>
+          </div>
+
+          <div class="stage-panel" data-stage="2">
+            <svg viewBox="0 0 900 460" role="img" aria-label="Interactive Thomson cathode ray tube">
+              <defs>
+                <filter id="s2BeamGlow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              </defs>
+              <rect width="900" height="460" fill="#fbfcfe"/>
+              <text x="450" y="46" text-anchor="middle" font-size="23" font-weight="900" fill="#22334d">Cathode-Ray Tube / หลอดรังสีแคโทด</text>
+              <path d="M95 123 Q95 87 135 87 H760 Q805 87 805 123 V325 Q805 365 760 365 H135 Q95 365 95 325 Z" fill="#f8fbff" stroke="#49647e" stroke-width="5"/>
+              <path id="s2GasTint" d="M108 126 Q108 101 139 101 H756 Q792 101 792 128 V319 Q792 351 756 351 H139 Q108 351 108 319 Z" fill="#f3a36b" opacity=".055"/>
+              <rect id="s2CathodeGlow" x="134" y="173" width="60" height="106" rx="13" fill="#facc15" opacity="0"/>
+              <rect id="s2CathodeMetal" x="145" y="183" width="38" height="86" rx="5" fill="#ba7a45" stroke="#111827" stroke-width="3"/><text x="164" y="160" text-anchor="middle" font-size="16" font-weight="900">Cathode (−)</text>
+              <rect x="278" y="164" width="26" height="124" rx="4" fill="#d8dee7" stroke="#111827" stroke-width="3"/><circle cx="291" cy="226" r="8" fill="#fff" stroke="#111827" stroke-width="2"/><text x="291" y="143" text-anchor="middle" font-size="16" font-weight="900">Anode (+)</text>
+
+              <rect x="320" y="132" width="240" height="188" rx="14" fill="#eef5fb" stroke="#b7cadc" stroke-width="2" stroke-dasharray="7 6"/>
+              <g id="s2FieldSymbols" fill="#52677d" font-size="28" text-anchor="middle" opacity=".18">
+                <text class="s2-field-symbol" x="365" y="170">⊗</text><text class="s2-field-symbol" x="440" y="170">⊗</text><text class="s2-field-symbol" x="515" y="170">⊗</text>
+                <text class="s2-field-symbol" x="365" y="295">⊗</text><text class="s2-field-symbol" x="440" y="295">⊗</text><text class="s2-field-symbol" x="515" y="295">⊗</text>
+              </g>
+
+              <path id="s2BeamPath" d="M183 226 L746 226" fill="none" stroke="#e9b600" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity="0" filter="url(#s2BeamGlow)"/>
+              <path id="s2MeasureCircle" d="" fill="none" stroke="#b7791f" stroke-width="3" stroke-dasharray="8 6" opacity="0"/>
+              <circle id="s2MeasureHandle" cx="320" cy="226" r="7" fill="#b7791f" stroke="#fff" stroke-width="2" opacity="0"/>
+              <text id="s2MeasureLabel" x="340" y="206" font-size="12" font-weight="950" fill="#7b5a00" opacity="0">measurement arc</text>
+              <circle id="s2ScreenSpot" cx="746" cy="226" r="11" fill="#facc15" stroke="#111827" stroke-width="3" opacity="0"/>
+              <line x1="770" y1="125" x2="770" y2="327" stroke="#6f7f90" stroke-width="5"/><text x="770" y="111" text-anchor="middle" font-size="15" font-weight="900">Fluorescent Screen</text>
+
+              <text id="s2FieldLabel" x="440" y="340" text-anchor="middle" font-size="14" font-weight="850" fill="#52677d">B = 0.00 mT · ⊗ into screen</text>
+              <g id="s2GasParticles" opacity=".42" fill="#e37842"><circle cx="220" cy="116" r="4"/><circle cx="363" cy="340" r="4"/><circle cx="563" cy="126" r="4"/><circle cx="671" cy="318" r="4"/><circle cx="622" cy="166" r="3"/></g>
+
+              <g transform="translate(108 375)">
+                <rect width="174" height="48" rx="10" fill="#f8fafc" stroke="#c7d0dc"/>
+                <text id="s2PowerLabel" x="87" y="20" text-anchor="middle" font-size="12" font-weight="950" fill="#667085">POWER OFF</text>
+                <text id="s2BeamStatus" x="87" y="37" text-anchor="middle" font-size="11" font-weight="800" fill="#7a8492">beam not emitted</text>
+              </g>
+              <text id="s2SourceLabel" x="480" y="395" text-anchor="middle" font-size="16" font-weight="900" fill="#22334d">Gas: Ne · Cathode: Cu</text>
+              <text id="s2ImportedSpeedLabel" x="480" y="418" text-anchor="middle" font-size="13" font-weight="850" fill="#3169a8">Beam speed: choose default or import from Station 1</text>
+              <text x="480" y="439" text-anchor="middle" font-size="11" font-weight="800" fill="#667085">Trajectory uses magnetic-force physics; apparatus drawing is schematic.</text>
+            </svg>
+          </div>
+
+          <div class="stage-panel" data-stage="3">
+            <svg viewBox="0 0 900 460" role="img" aria-label="Interactive idealized Millikan oil drop apparatus">
+              <defs>
+                <marker id="s3ArrowUp" markerWidth="10" markerHeight="10" refX="5" refY="3" orient="auto"><path d="M0,6 L5,0 L10,6" fill="none" stroke="#3169a8" stroke-width="2"/></marker>
+                <marker id="s3ArrowDown" markerWidth="10" markerHeight="10" refX="5" refY="3" orient="auto"><path d="M0,0 L5,6 L10,0" fill="none" stroke="#b4533b" stroke-width="2"/></marker>
+              </defs>
+              <rect width="900" height="460" fill="#fbfcfe"/>
+              <text x="450" y="42" text-anchor="middle" font-size="23" font-weight="900" fill="#22334d">Millikan Oil-Drop Apparatus / การทดลองหยดน้ำมัน</text>
+              <text x="450" y="64" text-anchor="middle" font-size="12" font-weight="800" fill="#667085">Idealized electrostatic suspension model / แบบจำลองเพื่อการเรียนรู้</text>
+              <rect x="180" y="95" width="430" height="288" rx="22" fill="#f8fbff" stroke="#49647e" stroke-width="4"/>
+              <rect x="225" y="136" width="340" height="22" rx="5" fill="#d8dee7" stroke="#111827" stroke-width="3"/><rect x="225" y="319" width="340" height="22" rx="5" fill="#d8dee7" stroke="#111827" stroke-width="3"/>
+              <text id="s3TopPlateLabel" x="580" y="153" font-size="14" font-weight="950" fill="#22334d">TOP (+)</text><text id="s3BottomPlateLabel" x="580" y="336" font-size="14" font-weight="950" fill="#22334d">BOTTOM (−)</text>
+              <line x1="200" y1="158" x2="200" y2="319" stroke="#3169a8" stroke-width="2"/><line x1="192" y1="158" x2="208" y2="158" stroke="#3169a8" stroke-width="2"/><line x1="192" y1="319" x2="208" y2="319" stroke="#3169a8" stroke-width="2"/><text x="166" y="240" transform="rotate(-90 166 240)" text-anchor="middle" font-size="12" font-weight="900" fill="#315b89">d = 5.00 mm</text>
+              <circle id="s3DropLive" cx="395" cy="238" r="12" fill="#e7a839" stroke="#7a5515" stroke-width="3"/><circle cx="390" cy="234" r="3.5" fill="#fff" opacity=".68"/><text id="s3DropRadiusLabel" x="425" y="224" font-size="12" font-weight="900" fill="#74551a">r = 0.80 μm</text>
+              <line id="s3ForceUp" x1="395" y1="226" x2="395" y2="185" stroke="#3169a8" stroke-width="4" marker-end="url(#s3ArrowUp)" opacity=".9"/><text id="s3ForceUpLabel" x="411" y="191" font-size="13" font-weight="900" fill="#3169a8">F_E</text>
+              <line id="s3ForceDown" x1="395" y1="250" x2="395" y2="291" stroke="#b4533b" stroke-width="4" marker-end="url(#s3ArrowDown)" opacity=".9"/><text id="s3ForceDownLabel" x="411" y="291" font-size="13" font-weight="900" fill="#a34634">mg</text>
+              <g transform="translate(640 135)"><rect x="0" y="40" width="95" height="130" rx="18" fill="#eef2f6" stroke="#4d5f72" stroke-width="4"/><circle cx="48" cy="105" r="32" fill="#dce8f2" stroke="#4d5f72" stroke-width="4"/><circle cx="48" cy="105" r="17" fill="#9dc3df" opacity=".75"/><rect x="32" y="0" width="32" height="58" rx="9" fill="#d1d8e0" stroke="#4d5f72" stroke-width="4"/><text x="48" y="194" text-anchor="middle" font-size="13" font-weight="900" fill="#22334d">Microscope</text></g>
+              <g transform="translate(650 315)"><rect width="125" height="65" rx="12" fill="#fbf3ff" stroke="#82639a" stroke-width="3"/><text x="62" y="27" text-anchor="middle" font-size="14" font-weight="950" fill="#66477d">X-RAY</text><text x="62" y="49" text-anchor="middle" font-size="22">☢</text></g><path d="M650 347 L585 300" stroke="#9e77b5" stroke-width="3" stroke-dasharray="7 6" opacity=".45"/><path id="s3XrayBeam" d="M650 347 L545 272" stroke="#b764d4" stroke-width="9" stroke-linecap="round" opacity=".12"/>
+              <g transform="translate(250 390)"><rect width="330" height="48" rx="11" fill="#fff" stroke="#ccd5df"/><text id="s3MotionLabel" x="165" y="20" text-anchor="middle" font-size="13" font-weight="950" fill="#667085">DROP STATE: FALLING</text><text id="s3ForceReadLabel" x="165" y="38" text-anchor="middle" font-size="11" font-weight="800" fill="#7a8492">Adjust plate voltage to balance forces</text></g>
+            </svg>
+          </div>
+        </div>
+        <div class="stage-status"><b id="stageStatusTitle">READY TO ACCELERATE</b><span id="stageStatusText">เลือก Initial Motion และ Battery แล้วกด Release · สนามจะเร่งประจุลบไปทางแผ่นบวก</span></div>
+      </div>
+
+      <div class="control-deck">
+        <div class="deck-head"><b id="deckTitle">Station 1 Controls / ชุดควบคุมสถานี 1</b><span class="preview-note" id="deckRoundNote">S1 · ENERGY</span></div>
+
+        <div class="controls-panel active" data-controls="1">
+          <div class="control-grid">
+            <div class="control-group">
+              <h4>Initial Motion / การเคลื่อนที่เริ่มต้น</h4>
+              <div class="choice-row"><button class="chip selected s1-motion" data-motion="rest" type="button">From rest / หยุดนิ่ง</button><button class="chip s1-motion" data-motion="moving" type="button">Already moving / มี vᵢ</button></div>
+              <div class="read-mini" id="s1MotionRead" style="margin-top:6px">vᵢ = 0 m/s</div>
+              <div class="s1-speed-control" id="s1SpeedControl"><div class="range-line"><input id="s1InitialSpeed" type="range" min="2000000" max="20000000" step="1000000" value="10000000" aria-label="Initial particle speed"/><span class="read-mini" id="s1InitialSpeedRead">1.00 × 10⁷ m/s</span></div></div>
+            </div>
+            <div class="control-group"><h4>Battery Voltage / ความต่างศักย์</h4><div class="choice-row"><button class="chip s1-voltage" data-v="250" type="button">250 V</button><button class="chip s1-voltage" data-v="500" type="button">500 V</button><button class="chip s1-voltage selected" data-v="1000" type="button">1000 V</button><button class="chip s1-voltage" data-v="2000" type="button">2000 V</button></div><div class="energy-bar-shell" aria-hidden="true"><div class="energy-bar-fill" id="s1EnergyBar"></div></div><div class="read-mini" id="s1EnergyTarget" style="margin-top:6px">Energy gain target = 1.60 × 10⁻¹⁶ J</div></div>
+            <div class="control-group"><h4>Transport / การเล่น</h4><div class="s1-transport"><button class="btn primary" id="s1Release" type="button">▶ Release / ปล่อย</button><button class="btn" id="s1Pause" type="button" disabled>⏸ Pause</button><button class="btn soft" id="s1Reset" type="button">↻ Reset</button></div><div class="s1-live-strip"><div class="s1-live-mini"><span>STATUS</span><b id="s1StatusMini">READY</b></div><div class="s1-live-mini"><span>POSITION</span><b id="s1PosMini">0%</b></div><div class="s1-live-mini"><span>CURRENT v</span><b id="s1SpeedMini">0 m/s</b></div></div></div>
+          </div>
+        </div>
+
+        <div class="controls-panel" data-controls="2">
+          <div class="control-grid s2-control-grid">
+            <div class="control-group"><h4>Residual Gas / แก๊สในหลอด</h4><div class="choice-row"><button class="chip s2-gas" data-gas="H₂" type="button">H₂</button><button class="chip s2-gas" data-gas="He" type="button">He</button><button class="chip s2-gas selected" data-gas="Ne" type="button">Ne</button><button class="chip s2-gas" data-gas="Ar" type="button">Ar</button></div><div class="read-mini" id="s2GasRead" style="margin-top:6px">Ne · residual gas</div></div>
+            <div class="control-group"><h4>Cathode Material / วัสดุแคโทด</h4><div class="choice-row"><button class="chip s2-cat" data-cat="Al" type="button">Al</button><button class="chip s2-cat selected" data-cat="Cu" type="button">Cu</button><button class="chip s2-cat" data-cat="Fe" type="button">Fe</button><button class="chip s2-cat" data-cat="Pt" type="button">Pt</button></div><div class="read-mini" id="s2CathodeRead" style="margin-top:6px">Cu cathode</div></div>
+            <div class="control-group s2-power-group">
+              <h4>Beam Speed + Power / ความเร็วและสวิตช์</h4>
+              <div class="action-row"><button class="btn soft" id="s2DefaultSpeed" type="button">Use Default Speed</button><button class="btn primary" id="s2Power" type="button" disabled>⚡ POWER ON</button></div>
+              <div class="s2-speed-source" id="s2SpeedSource">① Import speed from Station 1 หรือกด <b>Use Default Speed</b> ก่อน แล้วปุ่ม POWER จะเปิดใช้งาน</div>
+              <div class="s2-power-state" id="s2PowerState"><span class="s2-power-dot"></span><span>POWER OFF</span></div>
+            </div>
+            <div class="control-group s2-field-group">
+              <h4>Magnetic Field / สนามแม่เหล็ก</h4>
+              <div class="s2-field-read"><input id="s2B" type="range" min="0" max="2" step="0.05" value="0" aria-label="Magnetic field strength in millitesla"/><span class="read-mini" id="s2BRead">0.00 mT</span></div>
+              <div class="action-row" style="margin-top:6px"><button class="btn soft" id="s2FlipB" type="button">⇄ Flip B</button><button class="btn soft" id="s2Reset" type="button">↻ Reset CRT</button></div>
+              <div class="s2-dir-pill" id="s2DirRead">⊗ Into screen / เข้ากระดาษ</div>
+            </div>
+          </div>
+          <div class="s2-radius-panel" id="s2RadiusPanel">
+            <div class="s2-radius-head">
+              <div><b>📐 Radius Measurement / วัดรัศมีวิถี</b><div class="tiny">ปรับวงวัดเส้นประให้ซ้อนกับลำรังสีแคโทด · Adjust the dashed arc until it matches the beam.</div></div>
+              <span class="s2-radius-read" id="s2RadiusRead">r = 10.0 cm</span>
+            </div>
+            <div class="s2-radius-slider">
+              <span class="tiny">5 cm</span>
+              <input id="s2RadiusSlider" type="range" min="5" max="80" step="0.1" value="10" aria-label="Candidate trajectory radius in centimetres"/>
+              <span class="tiny">80 cm</span>
+            </div>
+            <div class="s2-match-meter" aria-hidden="true"><span id="s2MatchBar"></span></div>
+            <div class="s2-radius-feedback" id="s2RadiusFeedback">Move the radius slider until the dashed arc overlays the yellow beam. / เลื่อนรัศมีจนเส้นประทับกับลำสีเหลือง</div>
+            <div class="action-row" style="margin-top:7px">
+              <button class="btn soft" id="s2SnapRadius" type="button">◎ Fit Near Beam / จัดวงวัดใกล้ลำ</button>
+              <button class="btn green" id="s2ConfirmRadius" type="button" disabled>✓ Confirm Radius / ยืนยัน</button>
+              <button class="btn soft" id="s2CloseRadius" type="button">× Close Tool</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="controls-panel" data-controls="3">
+          <div class="control-grid s3-control-grid">
+            <div class="control-group s3-drop-group"><h4>Oil Drop / หยดน้ำมัน</h4><div class="action-row"><button class="btn primary" id="s3NewDrop" type="button">● New Oil Drop</button></div><div class="s3-readline"><span class="tiny">Radius</span><b id="s3RadiusRead">0.80 μm</b></div><div class="s3-readline"><span class="tiny">Oil density</span><b>850 kg/m³</b></div><div class="s3-readline"><span class="tiny">Drop mass</span><b id="s3MassRead">—</b></div></div>
+            <div class="control-group s3-plate-group"><h4>Parallel Plates / แผ่นตัวนำคู่ขนาน</h4><label class="tiny" for="s3VoltageLive">Plate voltage</label><input id="s3VoltageLive" type="range" min="0" max="900" step="5" value="350" aria-label="Millikan plate voltage"/><div class="s3-readline"><span class="tiny">ΔV</span><b id="s3VoltageLiveRead">350 V</b></div><div class="s3-readline"><span class="tiny">d</span><b>5.00 mm</b></div><div class="action-row" style="margin-top:6px"><button class="btn soft" id="s3ReversePolarity" type="button">⇄ Reverse Polarity</button><button class="btn soft" id="s3ResetLive" type="button">↻ Reset</button></div></div>
+            <div class="control-group s3-force-group"><h4>Force Balance / สมดุลแรง</h4><div class="s3-state-pill fall" id="s3StatePill">↓ FALLING</div><div class="s3-balance-wrap"><div class="s3-balance-bar"><span class="s3-balance-mid"></span><span class="s3-balance-marker" id="s3BalanceMarker"></span></div><div class="s3-balance-labels"><span>Gravity dominates</span><span>Electric dominates</span></div></div><div class="s3-readline"><span class="tiny">mg</span><b id="s3MgRead">—</b></div><div class="s3-readline"><span class="tiny">|F_E|</span><b id="s3FeRead">—</b></div></div>
+            <div class="control-group s3-xray-group s3-xray-live">
+              <h4>X-ray / รังสีเอกซ์</h4>
+              <div class="action-row"><button class="btn soft" id="s3XrayPulse" type="button">☢ X-RAY PULSE</button><span class="s3-pulse-count" id="s3PulseCount">0 pulses</span></div>
+              <div class="s3-charge-status" id="s3ChargeStatus">Charge state is hidden. Pulse the X-ray, then rebalance the same drop. / ซ่อนสถานะประจุไว้ ให้ยิง X-ray แล้วปรับสมดุลใหม่</div>
+            </div>
+          </div>
+          <div class="s3-measure-card"><div class="s3-measure-grid"><div class="s3-measure-cell"><span>DROP RADIUS</span><b id="s3CardR">0.80 μm</b></div><div class="s3-measure-cell"><span>DROP MASS</span><b id="s3CardM">—</b></div><div class="s3-measure-cell"><span>ELECTRIC FIELD</span><b id="s3CardE">—</b></div><div class="s3-measure-cell"><span>MOTION</span><b id="s3CardMotion">Falling</b></div></div></div>
+          <div class="s3-force-note" id="s3ForceNote">ปรับ Plate Voltage จนหยดลอยนิ่ง เมื่อ \\(|F_E|\\approx mg\\) จะขึ้น BALANCED / SUSPENDED.</div>
+        </div>
+      </div>
+
+      <div class="deck-foot"><div><span class="foot-state" id="footState">Station 1 physics ready · ตัวเลขเป็นค่าทางฟิสิกส์จริง</span><div class="transfer-note" id="s1TransferNote">Speed has been transferred to Station 2.</div></div><div class="foot-actions s1-r3-actions"><button class="btn green" id="recordS1Trial" type="button" disabled>● Record Trial</button><button class="btn soft" id="sendSnapshot" type="button">📥 Send Current Setup to Notes</button><button class="btn transfer" id="useSpeedS2" type="button" disabled>➡ Use speed in Station 2</button><button class="btn soft s2-future" id="s2MeasureRadius" type="button" disabled>📐 Measure Radius / วัดรัศมี</button><button class="btn dark" id="openNotesInline" type="button">📝 Open Notes</button></div></div>
+    </section>
+
+    <aside class="monitor">
+      <div class="monitor-title"><b>LIVE MEASUREMENTS / ค่าจากการทดลอง</b><span id="monitorModeBadge">LIVE · S1</span></div>
+      <div class="metric-grid" id="metricGrid"></div>
+      <div class="monitor-story" id="monitorStory"></div>
+      <details class="solution-shell"><summary>📖 Solution / เฉลย</summary><div class="solution-body" id="solutionBody"></div></details>
+    </aside>
+  </section>
+
+  <section class="bottom-log">
+    <div class="log-head">
+      <b id="logTitle">Station 1 Energy Trial Log / ตารางบันทึกการทดลองพลังงาน</b>
+      <div class="log-tools"><span id="logNote">Run → Record → change Battery or vᵢ → compare</span><button class="btn soft" id="clearS1Trials" type="button" disabled>Clear Trials / ล้างตาราง</button></div>
+    </div>
+    <div id="s1LogPanel">
+      <div class="compare-insight" id="s1CompareInsight">บันทึกอย่างน้อย 2 รอบเพื่อเปรียบเทียบผลของ Battery Voltage หรือความเร็วต้น · Record at least two trials to compare.</div>
+      <div class="trial-table-wrap">
+        <table class="trial-table" aria-label="Station 1 energy trials">
+          <thead><tr><th>#</th><th>Initial motion</th><th>vᵢ / m s⁻¹</th><th>Battery / V</th><th>E / N C⁻¹</th><th>a / m s⁻²</th><th>ΔK / J</th><th>v_f / m s⁻¹</th></tr></thead>
+          <tbody id="s1TrialBody"></tbody>
+        </table>
+        <div class="log-placeholder" id="s1TrialEmpty">No recorded trials yet / ยังไม่มีข้อมูลที่บันทึก</div>
+      </div>
+    </div>
+    <div id="s2LogPanel" hidden>
+      <div class="s2-observation-grid">
+        <div class="s2-observation"><span>BEAM</span><b id="s2ObsBeam">Power off</b></div>
+        <div class="s2-observation"><span>MAGNETIC FIELD</span><b id="s2ObsField">B = 0.00 mT</b></div>
+        <div class="s2-observation"><span>DEFLECTION</span><b id="s2ObsDeflect">No beam yet</b></div>
+      </div>
+      <div class="s2-observation-note" id="s2ObsNote">เลือก Beam speed → POWER ON → เพิ่ม B → Measure Radius → Record Trial.</div>
+      <div class="s2-trial-actions">
+        <button class="btn green" id="s2RecordTrial" type="button" disabled>● Record Thomson Trial</button>
+        <button class="btn soft" id="s2ClearTrials" type="button" disabled>Clear Trials / ล้างตาราง</button>
+        <span class="s2-em-badge" id="s2MeasuredBadge">r not measured / ยังไม่ได้วัด r</span>
+      </div>
+      <div class="s2-constant-note" id="s2ConstantNote">บันทึกหลายรอบโดยเปลี่ยน Gas และ Cathode แล้วเปรียบเทียบค่า \\(e/m\\). / Change gas and cathode, then compare the calculated charge-to-mass ratio.</div>
+      <div class="s2-trial-table-wrap">
+        <table class="s2-trial-table" aria-label="Thomson cathode ray trials">
+          <thead><tr><th>#</th><th>Gas</th><th>Cathode</th><th>v / m s⁻¹</th><th>B / mT</th><th>Direction</th><th>Measured r / cm</th><th>e/m / C kg⁻¹</th></tr></thead>
+          <tbody id="s2TrialBody"></tbody>
+        </table>
+        <div class="log-placeholder" id="s2TrialEmpty">No Thomson trials recorded yet / ยังไม่มีข้อมูล Thomson ที่บันทึก</div>
+      </div>
+    </div>
+    <div id="s3LogPanel" hidden>
+      <div class="s3-observation-grid">
+        <div class="s3-observation"><span>STEP 1</span><b>Suspend the oil drop</b></div>
+        <div class="s3-observation"><span>STEP 2</span><b>Record balance voltage</b></div>
+        <div class="s3-observation"><span>STEP 3</span><b>X-ray → rebalance → repeat</b></div>
+      </div>
+      <div class="s3-trial-actions">
+        <button class="btn green" id="s3RecordBalance" type="button" disabled>● Record Balanced Trial</button>
+        <button class="btn soft" id="s3ClearTrials" type="button" disabled>Clear Charge Trials</button>
+        <span class="s3-em-badge" id="s3BalanceBadge">Not balanced / ยังไม่สมดุล</span>
+      </div>
+      <div class="s3-trial-table-wrap">
+        <table class="s3-trial-table" aria-label="Millikan balanced charge trials">
+          <thead><tr><th>#</th><th>Drop</th><th>r / μm</th><th>m / kg</th><th>Balance V</th><th>E / N C⁻¹</th><th>|q| / C</th></tr></thead>
+          <tbody id="s3TrialBody"></tbody>
+        </table>
+        <div class="log-placeholder" id="s3TrialEmpty">No balanced charge trials yet / ยังไม่มีข้อมูลประจุที่บันทึก</div>
+      </div>
+      <div class="s3-evidence" id="s3Evidence">เก็บอย่างน้อย 3 ค่า <b>ที่ต่างกัน</b> จากหยดเดิม โดยยิง X-ray และทำให้ลอยนิ่งใหม่ทุกครั้ง แล้วค่อยค้นหาหน่วยประจุพื้นฐาน.</div>
+      <div class="s3-synthesis" id="s3Synthesis">
+        <h4>Final Synthesis / เชื่อม Thomson + Millikan</h4>
+        <div class="s3-synthesis-grid">
+          <div class="s3-synthesis-cell"><span>MILLIKAN</span><b id="s3SynthE">Need ≥3 charge states</b></div>
+          <div class="s3-synthesis-cell"><span>THOMSON</span><b id="s3SynthEM">Need Thomson trial</b></div>
+          <div class="s3-synthesis-cell"><span>ELECTRON MASS</span><b id="s3SynthMass">Not calculated yet</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<button class="notes-fab" id="notesFab" type="button">📝 Notes / สมุดโน้ต</button>
+<div class="notes-shell" id="notesShell" aria-hidden="true">
+  <section class="notes-dock">
+    <div class="notes-top">
+      <div><div class="notes-title">📝 Working Notes / สมุดโน้ตสำหรับทำงาน</div><div class="notes-sub">เขียนเองระหว่างสอน · รองรับปากกา ยางลบ Undo หลายหน้า และ snapshot จาก apparatus</div></div>
+      <div class="notes-toolbar"><button class="notes-btn tool active" data-tool="pen" type="button">✏ Pen</button><button class="notes-btn tool" data-tool="eraser" type="button">🧽 Eraser</button><button class="notes-btn tool" data-tool="select" type="button">▣ Select</button><button class="notes-btn" id="undoNote" type="button">↶ Undo</button><button class="notes-btn" id="clearInk" type="button">Clear Ink</button><button class="notes-btn" id="clearSnapshots" type="button">Clear Snapshots</button><button class="notes-btn" id="printNotes" type="button">🖨 Print</button><button class="notes-btn" id="closeNotes" type="button">× Close</button></div>
+      <div class="notes-stations" style="width:100%"><button class="notes-btn notes-station active" data-note-station="1" type="button">S1 Energy</button><button class="notes-btn notes-station" data-note-station="2" type="button">S2 Thomson</button><button class="notes-btn notes-station" data-note-station="3" type="button">S3 Millikan</button></div>
+    </div>
+    <div class="notes-sheet" id="noteSheet"><div class="note-object-layer" id="noteObjectLayer"></div><canvas class="note-ink" id="noteInk"></canvas></div>
+    <div class="notes-foot"><div class="page-controls"><button class="notes-btn" id="prevPage" type="button">◀</button><span class="page-label" id="pageLabel">Page 1 / 1</span><button class="notes-btn" id="nextPage" type="button">▶</button><button class="notes-btn" id="addPage" type="button">＋ Add Page</button></div><span class="notes-state" id="notesState">S1 Energy · Pen</span></div>
+  </section>
+</div>
+
+<script>
+(() => {
+'use strict';
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const ELECTRON={q:1.602176634e-19,m:9.1093837139e-31};
+const S1_PLATE_SEPARATION=0.10; // m, physical model distance between accelerating plates
+const S2_DEFAULT_SPEED=2.65e7;
+const S3_RHO=850,S3_D=5.00e-3,S3_G=9.81,S3_E=1.602176634e-19;
+const S2_FIELD_SCALE=4000; // px per metre for the schematic curvature display
+const state={station:1,s1:{motion:'rest',voltage:1000,viMoving:1.0e7,phase:'ready',progress:0,currentV:0,finalV:0,energyGain:0,physicalTransit:0,raf:0,lastTs:0,visualElapsed:0,trials:[]},s2:{gas:'Ne',cat:'Cu',importedSpeed:null,useDefault:false,power:false,BmT:0,dir:-1,measureOpen:false,candidateRcm:10,measuredR:null,trials:[]},s3:{voltage:350,drop:3,rUm:0.80,chargeN:3,polarity:1,cy:238,targetCy:238,pulseCount:0,chargeChanged:false,trials:[]}};
+const info={
+  1:{title:'Station 1 · Energy & Accelerating Charge',sub:'เปลี่ยนพลังงานไฟฟ้าเป็นพลังงานจลน์ · เริ่มได้ทั้งจากหยุดนิ่งและมีความเร็วต้น',deck:'Station 1 Controls / ชุดควบคุมสถานี 1',status:'เลือก Initial Motion และ Battery → Release → Record Trial → เปลี่ยนค่าแล้วเปรียบเทียบ',log:'Station 1 Energy Trial Log'},
+  2:{title:'Station 2 · Cathode Rays & Thomson',sub:'เปิดหลอดรังสีแคโทด เปลี่ยนแก๊ส/แคโทด แล้วควบคุมสนามแม่เหล็กเพื่อสังเกตการโค้งของลำ',deck:'Station 2 Controls / ชุดควบคุมสถานี 2',status:'เลือก Beam speed → POWER ON → เพิ่ม B → Flip B แล้วสังเกตทิศและความโค้ง',log:'Station 2 · Thomson Radius + e/m Trials'},
+  3:{title:'Station 3 · Millikan Oil Drop',sub:'ปรับแรงดันระหว่างแผ่นให้แรงไฟฟ้าสมดุลกับน้ำหนักของหยดน้ำมัน',deck:'Station 3 Controls / ชุดควบคุมสถานี 3',status:'New Oil Drop → อ่านรัศมีและมวล → ปรับ Plate Voltage → ทำให้หยด Suspended',log:'Station 3 · Millikan Force-Balance Observation'}
+};
+function toast(msg){const e=$('#toast');e.textContent=msg;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),1500)}
+function metric(k,v,cls=''){return `<div class="metric ${cls}"><div class="k">${k}</div><div class="v">${v}</div></div>`}
+let mathTypesetTimer=0;
+let mathTypesetChain=Promise.resolve();
+function queueMathTypeset(elements){
+  clearTimeout(mathTypesetTimer);
+  mathTypesetTimer=setTimeout(()=>{
+    if(!window.MathJax?.typesetPromise)return;
+    const targets=elements.filter(Boolean);
+    if(!targets.length)return;
+    mathTypesetChain=mathTypesetChain.then(async()=>{
+      try{
+        window.MathJax.typesetClear?.(targets);
+        await window.MathJax.typesetPromise(targets);
+      }catch(_){}
+    });
+  },90);
+}
+function setMathHTML(el,raw){
+  if(!el)return;
+  if(el.dataset.rawMath===raw)return false;
+  el.dataset.rawMath=raw;
+  el.innerHTML=raw;
+  queueMathTypeset([el]);
+  return true;
+}
+function typesetMath(){
+  queueMathTypeset([$('#monitorStory'),$('#solutionBody')]);
+}
+const mathLoader=document.getElementById('mathjax-loader');
+mathLoader?.addEventListener('load',()=>typesetMath());
+function sci(v,d=2){if(!Number.isFinite(v))return '—';if(v===0)return '0';const e=Math.floor(Math.log10(Math.abs(v))),m=v/10**e;return `${m.toFixed(d)} × 10<sup>${String(e).replace('-','−')}</sup>`}
+function sciText(v,d=2){if(!Number.isFinite(v))return '—';if(v===0)return '0';const e=Math.floor(Math.log10(Math.abs(v))),m=v/10**e;return `${m.toFixed(d)} × 10^${e}`}
+function s1Vi(){return state.s1.motion==='rest'?0:state.s1.viMoving}
+function s1Physics(){
+  const vi=s1Vi(),V=state.s1.voltage,q=ELECTRON.q,m=ELECTRON.m,L=S1_PLATE_SEPARATION;
+  const gain=q*V, vf=Math.sqrt(Math.max(0,vi*vi+2*gain/m));
+  const Efield=V/L, a=q*Efield/m;
+  const t= a>0 ? (Math.sqrt(vi*vi+2*a*L)-vi)/a : 0;
+  return {vi,V,gain,vf,Efield,a,t,L};
+}
+function setS1Derived(){const p=s1Physics();state.s1.finalV=p.vf;state.s1.energyGain=p.gain;state.s1.physicalTransit=p.t;if(state.s1.phase==='ready')state.s1.currentV=p.vi;$('#s1EnergyTarget').innerHTML=`Energy gain target = ${sci(p.gain)} J`;}
+function renderMonitor(){let html='',story='',sol='';
+ if(state.station===1){
+   const p=s1Physics(),phase=state.s1.phase,cv=state.s1.currentV||p.vi;
+   const F=p.a*ELECTRON.m;
+   html=metric('INITIAL SPEED',`${sci(p.vi)} m/s`,'highlight')+
+        metric('BATTERY / ΔV',p.V+' V')+
+        metric('PLATE SEPARATION','0.100 m')+
+        metric('ELECTRIC FIELD',`${sci(p.Efield)} N/C`)+
+        metric('ELECTRIC FORCE',`${sci(F)} N`)+
+        metric('ACCELERATION',`${sci(p.a)} m/s²`,'highlight')+
+        metric('ENERGY GAIN',`${sci(p.gain)} J`)+
+        metric('CURRENT SPEED',`${sci(cv)} m/s`)+
+        metric('FINAL SPEED',phase==='complete'?`${sci(p.vf)} m/s`:`target ${sci(p.vf)} m/s`)+
+        metric('PHYSICAL TRANSIT',`${sci(p.t)} s`,'full');
+   const phaseText=phase==='running'?'กำลังเร่งอนุภาคผ่านสนาม':phase==='paused'?'หยุดภาพชั่วคราว':phase==='complete'?'ผ่าน accelerating region แล้ว':'พร้อมปล่อยอนุภาค';
+   story=`<h3>Energy Transfer / การถ่ายโอนพลังงาน</h3><p><b>${phaseText}</b></p><ul class="story-list"><li>อนุภาคในแบบจำลองมีประจุลบและใช้มวลของอิเล็กตรอน</li><li>สนามไฟฟ้า E ชี้ไปทางซ้าย แต่แรงบนประจุลบชี้ไปทางขวา</li><li>ระยะห่างแผ่นคงที่ \\(d=0.100\\,\\mathrm{m}\\) จึงมี \\(E=\\Delta V/d\\)</li><li>แรงไฟฟ้า \\(F_E=|q|E\\) และความเร่ง \\(a=F_E/m\\)</li><li>เพิ่ม Battery \\(\\Delta V\\) → \\(E\\) เพิ่ม → \\(F_E\\) เพิ่ม → \\(a\\) เพิ่ม → พลังงานจลน์และความเร็วปลายเพิ่ม</li><li>ถ้าเปลี่ยนเฉพาะ \\(v_i\\) แต่คง \\(V,d\\) เดิม ค่า \\(E,F_E,a\\) จะเท่าเดิม</li><li>ภาพถูกชะลอ แต่ค่าความเร็ว ความเร่ง และเวลาเดินทางที่รายงานเป็นค่าทางฟิสิกส์</li></ul>`;
+   const Ki=.5*ELECTRON.m*p.vi*p.vi, Kf=Ki+p.gain;
+   sol=`<b>Dynamic Solution / เฉลยตามค่าปัจจุบัน</b>
+   <div class="solution-two-way">
+     <div class="solution-route">
+       <b>Route A · Field → Force → Acceleration</b>
+       <div class="math-block">\\[
+       E=\\frac{\\Delta V}{d}
+       =\\frac{${p.V}}{0.100}
+       =${(p.Efield).toExponential(3)}\\ \\mathrm{N/C}
+       \\]</div>
+       <div class="math-block">\\[
+       F_E=|q|E
+       =(${ELECTRON.q.toExponential(4)})(${p.Efield.toExponential(3)})
+       =${F.toExponential(3)}\\ \\mathrm{N}
+       \\]</div>
+       <div class="math-block">\\[
+       a=\\frac{F_E}{m}
+       =\\frac{${F.toExponential(3)}}{${ELECTRON.m.toExponential(4)}}
+       =${p.a.toExponential(3)}\\ \\mathrm{m/s^2}
+       \\]</div>
+     </div>
+     <div class="solution-route">
+       <b>Route B · Kinematics Check / ตรวจด้วยการเคลื่อนที่</b>
+       <div class="math-block">\\[
+       v_f^2=v_i^2+2ad
+       \\]</div>
+       <div class="math-block">\\[
+       a=\\frac{v_f^2-v_i^2}{2d}
+       =\\frac{(${p.vf.toExponential(3)})^2-(${p.vi.toExponential(3)})^2}{2(0.100)}
+       =${p.a.toExponential(3)}\\ \\mathrm{m/s^2}
+       \\]</div>
+     </div>
+   </div>
+   <div class="solution-step"><div class="step-k">ENERGY METHOD / วิธีพลังงาน</div>
+     <div class="math-block">\\[
+     \\Delta K=|q|\\Delta V=${p.gain.toExponential(3)}\\ \\mathrm{J}
+     \\]</div>
+     <div class="math-block">\\[
+     \\frac12mv_f^2-\\frac12mv_i^2=|q|\\Delta V
+     \\]</div>
+     <div class="math-block">\\[
+     v_f=\\sqrt{v_i^2+\\frac{2|q|\\Delta V}{m}}
+     =${p.vf.toExponential(3)}\\ \\mathrm{m/s}
+     \\]</div>
+   </div>
+   <div class="solution-answer">\\(\\boxed{a=${p.a.toExponential(3)}\\ \\mathrm{m/s^2}}\\) &nbsp; · &nbsp; \\(\\boxed{v_f=${p.vf.toExponential(3)}\\ \\mathrm{m/s}}\\)</div>`;
+ } else if(state.station===2){
+   const v=s2BeamSpeed(),tr=s2Trajectory(),dir=state.s2.dir<0?'⊗ Into screen':'⊙ Out of screen';
+   const measured=state.s2.measuredR!=null, em=measured&&v&&tr.B>0 ? v/(tr.B*state.s2.measuredR) : null;
+   html=metric('POWER',state.s2.power?'ON':'OFF',state.s2.power?'highlight':'')+
+        metric('SOURCE',`${state.s2.gas} · ${state.s2.cat}`)+
+        metric('BEAM SPEED',v?`${sci(v)} m/s · ${state.s2.importedSpeed?'from S1':'default'}`:'Choose / import speed')+
+        metric('MAGNETIC FIELD',`${state.s2.BmT.toFixed(2)} mT`)+
+        metric('B DIRECTION',dir)+
+        metric('TRAJECTORY',!state.s2.power?'No beam':state.s2.BmT===0?'Straight':tr.screenHit?(state.s2.dir<0?'Curves upward':'Curves downward'):'Misses screen')+
+        metric('MEASURED RADIUS',measured?`${(state.s2.measuredR*100).toFixed(1)} cm`:'— measure the arc',measured?'highlight':'')+
+        metric('CHARGE / MASS',em?`${sci(em)} C/kg`:'— after radius measurement','full');
+   const powerLine=!v?'เลือกความเร็วก่อนเปิดหลอด':!state.s2.power?'พร้อมเปิดหลอด':state.s2.BmT===0?'ลำวิ่งตรง เพราะ B = 0':tr.screenHit?'ลำโค้งในสนามแม่เหล็กและยังชนจอ':'สนามแรงพอให้ลำเบนจนไม่ถึงจอ';
+   story=`<h3>Thomson Measurement / การวัดแบบทอมสัน</h3><p><b>${powerLine}</b></p><ul class="story-list"><li>เมื่อ \\(B=0\\) ลำวิ่งตรง เมื่อเพิ่ม \\(B\\) วิถีจะโค้ง</li><li>ใช้ Radius Tool ปรับเส้นประให้ซ้อนกับวิถี แล้วบันทึก \\(r\\)</li><li>เปลี่ยน Gas และ Cathode แล้วทำซ้ำ โดยคงสมบัติของอนุภาคที่ติดตามไว้เหมือนเดิม</li><li>เปรียบเทียบค่า \\(e/m\\) จากหลาย trial เพื่อดูว่าค่าใกล้คงที่หรือไม่</li></ul>`;
+   if(measured&&v&&tr.B>0){
+     sol=`<b>Dynamic Thomson Solution / เฉลยตามค่าที่วัด</b>
+       <div class="math-block">\\[F_B=|q|vB\\]</div>
+       <div class="math-block">\\[|q|vB=\\frac{mv^2}{r}\\]</div>
+       <div class="math-block">\\[\\frac{|q|}{m}=\\frac{v}{Br}\\]</div>
+       <div class="math-block">\\[
+       \\frac{|q|}{m}
+       =\\frac{${v.toExponential(3)}}{(${tr.B.toExponential(3)})(${state.s2.measuredR.toExponential(3)})}
+       =${em.toExponential(3)}\\ \\mathrm{C\\,kg^{-1}}
+       \\]</div>
+       <div class="solution-answer">\\(\\boxed{e/m\\approx ${em.toExponential(3)}\\ \\mathrm{C\\,kg^{-1}}}\\)</div>
+       <span>ค่ามาตรฐานของอิเล็กตรอนอยู่ใกล้ \\(1.76\\times10^{11}\\ \\mathrm{C\\,kg^{-1}}\\). ความคลาดเคลื่อนเล็กน้อยใน simulation มาจากการอ่านรัศมีของผู้วัด.</span>`;
+   }else{
+     sol=`<b>Measure first / วัดก่อน</b>
+       <div class="math-block">\\[\\frac{|q|}{m}=\\frac{v}{Br}\\]</div>
+       <span>เปิดหลอด ตั้ง \\(B\\ge 0.30\\,\\mathrm{mT}\\) แล้วกด <b>Measure Radius</b>. เมื่อยืนยัน \\(r\\) แล้ว ระบบจะแทนค่าปัจจุบันให้ทีละขั้น.</span>`;
+   }
+ }
+ else {
+   const p=s3Physics(),qMeas=s3CurrentMeasuredQ(),est=estimateElementaryCharge(),em=s2MeanEM(),mElectron=est&&em?est.e/em:null;
+   html=metric('DROP RADIUS',`${state.s3.rUm.toFixed(2)} μm`,'highlight')+
+        metric('OIL DENSITY',`${S3_RHO} kg/m³`)+
+        metric('DROP MASS',`${sci(p.mass)} kg`)+
+        metric('PLATE VOLTAGE',`${state.s3.voltage} V`)+
+        metric('PLATE SEPARATION',`${(S3_D*1000).toFixed(2)} mm`)+
+        metric('ELECTRIC FIELD',`${sci(p.E)} N/C`)+
+        metric('WEIGHT',`${sci(p.mg)} N`)+
+        metric('ELECTRIC FORCE',`${sci(p.Fe)} N`)+
+        metric('MOTION',p.motion.toUpperCase(),p.motion==='suspended'?'highlight':'')+
+        metric('MEASURED |q|',qMeas?`${sci(qMeas)} C`:'— balance first','full')+
+        metric('ELEMENTARY CHARGE',est?`${sci(est.e,4)} C · from trials`:'— need ≥3 levels','full');
+   story=`<h3>Millikan Charge Quantization / การควอนไทซ์ของประจุ</h3>
+   <p>ทำให้หยดเดิมลอยนิ่ง บันทึก \\(|q|\\) จากนั้นยิง X-ray เพื่อเปลี่ยนสถานะประจุ แล้วทำสมดุลใหม่.</p>
+   <ul class="story-list">
+     <li>ที่สมดุล: \\(|q|E=mg\\)</li>
+     <li>เพราะ \\(E=\\Delta V/d\\), จึงหา \\(|q|=mgd/\\Delta V\\)</li>
+     <li>X-ray เปลี่ยนประจุแบบไม่เปิดเผยจำนวนอิเล็กตรอน ให้สังเกตจากชุด \\(|q|\\) ที่วัดเอง</li>
+     <li>เมื่อมีหลายระดับ ระบบช่วยหาหน่วยพื้นฐานที่ทำให้ค่าต่าง ๆ ใกล้จำนวนเต็มเท่าของมัน</li>
+   </ul>`;
+   if(qMeas){
+     sol=`<b>Balanced-Drop Solution / เฉลยจากจุดสมดุลปัจจุบัน</b>
+       <div class="math-block">\\[m_{\\mathrm{drop}}=\\rho\\frac{4}{3}\\pi r^3=${p.mass.toExponential(3)}\\ \\mathrm{kg}\\]</div>
+       <div class="math-block">\\[E=\\frac{\\Delta V}{d}=\\frac{${state.s3.voltage}}{${S3_D.toExponential(3)}}=${p.E.toExponential(3)}\\ \\mathrm{N/C}\\]</div>
+       <div class="math-block">\\[|q|E=mg\\]</div>
+       <div class="math-block">\\[
+       |q|=\\frac{mg}{E}=\\frac{mgd}{\\Delta V}
+       =\\frac{(${p.mass.toExponential(3)})(${S3_G})(${S3_D.toExponential(3)})}{${state.s3.voltage}}
+       =${qMeas.toExponential(3)}\\ \\mathrm{C}
+       \\]</div>
+       ${est?`<div class="solution-answer">จากหลาย trial: \\(\\boxed{e\\approx ${est.e.toExponential(3)}\\ \\mathrm{C}}\\)</div>`:''}
+       ${mElectron?`<div class="math-block">\\[
+         m_e=\\frac{e}{e/m}
+         =\\frac{${est.e.toExponential(3)}}{${em.toExponential(3)}}
+         =${mElectron.toExponential(3)}\\ \\mathrm{kg}
+       \\]</div><div class="solution-answer">\\(\\boxed{m_e\\approx ${mElectron.toExponential(3)}\\ \\mathrm{kg}}\\)</div>`:
+       `<span>${est?'ได้ค่า \\(e\\) แล้ว แต่ยังต้องมี Thomson trial เพื่อหา \\(m_e\\).':'Record อย่างน้อย 3 charge levels เพื่อประมาณ \\(e\\).'}</span>`}`;
+   }else{
+     sol=`<b>Find the balance first / หาจุดสมดุลก่อน</b>
+       <div class="math-block">\\[|q|E=mg,\\qquad E=\\frac{\\Delta V}{d}\\]</div>
+       <div class="math-block">\\[|q|=\\frac{mgd}{\\Delta V}\\]</div>
+       <span>ปรับ Plate Voltage จนขึ้น <b>SUSPENDED</b> แล้วกด Record Balanced Trial.</span>`;
+   }
+ }
+ $('#metricGrid').innerHTML=html;setMathHTML($('#monitorStory'),story);setMathHTML($('#solutionBody'),sol);
+}
+function renderBattery(){
+  const g=$('#s1BatteryCells');if(!g)return;g.innerHTML='';
+  const count={250:1,500:2,1000:3,2000:4}[state.s1.voltage]||3;
+  const NS='http://www.w3.org/2000/svg',start=54,span=150,step=count===1?0:span/(count-1);
+  for(let i=0;i<count;i++){
+    const x=start+i*step;
+    const long=document.createElementNS(NS,'line');long.setAttribute('x1',x);long.setAttribute('x2',x);long.setAttribute('y1','8');long.setAttribute('y2','48');long.setAttribute('stroke','#22334d');long.setAttribute('stroke-width','5');g.appendChild(long);
+    const short=document.createElementNS(NS,'line');short.setAttribute('x1',x+16);short.setAttribute('x2',x+16);short.setAttribute('y1','17');short.setAttribute('y2','39');short.setAttribute('stroke','#22334d');short.setAttribute('stroke-width','5');g.appendChild(short);
+    if(i<count-1){const wire=document.createElementNS(NS,'line');wire.setAttribute('x1',x+16);wire.setAttribute('x2',start+(i+1)*step);wire.setAttribute('y1','28');wire.setAttribute('y2','28');wire.setAttribute('stroke','#22334d');wire.setAttribute('stroke-width','4');g.appendChild(wire);}
+  }
+}
+function renderS1Visual(){
+  const p=s1Physics(),prog=Math.max(0,Math.min(1,state.s1.progress||0)),x0=260,x1=676,x=x0+(x1-x0)*prog;
+  $('#s1Particle').setAttribute('transform',`translate(${x.toFixed(2)} 208)`);
+  const speed=Math.max(p.vi,state.s1.currentV||p.vi),ratio=Math.max(.08,Math.min(1,speed/Math.max(p.vf,1))),arrow=35+105*ratio;
+  $('#s1VelocityArrow').setAttribute('x1',x);$('#s1VelocityArrow').setAttribute('x2',Math.min(775,x+arrow));
+  $('#s1VelocityLabel').setAttribute('x',Math.min(760,x+arrow/2));$('#s1VelocityLabel').textContent=`v = ${sciText(speed)} m/s`;
+  $$('.trail-dot').forEach((d,i)=>d.setAttribute('opacity',prog>(i+1)/7?String(.18+.12*i):'0'));
+  $('#s1EnergyBar').style.width=`${(prog*100).toFixed(1)}%`;
+  $('#s1PosMini').textContent=`${Math.round(prog*100)}%`;$('#s1SpeedMini').textContent=`${sciText(speed)} m/s`;
+  const label={ready:'READY',running:'ACCELERATING',paused:'PAUSED',complete:'COMPLETE'}[state.s1.phase]||'READY';$('#s1StatusMini').textContent=label;
+  const complete=state.s1.phase==='complete';
+  const rec=$('#recordS1Trial'),use=$('#useSpeedS2');
+  if(rec){rec.disabled=!complete;rec.classList.toggle('record-ready',complete)}
+  if(use)use.disabled=!complete;
+  renderBattery();
+}
+function cancelS1Animation(){if(state.s1.raf){cancelAnimationFrame(state.s1.raf);state.s1.raf=0}state.s1.lastTs=0}
+function s1VisualDuration(){return matchMedia('(prefers-reduced-motion: reduce)').matches?.45:2.4}
+function s1Start(){
+  if(state.s1.phase==='complete')s1Reset(false);
+  if(state.s1.phase==='paused'){state.s1.phase='running';state.s1.lastTs=0;} else if(state.s1.phase!=='running'){state.s1.phase='running';state.s1.visualElapsed=state.s1.progress*s1VisualDuration();state.s1.lastTs=0;}
+  $('#s1Release').textContent='▶ Running…';$('#s1Release').disabled=true;$('#s1Pause').disabled=false;animateS1();renderMonitor();renderS1Visual();
+}
+function animateS1(ts){
+  if(state.s1.phase!=='running'){state.s1.raf=0;return}
+  if(!ts){state.s1.raf=requestAnimationFrame(animateS1);return}
+  if(!state.s1.lastTs)state.s1.lastTs=ts;
+  const dt=Math.min(.05,(ts-state.s1.lastTs)/1000);state.s1.lastTs=ts;state.s1.visualElapsed+=dt;
+  const p=s1Physics(),D=s1VisualDuration(),u=Math.min(1,state.s1.visualElapsed/D);
+  // Map classroom animation time to the real constant-acceleration trajectory.
+  const tPhys=u*p.t, xPhys=p.vi*tPhys+.5*p.a*tPhys*tPhys;
+  state.s1.progress=p.L>0?Math.min(1,xPhys/p.L):u;
+  state.s1.currentV=p.vi+p.a*tPhys;
+  renderS1Visual();renderMonitor();
+  if(u>=1){state.s1.phase='complete';state.s1.progress=1;state.s1.currentV=p.vf;cancelS1Animation();$('#s1Release').disabled=false;$('#s1Release').textContent='▶ Run Again';$('#s1Pause').disabled=true;$('#stageStatusTitle').textContent='ENERGY TRANSFER COMPLETE';$('#stageStatusText').textContent=`Battery ${p.V} V accelerated the particle to ${sciText(p.vf)} m/s.`;$('.lab').classList.add('s1-run-complete');setTimeout(()=>$('.lab').classList.remove('s1-run-complete'),600);renderS1Visual();renderMonitor();toast('Acceleration complete / การเร่งเสร็จแล้ว');return}
+  state.s1.raf=requestAnimationFrame(animateS1);
+}
+function s1Pause(){if(state.s1.phase!=='running')return;state.s1.phase='paused';cancelS1Animation();$('#s1Release').disabled=false;$('#s1Release').textContent='▶ Resume';$('#s1Pause').disabled=true;renderS1Visual();renderMonitor()}
+function s1Reset(showToast=true){
+  cancelS1Animation();state.s1.phase='ready';state.s1.progress=0;state.s1.visualElapsed=0;state.s1.currentV=s1Vi();setS1Derived();$('#s1Release').disabled=false;$('#s1Release').textContent='▶ Release / ปล่อย';$('#s1Pause').disabled=true;$('#stageStatusTitle').textContent='READY TO ACCELERATE';$('#stageStatusText').textContent='เลือก Initial Motion และ Battery แล้วกด Release · สนามจะเร่งประจุลบไปทางแผ่นบวก';renderS1Visual();renderMonitor();if(showToast)toast('Station 1 reset / รีเซ็ตสถานี 1')
+}
+function refreshS1Controls(){
+  const moving=state.s1.motion==='moving';$('#s1SpeedControl').classList.toggle('show',moving);$('#s1InitialSpeed').disabled=!moving;$('#s1MotionRead').innerHTML=moving?`vᵢ = ${sci(state.s1.viMoving)} m/s`:'vᵢ = 0 m/s';$('#s1InitialSpeedRead').innerHTML=`${sci(state.s1.viMoving)} m/s`;$('#s1BatteryLabel').textContent=state.s1.voltage+' V';setS1Derived();renderS1Visual();renderMonitor();
+}
+
+
+function s2BeamSpeed(){return state.s2.importedSpeed || (state.s2.useDefault?S2_DEFAULT_SPEED:null)}
+function s2Trajectory(){
+  const v=s2BeamSpeed(),B=state.s2.BmT*1e-3;
+  const xStart=183,y0=226,xField0=320,xField1=560,xScreen=746;
+  if(!v||B<=0){
+    return {v,B,r:Infinity,path:`M${xStart} ${y0} L${xScreen} ${y0}`,screenHit:true,screenY:y0,deflection:0,endedInField:false};
+  }
+  const r=ELECTRON.m*v/(ELECTRON.q*B),rp=r*S2_FIELD_SCALE,dx=xField1-xField0,sign=state.s2.dir<0?-1:1;
+  const pts=[[xStart,y0],[xField0,y0]];
+  let screenHit=false,screenY=null,endedInField=false,lastX=xField0,lastY=y0,theta=0;
+  if(rp<=dx){
+    const thetaEnd=1.48;
+    for(let i=1;i<=34;i++){
+      theta=thetaEnd*i/34;
+      const x=xField0+rp*Math.sin(theta),y=y0+sign*rp*(1-Math.cos(theta));
+      if(y<126||y>324){lastX=x;lastY=Math.max(126,Math.min(324,y));break}
+      pts.push([x,y]);lastX=x;lastY=y;
+    }
+    endedInField=true;
+  }else{
+    const thetaExit=Math.asin(Math.min(.999999,dx/rp));
+    for(let i=1;i<=32;i++){
+      theta=thetaExit*i/32;
+      const x=xField0+rp*Math.sin(theta),y=y0+sign*rp*(1-Math.cos(theta));
+      pts.push([x,y]);lastX=x;lastY=y;
+    }
+    const slope=sign*Math.tan(thetaExit);
+    const yAtScreen=lastY+slope*(xScreen-xField1);
+    if(yAtScreen>=126&&yAtScreen<=324){
+      pts.push([xScreen,yAtScreen]);screenHit=true;screenY=yAtScreen;lastX=xScreen;lastY=yAtScreen;
+    }else{
+      const wallY=yAtScreen<126?126:324;
+      const xWall=xField1+(wallY-lastY)/slope;
+      if(Number.isFinite(xWall)&&xWall>xField1&&xWall<xScreen)pts.push([xWall,wallY]);
+      endedInField=false;
+    }
+  }
+  return {v,B,r,path:pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' '),screenHit,screenY,deflection:screenHit?screenY-y0:lastY-y0,endedInField};
+}
+
+function s2InvalidateMeasurement(){
+  state.s2.measuredR=null;
+  const b=$('#s2MeasuredBadge');if(b)b.textContent='r not measured / ยังไม่ได้วัด r';
+}
+function s2CanMeasure(){
+  return !!s2BeamSpeed() && state.s2.power && state.s2.BmT>=0.30;
+}
+function s2CandidatePath(radiusM){
+  const xStart=320,y0=226,xField1=560,xScreen=746,sign=state.s2.dir<0?-1:1;
+  const rp=Math.max(1,radiusM*S2_FIELD_SCALE),dx=xField1-xStart,pts=[[xStart,y0]];
+  if(rp<=dx){
+    const thetaEnd=1.48;
+    for(let i=1;i<=34;i++){
+      const th=thetaEnd*i/34;
+      const x=xStart+rp*Math.sin(th),y=y0+sign*rp*(1-Math.cos(th));
+      if(y<126||y>324)break;
+      pts.push([x,y]);
+    }
+  }else{
+    const thExit=Math.asin(Math.min(.999999,dx/rp));
+    let lx=xStart,ly=y0;
+    for(let i=1;i<=32;i++){
+      const th=thExit*i/32;
+      lx=xStart+rp*Math.sin(th);ly=y0+sign*rp*(1-Math.cos(th));pts.push([lx,ly]);
+    }
+    const slope=sign*Math.tan(thExit),yScreen=ly+slope*(xScreen-xField1);
+    if(yScreen>=126&&yScreen<=324)pts.push([xScreen,yScreen]);
+    else{
+      const wallY=yScreen<126?126:324,xWall=xField1+(wallY-ly)/slope;
+      if(Number.isFinite(xWall)&&xWall>xField1&&xWall<xScreen)pts.push([xWall,wallY]);
+    }
+  }
+  return pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+}
+function s2MeasurementQuality(){
+  const tr=s2Trajectory(),trueR=tr.r,cand=state.s2.candidateRcm/100;
+  if(!Number.isFinite(trueR)||trueR<=0)return {score:0,rel:Infinity,matched:false,trueR};
+  const rel=Math.abs(cand-trueR)/trueR;
+  const score=Math.max(0,1-rel/.30);
+  return {score,rel,matched:rel<=.02,trueR};
+}
+function renderS2Measurement(){
+  const panel=$('#s2RadiusPanel'),svg=$('[data-stage="2"] svg'),can=s2CanMeasure();
+  const btn=$('#s2MeasureRadius');if(btn)btn.disabled=!can;
+  if(!panel)return;
+  panel.classList.toggle('show',state.s2.measureOpen);
+  svg?.classList.toggle('s2-measure-on',state.s2.measureOpen);
+  if(!state.s2.measureOpen){
+    svg?.classList.remove('s2-measure-match');
+    $('#s2MeasureCircle').setAttribute('opacity','0');
+    $('#s2MeasureHandle').setAttribute('opacity','0');
+    $('#s2MeasureLabel').setAttribute('opacity','0');
+    return;
+  }
+  const candM=state.s2.candidateRcm/100,q=s2MeasurementQuality();
+  $('#s2RadiusSlider').value=state.s2.candidateRcm;
+  $('#s2RadiusRead').textContent=`r = ${state.s2.candidateRcm.toFixed(1)} cm`;
+  $('#s2MeasureCircle').setAttribute('d',s2CandidatePath(candM));
+  $('#s2MeasureCircle').setAttribute('opacity','.95');
+  $('#s2MeasureHandle').setAttribute('opacity','1');
+  $('#s2MeasureLabel').setAttribute('opacity','1');
+  const rp=candM*S2_FIELD_SCALE,sign=state.s2.dir<0?-1:1;
+  const th=Math.min(.55,Math.asin(Math.min(.95,150/Math.max(rp,1))));
+  const hx=320+rp*Math.sin(th),hy=226+sign*rp*(1-Math.cos(th));
+  $('#s2MeasureHandle').setAttribute('cx',hx.toFixed(1));$('#s2MeasureHandle').setAttribute('cy',hy.toFixed(1));
+  $('#s2MeasureLabel').setAttribute('x',Math.min(690,hx+12).toFixed(1));$('#s2MeasureLabel').setAttribute('y',(hy-12).toFixed(1));
+  $('#s2MatchBar').style.width=`${Math.round(q.score*100)}%`;
+  const fb=$('#s2RadiusFeedback'),confirm=$('#s2ConfirmRadius');
+  fb.className='s2-radius-feedback '+(q.matched?'good':q.rel<.12?'warn':'');
+  svg?.classList.toggle('s2-measure-match',q.matched);
+  confirm.disabled=!q.matched;
+  if(q.matched)fb.innerHTML='✓ <b>ARC MATCHED</b> · เส้นประซ้อนกับวิถีแล้ว กด Confirm Radius เพื่อบันทึกค่าที่อ่านได้';
+  else if(candM<q.trueR)fb.innerHTML='วงวัด <b>เล็กเกินไป</b> → เพิ่ม r / The measuring arc is too curved → increase the radius.';
+  else fb.innerHTML='วงวัด <b>ใหญ่เกินไป</b> → ลด r / The measuring arc is too flat → decrease the radius.';
+}
+function openS2Radius(){
+  if(!s2CanMeasure()){
+    toast(state.s2.BmT<0.30?'Increase B to at least 0.30 mT / เพิ่ม B ก่อน':'Turn on the beam first / เปิดลำก่อน');
+    return;
+  }
+  const tr=s2Trajectory();
+  state.s2.measureOpen=true;
+  if(!Number.isFinite(state.s2.candidateRcm)||state.s2.candidateRcm<5||state.s2.candidateRcm>80){
+    state.s2.candidateRcm=20;
+  }
+  if(tr.r*100>=5&&tr.r*100<=80 && Math.abs(state.s2.candidateRcm-tr.r*100)>35){
+    state.s2.candidateRcm=Math.max(5,Math.min(80,Math.round((tr.r*100+10)*10)/10));
+  }
+  renderS2Measurement();
+  toast('Match the dashed arc to the beam / ปรับเส้นประให้ซ้อนลำ');
+}
+function closeS2Radius(){state.s2.measureOpen=false;renderS2Measurement()}
+function confirmS2Radius(){
+  const q=s2MeasurementQuality();
+  if(!q.matched){toast('Match the arc more closely / ปรับวงวัดให้ใกล้กว่านี้');return}
+  state.s2.measuredR=state.s2.candidateRcm/100;
+  state.s2.measureOpen=false;
+  const b=$('#s2MeasuredBadge');if(b)b.textContent=`r = ${state.s2.candidateRcm.toFixed(1)} cm ✓`;
+  renderS2();renderMonitor();renderS2Trials();
+  toast('Radius confirmed / บันทึกรัศมีแล้ว');
+}
+function renderS2Trials(){
+  const body=$('#s2TrialBody'),empty=$('#s2TrialEmpty'),clear=$('#s2ClearTrials'),note=$('#s2ConstantNote');
+  if(!body)return;
+  body.innerHTML=state.s2.trials.map((t,i)=>`<tr>
+    <td><span class="trial-num">${i+1}</span></td><td>${t.gas}</td><td>${t.cat}</td>
+    <td>${sci(t.v,3)}</td><td>${t.BmT.toFixed(2)}</td><td>${t.dir<0?'⊗':'⊙'}</td>
+    <td>${(t.r*100).toFixed(1)}</td><td><b>${sci(t.em,3)}</b></td>
+  </tr>`).join('');
+  empty.style.display=state.s2.trials.length?'none':'block';clear.disabled=state.s2.trials.length===0;
+  const gases=new Set(state.s2.trials.map(t=>t.gas)),cats=new Set(state.s2.trials.map(t=>t.cat));
+  if(state.s2.trials.length>=3 && gases.size>=2 && cats.size>=2){
+    const vals=state.s2.trials.map(t=>t.em),mean=vals.reduce((a,b)=>a+b,0)/vals.length;
+    const spread=(Math.max(...vals)-Math.min(...vals))/mean*100;
+    note.className='s2-constant-note good';
+    note.innerHTML=`✓ มี ${state.s2.trials.length} trials จาก ${gases.size} gases และ ${cats.size} cathodes. ค่าเฉลี่ย <b>e/m = ${sci(mean,3)} C/kg</b> และช่วงกระจายประมาณ ${spread.toFixed(1)}%. หลักฐานสนับสนุนว่าอัตราส่วนประจุต่อมวลใกล้คงที่แม้เปลี่ยน gas/cathode.`;
+  }else{
+    note.className='s2-constant-note';
+    note.innerHTML=`บันทึกอย่างน้อย 3 รอบ โดยใช้ ≥2 gases และ ≥2 cathodes เพื่อทดสอบว่าค่า \\(e/m\\) ใกล้คงที่หรือไม่. ตอนนี้: ${state.s2.trials.length} trials · ${gases.size} gas type(s) · ${cats.size} cathode type(s).`;
+  }
+  setMathHTML(note,note.innerHTML);
+}
+function recordS2Trial(){
+  const v=s2BeamSpeed(),tr=s2Trajectory();
+  if(!state.s2.power||!v||state.s2.BmT<=0||state.s2.measuredR==null){toast('Measure radius first / วัดรัศมีก่อน');return}
+  const em=v/(tr.B*state.s2.measuredR);
+  const duplicate=state.s2.trials.some(t=>t.gas===state.s2.gas&&t.cat===state.s2.cat&&Math.abs(t.BmT-state.s2.BmT)<1e-9&&Math.abs(t.v-v)/v<1e-9);
+  if(duplicate){toast('This source + field trial is already recorded / ชุดนี้บันทึกแล้ว');return}
+  if(state.s2.trials.length>=12){toast('Thomson log is full (12) / ตารางเต็ม 12 รอบ');return}
+  state.s2.trials.push({gas:state.s2.gas,cat:state.s2.cat,v,BmT:state.s2.BmT,B:tr.B,dir:state.s2.dir,r:state.s2.measuredR,em});
+  renderS2Trials();toast('Thomson trial recorded / บันทึก Thomson แล้ว');
+}
+
+function renderS2(){
+  const v=s2BeamSpeed(),tr=s2Trajectory(),on=state.s2.power&&!!v;
+  const colors={Al:'#bfc7cf',Cu:'#ba7a45',Fe:'#7c8791',Pt:'#d4d7dc'};
+  const gasColors={'H₂':'#e58aa9',He:'#e5b84a',Ne:'#e37842',Ar:'#a477cf'};
+  $('#s2CathodeMetal').setAttribute('fill',colors[state.s2.cat]||'#ba7a45');
+  $('#s2GasTint').setAttribute('fill',gasColors[state.s2.gas]||'#e37842');
+  $('#s2GasParticles').setAttribute('fill',gasColors[state.s2.gas]||'#e37842');
+  $('#s2SourceLabel').textContent=`Gas: ${state.s2.gas} · Cathode: ${state.s2.cat}`;
+  $('#s2GasRead').textContent=`${state.s2.gas} · residual gas`;
+  $('#s2CathodeRead').textContent=`${state.s2.cat} cathode`;
+  const imp=$('#s2ImportedSpeedLabel'),src=$('#s2SpeedSource');
+  if(v){
+    const source=state.s2.importedSpeed?'imported from Station 1':'default reference';
+    imp.textContent=`Beam speed: ${sciText(v)} m/s · ${source}`;
+    src.innerHTML=`<b>${sci(v)} m/s</b><br>${source}`;
+    src.classList.add('good');
+  }else{
+    imp.textContent='Beam speed: choose default or import from Station 1';
+    src.textContent='Import speed from Station 1 or use default 2.65 × 10⁷ m/s.';
+    src.classList.remove('good');
+  }
+  $('#s2Power').disabled=!v;
+  $('#s2Power').textContent=state.s2.power?'⏻ POWER OFF':'⚡ POWER ON';
+  $('#s2PowerState').classList.toggle('on',on);
+  $('#s2PowerState').querySelector('span:last-child').textContent=on?'POWER ON':'POWER OFF';
+  $('#s2B').value=state.s2.BmT;
+  $('#s2BRead').textContent=`${state.s2.BmT.toFixed(2)} mT`;
+  const symbol=state.s2.dir<0?'⊗':'⊙',dirText=state.s2.dir<0?'Into screen / เข้ากระดาษ':'Out of screen / ออกจากกระดาษ';
+  $('#s2DirRead').textContent=`${symbol} ${dirText}`;
+  $('#s2FieldLabel').textContent=`B = ${state.s2.BmT.toFixed(2)} mT · ${symbol} ${state.s2.dir<0?'into':'out of'} screen`;
+  $$('.s2-field-symbol').forEach(x=>x.textContent=symbol);
+  $('#s2FieldSymbols').setAttribute('opacity',String(.15+.65*Math.min(1,state.s2.BmT/2)));
+  $('#s2BeamPath').setAttribute('d',tr.path);
+  $('#s2BeamPath').setAttribute('opacity',on?'1':'0');
+  $('#s2CathodeGlow').setAttribute('opacity',on?'.32':'0');
+  if(on&&tr.screenHit){
+    $('#s2ScreenSpot').setAttribute('cy',tr.screenY.toFixed(1));
+    $('#s2ScreenSpot').setAttribute('opacity','1');
+  }else $('#s2ScreenSpot').setAttribute('opacity','0');
+  $('#s2PowerLabel').textContent=on?'POWER ON':'POWER OFF';
+  if(!v)$('#s2BeamStatus').textContent='choose beam speed';
+  else if(!state.s2.power)$('#s2BeamStatus').textContent='beam not emitted';
+  else if(state.s2.BmT===0)$('#s2BeamStatus').textContent='straight beam';
+  else if(tr.screenHit)$('#s2BeamStatus').textContent=state.s2.dir<0?'deflected upward':'deflected downward';
+  else $('#s2BeamStatus').textContent='beam misses screen';
+  $('#s2ObsBeam').textContent=!v?'Choose speed':state.s2.power?'Power ON':'Power OFF';
+  $('#s2ObsField').textContent=`B = ${state.s2.BmT.toFixed(2)} mT · ${symbol}`;
+  $('#s2ObsDeflect').textContent=!state.s2.power?'No beam':state.s2.BmT===0?'Straight':tr.screenHit?(state.s2.dir<0?'Upward / ขึ้น':'Downward / ลง'):'Misses screen';
+  const measuredBadge=$('#s2MeasuredBadge');if(measuredBadge)measuredBadge.textContent=state.s2.measuredR!=null?`r = ${(state.s2.measuredR*100).toFixed(1)} cm ✓`:'r not measured / ยังไม่ได้วัด r';
+  const rec2=$('#s2RecordTrial');if(rec2)rec2.disabled=!(state.s2.power&&v&&state.s2.BmT>0&&state.s2.measuredR!=null);
+  renderS2Measurement();
+  const obs=$('#s2ObsNote');
+  if(!v)obs.innerHTML='① เลือก <b>Use Default Speed</b> หรือส่ง v จาก Station 1 ก่อน.';
+  else if(!state.s2.power)obs.innerHTML='② กด <b>POWER ON</b> เพื่อสร้าง cathode-ray beam.';
+  else if(state.s2.BmT===0)obs.innerHTML='③ ตอนนี้ B = 0 ลำจึงตรง. <b>เลื่อน B ไปทางขวา</b> อย่างน้อย 0.30 mT เพื่อให้วัดรัศมีได้.';
+  else if(tr.screenHit)obs.innerHTML=state.s2.measuredR!=null?`✓ วัดได้ <b>r = ${(state.s2.measuredR*100).toFixed(1)} cm</b>. กด <b>Record Thomson Trial</b> แล้วเปลี่ยน Gas/Cathode เพื่อทำซ้ำ.`:`✓ B = <b>${state.s2.BmT.toFixed(2)} mT</b> ทำให้ลำโค้ง${state.s2.dir<0?'ขึ้น':'ลง'}. กด <b>Measure Radius</b> เพื่อวัด r.`;
+  else obs.innerHTML='สนามแรงจนลำไม่ถึงจอในแบบจำลองนี้. ลด B หรือเพิ่มความเร็ว beam แล้วลองใหม่.';
+  if(state.station===2){
+    $('#stageStatusTitle').textContent=!v?'CHOOSE BEAM SPEED':!state.s2.power?'POWER OFF':state.s2.BmT===0?'STRAIGHT CATHODE RAY':tr.screenHit?'MAGNETIC DEFLECTION':'BEAM MISSES SCREEN';
+    $('#stageStatusText').textContent=!v?'ใช้ความเร็วจาก Station 1 หรือกด Use Default Speed':!state.s2.power?'กด POWER ON เพื่อปล่อยลำรังสีแคโทด':state.s2.BmT===0?'B = 0 ลำเคลื่อนที่เป็นเส้นตรง · เพิ่ม B เพื่อให้เกิดการเบน':tr.screenHit?`B = ${state.s2.BmT.toFixed(2)} mT · ${symbol} ทำให้ลำเบน${state.s2.dir<0?'ขึ้น':'ลง'}`:'ลด B เพื่อให้ลำกลับมาถึง fluorescent screen';
+  }
+}
+function s2Reset(showToast=true){
+  const imported=state.s2.importedSpeed;
+  const trials=state.s2.trials;state.s2={gas:'Ne',cat:'Cu',importedSpeed:imported,useDefault:false,power:false,BmT:0,dir:-1,measureOpen:false,candidateRcm:10,measuredR:null,trials};
+  $$('.s2-gas').forEach(x=>x.classList.toggle('selected',x.dataset.gas==='Ne'));
+  $$('.s2-cat').forEach(x=>x.classList.toggle('selected',x.dataset.cat==='Cu'));
+  if(imported)state.s2.useDefault=false;
+  renderS2();renderMonitor();
+  if(showToast)toast('CRT reset / รีเซ็ตหลอดแล้ว');
+}
+
+
+function s3Physics(){
+  const r=state.s3.rUm*1e-6,volume=4/3*Math.PI*r*r*r,mass=S3_RHO*volume,E=state.s3.voltage/S3_D,qAbs=state.s3.chargeN*S3_E,mg=mass*S3_G,Fe=qAbs*E,electricUp=state.s3.polarity===1;
+  let motion='falling';if(electricUp&&Math.abs(Fe-mg)/Math.max(mg,1e-30)<=0.025)motion='suspended';else if(electricUp&&Fe>mg)motion='rising';
+  return {r,volume,mass,E,qAbs,mg,Fe,electricUp,motion,balanceV:mg*S3_D/qAbs};
+}
+function renderS3(){
+  const p=s3Physics(),motionText={falling:'↓ FALLING / ตกลง',rising:'↑ RISING / ลอยขึ้น',suspended:'● SUSPENDED / ลอยนิ่ง'}[p.motion];
+
+  $('#s3RadiusRead').textContent=`${state.s3.rUm.toFixed(2)} μm`;
+  $('#s3MassRead').innerHTML=`${sci(p.mass,3)} kg`;
+  $('#s3VoltageLive').value=state.s3.voltage;
+  $('#s3VoltageLiveRead').textContent=`${state.s3.voltage} V`;
+  $('#s3MgRead').innerHTML=`${sci(p.mg,3)} N`;
+  $('#s3FeRead').innerHTML=`${sci(p.Fe,3)} N`;
+  $('#s3CardR').textContent=`${state.s3.rUm.toFixed(2)} μm`;
+  $('#s3CardM').innerHTML=`${sci(p.mass,3)} kg`;
+  $('#s3CardE').innerHTML=`${sci(p.E,3)} N/C`;
+  $('#s3CardMotion').textContent=p.motion[0].toUpperCase()+p.motion.slice(1);
+
+  const pill=$('#s3StatePill');
+  pill.className='s3-state-pill '+(p.motion==='suspended'?'balance':p.motion==='rising'?'rise':'fall');
+  pill.textContent=motionText;
+  $('#s3MotionLabel').textContent=`DROP STATE: ${p.motion.toUpperCase()}`;
+  $('#s3ForceReadLabel').textContent=p.motion==='suspended'?'BALANCED ✓ · electric force = weight':p.motion==='rising'?'Electric force > weight':'Weight > upward electric force';
+  $('#s3TopPlateLabel').textContent=state.s3.polarity===1?'TOP (+)':'TOP (−)';
+  $('#s3BottomPlateLabel').textContent=state.s3.polarity===1?'BOTTOM (−)':'BOTTOM (+)';
+
+  // Move the droplet first, then attach both force arrows to its actual screen position.
+  const target=p.motion==='suspended'?238:p.motion==='rising'?205:273;
+  state.s3.targetCy=target;
+  state.s3.cy+=(target-state.s3.cy)*.35;
+  const cy=state.s3.cy;
+  $('#s3DropLive').setAttribute('cy',cy.toFixed(1));
+  $('#s3DropRadiusLabel').setAttribute('y',(cy-14).toFixed(1));
+  $('#s3DropRadiusLabel').textContent=`r = ${state.s3.rUm.toFixed(2)} μm`;
+
+  const mgLen=42,feLen=Math.max(8,Math.min(76,mgLen*(p.Fe/Math.max(p.mg,1e-30))));
+  const dropR=12;
+  $('#s3ForceDown').setAttribute('x1','395');
+  $('#s3ForceDown').setAttribute('y1',(cy+dropR).toFixed(1));
+  $('#s3ForceDown').setAttribute('x2','395');
+  $('#s3ForceDown').setAttribute('y2',(cy+dropR+mgLen).toFixed(1));
+  $('#s3ForceDownLabel').setAttribute('x','411');
+  $('#s3ForceDownLabel').setAttribute('y',(cy+dropR+mgLen+4).toFixed(1));
+  $('#s3ForceDownLabel').textContent='mg';
+
+  if(p.electricUp){
+    $('#s3ForceUp').setAttribute('x1','395');
+    $('#s3ForceUp').setAttribute('x2','395');
+    $('#s3ForceUp').setAttribute('y1',(cy-dropR).toFixed(1));
+    $('#s3ForceUp').setAttribute('y2',(cy-dropR-feLen).toFixed(1));
+    $('#s3ForceUpLabel').setAttribute('x','411');
+    $('#s3ForceUpLabel').setAttribute('y',(cy-dropR-feLen+5).toFixed(1));
+    $('#s3ForceUpLabel').textContent='F_E';
+  }else{
+    $('#s3ForceUp').setAttribute('x1','370');
+    $('#s3ForceUp').setAttribute('x2','370');
+    $('#s3ForceUp').setAttribute('y1',(cy+dropR).toFixed(1));
+    $('#s3ForceUp').setAttribute('y2',(cy+dropR+feLen).toFixed(1));
+    $('#s3ForceUpLabel').setAttribute('x','340');
+    $('#s3ForceUpLabel').setAttribute('y',(cy+dropR+feLen+4).toFixed(1));
+    $('#s3ForceUpLabel').textContent='F_E ↓';
+  }
+
+  $('#s3BalanceMarker').style.left=`${Math.max(4,Math.min(96,50+(p.Fe-p.mg)/Math.max(p.Fe,p.mg,1e-30)*45))}%`;
+
+  const note=$('#s3ForceNote');
+  if(!p.electricUp){
+    note.className='s3-force-note';
+    note.innerHTML='แรงไฟฟ้าชี้ <b>ลง</b> เช่นเดียวกับน้ำหนัก จึงแขวนหยดไม่ได้ด้วย polarity นี้. กด <b>Reverse Polarity</b>.';
+  }else if(p.motion==='suspended'){
+    note.className='s3-force-note good';
+    note.innerHTML=`✓ <b>BALANCED / SUSPENDED</b> · |F_E| ≈ mg ที่ ΔV = ${state.s3.voltage} V.`;
+  }else if(p.motion==='rising'){
+    note.className='s3-force-note';
+    note.innerHTML='แรงไฟฟ้ามากกว่าน้ำหนัก → หยดลอยขึ้น. <b>ลด Plate Voltage</b>.';
+  }else{
+    note.className='s3-force-note';
+    note.innerHTML='น้ำหนักมากกว่าแรงไฟฟ้าขึ้น → หยดตกลง. <b>เพิ่ม Plate Voltage</b>.';
+  }
+
+  const rec=$('#s3RecordBalance'),badge=$('#s3BalanceBadge');
+  if(rec)rec.disabled=p.motion!=='suspended';
+  if(badge)badge.textContent=p.motion==='suspended'?`Balanced at ${state.s3.voltage} V ✓`:'Not balanced / ยังไม่สมดุล';
+  const pc=$('#s3PulseCount');if(pc)pc.textContent=`${state.s3.pulseCount} pulse${state.s3.pulseCount===1?'':'s'}`;
+
+  const cs=$('#s3ChargeStatus');
+  if(cs){
+    if(state.s3.chargeChanged){
+      cs.className='s3-charge-status changed';
+      cs.innerHTML='☢ <b>Charge state changed ✓</b> · ค่าประจุถูกซ่อนไว้ ปรับ Plate Voltage ใหม่จนหยดลอยนิ่ง';
+    }else if(state.s3.trials.some(t=>t.drop===state.s3.drop)){
+      cs.className='s3-charge-status';
+      cs.innerHTML='✓ Balanced state recorded. Pulse X-ray again to create another hidden charge level. / บันทึกแล้ว ยิง X-ray อีกครั้งเพื่อสร้างระดับประจุใหม่';
+    }else{
+      cs.className='s3-charge-status';
+      cs.innerHTML='Charge state is hidden. Balance and record this drop, then pulse X-ray. / ซ่อนสถานะประจุไว้ ทำสมดุลและบันทึกก่อนยิง X-ray';
+    }
+  }
+
+  if(state.station===3){
+    $('#stageStatusTitle').textContent=p.motion==='suspended'?'FORCES BALANCED':p.motion==='rising'?'DROP RISING':'DROP FALLING';
+    $('#stageStatusText').textContent=p.motion==='suspended'?'หยดลอยนิ่ง · บันทึก trial หรือยิง X-ray เพื่อเปลี่ยนประจุ':p.motion==='rising'?'แรงไฟฟ้ามากกว่า mg · ลด Voltage':'mg มากกว่าแรงไฟฟ้า · เพิ่ม Voltage';
+  }
+}
+function newS3Drop(){
+  const radii=[0.65,0.72,0.80,0.88,0.95,1.02],charges=[2,3,3,4,4,5];
+  const trials=state.s3.trials;
+  state.s3.drop=(state.s3.drop%radii.length)+1;
+  state.s3.rUm=radii[state.s3.drop-1];
+  state.s3.chargeN=charges[state.s3.drop-1];
+  state.s3.voltage=350;state.s3.polarity=1;state.s3.cy=238;state.s3.targetCy=238;
+  state.s3.pulseCount=0;state.s3.chargeChanged=false;state.s3.trials=trials;
+  renderS3();renderMonitor();renderS3Trials();toast('New oil drop / สร้างหยดใหม่แล้ว');
+}
+function resetS3(showToast=true){
+  const trials=state.s3.trials;
+  state.s3={voltage:350,drop:3,rUm:0.80,chargeN:3,polarity:1,cy:238,targetCy:238,pulseCount:0,chargeChanged:false,trials};
+  renderS3();renderMonitor();renderS3Trials();
+  if(showToast)toast('Millikan reset / รีเซ็ต Millikan แล้ว');
+}
+
+
+function s3PulseXray(){
+  // Deterministic sequence keeps the activity reproducible.
+  const sequence=[1,1,-1,1,-1,-1,1,-1];
+  const delta=sequence[state.s3.pulseCount%sequence.length];
+  let next=state.s3.chargeN+delta;
+  if(next<2)next=3;
+  if(next>6)next=5;
+  if(next===state.s3.chargeN)next=state.s3.chargeN===6?5:state.s3.chargeN+1;
+  state.s3.chargeN=next;
+  state.s3.pulseCount++;
+  state.s3.chargeChanged=true;
+  const beam=$('#s3XrayBeam');
+  beam?.classList.remove('s3-xray-flash');void beam?.getBoundingClientRect();beam?.classList.add('s3-xray-flash');
+  const cs=$('#s3ChargeStatus');if(cs){cs.className='s3-charge-status changed';cs.innerHTML='☢ <b>Charge state changed ✓</b> · ค่าประจุถูกซ่อนไว้ ปรับ Plate Voltage ใหม่จนหยดลอยนิ่ง';}
+  renderS3();renderMonitor();renderS3Trials();
+  toast('X-ray changed the droplet charge / ประจุของหยดเปลี่ยนแล้ว');
+}
+function s3CurrentMeasuredQ(){
+  const p=s3Physics();
+  if(p.motion!=='suspended'||state.s3.voltage<=0)return null;
+  return p.mg*S3_D/state.s3.voltage;
+}
+function estimateElementaryCharge(){
+  const vals=state.s3.trials.map(t=>t.q).filter(q=>q>0);
+  if(vals.length<3)return null;
+  const distinct=[];
+  [...vals].sort((a,b)=>a-b).forEach(q=>{
+    if(!distinct.some(x=>Math.abs(x-q)/q<0.06))distinct.push(q);
+  });
+  if(distinct.length<3)return null;
+  let best=null;
+  // Search for a base unit that makes all measured charges close to integer multiples.
+  for(let e0=1.20e-19;e0<=1.95e-19;e0+=0.001e-19){
+    let err=0,ns=[];
+    for(const q of distinct){
+      const n=Math.max(1,Math.round(q/e0));
+      ns.push(n);
+      err+=Math.pow((q-n*e0)/q,2);
+    }
+    if(new Set(ns).size<3)err+=0.02;
+    if(!best||err<best.err)best={e:e0,err,ns,distinct};
+  }
+  if(!best)return null;
+  const refinedNumer=best.distinct.reduce((s,q,i)=>s+q*best.ns[i],0);
+  const refinedDenom=best.ns.reduce((s,n)=>s+n*n,0);
+  best.e=refinedNumer/refinedDenom;
+  return best;
+}
+function s2MeanEM(){
+  if(!state.s2.trials.length)return null;
+  return state.s2.trials.reduce((s,t)=>s+t.em,0)/state.s2.trials.length;
+}
+function renderS3Trials(){
+  const body=$('#s3TrialBody'),empty=$('#s3TrialEmpty'),clear=$('#s3ClearTrials'),ev=$('#s3Evidence');
+  if(!body)return;
+  body.innerHTML=state.s3.trials.map((t,i)=>`<tr>
+    <td><span class="trial-num">${i+1}</span></td><td>#${t.drop}</td><td>${t.rUm.toFixed(2)}</td>
+    <td>${sci(t.mass,3)}</td><td>${t.V}</td><td>${sci(t.E,3)}</td><td><b>${sci(t.q,3)}</b></td>
+  </tr>`).join('');
+  empty.style.display=state.s3.trials.length?'none':'block';
+  clear.disabled=state.s3.trials.length===0;
+
+  const est=estimateElementaryCharge();
+  if(est){
+    ev.className='s3-evidence good';
+    const chips=est.distinct.map((q,i)=>`<span class="s3-q-chip">${sci(q,3)} C ≈ ${est.ns[i]} × e</span>`).join('');
+    ev.innerHTML=`✓ <b>Charge quantization detected / พบการควอนไทซ์ของประจุ</b><br>
+      ค่าประจุที่วัดได้จัดกลุ่มได้เป็นจำนวนเต็มเท่าของหน่วยพื้นฐานประมาณ
+      <b>${sci(est.e,4)} C</b>.
+      <div class="s3-q-chip-wrap">${chips}</div>`;
+  }else{
+    const distinct=[];
+    state.s3.trials.map(t=>t.q).sort((a,b)=>a-b).forEach(q=>{if(!distinct.some(x=>Math.abs(x-q)/q<.06))distinct.push(q)});
+    ev.className='s3-evidence';
+    ev.innerHTML=`เก็บอย่างน้อย 3 ค่า <b>ที่ต่างกัน</b> จากการ X-ray → rebalance. ตอนนี้มี ${state.s3.trials.length} trial(s), ${distinct.length} distinct charge level(s).`;
+  }
+
+  const em=s2MeanEM(),eEst=est?.e||null,mass=eEst&&em?eEst/em:null;
+  $('#s3SynthE').innerHTML=eEst?`${sci(eEst,4)} C`:'Need ≥3 charge states';
+  $('#s3SynthEM').innerHTML=em?`${sci(em,4)} C/kg`:'Need Thomson trial';
+  $('#s3SynthMass').innerHTML=mass?`${sci(mass,4)} kg`:'Not calculated yet';
+}
+function recordS3Balance(){
+  const p=s3Physics(),q=s3CurrentMeasuredQ();
+  if(p.motion!=='suspended'||!q){toast('Suspend the drop first / ทำให้หยดลอยนิ่งก่อน');return}
+  const duplicate=state.s3.trials.some(t=>t.drop===state.s3.drop&&Math.abs(t.q-q)/q<.025);
+  if(duplicate){toast('This charge level is already recorded / ระดับประจุนี้บันทึกแล้ว');return}
+  if(state.s3.trials.length>=15){toast('Charge trial log is full / ตารางเต็มแล้ว');return}
+  state.s3.trials.push({drop:state.s3.drop,rUm:state.s3.rUm,mass:p.mass,V:state.s3.voltage,E:p.E,q});
+  state.s3.chargeChanged=false;
+  renderS3Trials();renderS3();renderMonitor();
+  toast('Balanced charge trial recorded / บันทึกจุดสมดุลแล้ว');
+}
+
+function renderS1Trials(){
+  const body=$('#s1TrialBody'),empty=$('#s1TrialEmpty'),clear=$('#clearS1Trials'),insight=$('#s1CompareInsight');
+  if(!body)return;
+  body.innerHTML=state.s1.trials.map((t,i)=>`<tr>
+    <td><span class="trial-num">${i+1}</span></td>
+    <td>${t.motion==='rest'?'From rest / หยุดนิ่ง':'Moving / มี vᵢ'}</td>
+    <td>${sci(t.vi,3)}</td>
+    <td>${t.V}</td>
+    <td>${sci(t.Efield,3)}</td>
+    <td>${sci(t.a,3)}</td>
+    <td>${sci(t.gain,3)}</td>
+    <td><b>${sci(t.vf,3)}</b></td>
+  </tr>`).join('');
+  empty.style.display=state.s1.trials.length?'none':'block';
+  clear.disabled=state.s1.trials.length===0;
+  if(state.s1.trials.length<2){
+    insight.className='compare-insight';
+    insight.innerHTML='บันทึกอย่างน้อย 2 รอบเพื่อเปรียบเทียบผลของ Battery Voltage หรือความเร็วต้น · Record at least two trials to compare.';
+    return;
+  }
+  let pair=null;
+  for(let i=0;i<state.s1.trials.length&&!pair;i++){
+    for(let j=i+1;j<state.s1.trials.length;j++){
+      const a=state.s1.trials[i],b=state.s1.trials[j];
+      if(Math.abs(a.vi-b.vi)<1 && a.V!==b.V){pair=[a,b];break}
+    }
+  }
+  insight.className='compare-insight good';
+  if(pair){
+    const [a,b]=pair[0].V<pair[1].V?pair:[pair[1],pair[0]];
+    insight.innerHTML=`✓ เปรียบเทียบที่ vᵢ เท่ากัน: เพิ่ม Battery จาก <b>${a.V} V</b> → <b>${b.V} V</b> ทำให้ E และ a เพิ่มตามด้วย: a ${sci(a.a,2)} → ${sci(b.a,2)} m/s², ΔK ${sci(a.gain,2)} → ${sci(b.gain,2)} J และ v_f ${sci(a.vf,2)} → ${sci(b.vf,2)} m/s.`;
+  }else{
+    insight.innerHTML=`✓ มี ${state.s1.trials.length} trials แล้ว ลองทำอีกสองรอบโดยคง vᵢ เท่ากันและเปลี่ยนเฉพาะ Battery เพื่อเห็นผลของ ΔV ชัดที่สุด.`;
+  }
+}
+function recordS1Trial(){
+  if(state.s1.phase!=='complete'){toast('Finish the acceleration first / ให้การเร่งเสร็จก่อน');return}
+  const p=s1Physics();
+  const duplicate=state.s1.trials.some(t=>t.motion===state.s1.motion&&t.V===p.V&&Math.abs(t.vi-p.vi)<1);
+  if(duplicate){toast('This setup is already recorded / ชุดค่านี้บันทึกแล้ว');return}
+  if(state.s1.trials.length>=12){toast('Trial log is full (12) / ตารางเต็ม 12 รอบ');return}
+  state.s1.trials.push({motion:state.s1.motion,vi:p.vi,V:p.V,Efield:p.Efield,a:p.a,gain:p.gain,vf:p.vf,t:p.t});
+  renderS1Trials();
+  toast('Trial recorded / บันทึกข้อมูลแล้ว');
+}
+function transferS1Speed(){
+  if(state.s1.phase!=='complete'){toast('Complete Station 1 run first / ให้การทดลองจบก่อน');return}
+  const p=s1Physics();
+  state.s2.importedSpeed=p.vf;state.s2.useDefault=false;state.s2.power=false;s2InvalidateMeasurement();
+  const lbl=$('#s2ImportedSpeedLabel');
+  if(lbl)lbl.textContent=`Beam speed imported from S1: ${sciText(p.vf)} m/s`;
+  $('#s1TransferNote')?.classList.add('show');
+  updateS2Preview();renderS2();
+  toast('Speed → Station 2 / ส่งความเร็วไป Station 2 แล้ว');
+  setStation(2);
+}
+
+function setStation(n){
+  if(state.station===1 && n!==1 && state.s1.phase==='running')s1Pause();
+  state.station=n;
+  document.body.classList.toggle('s1-active',n===1);document.body.classList.toggle('s2-active',n===2);
+  $$('.station-tab').forEach(b=>{const active=Number(b.dataset.station)===n;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});$$('.stage-panel').forEach(p=>p.classList.toggle('active',Number(p.dataset.stage)===n));$$('.controls-panel').forEach(p=>p.classList.toggle('active',Number(p.dataset.controls)===n));$('#contextTitle').textContent=info[n].title;$('#contextSub').textContent=info[n].sub;$('#deckTitle').textContent=info[n].deck;$('#stageStatusText').textContent=info[n].status;$('#logTitle').textContent=info[n].log;
+  $('#deckRoundNote').textContent=n===1?'S1 · ENERGY':n===2?'S2 · THOMSON':'S3 · MILLIKAN';
+  $('#monitorModeBadge').textContent=n===1?'LIVE · S1':n===2?'LIVE · S2':'LIVE · S3';
+  $('#s1LogPanel').hidden=n!==1;$('#s2LogPanel').hidden=n!==2;$('#s3LogPanel').hidden=n!==3;
+  $('#clearS1Trials').style.display=n===1?'inline-block':'none';
+  $('#logNote').textContent=n===1?'Run → Record → change Battery or vᵢ → compare':n===2?'POWER → B → Measure Radius → Record → change Gas/Cathode':'New Drop → radius/mass → voltage → force balance';
+  if(n===1){$('#stageStatusTitle').textContent=state.s1.phase==='complete'?'ENERGY TRANSFER COMPLETE':state.s1.phase==='paused'?'PAUSED':'READY TO ACCELERATE';renderS1Visual()}
+  else if(n===2){renderS2();renderS2Trials()}
+  else {renderS3();}
+  renderMonitor();
+}
+$$('.station-tab').forEach(b=>b.addEventListener('click',()=>setStation(Number(b.dataset.station))));
+$$('.s1-motion').forEach(b=>b.addEventListener('click',()=>{state.s1.motion=b.dataset.motion;$$('.s1-motion').forEach(x=>x.classList.toggle('selected',x===b));s1Reset(false);refreshS1Controls()}));
+$('#s1InitialSpeed').addEventListener('input',e=>{state.s1.viMoving=Number(e.target.value);s1Reset(false);refreshS1Controls()});
+$$('.s1-voltage').forEach(b=>b.addEventListener('click',()=>{state.s1.voltage=Number(b.dataset.v);$$('.s1-voltage').forEach(x=>x.classList.toggle('selected',x===b));s1Reset(false);refreshS1Controls()}));
+$('#s1Release').addEventListener('click',s1Start);$('#s1Pause').addEventListener('click',s1Pause);$('#s1Reset').addEventListener('click',()=>s1Reset(true));$('#recordS1Trial').addEventListener('click',recordS1Trial);$('#useSpeedS2').addEventListener('click',transferS1Speed);$('#clearS1Trials').addEventListener('click',()=>{state.s1.trials=[];renderS1Trials();toast('Station 1 trials cleared / ล้างตารางแล้ว')});
+$$('.s2-gas').forEach(b=>b.addEventListener('click',()=>{state.s2.gas=b.dataset.gas;s2InvalidateMeasurement();$$('.s2-gas').forEach(x=>x.classList.toggle('selected',x===b));renderS2();renderMonitor()}));
+$$('.s2-cat').forEach(b=>b.addEventListener('click',()=>{state.s2.cat=b.dataset.cat;s2InvalidateMeasurement();$$('.s2-cat').forEach(x=>x.classList.toggle('selected',x===b));renderS2();renderMonitor()}));
+function updateS2Preview(){renderS2()}
+$('#s2DefaultSpeed').addEventListener('click',()=>{state.s2.importedSpeed=null;state.s2.useDefault=true;state.s2.power=false;s2InvalidateMeasurement();renderS2();renderMonitor();toast('Default beam speed selected / ใช้ความเร็วอ้างอิงแล้ว')});
+$('#s2Power').addEventListener('click',()=>{if(!s2BeamSpeed()){toast('Choose beam speed first / เลือกความเร็วก่อน');return}state.s2.power=!state.s2.power;renderS2();renderMonitor();toast(state.s2.power?'CRT power ON / เปิดหลอดแล้ว':'CRT power OFF / ปิดหลอดแล้ว')});
+$('#s2B').addEventListener('input',e=>{state.s2.BmT=Math.max(0,Math.min(2,Number(e.target.value)||0));s2InvalidateMeasurement();renderS2();renderMonitor()});
+$('#s2FlipB').addEventListener('click',()=>{state.s2.dir*=-1;s2InvalidateMeasurement();renderS2();renderMonitor();toast(state.s2.dir<0?'B into screen ⊗':'B out of screen ⊙')});
+$('#s2Reset').addEventListener('click',()=>s2Reset(true));
+$('#s2MeasureRadius').addEventListener('click',openS2Radius);
+$('#s2RadiusSlider').addEventListener('input',e=>{state.s2.candidateRcm=Math.max(5,Math.min(80,Number(e.target.value)||10));renderS2Measurement()});
+$('#s2SnapRadius').addEventListener('click',()=>{
+  const q=s2MeasurementQuality();
+  if(!Number.isFinite(q.trueR))return;
+  const offset=q.trueR*100*(state.s2.candidateRcm<q.trueR*100?.035:-.035);
+  state.s2.candidateRcm=Math.max(5,Math.min(80,Math.round((q.trueR*100+offset)*10)/10));
+  renderS2Measurement();
+});
+$('#s2ConfirmRadius').addEventListener('click',confirmS2Radius);
+$('#s2CloseRadius').addEventListener('click',closeS2Radius);
+$('#s2RecordTrial').addEventListener('click',recordS2Trial);
+$('#s2ClearTrials').addEventListener('click',()=>{state.s2.trials=[];renderS2Trials();toast('Thomson trials cleared / ล้างตารางแล้ว')});
+$('#s3NewDrop').addEventListener('click',newS3Drop);
+$('#s3VoltageLive').addEventListener('input',e=>{state.s3.voltage=Math.max(0,Math.min(900,Number(e.target.value)||0));renderS3();renderMonitor()});
+$('#s3ReversePolarity').addEventListener('click',()=>{state.s3.polarity*=-1;renderS3();renderMonitor();toast(state.s3.polarity===1?'Electric force upward / แรงไฟฟ้าขึ้น':'Electric force downward / แรงไฟฟ้าลง')});
+$('#s3ResetLive').addEventListener('click',()=>resetS3(true));
+$('#s3XrayPulse').addEventListener('click',s3PulseXray);
+$('#s3RecordBalance').addEventListener('click',recordS3Balance);
+$('#s3ClearTrials').addEventListener('click',()=>{state.s3.trials=[];renderS3Trials();renderMonitor();toast('Charge trials cleared / ล้างข้อมูลประจุแล้ว')});
+
+$$('.reset-view').forEach(b=>b.addEventListener('click',()=>{if(state.station===3){state.s3={voltage:420,drop:1};$('#s3Voltage').value=420;$('#s3VoltageRead').textContent='420 V';$('#s3PreviewLabel').textContent='Preview drop · plate voltage 420 V';$('#s3Drop').setAttribute('cy','233')}renderMonitor();toast('View reset / รีเซ็ตหน้าตาแล้ว')}));
+
+// Notes engine: station-specific multi-page ink + lightweight snapshot cards.
+const noteState={station:1,tool:'pen',data:{1:[newPage()],2:[newPage()],3:[newPage()]},page:{1:0,2:0,3:0},active:null};
+function newPage(){return {strokes:[],history:[],snapshots:[]}}
+const sheet=$('#noteSheet'),canvas=$('#noteInk'),ctx=canvas.getContext('2d');
+function currentPage(){return noteState.data[noteState.station][noteState.page[noteState.station]]}
+function openNotes(){noteState.station=state.station;syncNoteStationButtons();$('#notesShell').classList.add('show');$('#notesShell').setAttribute('aria-hidden','false');$('#notesFab').classList.add('hidden');requestAnimationFrame(()=>{resizeCanvas();renderNotes()})}
+function closeNotes(){$('#notesShell').classList.remove('show');$('#notesShell').setAttribute('aria-hidden','true');$('#notesFab').classList.remove('hidden')}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#notesShell').classList.contains('show'))closeNotes()});
+$('#notesFab').addEventListener('click',openNotes);$('#openNotesInline').addEventListener('click',openNotes);$('#closeNotes').addEventListener('click',closeNotes);
+function syncNoteStationButtons(){$$('.notes-station').forEach(b=>b.classList.toggle('active',Number(b.dataset.noteStation)===noteState.station));updatePageLabel()}
+$$('.notes-station').forEach(b=>b.addEventListener('click',()=>{noteState.station=Number(b.dataset.noteStation);syncNoteStationButtons();renderNotes()}));
+function setTool(t){
+  noteState.tool=t;
+  $$('.tool').forEach(b=>b.classList.toggle('active',b.dataset.tool===t));
+  $('#notesShell').classList.toggle('select-mode',t==='select');
+  $('#notesState').textContent=`S${noteState.station} ${noteState.station===1?'Energy':noteState.station===2?'Thomson':'Millikan'} · ${t==='pen'?'Pen':t==='eraser'?'Eraser':'Select'}`;
+}
+$$('.tool').forEach(b=>b.addEventListener('click',()=>setTool(b.dataset.tool)));
+function resizeCanvas(){const r=sheet.getBoundingClientRect(),dpr=Math.max(1,window.devicePixelRatio||1);canvas.width=Math.round(r.width*dpr);canvas.height=Math.round(r.height*dpr);canvas.style.width=r.width+'px';canvas.style.height=r.height+'px';ctx.setTransform(dpr,0,0,dpr,0,0);redrawInk()}
+new ResizeObserver(resizeCanvas).observe(sheet);
+function pnt(e){const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height}}
+function drawStroke(st,w,h){if(!st.points.length)return;ctx.beginPath();st.points.forEach((p,i)=>{const x=p.x*w,y=p.y*h;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.strokeStyle='#111827';ctx.lineWidth=2.4;ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke()}
+function redrawInk(){const r=canvas.getBoundingClientRect();ctx.clearRect(0,0,r.width,r.height);currentPage().strokes.forEach(s=>drawStroke(s,r.width,r.height));if(noteState.active)drawStroke(noteState.active,r.width,r.height)}
+function segDist(p,a,b){const vx=b.x-a.x,vy=b.y-a.y,wx=p.x-a.x,wy=p.y-a.y,c1=vx*wx+vy*wy;if(c1<=0)return Math.hypot(p.x-a.x,p.y-a.y);const c2=vx*vx+vy*vy;if(c2<=c1)return Math.hypot(p.x-b.x,p.y-b.y);const t=c1/c2;return Math.hypot(p.x-(a.x+t*vx),p.y-(a.y+t*vy))}
+function eraseAt(p){const pg=currentPage();for(let i=pg.strokes.length-1;i>=0;i--){const st=pg.strokes[i];let hit=false;for(let j=1;j<st.points.length;j++){if(segDist(p,st.points[j-1],st.points[j])<.035){hit=true;break}}if(hit){pg.history.push({type:'erase',stroke:st,index:i});pg.strokes.splice(i,1);redrawInk();break}}}
+canvas.addEventListener('pointerdown',e=>{e.preventDefault();canvas.setPointerCapture?.(e.pointerId);const p=pnt(e);if(noteState.tool==='eraser'){eraseAt(p);return}noteState.active={points:[p]};redrawInk()},{passive:false});
+canvas.addEventListener('pointermove',e=>{if(!(e.buttons||e.pressure>0))return;const p=pnt(e);if(noteState.tool==='eraser'){eraseAt(p);return}if(noteState.active){noteState.active.points.push(p);redrawInk()}},{passive:false});
+function endStroke(){if(noteState.active){const pg=currentPage();pg.strokes.push(noteState.active);pg.history.push({type:'draw'});noteState.active=null;redrawInk()}}
+canvas.addEventListener('pointerup',endStroke);canvas.addEventListener('pointercancel',endStroke);canvas.addEventListener('contextmenu',e=>e.preventDefault());
+$('#undoNote').addEventListener('click',()=>{const pg=currentPage(),a=pg.history.pop();if(!a)return;if(a.type==='draw')pg.strokes.pop();else if(a.type==='erase')pg.strokes.splice(a.index,0,a.stroke);else if(a.type==='clear')pg.strokes=a.strokes;redrawInk()});
+$('#clearInk').addEventListener('click',()=>{const pg=currentPage();if(!pg.strokes.length)return;pg.history.push({type:'clear',strokes:JSON.parse(JSON.stringify(pg.strokes))});pg.strokes=[];redrawInk()});
+$('#clearSnapshots').addEventListener('click',()=>{currentPage().snapshots=[];renderSnapshots()});
+function snapshotText(){if(state.station===1){const p=s1Physics();return {title:'S1 · Energy apparatus',lines:[`Initial motion: ${state.s1.motion==='rest'?'from rest':'already moving'}`,`Battery: ${state.s1.voltage} V`,`Plate separation: ${p.L.toFixed(3)} m`,`Electric field: ${sciText(p.Efield)} N/C`,`Acceleration: ${sciText(p.a)} m/s²`,`vᵢ = ${sciText(p.vi)} m/s`,`v_f = ${sciText(p.vf)} m/s`,`Energy gain = ${sciText(p.gain)} J`,`Run status: ${state.s1.phase==='complete'?'complete':'setup / not completed'}`]};}if(state.station===2){const v=s2BeamSpeed(),tr=s2Trajectory(),r=state.s2.measuredR,em=(r&&v&&tr.B>0)?v/(tr.B*r):null;return {title:'S2 · Thomson CRT',lines:[`Power: ${state.s2.power?'ON':'OFF'}`,`Gas: ${state.s2.gas}`,`Cathode: ${state.s2.cat}`,`Beam speed: ${v?sciText(v)+' m/s':'not selected'}`,`B = ${state.s2.BmT.toFixed(2)} mT · ${state.s2.dir<0?'⊗ into screen':'⊙ out of screen'}`,`Trajectory: ${!state.s2.power?'no beam':state.s2.BmT===0?'straight':tr.screenHit?(state.s2.dir<0?'curved upward':'curved downward'):'misses screen'}`,`Measured r: ${r?(r*100).toFixed(1)+' cm':'not measured'}`,`e/m: ${em?sciText(em)+' C/kg':'calculate after measuring r'}`]};}const p=s3Physics(),q=s3CurrentMeasuredQ(),est=estimateElementaryCharge(),em=s2MeanEM(),me=est&&em?est.e/em:null;return {title:'S3 · Millikan Charge Quantization',lines:[`Drop radius: ${state.s3.rUm.toFixed(2)} μm`,`Oil density: ${S3_RHO} kg/m³`,`Drop mass: ${sciText(p.mass)} kg`,`Plate voltage: ${state.s3.voltage} V`,`Electric field: ${sciText(p.E)} N/C`,`Motion: ${p.motion}`,`Measured |q|: ${q?sciText(q)+' C':'balance first'}`,`Estimated e: ${est?sciText(est.e)+' C':'need more charge levels'}`,`Thomson e/m: ${em?sciText(em)+' C/kg':'need Thomson trial'}`,`Estimated electron mass: ${me?sciText(me)+' kg':'not available yet'}`]}}
+function snapshotCapacity(){return window.innerWidth<620?2:4}
+function addSnapshot(){
+  noteState.station=state.station;
+  let pg=currentPage();
+  if(pg.snapshots.length>=snapshotCapacity()){
+    const arr=noteState.data[noteState.station];
+    arr.push(newPage());
+    noteState.page[noteState.station]=arr.length-1;
+    pg=currentPage();
+  }
+  const s=snapshotText();
+  pg.snapshots.push({title:s.title,lines:s.lines,id:Date.now(),x:null,y:null,w:null});
+  openNotes();renderNotes();toast('Apparatus snapshot → Notes');
+}
+$('#sendSnapshot').addEventListener('click',addSnapshot);
+
+function ensureSnapshotLayout(s,i){
+  const mobile=window.innerWidth<620;
+  if(s.w==null)s.w=mobile?88:44;
+  if(s.x==null)s.x=mobile?6:(i%2===0?4:52);
+  if(s.y==null)s.y=mobile?(5+i*47):(5+Math.floor(i/2)*48);
+}
+function startSnapshotMove(e,card,s){
+  if(noteState.tool!=='select')return;
+  e.preventDefault();
+  const sheetRect=sheet.getBoundingClientRect(),cardRect=card.getBoundingClientRect();
+  const resizing=e.target.classList.contains('snap-resize');
+  const startX=e.clientX,startY=e.clientY,startLeft=s.x,startTop=s.y,startW=s.w;
+  card.classList.add('selected-snapshot');
+  card.setPointerCapture?.(e.pointerId);
+
+  const move=ev=>{
+    if(resizing){
+      const deltaPct=(ev.clientX-startX)/sheetRect.width*100;
+      s.w=Math.max(26,Math.min(94-startLeft,startW+deltaPct));
+      card.style.width=s.w+'%';
+    }else{
+      const dx=(ev.clientX-startX)/sheetRect.width*100,dy=(ev.clientY-startY)/sheetRect.height*100;
+      const cardHPct=cardRect.height/sheetRect.height*100;
+      s.x=Math.max(0,Math.min(100-s.w,startLeft+dx));
+      s.y=Math.max(0,Math.min(Math.max(0,100-cardHPct),startTop+dy));
+      card.style.left=s.x+'%';card.style.top=s.y+'%';
+    }
+  };
+  const up=ev=>{
+    card.releasePointerCapture?.(e.pointerId);
+    card.removeEventListener('pointermove',move);
+    card.removeEventListener('pointerup',up);
+    card.removeEventListener('pointercancel',up);
+  };
+  card.addEventListener('pointermove',move);
+  card.addEventListener('pointerup',up);
+  card.addEventListener('pointercancel',up);
+}
+function renderSnapshots(){
+  const layer=$('#noteObjectLayer'),pg=currentPage();layer.innerHTML='';
+  pg.snapshots.forEach((s,i)=>{
+    ensureSnapshotLayout(s,i);
+    const d=document.createElement('div');
+    d.className='snapshot-card';
+    d.style.left=s.x+'%';d.style.top=s.y+'%';d.style.width=s.w+'%';
+    d.innerHTML=`<div class="snap-k">APPARATUS SNAPSHOT</div><b>${s.title}</b>${s.lines.map(x=>`<div>• ${x}</div>`).join('')}<button class="snap-resize" type="button" aria-label="Resize snapshot">↘</button>`;
+    d.addEventListener('pointerdown',e=>startSnapshotMove(e,d,s));
+    layer.appendChild(d);
+  });
+}
+function renderNotes(){renderSnapshots();redrawInk();updatePageLabel();setTool(noteState.tool)}
+function updatePageLabel(){const arr=noteState.data[noteState.station],i=noteState.page[noteState.station];$('#pageLabel').textContent=`Page ${i+1} / ${arr.length}`;$('#prevPage').disabled=i===0;$('#nextPage').disabled=i===arr.length-1;$('#notesState').textContent=`S${noteState.station} ${noteState.station===1?'Energy':noteState.station===2?'Thomson':'Millikan'} · ${noteState.tool==='pen'?'Pen':'Eraser'}`}
+$('#addPage').addEventListener('click',()=>{const arr=noteState.data[noteState.station];arr.push(newPage());noteState.page[noteState.station]=arr.length-1;renderNotes()});
+$('#prevPage').addEventListener('click',()=>{if(noteState.page[noteState.station]>0){noteState.page[noteState.station]--;renderNotes()}});$('#nextPage').addEventListener('click',()=>{const arr=noteState.data[noteState.station];if(noteState.page[noteState.station]<arr.length-1){noteState.page[noteState.station]++;renderNotes()}});
+$('#printNotes').addEventListener('click',()=>window.print());
+window.addEventListener('resize',()=>{if($('#notesShell').classList.contains('show')){resizeCanvas();renderSnapshots()}});
+setTool('pen');refreshS1Controls();renderS1Trials();renderS2Trials();renderS2();renderS3();renderS3Trials();setStation(1);
+})();
+</script>
+</body>
+</html>
