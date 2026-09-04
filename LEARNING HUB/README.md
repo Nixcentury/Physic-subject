@@ -1,33 +1,52 @@
-# Learning Hub V0
+# Learning Hub — เวอร์ชัน HTML พื้นฐาน
 
-Static Web สำหรับ GitHub Pages เพื่อรวบรวมบทเรียน ห้องเรียน Quiz และ Simulation ที่จะสร้างขึ้นใหม่
+หน้าเว็บที่ใช้งานจริงเขียนด้วย HTML, CSS และ JavaScript พื้นฐาน เพื่อให้เปิดดูและช่วยแก้ไขได้ง่าย โดยไม่ต้อง Build และไม่ต้องแก้ไฟล์ React
 
-## ขอบเขตรอบนี้
+## ไฟล์ที่ต้องรู้จักเพียง 3 จุด
 
-- หน้า Login ตามคอนเซปต์ที่ตกลงกัน
-- สลับภาษาไทย/English ได้ครบทุกหน้าจอ และจำภาษาที่เลือกไว้ในเครื่อง
-- ปุ่มทดลองเข้า Hub แบบผู้เยี่ยมชม
-- โครง Dashboard, Classroom และแท็บรายวิชา
-- หน้าว่างสำหรับรับเนื้อหาใหม่ทั้งหมด
-- ยังไม่เชื่อม Google Sign-In, `note.js`, Shared Engine, Notebook หรือระบบ Save/Load
-- ไม่มีลิงก์และไม่มีเนื้อหา Quiz เดิม
-- เผยแพร่อัตโนมัติผ่าน GitHub Pages เมื่อมีการ Push เข้า `main`
+1. `index.html` — โครงหน้า ข้อความภาษาไทย/อังกฤษ และรายชื่อแท็บ
+2. `css/styles.css` — สี กระจกใส ขนาด ระยะห่าง และหน้าจอมือถือ
+3. `js/app.js` — การสลับภาษา เข้า/ออก Hub และเปลี่ยนแท็บ
 
-## จุดที่แก้บ่อย
+ใน `index.html` ข้อความสองภาษาเขียนอยู่ด้วยกันแบบนี้:
 
-- `lib/hub-config.ts` — รายชื่อและลำดับแท็บ
-- `lib/i18n.ts` — ข้อความภาษาไทยและภาษาอังกฤษทั้งหมด
-- `components/learning-hub/login-screen.tsx` — หน้า Login
-- `components/learning-hub/hub-shell.tsx` — หน้าหลักและสถานะว่างของแต่ละแท็บ
-- `src/globals.css` — สี ฟอนต์ และสไตล์รวม
-
-## คำสั่งตรวจงาน
-
-```bash
-pnpm dev
-pnpm lint
-pnpm typecheck
-pnpm build
+```html
+<span data-th="ฟิสิกส์" data-en="Physics">ฟิสิกส์</span>
 ```
 
-ไฟล์สำหรับ GitHub Pages อยู่ที่ `.github/workflows/learning-hub-pages.yml` บริเวณรากของ Repository
+แก้ข้อความไทยใน `data-th` แก้ภาษาอังกฤษใน `data-en` และแก้ข้อความระหว่าง `<span>...</span>` ให้ตรงกับภาษาไทย
+
+## การเพิ่มหน้า HTML แยก
+
+สร้างไฟล์ใหม่ในโฟลเดอร์ที่ต้องการ เช่น:
+
+```text
+LEARNING HUB/
+├── index.html
+├── pages/
+│   └── physics/
+│       ├── motion.html
+│       └── electricity.html
+├── css/styles.css
+└── js/app.js
+```
+
+แล้วเชื่อมจากหน้า Hub ด้วยลิงก์ปกติ:
+
+```html
+<a href="pages/physics/motion.html">การเคลื่อนที่</a>
+```
+
+ทุกไฟล์ `.html` ที่วางไว้ใต้โฟลเดอร์ `pages` จะถูกนำขึ้น GitHub Pages อัตโนมัติ
+
+## ขอบเขตปัจจุบัน
+
+- หน้า Login โทนเย็นแบบกระจกฝ้า
+- สลับภาษาไทย/English และจำภาษาที่เลือก
+- ปุ่มทดลองเข้า Hub แบบผู้เยี่ยมชม
+- หน้า Overview, Classroom และแท็บรายวิชา
+- ยังไม่มีเนื้อหา Quiz เดิม
+- ยังไม่เชื่อม Google Sign-In, Notebook หรือระบบ Save/Load
+- GitHub Pages เผยแพร่อัตโนมัติเมื่อ Push เข้า `main`
+
+โฟลเดอร์ React เดิมยังเก็บไว้เป็นข้อมูลสำรอง แต่หน้าเว็บจริงไม่เรียกใช้ไฟล์เหล่านั้นแล้ว

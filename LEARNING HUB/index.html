@@ -7,11 +7,312 @@
       name="description"
       content="พื้นที่รวมบทเรียน ห้องเรียน แบบทดสอบ และห้องทดลองจำลองในที่เดียว"
     />
-    <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
+    <meta name="theme-color" content="#f4f8ff" />
+    <link rel="icon" type="image/svg+xml" href="public/favicon.svg" />
+    <link rel="stylesheet" href="css/styles.css" />
     <title>Learning Hub</title>
   </head>
+
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <!-- =========================================================
+      หน้า Login
+      หากต้องการแก้ข้อความ ให้แก้ data-th และ data-en ใน element นั้น
+      หากต้องการแก้สี ให้ไปที่ css/styles.css ส่วน :root ด้านบนสุด
+    ========================================================== -->
+    <section class="view login-view" id="login-view">
+      <div class="ambient ambient-blue" aria-hidden="true"></div>
+      <div class="ambient ambient-mint" aria-hidden="true"></div>
+
+      <div class="login-shell">
+        <header class="topbar glass-surface">
+          <a class="brand" href="#" aria-label="Learning Hub">
+            <span class="brand-icon" aria-hidden="true">▤</span>
+            <span class="brand-name">Learning Hub</span>
+          </a>
+
+          <div class="language-switch" aria-label="เลือกภาษา">
+            <button class="language-button" type="button" data-language="th" lang="th">
+              ไทย
+            </button>
+            <button class="language-button" type="button" data-language="en" lang="en">
+              EN
+            </button>
+          </div>
+        </header>
+
+        <main class="login-main">
+          <div class="login-content">
+            <div class="login-intro">
+              <p
+                class="eyebrow glass-chip"
+                data-th="ยินดีต้อนรับสู่พื้นที่เรียนรู้ของคุณ"
+                data-en="Welcome to your learning space"
+              >
+                ยินดีต้อนรับสู่พื้นที่เรียนรู้ของคุณ
+              </p>
+
+              <h1 id="login-heading" tabindex="-1">
+                <span data-th="ทุกอย่างที่เรียน" data-en="Everything you learn">
+                  ทุกอย่างที่เรียน
+                </span>
+                <span
+                  class="heading-accent"
+                  data-th="อยู่ในที่เดียว"
+                  data-en="all in one place"
+                >
+                  อยู่ในที่เดียว
+                </span>
+              </h1>
+
+              <p
+                class="tagline"
+                data-th="หนังสือ · แบบทดสอบ · ห้องทดลองจำลอง · ห้องเรียน"
+                data-en="Books · Quizzes · Simulations · Classrooms"
+              >
+                หนังสือ · แบบทดสอบ · ห้องทดลองจำลอง · ห้องเรียน
+              </p>
+            </div>
+
+            <div class="login-card glass-surface">
+              <div class="cloud-note">
+                <span class="cloud-icon" aria-hidden="true">☁</span>
+                <div>
+                  <h2
+                    data-th="กลับมาทำต่อได้จากทุกเครื่อง"
+                    data-en="Continue learning on any device"
+                  >
+                    กลับมาทำต่อได้จากทุกเครื่อง
+                  </h2>
+                  <p
+                    data-th="เมื่อเชื่อมบัญชีแล้ว ระบบจะจำห้องเรียนและความคืบหน้าของคุณ"
+                    data-en="Once connected, your classrooms and progress will stay with you."
+                  >
+                    เมื่อเชื่อมบัญชีแล้ว ระบบจะจำห้องเรียนและความคืบหน้าของคุณ
+                  </p>
+                </div>
+              </div>
+
+              <button class="button button-google" id="google-button" type="button">
+                <span class="google-mark" aria-hidden="true">G</span>
+                <span
+                  data-th="ดำเนินการต่อด้วย Google"
+                  data-en="Continue with Google"
+                >
+                  ดำเนินการต่อด้วย Google
+                </span>
+              </button>
+
+              <div class="divider" aria-hidden="true">
+                <span></span>
+                <small data-th="หรือ" data-en="or">หรือ</small>
+                <span></span>
+              </div>
+
+              <button class="button button-primary" id="guest-button" type="button">
+                <span
+                  data-th="ทดลองเข้า Hub แบบผู้เยี่ยมชม"
+                  data-en="Explore the Hub as a guest"
+                >
+                  ทดลองเข้า Hub แบบผู้เยี่ยมชม
+                </span>
+                <span aria-hidden="true">→</span>
+              </button>
+
+              <p class="notice" id="auth-notice" role="status" hidden>
+                <span aria-hidden="true">✓</span>
+                <span
+                  data-th="Google Sign-In จะเชื่อมในรอบระบบสมาชิก ขณะนี้ทดลอง Hub แบบผู้เยี่ยมชมได้ก่อน"
+                  data-en="Google Sign-In will be connected in the membership phase. For now, you can explore the Hub as a guest."
+                >
+                  Google Sign-In จะเชื่อมในรอบระบบสมาชิก ขณะนี้ทดลอง Hub แบบผู้เยี่ยมชมได้ก่อน
+                </span>
+              </p>
+
+              <p class="privacy-note">
+                <span aria-hidden="true">✓</span>
+                <span
+                  data-th="โหมดผู้เยี่ยมชมยังไม่บันทึกความคืบหน้าบน Cloud"
+                  data-en="Guest mode does not save progress to the cloud yet."
+                >
+                  โหมดผู้เยี่ยมชมยังไม่บันทึกความคืบหน้าบน Cloud
+                </span>
+              </p>
+            </div>
+          </div>
+        </main>
+
+        <footer
+          class="site-footer"
+          data-th="Learning Hub · เริ่มจากโครงที่เรียบง่าย แล้วค่อยเติบโตไปพร้อมบทเรียนใหม่"
+          data-en="Learning Hub · Start simple, then grow with every new lesson."
+        >
+          Learning Hub · เริ่มจากโครงที่เรียบง่าย แล้วค่อยเติบโตไปพร้อมบทเรียนใหม่
+        </footer>
+      </div>
+    </section>
+
+    <!-- =========================================================
+      หน้า Hub
+      แต่ละปุ่มมี data-section ตรงกับ id ของ .content-panel
+      เพิ่มวิชาใหม่ได้โดยคัดลอกปุ่มและ panel เดิม แล้วเปลี่ยนชื่อ id
+    ========================================================== -->
+    <section class="view hub-view" id="hub-view" hidden>
+      <header class="hub-topbar glass-surface">
+        <a class="brand" href="#" aria-label="Learning Hub">
+          <span class="brand-icon" aria-hidden="true">▤</span>
+          <span class="brand-name">Learning Hub</span>
+        </a>
+
+        <div class="hub-actions">
+          <div class="language-switch" aria-label="เลือกภาษา">
+            <button class="language-button" type="button" data-language="th" lang="th">
+              ไทย
+            </button>
+            <button class="language-button" type="button" data-language="en" lang="en">
+              EN
+            </button>
+          </div>
+          <span class="guest-badge" data-th="ผู้เยี่ยมชม" data-en="Guest">
+            ผู้เยี่ยมชม
+          </span>
+          <button
+            class="icon-button"
+            id="sign-out-button"
+            type="button"
+            data-aria-th="ออกจาก Hub"
+            data-aria-en="Leave the Hub"
+            aria-label="ออกจาก Hub"
+            title="ออกจาก Hub"
+          >
+            ↗
+          </button>
+        </div>
+      </header>
+
+      <div class="hub-layout">
+        <nav
+          class="hub-nav glass-surface"
+          data-aria-th="ส่วนต่าง ๆ ของ Learning Hub"
+          data-aria-en="Learning Hub sections"
+          aria-label="ส่วนต่าง ๆ ของ Learning Hub"
+        >
+          <div class="nav-scroll">
+            <button class="nav-button is-active" type="button" data-section="overview">
+              <span class="nav-icon">⌂</span>
+              <span data-th="ภาพรวม" data-en="Overview">ภาพรวม</span>
+            </button>
+            <button class="nav-button" type="button" data-section="classroom">
+              <span class="nav-icon">◎</span>
+              <span data-th="ห้องเรียน" data-en="Classroom">ห้องเรียน</span>
+            </button>
+
+            <p class="nav-label" data-th="รายวิชา" data-en="Subjects">รายวิชา</p>
+
+            <button class="nav-button" type="button" data-section="physics">
+              <span class="nav-icon subject-physics">⚛</span>
+              <span data-th="ฟิสิกส์" data-en="Physics">ฟิสิกส์</span>
+            </button>
+            <button class="nav-button" type="button" data-section="chemistry">
+              <span class="nav-icon subject-chemistry">⚗</span>
+              <span data-th="เคมี" data-en="Chemistry">เคมี</span>
+            </button>
+            <button class="nav-button" type="button" data-section="biology">
+              <span class="nav-icon subject-biology">◌</span>
+              <span data-th="ชีววิทยา" data-en="Biology">ชีววิทยา</span>
+            </button>
+            <button class="nav-button" type="button" data-section="lower-science">
+              <span class="nav-icon subject-science">✦</span>
+              <span data-th="วิทยาศาสตร์ ม.ต้น" data-en="Lower Secondary Science">
+                วิทยาศาสตร์ ม.ต้น
+              </span>
+            </button>
+            <button class="nav-button" type="button" data-section="science-ep">
+              <span class="nav-icon subject-science">✦</span>
+              <span data-th="วิทยาศาสตร์ EP" data-en="Science EP">วิทยาศาสตร์ EP</span>
+            </button>
+            <button class="nav-button" type="button" data-section="math-ep">
+              <span class="nav-icon subject-math">∑</span>
+              <span data-th="คณิตศาสตร์ EP" data-en="Mathematics EP">คณิตศาสตร์ EP</span>
+            </button>
+            <button class="nav-button" type="button" data-section="upper-math">
+              <span class="nav-icon subject-math">∑</span>
+              <span data-th="คณิตศาสตร์ ม.ปลาย" data-en="Upper Secondary Mathematics">
+                คณิตศาสตร์ ม.ปลาย
+              </span>
+            </button>
+          </div>
+        </nav>
+
+        <main class="hub-content">
+          <!-- ภาพรวม -->
+          <section class="content-panel" id="overview">
+            <header class="page-heading">
+              <span class="page-icon subject-overview" aria-hidden="true">⌂</span>
+              <div>
+                <p data-th="ภาพรวมการเรียน" data-en="Dashboard">ภาพรวมการเรียน</p>
+                <h1 tabindex="-1" data-th="ภาพรวม" data-en="Overview">ภาพรวม</h1>
+              </div>
+            </header>
+
+            <article class="overview-card content-surface">
+              <div>
+                <span
+                  class="cool-badge"
+                  data-th="เริ่มต้นใหม่ทั้งหมด"
+                  data-en="A completely fresh start"
+                >
+                  เริ่มต้นใหม่ทั้งหมด
+                </span>
+                <h2
+                  data-th="โครง Hub พร้อมแล้ว รอเติมบทเรียนชุดใหม่ของเรา"
+                  data-en="The Hub foundation is ready for our brand-new lessons"
+                >
+                  โครง Hub พร้อมแล้ว รอเติมบทเรียนชุดใหม่ของเรา
+                </h2>
+                <p
+                  data-th="รอบนี้มีหน้าเข้าสู่ระบบ โครงนำทาง และแท็บวิชา โดยยังไม่ใส่เนื้อหาเก่าหรือลิงก์แบบทดสอบเดิม"
+                  data-en="This version includes the login, navigation, and subject tabs, with no previous content or links to older quizzes."
+                >
+                  รอบนี้มีหน้าเข้าสู่ระบบ โครงนำทาง และแท็บวิชา โดยยังไม่ใส่เนื้อหาเก่าหรือลิงก์แบบทดสอบเดิม
+                </p>
+              </div>
+              <div class="overview-symbol" aria-hidden="true">▤</div>
+
+              <footer class="status-row">
+                <span><i class="status-dot dot-mint"></i><b data-th="หน้าเข้าสู่ระบบพร้อมทดลอง" data-en="Login ready to explore">หน้าเข้าสู่ระบบพร้อมทดลอง</b></span>
+                <span><i class="status-dot dot-blue"></i><b data-th="แท็บวิชาพร้อมแล้ว" data-en="Subject tabs ready">แท็บวิชาพร้อมแล้ว</b></span>
+                <span><i class="status-dot dot-violet"></i><b data-th="ยังไม่เชื่อมระบบสมาชิก" data-en="Membership not connected yet">ยังไม่เชื่อมระบบสมาชิก</b></span>
+              </footer>
+            </article>
+          </section>
+
+          <!-- ห้องเรียน -->
+          <section class="content-panel" id="classroom" hidden>
+            <header class="page-heading">
+              <span class="page-icon subject-classroom" aria-hidden="true">◎</span>
+              <div><p data-th="พื้นที่ห้องเรียน" data-en="Classroom">พื้นที่ห้องเรียน</p><h1 tabindex="-1" data-th="ห้องเรียน" data-en="Classroom">ห้องเรียน</h1></div>
+            </header>
+            <article class="empty-card content-surface">
+              <span class="empty-icon subject-classroom" aria-hidden="true">◎</span>
+              <small data-th="ห้องเรียนรุ่นเริ่มต้น" data-en="Classroom preview">ห้องเรียนรุ่นเริ่มต้น</small>
+              <h2 data-th="ยังไม่ได้เข้าร่วมห้องเรียน" data-en="You have not joined a classroom yet">ยังไม่ได้เข้าร่วมห้องเรียน</h2>
+              <p data-th="พื้นที่นี้เตรียมไว้สำหรับห้องเรียนและรหัสเข้าร่วม ระบบจริงจะเชื่อมในรอบถัดไป" data-en="This space is reserved for classrooms and join codes. The live system will be connected later.">พื้นที่นี้เตรียมไว้สำหรับห้องเรียนและรหัสเข้าร่วม ระบบจริงจะเชื่อมในรอบถัดไป</p>
+              <span class="coming-soon" data-th="พร้อมพัฒนาต่อในรอบถัดไป" data-en="Ready for the next phase">พร้อมพัฒนาต่อในรอบถัดไป</span>
+            </article>
+          </section>
+
+          <!-- รายวิชา: คัดลอก panel หนึ่งชุดเพื่อเพิ่มวิชาใหม่ได้ -->
+          <section class="content-panel subject-panel" id="physics" hidden data-name-th="ฟิสิกส์" data-name-en="Physics" data-icon="⚛" data-theme="physics"></section>
+          <section class="content-panel subject-panel" id="chemistry" hidden data-name-th="เคมี" data-name-en="Chemistry" data-icon="⚗" data-theme="chemistry"></section>
+          <section class="content-panel subject-panel" id="biology" hidden data-name-th="ชีววิทยา" data-name-en="Biology" data-icon="◌" data-theme="biology"></section>
+          <section class="content-panel subject-panel" id="lower-science" hidden data-name-th="วิทยาศาสตร์ ม.ต้น" data-name-en="Lower Secondary Science" data-icon="✦" data-theme="science"></section>
+          <section class="content-panel subject-panel" id="science-ep" hidden data-name-th="วิทยาศาสตร์ EP" data-name-en="Science EP" data-icon="✦" data-theme="science"></section>
+          <section class="content-panel subject-panel" id="math-ep" hidden data-name-th="คณิตศาสตร์ EP" data-name-en="Mathematics EP" data-icon="∑" data-theme="math"></section>
+          <section class="content-panel subject-panel" id="upper-math" hidden data-name-th="คณิตศาสตร์ ม.ปลาย" data-name-en="Upper Secondary Mathematics" data-icon="∑" data-theme="math"></section>
+        </main>
+      </div>
+    </section>
+
+    <script src="js/app.js" defer></script>
   </body>
 </html>
