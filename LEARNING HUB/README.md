@@ -1,6 +1,6 @@
 # Learning Hub — เวอร์ชัน HTML พื้นฐาน
 
-หน้าเว็บที่ใช้งานจริงเขียนด้วย HTML, CSS และ JavaScript พื้นฐาน เพื่อให้เปิดดูและช่วยแก้ไขได้ง่าย โดยไม่ต้อง Build และไม่ต้องแก้ไฟล์ React
+หน้าเว็บที่ใช้งานจริงเขียนด้วย HTML, CSS และ JavaScript พื้นฐาน เพื่อให้เปิดดูและช่วยแก้ไขได้ง่าย โดยไม่ต้องแก้ไฟล์ React ส่วน GitHub จะ Build และเผยแพร่ให้อัตโนมัติ
 
 ## ไฟล์ที่ต้องรู้จักเพียง 3 จุด
 
@@ -23,10 +23,11 @@
 ```text
 LEARNING HUB/
 ├── index.html
-├── pages/
-│   └── physics/
-│       ├── motion.html
-│       └── electricity.html
+├── public/
+│   └── pages/
+│       └── physics/
+│           ├── motion.html
+│           └── electricity.html
 ├── css/styles.css
 └── js/app.js
 ```
@@ -37,7 +38,7 @@ LEARNING HUB/
 <a href="pages/physics/motion.html">การเคลื่อนที่</a>
 ```
 
-ทุกไฟล์ `.html` ที่วางไว้ใต้โฟลเดอร์ `pages` จะถูกนำขึ้น GitHub Pages อัตโนมัติ
+ทุกไฟล์ `.html` ที่วางไว้ใต้โฟลเดอร์ `public/pages` จะถูกนำขึ้น GitHub Pages อัตโนมัติ โดย workflow หลักไม่ต้องแก้ไข
 
 ## ขอบเขตปัจจุบัน
 

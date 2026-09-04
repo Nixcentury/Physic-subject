@@ -21,21 +21,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Prepare Learning Hub HTML
-        shell: bash
-        run: |
-          set -euo pipefail
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.19.0
 
-          mkdir -p './LEARNING HUB/dist'
-          cp './LEARNING HUB/index.html' './LEARNING HUB/dist/index.html'
-          cp -R './LEARNING HUB/css' './LEARNING HUB/dist/css'
-          cp -R './LEARNING HUB/js' './LEARNING HUB/dist/js'
-          cp -R './LEARNING HUB/public' './LEARNING HUB/dist/public'
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: 'LEARNING HUB/pnpm-lock.yaml'
 
-          # Any lesson HTML added under LEARNING HUB/pages is published too.
-          if [ -d './LEARNING HUB/pages' ]; then
-            cp -R './LEARNING HUB/pages' './LEARNING HUB/dist/pages'
-          fi
+      - name: Install dependencies
+        working-directory: './LEARNING HUB'
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Learning Hub
+        working-directory: './LEARNING HUB'
+        run: pnpm build
 
       - name: Merge legacy quizzes and simulations
         shell: bash
@@ -57,9 +61,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test -f './LEARNING HUB/dist/index.html'
-          test -f './LEARNING HUB/dist/css/styles.css'
-          test -f './LEARNING HUB/dist/js/app.js'
           test -f './LEARNING HUB/dist/BASIC PRORAMING/TEST_python-foundations-operators-conditions-loops - Copy.html'
           test -f './LEARNING HUB/dist/quiz with note and log in/chemistry/equlibrium/Chemical_Equilibrium_Mastery_Quiz_Round5_QA_FINAL.html'
 
