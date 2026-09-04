@@ -1,3 +1,5 @@
+import type { LocalizedText } from '@/lib/i18n';
+
 export type HubIconName =
   | 'dashboard'
   | 'classroom'
@@ -9,74 +11,74 @@ export type HubIconName =
 
 export type HubSection = {
   id: string;
-  label: string;
-  eyebrow: string;
+  label: LocalizedText;
+  eyebrow: LocalizedText;
   kind: 'system' | 'subject';
   icon: HubIconName;
 };
 
-// แก้รายชื่อและลำดับแท็บของ Hub ได้จากไฟล์นี้ไฟล์เดียว
+// แก้ชื่อภาษาไทย ภาษาอังกฤษ และลำดับแท็บได้จากไฟล์นี้ไฟล์เดียว
 export const hubSections: HubSection[] = [
   {
     id: 'dashboard',
-    label: 'ภาพรวม',
-    eyebrow: 'Dashboard',
+    label: { th: 'ภาพรวม', en: 'Overview' },
+    eyebrow: { th: 'ภาพรวมการเรียน', en: 'Dashboard' },
     kind: 'system',
     icon: 'dashboard',
   },
   {
     id: 'classroom',
-    label: 'ห้องเรียน',
-    eyebrow: 'Classroom',
+    label: { th: 'ห้องเรียน', en: 'Classroom' },
+    eyebrow: { th: 'พื้นที่ห้องเรียน', en: 'Classroom' },
     kind: 'system',
     icon: 'classroom',
   },
   {
     id: 'physics',
-    label: 'ฟิสิกส์',
-    eyebrow: 'Physics',
+    label: { th: 'ฟิสิกส์', en: 'Physics' },
+    eyebrow: { th: 'รายวิชา', en: 'Subject' },
     kind: 'subject',
     icon: 'physics',
   },
   {
     id: 'chemistry',
-    label: 'เคมี',
-    eyebrow: 'Chemistry',
+    label: { th: 'เคมี', en: 'Chemistry' },
+    eyebrow: { th: 'รายวิชา', en: 'Subject' },
     kind: 'subject',
     icon: 'chemistry',
   },
   {
     id: 'biology',
-    label: 'ชีววิทยา',
-    eyebrow: 'Biology',
+    label: { th: 'ชีววิทยา', en: 'Biology' },
+    eyebrow: { th: 'รายวิชา', en: 'Subject' },
     kind: 'subject',
     icon: 'biology',
   },
   {
     id: 'lower-secondary-science',
-    label: 'วิทยาศาสตร์ ม.ต้น',
-    eyebrow: 'Lower Secondary',
+    label: { th: 'วิทยาศาสตร์ ม.ต้น', en: 'Lower Secondary Science' },
+    eyebrow: { th: 'รายวิชา', en: 'Subject' },
     kind: 'subject',
     icon: 'science',
   },
   {
     id: 'science-ep',
-    label: 'วิทยาศาสตร์ EP',
-    eyebrow: 'Science EP',
+    label: { th: 'วิทยาศาสตร์ EP', en: 'Science EP' },
+    eyebrow: { th: 'รายวิชา', en: 'Subject' },
     kind: 'subject',
     icon: 'science',
   },
   {
     id: 'math-ep',
-    label: 'คณิตศาสตร์ EP',
-    eyebrow: 'Math EP',
+    label: { th: 'คณิตศาสตร์ EP', en: 'Mathematics EP' },
+    eyebrow: { th: 'รายวิชา', en: 'Subject' },
     kind: 'subject',
     icon: 'math',
   },
   {
     id: 'upper-secondary-math',
-    label: 'คณิตศาสตร์ ม.ปลาย',
-    eyebrow: 'Upper Secondary',
+    label: { th: 'คณิตศาสตร์ ม.ปลาย', en: 'Upper Secondary Mathematics' },
+    eyebrow: { th: 'รายวิชา', en: 'Subject' },
     kind: 'subject',
     icon: 'math',
   },

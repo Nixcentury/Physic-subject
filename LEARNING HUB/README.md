@@ -5,6 +5,7 @@ Static Web สำหรับ GitHub Pages เพื่อรวบรวมบ�
 ## ขอบเขตรอบนี้
 
 - หน้า Login ตามคอนเซปต์ที่ตกลงกัน
+- สลับภาษาไทย/English ได้ครบทุกหน้าจอ และจำภาษาที่เลือกไว้ในเครื่อง
 - ปุ่มทดลองเข้า Hub แบบผู้เยี่ยมชม
 - โครง Dashboard, Classroom และแท็บรายวิชา
 - หน้าว่างสำหรับรับเนื้อหาใหม่ทั้งหมด
@@ -15,6 +16,7 @@ Static Web สำหรับ GitHub Pages เพื่อรวบรวมบ�
 ## จุดที่แก้บ่อย
 
 - `lib/hub-config.ts` — รายชื่อและลำดับแท็บ
+- `lib/i18n.ts` — ข้อความภาษาไทยและภาษาอังกฤษทั้งหมด
 - `components/learning-hub/login-screen.tsx` — หน้า Login
 - `components/learning-hub/hub-shell.tsx` — หน้าหลักและสถานะว่างของแต่ละแท็บ
 - `src/globals.css` — สี ฟอนต์ และสไตล์รวม
