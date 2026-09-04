@@ -3,9 +3,6 @@ name: Learning Hub · GitHub Pages
 on:
   push:
     branches: [main]
-    paths:
-      - 'LEARNING HUB/**'
-      - '.github/workflows/learning-hub-pages.yml'
   workflow_dispatch:
 
 permissions:
@@ -43,6 +40,35 @@ jobs:
       - name: Build Learning Hub
         working-directory: './LEARNING HUB'
         run: pnpm build
+
+      - name: Merge legacy quizzes and simulations
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # GitHub Pages publishes one artifact. Keep the Learning Hub at the
+          # site root, then add every tracked legacy resource beside it while
+          # excluding the Hub source and workflow files.
+          git ls-files -z -- \
+            ':(exclude)LEARNING HUB/**' \
+            ':(exclude).github/**' \
+            | tar --null -T - -cf - \
+            | tar -xf - -C './LEARNING HUB/dist'
+
+          touch './LEARNING HUB/dist/.nojekyll'
+
+      - name: Verify critical legacy pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f './LEARNING HUB/dist/BASIC PRORAMING/TEST_python-foundations-operators-conditions-loops - Copy.html'
+          test -f './LEARNING HUB/dist/quiz with note and log in/chemistry/equlibrium/Chemical_Equilibrium_Mastery_Quiz_Round5_QA_FINAL.html'
+
+          html_count="$(find './LEARNING HUB/dist' -type f -name '*.html' | wc -l)"
+          if [ "$html_count" -lt 10 ]; then
+            echo "Expected legacy HTML pages, found only $html_count" >&2
+            exit 1
+          fi
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
