@@ -27,16 +27,18 @@ Learning Hub ใช้หน้า Google Login เดียว ไม่แย�
 ## โครงข้อมูลเบื้องต้น
 
 ```text
-users/{uid}/profile
-admins/{uid}
-teacherApprovals/{uid}
-classrooms/{roomId}
-classMembers/{roomId}/{uid}/role
-userClassrooms/{uid}/{roomId}
+learningHub/profiles/{uid}
+learningHub/admins/{uid}
+learningHub/teacherRequests/{uid}
+learningHub/teacherApprovals/{uid}
+learningHub/classrooms/{roomId}
+learningHub/classMembers/{roomId}/{uid}/role
+learningHub/userClassrooms/{uid}/{roomId}
 ```
 
-- `users` เก็บข้อมูลแสดงผลของบัญชี
+- `profiles` เก็บข้อมูลแสดงผลของบัญชีเท่าที่จำเป็น
 - `admins` และ `teacherApprovals` เป็นข้อมูลหลังบ้าน ผู้ใช้ทั่วไปเขียนไม่ได้
+- `teacherRequests` เก็บคำขอที่ผู้ใช้ส่งให้แอดมินตรวจ
 - `classMembers` เป็นบทบาทเฉพาะห้อง
 - `userClassrooms` เป็นดัชนีสำหรับโหลด Dashboard ของแต่ละคน
 
@@ -56,7 +58,7 @@ Google Login
 
 ## งานหลังบ้าน
 
-ระยะแรกให้ผู้ดูแล Firebase เพิ่มบัญชี admin เริ่มต้นและอนุมัติครูจาก Firebase Console ก่อน จากนั้นจึงสร้างหน้า Admin ขนาดเล็กสำหรับค้นหาบัญชีและกดอนุมัติครู โดย Database Rules ต้องตรวจว่าเฉพาะ `admin` เท่านั้นที่เขียน `teacherApprovals` ได้
+ระยะแรกให้ผู้ดูแล Firebase เพิ่มบัญชี admin เริ่มต้นจาก Firebase Console จากนั้นใช้หน้า `admin.html` ตรวจคำขอ อนุมัติ ปฏิเสธ หรือถอนสิทธิ์ครู โดย Database Rules ต้องตรวจว่าเฉพาะ `admin` เท่านั้นที่เขียน `teacherApprovals` ได้
 
 การทำหน้า Admin อย่างเดียวโดยไม่มีกฎ Firebase ไม่ปลอดภัย เพราะผู้ใช้สามารถข้ามหน้าจอและเรียกฐานข้อมูลโดยตรงได้
 
@@ -70,7 +72,6 @@ Google Login
 ## ลำดับพัฒนาที่ปรับใหม่
 
 1. Round 2 — Presence แบบไม่เปิดเผยรายชื่อ
-2. Round 3 — ฐาน Role และการอนุมัติครูหลังบ้าน
+2. Round 3 — ฐาน Role คำขอสิทธิ์ครู และหน้าหลังบ้าน (เตรียมแล้ว รอเปิด Firebase Rules)
 3. Round 4 — ส่งบัญชีและ Role ไปหน้า Classroom HTML
 4. Round 5 — QA และนำขึ้น GitHub Pages
-

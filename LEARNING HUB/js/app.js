@@ -15,6 +15,11 @@ import {
   stopPresence,
   subscribePresence,
 } from "./presence.js";
+import {
+  cancelTeacherRequest,
+  requestTeacherAccess,
+  subscribeRoles,
+} from "./roles.js";
 
 const languageStorageKey = "learning-hub-language";
 
@@ -41,6 +46,22 @@ const presenceIdleTotal = document.querySelector("#presence-idle-total");
 const presenceVisibleTotal = document.querySelector("#presence-visible-total");
 const presenceMessage = document.querySelector("#presence-message");
 const presenceList = document.querySelector("#presence-list");
+const roleButton = document.querySelector("#role-button");
+const roleLabel = document.querySelector("#role-label");
+const roleBackdrop = document.querySelector("#role-backdrop");
+const rolePanel = document.querySelector("#role-panel");
+const roleClose = document.querySelector("#role-close");
+const roleSummaryIcon = document.querySelector("#role-summary-icon");
+const roleStatusTitle = document.querySelector("#role-status-title");
+const roleStatusDetail = document.querySelector("#role-status-detail");
+const roleMessage = document.querySelector("#role-message");
+const roleLoading = document.querySelector("#role-loading");
+const roleApproved = document.querySelector("#role-approved");
+const adminPageLink = document.querySelector("#admin-page-link");
+const roleRequestStatus = document.querySelector("#role-request-status");
+const cancelRoleRequest = document.querySelector("#cancel-role-request");
+const teacherRequestForm = document.querySelector("#teacher-request-form");
+const submitRoleRequest = document.querySelector("#submit-role-request");
 const languageButtons = document.querySelectorAll("[data-language]");
 const navButtons = document.querySelectorAll("[data-section]");
 const subjectPanels = document.querySelectorAll(".subject-panel");
@@ -54,7 +75,17 @@ let activePresence = {
   counts: { online: 0, idle: 0, visible: 0, active: 0 },
   error: "",
 };
+let activeRole = {
+  status: "signed-out",
+  systemRole: "student",
+  isAdmin: false,
+  isTeacher: false,
+  requestStatus: "none",
+  request: null,
+  error: "",
+};
 let presenceReturnFocus = null;
+let roleReturnFocus = null;
 
 function readSavedLanguage() {
   try {
@@ -125,6 +156,104 @@ function renderAccount(session) {
   accountAvatar.src = fallbackAvatar;
 }
 
+function closeRolePanel() {
+  rolePanel.hidden = true;
+  rolePanel.setAttribute("aria-hidden", "true");
+  roleBackdrop.hidden = true;
+  roleButton.setAttribute("aria-expanded", "false");
+  roleReturnFocus?.focus();
+  roleReturnFocus = null;
+}
+
+function openRolePanel() {
+  if (roleButton.hidden) return;
+  if (!presencePanel.hidden) closePresencePanel();
+  roleReturnFocus = document.activeElement;
+  rolePanel.hidden = false;
+  rolePanel.setAttribute("aria-hidden", "false");
+  roleBackdrop.hidden = false;
+  roleButton.setAttribute("aria-expanded", "true");
+  roleClose.focus();
+}
+
+function setRoleMessage(messageTh, messageEn, tone = "info") {
+  roleMessage.textContent = currentLanguage === "th" ? messageTh : messageEn;
+  roleMessage.classList.toggle("is-error", tone === "error");
+  roleMessage.hidden = false;
+}
+
+function renderRole(role) {
+  activeRole = role;
+  const isSignedIn = activeSession.status === "signed-in";
+  roleButton.hidden = !isSignedIn;
+
+  if (!isSignedIn) closeRolePanel();
+
+  const labels = {
+    student: ["นักเรียน", "Student", "♙"],
+    teacher: ["ครู", "Teacher", "♜"],
+    admin: ["แอดมิน", "Admin", "♛"],
+  };
+  const [labelTh, labelEn, icon] = labels[role.systemRole] || labels.student;
+  roleLabel.textContent = currentLanguage === "th" ? labelTh : labelEn;
+  roleSummaryIcon.textContent = icon;
+  roleButton.querySelector(".role-button-icon").textContent = icon;
+
+  roleLoading.hidden = role.status !== "loading";
+  roleApproved.hidden = role.status !== "ready" || !role.isTeacher;
+  adminPageLink.hidden = !role.isAdmin;
+  roleRequestStatus.hidden =
+    role.status !== "ready" || role.isTeacher || role.requestStatus !== "pending";
+  teacherRequestForm.hidden =
+    role.status !== "ready" || role.isTeacher || role.requestStatus === "pending";
+  roleMessage.hidden = true;
+  roleMessage.classList.remove("is-error");
+
+  if (role.status === "loading") {
+    roleStatusTitle.textContent = currentLanguage === "th" ? "กำลังตรวจสิทธิ์" : "Checking access";
+    roleStatusDetail.textContent =
+      currentLanguage === "th"
+        ? "ระบบกำลังอ่านสิทธิ์จาก Firebase"
+        : "Reading access from Firebase";
+    return;
+  }
+
+  roleStatusTitle.textContent = currentLanguage === "th" ? labelTh : labelEn;
+  const detail = {
+    student: [
+      "ใช้บทเรียนและเข้าร่วมห้องเรียนได้",
+      "Can use lessons and join classrooms",
+    ],
+    teacher: [
+      "ได้รับอนุมัติให้ใช้เครื่องมือครู",
+      "Approved to use teacher tools",
+    ],
+    admin: [
+      "จัดการสิทธิ์ครูและระบบหลังบ้านได้",
+      "Can manage teacher access and admin tools",
+    ],
+  }[role.systemRole] || ["", ""];
+  roleStatusDetail.textContent = currentLanguage === "th" ? detail[0] : detail[1];
+
+  if (role.error) {
+    setRoleMessage(
+      "ยังอ่านสิทธิ์บางส่วนไม่ได้ ต้องติดตั้ง Firebase Rules ของรอบ 3 ก่อนใช้งานจริง",
+      "Some access data is unavailable. Install the Round 3 Firebase Rules before production use.",
+      "error",
+    );
+  } else if (role.requestStatus === "rejected") {
+    setRoleMessage(
+      "คำขอก่อนหน้านี้ยังไม่ได้รับอนุมัติ คุณแก้ข้อมูลแล้วส่งใหม่ได้",
+      "The previous request was not approved. You can update the details and submit again.",
+    );
+  } else if (role.requestStatus === "revoked") {
+    setRoleMessage(
+      "สิทธิ์ครูของบัญชีนี้ถูกถอน หากต้องการใช้อีกครั้งสามารถส่งคำขอใหม่ได้",
+      "Teacher access was revoked. You can submit a new request if access is needed again.",
+    );
+  }
+}
+
 function closePresencePanel() {
   presencePanel.hidden = true;
   presencePanel.setAttribute("aria-hidden", "true");
@@ -136,6 +265,7 @@ function closePresencePanel() {
 
 function openPresencePanel() {
   if (presenceButton.hidden) return;
+  if (!rolePanel.hidden) closeRolePanel();
   presenceReturnFocus = document.activeElement;
   presencePanel.hidden = false;
   presencePanel.setAttribute("aria-hidden", "false");
@@ -232,6 +362,7 @@ function setLanguage(language) {
   document.querySelector('meta[name="description"]').setAttribute("content", description);
   renderAccount(activeSession);
   renderPresence(activePresence);
+  renderRole(activeRole);
   saveLanguage(language);
 }
 
@@ -423,8 +554,65 @@ presenceButton.addEventListener("click", () => {
 presenceClose.addEventListener("click", closePresencePanel);
 presenceBackdrop.addEventListener("click", closePresencePanel);
 
+roleButton.addEventListener("click", () => {
+  if (rolePanel.hidden) {
+    openRolePanel();
+  } else {
+    closeRolePanel();
+  }
+});
+
+roleClose.addEventListener("click", closeRolePanel);
+roleBackdrop.addEventListener("click", closeRolePanel);
+
+teacherRequestForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  submitRoleRequest.disabled = true;
+
+  try {
+    const formData = new FormData(teacherRequestForm);
+    await requestTeacherAccess({
+      school: formData.get("school"),
+      subjects: formData.get("subjects"),
+      note: formData.get("note"),
+    });
+    teacherRequestForm.reset();
+    setRoleMessage(
+      "ส่งคำขอแล้ว บัญชีจะยังเป็นนักเรียนระหว่างรอแอดมินตรวจสอบ",
+      "Request submitted. The account remains a student while an admin reviews it.",
+    );
+  } catch (error) {
+    console.warn("Learning Hub could not submit the teacher request.", error);
+    setRoleMessage(
+      "ส่งคำขอไม่ได้ กรุณาตรวจ Firebase Rules ของรอบ 3 แล้วลองอีกครั้ง",
+      "Could not submit the request. Check the Round 3 Firebase Rules and try again.",
+      "error",
+    );
+  } finally {
+    submitRoleRequest.disabled = false;
+  }
+});
+
+cancelRoleRequest.addEventListener("click", async () => {
+  cancelRoleRequest.disabled = true;
+
+  try {
+    await cancelTeacherRequest();
+  } catch (error) {
+    console.warn("Learning Hub could not cancel the teacher request.", error);
+    setRoleMessage(
+      "ยกเลิกคำขอไม่ได้ กรุณาลองอีกครั้ง",
+      "Could not cancel the request. Please try again.",
+      "error",
+    );
+  } finally {
+    cancelRoleRequest.disabled = false;
+  }
+});
+
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && !presencePanel.hidden) closePresencePanel();
+  if (event.key === "Escape" && !rolePanel.hidden) closeRolePanel();
 });
 
 document.querySelectorAll(".brand").forEach((brandLink) => {
@@ -437,6 +625,7 @@ accountAvatar.addEventListener("error", () => {
 
 subscribeAuth(renderSession);
 subscribePresence(renderPresence);
+subscribeRoles(renderRole);
 
 setInterval(() => {
   if (!presencePanel.hidden) renderPresence(activePresence);

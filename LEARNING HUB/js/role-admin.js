@@ -51,7 +51,7 @@ function normalizeAdminData(requestsValue, approvalsValue, profilesValue) {
     .sort((a, b) => b.requestedAt - a.requestedAt);
 
   const teachers = toEntries(approvalsValue)
-    .filter(([, approval]) => approval === true || approval?.enabled !== false)
+    .filter(([, approval]) => Boolean(approval) && (approval === true || approval.enabled !== false))
     .map(([uid, approval]) => ({
       uid,
       displayName: profiles[uid]?.displayName || "",

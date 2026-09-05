@@ -2,7 +2,7 @@
 
 หน้าเว็บที่ใช้งานจริงเขียนด้วย HTML, CSS และ JavaScript พื้นฐาน เพื่อให้เปิดดูและช่วยแก้ไขได้ง่าย โดยไม่ต้องแก้ไฟล์ React ส่วน GitHub จะ Build และเผยแพร่ให้อัตโนมัติ
 
-## ไฟล์ที่ต้องรู้จัก 6 จุด
+## ไฟล์ที่ต้องรู้จัก 9 จุด
 
 1. `index.html` — โครงหน้า ข้อความภาษาไทย/อังกฤษ และรายชื่อแท็บ
 2. `css/styles.css` — สี กระจกใส ขนาด ระยะห่าง และหน้าจอมือถือ
@@ -10,6 +10,9 @@
 4. `js/firebase-config.js` — การเชื่อม Firebase กลาง ปกติไม่ต้องแก้
 5. `js/auth.js` — Google Login, Guest และ Logout ปกติไม่ต้องแก้
 6. `js/presence.js` — Online, Idle, Offline และคนออนไลน์ ปกติไม่ต้องแก้
+7. `js/roles.js` — สิทธิ์นักเรียน ครู แอดมิน และคำขอสิทธิ์ครู ปกติไม่ต้องแก้
+8. `admin.html` — หน้าหลังบ้านสำหรับแอดมิน
+9. `js/role-admin.js` — การอนุมัติ ปฏิเสธ และถอนสิทธิ์ครู ปกติไม่ต้องแก้
 
 ใน `index.html` ข้อความสองภาษาเขียนอยู่ด้วยกันแบบนี้:
 
@@ -50,6 +53,8 @@ LEARNING HUB/
 - Google Sign-In, Guest และ Logout
 - แสดงรูป ชื่อ และอีเมลของบัญชีที่เข้าสู่ระบบ
 - ระบบ Online, Idle, Offline และ Live Presence
+- ระบบ Role นักเรียน ครู แอดมิน และหน้าส่งคำขอสิทธิ์ครู
+- หน้า Admin แยกไฟล์สำหรับจัดการสิทธิ์ครู
 - หน้า Overview, Classroom และแท็บรายวิชา
 - ยังไม่มีเนื้อหา Quiz เดิม
 - ยังไม่เชื่อม Notebook หรือระบบ Save/Load
@@ -69,7 +74,9 @@ LEARNING HUB/
 
 แบบบัญชีครู นักเรียน และงานหลังบ้านบันทึกไว้ที่ [`ACCOUNT-ROLES.md`](ACCOUNT-ROLES.md)
 
-Round 1 เชื่อม Google Sign-In, Guest และ Logout แล้ว และ Round 2 เพิ่ม Online/Idle/Offline แล้ว โดยยังไม่เริ่ม Quiz, Notebook หรือระบบ Classroom จริง
+ผลการทำระบบสิทธิ์รอบ 3 บันทึกไว้ที่ [`ROUND-3-ROLES.md`](ROUND-3-ROLES.md) และกฎที่ต้องให้ผู้ดูแล Firebase ติดตั้งอยู่ใน [`FIREBASE-RULES-ROUND3.md`](FIREBASE-RULES-ROUND3.md)
+
+Round 1 เชื่อม Google Sign-In, Guest และ Logout แล้ว Round 2 เพิ่ม Online/Idle/Offline และ Round 3 เตรียมระบบสิทธิ์กับหน้าหลังบ้านแล้ว โดยยังไม่เริ่ม Quiz, Notebook หรือระบบ Classroom จริง
 
 ## แบบ Navigation ที่พักไว้สำหรับกลับมาทำต่อ
 

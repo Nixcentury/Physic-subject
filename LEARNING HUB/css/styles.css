@@ -855,6 +855,324 @@ a:focus-visible,
 .subject-math { background: #e6efff; color: #4a69a9; }
 
 /* ==============================================================
+   ปุ่มและแผงสิทธิ์บัญชี
+================================================================ */
+.role-button {
+  display: flex;
+  height: 40px;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  transition: 180ms ease;
+}
+
+.role-button:hover,
+.role-button[aria-expanded="true"] {
+  border-color: #bfd2ef;
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--navy);
+  box-shadow: 0 8px 20px rgba(49, 78, 132, 0.1);
+}
+
+.role-button-icon {
+  color: #4d70b8;
+  font-size: 15px;
+}
+
+.role-backdrop {
+  position: fixed;
+  z-index: 35;
+  inset: 0;
+  background: rgba(30, 50, 88, 0.2);
+  backdrop-filter: blur(3px);
+}
+
+.role-panel {
+  position: fixed;
+  z-index: 40;
+  top: 90px;
+  right: 18px;
+  bottom: 18px;
+  display: flex;
+  width: min(430px, calc(100vw - 36px));
+  overflow: hidden;
+  flex-direction: column;
+  border-radius: 26px;
+  background: rgba(247, 251, 255, 0.96);
+  box-shadow: 0 30px 80px rgba(32, 54, 96, 0.22);
+  animation: panel-in 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.role-panel[hidden],
+.role-backdrop[hidden],
+.role-button[hidden] {
+  display: none;
+}
+
+.role-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px;
+  background: linear-gradient(135deg, #203b70, #315793);
+  color: white;
+}
+
+.role-panel-header small {
+  color: #c9e8ff;
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.11em;
+}
+
+.role-panel-header h2 {
+  margin: 4px 0 0;
+  font-size: 20px;
+  line-height: 1.3;
+}
+
+.role-close {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 22px;
+}
+
+.role-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.role-panel-body {
+  display: grid;
+  gap: 16px;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.role-summary-card {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 15px;
+  border: 1px solid #d7e4f6;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.role-summary-icon {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 15px;
+  background: var(--blue-soft);
+  color: #4468af;
+  font-size: 22px;
+}
+
+.role-summary-card small,
+.role-form-heading small {
+  color: var(--faint);
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.role-summary-card h3,
+.role-form-heading h3,
+.role-request-status h3 {
+  margin: 2px 0 0;
+  color: var(--navy);
+  font-size: 16px;
+}
+
+.role-summary-card p,
+.role-form-heading p,
+.role-request-status p,
+.role-approved p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.role-message {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid #d4e3f8;
+  border-radius: 12px;
+  background: #eef5ff;
+  color: #48628e;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.role-message.is-error {
+  border-color: #e8b7c3;
+  background: #fff2f5;
+  color: #9a3852;
+}
+
+.role-loading {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 14px;
+  border-radius: 14px;
+  background: #edf4ff;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.role-loading p {
+  margin: 0;
+}
+
+.role-approved,
+.role-request-status,
+.teacher-request-form {
+  padding: 16px;
+  border: 1px solid #d8e4f5;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.76);
+}
+
+.role-request-status {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: 11px;
+}
+
+.role-request-status .secondary-button {
+  grid-column: 1 / -1;
+}
+
+.role-request-icon {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--mint);
+  color: #217c71;
+  font-weight: 900;
+}
+
+.admin-page-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 13px;
+  padding: 11px 13px;
+  border-radius: 12px;
+  background: var(--navy);
+  color: white;
+  font-size: 11px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.teacher-request-form {
+  display: grid;
+  gap: 13px;
+}
+
+.role-form-heading {
+  margin-bottom: 2px;
+}
+
+.role-field {
+  display: grid;
+  gap: 6px;
+  color: var(--text);
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.role-field input,
+.role-field textarea {
+  width: 100%;
+  border: 1px solid #cbdaf0;
+  border-radius: 11px;
+  background: rgba(252, 254, 255, 0.94);
+  color: var(--text);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  outline: none;
+}
+
+.role-field input {
+  min-height: 42px;
+  padding: 0 11px;
+}
+
+.role-field textarea {
+  resize: vertical;
+  padding: 10px 11px;
+}
+
+.role-field input:focus,
+.role-field textarea:focus {
+  border-color: #7897d0;
+  box-shadow: 0 0 0 3px rgba(76, 111, 189, 0.12);
+}
+
+.role-submit,
+.secondary-button {
+  min-height: 42px;
+  padding: 0 14px;
+  border-radius: 11px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.role-submit {
+  border: 1px solid #294472;
+  background: var(--navy);
+  color: white;
+}
+
+.secondary-button {
+  border: 1px solid #cbdaf0;
+  background: #f5f9ff;
+  color: #48628e;
+}
+
+.role-submit:disabled,
+.secondary-button:disabled {
+  cursor: wait;
+  opacity: 0.58;
+}
+
+.role-privacy {
+  margin-top: auto;
+  padding: 13px 20px;
+  border-top: 1px solid #dce7f6;
+  background: rgba(236, 244, 255, 0.78);
+  color: var(--faint);
+  font-size: 9px;
+  line-height: 1.6;
+}
+
+/* ==============================================================
    ระบบคนออนไลน์
 ================================================================ */
 .presence-button {
@@ -1139,6 +1457,16 @@ a:focus-visible,
     padding: 0;
   }
 
+  .role-button {
+    width: 40px;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .role-button > span:last-child {
+    display: none;
+  }
+
   .presence-label {
     display: none;
   }
@@ -1160,6 +1488,15 @@ a:focus-visible,
     width: auto;
     max-height: calc(100svh - 88px);
     border-radius: 24px;
+  }
+
+  .role-panel {
+    top: auto;
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
+    width: auto;
+    max-height: calc(100svh - 88px);
   }
 
   .hub-content {
