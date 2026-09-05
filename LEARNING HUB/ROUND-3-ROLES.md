@@ -34,7 +34,8 @@
 - Lint ผ่าน
 - Production build ผ่านทั้ง `index.html` และ `admin.html`
 - ยังไม่แก้ GitHub Pages workflow
-- ยังไม่ Push หรือ Deploy
+- GitHub Pages เผยแพร่ `index.html` และ `admin.html` ผ่าน workflow เดิมแล้ว และทั้งสองหน้าเปิดได้ด้วยสถานะ 200
+- ตรวจหน้า Quiz และ Simulation ตัวแทนหลังเผยแพร่แล้ว ยังเปิดได้ด้วยสถานะ 200
 - ทดสอบ Google และการเขียน Firebase จริงต้องให้เจ้าของบัญชีดำเนินการหลังติดตั้ง Rules
 
 ## สิ่งที่ยังไม่ทำ
