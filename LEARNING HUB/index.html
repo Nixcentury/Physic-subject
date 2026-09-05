@@ -118,13 +118,14 @@
                 <span aria-hidden="true">→</span>
               </button>
 
-              <p class="notice" id="auth-notice" role="status" hidden>
-                <span aria-hidden="true">✓</span>
+              <p class="notice" id="auth-notice" role="status" aria-live="polite" hidden>
+                <span id="auth-notice-icon" aria-hidden="true">●</span>
                 <span
-                  data-th="Google Sign-In จะเชื่อมในรอบระบบสมาชิก ขณะนี้ทดลอง Hub แบบผู้เยี่ยมชมได้ก่อน"
-                  data-en="Google Sign-In will be connected in the membership phase. For now, you can explore the Hub as a guest."
+                  id="auth-notice-text"
+                  data-th="กำลังตรวจสอบบัญชีที่เคยเข้าสู่ระบบ"
+                  data-en="Checking your saved account"
                 >
-                  Google Sign-In จะเชื่อมในรอบระบบสมาชิก ขณะนี้ทดลอง Hub แบบผู้เยี่ยมชมได้ก่อน
+                  กำลังตรวจสอบบัญชีที่เคยเข้าสู่ระบบ
                 </span>
               </p>
 
@@ -172,9 +173,48 @@
               EN
             </button>
           </div>
-          <span class="guest-badge" data-th="ผู้เยี่ยมชม" data-en="Guest">
-            ผู้เยี่ยมชม
-          </span>
+          <button
+            class="role-button"
+            id="role-button"
+            type="button"
+            data-aria-th="เปิดข้อมูลสิทธิ์บัญชี"
+            data-aria-en="Open account access"
+            aria-label="เปิดข้อมูลสิทธิ์บัญชี"
+            aria-expanded="false"
+            aria-controls="role-panel"
+            hidden
+          >
+            <span class="role-button-icon" aria-hidden="true">♙</span>
+            <span id="role-label" data-th="นักเรียน" data-en="Student">นักเรียน</span>
+          </button>
+          <button
+            class="presence-button"
+            id="presence-button"
+            type="button"
+            data-aria-th="เปิดรายชื่อคนออนไลน์"
+            data-aria-en="Open online people"
+            aria-label="เปิดรายชื่อคนออนไลน์"
+            aria-expanded="false"
+            aria-controls="presence-panel"
+            hidden
+          >
+            <span class="presence-dot offline" id="presence-dot" aria-hidden="true"></span>
+            <strong id="presence-count">0</strong>
+            <span class="presence-label" data-th="ออนไลน์" data-en="online">ออนไลน์</span>
+          </button>
+          <div class="account-chip" id="account-chip">
+            <img
+              class="account-avatar"
+              id="account-avatar"
+              src="%BASE_URL%favicon.svg"
+              alt=""
+              referrerpolicy="no-referrer"
+            />
+            <span class="account-copy">
+              <strong id="account-name">ผู้เยี่ยมชม</strong>
+              <small id="account-detail">ไม่บันทึกบน Cloud</small>
+            </span>
+          </div>
           <button
             class="icon-button"
             id="sign-out-button"
@@ -279,9 +319,9 @@
               <div class="overview-symbol" aria-hidden="true">▤</div>
 
               <footer class="status-row">
-                <span><i class="status-dot dot-mint"></i><b data-th="หน้าเข้าสู่ระบบพร้อมทดลอง" data-en="Login ready to explore">หน้าเข้าสู่ระบบพร้อมทดลอง</b></span>
+                <span><i class="status-dot dot-mint"></i><b data-th="หน้าเข้าสู่ระบบพร้อมใช้งาน" data-en="Login is ready">หน้าเข้าสู่ระบบพร้อมใช้งาน</b></span>
                 <span><i class="status-dot dot-blue"></i><b data-th="แท็บวิชาพร้อมแล้ว" data-en="Subject tabs ready">แท็บวิชาพร้อมแล้ว</b></span>
-                <span><i class="status-dot dot-violet"></i><b data-th="ยังไม่เชื่อมระบบสมาชิก" data-en="Membership not connected yet">ยังไม่เชื่อมระบบสมาชิก</b></span>
+                <span><i class="status-dot dot-violet"></i><b data-th="เชื่อมบัญชี Google และ Guest แล้ว" data-en="Google and guest access connected">เชื่อมบัญชี Google และ Guest แล้ว</b></span>
               </footer>
             </article>
           </section>
@@ -312,6 +352,200 @@
         </main>
       </div>
     </section>
+
+    <!-- ระบบคนออนไลน์: แยกจากเนื้อหาและ Navigation -->
+    <div class="presence-backdrop" id="presence-backdrop" hidden></div>
+    <aside
+      class="presence-panel glass-surface"
+      id="presence-panel"
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
+      aria-labelledby="presence-heading"
+      hidden
+    >
+      <header class="presence-panel-header">
+        <div>
+          <small data-th="LIVE PRESENCE · LEARNING HUB" data-en="LIVE PRESENCE · LEARNING HUB">
+            LIVE PRESENCE · LEARNING HUB
+          </small>
+          <h2 id="presence-heading" data-th="คนที่กำลังใช้งาน" data-en="People using the Hub">
+            คนที่กำลังใช้งาน
+          </h2>
+        </div>
+        <button
+          class="presence-close"
+          id="presence-close"
+          type="button"
+          data-aria-th="ปิดรายชื่อคนออนไลน์"
+          data-aria-en="Close online people"
+          aria-label="ปิดรายชื่อคนออนไลน์"
+        >
+          ×
+        </button>
+      </header>
+
+      <div class="presence-summary" aria-label="สรุปสถานะผู้ใช้">
+        <div><strong id="presence-online-total">0</strong><span>● Online</span></div>
+        <div><strong id="presence-idle-total">0</strong><span>● Idle</span></div>
+        <div><strong id="presence-visible-total">0</strong><span>● Visible</span></div>
+      </div>
+
+      <p class="presence-message" id="presence-message" role="status" aria-live="polite">
+        กำลังเชื่อมต่อระบบคนออนไลน์
+      </p>
+
+      <div class="presence-list" id="presence-list"></div>
+
+      <footer
+        class="presence-privacy"
+        data-th="นักเรียนเห็นเฉพาะจำนวน รายชื่อจะเปิดให้บัญชีครูและแอดมินที่ได้รับอนุมัติ"
+        data-en="Students see counts only. Names are reserved for approved teacher and admin accounts."
+      >
+        นักเรียนเห็นเฉพาะจำนวน รายชื่อจะเปิดให้บัญชีครูและแอดมินที่ได้รับอนุมัติ
+      </footer>
+    </aside>
+
+    <!-- สิทธิ์บัญชี: ผู้ใช้ส่งคำขอได้ แต่ Firebase เท่านั้นที่อนุมัติครูได้ -->
+    <div class="role-backdrop" id="role-backdrop" hidden></div>
+    <aside
+      class="role-panel glass-surface"
+      id="role-panel"
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
+      aria-labelledby="role-heading"
+      hidden
+    >
+      <header class="role-panel-header">
+        <div>
+          <small data-th="ACCOUNT ACCESS · LEARNING HUB" data-en="ACCOUNT ACCESS · LEARNING HUB">
+            ACCOUNT ACCESS · LEARNING HUB
+          </small>
+          <h2 id="role-heading" data-th="สิทธิ์บัญชีของฉัน" data-en="My account access">
+            สิทธิ์บัญชีของฉัน
+          </h2>
+        </div>
+        <button
+          class="role-close"
+          id="role-close"
+          type="button"
+          data-aria-th="ปิดข้อมูลสิทธิ์บัญชี"
+          data-aria-en="Close account access"
+          aria-label="ปิดข้อมูลสิทธิ์บัญชี"
+        >
+          ×
+        </button>
+      </header>
+
+      <div class="role-panel-body">
+        <section class="role-summary-card" aria-live="polite">
+          <span class="role-summary-icon" id="role-summary-icon" aria-hidden="true">♙</span>
+          <div>
+            <small data-th="สิทธิ์ปัจจุบัน" data-en="Current access">สิทธิ์ปัจจุบัน</small>
+            <h3 id="role-status-title">นักเรียน</h3>
+            <p id="role-status-detail">ใช้บทเรียนและเข้าร่วมห้องเรียนได้</p>
+          </div>
+        </section>
+
+        <p class="role-message" id="role-message" role="status" aria-live="polite" hidden></p>
+
+        <div class="role-loading" id="role-loading">
+          <span aria-hidden="true">◌</span>
+          <p data-th="กำลังตรวจสิทธิ์จากระบบ" data-en="Checking account access">
+            กำลังตรวจสิทธิ์จากระบบ
+          </p>
+        </div>
+
+        <section class="role-approved" id="role-approved" hidden>
+          <p
+            data-th="บัญชีนี้ได้รับอนุมัติแล้ว เครื่องมือที่ตรงกับสิทธิ์จะปรากฏเมื่อเริ่มพัฒนา Classroom"
+            data-en="This account is approved. Matching tools will appear when Classroom development begins."
+          >
+            บัญชีนี้ได้รับอนุมัติแล้ว เครื่องมือที่ตรงกับสิทธิ์จะปรากฏเมื่อเริ่มพัฒนา Classroom
+          </p>
+          <a class="admin-page-link" id="admin-page-link" href="admin.html" hidden>
+            <span data-th="เปิดหน้าจัดการสิทธิ์ครู" data-en="Open teacher access manager">
+              เปิดหน้าจัดการสิทธิ์ครู
+            </span>
+            <span aria-hidden="true">→</span>
+          </a>
+        </section>
+
+        <section class="role-request-status" id="role-request-status" hidden>
+          <span class="role-request-icon" aria-hidden="true">✓</span>
+          <div>
+            <h3 data-th="ส่งคำขอแล้ว" data-en="Request submitted">ส่งคำขอแล้ว</h3>
+            <p
+              data-th="ระหว่างรออนุมัติ บัญชีจะยังใช้งานในฐานะนักเรียนตามปกติ"
+              data-en="While approval is pending, this account continues to work as a student."
+            >
+              ระหว่างรออนุมัติ บัญชีจะยังใช้งานในฐานะนักเรียนตามปกติ
+            </p>
+          </div>
+          <button class="secondary-button" id="cancel-role-request" type="button">
+            <span data-th="ยกเลิกคำขอ" data-en="Cancel request">ยกเลิกคำขอ</span>
+          </button>
+        </section>
+
+        <form class="teacher-request-form" id="teacher-request-form" hidden>
+          <div class="role-form-heading">
+            <small data-th="สำหรับคุณครู" data-en="For teachers">สำหรับคุณครู</small>
+            <h3 data-th="ขอเปิดใช้เครื่องมือครู" data-en="Request teacher tools">
+              ขอเปิดใช้เครื่องมือครู
+            </h3>
+            <p
+              data-th="แอดมินจะตรวจข้อมูลก่อนอนุมัติ ผู้ใช้ไม่สามารถเปิดสิทธิ์ครูให้ตัวเองได้"
+              data-en="An admin reviews every request. Users cannot grant teacher access to themselves."
+            >
+              แอดมินจะตรวจข้อมูลก่อนอนุมัติ ผู้ใช้ไม่สามารถเปิดสิทธิ์ครูให้ตัวเองได้
+            </p>
+          </div>
+
+          <label class="role-field">
+            <span data-th="โรงเรียนหรือหน่วยงาน" data-en="School or organization">
+              โรงเรียนหรือหน่วยงาน
+            </span>
+            <input
+              id="teacher-school"
+              name="school"
+              type="text"
+              maxlength="120"
+              autocomplete="organization"
+              required
+            />
+          </label>
+
+          <label class="role-field">
+            <span data-th="วิชาหรือระดับชั้นที่สอน" data-en="Subjects or levels taught">
+              วิชาหรือระดับชั้นที่สอน
+            </span>
+            <input id="teacher-subjects" name="subjects" type="text" maxlength="160" required />
+          </label>
+
+          <label class="role-field">
+            <span data-th="หมายเหตุเพิ่มเติม (ไม่บังคับ)" data-en="Additional note (optional)">
+              หมายเหตุเพิ่มเติม (ไม่บังคับ)
+            </span>
+            <textarea id="teacher-note" name="note" maxlength="300" rows="3"></textarea>
+          </label>
+
+          <button class="primary-button role-submit" id="submit-role-request" type="submit">
+            <span data-th="ส่งคำขอสิทธิ์ครู" data-en="Submit teacher request">
+              ส่งคำขอสิทธิ์ครู
+            </span>
+          </button>
+        </form>
+      </div>
+
+      <footer
+        class="role-privacy"
+        data-th="บัญชีใหม่เป็นนักเรียนเสมอ สิทธิ์ครูและแอดมินอ่านจาก Firebase"
+        data-en="New accounts are always students. Teacher and admin access comes from Firebase."
+      >
+        บัญชีใหม่เป็นนักเรียนเสมอ สิทธิ์ครูและแอดมินอ่านจาก Firebase
+      </footer>
+    </aside>
 
     <script type="module" src="js/app.js"></script>
   </body>
