@@ -2,19 +2,21 @@
 
 หน้าเว็บที่ใช้งานจริงเขียนด้วย HTML, CSS และ JavaScript พื้นฐาน เพื่อให้เปิดดูและช่วยแก้ไขได้ง่าย โดยไม่ต้องแก้ไฟล์ React ส่วน GitHub จะ Build และเผยแพร่ให้อัตโนมัติ
 
-## ไฟล์ที่ต้องรู้จัก 9 จุด
+## ไฟล์ที่ต้องรู้จัก
 
 1. `index.html` — โครงหน้า ข้อความภาษาไทย/อังกฤษ และรายชื่อแท็บ
-2. `css/styles.css` — สี กระจกใส ขนาด ระยะห่าง และหน้าจอมือถือ
-3. `js/app.js` — การสลับภาษา เชื่อมหน้าตากับบัญชี และเปลี่ยนแท็บ
-4. `js/firebase-config.js` — การเชื่อม Firebase กลาง ปกติไม่ต้องแก้
-5. `js/auth.js` — Google Login, Guest และ Logout ปกติไม่ต้องแก้
-6. `js/presence.js` — Online, Idle, Offline และคนออนไลน์ ปกติไม่ต้องแก้
-7. `js/roles.js` — สิทธิ์นักเรียน ครู แอดมิน และคำขอสิทธิ์ครู ปกติไม่ต้องแก้
-8. `admin.html` — หน้าหลังบ้านสำหรับแอดมิน
-9. `js/role-admin.js` — การอนุมัติ ปฏิเสธ และถอนสิทธิ์ครู ปกติไม่ต้องแก้
+2. `public/pages/*.html` — หน้า Overview, Classroom และแต่ละรายวิชา แก้เนื้อหาที่นี่
+3. `public/pages/shared/page.css` — หน้าตาของหน้า HTML ลูกทั้งหมด
+4. `public/pages/shared/page.js` — รับภาษาและ Role จาก Hub กลาง
+5. `css/styles.css` — สี กระจกใส ขนาด ระยะห่าง และหน้าจอมือถือของ Hub
+6. `js/app.js` — การสลับภาษา เชื่อมหน้าตากับบัญชี และเปลี่ยนแท็บ
+7. `js/firebase-config.js` — การเชื่อม Firebase กลาง ปกติไม่ต้องแก้
+8. `js/auth.js` — Google Login, Guest และ Logout ปกติไม่ต้องแก้
+9. `js/presence.js` — Online, Idle, Offline และคนออนไลน์ ปกติไม่ต้องแก้
+10. `js/roles.js` — สิทธิ์นักเรียน ครู แอดมิน และคำขอสิทธิ์ครู ปกติไม่ต้องแก้
+11. `admin.html` และ `js/role-admin.js` — หน้าหลังบ้านและการจัดการสิทธิ์ครู
 
-ใน `index.html` ข้อความสองภาษาเขียนอยู่ด้วยกันแบบนี้:
+ในหน้า HTML ลูก ข้อความสองภาษาเขียนอยู่ด้วยกันแบบนี้:
 
 ```html
 <span data-th="ฟิสิกส์" data-en="Physics">ฟิสิกส์</span>
@@ -24,24 +26,25 @@
 
 ## การเพิ่มหน้า HTML แยก
 
-สร้างไฟล์ใหม่ในโฟลเดอร์ที่ต้องการ เช่น:
+คัดลอกหน้าเดิมใน `public/pages` แล้วเปลี่ยนชื่อ เช่น:
 
 ```text
 LEARNING HUB/
 ├── index.html
 ├── public/
 │   └── pages/
-│       └── physics/
-│           ├── motion.html
-│           └── electricity.html
+│       ├── overview.html
+│       ├── classroom.html
+│       ├── physics.html
+│       └── chemistry.html
 ├── css/styles.css
 └── js/app.js
 ```
 
-แล้วเชื่อมจากหน้า Hub ด้วยลิงก์ปกติ:
+แล้วเพิ่มปุ่มใน `index.html` โดยให้ `data-page-src` ชี้ไปยังไฟล์นั้น:
 
 ```html
-<a href="pages/physics/motion.html">การเคลื่อนที่</a>
+<button data-section="physics" data-page-src="pages/physics.html">ฟิสิกส์</button>
 ```
 
 ทุกไฟล์ `.html` ที่วางไว้ใต้โฟลเดอร์ `public/pages` จะถูกนำขึ้น GitHub Pages อัตโนมัติ โดย workflow หลักไม่ต้องแก้ไข
@@ -55,7 +58,8 @@ LEARNING HUB/
 - ระบบ Online, Idle, Offline และ Live Presence
 - ระบบ Role นักเรียน ครู แอดมิน และหน้าส่งคำขอสิทธิ์ครู
 - หน้า Admin แยกไฟล์สำหรับจัดการสิทธิ์ครู
-- หน้า Overview, Classroom และแท็บรายวิชา
+- แท็บด้านบนเปิดหน้า Overview, Classroom และรายวิชาที่แยกเป็น HTML คนละไฟล์
+- หน้า Physics มีโครง 3 ชั้นและช่องบทเริ่มต้น 4 บท
 - ยังไม่มีเนื้อหา Quiz เดิม
 - ยังไม่เชื่อม Notebook หรือระบบ Save/Load
 - GitHub Pages เผยแพร่อัตโนมัติเมื่อ Push เข้า `main`
@@ -64,7 +68,7 @@ LEARNING HUB/
 
 ## ลำดับงานที่ตกลงล่าสุด
 
-สถานะปัจจุบัน: **พักงาน Navigation ชั่วคราว และทำระบบ Login กลางก่อน**
+สถานะปัจจุบัน: **Round 4A แยก Navigation และหน้า HTML ลูกแล้ว**
 
 ผลตรวจฐานก่อนเริ่ม Login บันทึกไว้ที่ [`ROUND-0-BASELINE.md`](ROUND-0-BASELINE.md)
 
@@ -76,9 +80,13 @@ LEARNING HUB/
 
 ผลการทำระบบสิทธิ์รอบ 3 บันทึกไว้ที่ [`ROUND-3-ROLES.md`](ROUND-3-ROLES.md) และกฎที่ต้องให้ผู้ดูแล Firebase ติดตั้งอยู่ใน [`FIREBASE-RULES-ROUND3.md`](FIREBASE-RULES-ROUND3.md)
 
+ผลการแยกหน้า Navigation รอบ 4A บันทึกไว้ที่ [`ROUND-4A-NAVIGATION.md`](ROUND-4A-NAVIGATION.md)
+
+แบบคะแนน V1 ที่เก็บเฉพาะคะแนนล่าสุดบันทึกไว้ที่ [`SCORE-DATA-V1.md`](SCORE-DATA-V1.md)
+
 Round 1 เชื่อม Google Sign-In, Guest และ Logout แล้ว Round 2 เพิ่ม Online/Idle/Offline และ Round 3 เตรียมระบบสิทธิ์กับหน้าหลังบ้านแล้ว โดยยังไม่เริ่ม Quiz, Notebook หรือระบบ Classroom จริง
 
-## แบบ Navigation ที่พักไว้สำหรับกลับมาทำต่อ
+## แบบ Navigation และสิ่งที่จะทำต่อ
 
 - ใช้แถบแท็บด้านบนเพื่อเหลือพื้นที่แสดงเนื้อหามากขึ้น
 - แต่ละแท็บและแต่ละหน้าหลักแยกเป็นไฟล์ HTML สั้น ๆ เพื่อให้แก้ไขและเพิ่มหน้าได้ง่าย
@@ -90,4 +98,4 @@ Round 1 เชื่อม Google Sign-In, Guest และ Logout แล้ว R
 - ทุกหน้ารองรับภาษาไทยและอังกฤษอย่างสมบูรณ์
 - ต้องรักษา URL ของ Quiz และ Simulation เดิมทั้งหมดให้เปิดได้เสมอ
 
-กลับมาพัฒนา Navigation ต่อหลังระบบ Login กลางผ่าน QA แล้ว โดยไม่ทิ้งโครงที่บันทึกไว้ข้างต้น
+Round 4B จะต่อจากหน้า Physics ชั้นที่ 2 และระบบหน้าต่างลอย โดยยังไม่ต้องสร้าง Quiz จริง

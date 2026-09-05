@@ -64,7 +64,8 @@ const teacherRequestForm = document.querySelector("#teacher-request-form");
 const submitRoleRequest = document.querySelector("#submit-role-request");
 const languageButtons = document.querySelectorAll("[data-language]");
 const navButtons = document.querySelectorAll("[data-section]");
-const subjectPanels = document.querySelectorAll(".subject-panel");
+const pageFrame = document.querySelector("#hub-page-frame");
+const pageFrameLoading = document.querySelector("#hub-frame-loading");
 
 const fallbackAvatar = accountAvatar.src;
 let currentLanguage = readSavedLanguage();
@@ -86,6 +87,7 @@ let activeRole = {
 };
 let presenceReturnFocus = null;
 let roleReturnFocus = null;
+let activeSectionId = "overview";
 
 function readSavedLanguage() {
   try {
@@ -103,37 +105,16 @@ function saveLanguage(language) {
   }
 }
 
-/* สร้างหน้าว่างของแต่ละวิชาจากชื่อที่เขียนไว้ใน index.html */
-function prepareSubjectPanels() {
-  subjectPanels.forEach((panel) => {
-    const nameTh = panel.dataset.nameTh;
-    const nameEn = panel.dataset.nameEn;
-    const icon = panel.dataset.icon;
-    const theme = panel.dataset.theme;
-
-    panel.innerHTML = `
-      <header class="page-heading">
-        <span class="page-icon subject-${theme}" aria-hidden="true">${icon}</span>
-        <div>
-          <p data-th="รายวิชา" data-en="Subject">รายวิชา</p>
-          <h1 tabindex="-1" data-th="${nameTh}" data-en="${nameEn}">${nameTh}</h1>
-        </div>
-      </header>
-      <article class="empty-card content-surface">
-        <span class="empty-icon subject-${theme}" aria-hidden="true">${icon}</span>
-        <small data-th="เนื้อหาใหม่เท่านั้น" data-en="New content only">เนื้อหาใหม่เท่านั้น</small>
-        <h2
-          data-th="กำลังเตรียมเนื้อหาใหม่สำหรับ${nameTh}"
-          data-en="New ${nameEn} content is on the way"
-        >กำลังเตรียมเนื้อหาใหม่สำหรับ${nameTh}</h2>
-        <p
-          data-th="แท็บวิชาพร้อมแล้ว แต่ยังไม่ใส่บทเรียน แบบทดสอบ หรือห้องทดลองจำลอง เพื่อให้เริ่มออกแบบเนื้อหาใหม่ทั้งหมด"
-          data-en="The subject tab is ready, with no lessons, quizzes, or simulations added yet, so every piece of content can be designed from scratch."
-        >แท็บวิชาพร้อมแล้ว แต่ยังไม่ใส่บทเรียน แบบทดสอบ หรือห้องทดลองจำลอง เพื่อให้เริ่มออกแบบเนื้อหาใหม่ทั้งหมด</p>
-        <span class="coming-soon" data-th="พร้อมพัฒนาต่อในรอบถัดไป" data-en="Ready for the next phase">พร้อมพัฒนาต่อในรอบถัดไป</span>
-      </article>
-    `;
-  });
+function postContextToPage() {
+  const targetOrigin = location.origin === "null" ? "*" : location.origin;
+  pageFrame.contentWindow?.postMessage(
+    {
+      type: "learning-hub-context",
+      language: currentLanguage,
+      role: activeRole.systemRole,
+    },
+    targetOrigin,
+  );
 }
 
 function renderAccount(session) {
@@ -184,6 +165,7 @@ function setRoleMessage(messageTh, messageEn, tone = "info") {
 
 function renderRole(role) {
   activeRole = role;
+  postContextToPage();
   const isSignedIn = activeSession.status === "signed-in";
   roleButton.hidden = !isSignedIn;
 
@@ -363,13 +345,14 @@ function setLanguage(language) {
   renderAccount(activeSession);
   renderPresence(activePresence);
   renderRole(activeRole);
+  postContextToPage();
   saveLanguage(language);
 }
 
 function showHub() {
   loginView.hidden = true;
   hubView.hidden = false;
-  hubView.querySelector(".content-panel:not([hidden]) h1")?.focus();
+  pageFrame.focus();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -464,11 +447,13 @@ function renderSession(session) {
   showLogin();
 }
 
-function showSection(sectionId) {
-  document.querySelectorAll(".content-panel").forEach((panel) => {
-    panel.hidden = panel.id !== sectionId;
-  });
+function showSection(sectionId, updateHistory = true) {
+  const activeButton = [...navButtons].find(
+    (button) => button.dataset.section === sectionId,
+  );
+  if (!activeButton) return;
 
+  activeSectionId = sectionId;
   navButtons.forEach((button) => {
     const isActive = button.dataset.section === sectionId;
     button.classList.toggle("is-active", isActive);
@@ -479,11 +464,19 @@ function showSection(sectionId) {
     }
   });
 
-  document.querySelector(`#${sectionId} h1`)?.focus();
+  const pageUrl = new URL(activeButton.dataset.pageSrc, location.href);
+  pageUrl.searchParams.set("lang", currentLanguage);
+  pageFrameLoading.hidden = false;
+  pageFrame.src = pageUrl.href;
+  pageFrame.title = activeButton.textContent.trim();
+
+  if (updateHistory) {
+    history.pushState({ sectionId }, "", `#${sectionId}`);
+  }
+
   setPresenceContext({ sectionId });
 }
 
-prepareSubjectPanels();
 setLanguage(currentLanguage);
 
 languageButtons.forEach((button) => {
@@ -541,6 +534,16 @@ signOutButton.addEventListener("click", async () => {
 
 navButtons.forEach((button) => {
   button.addEventListener("click", () => showSection(button.dataset.section));
+});
+
+pageFrame.addEventListener("load", () => {
+  pageFrameLoading.hidden = true;
+  postContextToPage();
+});
+
+window.addEventListener("popstate", () => {
+  const sectionId = location.hash.slice(1) || "overview";
+  showSection(sectionId, false);
 });
 
 presenceButton.addEventListener("click", () => {
@@ -626,6 +629,9 @@ accountAvatar.addEventListener("error", () => {
 subscribeAuth(renderSession);
 subscribePresence(renderPresence);
 subscribeRoles(renderRole);
+
+const initialSectionId = location.hash.slice(1) || activeSectionId;
+showSection(initialSectionId, false);
 
 setInterval(() => {
   if (!presencePanel.hidden) renderPresence(activePresence);
