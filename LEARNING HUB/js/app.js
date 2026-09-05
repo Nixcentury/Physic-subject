@@ -20,6 +20,7 @@ import {
   requestTeacherAccess,
   subscribeRoles,
 } from "./roles.js";
+import { createWorkspace } from "./workspace.js";
 
 const languageStorageKey = "learning-hub-language";
 
@@ -66,6 +67,10 @@ const languageButtons = document.querySelectorAll("[data-language]");
 const navButtons = document.querySelectorAll("[data-section]");
 const pageFrame = document.querySelector("#hub-page-frame");
 const pageFrameLoading = document.querySelector("#hub-frame-loading");
+const workspaceWindowLayer = document.querySelector("#workspace-window-layer");
+const hubTaskbar = document.querySelector("#hub-taskbar");
+const taskbarItems = document.querySelector("#taskbar-items");
+const workspaceCount = document.querySelector("#workspace-count");
 
 const fallbackAvatar = accountAvatar.src;
 let currentLanguage = readSavedLanguage();
@@ -88,6 +93,14 @@ let activeRole = {
 let presenceReturnFocus = null;
 let roleReturnFocus = null;
 let activeSectionId = "overview";
+
+const workspace = createWorkspace({
+  windowLayer: workspaceWindowLayer,
+  taskbar: hubTaskbar,
+  taskbarItems,
+  countElement: workspaceCount,
+  getLanguage: () => currentLanguage,
+});
 
 function readSavedLanguage() {
   try {
@@ -346,6 +359,7 @@ function setLanguage(language) {
   renderPresence(activePresence);
   renderRole(activeRole);
   postContextToPage();
+  workspace.setLanguage(language);
   saveLanguage(language);
 }
 
@@ -357,6 +371,7 @@ function showHub() {
 }
 
 function showLogin(preserveNotice = false) {
+  workspace.clear();
   hubView.hidden = true;
   loginView.hidden = false;
   if (!preserveNotice) authNotice.hidden = true;
@@ -539,6 +554,14 @@ navButtons.forEach((button) => {
 pageFrame.addEventListener("load", () => {
   pageFrameLoading.hidden = true;
   postContextToPage();
+});
+
+window.addEventListener("message", (event) => {
+  const trustedOrigin = location.origin === "null" || event.origin === location.origin;
+  if (!trustedOrigin || event.source !== pageFrame.contentWindow) return;
+  if (event.data?.type !== "learning-hub-open-tool") return;
+
+  workspace.open(event.data.toolId);
 });
 
 window.addEventListener("popstate", () => {

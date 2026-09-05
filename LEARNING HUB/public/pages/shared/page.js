@@ -8,6 +8,13 @@ function setLanguage(language) {
   document.querySelectorAll("[data-th][data-en]").forEach((element) => {
     element.textContent = element.dataset[nextLanguage];
   });
+
+  document.querySelectorAll("[data-aria-th][data-aria-en]").forEach((element) => {
+    element.setAttribute(
+      "aria-label",
+      nextLanguage === "th" ? element.dataset.ariaTh : element.dataset.ariaEn,
+    );
+  });
 }
 
 function setRole(role) {

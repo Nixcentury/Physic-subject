@@ -1421,6 +1421,301 @@ a:focus-visible,
 }
 
 /* ==============================================================
+   รอบ 4B · หน้าต่างงานลอยและแถบงานด้านล่าง
+================================================================ */
+.workspace-window-layer {
+  position: fixed;
+  z-index: 25;
+  inset: 139px 0 76px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.workspace-window {
+  position: absolute;
+  display: grid;
+  width: min(880px, calc(100vw - 48px));
+  height: min(610px, calc(100svh - 231px));
+  min-width: 360px;
+  min-height: 330px;
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid rgba(180, 200, 230, 0.88);
+  border-radius: 22px;
+  background: #f8fbff;
+  box-shadow:
+    0 34px 92px rgba(30, 54, 101, 0.28),
+    0 10px 28px rgba(45, 75, 128, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  opacity: 0.94;
+  pointer-events: auto;
+  transform: scale(0.995);
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.workspace-window.is-active {
+  border-color: rgba(128, 158, 207, 0.86);
+  box-shadow:
+    0 38px 100px rgba(30, 54, 101, 0.34),
+    0 12px 34px rgba(45, 75, 128, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.96);
+  opacity: 1;
+  transform: scale(1);
+}
+
+.workspace-window.is-dragging {
+  cursor: grabbing;
+  transition: none;
+  user-select: none;
+}
+
+.workspace-window.is-maximized {
+  inset: 8px !important;
+  width: auto;
+  height: auto;
+}
+
+.workspace-window-bar {
+  display: grid;
+  min-height: 52px;
+  grid-template-columns: 98px minmax(0, 1fr) 42px;
+  align-items: center;
+  border-bottom: 1px solid #d8e4f4;
+  background: rgba(247, 251, 255, 0.95);
+  cursor: grab;
+  touch-action: none;
+}
+
+.workspace-window-bar::after {
+  position: absolute;
+  top: 51px;
+  right: 0;
+  left: 0;
+  height: 3px;
+  background: var(--window-accent, #6d8dd0);
+  content: "";
+  opacity: 0.64;
+}
+
+.accent-blue { --window-accent: #6b8ed4; --window-soft: #e9f1ff; }
+.accent-mint { --window-accent: #4fb9a8; --window-soft: #e1f7f3; }
+.accent-violet { --window-accent: #8a77ca; --window-soft: #f0edff; }
+
+.window-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 17px;
+}
+
+.window-control {
+  display: grid;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: rgba(44, 55, 74, 0);
+  font: 800 13px/1 Arial, sans-serif;
+  transition: 140ms ease;
+}
+
+.window-controls:hover .window-control,
+.window-control:focus-visible {
+  color: rgba(44, 55, 74, 0.72);
+}
+
+.window-control:hover {
+  filter: brightness(0.96);
+  transform: scale(1.08);
+}
+
+.window-control.is-close { background: #ef7280; }
+.window-control.is-minimize { background: #f3c65c; }
+.window-control.is-maximize { background: #59c7a7; }
+
+.window-identity {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  color: var(--navy);
+}
+
+.window-icon {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  place-items: center;
+  border-radius: 9px;
+  background: var(--window-soft, #e9f1ff);
+  color: var(--window-accent, #5e7fc4);
+  font-size: 13px;
+}
+
+.window-title {
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 850;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.window-drag-hint {
+  color: #9cacbf;
+  font-size: 12px;
+  letter-spacing: 0.13em;
+  text-align: center;
+}
+
+.workspace-tool-frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #f7fbff;
+}
+
+.hub-taskbar {
+  position: fixed;
+  z-index: 32;
+  right: 18px;
+  bottom: 12px;
+  left: 18px;
+  display: grid;
+  min-height: 56px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 7px 10px;
+  border-radius: 18px;
+  background: rgba(243, 248, 255, 0.9);
+  box-shadow: 0 18px 54px rgba(35, 61, 108, 0.2);
+}
+
+.taskbar-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-right: 11px;
+  border-right: 1px solid #d4e1f3;
+}
+
+.taskbar-brand {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: 11px;
+  background: var(--navy);
+  color: white;
+  font-size: 16px;
+}
+
+.taskbar-summary > span:last-child {
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.taskbar-summary small {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.taskbar-summary strong {
+  color: var(--navy);
+  font-size: 15px;
+}
+
+.taskbar-items {
+  display: flex;
+  min-width: 0;
+  gap: 7px;
+  overflow-x: auto;
+  padding: 2px;
+  scrollbar-width: thin;
+}
+
+.taskbar-item {
+  display: flex;
+  min-width: 142px;
+  max-width: 220px;
+  min-height: 39px;
+  flex: 0 1 210px;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px 5px 6px;
+  border: 1px solid #d4e1f3;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.77);
+  color: var(--muted);
+  transition: 150ms ease;
+}
+
+.taskbar-item:hover,
+.taskbar-item.is-active {
+  border-color: color-mix(in srgb, var(--window-accent) 48%, #cbd9ed);
+  background: white;
+  color: var(--navy);
+  box-shadow: 0 7px 18px rgba(45, 73, 123, 0.1);
+}
+
+.taskbar-item.is-minimized {
+  border-style: dashed;
+  opacity: 0.8;
+}
+
+.taskbar-item-icon {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  place-items: center;
+  border-radius: 9px;
+  background: var(--window-soft);
+  color: var(--window-accent);
+  font-size: 13px;
+}
+
+.taskbar-item-title {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 10px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.taskbar-state {
+  margin-left: auto;
+  color: var(--window-accent);
+  font-size: 7px;
+}
+
+.taskbar-item.is-minimized .taskbar-state {
+  color: #a5b3c7;
+}
+
+.taskbar-hint {
+  margin: 0;
+  padding: 0 5px;
+  color: var(--faint);
+  font-size: 9px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ==============================================================
    หน้าจอมือถือและแท็บเล็ต
 ================================================================ */
 @media (max-width: 900px) {
@@ -1430,6 +1725,14 @@ a:focus-visible,
 
   .hub-content:not(.hub-frame-host) {
     padding: 34px 26px;
+  }
+
+  .taskbar-hint {
+    display: none;
+  }
+
+  .hub-taskbar {
+    grid-template-columns: auto minmax(0, 1fr);
   }
 }
 
@@ -1554,6 +1857,68 @@ a:focus-visible,
   .status-row {
     gap: 8px;
     padding: 14px 24px;
+  }
+
+  .workspace-window-layer {
+    inset: 139px 0 72px;
+  }
+
+  .workspace-window,
+  .workspace-window.is-maximized {
+    inset: 7px !important;
+    width: auto;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+    border-radius: 17px;
+  }
+
+  .workspace-window-bar {
+    grid-template-columns: 82px minmax(0, 1fr) 26px;
+  }
+
+  .window-controls {
+    gap: 7px;
+    padding-left: 13px;
+  }
+
+  .window-control {
+    width: 17px;
+    height: 17px;
+  }
+
+  .window-title {
+    font-size: 10px;
+  }
+
+  .hub-taskbar {
+    right: 7px;
+    bottom: 7px;
+    left: 7px;
+    min-height: 58px;
+    gap: 7px;
+    padding: 7px;
+    border-radius: 16px;
+  }
+
+  .taskbar-summary {
+    padding-right: 7px;
+  }
+
+  .taskbar-summary > span:last-child {
+    display: none;
+  }
+
+  .taskbar-brand {
+    width: 35px;
+    height: 35px;
+  }
+
+  .taskbar-item {
+    min-width: 52px;
+    max-width: 158px;
+    min-height: 39px;
+    padding-right: 8px;
   }
 }
 
