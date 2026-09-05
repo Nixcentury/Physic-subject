@@ -51,7 +51,8 @@ jobs:
           s=requests.Session(); s.headers.update({'User-Agent':'Mozilla/5.0','Accept':'application/pdf,*/*'})
           d=Path('_section1_sources'); d.mkdir(exist_ok=True)
           rows=[]
-          for name,url in items:
+          for name,page_url in items:
+            url=page_url+'/download'
             r=s.get(url,timeout=30,allow_redirects=True)
             print(name,r.status_code,r.headers.get('content-type'),len(r.content),r.url)
             if r.status_code!=200 or r.content[:4]!=b'%PDF':
