@@ -199,6 +199,9 @@ export class NotebookCore {
       this.onPointerEnd(event),
     );
     this.canvas.addEventListener('contextmenu', this.onContextMenu);
+    this.root.addEventListener('contextmenu', this.onContextMenu);
+    this.root.addEventListener('selectstart', this.onContextMenu);
+    this.root.addEventListener('dragstart', this.onContextMenu);
   }
 
   refreshLocalizedControls() {
@@ -304,6 +307,7 @@ export class NotebookCore {
 
   onPointerDown(event) {
     if (event.button !== 0 && event.pointerType === 'mouse') return;
+
     this.canvas.setPointerCapture(event.pointerId);
 
     if (this.shouldPan(event)) {

@@ -61,6 +61,7 @@ strokes:
 - ทดสอบเปิดจาก Hub ผ่าน ฟิสิกส์ → บทที่ 1 → Notebook ผ่าน
 - ทดสอบ Context `physics-c1-notebook / main / page-001` ผ่าน
 - ทดสอบสลับไทย/English ทั้ง Hub และ Notebook ผ่าน
+- ปิดเมนูเลือกข้อความ, Touch Callout และการลากองค์ประกอบภายในสมุดสำหรับ Safari บน iPad
 
 ## รอบถัดไป
 
