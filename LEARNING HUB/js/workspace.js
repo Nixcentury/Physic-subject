@@ -29,19 +29,38 @@ const toolTypes = {
   },
 };
 
+const subjects = {
+  physics: { titleTh: "ฟิสิกส์", titleEn: "Physics" },
+  chemistry: { titleTh: "เคมี", titleEn: "Chemistry" },
+  biology: { titleTh: "ชีววิทยา", titleEn: "Biology" },
+  "lower-science": {
+    titleTh: "วิทยาศาสตร์ ม.ต้น",
+    titleEn: "Lower Secondary Science",
+  },
+  "science-ep": { titleTh: "วิทยาศาสตร์ EP", titleEn: "Science EP" },
+  "math-ep": { titleTh: "คณิตศาสตร์ EP", titleEn: "Mathematics EP" },
+  "upper-math": {
+    titleTh: "คณิตศาสตร์ ม.ปลาย",
+    titleEn: "Upper Secondary Mathematics",
+  },
+};
+
 function buildToolCatalog() {
   const catalog = {};
 
-  for (let chapter = 1; chapter <= 4; chapter += 1) {
-    Object.entries(toolTypes).forEach(([typeId, type]) => {
-      catalog[`physics-c${chapter}-${typeId}`] = {
-        ...type,
-        id: `physics-c${chapter}-${typeId}`,
-        titleTh: `${type.titleTh} · บทที่ ${chapter}`,
-        titleEn: `${type.titleEn} · Chapter ${chapter}`,
-      };
-    });
-  }
+  Object.entries(subjects).forEach(([subjectId, subject]) => {
+    for (let chapter = 1; chapter <= 4; chapter += 1) {
+      Object.entries(toolTypes).forEach(([typeId, type]) => {
+        const id = `${subjectId}-c${chapter}-${typeId}`;
+        catalog[id] = {
+          ...type,
+          id,
+          titleTh: `${type.titleTh} · ${subject.titleTh} · บทที่ ${chapter}`,
+          titleEn: `${type.titleEn} · ${subject.titleEn} · Chapter ${chapter}`,
+        };
+      });
+    }
+  });
 
   return catalog;
 }
