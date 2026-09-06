@@ -62,6 +62,10 @@ strokes:
 - ทดสอบ Context `physics-c1-notebook / main / page-001` ผ่าน
 - ทดสอบสลับไทย/English ทั้ง Hub และ Notebook ผ่าน
 - ปิดเมนูเลือกข้อความ, Touch Callout และการลากองค์ประกอบภายในสมุดสำหรับ Safari บน iPad
+- ขยาย Interaction Guard ไปยังหน้า Hub, Admin, รายวิชา และเครื่องมือทั้งหมด โดยยกเว้นช่องกรอกข้อมูล
+- พื้นที่วาดตัด Touch/Gesture ของ Safari ตั้งแต่เริ่มแตะ เพื่อไม่ให้หน้าต่าง Copy แทรกระหว่างเขียนด้วยปากกา
+- เพิ่มปุ่มย้อนกลับกลาง: เปิดใน Hub จะปิดหน้าต่างงาน เปิดโดยตรงจะย้อนกลับหรือกลับหน้า Hub
+- เตรียม `public/shared/learning-hub-tools.js` ให้ Quiz/Simulation เรียกตัวกัน Copy และปุ่มย้อนกลับได้ด้วย script บรรทัดเดียว
 
 ## รอบถัดไป
 

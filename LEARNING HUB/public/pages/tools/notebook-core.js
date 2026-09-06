@@ -138,6 +138,7 @@ export class NotebookCore {
     };
 
     this.onContextMenu = (event) => event.preventDefault();
+    this.onTouchGesture = (event) => event.preventDefault();
 
     this.bindControls();
     this.bindCanvas();
@@ -199,6 +200,13 @@ export class NotebookCore {
       this.onPointerEnd(event),
     );
     this.canvas.addEventListener('contextmenu', this.onContextMenu);
+    this.canvas.addEventListener('touchstart', this.onTouchGesture, {
+      passive: false,
+    });
+    this.canvas.addEventListener('touchmove', this.onTouchGesture, {
+      passive: false,
+    });
+    this.canvas.addEventListener('gesturestart', this.onTouchGesture);
     this.root.addEventListener('contextmenu', this.onContextMenu);
     this.root.addEventListener('selectstart', this.onContextMenu);
     this.root.addEventListener('dragstart', this.onContextMenu);

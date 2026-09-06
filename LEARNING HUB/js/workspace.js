@@ -385,6 +385,16 @@ export function createWorkspace({
     setTaskbarVisibility();
   }
 
+  window.addEventListener("message", (event) => {
+    const trustedOrigin = location.origin === "null" || event.origin === location.origin;
+    if (!trustedOrigin || event.data?.type !== "learning-hub-close-tool") return;
+
+    const record = [...records.values()].find(
+      (candidate) => candidate.frame.contentWindow === event.source,
+    );
+    if (record) close(record);
+  });
+
   window.addEventListener("resize", () => {
     records.forEach((record) => {
       if (record.minimized || record.element.classList.contains("is-maximized")) return;
