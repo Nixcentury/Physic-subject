@@ -98,6 +98,10 @@ function drawStroke(context, stroke) {
   context.restore();
 }
 
+function snapshotStrokes(strokes) {
+  return [...strokes];
+}
+
 export class NotebookCore {
   constructor(root, options = {}) {
     this.root = root;
@@ -121,6 +125,13 @@ export class NotebookCore {
       pointer: null,
       revision: 0,
       eraseChanged: false,
+      eraseSnapshot: null,
+    };
+
+    this.history = {
+      undo: [],
+      redo: [],
+      limit: 100,
     };
 
     this.elements = {
@@ -128,6 +139,8 @@ export class NotebookCore {
       colors: [...root.querySelectorAll('[data-notebook-color]')],
       finger: root.querySelector('[data-notebook-finger]'),
       fingerLabel: root.querySelector('[data-notebook-finger-label]'),
+      undo: root.querySelector('[data-notebook-undo]'),
+      redo: root.querySelector('[data-notebook-redo]'),
       zoom: root.querySelector('[data-notebook-zoom]'),
       zoomIn: root.querySelector('[data-notebook-zoom-in]'),
       zoomOut: root.querySelector('[data-notebook-zoom-out]'),
@@ -144,6 +157,7 @@ export class NotebookCore {
     this.bindCanvas();
     this.paint();
     this.setTool('pen');
+    this.updateHistoryControls();
     this.root.classList.add('is-touch-panning');
 
     requestAnimationFrame(() => this.fitToViewport());
@@ -171,6 +185,8 @@ export class NotebookCore {
     this.elements.finger?.addEventListener('click', () =>
       this.toggleFingerMode(),
     );
+    this.elements.undo?.addEventListener('click', () => this.undo());
+    this.elements.redo?.addEventListener('click', () => this.redo());
     this.elements.zoomIn?.addEventListener('click', () =>
       this.setZoom(this.state.zoom + ZOOM_STEP),
     );
@@ -179,6 +195,10 @@ export class NotebookCore {
     );
     this.elements.fit?.addEventListener('click', () => this.fitToViewport());
     this.elements.clear?.addEventListener('click', () => this.requestClear());
+
+    this.root.addEventListener('keydown', (event) =>
+      this.onHistoryShortcut(event),
+    );
 
     document.addEventListener('learning-hub-context-change', (event) => {
       this.updatePageKey(event.detail?.content);
@@ -226,7 +246,24 @@ export class NotebookCore {
       if (label) button.setAttribute('aria-label', label);
     });
     this.updateFingerLabel();
+    this.updateHistoryControls();
     this.setStatus(toolMessages[this.state.tool]);
+  }
+
+  onHistoryShortcut(event) {
+    const target = event.target;
+    if (
+      target instanceof Element &&
+      target.closest('input, textarea, select, [contenteditable="true"]')
+    )
+      return;
+
+    if ((!event.ctrlKey && !event.metaKey) || event.altKey) return;
+    const key = event.key.toLowerCase();
+    let changed = false;
+    if (key === 'z') changed = event.shiftKey ? this.redo() : this.undo();
+    else if (key === 'y' && !event.shiftKey) changed = this.redo();
+    if (changed) event.preventDefault();
   }
 
   updatePageKey(content) {
@@ -336,6 +373,7 @@ export class NotebookCore {
     if (this.state.tool === 'eraser') {
       this.state.pointer = { type: 'erase', id: event.pointerId };
       this.state.eraseChanged = false;
+      this.state.eraseSnapshot = snapshotStrokes(this.state.strokes);
       this.eraseAt(point);
       event.preventDefault();
       return;
@@ -389,13 +427,16 @@ export class NotebookCore {
     if (!pointer || pointer.id !== event.pointerId) return;
 
     if (pointer.type === 'draw' && this.state.activeStroke) {
-      this.state.strokes.push(this.state.activeStroke);
+      this.pushUndoState(this.state.strokes);
+      this.state.strokes = [...this.state.strokes, this.state.activeStroke];
       this.state.activeStroke = null;
       this.commitChange('draw');
     } else if (pointer.type === 'erase' && this.state.eraseChanged) {
+      this.pushUndoState(this.state.eraseSnapshot || []);
       this.commitChange('erase');
     }
 
+    this.state.eraseSnapshot = null;
     this.root.classList.remove('is-panning');
     this.state.pointer = null;
     if (this.canvas.hasPointerCapture(event.pointerId)) {
@@ -500,13 +541,67 @@ export class NotebookCore {
     if (accepted) this.clear();
   }
 
+  get canUndo() {
+    return this.history.undo.length > 0;
+  }
+
+  get canRedo() {
+    return this.history.redo.length > 0;
+  }
+
+  pushUndoState(strokes = this.state.strokes) {
+    this.history.undo.push(snapshotStrokes(strokes));
+    if (this.history.undo.length > this.history.limit) this.history.undo.shift();
+    this.history.redo = [];
+    this.updateHistoryControls();
+  }
+
+  applyStrokeState(strokes) {
+    this.state.strokes = snapshotStrokes(strokes);
+    this.state.activeStroke = null;
+    this.state.eraseChanged = false;
+    this.state.eraseSnapshot = null;
+    this.root.classList.toggle('has-ink', this.state.strokes.length > 0);
+    this.paint();
+  }
+
+  updateHistoryControls() {
+    if (this.elements.undo) this.elements.undo.disabled = !this.canUndo;
+    if (this.elements.redo) this.elements.redo.disabled = !this.canRedo;
+  }
+
+  undo() {
+    if (!this.canUndo || this.state.pointer) return false;
+    const previous = this.history.undo.pop();
+    this.history.redo.push(snapshotStrokes(this.state.strokes));
+    this.applyStrokeState(previous);
+    this.updateHistoryControls();
+    this.commitChange('undo');
+    this.setStatus({ th: 'ย้อนการแก้ไขล่าสุดแล้ว', en: 'Last change undone' });
+    return true;
+  }
+
+  redo() {
+    if (!this.canRedo || this.state.pointer) return false;
+    const next = this.history.redo.pop();
+    this.history.undo.push(snapshotStrokes(this.state.strokes));
+    this.applyStrokeState(next);
+    this.updateHistoryControls();
+    this.commitChange('redo');
+    this.setStatus({ th: 'ทำการแก้ไขซ้ำแล้ว', en: 'Last change redone' });
+    return true;
+  }
+
   clear() {
+    if (!this.state.strokes.length && !this.state.activeStroke) return false;
+    this.pushUndoState(this.state.strokes);
     this.state.strokes = [];
     this.state.activeStroke = null;
     this.root.classList.remove('has-ink');
     this.paint();
     this.commitChange('clear');
     this.setStatus({ th: 'ล้างหน้าปัจจุบันแล้ว', en: 'Current page cleared' });
+    return true;
   }
 
   commitChange(action) {
@@ -517,6 +612,8 @@ export class NotebookCore {
           action,
           revision: this.state.revision,
           strokeCount: this.state.strokes.length,
+          canUndo: this.canUndo,
+          canRedo: this.canRedo,
         },
       }),
     );
@@ -551,5 +648,17 @@ window.LearningHubNotebook = Object.freeze({
   instances: notebookInstances,
   get primary() {
     return notebookInstances[0] || null;
+  },
+  get canUndo() {
+    return notebookInstances[0]?.canUndo || false;
+  },
+  get canRedo() {
+    return notebookInstances[0]?.canRedo || false;
+  },
+  undo() {
+    return notebookInstances[0]?.undo() || false;
+  },
+  redo() {
+    return notebookInstances[0]?.redo() || false;
   },
 });

@@ -1495,15 +1495,25 @@ a:focus-visible,
 }
 
 .workspace-window.is-maximized {
-  inset: 8px !important;
+  inset: 0 !important;
   width: auto;
   height: auto;
+  border-radius: 0;
+}
+
+body.has-maximized-workspace .workspace-window-layer {
+  z-index: 50;
+  inset: 0;
+}
+
+body.has-maximized-workspace .hub-taskbar {
+  display: none;
 }
 
 .workspace-window-bar {
   display: grid;
   min-height: 52px;
-  grid-template-columns: 98px minmax(0, 1fr) 42px;
+  grid-template-columns: minmax(390px, auto) minmax(0, 1fr) 42px;
   align-items: center;
   border-bottom: 1px solid #d8e4f4;
   background: rgba(247, 251, 255, 0.95);
@@ -1533,6 +1543,135 @@ a:focus-visible,
   padding-left: 17px;
 }
 
+.window-leading-tools,
+.window-stopwatch-controls,
+.window-timer-controls,
+.window-clock {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+}
+
+.window-leading-tools {
+  gap: 8px;
+}
+
+.window-clock {
+  flex-direction: column;
+  align-items: flex-start;
+  color: #6d7c94;
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.window-clock-time {
+  color: var(--navy);
+  font-variant-numeric: tabular-nums;
+}
+
+.window-stopwatch-controls,
+.window-timer-controls {
+  gap: 3px;
+}
+
+.window-stopwatch-toggle,
+.window-stopwatch-reset,
+.window-timer-toggle,
+.window-timer-adjust,
+.window-timer-reset {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d8e4f4;
+  background: rgba(255, 255, 255, 0.76);
+  color: #566985;
+  font: 800 8px/1 Arial, sans-serif;
+  touch-action: manipulation;
+}
+
+.window-stopwatch-toggle {
+  min-width: 59px;
+  gap: 5px;
+  padding: 0 7px;
+  border-radius: 9px 5px 5px 9px;
+}
+
+.window-stopwatch-toggle output {
+  font-variant-numeric: tabular-nums;
+}
+
+.window-timer-toggle {
+  min-width: 59px;
+  gap: 5px;
+  padding: 0 6px;
+  border-radius: 5px;
+}
+
+.window-timer-toggle output {
+  font-variant-numeric: tabular-nums;
+}
+
+.window-timer-adjust,
+.window-timer-reset {
+  width: 26px;
+  padding: 0;
+  font-size: 12px;
+}
+
+.window-timer-adjust.is-decrease {
+  border-radius: 9px 5px 5px 9px;
+}
+
+.window-timer-adjust.is-increase {
+  border-radius: 5px;
+}
+
+.window-timer-reset {
+  border-radius: 5px 9px 9px 5px;
+}
+
+.window-stopwatch-toggle.is-running {
+  border-color: rgba(225, 105, 122, 0.38);
+  background: #fff1f4;
+  color: #a33f56;
+}
+
+.window-timer-toggle.is-running {
+  border-color: rgba(72, 165, 148, 0.42);
+  background: #e8f8f4;
+  color: #267c6e;
+}
+
+.window-timer-toggle.is-finished {
+  border-color: rgba(225, 105, 122, 0.44);
+  background: #fff1f4;
+  color: #a33f56;
+}
+
+.window-stopwatch-reset {
+  width: 28px;
+  padding: 0;
+  border-radius: 5px 9px 9px 5px;
+  font-size: 12px;
+}
+
+.window-stopwatch-toggle:hover,
+.window-stopwatch-reset:hover,
+.window-timer-toggle:hover,
+.window-timer-adjust:hover:not(:disabled),
+.window-timer-reset:hover {
+  border-color: #c4d5eb;
+  background: #fff;
+}
+
+.window-timer-adjust:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+}
+
 .window-control {
   display: grid;
   width: 18px;
@@ -1541,7 +1680,7 @@ a:focus-visible,
   padding: 0;
   border: 0;
   border-radius: 50%;
-  color: rgba(44, 55, 74, 0);
+  color: rgba(44, 55, 74, 0.72);
   font: 800 13px/1 Arial, sans-serif;
   transition: 140ms ease;
 }
@@ -1885,8 +2024,7 @@ a:focus-visible,
     inset: 139px 0 72px;
   }
 
-  .workspace-window,
-  .workspace-window.is-maximized {
+  .workspace-window {
     inset: 7px !important;
     width: auto;
     height: auto;
@@ -1895,13 +2033,41 @@ a:focus-visible,
     border-radius: 17px;
   }
 
+  .workspace-window.is-maximized {
+    inset: 0 !important;
+    border-radius: 0;
+  }
+
   .workspace-window-bar {
-    grid-template-columns: 82px minmax(0, 1fr) 26px;
+    grid-template-columns: minmax(250px, auto) minmax(0, 1fr) 26px;
   }
 
   .window-controls {
     gap: 7px;
     padding-left: 13px;
+  }
+
+  .window-leading-tools {
+    gap: 7px;
+  }
+
+  .window-clock {
+    display: none;
+  }
+
+  .window-stopwatch-toggle {
+    min-width: 55px;
+    padding: 0 5px;
+  }
+
+  .window-timer-toggle {
+    min-width: 55px;
+    padding: 0 5px;
+  }
+
+  .window-stopwatch-reset,
+  .window-timer-reset {
+    display: none;
   }
 
   .window-control {

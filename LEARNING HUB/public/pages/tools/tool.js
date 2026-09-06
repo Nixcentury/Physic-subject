@@ -1,13 +1,6 @@
 const supportedLanguages = new Set(["th", "en"]);
 const subscribers = new Set();
 
-const hubUrl =
-  location.protocol === "file:"
-    ? new URL("../../../index.html", location.href).href
-    : new URL("../../", location.href).href;
-
-window.LearningHubTools?.addBackButton({ hubUrl });
-
 let activeContext = Object.freeze({
   version: 1,
   language: "th",
@@ -37,7 +30,6 @@ function ensureContextPreview() {
 function setLanguage(language) {
   const nextLanguage = supportedLanguages.has(language) ? language : "th";
   document.documentElement.lang = nextLanguage;
-  window.LearningHubTools?.updateBackButton(nextLanguage);
   document.querySelectorAll("[data-th][data-en]").forEach((element) => {
     element.textContent = element.dataset[nextLanguage];
   });

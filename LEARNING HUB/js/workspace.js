@@ -82,6 +82,50 @@ function clamp(value, minimum, maximum) {
   return Math.min(Math.max(value, minimum), Math.max(minimum, maximum));
 }
 
+function formatElapsedTime(milliseconds) {
+  const totalSeconds = Math.max(0, Math.floor(milliseconds / 1000));
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const twoDigits = (value) => String(value).padStart(2, "0");
+  return hours > 0
+    ? `${twoDigits(hours)}:${twoDigits(minutes)}:${twoDigits(seconds)}`
+    : `${twoDigits(minutes)}:${twoDigits(seconds)}`;
+}
+
+const clockFormatters = {
+  th: {
+    date: new Intl.DateTimeFormat("th-TH", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "2-digit",
+    }),
+    time: new Intl.DateTimeFormat("th-TH", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    }),
+  },
+  en: {
+    date: new Intl.DateTimeFormat("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "2-digit",
+    }),
+    time: new Intl.DateTimeFormat("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    }),
+  },
+};
+
+function updateText(element, value) {
+  if (element.textContent !== value) element.textContent = value;
+}
+
 export function createWorkspace({
   windowLayer,
   taskbar,
@@ -103,9 +147,130 @@ export function createWorkspace({
     return language() === "th" ? thai : english;
   }
 
+  function renderWindowTime(record, now = Date.now()) {
+    const activeLanguage = language();
+    const clockTick = Math.floor(now / 1000);
+    if (
+      record.clockTick !== clockTick ||
+      record.clockLanguage !== activeLanguage
+    ) {
+      const formatters = clockFormatters[activeLanguage];
+      updateText(record.clockDate, formatters.date.format(now));
+      updateText(record.clockTime, formatters.time.format(now));
+      record.clockTick = clockTick;
+      record.clockLanguage = activeLanguage;
+    }
+
+    const elapsed = record.stopwatch.running
+      ? record.stopwatch.elapsed + now - record.stopwatch.startedAt
+      : record.stopwatch.elapsed;
+    updateText(record.stopwatchOutput, formatElapsedTime(elapsed));
+    record.stopwatchButton.classList.toggle(
+      "is-running",
+      record.stopwatch.running,
+    );
+    updateText(record.stopwatchIcon, record.stopwatch.running ? "Ⅱ" : "▶");
+
+    let timerRemaining = record.timer.running
+      ? record.timer.remaining - (now - record.timer.startedAt)
+      : record.timer.remaining;
+    if (record.timer.running && timerRemaining <= 0) {
+      timerRemaining = 0;
+      record.timer.remaining = 0;
+      record.timer.startedAt = null;
+      record.timer.running = false;
+      record.timer.finished = true;
+      updateRecordText(record);
+    }
+    updateText(record.timerOutput, formatElapsedTime(timerRemaining));
+    record.timerButton.classList.toggle("is-running", record.timer.running);
+    record.timerButton.classList.toggle("is-finished", record.timer.finished);
+    updateText(
+      record.timerIcon,
+      record.timer.running ? "Ⅱ" : record.timer.finished ? "↺" : "▶",
+    );
+  }
+
+  function toggleStopwatch(record) {
+    const now = Date.now();
+    if (record.stopwatch.running) {
+      record.stopwatch.elapsed += now - record.stopwatch.startedAt;
+      record.stopwatch.startedAt = null;
+      record.stopwatch.running = false;
+    } else {
+      record.stopwatch.startedAt = now;
+      record.stopwatch.running = true;
+    }
+    updateRecordText(record);
+    renderWindowTime(record, now);
+  }
+
+  function resetStopwatch(record) {
+    record.stopwatch.elapsed = 0;
+    record.stopwatch.startedAt = null;
+    record.stopwatch.running = false;
+    updateRecordText(record);
+    renderWindowTime(record);
+  }
+
+  function toggleTimer(record) {
+    const now = Date.now();
+    if (record.timer.running) {
+      record.timer.remaining = Math.max(
+        0,
+        record.timer.remaining - (now - record.timer.startedAt),
+      );
+      record.timer.startedAt = null;
+      record.timer.running = false;
+    } else {
+      if (record.timer.remaining <= 0) {
+        record.timer.remaining = record.timer.duration;
+      }
+      record.timer.startedAt = now;
+      record.timer.running = true;
+      record.timer.finished = false;
+    }
+    updateRecordText(record);
+    renderWindowTime(record, now);
+  }
+
+  function adjustTimer(record, minuteDelta) {
+    if (record.timer.running) return;
+    const nextDuration = clamp(
+      record.timer.remaining + minuteDelta * 60_000,
+      60_000,
+      60 * 60_000,
+    );
+    record.timer.duration = nextDuration;
+    record.timer.remaining = nextDuration;
+    record.timer.finished = false;
+    updateRecordText(record);
+    renderWindowTime(record);
+  }
+
+  function resetTimer(record) {
+    record.timer.remaining = record.timer.duration;
+    record.timer.startedAt = null;
+    record.timer.running = false;
+    record.timer.finished = false;
+    updateRecordText(record);
+    renderWindowTime(record);
+  }
+
   function setTaskbarVisibility() {
     countElement.textContent = String(records.size);
     taskbar.hidden = records.size === 0;
+  }
+
+  function syncMaximizedState() {
+    const hasMaximizedWindow = [...records.values()].some(
+      (record) =>
+        !record.minimized && record.element.classList.contains("is-maximized"),
+    );
+    document.body.classList.toggle(
+      "has-maximized-workspace",
+      hasMaximizedWindow,
+    );
   }
 
   function updateRecordText(record) {
@@ -126,6 +291,55 @@ export function createWorkspace({
     record.maximizeButton.title = isMaximized
       ? label("คืนขนาด", "Restore")
       : label("ขยาย", "Maximize");
+    record.maximizeButton.querySelector("span").textContent = isMaximized
+      ? "↙"
+      : "↗";
+    record.clock.setAttribute(
+      "aria-label",
+      label("วันที่และเวลาปัจจุบัน", "Current date and time"),
+    );
+    record.stopwatchButton.setAttribute(
+      "aria-label",
+      record.stopwatch.running
+        ? label("พักนาฬิกาจับเวลา", "Pause stopwatch")
+        : label("เริ่มนาฬิกาจับเวลา", "Start stopwatch"),
+    );
+    record.stopwatchButton.title = record.stopwatch.running
+      ? label("พักจับเวลา", "Pause stopwatch")
+      : label("เริ่มจับเวลา", "Start stopwatch");
+    record.stopwatchReset.setAttribute(
+      "aria-label",
+      label("รีเซ็ตนาฬิกาจับเวลา", "Reset stopwatch"),
+    );
+    record.stopwatchReset.title = label("รีเซ็ตจับเวลา", "Reset stopwatch");
+    record.timerButton.setAttribute(
+      "aria-label",
+      record.timer.running
+        ? label("พักตัวจับเวลา", "Pause timer")
+        : record.timer.finished
+          ? label("เริ่มตัวจับเวลาใหม่", "Restart timer")
+          : label("เริ่มตัวจับเวลา", "Start timer"),
+    );
+    record.timerButton.title = record.timer.running
+      ? label("พักนับถอยหลัง", "Pause timer")
+      : label("เริ่มนับถอยหลัง", "Start timer");
+    record.timerDecrease.setAttribute(
+      "aria-label",
+      label("ลดตัวจับเวลาหนึ่งนาที", "Decrease timer by one minute"),
+    );
+    record.timerDecrease.title = label("ลด 1 นาที", "Decrease 1 minute");
+    record.timerIncrease.setAttribute(
+      "aria-label",
+      label("เพิ่มตัวจับเวลาหนึ่งนาที", "Increase timer by one minute"),
+    );
+    record.timerIncrease.title = label("เพิ่ม 1 นาที", "Increase 1 minute");
+    record.timerReset.setAttribute(
+      "aria-label",
+      label("รีเซ็ตตัวจับเวลา", "Reset timer"),
+    );
+    record.timerReset.title = label("รีเซ็ตตัวจับเวลา", "Reset timer");
+    record.timerDecrease.disabled = record.timer.running;
+    record.timerIncrease.disabled = record.timer.running;
     record.taskButton.setAttribute(
       "aria-label",
       record.minimized
@@ -183,6 +397,7 @@ export function createWorkspace({
     record.element.hidden = false;
     record.taskButton.classList.remove("is-minimized");
     updateRecordText(record);
+    syncMaximizedState();
     focus(record);
     requestAnimationFrame(() => record.element.focus());
   }
@@ -196,6 +411,7 @@ export function createWorkspace({
     record.taskButton.classList.add("is-minimized");
     record.taskButton.setAttribute("aria-pressed", "false");
     updateRecordText(record);
+    syncMaximizedState();
 
     const nextRecord = [...records.values()]
       .filter((candidate) => !candidate.minimized)
@@ -207,6 +423,7 @@ export function createWorkspace({
   function toggleMaximize(record) {
     if (!record) return;
     record.element.classList.toggle("is-maximized");
+    syncMaximizedState();
     updateRecordText(record);
     focus(record);
   }
@@ -218,6 +435,7 @@ export function createWorkspace({
     record.taskButton.remove();
     records.delete(record.tool.id);
     setTaskbarVisibility();
+    syncMaximizedState();
 
     const nextRecord = [...records.values()]
       .filter((candidate) => !candidate.minimized)
@@ -290,10 +508,32 @@ export function createWorkspace({
     element.tabIndex = -1;
     element.innerHTML = `
       <header class="workspace-window-bar">
-        <div class="window-controls">
-          <button class="window-control is-close" type="button"><span aria-hidden="true">×</span></button>
-          <button class="window-control is-minimize" type="button"><span aria-hidden="true">−</span></button>
-          <button class="window-control is-maximize" type="button"><span aria-hidden="true">+</span></button>
+        <div class="window-leading-tools">
+          <div class="window-controls">
+            <button class="window-control is-close" type="button"><span aria-hidden="true">×</span></button>
+            <button class="window-control is-minimize" type="button"><span aria-hidden="true">−</span></button>
+            <button class="window-control is-maximize" type="button"><span aria-hidden="true">↗</span></button>
+          </div>
+          <div class="window-clock">
+            <span class="window-clock-date"></span>
+            <time class="window-clock-time"></time>
+          </div>
+          <div class="window-stopwatch-controls">
+            <button class="window-stopwatch-toggle" type="button">
+              <span class="window-stopwatch-icon" aria-hidden="true">▶</span>
+              <output>00:00</output>
+            </button>
+            <button class="window-stopwatch-reset" type="button"><span aria-hidden="true">↺</span></button>
+          </div>
+          <div class="window-timer-controls">
+            <button class="window-timer-adjust is-decrease" type="button"><span aria-hidden="true">−</span></button>
+            <button class="window-timer-toggle" type="button">
+              <span class="window-timer-icon" aria-hidden="true">▶</span>
+              <output>05:00</output>
+            </button>
+            <button class="window-timer-adjust is-increase" type="button"><span aria-hidden="true">＋</span></button>
+            <button class="window-timer-reset" type="button"><span aria-hidden="true">↺</span></button>
+          </div>
         </div>
         <div class="window-identity">
           <span class="window-icon" aria-hidden="true">${tool.icon}</span>
@@ -322,6 +562,33 @@ export function createWorkspace({
       closeButton: element.querySelector(".is-close"),
       minimizeButton: element.querySelector(".is-minimize"),
       maximizeButton: element.querySelector(".is-maximize"),
+      clock: element.querySelector(".window-clock"),
+      clockDate: element.querySelector(".window-clock-date"),
+      clockTime: element.querySelector(".window-clock-time"),
+      clockTick: -1,
+      clockLanguage: "",
+      stopwatchButton: element.querySelector(".window-stopwatch-toggle"),
+      stopwatchIcon: element.querySelector(".window-stopwatch-icon"),
+      stopwatchOutput: element.querySelector(".window-stopwatch-toggle output"),
+      stopwatchReset: element.querySelector(".window-stopwatch-reset"),
+      stopwatch: {
+        elapsed: 0,
+        startedAt: null,
+        running: false,
+      },
+      timerButton: element.querySelector(".window-timer-toggle"),
+      timerIcon: element.querySelector(".window-timer-icon"),
+      timerOutput: element.querySelector(".window-timer-toggle output"),
+      timerDecrease: element.querySelector(".window-timer-adjust.is-decrease"),
+      timerIncrease: element.querySelector(".window-timer-adjust.is-increase"),
+      timerReset: element.querySelector(".window-timer-reset"),
+      timer: {
+        duration: 5 * 60_000,
+        remaining: 5 * 60_000,
+        startedAt: null,
+        running: false,
+        finished: false,
+      },
       taskButton,
       taskTitle: taskButton.querySelector(".taskbar-item-title"),
       minimized: false,
@@ -330,6 +597,20 @@ export function createWorkspace({
     record.closeButton.addEventListener("click", () => close(record));
     record.minimizeButton.addEventListener("click", () => minimize(record));
     record.maximizeButton.addEventListener("click", () => toggleMaximize(record));
+    record.stopwatchButton.addEventListener("click", () =>
+      toggleStopwatch(record),
+    );
+    record.stopwatchReset.addEventListener("click", () =>
+      resetStopwatch(record),
+    );
+    record.timerButton.addEventListener("click", () => toggleTimer(record));
+    record.timerDecrease.addEventListener("click", () =>
+      adjustTimer(record, -1),
+    );
+    record.timerIncrease.addEventListener("click", () =>
+      adjustTimer(record, 1),
+    );
+    record.timerReset.addEventListener("click", () => resetTimer(record));
     record.element.addEventListener("pointerdown", () => focus(record));
     record.frame.addEventListener("load", () => postContext(record));
     record.taskButton.addEventListener("click", () => {
@@ -341,6 +622,7 @@ export function createWorkspace({
 
     enableDragging(record);
     updateRecordText(record);
+    renderWindowTime(record);
     return record;
   }
 
@@ -368,6 +650,7 @@ export function createWorkspace({
   function setLanguage() {
     records.forEach((record) => {
       updateRecordText(record);
+      renderWindowTime(record);
       postContext(record);
     });
   }
@@ -383,17 +666,13 @@ export function createWorkspace({
     });
     records.clear();
     setTaskbarVisibility();
+    syncMaximizedState();
   }
 
-  window.addEventListener("message", (event) => {
-    const trustedOrigin = location.origin === "null" || event.origin === location.origin;
-    if (!trustedOrigin || event.data?.type !== "learning-hub-close-tool") return;
-
-    const record = [...records.values()].find(
-      (candidate) => candidate.frame.contentWindow === event.source,
-    );
-    if (record) close(record);
-  });
+  window.setInterval(() => {
+    const now = Date.now();
+    records.forEach((record) => renderWindowTime(record, now));
+  }, 250);
 
   window.addEventListener("resize", () => {
     records.forEach((record) => {
