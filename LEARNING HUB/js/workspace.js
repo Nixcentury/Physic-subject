@@ -5,6 +5,11 @@
    - รองรับเปิดหลายงาน ย่อ เรียกกลับ ขยาย และปิด
 ================================================================ */
 
+import {
+  createContentContext,
+  createHubContextMessage,
+} from "./content-context.js";
+
 const toolTypes = {
   activity: {
     icon: "✎",
@@ -55,6 +60,12 @@ function buildToolCatalog() {
         catalog[id] = {
           ...type,
           id,
+          context: createContentContext({
+            subjectId,
+            chapterId: chapter,
+            toolKind: typeId,
+            contentId: id,
+          }),
           titleTh: `${type.titleTh} · ${subject.titleTh} · บทที่ ${chapter}`,
           titleEn: `${type.titleEn} · ${subject.titleEn} · Chapter ${chapter}`,
         };
@@ -77,6 +88,8 @@ export function createWorkspace({
   taskbarItems,
   countElement,
   getLanguage,
+  getIdentity,
+  getRole,
 }) {
   const records = new Map();
   let highestZIndex = 30;
@@ -124,7 +137,12 @@ export function createWorkspace({
   function postContext(record) {
     const targetOrigin = location.origin === "null" ? "*" : location.origin;
     record.frame.contentWindow?.postMessage(
-      { type: "learning-hub-context", language: language() },
+      createHubContextMessage({
+        language: language(),
+        role: getRole(),
+        identity: getIdentity(),
+        content: record.tool.context,
+      }),
       targetOrigin,
     );
   }
@@ -354,6 +372,10 @@ export function createWorkspace({
     });
   }
 
+  function setContext() {
+    records.forEach((record) => postContext(record));
+  }
+
   function clear() {
     records.forEach((record) => {
       record.element.remove();
@@ -381,5 +403,5 @@ export function createWorkspace({
     });
   });
 
-  return { open, setLanguage, clear };
+  return { open, setLanguage, setContext, clear };
 }

@@ -20,6 +20,10 @@ import {
   requestTeacherAccess,
   subscribeRoles,
 } from "./roles.js";
+import {
+  createHubContextMessage,
+  createIdentityContext,
+} from "./content-context.js";
 import { createWorkspace } from "./workspace.js";
 
 const languageStorageKey = "learning-hub-language";
@@ -94,12 +98,18 @@ let presenceReturnFocus = null;
 let roleReturnFocus = null;
 let activeSectionId = "overview";
 
+function getWorkspaceIdentity() {
+  return createIdentityContext(activeSession);
+}
+
 const workspace = createWorkspace({
   windowLayer: workspaceWindowLayer,
   taskbar: hubTaskbar,
   taskbarItems,
   countElement: workspaceCount,
   getLanguage: () => currentLanguage,
+  getIdentity: getWorkspaceIdentity,
+  getRole: () => activeRole.systemRole,
 });
 
 function readSavedLanguage() {
@@ -121,11 +131,11 @@ function saveLanguage(language) {
 function postContextToPage() {
   const targetOrigin = location.origin === "null" ? "*" : location.origin;
   pageFrame.contentWindow?.postMessage(
-    {
-      type: "learning-hub-context",
+    createHubContextMessage({
       language: currentLanguage,
       role: activeRole.systemRole,
-    },
+      identity: getWorkspaceIdentity(),
+    }),
     targetOrigin,
   );
 }
@@ -179,6 +189,7 @@ function setRoleMessage(messageTh, messageEn, tone = "info") {
 function renderRole(role) {
   activeRole = role;
   postContextToPage();
+  workspace.setContext();
   const isSignedIn = activeSession.status === "signed-in";
   roleButton.hidden = !isSignedIn;
 
@@ -440,6 +451,8 @@ function renderSession(session) {
   activeSession = session;
   renderAccount(session);
   renderPresence(activePresence);
+  postContextToPage();
+  workspace.setContext();
 
   if (session.status === "loading") {
     showLogin(true);
