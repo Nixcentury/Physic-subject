@@ -28,8 +28,8 @@ const toolTypes = {
   notebook: {
     icon: "▱",
     page: "pages/tools/notebook-preview.html",
-    titleTh: "สมุดบันทึกตัวอย่าง",
-    titleEn: "Notebook workspace",
+    titleTh: "สมุดเขียนกลาง",
+    titleEn: "Notebook Core",
     accent: "violet",
   },
 };

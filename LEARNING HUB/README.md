@@ -7,18 +7,20 @@
 1. `index.html` — โครงหน้า ข้อความภาษาไทย/อังกฤษ และรายชื่อแท็บ
 2. `public/pages/*.html` — หน้า Overview, Classroom และแต่ละรายวิชา แก้เนื้อหาที่นี่
 3. `public/pages/shared/subject-page.js` — Navigation 3 ชั้นของทุกวิชา ปกติไม่ต้องแก้
-4. `public/pages/tools/*.html` — ชิ้นงานตัวอย่างที่เปิดในหน้าต่างลอย แยก HTML คนละไฟล์
-5. `public/pages/shared/page.css` — หน้าตาของหน้า HTML ลูกทั้งหมด
-6. `public/pages/shared/page.js` — รับภาษาและ Role จาก Hub กลาง
-7. `css/styles.css` — สี กระจกใส ขนาด ระยะห่าง และหน้าจอมือถือของ Hub
-8. `js/app.js` — การสลับภาษา เชื่อมหน้าตากับบัญชี และเปลี่ยนแท็บ
-9. `js/content-context.js` — รหัสกลางของวิชา บท คอนเทนต์ รายการ และหน้าสมุด ปกติไม่ต้องแก้
-10. `js/workspace.js` — หน้าต่างงาน ปุ่มย่อ/ขยาย/ปิด และแถบงานล่าง ปกติไม่ต้องแก้
-11. `js/firebase-config.js` — การเชื่อม Firebase กลาง ปกติไม่ต้องแก้
-12. `js/auth.js` — Google Login, Guest และ Logout ปกติไม่ต้องแก้
-13. `js/presence.js` — Online, Idle, Offline และคนออนไลน์ ปกติไม่ต้องแก้
-14. `js/roles.js` — สิทธิ์นักเรียน ครู แอดมิน และคำขอสิทธิ์ครู ปกติไม่ต้องแก้
-15. `admin.html` และ `js/role-admin.js` — หน้าหลังบ้านและการจัดการสิทธิ์ครู
+4. `public/pages/tools/*.html` — ชิ้นงานที่เปิดในหน้าต่างลอย แยก HTML คนละไฟล์
+5. `public/pages/tools/notebook-core.css` — หน้าตาของสมุดเขียนกลาง
+6. `public/pages/tools/notebook-core.js` — กลไกเขียน ลบ เลื่อน ซูม และข้อมูลลายเส้น ปกติไม่ต้องแก้
+7. `public/pages/shared/page.css` — หน้าตาของหน้า HTML ลูกทั้งหมด
+8. `public/pages/shared/page.js` — รับภาษาและ Role จาก Hub กลาง
+9. `css/styles.css` — สี กระจกใส ขนาด ระยะห่าง และหน้าจอมือถือของ Hub
+10. `js/app.js` — การสลับภาษา เชื่อมหน้าตากับบัญชี และเปลี่ยนแท็บ
+11. `js/content-context.js` — รหัสกลางของวิชา บท คอนเทนต์ รายการ และหน้าสมุด ปกติไม่ต้องแก้
+12. `js/workspace.js` — หน้าต่างงาน ปุ่มย่อ/ขยาย/ปิด และแถบงานล่าง ปกติไม่ต้องแก้
+13. `js/firebase-config.js` — การเชื่อม Firebase กลาง ปกติไม่ต้องแก้
+14. `js/auth.js` — Google Login, Guest และ Logout ปกติไม่ต้องแก้
+15. `js/presence.js` — Online, Idle, Offline และคนออนไลน์ ปกติไม่ต้องแก้
+16. `js/roles.js` — สิทธิ์นักเรียน ครู แอดมิน และคำขอสิทธิ์ครู ปกติไม่ต้องแก้
+17. `admin.html` และ `js/role-admin.js` — หน้าหลังบ้านและการจัดการสิทธิ์ครู
 
 ในหน้า HTML ลูก ข้อความสองภาษาเขียนอยู่ด้วยกันแบบนี้:
 
@@ -81,15 +83,16 @@ LEARNING HUB/
 - งานเปิดในหน้าต่างลอยที่ย่อ ขยาย ปิด ลากย้าย และเปิดพร้อมกันหลายชิ้นได้
 - แถบงานด้านล่างเรียกหน้าต่างที่ย่อกลับมาได้ และหน้าต่างไม่หายเมื่อเปลี่ยนแท็บ
 - ทุกหน้าต่างได้รับ Content Context แยกกันในรูป `UID + Content ID + Item ID + Page ID`
+- Notebook Core หน้าเดียวเขียนด้วยสีดำ/น้ำเงิน/แดง ลบ เลื่อน ซูม และสลับโหมดนิ้วได้ในหน้าต่างลอย
 - ยังไม่มีเนื้อหา Quiz เดิม
-- ยังไม่เชื่อม Notebook หรือระบบ Save/Load
+- Notebook ยังไม่มีหลายหน้า Undo/Redo หรือระบบ Save/Load
 - GitHub Pages เผยแพร่อัตโนมัติเมื่อ Push เข้า `main`
 
 โฟลเดอร์ React เดิมยังเก็บไว้เป็นข้อมูลสำรอง แต่หน้าเว็บจริงไม่เรียกใช้ไฟล์เหล่านั้นแล้ว
 
 ## ลำดับงานที่ตกลงล่าสุด
 
-สถานะปัจจุบัน: **Round 4D มี Content ID และ Context Bridge กลางพร้อมสำหรับเสียบ Notebook และ Quiz แล้ว**
+สถานะปัจจุบัน: **Round 5A มี Notebook Core หน้าเดียวที่เขียนได้จริง และรับ Content Context จาก Hub แล้ว**
 
 ผลตรวจฐานก่อนเริ่ม Login บันทึกไว้ที่ [`ROUND-0-BASELINE.md`](ROUND-0-BASELINE.md)
 
@@ -109,9 +112,11 @@ LEARNING HUB/
 
 ผลการวาง Content ID และ Context Bridge รอบ 4D บันทึกไว้ที่ [`ROUND-4D-CONTENT-CONTEXT.md`](ROUND-4D-CONTENT-CONTEXT.md)
 
+ผลการทำ Notebook Core รอบ 5A บันทึกไว้ที่ [`ROUND-5A-NOTEBOOK-CORE.md`](ROUND-5A-NOTEBOOK-CORE.md)
+
 แบบคะแนน V1 ที่เก็บเฉพาะคะแนนล่าสุดบันทึกไว้ที่ [`SCORE-DATA-V1.md`](SCORE-DATA-V1.md)
 
-Round 1 เชื่อม Google Sign-In, Guest และ Logout แล้ว Round 2 เพิ่ม Online/Idle/Offline และ Round 3 เตรียมระบบสิทธิ์กับหน้าหลังบ้านแล้ว โดยยังไม่เริ่ม Quiz, Notebook หรือระบบ Classroom จริง
+Round 1 เชื่อม Google Sign-In, Guest และ Logout แล้ว Round 2 เพิ่ม Online/Idle/Offline และ Round 3 เตรียมระบบสิทธิ์กับหน้าหลังบ้านแล้ว ส่วน Round 5A เริ่ม Notebook Core แล้ว โดยยังไม่เริ่ม Quiz หรือระบบ Classroom จริง
 
 ## แบบ Navigation และสิ่งที่จะทำต่อ
 
@@ -125,4 +130,4 @@ Round 1 เชื่อม Google Sign-In, Guest และ Logout แล้ว R
 - ทุกหน้ารองรับภาษาไทยและอังกฤษอย่างสมบูรณ์
 - ต้องรักษา URL ของ Quiz และ Simulation เดิมทั้งหมดให้เปิดได้เสมอ
 
-Round ถัดไปคือ Round 5A แยก Notebook Core จาก `NotebookBoardTab` ให้เขียนได้ในหน้าต่างลอยก่อน โดยยังไม่เชื่อม Google Drive
+Round ถัดไปคือ Round 5B เพิ่มหลายหน้า Undo/Redo และเก็บฉบับร่างในเครื่องด้วย IndexedDB โดยยังไม่เชื่อม Google Drive

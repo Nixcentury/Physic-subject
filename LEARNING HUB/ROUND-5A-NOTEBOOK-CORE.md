@@ -1,0 +1,67 @@
+# Learning Hub — Round 5A Notebook Core
+
+บันทึกวันที่ 6 กันยายน 2026
+
+## เป้าหมายรอบนี้
+
+- ยกแนวคิดเครื่องมือหลักจาก `NotebookBoardTab` มาเป็นสมุดกลางของ Hub
+- ให้ Notebook เขียนได้จริงในหน้าต่างลอย โดยไม่แก้โปรเจกต์ Apps Script เดิม
+- แยก HTML, CSS และ JavaScript ให้แก้ไขง่ายและไม่รวมเป็นไฟล์ยาว
+- ใช้ Content Context จาก Round 4D ได้ทันที
+- ยังไม่เชื่อม Google Drive, AI, Quiz, คะแนน หรือระบบบันทึกข้ามเครื่อง
+
+## สิ่งที่ใช้งานได้แล้ว
+
+- เขียนด้วยเมาส์ ปากกา Stylus และ Pointer Events
+- เลือกสีปากกาดำ น้ำเงิน และแดง โดยแต่ละเส้นจำสีของตัวเอง
+- ยางลบแบบแตะเส้นเพื่อลบทั้งเส้น
+- Hand tool สำหรับลากเลื่อนกระดาษ
+- สลับให้นิ้วใช้เลื่อนกระดาษหรือใช้เขียน
+- ซูมเข้า ซูมออก และพอดีหน้าต่าง
+- ล้างหน้าปัจจุบันพร้อมถามยืนยัน
+- รองรับภาษาไทยและอังกฤษครบทั้งข้อความและชื่อปุ่มสำหรับโปรแกรมอ่านหน้าจอ
+- รับ `contentId`, `itemId` และ `pageId` จาก Hub
+- ส่งออก Snapshot แบบเวกเตอร์และภาพ PNG ผ่าน API ภายใน เพื่อเตรียม Save/Load และ AI ในรอบถัดไป
+
+## โครงไฟล์
+
+- `public/pages/tools/notebook-preview.html` — โครงหน้าสมุดและข้อความสองภาษา
+- `public/pages/tools/notebook-core.css` — หน้าตา Toolbar, กระดาษ และ Responsive
+- `public/pages/tools/notebook-core.js` — กลไกเขียน ลบ เลื่อน ซูม และรูปแบบข้อมูล
+- `public/pages/tools/tool.js` — รับภาษาและ Content Context จาก Hub
+
+การแก้ข้อความทั่วไปทำที่ไฟล์ HTML การปรับสีหรือขนาดทำที่ไฟล์ CSS ส่วน JavaScript เป็นแกนกลางที่ปกติไม่ต้องแก้
+
+## รูปแบบข้อมูลที่เตรียมไว้
+
+```text
+schema: HUB_NOTEBOOK_CORE_V1
+context:
+  subjectId
+  chapterId
+  contentId
+  itemId
+  pageId
+strokes:
+  color
+  width
+  points[]
+```
+
+ข้อมูลยังอยู่ในหน่วยความจำของหน้าต่างเท่านั้น การรีเฟรชหรือปิดหน้าต่างจะล้างข้อมูลตามขอบเขตของ Round 5A
+
+## ผล QA
+
+- ตรวจ JavaScript syntax ผ่าน
+- `pnpm lint` ผ่าน
+- `pnpm typecheck` ผ่าน
+- `pnpm build` ผ่าน
+- ทดสอบเขียนและลบเส้นจริงผ่าน
+- ทดสอบซูมและลากเลื่อนกระดาษผ่าน
+- ทดสอบเปิดจาก Hub ผ่าน ฟิสิกส์ → บทที่ 1 → Notebook ผ่าน
+- ทดสอบ Context `physics-c1-notebook / main / page-001` ผ่าน
+- ทดสอบสลับไทย/English ทั้ง Hub และ Notebook ผ่าน
+
+## รอบถัดไป
+
+Round 5B เพิ่มหลายหน้า, Undo/Redo และการเก็บฉบับร่างในเครื่องด้วย IndexedDB โดยยังไม่เชื่อม Google Drive

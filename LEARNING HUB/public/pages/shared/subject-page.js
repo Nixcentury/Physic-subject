@@ -2,7 +2,7 @@
    โครงหน้ารายวิชากลางของ Learning Hub
    - ชื่อวิชาและรายการบทอยู่ใน HTML ของแต่ละวิชา
    - ไฟล์นี้ดูแล Navigation 3 ชั้นและการเปิดหน้าต่างงาน
-   - ยังไม่มี Quiz, คะแนน, Simulation หรือ Notebook จริง
+   - Notebook Core เขียนได้แล้ว แต่ยังไม่มี Quiz, คะแนน, Simulation หรือ Cloud Save
 ================================================================ */
 
 const subjectRoot = document.querySelector("[data-subject-page]");
@@ -132,13 +132,13 @@ function buildSubjectPage() {
           <span class="activity-icon" aria-hidden="true">▱</span>
           <span class="activity-copy">
             <small data-th="สมุดบันทึก" data-en="Notebook">สมุดบันทึก</small>
-            <strong data-th="Notebook ตัวอย่างเปล่า" data-en="Blank notebook sample">
-              Notebook ตัวอย่างเปล่า
+            <strong data-th="สมุดเขียนกลาง · รอบ 5A" data-en="Notebook Core · Round 5A">
+              สมุดเขียนกลาง · รอบ 5A
             </strong>
             <span
-              data-th="สำรองที่ไว้สำหรับสมุดกลางและกลไก Save/Load ภายหลัง"
-              data-en="Reserves space for the shared notebook and later Save/Load."
-            >สำรองที่ไว้สำหรับสมุดกลางและกลไก Save/Load ภายหลัง</span>
+              data-th="เขียน ลบ เลื่อน และซูมได้แล้ว ส่วนหลายหน้าและ Save/Load จะตามมา"
+              data-en="Write, erase, pan, and zoom now; pages and Save/Load arrive next."
+            >เขียน ลบ เลื่อน และซูมได้แล้ว ส่วนหลายหน้าและ Save/Load จะตามมา</span>
           </span>
           <b aria-hidden="true">↗</b>
         </button>
@@ -147,9 +147,9 @@ function buildSubjectPage() {
       <p class="prototype-note">
         <span aria-hidden="true">◇</span>
         <span
-          data-th="รอบนี้ทดสอบเฉพาะโครง Navigation และหน้าต่าง ยังไม่มีคำถาม คะแนน หรือการบันทึกข้อมูล"
-          data-en="This round tests navigation and windows only. There are no questions, scores, or saved data."
-        >รอบนี้ทดสอบเฉพาะโครง Navigation และหน้าต่าง ยังไม่มีคำถาม คะแนน หรือการบันทึกข้อมูล</span>
+          data-th="Notebook Core เขียนได้แล้ว แต่ยังไม่มีคำถาม คะแนน หลายหน้า หรือการบันทึกข้อมูล"
+          data-en="Notebook Core can now draw, but questions, scores, multiple pages, and saving are not enabled yet."
+        >Notebook Core เขียนได้แล้ว แต่ยังไม่มีคำถาม คะแนน หลายหน้า หรือการบันทึกข้อมูล</span>
       </p>
     </section>
   `;
