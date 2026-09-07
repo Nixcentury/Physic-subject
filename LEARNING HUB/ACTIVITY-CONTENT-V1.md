@@ -8,7 +8,7 @@
 2. วางไฟล์ใหม่ใต้ `public/content/<subject>/`
 3. เปลี่ยน `data-activity-id` ให้เป็นรหัสภาษาอังกฤษตัวเล็กที่ไม่ซ้ำ
 4. แก้ข้อความไทยใน `data-th`, อังกฤษใน `data-en` และข้อความที่อยู่ระหว่างแท็ก
-5. เพิ่มโจทย์โดยใช้ `data-question-type="choice"` หรือ `data-question-type="number"`
+5. เพิ่มโจทย์โดยใช้ `data-question-type="choice"` หรือ `data-question-type="number"` และใส่วิธีทำสองภาษาใน `data-question-solution`
 6. เปิด Preview ด้วยลิงก์ `pages/tools/activity-preview.html?content=<subject>/<file>.html`
 7. รัน `pnpm validate:content` ก่อน Build
 
@@ -27,6 +27,7 @@ http://localhost:3000/pages/tools/activity-preview.html?content=physics/ohms-law
 - โจทย์แบบตัวเลือกและตัวเลข
 - รูปภาพหรือลิงก์เนื้อหาที่ปลอดภัย
 - ข้อมูลคำตอบและค่าคลาดเคลื่อน
+- วิธีทำหรือคำอธิบายเฉลยสองภาษาใน `data-question-solution` (ไม่บังคับ)
 
 ## สิ่งที่ห้ามใส่
 
@@ -37,6 +38,8 @@ http://localhost:3000/pages/tools/activity-preview.html?content=physics/ohms-law
 - Event handler เช่น `onclick`
 
 Activity Core จะสร้างช่องตอบให้ตาม `data-question-type` และ Print Core จะจัดกระดาษ A4 ให้ทุกชุดเหมือนกัน
+
+Print Core มี 4 ส่วนกลาง: เลือกข้อ, พิมพ์สรุป, ปริ้นโจทย์ และปริ้นเฉลย ปุ่มปริ้นเฉลยมีไว้ในหน้า Preview/งานหลังบ้าน ไม่ควรนำไปแสดงในหน้าสำหรับนักเรียน
 
 ## โจทย์ตัวเลือก
 
@@ -52,6 +55,11 @@ Activity Core จะสร้างช่องตอบให้ตาม `data
     <li data-choice-id="a" data-th="ตัวเลือก ก" data-en="Choice A">ตัวเลือก ก</li>
     <li data-choice-id="b" data-th="ตัวเลือก ข" data-en="Choice B">ตัวเลือก ข</li>
   </ul>
+  <p
+    data-question-solution
+    data-th="อธิบายเหตุผลภาษาไทย"
+    data-en="Explain the reasoning in English"
+  >อธิบายเหตุผลภาษาไทย</p>
 </article>
 ```
 
@@ -68,6 +76,11 @@ Activity Core จะสร้างช่องตอบให้ตาม `data
   data-unit-en="ohms"
 >
   <h3 data-question-prompt data-th="คำถาม" data-en="Question">คำถาม</h3>
+  <p
+    data-question-solution
+    data-th="แสดงวิธีคำนวณภาษาไทย"
+    data-en="Show the calculation in English"
+  >แสดงวิธีคำนวณภาษาไทย</p>
 </article>
 ```
 

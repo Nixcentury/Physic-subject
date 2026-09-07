@@ -2,7 +2,7 @@
    Activity Core กลางของ Learning Hub
    - โหลด HTML ที่มีเฉพาะเนื้อหา
    - ตรวจ Content Contract V1 ก่อนแสดง
-   - สร้างช่องตอบและปุ่มปริ้นจากระบบกลาง
+   - สร้างช่องตอบและส่งเนื้อหาให้ระบบปริ้นกลาง
    - รอบ 5B ยังไม่ตรวจคำตอบ ไม่คิดคะแนน และไม่บันทึกข้อมูล
 ================================================================ */
 
@@ -13,7 +13,11 @@
   const mount = document.querySelector("[data-activity-mount]");
   const loading = document.querySelector("[data-activity-loading]");
   const status = document.querySelector("[data-activity-contract-status]");
-  const printButton = document.querySelector("[data-activity-print]");
+  const printControls = [
+    ...document.querySelectorAll(
+      "[data-print-mode], [data-print-selection-toggle], [data-print-select-all], [data-print-select-none]",
+    ),
+  ];
   const allowedQuestionTypes = new Set(["choice", "number"]);
   const forbiddenSelector = "script, style, link, iframe, object, embed, form, button, input, textarea, select";
 
@@ -122,6 +126,7 @@
       const questionId = question.dataset.questionId?.trim();
       const questionType = question.dataset.questionType?.trim();
       const prompt = question.querySelector("[data-question-prompt]");
+      const solutions = [...question.querySelectorAll("[data-question-solution]")];
       const answer = question.dataset.answer?.trim();
 
       if (!questionId) {
@@ -139,6 +144,12 @@
         errors.push(`Question ${questionId || index + 1} needs Thai and English prompts.`);
       }
       if (!answer) errors.push(`Question ${questionId || index + 1} has no answer data.`);
+      if (solutions.length > 1) {
+        errors.push(`Question ${questionId || index + 1} has more than one solution.`);
+      }
+      if (solutions[0] && !hasBilingualText(solutions[0])) {
+        errors.push(`Question ${questionId || index + 1} solution needs Thai and English text.`);
+      }
 
       if (questionType === "choice") {
         const options = [...question.querySelectorAll("[data-choice-id]")];
@@ -306,6 +317,9 @@
       const questionId = question.dataset.questionId;
       const prompt = question.querySelector("[data-question-prompt]");
       question.classList.add("activity-question");
+      question
+        .querySelector("[data-question-solution]")
+        ?.classList.add("activity-question-solution");
 
       const heading = document.createElement("div");
       heading.className = "activity-question-heading";
@@ -350,7 +364,9 @@
     if (status) {
       setStatus("error", "!", "ไฟล์เนื้อหาต้องแก้ไข", "Content needs attention");
     }
-    if (printButton) printButton.disabled = true;
+    printControls.forEach((control) => {
+      control.disabled = true;
+    });
   }
 
   function getResponses() {
@@ -368,7 +384,7 @@
   }
 
   async function loadContent() {
-    if (!shell || !mount || !loading || !status || !printButton) {
+    if (!shell || !mount || !loading || !status || printControls.length === 0) {
       showError(["Activity shell is incomplete."]);
       return;
     }
@@ -412,11 +428,10 @@
       mount.replaceChildren(contentRoot);
       loading.hidden = true;
       setStatus("valid", "✓", "โครงเนื้อหาผ่าน", "Content contract passed");
-      printButton.disabled = false;
-
       const title = contentRoot.querySelector("[data-activity-title]");
       window.LearningHubPrint?.configure({
         getTitle: () => title?.textContent?.trim() || "Learning Hub Activity",
+        getContent: () => contentRoot,
       });
       document.dispatchEvent(
         new CustomEvent("learning-hub-activity-ready", {
@@ -435,8 +450,6 @@
       ]);
     }
   }
-
-  printButton?.addEventListener("click", () => window.LearningHubPrint?.print());
 
   window.LearningHubActivity = Object.freeze({
     getContent: () => contentRoot,

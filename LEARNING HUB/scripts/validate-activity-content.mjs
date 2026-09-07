@@ -67,6 +67,16 @@ function validateQuestion(file, openingTag, body, index, seenIds) {
     addError(file, `${label} needs a prompt with data-th and data-en.`);
   }
 
+  const solutionTags = [
+    ...body.matchAll(/<[^>]*\bdata-question-solution(?:\s|=|>)[^>]*>/gi),
+  ].map((match) => match[0]);
+  if (solutionTags.length > 1) {
+    addError(file, `${label} can contain only one data-question-solution.`);
+  }
+  if (solutionTags[0] && !hasBilingualText(solutionTags[0])) {
+    addError(file, `${label} solution needs data-th and data-en.`);
+  }
+
   if (type === "choice") {
     const optionTags = [...body.matchAll(/<li\b[^>]*\bdata-choice-id(?:\s|=|>)[^>]*>/gi)].map(
       (match) => match[0],
