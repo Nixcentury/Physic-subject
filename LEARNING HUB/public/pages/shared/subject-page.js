@@ -2,7 +2,7 @@
    โครงหน้ารายวิชากลางของ Learning Hub
    - ชื่อวิชาและรายการบทอยู่ใน HTML ของแต่ละวิชา
    - ไฟล์นี้ดูแล Navigation 3 ชั้นและการเปิดหน้าต่างงาน
-   - Notebook Core เขียนได้แล้ว แต่ยังไม่มี Quiz, คะแนน, Simulation หรือ Cloud Save
+   - Activity Core โหลด HTML เนื้อหาและปริ้นรูปแบบกลางได้แล้ว แต่ยังไม่ตรวจคะแนน
 ================================================================ */
 
 const subjectRoot = document.querySelector("[data-subject-page]");
@@ -100,19 +100,6 @@ function buildSubjectPage() {
       </header>
 
       <div class="activity-grid">
-        <button class="activity-card accent-blue" type="button" data-tool-kind="activity">
-          <span class="activity-icon" aria-hidden="true">✎</span>
-          <span class="activity-copy">
-            <small data-th="พื้นที่งาน" data-en="Activity">พื้นที่งาน</small>
-            <strong data-th="งานตัวอย่างเปล่า" data-en="Blank activity sample">งานตัวอย่างเปล่า</strong>
-            <span
-              data-th="ทดสอบหน้าต่างสำหรับโจทย์ คำสั่ง และการส่งงาน"
-              data-en="Tests a window for prompts, instructions, and submission."
-            >ทดสอบหน้าต่างสำหรับโจทย์ คำสั่ง และการส่งงาน</span>
-          </span>
-          <b aria-hidden="true">↗</b>
-        </button>
-
         <button class="activity-card accent-mint" type="button" data-tool-kind="simulation">
           <span class="activity-icon" aria-hidden="true">◉</span>
           <span class="activity-copy">
@@ -147,9 +134,9 @@ function buildSubjectPage() {
       <p class="prototype-note">
         <span aria-hidden="true">◇</span>
         <span
-          data-th="Notebook Core เขียนได้แล้ว แต่ยังไม่มีคำถาม คะแนน หลายหน้า หรือการบันทึกข้อมูล"
-          data-en="Notebook Core can now draw, but questions, scores, multiple pages, and saving are not enabled yet."
-        >Notebook Core เขียนได้แล้ว แต่ยังไม่มีคำถาม คะแนน หลายหน้า หรือการบันทึกข้อมูล</span>
+          data-th="แม่พิมพ์ Quiz และระบบปริ้นเป็นเครื่องมือหลังบ้าน จึงไม่แสดงในรายการนักเรียนจนกว่าจะมีเนื้อหาจริง"
+          data-en="Quiz templates and printing are authoring tools, so they stay hidden from students until real content is ready."
+        >แม่พิมพ์ Quiz และระบบปริ้นเป็นเครื่องมือหลังบ้าน จึงไม่แสดงในรายการนักเรียนจนกว่าจะมีเนื้อหาจริง</span>
       </p>
     </section>
   `;

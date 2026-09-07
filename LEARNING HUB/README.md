@@ -22,6 +22,11 @@
 16. `js/roles.js` — สิทธิ์นักเรียน ครู แอดมิน และคำขอสิทธิ์ครู ปกติไม่ต้องแก้
 17. `admin.html` และ `js/role-admin.js` — หน้าหลังบ้านและการจัดการสิทธิ์ครู
 18. `public/shared/learning-hub-tools.js` — ตัวกันหน้าต่าง Copy กลางสำหรับ Hub/Quiz/Simulation/Notebook
+19. `public/shared/activity-core.js` และ `.css` — โหลดและจัดหน้าตา HTML เนื้อหาทุกชุด
+20. `public/shared/print-core.js` และ `.css` — ปุ่มและฟอร์มปริ้น A4 กลาง
+21. `public/content/**/*.html` — ไฟล์เนื้อหาสั้นที่มีเฉพาะสรุปและโจทย์
+22. `templates/activity-content-template.html` — แม่พิมพ์สำหรับคัดลอกไปสร้างเนื้อหาใหม่
+23. `scripts/validate-activity-content.mjs` — ตรวจไฟล์เนื้อหาก่อน Build
 
 ในหน้า HTML ลูก ข้อความสองภาษาเขียนอยู่ด้วยกันแบบนี้:
 
@@ -69,6 +74,16 @@ LEARNING HUB/
 
 ทุกไฟล์ `.html` ที่วางไว้ใต้โฟลเดอร์ `public/pages` จะถูกนำขึ้น GitHub Pages อัตโนมัติ โดย workflow หลักไม่ต้องแก้ไข
 
+## การเพิ่ม Quiz หรือแบบฝึกหัดใหม่
+
+ไฟล์เนื้อหาใหม่ไม่สร้างหน้าเว็บทั้งระบบ ให้คัดลอก `templates/activity-content-template.html` แล้วแก้เฉพาะสรุป โจทย์ ตัวเลือก คำตอบ และข้อความสองภาษา จากนั้นวางใต้ `public/content/<subject>/`
+
+ไฟล์เนื้อหาห้ามมี CSS, JavaScript, Firebase, ปุ่ม, ช่องกรอก หรือคำสั่งปริ้นของตัวเอง Activity Core จะสร้างช่องตอบและหน้าตา ส่วน Print Core จะจัดกระดาษ A4 ให้เหมือนกันทุกชุด
+
+พรีวิวไฟล์ใดก็ได้ด้วย `pages/tools/activity-preview.html?content=<โฟลเดอร์>/<ชื่อไฟล์>.html` โดย `<โฟลเดอร์>/<ชื่อไฟล์>.html` คือที่อยู่ต่อจาก `public/content/` จึงไม่ต้องแก้ไฟล์ Activity Core หรือ Print Core
+
+รายละเอียดสัญญาและตัวอย่างอยู่ใน [`ACTIVITY-CONTENT-V1.md`](ACTIVITY-CONTENT-V1.md)
+
 ## การเรียกตัวกันหน้าต่าง Copy จาก Quiz
 
 เพิ่มบรรทัดนี้ก่อน `</body>` ใน Quiz หรือ Simulation ที่ต้องการเชื่อมกับ Hub:
@@ -98,7 +113,11 @@ LEARNING HUB/
 - Notebook Core หน้าเดียวเขียนด้วยสีดำ/น้ำเงิน/แดง ลบ เลื่อน ซูม Undo/Redo และสลับโหมดนิ้วได้ในหน้าต่างลอย
 - หน้า Hub, Admin, รายวิชา และเครื่องมือปิดหน้าต่างแตะค้าง/คัดลอก โดยยกเว้นช่องกรอกข้อมูล
 - เครื่องมือกลางหนึ่งไฟล์พร้อมให้ Quiz/Simulation ชุดใหม่เรียกตัวกันหน้าต่าง Copy ได้
-- ยังไม่มีเนื้อหา Quiz เดิม
+- Activity Core ดึง HTML เนื้อหาแยกไฟล์ ตรวจรูปแบบ และสร้างช่องตอบมาตรฐานได้
+- Print Core จัดหน้า A4, ช่องชื่อ/ห้อง/เลขที่ และป้องกันการตัดโจทย์กลางข้อเหมือนกันทุกชุด
+- ตัวตรวจ Content V1 ทำงานทุกครั้งก่อน Build และปฏิเสธ Script, CSS, Form หรือรหัสข้อที่ผิด
+- หน้าแม่พิมพ์เป็นเครื่องมือหลังบ้าน/QA แบบลิงก์ตรง ไม่แสดงเป็นงานให้นักเรียน
+- ยังไม่มีเนื้อหา Quiz จริงและยังไม่ตรวจคำตอบหรือคิดคะแนน
 - Notebook ยังไม่มีหลายหน้าหรือระบบ Save/Load
 - GitHub Pages เผยแพร่อัตโนมัติเมื่อ Push เข้า `main`
 
@@ -106,7 +125,7 @@ LEARNING HUB/
 
 ## ลำดับงานที่ตกลงล่าสุด
 
-สถานะปัจจุบัน: **Round 5A มี Notebook Core หน้าเดียวที่เขียนได้จริง และรับ Content Context จาก Hub แล้ว**
+สถานะปัจจุบัน: **Round 5B มี Content HTML Contract, Activity Core และ Print Core กลางแล้ว โดยยังไม่ตรวจคะแนน**
 
 ผลตรวจฐานก่อนเริ่ม Login บันทึกไว้ที่ [`ROUND-0-BASELINE.md`](ROUND-0-BASELINE.md)
 
@@ -128,9 +147,11 @@ LEARNING HUB/
 
 ผลการทำ Notebook Core รอบ 5A บันทึกไว้ที่ [`ROUND-5A-NOTEBOOK-CORE.md`](ROUND-5A-NOTEBOOK-CORE.md)
 
+ผลการแยกเนื้อหาและระบบปริ้นกลางรอบ 5B บันทึกไว้ที่ [`ROUND-5B-CENTRAL-TOOLS.md`](ROUND-5B-CENTRAL-TOOLS.md)
+
 แบบคะแนน V1 ที่เก็บเฉพาะคะแนนล่าสุดบันทึกไว้ที่ [`SCORE-DATA-V1.md`](SCORE-DATA-V1.md)
 
-Round 1 เชื่อม Google Sign-In, Guest และ Logout แล้ว Round 2 เพิ่ม Online/Idle/Offline และ Round 3 เตรียมระบบสิทธิ์กับหน้าหลังบ้านแล้ว ส่วน Round 5A เริ่ม Notebook Core แล้ว โดยยังไม่เริ่ม Quiz หรือระบบ Classroom จริง
+Round 1 เชื่อม Google Sign-In, Guest และ Logout แล้ว Round 2 เพิ่ม Online/Idle/Offline และ Round 3 เตรียมระบบสิทธิ์กับหน้าหลังบ้านแล้ว Round 5A เริ่ม Notebook Core และ Round 5B เริ่มเครื่องมือกลางสำหรับเนื้อหากับการปริ้น โดยยังไม่เริ่ม Quiz จริงหรือระบบ Classroom
 
 ## แบบ Navigation และสิ่งที่จะทำต่อ
 
@@ -144,4 +165,4 @@ Round 1 เชื่อม Google Sign-In, Guest และ Logout แล้ว R
 - ทุกหน้ารองรับภาษาไทยและอังกฤษอย่างสมบูรณ์
 - ต้องรักษา URL ของ Quiz และ Simulation เดิมทั้งหมดให้เปิดได้เสมอ
 
-Round ถัดไปคือ Round 5B เพิ่มหลายหน้าและเก็บฉบับร่างในเครื่องด้วย IndexedDB โดยยังไม่เชื่อม Google Drive
+Round ถัดไปคือ Round 5C เพิ่ม Quiz Checker พื้นฐานสำหรับตัวเลือกและคำตอบตัวเลข โดยยังไม่บันทึกคะแนน ส่วน Notebook หลายหน้าและ Save/Load จะทำหลังวางสัญญาบันทึกกลางที่ใช้ร่วมกับเครื่องมือชนิดอื่น

@@ -14,8 +14,8 @@ const toolTypes = {
   activity: {
     icon: "✎",
     page: "pages/tools/activity-preview.html",
-    titleTh: "พื้นที่งานตัวอย่าง",
-    titleEn: "Activity workspace",
+    titleTh: "กิจกรรม",
+    titleEn: "Activity",
     accent: "blue",
   },
   simulation: {

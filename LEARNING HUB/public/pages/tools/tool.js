@@ -1,5 +1,6 @@
 const supportedLanguages = new Set(["th", "en"]);
 const subscribers = new Set();
+const initialLanguage = new URLSearchParams(location.search).get("lang");
 
 let activeContext = Object.freeze({
   version: 1,
@@ -36,6 +37,17 @@ function setLanguage(language) {
   document.querySelectorAll("[data-aria-th][data-aria-en]").forEach((element) => {
     element.setAttribute("aria-label", element.dataset[`aria${nextLanguage === "en" ? "En" : "Th"}`]);
   });
+  document
+    .querySelectorAll("[data-placeholder-th][data-placeholder-en]")
+    .forEach((element) => {
+      element.setAttribute("placeholder", element.dataset[`placeholder${nextLanguage === "en" ? "En" : "Th"}`]);
+    });
+
+  const summary = document.querySelector("[data-context-summary]");
+  if (summary && !activeContext.content) {
+    summary.textContent =
+      nextLanguage === "en" ? "Waiting for context from Hub…" : "กำลังรอข้อมูลจาก Hub…";
+  }
 }
 
 function cleanContextValue(value, fallback = "-") {
@@ -109,7 +121,7 @@ window.addEventListener("message", (event) => {
 });
 
 ensureContextPreview();
-setLanguage("th");
+setLanguage(initialLanguage);
 
 window.HubContext = Object.freeze({
   get: () => activeContext,
