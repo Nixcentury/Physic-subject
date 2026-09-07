@@ -3,6 +3,7 @@ const STORAGE_KEY = 'kru-nix-tcas-learning-plan-v1';
 const ROUND_URL = 'https://my-tcas.s3.ap-southeast-1.amazonaws.com/mytcas/rounds/';
 const ROUND_REQUEST_TIMEOUT = 15000;
 const roundRequests = new Map();
+const roundCache = new Map();
 
 const state = {
   rows: [],
@@ -426,26 +427,97 @@ async function loadProgramRounds(programId, roundUrl) {
   if (!container) return;
 
   try {
-    const payload = await requestRoundsFromLms(programId);
-    if (!payload || payload.success === false) {
-      throw new Error(payload?.message || 'ไม่สามารถอ่านข้อมูลรอบได้');
-    }
-    renderProgramRounds(container, Array.isArray(payload.rounds) ? payload.rounds : []);
+    const rounds = await requestProgramRounds(programId, roundUrl);
+    renderProgramRounds(container, rounds);
   } catch (error) {
-    const isEmbedded = window.parent !== window;
     container.innerHTML = `
       <div class="rounds-empty">
-        <strong>${isEmbedded ? 'ยังโหลดข้อมูลรอบไม่สำเร็จ' : 'ข้อมูลรอบจะแสดงเมื่อเปิดผ่าน LMS'}</strong>
+        <strong>ยังโหลดข้อมูลรอบไม่สำเร็จ</strong>
         <span>${escapeHtml(error?.message || 'กรุณาลองใหม่อีกครั้ง')}</span>
-        ${isEmbedded ? '<button type="button" class="round-retry-button">ลองโหลดอีกครั้ง</button>' : ''}
+        <button type="button" class="round-retry-button">ลองโหลดอีกครั้ง</button>
       </div>
     `;
     const retry = container.querySelector('.round-retry-button');
     if (retry) retry.addEventListener('click', () => {
+      roundCache.delete(programId);
       container.innerHTML = '<div class="rounds-status"><span class="rounds-spinner" aria-hidden="true"></span>กำลังอ่านข้อมูลรอบจาก MyTCAS…</div>';
       loadProgramRounds(programId, roundUrl);
     });
   }
+}
+
+async function requestProgramRounds(programId, roundUrl) {
+  if (roundCache.has(programId)) return roundCache.get(programId);
+
+  const request = (async () => {
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => controller.abort(), ROUND_REQUEST_TIMEOUT);
+
+    try {
+      const response = await fetch(roundUrl, {
+        cache: 'no-store',
+        mode: 'cors',
+        signal: controller.signal
+      });
+      if (!response.ok) throw new Error(`MyTCAS ตอบกลับด้วยสถานะ ${response.status}`);
+
+      const rows = await response.json();
+      if (!Array.isArray(rows)) throw new Error('รูปแบบข้อมูลรอบไม่ถูกต้อง');
+      return rows.map(normalizeRoundRecord);
+    } catch (directError) {
+      if (window.parent === window) {
+        if (directError?.name === 'AbortError') throw new Error('ใช้เวลาโหลดข้อมูลนานเกินไป กรุณาลองใหม่');
+        throw new Error('เชื่อมต่อข้อมูลรอบจาก MyTCAS ไม่สำเร็จ กรุณาลองใหม่');
+      }
+
+      // Keep compatibility with the original LMS-embedded version.
+      const payload = await requestRoundsFromLms(programId);
+      if (!payload || payload.success === false) {
+        throw new Error(payload?.message || 'ไม่สามารถอ่านข้อมูลรอบได้');
+      }
+      return (Array.isArray(payload.rounds) ? payload.rounds : []).map(normalizeRoundRecord);
+    } finally {
+      window.clearTimeout(timer);
+    }
+  })();
+
+  roundCache.set(programId, request);
+  try {
+    return await request;
+  } catch (error) {
+    roundCache.delete(programId);
+    throw error;
+  }
+}
+
+function normalizeRoundRecord(round = {}) {
+  const typeParts = cleanText(round.type).split('_');
+  const roundNumber = typeParts[0];
+  const academicYear = typeParts[1];
+  const roundLabel = round.roundLabel || [
+    roundNumber ? `รอบ ${roundNumber}` : '',
+    academicYear ? `ปี ${academicYear}` : ''
+  ].filter(Boolean).join(' · ');
+
+  return {
+    ...round,
+    roundLabel,
+    projectName: round.projectName || cleanText(round.project_name_th),
+    receiveStudentNumber: round.receiveStudentNumber ?? round.receive_student_number,
+    scoreConditions: round.scoreConditions || round.score_conditions || {},
+    scores: round.scores || {},
+    description: round.description || '',
+    condition: round.condition || '',
+    interviewDate: round.interviewDate || round.interview_date || '',
+    interviewTime: round.interviewTime || round.interview_time || '',
+    interviewLocation: round.interviewLocation || round.interview_location || '',
+    link: round.link || '',
+    folio: {
+      ...(round.folio || {}),
+      closedDate: round.folio?.closedDate || round.folio?.closed_date || '',
+      criteria: round.folio?.criteria || ''
+    }
+  };
 }
 
 function requestRoundsFromLms(programId) {
