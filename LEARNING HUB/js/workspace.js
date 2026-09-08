@@ -48,6 +48,7 @@ const subjects = {
     titleTh: "คณิตศาสตร์ ม.ปลาย",
     titleEn: "Upper Secondary Mathematics",
   },
+  test: { titleTh: "ทดสอบ", titleEn: "Test" },
 };
 
 function buildToolCatalog() {

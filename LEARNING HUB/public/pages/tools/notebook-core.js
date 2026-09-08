@@ -127,6 +127,11 @@ export class NotebookCore {
       eraseChanged: false,
       eraseSnapshot: null,
     };
+    this.contextInfo = options.context ? { ...options.context } : null;
+    this.onHubContextChange = (event) => {
+      this.setContext(event.detail?.content);
+      this.refreshLocalizedControls();
+    };
 
     this.history = {
       undo: [],
@@ -200,10 +205,10 @@ export class NotebookCore {
       this.onHistoryShortcut(event),
     );
 
-    document.addEventListener('learning-hub-context-change', (event) => {
-      this.updatePageKey(event.detail?.content);
-      this.refreshLocalizedControls();
-    });
+    document.addEventListener(
+      'learning-hub-context-change',
+      this.onHubContextChange,
+    );
   }
 
   bindCanvas() {
@@ -269,6 +274,12 @@ export class NotebookCore {
   updatePageKey(content) {
     if (!this.elements.pageKey || !content) return;
     this.elements.pageKey.textContent = `${content.itemId || 'main'} / ${content.pageId || 'page-001'}`;
+  }
+
+  setContext(content) {
+    if (!content) return;
+    this.contextInfo = { ...content };
+    this.updatePageKey(this.contextInfo);
   }
 
   setTool(tool) {
@@ -565,6 +576,52 @@ export class NotebookCore {
     this.paint();
   }
 
+  loadSnapshot(snapshot) {
+    const strokes = Array.isArray(snapshot?.strokes)
+      ? snapshot.strokes
+          .filter(
+            (stroke) =>
+              stroke &&
+              typeof stroke.color === 'string' &&
+              Number.isFinite(Number(stroke.width)) &&
+              Array.isArray(stroke.points),
+          )
+          .map((stroke) => ({
+            color: stroke.color,
+            width: Number(stroke.width),
+            points: stroke.points
+              .filter(
+                (point) =>
+                  point &&
+                  Number.isFinite(Number(point.x)) &&
+                  Number.isFinite(Number(point.y)),
+              )
+              .map((point) => ({ x: Number(point.x), y: Number(point.y) })),
+          }))
+      : [];
+
+    this.history.undo = [];
+    this.history.redo = [];
+    this.state.revision = Math.max(0, Number(snapshot?.revision) || 0);
+    this.applyStrokeState(strokes);
+    this.updateHistoryControls();
+    if (snapshot?.context) this.setContext(snapshot.context);
+    this.setStatus(
+      strokes.length
+        ? { th: 'โหลดลายเขียนของหน้านี้แล้ว', en: 'Writing restored for this page' }
+        : toolMessages[this.state.tool],
+    );
+    return strokes.length;
+  }
+
+  get hasInk() {
+    return this.state.strokes.length > 0 || Boolean(this.state.activeStroke);
+  }
+
+  get strokeCount() {
+    return this.state.strokes.length + (this.state.activeStroke ? 1 : 0);
+  }
+
   updateHistoryControls() {
     if (this.elements.undo) this.elements.undo.disabled = !this.canUndo;
     if (this.elements.redo) this.elements.redo.disabled = !this.canRedo;
@@ -625,7 +682,12 @@ export class NotebookCore {
       schema: NOTEBOOK_SCHEMA,
       width: PAGE_WIDTH,
       height: PAGE_HEIGHT,
-      context: hub?.content ? { ...hub.content } : null,
+      revision: this.state.revision,
+      context: this.contextInfo
+        ? { ...this.contextInfo }
+        : hub?.content
+          ? { ...hub.content }
+          : null,
       strokes: this.state.strokes.map((stroke) => ({
         color: stroke.color,
         width: stroke.width,
@@ -636,6 +698,13 @@ export class NotebookCore {
 
   exportImage(type = 'image/png', quality) {
     return this.canvas.toDataURL(type, quality);
+  }
+
+  destroy() {
+    document.removeEventListener(
+      'learning-hub-context-change',
+      this.onHubContextChange,
+    );
   }
 }
 

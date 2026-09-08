@@ -25,6 +25,7 @@ import {
   createIdentityContext,
 } from "./content-context.js";
 import { createWorkspace } from "./workspace.js";
+import "./quiz-progress.js";
 
 const languageStorageKey = "learning-hub-language";
 
