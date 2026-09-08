@@ -79,6 +79,20 @@ function buildSubjectPage() {
         >การ์ดทั้ง 4 ใบเป็นช่องว่างสำหรับเนื้อหาใหม่ กดเพื่อทดลองชั้นเลือกงาน</p>
       </div>
       <div class="chapter-grid" id="chapter-grid"></div>
+      ${
+        subject.id === "test"
+          ? `<aside class="authoring-kit surface">
+              <div>
+                <small data-th="ชุดสร้าง Quiz" data-en="Quiz authoring kit">ชุดสร้าง Quiz</small>
+                <strong data-th="มีแม่แบบ HTML และ Prompt พร้อมส่งให้ AI" data-en="HTML template and an AI-ready prompt">มีแม่แบบ HTML และ Prompt พร้อมส่งให้ AI</strong>
+              </div>
+              <div class="authoring-kit-actions">
+                <a href="../content/templates/quiz-template.html" download data-th="ดาวน์โหลด HTML Template" data-en="Download HTML template">ดาวน์โหลด HTML Template</a>
+                <a href="../content/templates/quiz-ai-prompt.txt" download data-th="ดาวน์โหลด Prompt สำหรับ AI" data-en="Download AI prompt">ดาวน์โหลด Prompt สำหรับ AI</a>
+              </div>
+            </aside>`
+          : ""
+      }
     </section>
 
     <section class="activity-view" id="activity-view" aria-labelledby="activity-view-title" hidden>
@@ -100,6 +114,19 @@ function buildSubjectPage() {
       </header>
 
       <div class="activity-grid">
+        ${
+          subject.id === "test"
+            ? `<button class="activity-card" type="button" data-tool-kind="quiz">
+                <span class="activity-icon" aria-hidden="true">✓</span>
+                <span class="activity-copy">
+                  <small data-th="Quiz Engine" data-en="Quiz Engine">Quiz Engine</small>
+                  <strong data-th="เปิด Quiz Template" data-en="Open Quiz Template">เปิด Quiz Template</strong>
+                  <span data-th="ทดลองข้อสอบตัวอย่างผ่านระบบกลางก่อนสร้างชุดจริง" data-en="Try the sample quiz in the shared engine before creating a real set">ทดลองข้อสอบตัวอย่างผ่านระบบกลางก่อนสร้างชุดจริง</span>
+                </span>
+                <b aria-hidden="true">↗</b>
+              </button>`
+            : ""
+        }
         <button class="activity-card accent-mint" type="button" data-tool-kind="simulation">
           <span class="activity-icon" aria-hidden="true">◉</span>
           <span class="activity-copy">

@@ -11,6 +11,13 @@ import {
 } from "./content-context.js";
 
 const toolTypes = {
+  quiz: {
+    icon: "✓",
+    page: "pages/tools/quiz-player.html?content=../../content/templates/quiz-template.html",
+    titleTh: "Quiz Template",
+    titleEn: "Quiz Template",
+    accent: "blue",
+  },
   activity: {
     icon: "✎",
     page: "pages/tools/activity-preview.html",
