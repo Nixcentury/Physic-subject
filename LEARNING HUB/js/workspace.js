@@ -95,6 +95,11 @@ function buildToolCatalog() {
 }
 
 const toolCatalog = buildToolCatalog();
+// A separate content ID keeps numeric QA work apart from the original MCQ demo.
+Object.assign(toolCatalog["test-c2-quiz"], {
+  page: "pages/tools/quiz-player.html?content=../../content/samples/numeric-input-demo.html",
+  titleTh: "เติมคำตอบและแป้นคณิต", titleEn: "Numeric answers and math keyboard",
+});
 
 function clamp(value, minimum, maximum) {
   return Math.min(Math.max(value, minimum), Math.max(minimum, maximum));

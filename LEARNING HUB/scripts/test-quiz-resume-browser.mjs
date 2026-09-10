@@ -41,7 +41,7 @@ const server = createServer(async (request, response) => {
     let data;
     try { data = await readFile(path); }
     catch { path = resolve(root, "public", relative); data = await readFile(path); }
-    response.setHeader("Content-Type", ({".html":"text/html", ".js":"text/javascript", ".css":"text/css"})[extname(path)] || "application/octet-stream");
+    response.setHeader("Content-Type", ({".html":"text/html", ".js":"text/javascript", ".mjs":"text/javascript", ".css":"text/css", ".woff2":"font/woff2"})[extname(path)] || "application/octet-stream");
     response.end(data);
   } catch { response.writeHead(404); response.end("Not found"); }
 });
@@ -62,6 +62,7 @@ try {
   const page = await context.newPage();
   const errors = [];
   page.on("pageerror", error => errors.push(error.message));
+  page.on("console", message => { if(message.type() === 'warning') console.log('Browser warning:',message.text()); });
   page.on("dialog", dialog => dialog.accept());
   await page.goto(origin + "/__qa");
   await page.waitForFunction(()=>window.qaReady);
@@ -109,10 +110,12 @@ try {
   console.log("PASS real notebook + reasoning survive close/reopen");
 
   await page.evaluate(()=>qa.setUser('qa-b'));
+  await child.waitForFunction(()=>LearningHubQuiz.getState().identityKey === 'qa-b');
   await frame.locator('[data-quiz-storage-status][data-tone="cloud"]').waitFor();
   assert.equal(await frame.locator('[data-reasoning-input]').inputValue(),"");
   assert.deepEqual((await child.evaluate(()=>LearningHubQuiz.getState())).answers,{});
   await page.evaluate(()=>qa.setUser('qa-a'));
+  await child.waitForFunction(()=>LearningHubQuiz.getState().identityKey === 'qa-a');
   await frame.locator('[data-quiz-storage-status][data-tone="cloud"]').waitFor();
   assert.equal(await frame.locator('[data-reasoning-input]').inputValue(),"QA reasoning for account A");
   console.log("PASS account switch isolates answers and reasoning");
@@ -153,6 +156,46 @@ try {
   await child.evaluate(()=>{Storage.prototype.setItem=window.qaOriginalSetItem;});
   await frame.getByRole('button',{name:'Retry device save',exact:true}).click();
   console.log("PASS a failed device save leaves the real window open");
+  await page.locator('.is-close').click();
+  await page.evaluate(()=>qa.workspace.open('test-c2-quiz'));
+  frame = page.frameLocator('.workspace-tool-frame');
+  child = await frameObject();
+  await frame.locator('math-field[data-numeric-answer]').waitFor({timeout:12000});
+  await frame.locator('[data-quiz-storage-status][data-tone="cloud"]').waitFor();
+  await frame.locator('math-field').click();
+  await frame.locator('math-field').press('5');
+  await frame.locator('math-field').press('/');
+  await frame.locator('math-field').press('6');
+  const mathValue=await frame.locator('math-field').evaluate(element=>element.value);
+  console.log('Numeric keyboard value:',mathValue);
+  assert.match(mathValue,/frac/);
+  await frame.locator('[data-quiz-storage-status][data-tone="cloud"]').waitFor();
+  assert.equal(await page.evaluate(()=>db.records['quizProgress/qa-d/numeric-input-demo-v1'].answers['fraction-sum']),mathValue);
+  await page.locator('.is-close').click();
+  await page.evaluate(()=>qa.workspace.open('test-c2-quiz'));
+  frame=page.frameLocator('.workspace-tool-frame');child=await frameObject();
+  await frame.locator('math-field').waitFor();
+  await frame.locator('[data-quiz-storage-status][data-tone="cloud"]').waitFor();
+  assert.equal(await frame.locator('math-field').evaluate(element=>element.value),mathValue);
+  console.log('PASS MathLive fraction entry + cloud save + close/reopen');
+  await frame.locator('[data-submit-all]').click();
+  await frame.locator('[data-evidence-warning-continue]').click();
+  await frame.locator('[data-quiz-storage-status][data-tone="cloud"]').waitFor();
+  assert.equal((await child.evaluate(()=>LearningHubQuiz.getState())).latestScore.score,1);
+  console.log('PASS actual MathLive compact fraction is graded correctly');
+  // New browser storage, same fake signed-in account: restore from cloud only.
+  const second=await context.newPage();
+  await second.goto(origin+'/__qa');
+  await second.waitForFunction(()=>window.qaReady);
+  const numericRecord=await page.evaluate(()=>db.records['quizProgress/qa-d/numeric-input-demo-v1']);
+  await second.evaluate(record=>{localStorage.clear();db.records['quizProgress/qa-d/numeric-input-demo-v1']=record;qa.setUser('qa-d');qa.workspace.open('test-c2-quiz');},numericRecord);
+  const secondFrame=second.frameLocator('.workspace-tool-frame');
+  await secondFrame.locator('[data-quiz-storage-status][data-tone="cloud"]').waitFor();
+  const secondChild=await second.locator('.workspace-tool-frame').elementHandle().then(handle=>handle.contentFrame());
+  assert.equal((await secondChild.evaluate(()=>LearningHubQuiz.getState())).answers['fraction-sum'],mathValue);
+  assert.equal((await secondChild.evaluate(()=>LearningHubQuiz.getState())).latestScore.score,1);
+  console.log('PASS numeric answer and latest score restore from cloud without a device draft');
+  await second.close();
   assert.deepEqual(errors,[]);
   const output=resolve(root,'qa-output');await mkdir(output,{recursive:true});
   await page.screenshot({path:resolve(output,'quiz-resume-desktop.png'),fullPage:true});

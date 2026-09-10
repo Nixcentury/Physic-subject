@@ -1,4 +1,7 @@
-import { QuizEvidenceManager } from "./quiz-evidence.js";
+import { QuizEvidenceManager } from "./quiz-evidence.js?v=6b-numeric-1";
+import { readQuizContent } from "./quiz-content-adapter.js";
+import { hasAnswer, isCorrectAnswer, isStoredAnswer, parseNumericAnswer } from "./quiz-question-model.js";
+import { mountNumericAnswer, hideMathKeyboard } from "./quiz-math-input.js";
 
 /* ==============================================================
    Quiz Engine กลางของ Learning Hub
@@ -104,39 +107,12 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
   function questionStatus(question) {
     if (state.masteredIds.includes(question.id)) return "mastered";
     if (state.giveUps[question.id]) return "giveup";
-    if (state.answers[question.id]) return "answered";
+    if (hasAnswer(state.answers[question.id])) return "answered";
     return "empty";
   }
 
-  function readQuestions(root) {
-    return [...root.querySelectorAll("[data-question]")].map((element, index) => ({
-      id: element.dataset.questionId,
-      index,
-      answer: element.dataset.answer,
-      element,
-      prompt: element.querySelector("[data-question-prompt]"),
-      context: element.querySelector("[data-question-context]"),
-      options: [...element.querySelectorAll("[data-choice-id]")],
-      hints: [...element.querySelectorAll("[data-question-hint]")],
-      solution: element.querySelector("[data-question-solution]"),
-    }));
-  }
-
   function validateContent(root) {
-    const errors = [];
-    if (!root) errors.push("Missing data-learning-activity-content.");
-    if (root?.dataset.activityKind !== "quiz") errors.push("Content is not a quiz.");
-    if (!root?.dataset.activityId) errors.push("Missing stable quiz id.");
-    const questions = root ? readQuestions(root) : [];
-    if (!questions.length) errors.push("No questions found.");
-    questions.forEach((question, index) => {
-      if (!question.id || !question.prompt) errors.push(`Question ${index + 1} is incomplete.`);
-      if (question.options.length < 2) errors.push(`Question ${index + 1} needs choices.`);
-      if (!question.options.some((option) => option.dataset.choiceId === question.answer)) {
-        errors.push(`Question ${index + 1} has no matching answer.`);
-      }
-    });
-    return { errors, questions };
+    return readQuizContent(root);
   }
 
   function preparePrintSource(root) {
@@ -205,7 +181,7 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
     const questionsById = new Map(state.questions.map((question) => [question.id, question]));
     if (Object.entries(saved.answers || {}).some(([id, answer]) => {
       const question = questionsById.get(id);
-      return question && !question.options.some((option) => option.dataset.choiceId === answer);
+      return question && !isStoredAnswer(question, answer);
     })) return false;
     if (Object.values(saved.giveUps || {}).some((value) => typeof value !== "boolean")) return false;
     if (Object.values(saved.hintLevels || {}).some((value) => !Number.isInteger(value) || value < 0)) return false;
@@ -531,6 +507,7 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
   }
 
   function renderQuestion() {
+    hideMathKeyboard();
     const question = currentQuestion();
     if (!question) return;
     const promptTarget = document.querySelector("[data-current-prompt]");
@@ -560,6 +537,20 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
       button.addEventListener("click", () => selectAnswer(question.id, optionId));
       optionTarget.append(button);
     });
+
+    if (question.type === "number") {
+      mountNumericAnswer(optionTarget, {
+        value: state.answers[question.id] ?? "", disabled: isMastered || isGivenUp,
+        unit: question.unit[language()], language: language(),
+        onInput(value) {
+          if (state.answers[question.id] !== value) evidenceManager?.markContextChanged(question.id);
+          state.answers[question.id] = value;
+          persist();
+          renderNavigation();
+          renderStats();
+        },
+      });
+    }
 
     hintTarget.replaceChildren();
     const visibleHintCount = Math.min(Number(state.hintLevels[question.id]) || 0, question.hints.length);
@@ -602,7 +593,7 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
 
   function renderStats() {
     const answered = state.questions.filter(
-      (question) => state.answers[question.id] || state.masteredIds.includes(question.id),
+      (question) => hasAnswer(state.answers[question.id]) || state.masteredIds.includes(question.id),
     ).length;
     const hints = Object.values(state.hintLevels).reduce((sum, count) => sum + Number(count || 0), 0);
     const giveUps = Object.values(state.giveUps).filter(Boolean).length;
@@ -614,20 +605,21 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
   }
 
   function resultFor(question) {
-    const answer = state.answers[question.id] || "";
+    const answer = state.answers[question.id] ?? "";
     const mastered = state.masteredIds.includes(question.id);
-    const correct = mastered || (!state.giveUps[question.id] && answer === question.answer);
+    const correct = mastered || (!state.giveUps[question.id] && isCorrectAnswer(question, answer));
     const status = correct
       ? "correct"
       : state.giveUps[question.id]
         ? "giveup"
-        : answer
+        : hasAnswer(answer)
           ? "incorrect"
           : "unanswered";
     return { question, answer, correct, status };
   }
 
   function renderResults() {
+    hideMathKeyboard();
     evidenceManager?.unmount();
     const results = state.questions.map(resultFor);
     const score = results.filter((result) => result.correct).length;
@@ -882,6 +874,14 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
 
   async function submitAll() {
     if (submissionBusy) return;
+    const invalidIndex = state.questions.findIndex(question => question.type === "number" &&
+      !state.giveUps[question.id] && !state.masteredIds.includes(question.id) &&
+      hasAnswer(state.answers[question.id]) && parseNumericAnswer(state.answers[question.id]) === null);
+    if (invalidIndex >= 0) {
+      goTo(invalidIndex);
+      window.alert(label("มีคำตอบตัวเลขที่ยังไม่สมบูรณ์ กรุณาแก้รูปแบบหรือเว้นว่างก่อนส่งตรวจ", "A numeric answer is incomplete. Fix its format or leave it blank before submitting."));
+      return;
+    }
     const epoch = identityEpoch;
     submissionBusy = true;
     const results = state.questions.map(resultFor);

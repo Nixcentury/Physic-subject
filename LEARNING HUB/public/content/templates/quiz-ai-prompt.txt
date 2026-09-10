@@ -11,11 +11,18 @@ LEARNING HUB/public/content/templates/quiz-template.html
    - ชื่อชุดและคำอธิบายภาษาไทย–อังกฤษ
    - สรุปเนื้อหา
    - โจทย์
-   - ตัวเลือก
+   - ตัวเลือก (เฉพาะข้อกา) หรือค่าคำตอบและหน่วย (ข้อเติมตัวเลข)
    - คำตอบที่ถูกต้องใน data-answer
    - คำใบ้แบบไล่ระดับ
    - เฉลยและวิธีคิด
-5. แต่ละข้อต้องมี data-question-id ที่ไม่ซ้ำ เช่น q1, q2, q3 และ data-answer ต้องตรงกับ data-choice-id จริง
+5. แต่ละข้อต้องมี data-question-id ที่ไม่ซ้ำ เช่น q1, q2, q3 ห้ามเปลี่ยนรหัสเมื่อแค่แก้ชื่อหรือจัดกลุ่มใหม่
+   - ข้อกา: data-question-type="choice" และ data-answer ต้องตรงกับ data-choice-id จริง
+   - ข้อเติมตัวเลข: data-question-type="number" data-answer="5/6" data-tolerance="0" ไม่ต้องมีตัวเลือก
+   - ดูตัวอย่างข้อเติมได้ที่ LEARNING HUB/public/content/samples/numeric-input-demo.html
+   - data-tolerance เป็นค่าคลาดเคลื่อนสัมบูรณ์ที่ยอมรับได้ ต้องไม่ติดลบ ไม่ใช่เปอร์เซ็นต์ และถ้าไม่ใส่ถือว่า 0
+   - หน่วยแสดงแยกด้วย data-unit-th/data-unit-en ไม่ใส่หน่วยใน data-answer
+   - คำตอบตัวเลขรองรับจำนวนลบ ทศนิยม เศษส่วน รากและยกกำลัง แต่ยังไม่ใช่ระบบตรวจความสมมูลของสูตรที่มีตัวแปร
+   - data-topic-ids และ data-exam-ids เป็นรหัสหลายค่า คั่นด้วยช่องว่างได้ แต่ยังไม่ได้สร้างระบบค้นหา/นำเข้า Excel ในรอบนี้
 6. ทุกข้อความสำคัญต้องรองรับทั้งภาษาไทยและอังกฤษด้วย data-th/data-en หรือ data-quiz-language="th"/"en"
 7. ถ้ามีสูตร ใช้ MathJax รูปแบบ \(...\) สำหรับสูตรในบรรทัด และ \[...\] สำหรับสูตรแยกบรรทัด
 8. ห้ามใส่ API key, token หรือข้อมูลลับลงในไฟล์
@@ -36,7 +43,7 @@ LEARNING HUB/public/content/templates/quiz-template.html
 - ตรวจว่า data-activity-id ไม่ซ้ำ
 - ตรวจจำนวนข้อ
 - ตรวจ data-question-id ทุกข้อ
-- ตรวจ data-answer ว่าตรงกับตัวเลือก
+- ตรวจ data-answer ว่าตรงกับตัวเลือก หรือเป็นค่าตัวเลขที่ถูกต้องตามชนิดคำถาม
 - ตรวจภาษาไทย–อังกฤษ
 - เปิดทดสอบผ่าน pages/tools/quiz-player.html?content=พาธของไฟล์ใหม่
 - รัน build และรายงานลิงก์ทดสอบ โดยไม่แก้ deployment workflow

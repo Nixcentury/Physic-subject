@@ -1,6 +1,7 @@
 import { readdir, readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { extname, join, relative } from "node:path";
+import { parseNumericAnswer } from "../public/shared/quiz-question-model.js";
 
 const contentDirectory = fileURLToPath(new URL("../public/content", import.meta.url));
 const allowedQuestionTypes = new Set(["choice", "number"]);
@@ -101,10 +102,15 @@ function validateQuestion(file, openingTag, body, index, seenIds) {
   }
 
   if (type === "number") {
-    const tolerance = Number(attributes.get("data-tolerance"));
-    if (!Number.isFinite(Number(answer))) addError(file, `${label} needs a numeric answer.`);
-    if (!Number.isFinite(tolerance) || tolerance < 0) {
+    const tolerance = attributes.has("data-tolerance") ? parseNumericAnswer(attributes.get("data-tolerance")) : 0;
+    if (parseNumericAnswer(answer) === null) addError(file, `${label} needs a numeric answer.`);
+    if (tolerance === null || tolerance < 0) {
       addError(file, `${label} needs a non-negative data-tolerance.`);
+    }
+  }
+  for (const name of ["data-topic-ids", "data-exam-ids"]) {
+    if ((attributes.get(name) || "").trim().split(/\s+/).filter(Boolean).some(id => !/^[a-z][a-z0-9-]*$/.test(id))) {
+      addError(file, `${label} ${name} must contain space-separated lowercase IDs.`);
     }
   }
 }

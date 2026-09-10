@@ -4,7 +4,7 @@ import test from "node:test";
 import vm from "node:vm";
 
 const source = readFileSync(new URL("../public/shared/quiz-evidence.js", import.meta.url), "utf8")
-  .replace(/^import[^\n]+\n/, "").replace("export class QuizEvidenceManager", "class QuizEvidenceManager");
+  .replace(/^import[^\n]+\n/gm, "").replace("export class QuizEvidenceManager", "class QuizEvidenceManager");
 const settle = async () => { for (let i = 0; i < 12; i++) await Promise.resolve(); };
 function harness() {
   const timers = new Map();

@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import vm from "node:vm";
+import { readQuizContent } from "../public/shared/quiz-content-adapter.js";
+import { hasAnswer, isCorrectAnswer, isStoredAnswer, parseNumericAnswer, MAX_ANSWER_LENGTH } from "../public/shared/quiz-question-model.js";
 
 // Execute the production closure, with only browser edges replaced. No test API
 // is added to the shipped engine and no test packages are required.
@@ -56,7 +58,8 @@ function makeHarness() {
   const questionNodes = ["q1", "q2"].map((id, index) => node(
     { questionId: id, answer: index === 0 ? "A" : "B" },
     {
-      "[data-question-prompt]": node(),
+      "[data-question-prompt]": node({ th: "คำถาม", en: "Question" }),
+      "[data-question-solution]": node({ th: "เฉลย", en: "Solution" }),
       "[data-choice-id]": [node({ choiceId: "A" }), node({ choiceId: "B" })],
       "[data-question-hint]": [node(), node()],
     },
@@ -123,6 +126,8 @@ function makeHarness() {
     DOMParser: class { parseFromString() { return { querySelector: () => root }; } },
     fetch: async () => ({ ok: true, text: async () => "<test-content>" }),
     QuizEvidenceManager: EvidenceStub,
+    readQuizContent, hasAnswer, isCorrectAnswer, isStoredAnswer, parseNumericAnswer, MAX_ANSWER_LENGTH,
+    hideMathKeyboard() {}, mountNumericAnswer() {},
     localStorage: {
       getItem(storageKey) { if (storageFails) throw new Error("Storage disabled"); return storage.get(storageKey) ?? null; },
       setItem(storageKey, value) {
@@ -141,7 +146,7 @@ function makeHarness() {
     clearTimeout: (id) => timers.delete(id),
   });
   const injected = source
-    .replace(/^import[^\n]+\n/, "")
+    .replace(/^import[^\n]+\n/gm, "")
     .replace(/  void loadContent\(\);\s*\}\)\(\);\s*$/, `
       render = () => {};
       globalThis.__quizTest = {

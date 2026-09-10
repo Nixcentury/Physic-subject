@@ -216,7 +216,7 @@
       return option?.textContent?.trim() || answer;
     }
 
-    const unit = question.querySelector(".activity-number-response span")?.textContent?.trim();
+    const unit = question.dataset[language() === "en" ? "unitEn" : "unitTh"] || question.querySelector(".activity-number-response span")?.textContent?.trim();
     return unit ? `${answer} ${unit}` : answer;
   }
 

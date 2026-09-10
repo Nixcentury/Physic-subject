@@ -78,6 +78,7 @@ function activeLanguageNode(source, language) {
 }
 
 function selectedOptionText(question, answer) {
+  if (question.type === "number" && answer) return `\\(${answer}\\)`;
   const option = question.options.find((item) => item.dataset.choiceId === answer);
   return safeText(option?.textContent || answer || "");
 }
@@ -545,8 +546,8 @@ export class QuizEvidenceManager {
       <section class="quiz-reasoning-card">
         <header class="quiz-evidence-heading">
           <div>
-            <strong>${this.language() === "en" ? "Reasoning and AI review" : "เหตุผลและ AI ตรวจวิธีทำ"}</strong>
-            <small>${this.language() === "en" ? "Type your reasoning, write in the notebook, or use both." : "พิมพ์เหตุผล เขียนในสมุดทด หรือใช้ทั้งสองแบบ"}</small>
+            <strong>${this.language() === "en" ? "Your working · AI review" : "พื้นที่วิธีทำ · ให้ AI ตรวจ"}</strong>
+            <small>${this.language() === "en" ? "Explain with text or handwriting. You do not need to use every tool." : "ใช้ข้อความหรือสมุดทดอธิบายวิธีคิด ไม่จำเป็นต้องใช้ครบทุกเครื่องมือ"}</small>
           </div>
           <span class="quiz-evidence-badge" data-evidence-badge></span>
         </header>
@@ -762,7 +763,7 @@ export class QuizEvidenceManager {
       "Review the student's reasoning directly and concisely. Do not change the deterministic final-answer score. Return whether the reasoning is correct or needs revision, plus specific feedback in Thai and English. Before Give Up, do not reveal the final correct option or exact final answer.";
     return {
       mode: "image_check",
-      question: `${prompt}\nChoices:\n${optionLines}\nStudent selected: ${answer}${selected ? ` — ${selected}` : ""}`,
+      question: `${prompt}\n${question.type === "number" ? "Numeric response" : `Choices:\n${optionLines}`}\nStudent answer: ${answer}${selected ? ` — ${selected}` : ""}`,
       referenceSolution,
       selectedAnswer: answer,
       hintLevel: Number(this.getHintLevel?.(question.id) || 0),
