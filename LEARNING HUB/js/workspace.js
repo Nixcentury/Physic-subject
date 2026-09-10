@@ -10,6 +10,16 @@ import {
   createHubContextMessage,
 } from "./content-context.js";
 
+// Only live Quiz windows created by this workspace may use its storage bridge.
+const quizStorageFrames = new Set();
+
+export function isWorkspaceQuizSource(source) {
+  if (!source) return false;
+  return [...quizStorageFrames].some(
+    (frame) => frame.isConnected && frame.contentWindow === source,
+  );
+}
+
 const toolTypes = {
   quiz: {
     icon: "✓",
@@ -438,6 +448,26 @@ export function createWorkspace({
 
   function close(record) {
     if (!record) return;
+    const quiz = getQuiz(record);
+    if (quiz?.prepareClose) {
+      if (record.closing) return;
+      record.closing = true;
+      record.closeButton.disabled = true;
+      return quiz.prepareClose().then((ready) => {
+        if (ready && records.get(record.tool.id) === record) removeRecord(record);
+      }).catch((error) => {
+        console.warn("Learning Hub kept the quiz open because saving failed.", error);
+      }).finally(() => {
+        record.closing = false;
+        record.closeButton.disabled = false;
+      });
+    }
+    if (flushLocalBeforeRemoval(record) === false) return;
+    removeRecord(record);
+  }
+
+  function removeRecord(record) {
+    quizStorageFrames.delete(record.frame);
     const taskButton = record.taskButton;
     record.element.remove();
     record.taskButton.remove();
@@ -455,6 +485,21 @@ export function createWorkspace({
       [...records.values()][0].taskButton.focus();
     } else {
       taskButton.blur();
+    }
+  }
+
+  function getQuiz(record) {
+    try { return record.frame.contentWindow?.LearningHubQuiz; }
+    catch { return null; }
+  }
+
+  function flushLocalBeforeRemoval(record) {
+    try {
+      // Synchronous: removing an iframe cancels its pending debounce timers.
+      return record.frame.contentWindow?.LearningHubQuiz?.flushLocal?.();
+    } catch (error) {
+      // A separately hosted tool cannot be inspected by the Hub.
+      console.warn("Learning Hub could not flush the quiz before closing.", error);
     }
   }
 
@@ -647,6 +692,7 @@ export function createWorkspace({
     const record = createRecord(tool);
     records.set(toolId, record);
     windowLayer.append(record.element);
+    if (tool.context.toolKind === "quiz") quizStorageFrames.add(record.frame);
     taskbarItems.append(record.taskButton);
     positionNewWindow(record);
     setTaskbarVisibility();
@@ -669,6 +715,8 @@ export function createWorkspace({
 
   function clear() {
     records.forEach((record) => {
+      flushLocalBeforeRemoval(record);
+      quizStorageFrames.delete(record.frame);
       record.element.remove();
       record.taskButton.remove();
     });
@@ -676,6 +724,26 @@ export function createWorkspace({
     setTaskbarVisibility();
     syncMaximizedState();
   }
+
+  async function prepareAllForClose() {
+    for (const record of records.values()) {
+      const quiz = getQuiz(record);
+      if (quiz?.prepareClose) {
+        if (!await quiz.prepareClose()) return false;
+      } else if (flushLocalBeforeRemoval(record) === false) return false;
+    }
+    return true;
+  }
+
+  window.addEventListener("message", (event) => {
+    if (event.data?.type !== "learning-hub-quiz-ready") return;
+    const trustedOrigin = location.origin === "null" || event.origin === location.origin;
+    if (!trustedOrigin || !isWorkspaceQuizSource(event.source)) return;
+    const record = [...records.values()].find(
+      (candidate) => candidate.frame.contentWindow === event.source,
+    );
+    if (record) postContext(record);
+  });
 
   window.setInterval(() => {
     const now = Date.now();
@@ -700,5 +768,5 @@ export function createWorkspace({
     });
   });
 
-  return { open, setLanguage, setContext, clear };
+  return { open, setLanguage, setContext, clear, prepareAllForClose };
 }

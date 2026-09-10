@@ -37,11 +37,14 @@ function openNotebookDatabase() {
 
 async function notebookRecord(action, key, value) {
   const database = await openNotebookDatabase();
-  if (!database) return null;
+  if (!database) {
+    notebookDatabasePromise = null;
+    throw new Error("Notebook storage is unavailable.");
+  }
 
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     try {
-      const transaction = database.transaction(NOTEBOOK_STORE, "readwrite");
+      const transaction = database.transaction(NOTEBOOK_STORE, action === "get" ? "readonly" : "readwrite");
       const store = transaction.objectStore(NOTEBOOK_STORE);
       const request =
         action === "get"
@@ -49,10 +52,14 @@ async function notebookRecord(action, key, value) {
           : action === "delete"
             ? store.delete(key)
             : store.put(value, key);
-      request.onsuccess = () => resolve(action === "get" ? request.result || null : true);
-      request.onerror = () => resolve(null);
-    } catch {
-      resolve(null);
+      let result = null;
+      request.onsuccess = () => { result = action === "get" ? request.result || null : true; };
+      // Request success is not transaction commit: an abort can follow it.
+      transaction.oncomplete = () => resolve(result);
+      transaction.onerror = transaction.onabort = () => reject(new Error("Notebook write/read did not finish."));
+      request.onerror = () => reject(new Error("Notebook storage request failed."));
+    } catch (error) {
+      reject(error);
     }
   });
 }
@@ -284,6 +291,12 @@ export class QuizEvidenceManager {
     this.current = null;
     this.loadToken = 0;
     this.saveTimers = new Map();
+    this.lifecycle = 0;
+    this.requests = new Set();
+    this.dirtyNotebooks = new Map();
+    this.notebookWrites = new Map();
+    this.storageFailed = false;
+    this.storageFailures = new Set();
   }
 
   emptyState() {
@@ -298,9 +311,18 @@ export class QuizEvidenceManager {
   }
 
   setIdentity(identityKey) {
-    this.flushCurrent();
+    if ((identityKey || "guest") === this.identityKey) return;
+    this.dispose();
     this.identityKey = identityKey || "guest";
+    this.state = this.emptyState();
     this.memory.clear();
+  }
+
+  dispose() {
+    this.lifecycle += 1;
+    this.requests.forEach((controller) => controller.abort());
+    this.requests.clear();
+    this.unmount();
   }
 
   reset() {
@@ -430,17 +452,34 @@ export class QuizEvidenceManager {
 
   async readNotebook(questionId) {
     if (this.memory.has(questionId)) return clone(this.memory.get(questionId));
+    const lifecycle = this.lifecycle;
     const saved = await notebookRecord("get", this.notebookKey(questionId));
+    if (lifecycle !== this.lifecycle) return null;
     if (saved) this.memory.set(questionId, saved);
     return clone(saved);
   }
 
   persistNotebookSnapshot(recordKey, snapshot) {
     const strokeCount = Array.isArray(snapshot?.strokes) ? snapshot.strokes.length : 0;
-    if (strokeCount > 0) {
-      return notebookRecord("put", recordKey, clone(snapshot));
-    }
-    return notebookRecord("delete", recordKey);
+    const previous = this.notebookWrites.get(recordKey) || Promise.resolve();
+    const write = previous.then(async () => {
+      try {
+        await notebookRecord(strokeCount > 0 ? "put" : "delete", recordKey, clone(snapshot));
+        if (this.dirtyNotebooks.get(recordKey) === snapshot) this.dirtyNotebooks.delete(recordKey);
+        this.storageFailures.delete(recordKey);
+        this.storageFailed = this.storageFailures.size > 0;
+        return true;
+      } catch {
+        this.storageFailures.add(recordKey);
+        this.storageFailed = true;
+        return false;
+      }
+    }).finally(() => {
+      if (this.notebookWrites.get(recordKey) === write) this.notebookWrites.delete(recordKey);
+      this.onChange({ type: "notebook-storage" });
+    });
+    this.notebookWrites.set(recordKey, write);
+    return write;
   }
 
   saveNotebookSnapshot(questionId, snapshot, { changed = false, immediate = false } = {}) {
@@ -455,26 +494,40 @@ export class QuizEvidenceManager {
     if (changed) this.markChanged(questionId, "notebook");
 
     const recordKey = this.notebookKey(questionId);
+    const savedSnapshot = clone(snapshot);
+    this.dirtyNotebooks.set(recordKey, savedSnapshot);
     clearTimeout(this.saveTimers.get(recordKey));
     this.saveTimers.delete(recordKey);
     if (immediate) {
-      void this.persistNotebookSnapshot(recordKey, snapshot);
+      void this.persistNotebookSnapshot(recordKey, savedSnapshot);
       return;
     }
     const timer = setTimeout(() => {
       this.saveTimers.delete(recordKey);
-      void this.persistNotebookSnapshot(recordKey, snapshot);
+      void this.persistNotebookSnapshot(recordKey, savedSnapshot);
     }, changed ? 500 : 0);
     this.saveTimers.set(recordKey, timer);
   }
 
   flushCurrent() {
-    if (!this.current?.notebook || !this.current.questionId) return;
+    if (!this.current?.notebook || !this.current.questionId || this.current.notebookReady === false) return;
     this.saveNotebookSnapshot(
       this.current.questionId,
       this.current.notebook.exportSnapshot(),
       { immediate: true },
     );
+  }
+
+  async flushAll() {
+    this.flushCurrent();
+    this.saveTimers.forEach((timer) => clearTimeout(timer));
+    this.saveTimers.clear();
+    await Promise.all([...this.dirtyNotebooks].map(([key, snapshot]) => this.persistNotebookSnapshot(key, snapshot)));
+    return this.dirtyNotebooks.size === 0;
+  }
+
+  hasUnsavedNotebook() {
+    return this.dirtyNotebooks.size > 0 || this.notebookWrites.size > 0;
   }
 
   unmount() {
@@ -557,12 +610,31 @@ export class QuizEvidenceManager {
     };
     const notebook = new NotebookCore(root, { context });
     this.current.notebook = notebook;
-    const saved = await this.readNotebook(question.id);
+    this.current.notebookReady = false;
+    root.inert = true;
+    let saved;
+    try {
+      saved = await this.readNotebook(question.id);
+    } catch {
+      if (token !== this.loadToken || this.current?.questionId !== question.id) return;
+      notebook.destroy();
+      this.current.notebook = null;
+      this.storageFailures.add(this.notebookKey(question.id));
+      this.storageFailed = true;
+      mount.innerHTML = `<p>${this.language() === "en" ? "Could not load saved writing. No blank page was saved over it." : "โหลดลายมือเดิมไม่สำเร็จ ระบบยังไม่บันทึกหน้าว่างทับงานเดิม"}</p><button type="button">${this.language() === "en" ? "Retry notebook" : "ลองเปิดสมุดอีกครั้ง"}</button>`;
+      mount.querySelector("button").addEventListener("click", () => void this.mountNotebook(container, question));
+      this.onChange({ type: "notebook-storage" });
+      return;
+    }
     if (token !== this.loadToken || this.current?.questionId !== question.id) {
       notebook.destroy();
       return;
     }
     notebook.loadSnapshot(saved || { context, strokes: [] });
+    this.current.notebookReady = true;
+    this.storageFailures.delete(this.notebookKey(question.id));
+    this.storageFailed = this.storageFailures.size > 0;
+    root.inert = false;
     notebook.setContext(context);
     root.addEventListener("notebook-core-change", () => {
       this.saveNotebookSnapshot(question.id, notebook.exportSnapshot(), { changed: true });
@@ -708,6 +780,7 @@ export class QuizEvidenceManager {
   }
 
   async checkQuestion(question, { notifyMissing = false } = {}) {
+    const lifecycle = this.lifecycle;
     this.flushCurrent();
     const entry = this.entry(question.id);
     if (!this.hasEvidence(question.id)) {
@@ -737,10 +810,14 @@ export class QuizEvidenceManager {
     this.updateCurrentUi();
     this.onChange({ type: "review", questionId: question.id });
 
+    const controller = new AbortController();
+    this.requests.add(controller);
     try {
       const imageBase64 = await this.evidenceImage(question);
+      if (lifecycle !== this.lifecycle) return { cancelled: true };
       const response = await fetch(this.workerUrl, {
         method: "POST",
+        signal: controller.signal,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...this.questionPayload(question),
@@ -748,6 +825,7 @@ export class QuizEvidenceManager {
         }),
       });
       const data = await response.json().catch(() => null);
+      if (lifecycle !== this.lifecycle) return { cancelled: true };
       if (!response.ok) {
         const requestError = new Error(
           data?.error || data?.detail || `HTTP ${response.status}`,
@@ -776,6 +854,7 @@ export class QuizEvidenceManager {
       this.onChange({ type: "review", questionId: question.id });
       return { ok: true, review: entry.review };
     } catch (error) {
+      if (lifecycle !== this.lifecycle) return { cancelled: true };
       const message = safeText(error?.message || error || "AI review failed");
       entry.review = {
         status: "unavailable",
@@ -795,6 +874,8 @@ export class QuizEvidenceManager {
         rateLimited:
           Number(error?.status) === 429 || /limit|quota|too many/i.test(message),
       };
+    } finally {
+      this.requests.delete(controller);
     }
   }
 
@@ -811,11 +892,13 @@ export class QuizEvidenceManager {
   }
 
   async reviewPending(questions, onProgress = () => {}) {
+    const lifecycle = this.lifecycle;
     const pending = questions.filter((question) => this.needsReview(question.id));
     for (let index = 0; index < pending.length; index += 1) {
       const question = pending[index];
       onProgress({ current: index + 1, total: pending.length, question });
       const result = await this.checkQuestion(question);
+      if (result.cancelled || lifecycle !== this.lifecycle) return;
       if (result.rateLimited) {
         pending.slice(index + 1).forEach((remaining) => {
           const entry = this.entry(remaining.id);
@@ -1078,6 +1161,10 @@ export class QuizEvidenceManager {
   }
 
   async exportPdf({ title, results, onProgress = () => {} }) {
+    const lifecycle = this.lifecycle;
+    const checkSession = () => {
+      if (lifecycle !== this.lifecycle) throw new Error("Quiz session changed.");
+    };
     this.flushCurrent();
     if (!window.html2canvas || !window.jspdf?.jsPDF) {
       throw new Error(
@@ -1109,12 +1196,16 @@ export class QuizEvidenceManager {
         part: groupIndex + 1,
         partCount: groups.length,
       });
+      checkSession();
       await this.renderPdfPage(cover, pdf, false);
+      checkSession();
       completedPages += 1;
       onProgress({ current: completedPages, total: totalPages });
       for (const result of group) {
         const page = await this.buildQuestionPage({ title, result });
+        checkSession();
         await this.renderPdfPage(page, pdf, true);
+        checkSession();
         completedPages += 1;
         onProgress({ current: completedPages, total: totalPages });
       }

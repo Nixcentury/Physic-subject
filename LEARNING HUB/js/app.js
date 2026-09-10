@@ -544,6 +544,7 @@ guestButton.addEventListener("click", async () => {
 signOutButton.addEventListener("click", async () => {
   signOutButton.disabled = true;
   try {
+    if (!await workspace.prepareAllForClose()) return;
     await stopPresence();
     await signOutFromHub();
   } catch (error) {

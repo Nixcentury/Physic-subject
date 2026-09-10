@@ -47,6 +47,19 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
   let cloudSaveHandle = null;
   let evidenceManager = null;
   let submissionBusy = false;
+  let contentReady = false;
+  let latestHubContext = null;
+  let identityEpoch = 0;
+  let changeRevision = 0;
+  let cloudReady = false;
+  let cloudLoadPending = false;
+  let writeSequence = 0;
+  let localSaveFailed = false;
+  let syncBase = null;
+  let unsyncedChanges = false;
+  let pendingRemote = null;
+  let navigationRevision = 0;
+  let closing = false;
 
   function language() {
     return document.documentElement.lang === "en" ? "en" : "th";
@@ -145,27 +158,66 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
   function snapshot({ includeLocalEvidence = false } = {}) {
     return {
       version: 2,
+      identityKey: state.identityKey,
+      contentId: state.contentId,
       answers: { ...state.answers },
       giveUps: { ...state.giveUps },
       hintLevels: { ...state.hintLevels },
       masteredIds: [...state.masteredIds],
       currentIndex: state.currentIndex,
+      currentQuestionId: currentQuestion()?.id || null,
       attempt: state.attempt,
       view: state.view,
       elapsedMs: elapsedMs(),
-      savedAt: state.savedAt || Date.now(),
+      savedAt: state.savedAt,
       latestScore: state.latestScore ? { ...state.latestScore } : null,
       evidence: evidenceManager
         ? includeLocalEvidence
           ? evidenceManager.serializeLocal()
           : evidenceManager.serializeCloud()
         : state.evidenceSnapshot,
+      ...(includeLocalEvidence ? { localSync: { base: syncBase, dirty: unsyncedChanges } } : {}),
     };
   }
 
-  function applySnapshot(saved, { localEvidence = false } = {}) {
+  function validSnapshot(saved) {
     if (!saved || ![1, 2].includes(saved.version)) return false;
+    // Reject malformed records before touching the current attempt. Old v1/v2
+    // records without these optional identity fields remain readable.
+    if (saved.identityKey && saved.identityKey !== state.identityKey) return false;
+    if (saved.contentId && saved.contentId !== state.contentId) return false;
+    const isMap = (value) => value == null || (typeof value === "object" && !Array.isArray(value));
+    if (![saved.answers, saved.giveUps, saved.hintLevels].every(isMap)) return false;
+    if (saved.masteredIds != null && !Array.isArray(saved.masteredIds)) return false;
+    if (saved.evidence != null && (!isMap(saved.evidence) || !isMap(saved.evidence.entries))) return false;
+    if (saved.latestScore != null && (
+      !isMap(saved.latestScore) ||
+      !Number.isFinite(saved.latestScore.score) ||
+      !Number.isFinite(saved.latestScore.maxScore) ||
+      saved.latestScore.score < 0 || saved.latestScore.maxScore < saved.latestScore.score
+    )) return false;
+    for (const field of ["currentIndex", "attempt", "elapsedMs", "savedAt"]) {
+      if (saved[field] != null && (!Number.isFinite(Number(saved[field])) || Number(saved[field]) < 0)) return false;
+    }
+    for (const field of ["currentIndex", "attempt"]) {
+      if (saved[field] != null && !Number.isInteger(Number(saved[field]))) return false;
+    }
+    const questionsById = new Map(state.questions.map((question) => [question.id, question]));
+    if (Object.entries(saved.answers || {}).some(([id, answer]) => {
+      const question = questionsById.get(id);
+      return question && !question.options.some((option) => option.dataset.choiceId === answer);
+    })) return false;
+    if (Object.values(saved.giveUps || {}).some((value) => typeof value !== "boolean")) return false;
+    if (Object.values(saved.hintLevels || {}).some((value) => !Number.isInteger(value) || value < 0)) return false;
+    return true;
+  }
+
+  function applySnapshot(saved, { localEvidence = false } = {}) {
+    if (!validSnapshot(saved)) return false;
     const validIds = new Set(state.questions.map((question) => question.id));
+    // Unmount before replacing evidence, so the old canvas cannot flush into
+    // the freshly restored metadata when render() mounts the next question.
+    evidenceManager?.unmount();
     state.answers = Object.fromEntries(
       Object.entries(saved.answers || {}).filter(([id]) => validIds.has(id)),
     );
@@ -176,21 +228,37 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
       Object.entries(saved.hintLevels || {}).filter(([id]) => validIds.has(id)),
     );
     state.masteredIds = [...new Set(saved.masteredIds || [])].filter((id) => validIds.has(id));
+    const savedQuestionIndex = state.questions.findIndex((question) => question.id === saved.currentQuestionId);
     state.currentIndex = Math.min(
-      Math.max(0, Number(saved.currentIndex) || 0),
+      Math.max(0, savedQuestionIndex >= 0 ? savedQuestionIndex : Math.floor(Number(saved.currentIndex) || 0)),
       Math.max(0, state.questions.length - 1),
     );
-    state.attempt = Math.max(1, Number(saved.attempt) || 1);
+    state.attempt = Math.max(1, Math.floor(Number(saved.attempt) || 1));
     state.view = saved.view === "results" ? "results" : "exam";
     state.elapsedBeforeMs = Math.max(0, Number(saved.elapsedMs) || 0);
     state.startedAt = Date.now();
     state.latestScore = saved.latestScore || null;
     state.savedAt = Math.max(0, Number(saved.savedAt) || 0);
     state.evidenceSnapshot = saved.evidence || null;
+    if (localEvidence) {
+      syncBase = typeof saved.localSync?.base === "string" ? saved.localSync.base : null;
+      unsyncedChanges = saved.localSync?.dirty === true;
+    }
     if (evidenceManager) {
       evidenceManager.restore(saved.evidence, { merge: !localEvidence });
     }
     return true;
+  }
+
+  // Navigation and elapsed time are not answers. Merely opening another
+  // question must never make an empty draft overwrite a completed cloud quiz.
+  function progressSignature(value) {
+    const ordered = (map) => Object.entries(map || {}).sort(([a], [b]) => a.localeCompare(b));
+    return JSON.stringify({
+      answers: ordered(value.answers), giveUps: ordered(value.giveUps),
+      hintLevels: ordered(value.hintLevels), masteredIds: [...(value.masteredIds || [])].sort(),
+      attempt: value.attempt || 1, latestScore: value.latestScore ? ordered(value.latestScore) : null,
+    });
   }
 
   function loadLocal() {
@@ -204,14 +272,19 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
   }
 
   function saveLocalNow() {
+    if (!contentReady) return false;
     try {
-      state.savedAt = Date.now();
       localStorage.setItem(
         storageKey(),
         JSON.stringify(snapshot({ includeLocalEvidence: true })),
       );
+      localSaveFailed = false;
+      return true;
     } catch {
-      // The quiz remains usable when browser storage is unavailable.
+      localSaveFailed = true;
+      state.storageStatus = "memory";
+      renderStorageStatus();
+      return false;
     }
   }
 
@@ -219,56 +292,138 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
     if (parent === window || state.identityKey === "guest") return Promise.resolve(null);
     const requestId = crypto.randomUUID?.() || `${Date.now()}-${Math.random()}`;
     const targetOrigin = location.origin === "null" ? "*" : location.origin;
+    const uid = state.identityKey;
+    const contentId = state.contentId;
     return new Promise((resolve) => {
       const timeout = setTimeout(() => {
         pendingStorageRequests.delete(requestId);
         resolve({ ok: false, code: "quiz-progress/timeout" });
       }, 8000);
-      pendingStorageRequests.set(requestId, (result) => {
-        clearTimeout(timeout);
-        resolve(result);
+      pendingStorageRequests.set(requestId, {
+        uid, contentId,
+        resolve(result) {
+          clearTimeout(timeout);
+          resolve(result);
+        },
       });
-      parent.postMessage({ type, requestId, contentId: state.contentId, value }, targetOrigin);
+      parent.postMessage({ type, requestId, uid, contentId, value }, targetOrigin);
     });
   }
 
   async function loadCloud() {
+    if (!contentReady || state.identityKey === "guest" || parent === window || cloudLoadPending) return;
+    const epoch = identityEpoch;
+    const navigationAtStart = navigationRevision;
+    cloudReady = false;
+    cloudLoadPending = true;
     state.storageStatus = "syncing";
     renderStorageStatus();
     const result = await requestCloud("learning-hub-quiz-load");
-    if (result?.ok && result.value) {
-      const localSavedAt = state.savedAt;
-      if (Number(result.value.savedAt || 0) > localSavedAt || !localSavedAt) {
-        applySnapshot(result.value, { localEvidence: false });
-      } else if (localSavedAt > Number(result.value.savedAt || 0)) {
-        await saveCloudNow();
-      }
-      state.storageStatus = "cloud";
-      render();
+    if (epoch !== identityEpoch) return;
+    cloudLoadPending = false;
+    if (!result?.ok) {
+      state.storageStatus = localSaveFailed ? "memory" : "cloud-error";
+      renderStorageStatus();
       return;
     }
-    if (result?.ok && !result.value) {
+    const remote = result.value;
+    if (remote && !validSnapshot(remote)) {
+      state.storageStatus = "cloud-error";
+      renderStorageStatus();
+      return;
+    }
+    const remoteSignature = remote ? progressSignature(remote) : null;
+    const localSignature = progressSignature(snapshot());
+    const localChanged = unsyncedChanges || (syncBase === null && state.savedAt > Number(remote?.savedAt || 0));
+    // If both copies changed independently, keep both intact until the student
+    // explicitly chooses. Timestamps alone are not proof of ownership/newness.
+    if (remote && localChanged && remoteSignature !== localSignature && remoteSignature !== syncBase) {
+      pendingRemote = remote;
+      state.storageStatus = "conflict";
+      renderStorageStatus();
+      return;
+    }
+    pendingRemote = null;
+    cloudReady = true;
+    if (localChanged && remoteSignature !== localSignature) {
+      syncBase = remoteSignature;
       await saveCloudNow();
-      return;
+      if (epoch !== identityEpoch) return;
+    } else {
+      if (remote) {
+        const navigation = { currentIndex: state.currentIndex, view: state.view };
+        applySnapshot(remote, { localEvidence: false });
+        if (navigationRevision !== navigationAtStart) Object.assign(state, navigation);
+      }
+      syncBase = remoteSignature;
+      unsyncedChanges = false;
+      saveLocalNow();
+      state.storageStatus = localSaveFailed ? "memory" : "cloud";
     }
-    state.storageStatus = result?.ok ? "cloud" : "local";
-    renderStorageStatus();
+    render();
+  }
+
+  async function resolveCloudConflict(choice) {
+    if (!pendingRemote || closing) return;
+    const epoch = identityEpoch;
+    const remote = pendingRemote;
+    if (choice === "cloud") {
+      // Keep the local reasoning/ink. Only the attempt/score is selected here.
+      if (!applySnapshot(remote, { localEvidence: false })) return;
+      unsyncedChanges = false;
+      syncBase = progressSignature(remote);
+      cloudReady = true;
+      pendingRemote = null;
+      saveLocalNow();
+      state.storageStatus = localSaveFailed ? "memory" : "cloud";
+    } else if (choice === "local") {
+      syncBase = progressSignature(remote);
+      cloudReady = true;
+      pendingRemote = null;
+      markEdited();
+      saveLocalNow();
+      await saveCloudNow();
+    }
+    if (epoch === identityEpoch) render();
   }
 
   async function saveCloudNow() {
-    const result = await requestCloud("learning-hub-quiz-save", snapshot());
-    state.storageStatus = result?.ok ? "cloud" : "local";
+    if (!contentReady || !cloudReady || cloudLoadPending || state.identityKey === "guest") return null;
+    const epoch = identityEpoch;
+    const revision = changeRevision;
+    const sequence = ++writeSequence;
+    const value = snapshot();
+    state.storageStatus = "syncing";
     renderStorageStatus();
+    const result = await requestCloud("learning-hub-quiz-save", value);
+    if (epoch !== identityEpoch || sequence !== writeSequence) return result;
+    if (result?.ok) {
+      syncBase = progressSignature(value);
+      unsyncedChanges = revision !== changeRevision;
+      saveLocalNow();
+    }
+    state.storageStatus = localSaveFailed ? "memory" : result?.ok
+      ? (revision === changeRevision ? "cloud" : "syncing") : "cloud-error";
+    renderStorageStatus();
+    return result;
+  }
+
+  function markEdited() {
+    changeRevision += 1;
+    unsyncedChanges = true;
+    state.savedAt = Math.max(Date.now(), state.savedAt + 1);
   }
 
   function persist() {
+    markEdited();
     clearTimeout(localSaveHandle);
     clearTimeout(cloudSaveHandle);
     localSaveHandle = setTimeout(saveLocalNow, 120);
     if (state.identityKey !== "guest") {
-      state.storageStatus = "syncing";
+      state.storageStatus = localSaveFailed ? "memory" : pendingRemote ? "conflict"
+        : cloudReady || cloudLoadPending ? "syncing" : "cloud-error";
       renderStorageStatus();
-      cloudSaveHandle = setTimeout(saveCloudNow, 650);
+      if (cloudReady) cloudSaveHandle = setTimeout(saveCloudNow, 650);
     }
   }
 
@@ -277,16 +432,63 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
     localSaveHandle = setTimeout(saveLocalNow, 120);
   }
 
+  function persistNavigation() {
+    navigationRevision += 1;
+    persistLocalOnly();
+    // Once the answer snapshot is known, navigation can accompany it safely.
+    if (cloudReady) {
+      clearTimeout(cloudSaveHandle);
+      cloudSaveHandle = setTimeout(saveCloudNow, 650);
+    }
+  }
+
+  function retrySync() {
+    clearTimeout(cloudSaveHandle);
+    flushLocal();
+    return loadCloud();
+  }
+
   function renderStorageStatus() {
     const status = document.querySelector("[data-quiz-storage-status]");
     if (!status) return;
+    const effectiveStatus = localSaveFailed ? "memory" : evidenceManager?.storageFailed ? "notebook-error" : state.storageStatus;
     const copy = {
       cloud: ["บันทึกบน Cloud แล้ว", "Saved to cloud"],
       syncing: ["กำลังบันทึก…", "Saving…"],
       local: ["บันทึกในเครื่องนี้", "Saved on this device"],
-    }[state.storageStatus];
-    status.dataset.tone = state.storageStatus;
+      "cloud-error": ["ยังซิงก์ Cloud ไม่สำเร็จ · เก็บในเครื่องนี้ก่อน", "Cloud sync failed · kept on this device"],
+      memory: ["บันทึกในเครื่องไม่ได้ · อย่าเพิ่งปิดหน้านี้", "Device save failed · keep this page open"],
+      conflict: ["งานในเครื่องกับ Cloud ต่างกัน · เลือกฉบับที่จะใช้ (แทนคำตอบและคะแนนอีกฉบับ)", "Device and cloud work differ · choose which answers and score to keep"],
+      "notebook-error": ["บันทึกหรือโหลดสมุดไม่สำเร็จ · อย่าเพิ่งปิด", "Notebook save/load failed · keep this page open"],
+    }[effectiveStatus];
+    status.dataset.tone = effectiveStatus;
     status.textContent = label(copy[0], copy[1]);
+    const action = (thai, english, handler) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "quiz-sync-action";
+      button.textContent = label(thai, english);
+      button.addEventListener("click", handler);
+      status.append(button);
+    };
+    if (effectiveStatus === "notebook-error") {
+      action("ลองเก็บลายมืออีกครั้ง", "Retry writing save", async () => {
+        await evidenceManager.flushAll();
+        renderStorageStatus();
+      });
+    } else if (effectiveStatus === "conflict") {
+      action("ใช้ฉบับในเครื่อง", "Use device copy", () => void resolveCloudConflict("local"));
+      action("ใช้ฉบับ Cloud", "Use cloud copy", () => void resolveCloudConflict("cloud"));
+    } else if (effectiveStatus === "cloud-error") {
+      action("ลองเชื่อมต่ออีกครั้ง", "Retry cloud sync", () => void retrySync());
+    } else if (effectiveStatus === "memory") {
+      action("ลองบันทึกในเครื่องอีกครั้ง", "Retry device save", () => {
+        if (flushLocal()) {
+          state.storageStatus = state.identityKey === "guest" ? "local" : "cloud-error";
+          renderStorageStatus();
+        }
+      });
+    }
   }
 
   function activeLanguageNode(source) {
@@ -488,6 +690,7 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
       item.addEventListener("click", () => {
         state.currentIndex = index;
         state.view = "exam";
+        persistNavigation();
         render();
       });
       list.append(item);
@@ -497,7 +700,7 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
       state.view = "exam";
       const firstUnmastered = state.questions.findIndex((question) => !state.masteredIds.includes(question.id));
       state.currentIndex = firstUnmastered < 0 ? 0 : firstUnmastered;
-      persist();
+      persistNavigation();
       render();
     });
     document.querySelector("[data-retry]")?.addEventListener("click", startRetry);
@@ -594,7 +797,7 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
 
   function goTo(index) {
     state.currentIndex = Math.min(Math.max(0, index), state.questions.length - 1);
-    persist();
+    persistNavigation();
     renderNavigation();
     renderQuestion();
     app.querySelector("[data-question-card]")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -679,11 +882,15 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
 
   async function submitAll() {
     if (submissionBusy) return;
+    const epoch = identityEpoch;
+    submissionBusy = true;
     const results = state.questions.map(resultFor);
     evidenceManager?.flushCurrent();
     const missing = evidenceManager?.missingForAnswered(results) || [];
     const accepted = await confirmMissingEvidence(missing);
+    if (epoch !== identityEpoch) return;
     if (!accepted) {
+      submissionBusy = false;
       if (missing[0]) goTo(missing[0].index);
       return;
     }
@@ -700,7 +907,7 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
         .filter((result) => result.status !== "unanswered")
         .map((result) => result.question);
       await evidenceManager?.reviewPending(reviewableQuestions, ({ current, total, done }) => {
-        if (!batchStatus) return;
+        if (epoch !== identityEpoch || !batchStatus) return;
         batchStatus.textContent = done
           ? label("ตรวจวิธีทำเสร็จแล้ว", "Reasoning review complete")
           : label(
@@ -709,8 +916,10 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
             );
       });
     } finally {
-      submissionBusy = false;
+      if (epoch === identityEpoch) submissionBusy = false;
     }
+
+    if (epoch !== identityEpoch) return;
 
     state.masteredIds = [
       ...new Set([...state.masteredIds, ...results.filter((result) => result.correct).map((result) => result.question.id)]),
@@ -726,6 +935,7 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
     state.elapsedBeforeMs = elapsedMs();
     state.startedAt = Date.now();
     state.view = "results";
+    markEdited();
     saveLocalNow();
     void saveCloudNow();
     render();
@@ -734,6 +944,7 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
   async function exportEvidence(results = state.questions.map(resultFor)) {
     const button = document.querySelector("[data-export-evidence]");
     if (!evidenceManager || !button) return;
+    const epoch = identityEpoch;
     const title =
       contentRoot.querySelector("[data-quiz-title]")?.dataset[language()] ||
       contentRoot.querySelector("[data-activity-title]")?.dataset[language()] ||
@@ -745,12 +956,14 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
         title,
         results,
         onProgress: ({ current, total }) => {
+          if (epoch !== identityEpoch) return;
           button.textContent = label(
             `กำลังสร้าง PDF ${current}/${total}`,
             `Creating PDF ${current}/${total}`,
           );
         },
       });
+      if (epoch !== identityEpoch) return;
       if (state.latestScore) {
         state.latestScore.status =
           state.latestScore.scoreStatus ||
@@ -760,10 +973,13 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
         state.latestScore.evidenceExportedAt = Date.now();
         state.latestScore.evidenceFileCount = files.length;
       }
+      markEdited();
       saveLocalNow();
       await saveCloudNow();
+      if (epoch !== identityEpoch) return;
       renderResults();
     } catch (error) {
+      if (epoch !== identityEpoch) return;
       window.alert(
         label(
           `สร้าง PDF ไม่สำเร็จ: ${error.message || error}`,
@@ -840,7 +1056,8 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
   }
 
   function initializeEvidenceManager() {
-    evidenceManager?.unmount();
+    evidenceManager?.dispose();
+    const epoch = identityEpoch;
     evidenceManager = new QuizEvidenceManager({
       contentId: state.contentId,
       identityKey: state.identityKey,
@@ -848,6 +1065,11 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
       language,
       workerUrl: shell.dataset.aiWorkerUrl,
       onChange(detail) {
+        if (epoch !== identityEpoch) return;
+        if (detail?.type === "notebook-storage") {
+          renderStorageStatus();
+          return;
+        }
         state.evidenceSnapshot = evidenceManager.serializeLocal();
         if (detail?.type === "evidence" || (submissionBusy && detail?.type === "review")) {
           persistLocalOnly();
@@ -879,8 +1101,10 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
       state.questions = validation.questions;
       preparePrintSource(contentRoot);
       printSource.replaceChildren(contentRoot);
+      contentReady = true;
       loadLocal();
       initializeEvidenceManager();
+      if (latestHubContext) applyHubContext(latestHubContext);
 
       window.LearningHubPrint?.configure({
         getTitle: () => contentRoot.querySelector("[data-activity-title]")?.dataset[language()],
@@ -893,6 +1117,9 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
       document.dispatchEvent(
         new CustomEvent("learning-hub-quiz-ready", { detail: { contentId: state.contentId, count: state.questions.length } }),
       );
+      if (parent !== window) {
+        parent.postMessage({ type: "learning-hub-quiz-ready" }, location.origin === "null" ? "*" : location.origin);
+      }
     } catch (error) {
       loading.hidden = true;
       errorBox.hidden = false;
@@ -901,13 +1128,39 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
   }
 
   function applyHubContext(context) {
+    latestHubContext = context;
     const nextIdentity = context?.identity?.uid || "guest";
-    if (context?.language) setLanguage(context.language);
-    if (!contentRoot || nextIdentity === state.identityKey) return;
-    saveLocalNow();
+    if (context?.language && context.language !== language()) setLanguage(context.language);
+    if (!contentReady || nextIdentity === state.identityKey) return;
+    flushLocal();
+    identityEpoch += 1;
+    clearTimeout(cloudSaveHandle);
+    pendingStorageRequests.forEach((request) => request.resolve({ ok: false, code: "quiz-progress/session-changed" }));
+    pendingStorageRequests.clear();
+    cloudReady = false;
+    cloudLoadPending = false;
+    changeRevision = 0;
+    localSaveFailed = false;
+    syncBase = null;
+    unsyncedChanges = false;
+    pendingRemote = null;
+    navigationRevision = 0;
+    closing = false;
+    app.inert = false;
+    submissionBusy = false;
+    // No automatic guest/account transfer. Every identity loads only its own
+    // attempt, including when its browser/cloud record does not exist yet.
+    evidenceManager?.dispose();
+    evidenceManager = null;
+    Object.assign(state, {
+      answers: {}, giveUps: {}, hintLevels: {}, masteredIds: [],
+      currentIndex: 0, attempt: 1, view: "exam", startedAt: Date.now(),
+      elapsedBeforeMs: 0, latestScore: null, savedAt: 0,
+      evidenceSnapshot: null, storageStatus: "local",
+    });
     state.identityKey = nextIdentity;
-    evidenceManager?.setIdentity(nextIdentity);
     loadLocal();
+    initializeEvidenceManager();
     if (nextIdentity !== "guest") void loadCloud();
     render();
   }
@@ -919,11 +1172,11 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
       applyHubContext(event.data);
       return;
     }
-    if (event.data?.type !== "learning-hub-quiz-storage-result") return;
-    const resolve = pendingStorageRequests.get(event.data.requestId);
-    if (!resolve) return;
+    if (event.source !== parent || event.data?.type !== "learning-hub-quiz-storage-result") return;
+    const request = pendingStorageRequests.get(event.data.requestId);
+    if (!request || event.data.uid !== request.uid || event.data.contentId !== request.contentId) return;
     pendingStorageRequests.delete(event.data.requestId);
-    resolve(event.data);
+    request.resolve(event.data);
   });
 
   document.addEventListener("learning-hub-context-change", (event) => {
@@ -948,16 +1201,60 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
     }
   });
   document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "hidden" && contentRoot) saveLocalNow();
+    if (document.visibilityState === "hidden" && contentReady) {
+      flushLocal();
+      void saveCloudNow();
+    }
+  });
+  window.addEventListener("online", () => {
+    if (state.identityKey !== "guest" && !closing) void retrySync();
   });
   window.addEventListener("beforeunload", (event) => {
-    evidenceManager?.flushCurrent();
-    saveLocalNow();
-    if (state.latestScore && evidenceManager?.needsExport()) {
+    flushLocal();
+    if (localSaveFailed || evidenceManager?.hasUnsavedNotebook() || (state.identityKey !== "guest" && unsyncedChanges) || (state.latestScore && evidenceManager?.needsExport())) {
       event.preventDefault();
       event.returnValue = "";
     }
   });
+
+  function flushLocal() {
+    clearTimeout(localSaveHandle);
+    evidenceManager?.flushCurrent();
+    return saveLocalNow();
+  }
+
+  async function prepareClose() {
+    if (closing) return false;
+    if (!contentReady) return true;
+    closing = true;
+    app.inert = true;
+    const epoch = identityEpoch;
+    try {
+      const localOk = flushLocal();
+      const notebookOk = evidenceManager ? await evidenceManager.flushAll() : true;
+      if (epoch !== identityEpoch) return false;
+      if (!localOk || !notebookOk) {
+        window.alert(label("ยังบันทึกงานในเครื่องไม่สำเร็จ จึงยังไม่ปิด Quiz กรุณาลองบันทึกอีกครั้งหรือส่งออกหลักฐานก่อน", "Device saving failed. The quiz will stay open. Retry saving or export your work first."));
+        return false;
+      }
+      if (cloudReady && unsyncedChanges) await saveCloudNow();
+      if (epoch !== identityEpoch) return false;
+      if (state.identityKey !== "guest" && (unsyncedChanges || pendingRemote) && !window.confirm(label(
+        "งานเก็บในเครื่องนี้แล้ว แต่ยังไม่ยืนยันการซิงก์ Cloud หากปิด ให้กลับมาทำต่อบนเครื่องนี้ก่อน ต้องการปิดหรือไม่",
+        "Work is saved on this device, but cloud sync is not confirmed. Resume on this device first. Close anyway?",
+      ))) return false;
+      if (state.latestScore && evidenceManager?.needsExport() && !window.confirm(label(
+        "ยังไม่ได้ส่งออกหลักฐาน PDF ของงานล่าสุด ต้องการปิดและกลับมาส่งออกบนเครื่องนี้ภายหลังหรือไม่",
+        "The latest evidence PDF has not been exported. Close and export it later on this device?",
+      ))) return false;
+      return true;
+    } finally {
+      if (epoch === identityEpoch) {
+        closing = false;
+        app.inert = false;
+      }
+    }
+  }
 
   timerHandle = setInterval(() => {
     const timer = document.querySelector("[data-elapsed-time]");
@@ -969,8 +1266,11 @@ import { QuizEvidenceManager } from "./quiz-evidence.js";
     goToQuestion: goTo,
     openSummary,
     restart,
-    save: () => {
-      saveLocalNow();
+    flushLocal,
+    prepareClose,
+    save: async () => {
+      flushLocal();
+      if (!cloudReady) return retrySync();
       return saveCloudNow();
     },
   });
