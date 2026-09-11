@@ -126,6 +126,7 @@ function makeHarness() {
     DOMParser: class { parseFromString() { return { querySelector: () => root }; } },
     fetch: async () => ({ ok: true, text: async () => "<test-content>" }),
     QuizEvidenceManager: EvidenceStub,
+    createNotebookBackupUi: () => ({ busy: false, open() {}, invalidate() {} }),
     readQuizContent, hasAnswer, isCorrectAnswer, isStoredAnswer, parseNumericAnswer, MAX_ANSWER_LENGTH,
     hideMathKeyboard() {}, mountNumericAnswer() {},
     localStorage: {

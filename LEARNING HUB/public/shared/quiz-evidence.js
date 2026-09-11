@@ -1,4 +1,5 @@
 import { NotebookCore } from "../pages/tools/notebook-core.js";
+import { validateNotebookBackup, restoreNotebookRecords } from "./notebook-backup.js";
 
 const EVIDENCE_SCHEMA = "HUB_QUIZ_EVIDENCE_V1";
 const NOTEBOOK_DB = "learning-hub-quiz-evidence";
@@ -46,14 +47,20 @@ async function notebookRecord(action, key, value) {
     try {
       const transaction = database.transaction(NOTEBOOK_STORE, action === "get" ? "readonly" : "readwrite");
       const store = transaction.objectStore(NOTEBOOK_STORE);
-      const request =
-        action === "get"
-          ? store.get(key)
-          : action === "delete"
-            ? store.delete(key)
-            : store.put(value, key);
       let result = null;
-      request.onsuccess = () => { result = action === "get" ? request.result || null : true; };
+      const request = store.get(key);
+      request.onsuccess = () => {
+        if (action === "get") { result = request.result || null; return; }
+        // A different tab may have restored a backup since this editor loaded.
+        // Refuse its stale autosave rather than silently replacing restored ink.
+        if (request.result?.backupImportId && request.result.backupImportId !== value?.backupImportId) {
+          transaction.abort();
+          return;
+        }
+        const write = action === "delete" ? store.delete(key) : store.put(value, key);
+        write.onerror = () => reject(new Error("Notebook storage request failed."));
+        result = true;
+      };
       // Request success is not transaction commit: an abort can follow it.
       transaction.oncomplete = () => resolve(result);
       transaction.onerror = transaction.onabort = () => reject(new Error("Notebook write/read did not finish."));
@@ -321,6 +328,7 @@ export class QuizEvidenceManager {
 
   dispose() {
     this.lifecycle += 1;
+    try { this.backupTransaction?.abort(); } catch { /* Already committed. */ }
     this.requests.forEach((controller) => controller.abort());
     this.requests.clear();
     this.unmount();
@@ -485,6 +493,8 @@ export class QuizEvidenceManager {
 
   saveNotebookSnapshot(questionId, snapshot, { changed = false, immediate = false } = {}) {
     if (!snapshot) return;
+    const restoredId = this.memory.get(questionId)?.backupImportId;
+    if (restoredId) snapshot = { ...snapshot, backupImportId: restoredId };
     this.memory.set(questionId, clone(snapshot));
     const entry = this.entry(questionId);
     const strokeCount = Array.isArray(snapshot.strokes) ? snapshot.strokes.length : 0;
@@ -525,6 +535,64 @@ export class QuizEvidenceManager {
     this.saveTimers.clear();
     await Promise.all([...this.dirtyNotebooks].map(([key, snapshot]) => this.persistNotebookSnapshot(key, snapshot)));
     return this.dirtyNotebooks.size === 0;
+  }
+
+  async listNotebookBackups() {
+    const lifecycle = this.lifecycle;
+    await this.flushAll();
+    const pages = [];
+    for (const question of this.questions) {
+      const snapshot = await this.readNotebook(question.id);
+      if (lifecycle !== this.lifecycle) throw new Error("backup-session");
+      if (snapshot?.strokes?.length) pages.push({ questionId: question.id, snapshot });
+    }
+    return pages;
+  }
+
+  async prepareNotebookImport(backup) {
+    const lifecycle = this.lifecycle;
+    const clean = validateNotebookBackup(backup, { contentId: this.contentId, questionIds: this.questions.map((q) => q.id) });
+    this.unmount();
+    if (!await this.flushAll()) throw new Error("backup-storage");
+    const expected = new Map();
+    const conflicts = [];
+    for (const page of clean.pages) {
+      const key = this.notebookKey(page.questionId);
+      const current = await notebookRecord("get", key);
+      if (lifecycle !== this.lifecycle) throw new Error("backup-session");
+      expected.set(key, JSON.stringify(current));
+      if (current?.strokes?.length) conflicts.push(page.questionId);
+    }
+    return { backup: clean, expected, conflicts, lifecycle, revision: this.state.globalRevision };
+  }
+
+  async importNotebookBackup(plan, { overwrite = false } = {}) {
+    if (plan.lifecycle !== this.lifecycle || plan.revision !== this.state.globalRevision) throw new Error("backup-session");
+    if (plan.conflicts.length && !overwrite) throw new Error("backup-overwrite");
+    const clean = validateNotebookBackup(plan.backup, { contentId: this.contentId, questionIds: this.questions.map((q) => q.id) });
+    const database = await openNotebookDatabase();
+    if (!database) throw new Error("backup-storage");
+    const restored = clean.pages.map((page) => ({ ...page, snapshot: {
+      ...page.snapshot, backupImportId: crypto.randomUUID(),
+      revision: (Number(this.entry(page.questionId).notebook?.revision) || 0) + 1,
+    } }));
+    try {
+      await restoreNotebookRecords(database, restored.map((page) => [this.notebookKey(page.questionId), page.snapshot]), plan.expected, {
+        isCurrent: () => plan.lifecycle === this.lifecycle && plan.revision === this.state.globalRevision,
+        onTransaction: (transaction) => { this.backupTransaction = transaction; },
+      });
+    } finally { this.backupTransaction = null; }
+    if (plan.lifecycle !== this.lifecycle) throw new Error("backup-session");
+    for (const page of restored) {
+      this.memory.set(page.questionId, clone(page.snapshot));
+      const entry = this.entry(page.questionId);
+      entry.notebook = { strokeCount: page.snapshot.strokes.length, revision: page.snapshot.revision };
+      // Restored handwriting is new evidence; never carry a passed AI stamp.
+      entry.review = entry.review ? { ...entry.review, status: "recheck" } : null;
+      this.markChanged(page.questionId, "notebook-import");
+    }
+    this.updateCurrentUi();
+    return restored.length;
   }
 
   hasUnsavedNotebook() {

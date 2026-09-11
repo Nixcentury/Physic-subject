@@ -1,4 +1,5 @@
-import { QuizEvidenceManager } from "./quiz-evidence.js?v=6b-numeric-1";
+import { QuizEvidenceManager } from "./quiz-evidence.js?v=6c-backup-1";
+import { createNotebookBackupUi } from "./notebook-backup-ui.js?v=6c-backup-2";
 import { readQuizContent } from "./quiz-content-adapter.js";
 import { hasAnswer, isCorrectAnswer, isStoredAnswer, parseNumericAnswer } from "./quiz-question-model.js";
 import { mountNumericAnswer, hideMathKeyboard } from "./quiz-math-input.js";
@@ -63,6 +64,14 @@ import { mountNumericAnswer, hideMathKeyboard } from "./quiz-math-input.js";
   let pendingRemote = null;
   let navigationRevision = 0;
   let closing = false;
+
+  const notebookBackupUi = createNotebookBackupUi({
+    getManager: () => evidenceManager,
+    language,
+    getTitle: () => contentRoot?.querySelector("[data-activity-title]")?.dataset[language()] || state.contentId,
+    canOpen: () => contentReady && !submissionBusy && !closing,
+    onClose: () => { if (contentReady && !closing) render(); },
+  });
 
   function language() {
     return document.documentElement.lang === "en" ? "en" : "th";
@@ -1134,6 +1143,7 @@ import { mountNumericAnswer, hideMathKeyboard } from "./quiz-math-input.js";
     if (!contentReady || nextIdentity === state.identityKey) return;
     flushLocal();
     identityEpoch += 1;
+    notebookBackupUi.invalidate();
     clearTimeout(cloudSaveHandle);
     pendingStorageRequests.forEach((request) => request.resolve({ ok: false, code: "quiz-progress/session-changed" }));
     pendingStorageRequests.clear();
@@ -1187,6 +1197,10 @@ import { mountNumericAnswer, hideMathKeyboard } from "./quiz-math-input.js";
     button.addEventListener("click", () => setLanguage(button.dataset.languageButton));
   });
   document.querySelector("[data-summary-open]")?.addEventListener("click", openSummary);
+  document.querySelector("[data-notebook-backup-open]")?.addEventListener("click", () => {
+    hideMathKeyboard();
+    void notebookBackupUi.open();
+  });
   document.querySelector("[data-print-dialog-close]")?.addEventListener("click", () => {
     printPanel.hidden = true;
     printToggle?.setAttribute("aria-expanded", "false");
@@ -1224,7 +1238,7 @@ import { mountNumericAnswer, hideMathKeyboard } from "./quiz-math-input.js";
   }
 
   async function prepareClose() {
-    if (closing) return false;
+    if (closing || notebookBackupUi.busy) return false;
     if (!contentReady) return true;
     closing = true;
     app.inert = true;

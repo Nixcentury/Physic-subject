@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import vm from "node:vm";
+import { validateNotebookBackup, restoreNotebookRecords } from "../public/shared/notebook-backup.js";
 
 const source = readFileSync(new URL("../public/shared/quiz-evidence.js", import.meta.url), "utf8")
   .replace(/^import[^\n]+\n/gm, "").replace("export class QuizEvidenceManager", "class QuizEvidenceManager");
@@ -10,7 +11,7 @@ function harness() {
   const timers = new Map();
   let timerId = 0;
   const context = vm.createContext({
-    window: {}, console, structuredClone, AbortController,
+    window: {}, console, structuredClone, AbortController, validateNotebookBackup, restoreNotebookRecords,
     setTimeout: (callback) => { const id = ++timerId; timers.set(id, callback); return id; },
     clearTimeout: (id) => timers.delete(id),
     crypto: { randomUUID: () => "test-verification" },
@@ -30,7 +31,7 @@ function harness() {
 test("notebook storage is successful only after transaction commit", async () => {
   const h = harness();
   const request = {};
-  const transaction = { objectStore: () => ({ put: () => request }) };
+  const transaction = { objectStore: () => ({ get: () => request, put: () => ({}) }) };
   h.setDatabase({ transaction: () => transaction });
   let finished = false;
   const saving = h.notebookRecord("put", "key", { strokes: [1] }).then(() => { finished = true; });
@@ -43,10 +44,45 @@ test("notebook storage is successful only after transaction commit", async () =>
   assert.equal(finished, true);
 });
 
+test("a stale editor cannot autosave over imported ink", async () => {
+  const h = harness();
+  const request = { result: { backupImportId: "new-import" } };
+  let writes = 0;
+  const transaction = {
+    objectStore: () => ({ get: () => request, put: () => { writes++; return {}; } }),
+    abort() { this.onabort(); },
+  };
+  h.setDatabase({ transaction: () => transaction });
+  const saving = h.notebookRecord("put", "key", { strokes: [1] });
+  const rejected = assert.rejects(saving, /did not finish/);
+  await settle(); request.onsuccess(); await rejected;
+  assert.equal(writes, 0);
+});
+
+test("writing after import keeps the imported page's concurrency token", async () => {
+  const h = harness();
+  let saved;
+  h.setRecord(async (_, key, value) => { saved = value; return true; });
+  h.manager.memory.set("q1", { backupImportId: "import-token", strokes: [1] });
+  h.manager.saveNotebookSnapshot("q1", { strokes: [1, 2], revision: 2 }, { changed: true });
+  await h.manager.flushAll();
+  assert.equal(saved.backupImportId, "import-token");
+  assert.equal(saved.strokes.length, 2);
+});
+
+test("import requires overwrite consent and a current identity/work revision", async () => {
+  const h = harness();
+  const plan = { lifecycle: h.manager.lifecycle, revision: h.manager.state.globalRevision, conflicts: ["q1"] };
+  await assert.rejects(h.manager.importNotebookBackup(plan), /backup-overwrite/);
+  h.manager.lifecycle++;
+  await assert.rejects(h.manager.importNotebookBackup(plan, { overwrite: true }), /backup-session/);
+  assert.equal(h.manager.memory.size, 0);
+});
+
 test("an abort after request success still rejects the notebook write", async () => {
   const h = harness();
   const request = {};
-  const transaction = { objectStore: () => ({ put: () => request }) };
+  const transaction = { objectStore: () => ({ get: () => request, put: () => ({}) }) };
   h.setDatabase({ transaction: () => transaction });
   const saving = h.notebookRecord("put", "key", {});
   const rejected = assert.rejects(saving, /did not finish/);
