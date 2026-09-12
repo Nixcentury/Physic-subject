@@ -211,7 +211,7 @@ function buildSubjectPage() {
       <h3 class="chapter-title"></h3>
       <p class="chapter-description"></p>
       <span class="chapter-action">
-        <span data-th="กำลังเตรียมเนื้อหา" data-en="View sample tools">กำลังเตรียมเนื้อหา</span>
+        <span data-th="กำลังเตรียมเนื้อหา" data-en="Content in preparation">กำลังเตรียมเนื้อหา</span>
         <b aria-hidden="true">→</b>
       </span>
     `;
