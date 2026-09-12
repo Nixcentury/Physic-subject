@@ -240,6 +240,12 @@ function buildSubjectPage() {
   }
 
   function updateActivityTitle() {
+    if (window.LearningHubSubjectOrbit) {
+      const chapter = chapterDefinitions.find((item) => item.dataset.chapter === selectedChapter);
+      const title = readLocalizedText(chapter?.querySelector("[data-chapter-title]"), `บทที่ ${selectedChapter}`, `Chapter ${selectedChapter}`);
+      setLocalizedText(activityTitle, title.th, title.en);
+      return;
+    }
     setLocalizedText(
       activityTitle,
       `${subject.titleTh} · งานตัวอย่าง · บทที่ ${selectedChapter}`,
@@ -254,7 +260,7 @@ function buildSubjectPage() {
     activityView.hidden = false;
     setStage(2);
     activityTitle.focus({ preventScroll: true });
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
   }
 
   function showChapters() {
@@ -262,12 +268,16 @@ function buildSubjectPage() {
     chapterView.hidden = false;
     setStage(1);
     subjectRoot.querySelector(`[data-chapter="${selectedChapter}"]`)?.focus();
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
   }
 
-  chapterGrid.querySelectorAll("[data-chapter]").forEach((button) => {
-    button.addEventListener("click", () => showActivities(button.dataset.chapter));
-  });
+  if (window.LearningHubSubjectOrbit) {
+    window.LearningHubSubjectOrbit.mount({ root: subjectRoot, grid: chapterGrid, subject, onOpen: showActivities });
+  } else {
+    chapterGrid.querySelectorAll("[data-chapter]").forEach((button) => {
+      button.addEventListener("click", () => showActivities(button.dataset.chapter));
+    });
+  }
 
   subjectRoot.querySelectorAll("[data-tool-kind]").forEach((button) => {
     button.addEventListener("click", () => {

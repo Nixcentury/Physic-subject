@@ -52,9 +52,9 @@ const toolTypes = {
 };
 
 const subjects = {
-  physics: { titleTh: "ฟิสิกส์", titleEn: "Physics" },
-  chemistry: { titleTh: "เคมี", titleEn: "Chemistry" },
-  biology: { titleTh: "ชีววิทยา", titleEn: "Biology" },
+  physics: { titleTh: "ฟิสิกส์", titleEn: "Physics", chapterCount: 20 },
+  chemistry: { titleTh: "เคมี", titleEn: "Chemistry", chapterCount: 14 },
+  biology: { titleTh: "ชีววิทยา", titleEn: "Biology", chapterCount: 25 },
   "lower-science": {
     titleTh: "วิทยาศาสตร์ ม.ต้น",
     titleEn: "Lower Secondary Science",
@@ -72,7 +72,7 @@ function buildToolCatalog() {
   const catalog = {};
 
   Object.entries(subjects).forEach(([subjectId, subject]) => {
-    for (let chapter = 1; chapter <= 4; chapter += 1) {
+    for (let chapter = 1; chapter <= (subject.chapterCount || 4); chapter += 1) {
       Object.entries(toolTypes).forEach(([typeId, type]) => {
         const id = `${subjectId}-c${chapter}-${typeId}`;
         catalog[id] = {
