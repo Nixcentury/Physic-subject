@@ -100,6 +100,10 @@ Object.assign(toolCatalog["test-c2-quiz"], {
   page: "pages/tools/quiz-player.html?content=../../content/samples/numeric-input-demo.html",
   titleTh: "เติมคำตอบและแป้นคณิต", titleEn: "Numeric answers and math keyboard",
 });
+Object.assign(toolCatalog["test-c3-quiz"], {
+  page: "pages/tools/quiz-player.html?content=../../content/samples/drag-drop-demo.html",
+  titleTh: "ลากเติมและจับคู่", titleEn: "Drag-fill and matching",
+});
 
 function clamp(value, minimum, maximum) {
   return Math.min(Math.max(value, minimum), Math.max(minimum, maximum));

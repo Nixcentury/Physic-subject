@@ -208,6 +208,13 @@
   }
 
   function answerText(question) {
+    if (question.dataset.questionType === "drag-drop") {
+      return [...question.querySelectorAll("[data-drop-slot]")].map(slot => {
+        const item = [...question.querySelectorAll("[data-item-id]")].find(item => item.dataset.itemId === slot.dataset.answer);
+        const localizedItem = item?.querySelector(`[data-quiz-language="${language()}"]`) || item;
+        return `${slot.dataset[language() === "en" ? "labelEn" : "labelTh"] || slot.dataset.dropSlot}: ${item?.dataset[language()] || localizedItem?.textContent?.trim() || localizedItem?.querySelector("img")?.alt || "—"}`;
+      }).join("; ");
+    }
     const answer = question.dataset.answer || "-";
     if (question.dataset.questionType === "choice") {
       const option = [...question.querySelectorAll("[data-choice-id]")].find(
@@ -223,6 +230,12 @@
   function decorateAnswerKey(question) {
     const answer = question.dataset.answer || "";
     const correctAnswer = answerText(question);
+    if (question.dataset.questionType === "drag-drop") {
+      question.querySelectorAll("[data-drop-slot]").forEach(slot => {
+        const item = [...question.querySelectorAll("[data-item-id]")].find(item => item.dataset.itemId === slot.dataset.answer);
+        if (item) slot.replaceChildren(...[...item.childNodes].map(node => node.cloneNode(true)));
+      });
+    }
     question.classList.add("is-print-answer-key");
 
     if (question.dataset.questionType === "choice") {
@@ -248,6 +261,14 @@
   function buildPrintDocument(mode) {
     const clone = cloneContent();
     if (!clone) return null;
+    clone.querySelectorAll('[data-question-type="drag-drop"]').forEach(question => {
+      question.querySelectorAll("[data-th][data-en]").forEach(node => { if (!node.children.length) node.textContent = node.dataset[language()]; });
+      question.querySelectorAll("[data-question-body]").forEach(body => body.classList.add("quiz-drag-body"));
+      question.querySelectorAll("[data-drop-slot]").forEach(slot => {
+        slot.classList.add("quiz-drag-paper-slot");
+        slot.textContent = `${slot.dataset[language() === "en" ? "labelEn" : "labelTh"] || slot.dataset.dropSlot}: ________`;
+      });
+    });
 
     clone.classList.add("activity-print-document", `activity-print-mode-${mode}`);
     const summary = clone.querySelector("[data-activity-summary]");

@@ -1,8 +1,10 @@
-import { QuizEvidenceManager } from "./quiz-evidence.js?v=6c-backup-1";
+import { QuizEvidenceManager } from "./quiz-evidence.js?v=drag-1";
 import { createNotebookBackupUi } from "./notebook-backup-ui.js?v=6c-backup-2";
 import { readQuizContent } from "./quiz-content-adapter.js";
 import { hasAnswer, isCorrectAnswer, isStoredAnswer, parseNumericAnswer } from "./quiz-question-model.js";
 import { mountNumericAnswer, hideMathKeyboard } from "./quiz-math-input.js";
+import { mountDragAnswer } from "./quiz-drag-view.js";
+import { dragAnswerSummary } from "./quiz-drag-model.js";
 
 /* ==============================================================
    Quiz Engine กลางของ Learning Hub
@@ -64,6 +66,7 @@ import { mountNumericAnswer, hideMathKeyboard } from "./quiz-math-input.js";
   let pendingRemote = null;
   let navigationRevision = 0;
   let closing = false;
+  let dragAnswerUi = null;
 
   const notebookBackupUi = createNotebookBackupUi({
     getManager: () => evidenceManager,
@@ -116,6 +119,7 @@ import { mountNumericAnswer, hideMathKeyboard } from "./quiz-math-input.js";
   function questionStatus(question) {
     if (state.masteredIds.includes(question.id)) return "mastered";
     if (state.giveUps[question.id]) return "giveup";
+    if (question.type === "drag-drop" && hasAnswer(state.answers[question.id]) && !dragAnswerSummary(question, state.answers[question.id]).complete) return "partial";
     if (hasAnswer(state.answers[question.id])) return "answered";
     return "empty";
   }
@@ -238,7 +242,8 @@ import { mountNumericAnswer, hideMathKeyboard } from "./quiz-math-input.js";
   // Navigation and elapsed time are not answers. Merely opening another
   // question must never make an empty draft overwrite a completed cloud quiz.
   function progressSignature(value) {
-    const ordered = (map) => Object.entries(map || {}).sort(([a], [b]) => a.localeCompare(b));
+    const ordered = (map) => Object.entries(map || {}).sort(([a], [b]) => a.localeCompare(b))
+      .map(([key, value]) => [key, value && typeof value === "object" && !Array.isArray(value) ? ordered(value) : value]);
     return JSON.stringify({
       answers: ordered(value.answers), giveUps: ordered(value.giveUps),
       hintLevels: ordered(value.hintLevels), masteredIds: [...(value.masteredIds || [])].sort(),
@@ -488,7 +493,11 @@ import { mountNumericAnswer, hideMathKeyboard } from "./quiz-math-input.js";
   function cloneInto(target, source, useLanguage = false) {
     target.replaceChildren();
     const selected = useLanguage ? activeLanguageNode(source) : source;
-    if (selected) target.append(selected.cloneNode(true));
+    if (selected) {
+      const copy = selected.cloneNode(true);
+      if (useLanguage && !copy.children.length && selected.dataset?.[language()]) copy.textContent = selected.dataset[language()];
+      target.append(copy);
+    }
   }
 
   function typeset(target = app) {
@@ -517,6 +526,7 @@ import { mountNumericAnswer, hideMathKeyboard } from "./quiz-math-input.js";
 
   function renderQuestion() {
     hideMathKeyboard();
+    dragAnswerUi?.destroy(); dragAnswerUi = null;
     const question = currentQuestion();
     if (!question) return;
     const promptTarget = document.querySelector("[data-current-prompt]");
@@ -561,6 +571,19 @@ import { mountNumericAnswer, hideMathKeyboard } from "./quiz-math-input.js";
       });
     }
 
+    if (question.type === "drag-drop") {
+      dragAnswerUi = mountDragAnswer(optionTarget, {
+        question, value: state.answers[question.id], disabled: isMastered || isGivenUp,
+        language: language(), typeset, canEdit: () => !submissionBusy && !closing,
+        onChange(value) {
+          if (submissionBusy || closing) return;
+          evidenceManager?.markContextChanged(question.id);
+          state.answers[question.id] = value;
+          persist(); renderNavigation(); renderStats();
+        },
+      });
+    }
+
     hintTarget.replaceChildren();
     const visibleHintCount = Math.min(Number(state.hintLevels[question.id]) || 0, question.hints.length);
     question.hints.slice(0, visibleHintCount).forEach((hint, index) => {
@@ -586,6 +609,7 @@ import { mountNumericAnswer, hideMathKeyboard } from "./quiz-math-input.js";
     }
 
     document.querySelector("[data-question-position]").textContent = `Q${state.currentIndex + 1}/${state.questions.length}`;
+    document.querySelector(".quiz-question-number").textContent = String(state.currentIndex + 1);
     document.querySelector("[data-hint-button]").disabled =
       isMastered || isGivenUp || visibleHintCount >= question.hints.length;
     document.querySelector("[data-hint-count]").textContent = String(visibleHintCount + 1);
@@ -602,7 +626,8 @@ import { mountNumericAnswer, hideMathKeyboard } from "./quiz-math-input.js";
 
   function renderStats() {
     const answered = state.questions.filter(
-      (question) => hasAnswer(state.answers[question.id]) || state.masteredIds.includes(question.id),
+      (question) => state.masteredIds.includes(question.id) || (question.type === "drag-drop"
+        ? dragAnswerSummary(question, state.answers[question.id]).complete : hasAnswer(state.answers[question.id])),
     ).length;
     const hints = Object.values(state.hintLevels).reduce((sum, count) => sum + Number(count || 0), 0);
     const giveUps = Object.values(state.giveUps).filter(Boolean).length;
@@ -629,6 +654,7 @@ import { mountNumericAnswer, hideMathKeyboard } from "./quiz-math-input.js";
 
   function renderResults() {
     hideMathKeyboard();
+    dragAnswerUi?.destroy(); dragAnswerUi = null;
     evidenceManager?.unmount();
     const results = state.questions.map(resultFor);
     const score = results.filter((result) => result.correct).length;
@@ -681,8 +707,13 @@ import { mountNumericAnswer, hideMathKeyboard } from "./quiz-math-input.js";
       }[result.status];
       const aiStamp = evidenceManager?.statusFor(result.question.id, result.status);
       item.innerHTML = `<span class="quiz-result-number">${index + 1}</span><span class="quiz-result-copy"><span data-result-prompt></span><small class="quiz-result-ai-stamp"></small></span><strong>${statusCopy}</strong>`;
-      const prompt = activeLanguageNode(result.question.prompt)?.textContent?.replace(/\s+/g, " ").trim();
+      const sourcePrompt = result.question.prompt;
+      const prompt = (sourcePrompt?.dataset?.[language()] || activeLanguageNode(sourcePrompt)?.textContent)?.replace(/\s+/g, " ").trim();
       item.querySelector("[data-result-prompt]").textContent = prompt || `Q${index + 1}`;
+      if (result.question.type === "drag-drop") {
+        const detail = dragAnswerSummary(result.question, result.answer);
+        item.querySelector("[data-result-prompt]").textContent += label(` · ถูก ${detail.correct}/${detail.total} ช่อง`, ` · ${detail.correct}/${detail.total} slots correct`);
+      }
       item.querySelector(".quiz-result-ai-stamp").textContent = aiStamp
         ? language() === "en"
           ? aiStamp.en
@@ -714,6 +745,7 @@ import { mountNumericAnswer, hideMathKeyboard } from "./quiz-math-input.js";
   }
 
   function renderExam() {
+    dragAnswerUi?.destroy(); dragAnswerUi = null;
     evidenceManager?.unmount();
     const title = contentRoot.querySelector("[data-quiz-title]");
     const titleCopy = title?.dataset[language()] || title?.textContent?.trim() || "Quiz";
@@ -1003,6 +1035,7 @@ import { mountNumericAnswer, hideMathKeyboard } from "./quiz-math-input.js";
   function startRetry() {
     state.questions.forEach((question) => {
       if (state.masteredIds.includes(question.id)) return;
+      evidenceManager?.markContextChanged(question.id);
       delete state.answers[question.id];
       delete state.giveUps[question.id];
       delete state.hintLevels[question.id];
@@ -1016,6 +1049,7 @@ import { mountNumericAnswer, hideMathKeyboard } from "./quiz-math-input.js";
   }
 
   function restart() {
+    state.questions.forEach(question => evidenceManager?.markContextChanged(question.id));
     state.answers = {};
     state.giveUps = {};
     state.hintLevels = {};
@@ -1102,6 +1136,10 @@ import { mountNumericAnswer, hideMathKeyboard } from "./quiz-math-input.js";
       if (!response.ok) throw new Error(`Content request failed (${response.status}).`);
       const documentCopy = new DOMParser().parseFromString(await response.text(), "text/html");
       const root = documentCopy.querySelector("[data-learning-activity-content]");
+      // Relative diagrams belong to the content file, not the player route.
+      root?.querySelectorAll("img[src]").forEach(image => {
+        image.src = new URL(image.getAttribute("src"), response.url || new URL(source, location.href)).href;
+      });
       const validation = validateContent(root);
       if (validation.errors.length) throw new Error(validation.errors.join(" "));
 

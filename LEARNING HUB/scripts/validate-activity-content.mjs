@@ -4,7 +4,7 @@ import { extname, join, relative } from "node:path";
 import { parseNumericAnswer } from "../public/shared/quiz-question-model.js";
 
 const contentDirectory = fileURLToPath(new URL("../public/content", import.meta.url));
-const allowedQuestionTypes = new Set(["choice", "number"]);
+const allowedQuestionTypes = new Set(["choice", "number", "drag-drop"]);
 const allowedActivityKinds = new Set(["practice", "quiz"]);
 const errors = [];
 
@@ -61,7 +61,7 @@ function validateQuestion(file, openingTag, body, index, seenIds) {
   if (!allowedQuestionTypes.has(type)) {
     addError(file, `${label} has unsupported type "${type || "missing"}".`);
   }
-  if (!answer) addError(file, `${label} is missing data-answer.`);
+  if (!answer && type !== "drag-drop") addError(file, `${label} is missing data-answer.`);
 
   const prompt = findOpeningTag(body, "data-question-prompt");
   if (!prompt || !hasBilingualText(prompt)) {
@@ -107,6 +107,21 @@ function validateQuestion(file, openingTag, body, index, seenIds) {
     if (tolerance === null || tolerance < 0) {
       addError(file, `${label} needs a non-negative data-tolerance.`);
     }
+  }
+  if (type === "drag-drop") {
+    const tags = attribute => [...body.matchAll(new RegExp(`<[^>]*\\b${attribute}(?:\\s|=|>)[^>]*>`, "gi"))].map(match => readAttributes(match[0]));
+    const items = tags("data-item-id");
+    const slots = tags("data-drop-slot");
+    const reuse = attributes.get("data-drag-reuse") || "once";
+    const ids = items.map(item => item.get("data-item-id"));
+    const slotIds = slots.map(slot => slot.get("data-drop-slot"));
+    const stable = id => /^[a-z][a-z0-9-]{0,63}$/.test(id || "") && !["constructor", "prototype"].includes(id);
+    if (!findOpeningTag(body, "data-question-body")) addError(file, `${label} needs data-question-body.`);
+    if (!items.length || items.length > 80 || ids.some(id => !stable(id)) || new Set(ids).size !== ids.length) addError(file, `${label} needs 1–80 uniquely identified drag items.`);
+    if (!slots.length || slots.length > 40 || slotIds.some(id => !stable(id)) || new Set(slotIds).size !== slotIds.length) addError(file, `${label} needs 1–40 uniquely identified slots.`);
+    if (slots.some(slot => !ids.includes(slot.get("data-answer")))) addError(file, `${label} slot answer must match an item ID.`);
+    if (!["once", "repeat"].includes(reuse)) addError(file, `${label} reuse must be once or repeat.`);
+    if (reuse === "once" && new Set(slots.map(slot => slot.get("data-answer"))).size !== slots.length) addError(file, `${label} repeated answers require data-drag-reuse=repeat.`);
   }
   for (const name of ["data-topic-ids", "data-exam-ids"]) {
     if ((attributes.get(name) || "").trim().split(/\s+/).filter(Boolean).some(id => !/^[a-z][a-z0-9-]*$/.test(id))) {
@@ -172,7 +187,11 @@ async function validateFile(file) {
   if (questionBlocks.length === 0) addError(file, "At least one question is required.");
 
   const seenIds = new Set();
+  const mode = rootAttributes.get("data-quiz-mode") || "standard";
+  if (!["standard", "drag-drop"].includes(mode)) addError(file, "Quiz mode must be standard or drag-drop.");
   questionBlocks.forEach((match, index) => {
+    const isDrag = readAttributes(`<article ${match[1]}>`).get("data-question-type") === "drag-drop";
+    if (isDrag !== (mode === "drag-drop")) addError(file, "Drag-drop must be a separate data-quiz-mode=drag-drop set, without choice/number questions.");
     validateQuestion(file, `<article ${match[1]}>`, match[2], index, seenIds);
   });
 }

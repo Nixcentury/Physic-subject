@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 import vm from "node:vm";
 import { readQuizContent } from "../public/shared/quiz-content-adapter.js";
+import { dragAnswerSummary } from "../public/shared/quiz-drag-model.js";
 import { hasAnswer, isCorrectAnswer, isStoredAnswer, parseNumericAnswer, MAX_ANSWER_LENGTH } from "../public/shared/quiz-question-model.js";
 
 // Execute the production closure, with only browser edges replaced. No test API
@@ -127,7 +128,7 @@ function makeHarness() {
     fetch: async () => ({ ok: true, text: async () => "<test-content>" }),
     QuizEvidenceManager: EvidenceStub,
     createNotebookBackupUi: () => ({ busy: false, open() {}, invalidate() {} }),
-    readQuizContent, hasAnswer, isCorrectAnswer, isStoredAnswer, parseNumericAnswer, MAX_ANSWER_LENGTH,
+    readQuizContent, hasAnswer, isCorrectAnswer, isStoredAnswer, parseNumericAnswer, MAX_ANSWER_LENGTH, dragAnswerSummary,
     hideMathKeyboard() {}, mountNumericAnswer() {},
     localStorage: {
       getItem(storageKey) { if (storageFails) throw new Error("Storage disabled"); return storage.get(storageKey) ?? null; },
@@ -244,6 +245,42 @@ test("switching to an account without a draft resets answers, mastery, position,
   assert.equal(h.state.latestScore, null);
   assert.ok(!JSON.stringify(h.evidence().serializeLocal()).includes("Account A working"));
   assert.deepEqual(h.read("student-a").answers, { q1: "A" });
+});
+
+function addDragQuestion(h) {
+  Object.assign(h.state.questions[0], { type: "drag-drop", reuse: "once",
+    items: [{ id: "same" }, { id: "sum" }], slots: [{ id: "a", answer: "same" }, { id: "b", answer: "sum" }],
+  });
+}
+
+test("drag partial answers restore atomically and survive local reload", async () => {
+  const h = makeHarness(); await h.load(); addDragQuestion(h);
+  assert.equal(h.applySnapshot(baseline({ answers: { q1: { a: "same" } } })), true);
+  assert.equal(h.saveLocalNow(), true);
+  h.state.answers = {};
+  assert.equal(h.loadLocal(), true);
+  assert.deepEqual(plain(h.state.answers), { q1: { a: "same" } });
+  const before = plain(h.snapshot());
+  assert.equal(h.applySnapshot(baseline({ answers: { q1: { unknown: "same" } } })), false);
+  assert.deepEqual(plain(h.snapshot()), before);
+});
+
+test("cloud uses nested drag answers without mixing account drafts", async () => {
+  const h = makeHarness(); await h.load(); addDragQuestion(h);
+  await h.choose("student-a", baseline({ answers: { q1: { b: "sum", a: "same" } } }));
+  assert.deepEqual(plain(h.state.answers.q1), { b: "sum", a: "same" });
+  h.state.answers.q1 = { a: "sum" };
+  h.persist();
+  const saving = h.saveCloudNow();
+  await h.settle();
+  const save = h.messages.findLast(message => message.type === "learning-hub-quiz-save");
+  h.response(save, { ok: true });
+  await saving;
+  assert.equal(save.uid, "student-a");
+  assert.deepEqual(save.value.answers.q1, { a: "sum" });
+  h.applyHubContext({ identity: { uid: "student-b" } });
+  assert.deepEqual(plain(h.state.answers), {});
+  assert.deepEqual(h.read("student-a").answers.q1, { a: "sum" });
 });
 
 test("guest work stays in the guest draft and is not transferred to a signed-in account", async () => {

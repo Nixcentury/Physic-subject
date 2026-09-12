@@ -1,5 +1,6 @@
 import { NotebookCore } from "../pages/tools/notebook-core.js";
 import { validateNotebookBackup, restoreNotebookRecords } from "./notebook-backup.js";
+import { dragAnswerText, dragQuestionText, createDragEvidenceBody } from "./quiz-drag-view.js";
 
 const EVIDENCE_SCHEMA = "HUB_QUIZ_EVIDENCE_V1";
 const NOTEBOOK_DB = "learning-hub-quiz-evidence";
@@ -84,7 +85,8 @@ function activeLanguageNode(source, language) {
   );
 }
 
-function selectedOptionText(question, answer) {
+function selectedOptionText(question, answer, language = "th") {
+  if (question.type === "drag-drop") return dragAnswerText(question, answer, language);
   if (question.type === "number" && answer) return `\\(${answer}\\)`;
   const option = question.options.find((item) => item.dataset.choiceId === answer);
   return safeText(option?.textContent || answer || "");
@@ -824,16 +826,17 @@ export class QuizEvidenceManager {
     const optionLines = question.options
       .map((option) => `${option.dataset.choiceId}: ${safeText(option.textContent)}`)
       .join("\n");
-    const prompt = safeText(question.prompt?.textContent);
-    const selected = selectedOptionText(question, answer);
+    const prompt = safeText(question.prompt?.dataset?.[this.language()] || activeLanguageNode(question.prompt, this.language())?.textContent);
+    const selected = selectedOptionText(question, answer, this.language());
+    const drag = question.type === "drag-drop";
     const referenceSolution = safeText(question.solution?.textContent);
     const policy =
       "Review the student's reasoning directly and concisely. Do not change the deterministic final-answer score. Return whether the reasoning is correct or needs revision, plus specific feedback in Thai and English. Before Give Up, do not reveal the final correct option or exact final answer.";
     return {
       mode: "image_check",
-      question: `${prompt}\n${question.type === "number" ? "Numeric response" : `Choices:\n${optionLines}`}\nStudent answer: ${answer}${selected ? ` — ${selected}` : ""}`,
-      referenceSolution,
-      selectedAnswer: answer,
+      question: `${prompt}\n${drag ? dragQuestionText(question, this.language()) : question.type === "number" ? "Numeric response" : `Choices:\n${optionLines}`}\nStudent answer: ${drag ? selected : answer}${!drag && selected ? ` — ${selected}` : ""}`,
+      referenceSolution: drag ? `${referenceSolution}\n${dragAnswerText(question, Object.fromEntries(question.slots.map(slot => [slot.id, slot.answer])), this.language())}` : referenceSolution,
+      selectedAnswer: drag ? selected : answer,
       hintLevel: Number(this.getHintLevel?.(question.id) || 0),
       giveUp: Boolean(this.getGiveUp?.(question.id)),
       studentReasoning: this.entry(question.id).reasoning || "",
@@ -1152,10 +1155,15 @@ export class QuizEvidenceManager {
     prompt.className = "quiz-evidence-export-prompt";
     prompt.innerHTML = `<small>${this.language() === "en" ? "QUESTION" : "โจทย์"}</small>`;
     const promptCopy = activeLanguageNode(question.prompt, this.language())?.cloneNode(true);
+    if (promptCopy && !promptCopy.children.length && question.prompt?.dataset?.[this.language()]) promptCopy.textContent = question.prompt.dataset[this.language()];
     if (promptCopy) prompt.append(promptCopy);
+    if (question.type === "drag-drop") {
+      page.classList.add("is-drag-evidence");
+      prompt.append(createDragEvidenceBody(question, this.getAnswer?.(question.id), this.language()));
+    }
     const answer = document.createElement("p");
     answer.className = "quiz-evidence-export-answer";
-    answer.textContent = `${this.language() === "en" ? "Selected answer" : "คำตอบที่เลือก"}: ${selectedOptionText(question, this.getAnswer?.(question.id)) || "—"}`;
+    answer.textContent = `${this.language() === "en" ? "Selected answer" : "คำตอบที่เลือก"}: ${selectedOptionText(question, this.getAnswer?.(question.id), this.language()) || "—"}`;
     const reason = document.createElement("section");
     reason.className = "quiz-evidence-export-reason";
     reason.innerHTML = `<small>${this.language() === "en" ? "TYPED REASONING" : "เหตุผลที่พิมพ์"}</small><p></p>`;
@@ -1220,6 +1228,29 @@ export class QuizEvidenceManager {
         context.fillStyle = "#ffffff";
         context.fillRect(x, y, headerShot.width, headerShot.height);
         context.drawImage(headerShot, x, y);
+      }
+      if (page.classList.contains("is-drag-evidence")) {
+        // Long passages must not disappear below the old fixed-height PDF page.
+        // Continue at the same scale and repeat the question header + AI stamp.
+        const height = Math.round(shot.width * 297 / 210);
+        const stampRect = page.querySelector(".quiz-evidence-export-stamp")?.getBoundingClientRect();
+        const repeat = Math.min(Math.round(height / 3), Math.round(((stampRect?.bottom || pageRect.top) - pageRect.top + 12) * shot.width / pageRect.width));
+        let offset = 0;
+        while (offset < shot.height) {
+          const continued = offset > 0;
+          const top = continued ? repeat : 0;
+          const slice = Math.min(height - top, shot.height - offset);
+          const sheet = document.createElement("canvas");
+          sheet.width = shot.width; sheet.height = height;
+          const context = sheet.getContext("2d");
+          context.fillStyle = "#ffffff"; context.fillRect(0, 0, sheet.width, height);
+          if (continued && repeat) context.drawImage(shot, 0, 0, shot.width, repeat, 0, 0, shot.width, repeat);
+          context.drawImage(shot, 0, offset, shot.width, slice, 0, top, shot.width, slice);
+          if (addPage || continued) pdf.addPage("a4", "portrait");
+          pdf.addImage(sheet.toDataURL("image/jpeg", 0.86), "JPEG", 0, 0, 210, 297, undefined, "FAST");
+          offset += slice;
+        }
+        return;
       }
       const data = shot.toDataURL("image/jpeg", 0.86);
       if (addPage) pdf.addPage("a4", "portrait");

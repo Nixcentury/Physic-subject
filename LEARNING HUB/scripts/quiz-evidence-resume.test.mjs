@@ -12,6 +12,8 @@ function harness() {
   let timerId = 0;
   const context = vm.createContext({
     window: {}, console, structuredClone, AbortController, validateNotebookBackup, restoreNotebookRecords,
+    dragAnswerText: (_question, answers) => Object.entries(answers || {}).map(([slot, item]) => `${slot}: ${item}`).join("; "),
+    dragQuestionText: () => "Passage and image descriptions; Slots A and B; item choices",
     setTimeout: (callback) => { const id = ++timerId; timers.set(id, callback); return id; },
     clearTimeout: (id) => timers.delete(id),
     crypto: { randomUUID: () => "test-verification" },
@@ -155,4 +157,17 @@ test("AI work stops before calling the Worker when identity changes during image
   assert.equal((await checking).cancelled, true);
   assert.equal(workerCalls, 0);
   assert.equal(Object.keys(h.manager.state.entries).length, 0);
+});
+
+test("drag AI context describes slots and selections, never object-to-string answers", () => {
+  const h = harness();
+  h.manager.getAnswer = () => ({ a: "same", b: "sum" });
+  const payload = h.manager.questionPayload({ id: "q1", type: "drag-drop", options: [],
+    prompt: { textContent: "Fill passage" }, solution: { textContent: "Explanation" },
+    slots: [{ id: "a", answer: "same" }, { id: "b", answer: "sum" }],
+  });
+  assert.match(payload.question, /Passage and image descriptions/);
+  assert.equal(payload.selectedAnswer, "a: same; b: sum");
+  assert.doesNotMatch(payload.question, /\[object Object\]/);
+  assert.match(payload.referenceSolution, /a: same; b: sum/);
 });

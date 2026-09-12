@@ -2,6 +2,7 @@
  * HTML uses this now; a future Excel importer must produce the same records.
  * Keep canonical question IDs unchanged when grouping by exam or topic.
  */
+import { validateDragQuestion, isStoredDragAnswer, dragAnswerSummary } from "./quiz-drag-model.js";
 export const QUESTION_MODEL_VERSION = 1;
 export const MAX_ANSWER_LENGTH = 160;
 const stableId = /^[a-z][a-z0-9-]*$/;
@@ -104,6 +105,9 @@ export function parseNumericAnswer(raw) {
 }
 
 export function hasAnswer(answer) {
+  if (answer && typeof answer === "object" && !Array.isArray(answer)) {
+    return Object.values(answer).some(value => typeof value === "string" && value.trim().length > 0);
+  }
   return (typeof answer === "number" && Number.isFinite(answer)) ||
     (typeof answer === "string" && answer.trim().length > 0);
 }
@@ -125,11 +129,13 @@ export function normalizeQuestion(input) {
   const id = typeof input.id === "string" ? input.id.trim() : "";
   const type = input.type || "choice"; // Backward compatibility for old MCQs.
   if (!stableId.test(id) || ["constructor", "prototype"].includes(id)) errors.push("Question needs a stable lowercase ID.");
-  if (!["choice", "number"].includes(type)) errors.push(`Unsupported question type: ${type}.`);
+  if (!["choice", "number", "drag-drop"].includes(type)) errors.push(`Unsupported question type: ${type}.`);
   const answer = typeof input.answer === "string" || typeof input.answer === "number" ? String(input.answer).trim() : "";
   const choices = Array.isArray(input.choices) ? input.choices : [];
   const choiceIds = choices.map(choice => choice?.id);
   let tolerance = 0;
+  const drag = type === "drag-drop" ? validateDragQuestion(input) : null;
+  if (drag) errors.push(...drag.errors);
   if (type === "choice") {
     if (choices.length < 2 || choiceIds.some(choiceId => typeof choiceId !== "string" || !choiceId.trim()) || new Set(choiceIds).size !== choiceIds.length) {
       errors.push("Choice questions need at least two choices with distinct IDs.");
@@ -156,11 +162,16 @@ export function normalizeQuestion(input) {
     hints: Array.isArray(input.hints) ? input.hints : [], solution: input.solution,
     unit: { th: String(input.unit?.th || ""), en: String(input.unit?.en || "") },
     topicIds, examIds,
+    ...(drag ? { items: drag.items, slots: drag.slots, reuse: drag.reuse, body: input.body } : {}),
   } };
 }
 
 export function isCorrectAnswer(question, answer) {
   if (!hasAnswer(answer)) return false;
+  if (question.type === "drag-drop") {
+    const result = dragAnswerSummary(question, answer);
+    return result.complete && result.correct === result.total;
+  }
   if (question.type !== "number") return answer === question.answer;
   const value = parseNumericAnswer(answer);
   const expected = parseNumericAnswer(question.answer);
@@ -172,6 +183,7 @@ export function isCorrectAnswer(question, answer) {
 }
 
 export function isStoredAnswer(question, answer) {
+  if (question.type === "drag-drop") return isStoredDragAnswer(question, answer);
   // Preserve even an incomplete/invalid numeric draft (e.g. "-") for editing.
   // Validation feedback and grading must not discard the student's input.
   if (question.type === "number") return typeof answer === "string" && answer.length <= MAX_ANSWER_LENGTH;

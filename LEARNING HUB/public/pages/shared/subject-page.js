@@ -89,6 +89,8 @@ function buildSubjectPage() {
               <div class="authoring-kit-actions">
                 <a href="../content/templates/quiz-template.html" download data-th="ดาวน์โหลด HTML Template" data-en="Download HTML template">ดาวน์โหลด HTML Template</a>
                 <a href="../content/templates/quiz-ai-prompt.txt" download data-th="ดาวน์โหลด Prompt สำหรับ AI" data-en="Download AI prompt">ดาวน์โหลด Prompt สำหรับ AI</a>
+                <a href="../content/templates/quiz-drag-template.html" download data-th="แม่แบบ HTML ลากวาง" data-en="Drag-fill HTML template">แม่แบบ HTML ลากวาง</a>
+                <a href="../content/templates/quiz-drag-ai-prompt.txt" download data-th="Prompt ควิซลากวาง" data-en="Drag-fill AI prompt">Prompt ควิซลากวาง</a>
               </div>
             </aside>`
           : ""
