@@ -18,8 +18,10 @@ import {
 import {
   cancelTeacherRequest,
   requestTeacherAccess,
+  retryRoleCheck,
   subscribeRoles,
 } from "./roles.js";
+import { createClassroomAccess } from "./classroom-access.js";
 import {
   createHubContextMessage,
   createIdentityContext,
@@ -103,6 +105,11 @@ function getWorkspaceIdentity() {
   return createIdentityContext(activeSession);
 }
 
+function getWorkspaceRole() {
+  return createClassroomAccess(activeSession, activeRole).state === "teacher"
+    ? activeRole.systemRole : "student";
+}
+
 const workspace = createWorkspace({
   windowLayer: workspaceWindowLayer,
   taskbar: hubTaskbar,
@@ -110,7 +117,7 @@ const workspace = createWorkspace({
   countElement: workspaceCount,
   getLanguage: () => currentLanguage,
   getIdentity: getWorkspaceIdentity,
-  getRole: () => activeRole.systemRole,
+  getRole: getWorkspaceRole,
   onToolClosed: (toolId) => pageFrame.contentWindow?.postMessage(
     { type: "learning-hub-tool-closed", toolId }, location.origin,
   ),
@@ -135,11 +142,14 @@ function saveLanguage(language) {
 function postContextToPage() {
   const targetOrigin = location.origin === "null" ? "*" : location.origin;
   pageFrame.contentWindow?.postMessage(
-    createHubContextMessage({
-      language: currentLanguage,
-      role: activeRole.systemRole,
-      identity: getWorkspaceIdentity(),
-    }),
+    {
+      ...createHubContextMessage({
+        language: currentLanguage,
+        role: getWorkspaceRole(),
+        identity: getWorkspaceIdentity(),
+      }),
+      classroom: createClassroomAccess(activeSession, activeRole),
+    },
     targetOrigin,
   );
 }
@@ -192,6 +202,15 @@ function setRoleMessage(messageTh, messageEn, tone = "info") {
 
 function renderRole(role) {
   activeRole = role;
+  const access = createClassroomAccess(activeSession, role);
+  const ready = ["student", "teacher"].includes(access.state);
+  role = {
+    ...role,
+    status: ready ? "ready" : access.state,
+    systemRole: access.state === "teacher" ? role.systemRole : "student",
+    isTeacher: access.state === "teacher",
+    isAdmin: access.state === "teacher" && role.isAdmin === true,
+  };
   postContextToPage();
   workspace.setContext();
   const isSignedIn = activeSession.status === "signed-in";
@@ -220,11 +239,21 @@ function renderRole(role) {
   roleMessage.classList.remove("is-error");
 
   if (role.status === "loading") {
+    roleLabel.textContent = currentLanguage === "th" ? "กำลังตรวจสิทธิ์" : "Checking access";
     roleStatusTitle.textContent = currentLanguage === "th" ? "กำลังตรวจสิทธิ์" : "Checking access";
     roleStatusDetail.textContent =
       currentLanguage === "th"
         ? "ระบบกำลังอ่านสิทธิ์จาก Firebase"
         : "Reading access from Firebase";
+    return;
+  }
+
+  if (role.status === "error") {
+    roleLabel.textContent = currentLanguage === "th" ? "ตรวจสิทธิ์ไม่สำเร็จ" : "Access unavailable";
+    roleStatusTitle.textContent = roleLabel.textContent;
+    roleStatusDetail.textContent = currentLanguage === "th"
+      ? "ยังยืนยันสิทธิ์ไม่ได้ กรุณาลองตรวจใหม่ในแท็บห้องเรียน"
+      : "Access could not be verified. Retry in the Classroom tab.";
     return;
   }
 
@@ -247,8 +276,8 @@ function renderRole(role) {
 
   if (role.error) {
     setRoleMessage(
-      "ยังอ่านสิทธิ์บางส่วนไม่ได้ ต้องติดตั้ง Firebase Rules ของรอบ 3 ก่อนใช้งานจริง",
-      "Some access data is unavailable. Install the Round 3 Firebase Rules before production use.",
+      "ข้อมูลบัญชีบางส่วนยังไม่พร้อม กรุณาลองใหม่หรือตรวจการเชื่อมต่อและสิทธิ์ฐานข้อมูล",
+      "Some account data is unavailable. Retry or check the connection and database permissions.",
       "error",
     );
   } else if (role.requestStatus === "rejected") {
@@ -452,11 +481,17 @@ function authErrorMessage(error) {
 }
 
 function renderSession(session) {
+  if (activeSession.user?.uid !== session.user?.uid || activeSession.status !== session.status) {
+    closeRolePanel();
+    teacherRequestForm.reset();
+    roleMessage.hidden = true;
+    submitRoleRequest.disabled = false;
+    cancelRoleRequest.disabled = false;
+  }
   activeSession = session;
   renderAccount(session);
   renderPresence(activePresence);
-  postContextToPage();
-  workspace.setContext();
+  renderRole(activeRole);
 
   if (session.status === "loading") {
     showLogin(true);
@@ -577,6 +612,16 @@ pageFrame.addEventListener("load", () => {
 window.addEventListener("message", (event) => {
   const trustedOrigin = location.origin === "null" || event.origin === location.origin;
   if (!trustedOrigin || event.source !== pageFrame.contentWindow) return;
+  if (event.data?.type === "learning-hub-page-ready") {
+    postContextToPage();
+    return;
+  }
+  if (event.data?.type === "learning-hub-classroom-action" && activeSectionId === "classroom") {
+    if (event.data.action === "sign-in" && activeSession.status === "guest") googleButton.click();
+    if (event.data.action === "account" && activeSession.status === "signed-in") openRolePanel();
+    if (event.data.action === "retry" && activeSession.status === "signed-in") retryRoleCheck();
+    return;
+  }
   if (event.data?.type === "learning-hub-open-content") {
     const ok = workspace.openContent(event.data.content);
     event.source.postMessage({
@@ -618,6 +663,7 @@ roleBackdrop.addEventListener("click", closeRolePanel);
 
 teacherRequestForm.addEventListener("submit", async (event) => {
   event.preventDefault();
+  const requestSession = activeSession;
   submitRoleRequest.disabled = true;
 
   try {
@@ -627,12 +673,14 @@ teacherRequestForm.addEventListener("submit", async (event) => {
       subjects: formData.get("subjects"),
       note: formData.get("note"),
     });
+    if (activeSession !== requestSession) return;
     teacherRequestForm.reset();
     setRoleMessage(
       "ส่งคำขอแล้ว บัญชีจะยังเป็นนักเรียนระหว่างรอแอดมินตรวจสอบ",
       "Request submitted. The account remains a student while an admin reviews it.",
     );
   } catch (error) {
+    if (activeSession !== requestSession) return;
     console.warn("Learning Hub could not submit the teacher request.", error);
     setRoleMessage(
       "ส่งคำขอไม่ได้ กรุณาตรวจ Firebase Rules ของรอบ 3 แล้วลองอีกครั้ง",
@@ -640,16 +688,18 @@ teacherRequestForm.addEventListener("submit", async (event) => {
       "error",
     );
   } finally {
-    submitRoleRequest.disabled = false;
+    if (activeSession === requestSession) submitRoleRequest.disabled = false;
   }
 });
 
 cancelRoleRequest.addEventListener("click", async () => {
+  const requestSession = activeSession;
   cancelRoleRequest.disabled = true;
 
   try {
     await cancelTeacherRequest();
   } catch (error) {
+    if (activeSession !== requestSession) return;
     console.warn("Learning Hub could not cancel the teacher request.", error);
     setRoleMessage(
       "ยกเลิกคำขอไม่ได้ กรุณาลองอีกครั้ง",
@@ -657,7 +707,7 @@ cancelRoleRequest.addEventListener("click", async () => {
       "error",
     );
   } finally {
-    cancelRoleRequest.disabled = false;
+    if (activeSession === requestSession) cancelRoleRequest.disabled = false;
   }
 });
 

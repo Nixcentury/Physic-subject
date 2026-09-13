@@ -4,6 +4,8 @@
 
 อย่าแทนที่ Rules เดิมทั้งไฟล์ เพราะ Quiz และ Simulation เดิมอาจใช้เส้นทางอื่นอยู่ ให้เพิ่มเฉพาะกิ่ง `learningHub` ต่อไปนี้เข้าไปใต้ `rules` เดิม
 
+**ก่อนใช้กับ Classroom:** ต้องตรวจ Rules ปัจจุบันรวมถึงกิ่งแม่ด้วย การใส่ `.read: false` / `.write: false` ที่กิ่งลูกไม่ถอนสิทธิ์ที่กิ่งแม่เปิดไว้แล้ว ตาม [หลักการสืบทอดสิทธิ์ของ Firebase](https://firebase.google.com/docs/database/security/core-syntax) อย่าเปิดกิ่งแม่ให้ทุกคนอ่าน/เขียนเพื่อแก้ปัญหา permission denied ดูรายการทดสอบจริงใน `CLASSROOM-PHASE0.txt`; การทดสอบหน้าจอจำลองไม่ใช่การทดสอบ Rules ที่ติดตั้งจริง
+
 ```json
 "learningHub": {
   ".read": false,

@@ -21,7 +21,7 @@ function requireAdmin() {
   const session = getAuthSession();
   const role = getRoleState();
 
-  if (session.status === "signed-in" && session.user && role.isAdmin) {
+  if (session.status === "signed-in" && session.user && role.status === "ready" && role.uid === session.user.uid && role.isAdmin) {
     return session.user;
   }
 

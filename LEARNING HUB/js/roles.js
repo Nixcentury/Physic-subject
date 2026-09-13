@@ -15,7 +15,7 @@ import {
   set,
   update,
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
-import { subscribeAuth } from "./auth.js";
+import { getAuthSession, subscribeAuth } from "./auth.js";
 import { firebaseApp } from "./firebase-config.js";
 
 const database = getDatabase(firebaseApp);
@@ -30,6 +30,7 @@ let readyKeys = new Set();
 let roleErrors = new Set();
 
 let currentRole = Object.freeze({
+  uid: null,
   status: "signed-out",
   systemRole: "student",
   isAdmin: false,
@@ -51,19 +52,24 @@ function clearRoleListeners() {
 }
 
 function isEnabled(value) {
-  return value === true || (Boolean(value) && value.enabled !== false);
+  return value === true || (value !== null && typeof value === "object" && value.enabled === true);
 }
 
 function publishSignedInRole() {
-  const isAdmin = isEnabled(roleValues.admin);
-  const isTeacher = isAdmin || isEnabled(roleValues.teacher);
+  const denied = roleErrors.has("admin") || roleErrors.has("teacher");
+  const ready = readyKeys.size === 3 && !denied;
+  // The admin marker is boolean true in the existing Rules; malformed values
+  // and partially loaded/failed permissions never grant privileged UI access.
+  const isAdmin = ready && roleValues.admin === true;
+  const isTeacher = ready && (isAdmin || isEnabled(roleValues.teacher));
   const systemRole = isAdmin ? "admin" : isTeacher ? "teacher" : "student";
   const requestStatus = isTeacher
     ? "approved"
     : roleValues.request?.status || "none";
 
   publishRole({
-    status: readyKeys.size === 3 ? "ready" : "loading",
+    uid: activeUser?.uid || null,
+    status: denied ? "error" : ready ? "ready" : "loading",
     systemRole,
     isAdmin,
     isTeacher,
@@ -111,7 +117,8 @@ async function ensureUserProfile(user, generation) {
 
     if (!snapshot.exists()) profile.createdAt = serverTimestamp();
     await update(profileRef, profile);
-    roleErrors.delete("profile");
+    if (generation !== activeGeneration) return;
+    if (roleErrors.delete("profile")) publishSignedInRole();
   } catch (error) {
     if (generation !== activeGeneration) return;
     console.warn("Learning Hub could not update the user profile.", error);
@@ -154,6 +161,7 @@ function stopRoleSession(status = "signed-out") {
   readyKeys = new Set();
   roleErrors = new Set();
   publishRole({
+    uid: null,
     status,
     systemRole: status === "guest" ? "guest" : "student",
     isAdmin: false,
@@ -169,7 +177,8 @@ function cleanField(value, maximumLength) {
 }
 
 function requireSignedInUser() {
-  if (activeUser) return activeUser;
+  const session = getAuthSession();
+  if (session.status === "signed-in" && activeUser?.uid === session.user?.uid) return activeUser;
 
   const error = new Error("A Google account is required.");
   error.code = "hub/role-sign-in-required";
@@ -184,6 +193,11 @@ export function subscribeRoles(subscriber) {
   subscribers.add(subscriber);
   subscriber(currentRole);
   return () => subscribers.delete(subscriber);
+}
+
+export function retryRoleCheck() {
+  const session = getAuthSession();
+  if (session.status === "signed-in" && session.user) startRoleSession(session.user);
 }
 
 export async function requestTeacherAccess({ school, subjects, note = "" }) {
@@ -237,4 +251,5 @@ window.HubRoles = Object.freeze({
   subscribe: subscribeRoles,
   requestTeacherAccess,
   cancelTeacherRequest,
+  retry: retryRoleCheck,
 });

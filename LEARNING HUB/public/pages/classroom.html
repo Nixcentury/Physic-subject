@@ -4,50 +4,56 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="shared/page.css" />
+    <link rel="stylesheet" href="shared/classroom-page.css" />
     <title>Classroom · Learning Hub</title>
   </head>
-  <body class="theme-classroom">
+  <body class="theme-classroom" data-classroom-page>
     <main class="page-shell">
       <header class="page-heading">
         <span class="page-icon" aria-hidden="true">◎</span>
-        <div>
-          <small data-th="พื้นที่ห้องเรียน" data-en="Classroom workspace">พื้นที่ห้องเรียน</small>
-          <h1 data-th="ห้องเรียน" data-en="Classroom">ห้องเรียน</h1>
-        </div>
+        <div><small  data-th="พื้นที่ห้องเรียน" data-en="Classroom workspace">พื้นที่ห้องเรียน</small><h1  data-th="ห้องเรียน" data-en="Classroom">ห้องเรียน</h1></div>
+        <span class="classroom-phase" data-th="เฟส 0 · บัญชีและสิทธิ์" data-en="Phase 0 · Account access">เฟส 0 · บัญชีและสิทธิ์</span>
       </header>
-
-      <section class="classroom-welcome surface" data-role-view="student">
-        <span class="eyebrow" data-th="มุมมองนักเรียน" data-en="STUDENT VIEW">มุมมองนักเรียน</span>
-        <h2 data-th="Dashboard ห้องเรียนของนักเรียน" data-en="Student classroom dashboard">Dashboard ห้องเรียนของนักเรียน</h2>
-        <p
-          data-th="รอบนี้วางเฉพาะตำแหน่งห้องที่เคยเข้า งานค้าง และกำหนดส่ง ระบบห้องเรียนจริงจะเชื่อมภายหลัง"
-          data-en="This round reserves space for joined rooms, pending work, and due dates. Live classroom data will be connected later."
-        >
-          รอบนี้วางเฉพาะตำแหน่งห้องที่เคยเข้า งานค้าง และกำหนดส่ง ระบบห้องเรียนจริงจะเชื่อมภายหลัง
-        </p>
-        <div class="classroom-grid">
-          <article class="classroom-card"><span>⌂</span><h3 data-th="ห้องของฉัน" data-en="My classrooms">ห้องของฉัน</h3><p data-th="ยังไม่มีห้องเรียน" data-en="No classrooms yet">ยังไม่มีห้องเรียน</p></article>
-          <article class="classroom-card"><span>◷</span><h3 data-th="งานค้าง" data-en="Pending work">งานค้าง</h3><p data-th="ยังไม่มีงานที่ได้รับมอบหมาย" data-en="No assigned work yet">ยังไม่มีงานที่ได้รับมอบหมาย</p></article>
-        </div>
-        <span class="role-note" data-th="Classroom จะดึงคะแนนล่าสุดจาก Quiz โดยตรง" data-en="Classroom will read the latest score directly from each Quiz">Classroom จะดึงคะแนนล่าสุดจาก Quiz โดยตรง</span>
+      <div class="classroom-account" data-classroom-account hidden>
+        <span aria-hidden="true">●</span>
+        <div><strong data-account-name></strong><small data-account-email data-allow-selection></small></div>
+      </div>
+      <section class="classroom-welcome surface" data-classroom-state="loading" aria-busy="true">
+        <h2 tabindex="-1" data-th="กำลังตรวจสอบสิทธิ์ของคุณ" data-en="Checking your access">กำลังตรวจสอบสิทธิ์ของคุณ</h2>
+        <p  data-th="รอยืนยันบัญชีและสิทธิ์ก่อนเปิดพื้นที่ห้องเรียน" data-en="Your account and access are checked before opening the classroom workspace.">รอยืนยันบัญชีและสิทธิ์ก่อนเปิดพื้นที่ห้องเรียน</p>
+        <div data-access-delayed hidden><p  data-th="ใช้เวลานานกว่าปกติ ลองตรวจใหม่ หรือโหลดหน้า Learning Hub ใหม่หากยังไม่ตอบสนอง" data-en="This is taking longer than usual. Retry, or reload the Learning Hub if it still does not respond.">ใช้เวลานานกว่าปกติ ลองตรวจใหม่ หรือโหลดหน้า Learning Hub ใหม่หากยังไม่ตอบสนอง</p><button class="classroom-button" data-classroom-action="retry"  data-th="ตรวจสิทธิ์อีกครั้ง" data-en="Retry access check">ตรวจสิทธิ์อีกครั้ง</button></div>
       </section>
-
-      <section class="classroom-welcome surface" data-role-view="teacher admin" hidden>
-        <span class="eyebrow" data-th="มุมมองครู" data-en="TEACHER VIEW">มุมมองครู</span>
-        <h2 data-th="Dashboard จัดการห้องเรียน" data-en="Classroom management dashboard">Dashboard จัดการห้องเรียน</h2>
-        <p
-          data-th="เตรียมตำแหน่งสำหรับสร้างห้อง เลือก Quiz ให้เด็กทำ ดูคะแนนล่าสุด และกำหนดส่ง"
-          data-en="Reserved for creating rooms, assigning Quizzes, viewing latest scores, and setting due dates."
-        >
-          เตรียมตำแหน่งสำหรับสร้างห้อง เลือก Quiz ให้เด็กทำ ดูคะแนนล่าสุด และกำหนดส่ง
-        </p>
-        <div class="classroom-grid">
-          <article class="classroom-card"><span>＋</span><h3 data-th="สร้างห้อง" data-en="Create classroom">สร้างห้อง</h3><p data-th="เครื่องมือจริงจะเปิดในรอบ Classroom" data-en="The live tool will arrive in the Classroom round">เครื่องมือจริงจะเปิดในรอบ Classroom</p></article>
-          <article class="classroom-card"><span>▦</span><h3 data-th="ตรวจคะแนน" data-en="Review scores">ตรวจคะแนน</h3><p data-th="ดึงคะแนนล่าสุดจาก Quiz ของนักเรียน" data-en="Read each student's latest Quiz score">ดึงคะแนนล่าสุดจาก Quiz ของนักเรียน</p></article>
-        </div>
+      <section class="classroom-welcome surface" data-classroom-state="guest" hidden>
+        <h2 tabindex="-1" data-th="ห้องเรียนเริ่มต้นที่บัญชีของคุณ" data-en="Your classroom starts with your account">ห้องเรียนเริ่มต้นที่บัญชีของคุณ</h2>
+        <p  data-th="เข้าสู่ระบบเพื่อระบุตัวคุณในห้องเรียน ระหว่างนี้ยังเปิดบทเรียนและเครื่องมือทั่วไปในแท็บวิชาได้" data-en="Sign in to identify yourself in classrooms. You can still explore lessons and general tools in the subject tabs.">เข้าสู่ระบบเพื่อระบุตัวคุณในห้องเรียน ระหว่างนี้ยังเปิดบทเรียนและเครื่องมือทั่วไปในแท็บวิชาได้</p>
+        <button class="classroom-button" data-classroom-action="sign-in"  data-th="เข้าสู่ระบบด้วย Google" data-en="Sign in with Google">เข้าสู่ระบบด้วย Google</button><p class="classroom-footnote" data-th="ใช้บัญชี Google เพื่อล็อกอินเท่านั้น ไม่ต้องเชื่อม Google Classroom" data-en="Google is used for sign-in only. Connecting Google Classroom is not required.">ใช้บัญชี Google เพื่อล็อกอินเท่านั้น ไม่ต้องเชื่อม Google Classroom</p>
       </section>
+      <section class="classroom-welcome surface" data-classroom-state="student" hidden>
+        <h2 tabindex="-1" data-th="พื้นที่ห้องเรียนของฉัน" data-en="My classroom workspace">พื้นที่ห้องเรียนของฉัน</h2>
+        <p  data-th="ยืนยันบัญชีนักเรียน / บัญชีทั่วไปแล้ว พื้นที่นี้จะใช้สำหรับห้องที่คุณเข้าร่วมและงานของคุณ" data-en="Student / general account verified. This space is reserved for your joined classrooms and your own work.">ยืนยันบัญชีนักเรียน / บัญชีทั่วไปแล้ว พื้นที่นี้จะใช้สำหรับห้องที่คุณเข้าร่วมและงานของคุณ</p>
+        <p class="classroom-notice" data-request-pending hidden data-th="คำขอเป็นครูอยู่ระหว่างรออนุมัติ ขณะนี้ยังใช้มุมมองนักเรียน" data-en="Your teacher request is pending. You currently have student access.">คำขอเป็นครูอยู่ระหว่างรออนุมัติ ขณะนี้ยังใช้มุมมองนักเรียน</p><p class="classroom-notice" data-request-rejected hidden data-th="คำขอเป็นครูยังไม่ได้รับอนุมัติ ดูรายละเอียดได้ที่สิทธิ์บัญชีของฉัน" data-en="Your teacher request was not approved. Open My account access for details.">คำขอเป็นครูยังไม่ได้รับอนุมัติ ดูรายละเอียดได้ที่สิทธิ์บัญชีของฉัน</p><p class="classroom-notice" data-request-revoked hidden data-th="สิทธิ์ครูถูกถอนแล้ว ขณะนี้ใช้มุมมองนักเรียน" data-en="Teacher access was revoked. You now have student access.">สิทธิ์ครูถูกถอนแล้ว ขณะนี้ใช้มุมมองนักเรียน</p><div class="classroom-grid"><article class="classroom-card"><span aria-hidden="true">⌂</span><h3  data-th="ห้องของฉัน" data-en="My classrooms">ห้องของฉัน</h3><p  data-th="การเข้าห้องด้วยรหัสจะเปิดในเฟส 1" data-en="Joining rooms by code is planned for Phase 1.">การเข้าห้องด้วยรหัสจะเปิดในเฟส 1</p></article><article class="classroom-card"><span aria-hidden="true">▤</span><h3  data-th="งานและผลของฉัน" data-en="My work and results">งานและผลของฉัน</h3><p  data-th="ยังไม่เชื่อมรายการงานหรือคะแนนในเฟสนี้" data-en="Assignments and results are not connected in this phase.">ยังไม่เชื่อมรายการงานหรือคะแนนในเฟสนี้</p></article></div><button class="classroom-button" data-classroom-action="account"  data-th="สิทธิ์บัญชีของฉัน" data-en="My account access">สิทธิ์บัญชีของฉัน</button>
+      </section>
+      <section class="classroom-welcome surface" data-classroom-state="teacher" hidden>
+        <h2 tabindex="-1" data-th="พื้นที่จัดการห้องเรียน" data-en="Classroom management">พื้นที่จัดการห้องเรียน</h2>
+        <p  data-th="ยืนยันสิทธิ์ครูแล้ว พื้นที่จัดการจะแยกจากมุมมองนักเรียน" data-en="Teacher access is verified. Your management workspace is separate from the student view.">ยืนยันสิทธิ์ครูแล้ว พื้นที่จัดการจะแยกจากมุมมองนักเรียน</p>
+        <div class="classroom-grid"><article class="classroom-card"><span aria-hidden="true">＋</span><h3  data-th="สร้างและจัดการห้อง" data-en="Create and manage rooms">สร้างและจัดการห้อง</h3><p  data-th="เริ่มเปิดใช้งานในเฟส 1 — ยังไม่สร้างห้องในรอบนี้" data-en="Planned for Phase 1 — room creation is not enabled yet.">เริ่มเปิดใช้งานในเฟส 1 — ยังไม่สร้างห้องในรอบนี้</p></article><article class="classroom-card"><span aria-hidden="true">▦</span><h3  data-th="มอบหมายงานและดูคะแนน" data-en="Assignments and gradebook">มอบหมายงานและดูคะแนน</h3><p  data-th="จะเชื่อมในเฟสถัดไป หลังระบบห้องและสมาชิกพร้อม" data-en="Planned after rooms and membership are ready.">จะเชื่อมในเฟสถัดไป หลังระบบห้องและสมาชิกพร้อม</p></article></div><button class="classroom-button" data-classroom-action="account"  data-th="สิทธิ์บัญชีของฉัน" data-en="My account access">สิทธิ์บัญชีของฉัน</button>
+      </section>
+      <section class="classroom-welcome surface" data-classroom-state="error" hidden>
+        <h2 tabindex="-1" data-th="ตรวจสอบสิทธิ์ไม่สำเร็จ" data-en="Could not verify your access">ตรวจสอบสิทธิ์ไม่สำเร็จ</h2>
+        <p  data-th="อาจเกิดจากการเชื่อมต่อหรือสิทธิ์ฐานข้อมูล ระบบจะยังไม่เปิดพื้นที่ครู และไม่ได้สรุปว่าคุณเป็นนักเรียน กรุณาตรวจใหม่" data-en="The connection or database permissions may be unavailable. Teacher access stays closed; this does not mean your account is a student. Please retry.">อาจเกิดจากการเชื่อมต่อหรือสิทธิ์ฐานข้อมูล ระบบจะยังไม่เปิดพื้นที่ครู และไม่ได้สรุปว่าคุณเป็นนักเรียน กรุณาตรวจใหม่</p>
+        <button class="classroom-button" data-classroom-action="retry"  data-th="ตรวจสิทธิ์อีกครั้ง" data-en="Retry access check">ตรวจสิทธิ์อีกครั้ง</button>
+      </section>
+      <section class="classroom-welcome surface" data-classroom-state="standalone" hidden>
+        <h2 tabindex="-1" data-th="เปิดห้องเรียนจาก Learning Hub" data-en="Open Classroom from the Learning Hub">เปิดห้องเรียนจาก Learning Hub</h2>
+        <p  data-th="หน้านี้ต้องรับบัญชีจากหน้าเว็บหลัก การเปิดไฟล์เดี่ยวจะยังไม่ยืนยันสิทธิ์" data-en="This page receives your account from the main Hub. Opening the file alone does not verify access.">หน้านี้ต้องรับบัญชีจากหน้าเว็บหลัก การเปิดไฟล์เดี่ยวจะยังไม่ยืนยันสิทธิ์</p>
+        <a class="classroom-button" href="../index.html#classroom" data-th="ไป Learning Hub" data-en="Open Learning Hub">ไป Learning Hub</a>
+      </section>
+      <p class="classroom-notice" data-account-warning hidden data-th="อ่านข้อมูลบัญชีบางส่วนไม่สำเร็จ แต่ยืนยันสิทธิ์แล้ว ลองตรวจใหม่ได้หากข้อมูลคำขอยังไม่พร้อม" data-en="Access is verified, but some account details are unavailable. Retry if request details are missing.">อ่านข้อมูลบัญชีบางส่วนไม่สำเร็จ แต่ยืนยันสิทธิ์แล้ว ลองตรวจใหม่ได้หากข้อมูลคำขอยังไม่พร้อม</p>
+      <button class="classroom-button" data-classroom-action="retry" data-account-warning-retry hidden data-th="ตรวจข้อมูลบัญชีอีกครั้ง" data-en="Retry account details">ตรวจข้อมูลบัญชีอีกครั้ง</button>
+      <noscript>กรุณาเปิด JavaScript เพื่อให้ตรวจสอบบัญชีและสิทธิ์ได้ / Enable JavaScript to check your account.</noscript>
     </main>
     <script src="../shared/learning-hub-tools.js"></script>
+    <script src="shared/classroom-page.js"></script>
     <script src="shared/page.js"></script>
   </body>
 </html>

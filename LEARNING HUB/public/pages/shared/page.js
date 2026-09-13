@@ -23,6 +23,8 @@ function setRole(role) {
     : "student";
   document.body.dataset.role = nextRole;
 
+  // Classroom needs verified identity + a UID-bound role, not the legacy role string.
+  if (document.body.hasAttribute("data-classroom-page")) return;
   document.querySelectorAll("[data-role-view]").forEach((element) => {
     const acceptedRoles = element.dataset.roleView.split(" ");
     element.hidden = !acceptedRoles.includes(nextRole);
@@ -30,11 +32,12 @@ function setRole(role) {
 }
 
 window.addEventListener("message", (event) => {
-  if (event.source !== parent || event.data?.type !== "learning-hub-context") return;
+  if (parent === window || event.source !== parent || event.origin !== location.origin || event.data?.type !== "learning-hub-context") return;
   setLanguage(event.data.language);
   setRole(event.data.role);
+  document.dispatchEvent(new CustomEvent("hub-page-context", { detail: event.data }));
 });
 
 setLanguage(initialLanguage);
 setRole("student");
-parent.postMessage({ type: "learning-hub-page-ready" }, "*");
+if (parent !== window) parent.postMessage({ type: "learning-hub-page-ready" }, location.origin === "null" ? "*" : location.origin);

@@ -17,7 +17,7 @@ const auth = `const session={status:'signed-in',isGuest:false,user:{uid:'navigat
 export function getAuthSession(){return session;} export function subscribeAuth(fn){fn(session);return ()=>{};}
 export async function continueAsGuest(){} export async function signInWithGoogle(){} export async function signOutFromHub(){}`;
 const presence = `export function setPresenceContext(){} export async function stopPresence(){} export function subscribePresence(fn){fn({connectionStatus:'OFFLINE',rows:[],counts:{active:0,online:0,idle:0,visible:0},error:''});return ()=>{};}`;
-const roles = `export async function cancelTeacherRequest(){} export async function requestTeacherAccess(){} export function subscribeRoles(fn){fn({status:'ready',systemRole:'student',isAdmin:false,isTeacher:false,requestStatus:'none',request:null,error:''});return ()=>{};}`;
+const roles = `export function retryRoleCheck(){} export async function cancelTeacherRequest(){} export async function requestTeacherAccess(){} export function subscribeRoles(fn){fn({uid:'navigation-qa',status:'ready',systemRole:'student',isAdmin:false,isTeacher:false,requestStatus:'none',request:null,error:''});return ()=>{};}`;
 const database = `const records=new Map();export const getDatabase=()=>({});export const ref=(_,path)=>path;
 export const serverTimestamp=()=>Date.now();export async function get(path){const value=records.get(path);return {exists:()=>value!==undefined,val:()=>structuredClone(value)};}
 export async function set(path,value){records.set(path,structuredClone(value));}`;
@@ -118,6 +118,7 @@ try {
   assert.deepEqual(await child.evaluate(() => LearningHubQuiz.getState().answers), {});
   await page.locator(".window-control.is-minimize").click();
   await subject.locator('[data-menu-entry="chem-le-chatelier-starter-v1"]').click();
+  await page.locator(".workspace-tool-frame").nth(1).waitFor({state:"attached"});
   assert.equal(await page.locator(".workspace-tool-frame").count(), 2);
   child = await quizObject(1);
   await child.waitForFunction(() => window.LearningHubQuiz?.getState().answers.q21 === "a");
