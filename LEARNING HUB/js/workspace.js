@@ -9,6 +9,7 @@ import {
   createContentContext,
   createHubContextMessage,
 } from "./content-context.js";
+import { createContentTool } from "./content-tool.js";
 
 // Only live Quiz windows created by this workspace may use its storage bridge.
 const quizStorageFrames = new Set();
@@ -161,6 +162,7 @@ export function createWorkspace({
   getLanguage,
   getIdentity,
   getRole,
+  onToolClosed = () => {},
 }) {
   const records = new Map();
   let highestZIndex = 30;
@@ -481,6 +483,7 @@ export function createWorkspace({
     record.element.remove();
     record.taskButton.remove();
     records.delete(record.tool.id);
+    onToolClosed(record.tool.id);
     setTaskbarVisibility();
     syncMaximizedState();
 
@@ -710,6 +713,16 @@ export function createWorkspace({
     return true;
   }
 
+  function openContent(entry) {
+    const tool = createContentTool(entry, location.href);
+    if (!tool) return false;
+    // A copied quiz must receive a new ID; do not silently reuse another file's window.
+    const previous = toolCatalog[tool.id];
+    if (previous && previous.source !== tool.source) return false;
+    toolCatalog[tool.id] = tool;
+    return open(tool.id);
+  }
+
   function setLanguage() {
     records.forEach((record) => {
       updateRecordText(record);
@@ -777,5 +790,5 @@ export function createWorkspace({
     });
   });
 
-  return { open, setLanguage, setContext, clear, prepareAllForClose };
+  return { open, openContent, setLanguage, setContext, clear, prepareAllForClose };
 }

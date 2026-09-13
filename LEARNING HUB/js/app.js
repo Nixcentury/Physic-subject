@@ -111,6 +111,9 @@ const workspace = createWorkspace({
   getLanguage: () => currentLanguage,
   getIdentity: getWorkspaceIdentity,
   getRole: () => activeRole.systemRole,
+  onToolClosed: (toolId) => pageFrame.contentWindow?.postMessage(
+    { type: "learning-hub-tool-closed", toolId }, location.origin,
+  ),
 });
 
 function readSavedLanguage() {
@@ -574,6 +577,13 @@ pageFrame.addEventListener("load", () => {
 window.addEventListener("message", (event) => {
   const trustedOrigin = location.origin === "null" || event.origin === location.origin;
   if (!trustedOrigin || event.source !== pageFrame.contentWindow) return;
+  if (event.data?.type === "learning-hub-open-content") {
+    const ok = workspace.openContent(event.data.content);
+    event.source.postMessage({
+      type: "learning-hub-content-opened", requestId: event.data.requestId, ok,
+    }, event.origin === "null" ? "*" : event.origin);
+    return;
+  }
   if (event.data?.type !== "learning-hub-open-tool") return;
 
   workspace.open(event.data.toolId);

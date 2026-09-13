@@ -1,12 +1,72 @@
 import { readdir, readFile } from "node:fs/promises";
-import { fileURLToPath } from "node:url";
-import { extname, join, relative } from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
+import { extname, join, relative, sep } from "node:path";
 import { parseNumericAnswer } from "../public/shared/quiz-question-model.js";
 
 const contentDirectory = fileURLToPath(new URL("../public/content", import.meta.url));
 const allowedQuestionTypes = new Set(["choice", "number", "drag-drop"]);
 const allowedActivityKinds = new Set(["practice", "quiz"]);
 const errors = [];
+const activityIds = new Map();
+const stableMenuId = /^[a-z0-9][a-z0-9-]{0,127}$/;
+
+async function readMenuTarget(file, href) {
+  try {
+    const base = pathToFileURL(contentDirectory + sep);
+    const url = new URL(href, pathToFileURL(file));
+    if (!href || url.protocol !== "file:" || url.host || !url.pathname.startsWith(base.pathname) ||
+        !url.pathname.endsWith(".html") || url.search || url.hash || /%(?:2e|2f|5c|25)/i.test(url.pathname)) throw new Error("Unsafe path");
+    const path = fileURLToPath(url);
+    return { path, source: (await readFile(path, "utf8")).replace(/<!--[\s\S]*?-->/g, "") };
+  } catch {
+    addError(file, `Missing or invalid local content link: ${href || "(empty)"}`);
+    return null;
+  }
+}
+
+async function validateMenu(file, source) {
+  const roots = [...source.matchAll(/<nav\b[^>]*\bdata-learning-menu(?:\s|=|>)[^>]*>/gi)];
+  if (roots.length !== 1) { addError(file, "Menu needs exactly one nav data-learning-menu root."); return; }
+  const root = readAttributes(roots[0][0]);
+  const kind = root.get("data-menu-kind");
+  if (!["topics", "tools"].includes(kind)) addError(file, "Menu kind must be topics or tools.");
+  for (const attr of ["data-subject-id", "data-chapter-id", ...(kind === "tools" ? ["data-topic-id"] : [])]) {
+    if (!stableMenuId.test(root.get(attr) || "")) addError(file, `Menu needs stable ${attr}.`);
+  }
+  if (!root.get("data-title-th")?.trim() || !root.get("data-title-en")?.trim()) addError(file, "Menu needs Thai and English titles.");
+  if (/<\s*(script|style|link|iframe|object|embed|form|button|input|textarea|select)\b/i.test(source) || /\s(?:class|style|on[a-z]+)\s*=/i.test(source)) {
+    addError(file, "Menu HTML is data only: no scripts, styles, handlers or custom controls.");
+  }
+  const seen = new Set();
+  for (const match of source.matchAll(/<a\b[^>]*>/gi)) {
+    const entry = readAttributes(match[0]);
+    const id = entry.get(kind === "topics" ? "data-topic-id" : "data-content-id");
+    if (!stableMenuId.test(id || "") || seen.has(id)) addError(file, `Missing, invalid or duplicate menu entry ID: ${id}`);
+    seen.add(id);
+    if (!hasBilingualText(match[0])) addError(file, `${id} needs data-th and data-en.`);
+    const target = await readMenuTarget(file, entry.get("href"));
+    if (!target) continue;
+    if (kind === "topics") {
+      const destination = readAttributes(findOpeningTag(target.source, "data-learning-menu"));
+      if (destination.get("data-menu-kind") !== "tools" || destination.get("data-topic-id") !== id ||
+          destination.get("data-subject-id") !== root.get("data-subject-id") || destination.get("data-chapter-id") !== root.get("data-chapter-id")) {
+        addError(file, `${id} must link to a tools menu with matching subject, chapter and topic IDs.`);
+      }
+    } else {
+      const type = entry.get("data-tool-kind");
+      if (!["quiz", "simulation"].includes(type)) { addError(file, `${id} supports only quiz or simulation.`); continue; }
+      const destination = readAttributes(findOpeningTag(target.source, type === "quiz" ? "data-learning-activity-content" : "data-learning-simulation"));
+      if (destination.get("data-activity-id") !== id || (type === "quiz" && destination.get("data-activity-kind") !== "quiz")) {
+        addError(file, `${id} must match the destination's data-activity-id and tool kind.`);
+      }
+    }
+  }
+}
+
+function trackActivityId(file, id) {
+  if (activityIds.has(id)) addError(file, `Duplicate activity ID ${id}; already used by ${relative(contentDirectory, activityIds.get(id))}.`);
+  else activityIds.set(id, file);
+}
 
 async function listHtmlFiles(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
@@ -131,7 +191,19 @@ function validateQuestion(file, openingTag, body, index, seenIds) {
 }
 
 async function validateFile(file) {
-  const source = await readFile(file, "utf8");
+  const source = (await readFile(file, "utf8")).replace(/<!--[\s\S]*?-->/g, "");
+  if (findOpeningTag(source, "data-learning-menu")) {
+    if (findOpeningTag(source, "data-learning-activity-content") || findOpeningTag(source, "data-learning-simulation")) addError(file, "A menu must not also be a quiz or simulation.");
+    await validateMenu(file, source);
+    return;
+  }
+  if (findOpeningTag(source, "data-learning-simulation")) {
+    const root = readAttributes(findOpeningTag(source, "data-learning-simulation"));
+    const id = root.get("data-activity-id");
+    if (!/^[a-z][a-z0-9-]{0,127}$/.test(id || "")) addError(file, "Simulation needs a stable data-activity-id.");
+    else trackActivityId(file, id);
+    return;
+  }
   const rootTags = [
     ...source.matchAll(/<article\b[^>]*\bdata-learning-activity-content(?:\s|=|>)[^>]*>/gi),
   ].map((match) => match[0]);
@@ -157,6 +229,7 @@ async function validateFile(file) {
   if (!activityId || !/^[a-z][a-z0-9-]*$/.test(activityId)) {
     addError(file, "data-activity-id must be a stable lowercase id.");
   }
+  else trackActivityId(file, activityId);
   if (rootAttributes.get("data-activity-version") !== "1") {
     addError(file, "data-activity-version must be 1.");
   }
@@ -198,6 +271,24 @@ async function validateFile(file) {
 
 const files = await listHtmlFiles(contentDirectory);
 await Promise.all(files.map(validateFile));
+
+// Copying a chapter should need only HTML edits, but every chapter link must be real.
+const pagesDirectory = fileURLToPath(new URL("../public/pages", import.meta.url));
+for (const name of await readdir(pagesDirectory)) {
+  if (!name.endsWith(".html")) continue;
+  const file = join(pagesDirectory, name);
+  const source = (await readFile(file, "utf8")).replace(/<!--[\s\S]*?-->/g, "");
+  const subject = readAttributes(findOpeningTag(source, "data-subject-id")).get("data-subject-id");
+  for (const match of source.matchAll(/<article\b[^>]*\bdata-chapter-src\s*=[^>]*>/gi)) {
+    const entry = readAttributes(match[0]);
+    const target = await readMenuTarget(file, entry.get("data-chapter-src"));
+    if (!target) continue;
+    const menu = readAttributes(findOpeningTag(target.source, "data-learning-menu"));
+    if (menu.get("data-menu-kind") !== "topics" || menu.get("data-subject-id") !== subject || menu.get("data-chapter-id") !== entry.get("data-chapter")) {
+      addError(file, "Chapter link must point to a topics menu with matching subject and chapter IDs.");
+    }
+  }
+}
 
 if (errors.length) {
   console.error("Activity Content V1 validation failed:\n");

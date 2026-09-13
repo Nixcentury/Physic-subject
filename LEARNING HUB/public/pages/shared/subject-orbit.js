@@ -23,6 +23,7 @@
       th: cleanTitle(card.querySelector(".chapter-title").dataset.th),
       en: cleanTitle(card.querySelector(".chapter-title").dataset.en),
       description: { ...card.querySelector(".chapter-description").dataset },
+      ready: Boolean(root.ownerDocument.querySelector("#subject-chapters")?.content.querySelector(`[data-chapter="${card.dataset.chapter}"][data-chapter-src]`)),
     }));
     const count = cards.length;
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
@@ -117,6 +118,7 @@
       layout.querySelector(".orbit-counter").textContent = String(current + 1).padStart(2, "0");
       layout.querySelector(".orbit-detail-number").textContent = number;
       localize(layout.querySelector(".orbit-detail-title"), chapter.th, chapter.en);
+      localize(layout.querySelector(".orbit-status span"), chapter.ready ? "มีเรื่องย่อยให้เลือก" : "กำลังเตรียมเนื้อหา", chapter.ready ? "Topics available" : "Content in preparation");
       localize(layout.querySelector(".orbit-detail-description"), chapter.description.th, chapter.description.en);
       if (announce) {
         localize(layout.querySelector(".orbit-announcement"), `บทที่ ${chapter.id} ${chapter.th}`, `Chapter ${chapter.id}: ${chapter.en}`);

@@ -184,12 +184,13 @@ class FakeElement {
 function workspaceHarness() {
   const listeners = {};
   const context = vm.createContext({
-    console, location: { origin },
+    console, URL, location: { origin, href: origin + "/index.html" },
     document: { body: new FakeElement(), createElement: () => new FakeElement() },
     window: { addEventListener: (type, fn) => { listeners[type] = fn; }, setInterval() {} },
     requestAnimationFrame: (fn) => fn(),
   });
   vm.runInContext(readModule("../js/content-context.js"), context);
+  vm.runInContext(readModule("../js/content-tool.js"), context);
   vm.runInContext(readModule("../js/workspace.js"), context);
   const windowLayer = new FakeElement();
   const workspace = context.createWorkspace({

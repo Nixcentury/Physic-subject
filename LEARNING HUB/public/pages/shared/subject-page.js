@@ -1,12 +1,13 @@
 /* ==============================================================
    โครงหน้ารายวิชากลางของ Learning Hub
    - ชื่อวิชาและรายการบทอยู่ใน HTML ของแต่ละวิชา
-   - ไฟล์นี้ดูแล Navigation 3 ชั้นและการเปิดหน้าต่างงาน
+   - บทเดิมใช้ Navigation 3 ชั้น; data-chapter-src เปิดเมนู HTML แบบ 4 ชั้น
    - Activity Core โหลด HTML เนื้อหาและปริ้นรูปแบบกลางได้แล้ว แต่ยังไม่ตรวจคะแนน
 ================================================================ */
 
 const subjectRoot = document.querySelector("[data-subject-page]");
 const chapterTemplate = document.querySelector("#subject-chapters");
+const contentNavigationUrl = new URL("subject-content-nav.js", document.currentScript.src).href;
 
 function setLocalizedText(element, thai, english) {
   element.dataset.th = thai;
@@ -62,6 +63,10 @@ function buildSubjectPage() {
       <div class="stage" data-stage="3">
         <strong>3</strong>
         <span data-th="เปิดหน้าต่างงาน" data-en="Open tool window">เปิดหน้าต่างงาน</span>
+      </div>
+      <div class="stage" data-stage="4" hidden>
+        <strong>4</strong>
+        <span data-th="เปิดใช้งาน" data-en="Open workspace">เปิดใช้งาน</span>
       </div>
     </nav>
 
@@ -180,6 +185,23 @@ function buildSubjectPage() {
   const stageItems = [...subjectRoot.querySelectorAll("[data-stage]")];
   const chapterDefinitions = [...chapterTemplate.content.querySelectorAll("[data-chapter]")];
   let selectedChapter = chapterDefinitions[0]?.dataset.chapter || "1";
+  const hasContentMenus = chapterDefinitions.some((entry) => entry.dataset.chapterSrc);
+  let contentNavigation = null;
+  let contentNavigationPromise = null;
+  let navigationVersion = 0;
+  subjectRoot.classList.toggle("has-content-menus", hasContentMenus);
+
+  function setNavigationMode(fourLayers) {
+    subjectRoot.classList.toggle("is-four-layer", fourLayers);
+    const labels = fourLayers
+      ? [["เลือกบท", "Choose chapter"], ["เลือกเรื่องย่อย", "Choose topic"], ["เลือกงาน", "Choose activity"], ["เปิดใช้งาน", "Open workspace"]]
+      : [["เลือกบทและเรื่อง", "Choose chapter"], ["เลือกงานหรือเครื่องมือ", "Choose activity"], ["เปิดหน้าต่างงาน", "Open tool window"]];
+    stageItems.forEach((stage, index) => {
+      stage.hidden = index >= labels.length;
+      if (labels[index]) setLocalizedText(stage.querySelector("span"), ...labels[index]);
+    });
+  }
+  setNavigationMode(hasContentMenus);
 
   subjectIcon.textContent = subject.icon;
   setLocalizedText(subjectTitle, subject.titleTh, subject.titleEn);
@@ -228,6 +250,9 @@ function buildSubjectPage() {
       description.th,
       description.en,
     );
+    if (definition.dataset.chapterSrc) {
+      setLocalizedText(button.querySelector(".chapter-action span"), "เลือกเรื่องย่อย", "Choose a topic");
+    }
     chapterGrid.append(button);
   });
 
@@ -255,6 +280,29 @@ function buildSubjectPage() {
 
   function showActivities(chapter) {
     selectedChapter = String(chapter);
+    const definition = chapterDefinitions.find((entry) => entry.dataset.chapter === selectedChapter);
+    const version = ++navigationVersion;
+    contentNavigation?.hide();
+    if (definition?.dataset.chapterSrc) {
+      setNavigationMode(true);
+      chapterView.hidden = true;
+      activityView.hidden = true;
+      if (!contentNavigationPromise) {
+        contentNavigationPromise = import(contentNavigationUrl).then(({ createSubjectContentNavigation }) => {
+          contentNavigation = createSubjectContentNavigation({ root: subjectRoot, subject, setStage, backToChapters: showChapters });
+          return contentNavigation;
+        }).catch((error) => { contentNavigationPromise = null; throw error; });
+      }
+      contentNavigationPromise.then((navigation) => {
+        if (version === navigationVersion) return navigation.open(definition);
+      }).catch(() => {
+        if (version !== navigationVersion) return;
+        showChapters();
+        window.alert(document.documentElement.lang === "en" ? "Cannot load the topic menu. Please refresh and try again." : "โหลดเมนูเรื่องย่อยไม่สำเร็จ กรุณารีเฟรชแล้วลองอีกครั้ง");
+      });
+      return;
+    }
+    setNavigationMode(false);
     updateActivityTitle();
     chapterView.hidden = true;
     activityView.hidden = false;
@@ -264,6 +312,9 @@ function buildSubjectPage() {
   }
 
   function showChapters() {
+    ++navigationVersion;
+    contentNavigation?.hide();
+    setNavigationMode(hasContentMenus);
     activityView.hidden = true;
     chapterView.hidden = false;
     setStage(1);
