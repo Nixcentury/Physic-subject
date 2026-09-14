@@ -22,6 +22,7 @@ import {
   subscribeRoles,
 } from "./roles.js";
 import { createClassroomAccess } from "./classroom-access.js";
+import { createFirebaseClassrooms } from "./classroom-firebase.js";
 import {
   createHubContextMessage,
   createIdentityContext,
@@ -100,6 +101,16 @@ let activeRole = {
 let presenceReturnFocus = null;
 let roleReturnFocus = null;
 let activeSectionId = "overview";
+let classroomPageRevision = 0;
+let classroomRooms = null;
+const classrooms = createFirebaseClassrooms(snapshot => {
+  classroomRooms = snapshot;
+  postContextToPage();
+});
+
+function syncClassrooms() {
+  classrooms.setContext(activeSession, activeRole, activeSectionId === "classroom");
+}
 
 function getWorkspaceIdentity() {
   return createIdentityContext(activeSession);
@@ -149,6 +160,7 @@ function postContextToPage() {
         identity: getWorkspaceIdentity(),
       }),
       classroom: createClassroomAccess(activeSession, activeRole),
+      classroomRooms: activeSectionId === "classroom" && classroomRooms?.uid === activeSession.user?.uid ? classroomRooms : null,
     },
     targetOrigin,
   );
@@ -202,6 +214,7 @@ function setRoleMessage(messageTh, messageEn, tone = "info") {
 
 function renderRole(role) {
   activeRole = role;
+  syncClassrooms();
   const access = createClassroomAccess(activeSession, role);
   const ready = ["student", "teacher"].includes(access.state);
   role = {
@@ -521,6 +534,8 @@ function showSection(sectionId, updateHistory = true) {
   if (!activeButton) return;
 
   activeSectionId = sectionId;
+  ++classroomPageRevision;
+  syncClassrooms();
   navButtons.forEach((button) => {
     const isActive = button.dataset.section === sectionId;
     button.classList.toggle("is-active", isActive);
@@ -620,6 +635,20 @@ window.addEventListener("message", (event) => {
     if (event.data.action === "sign-in" && activeSession.status === "guest") googleButton.click();
     if (event.data.action === "account" && activeSession.status === "signed-in") openRolePanel();
     if (event.data.action === "retry" && activeSession.status === "signed-in") retryRoleCheck();
+    return;
+  }
+  if (event.data?.type === "learning-hub-classroom-command" && activeSectionId === "classroom") {
+    const { action, payload, uid, requestId } = event.data;
+    if (typeof requestId !== "string" || requestId.length > 100 || uid !== activeSession.user?.uid) return;
+    const revision = classroomPageRevision;
+    const reply = result => {
+      if (revision !== classroomPageRevision || activeSectionId !== "classroom" || activeSession.user?.uid !== uid) return;
+      event.source.postMessage({ type: "learning-hub-classroom-result", requestId, uid, ...result }, event.origin);
+    };
+    void classrooms.command(action, payload, uid).then(
+      result => reply({ ok: true, result }),
+      error => reply({ ok: false, error: String(error?.code || error?.message || "classroom/unavailable") }),
+    );
     return;
   }
   if (event.data?.type === "learning-hub-open-content") {

@@ -20,7 +20,8 @@ const presence = `export function setPresenceContext(){} export async function s
 const roles = `export function retryRoleCheck(){} export async function cancelTeacherRequest(){} export async function requestTeacherAccess(){} export function subscribeRoles(fn){fn({uid:'navigation-qa',status:'ready',systemRole:'student',isAdmin:false,isTeacher:false,requestStatus:'none',request:null,error:''});return ()=>{};}`;
 const database = `const records=new Map();export const getDatabase=()=>({});export const ref=(_,path)=>path;
 export const serverTimestamp=()=>Date.now();export async function get(path){const value=records.get(path);return {exists:()=>value!==undefined,val:()=>structuredClone(value)};}
-export async function set(path,value){records.set(path,structuredClone(value));}`;
+export async function set(path,value){records.set(path,structuredClone(value));}
+export async function update(){} export function onValue(){return ()=>{};}`;
 const server = createServer(async (request, response) => {
   try {
     const pathname = decodeURIComponent(new URL(request.url, "http://localhost").pathname);

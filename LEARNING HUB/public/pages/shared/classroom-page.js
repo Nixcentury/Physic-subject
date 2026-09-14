@@ -1,5 +1,5 @@
 // The Hub supplies account context. No cached role, URL role selector, student
-// directory or database request belongs in this Phase 0 display.
+// directory or database request belongs in this account-access display.
 (() => {
   const panels = [...document.querySelectorAll("[data-classroom-state]")];
   const account = document.querySelector("[data-classroom-account]");
