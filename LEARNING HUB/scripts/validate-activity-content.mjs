@@ -44,6 +44,9 @@ async function validateMenu(file, source) {
     if (!stableMenuId.test(id || "") || seen.has(id)) addError(file, `Missing, invalid or duplicate menu entry ID: ${id}`);
     seen.add(id);
     if (!hasBilingualText(match[0])) addError(file, `${id} needs data-th and data-en.`);
+    // Topic headings may be published before their activity-menu file exists.
+    // Explicit non-empty links must still be valid; never hide broken links.
+    if (kind === "topics" && !entry.get("href")?.trim()) continue;
     const target = await readMenuTarget(file, entry.get("href"));
     if (!target) continue;
     if (kind === "topics") {

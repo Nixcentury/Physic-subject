@@ -83,6 +83,17 @@ try {
   }
   await page.goto(origin + prefix + "#chemistry");
   let subject = await enterChapter();
+  assert.equal(await subject.locator('[data-menu-entry]').count(), 9);
+  for (const topic of ['reversible-process', 'equilibrium-graphs', 'equilibrium-expression', 'equilibrium-manipulation', 'reaction-quotient', 'equilibrium-calculations', 'disturbance-graphs', 'equilibrium-applications']) {
+    const card = subject.locator(`[data-menu-entry="${topic}"]`);
+    assert.equal(await card.isDisabled(), true);
+    assert.equal(await card.locator('small').textContent(), 'กำลังเตรียมเนื้อหา');
+  }
+  assert.equal(await subject.locator('.stage.is-active').getAttribute('data-stage'), '2');
+  await page.locator('#hub-view [data-language="en"]').click();
+  await subject.locator('[data-content-status="preparing"] small').first().filter({hasText:'Content in preparation'}).waitFor();
+  await page.locator('#hub-view [data-language="th"]').click();
+  console.log('PASS nine topics visible; eight link-free topics show bilingual preparation labels and cannot navigate');
   await enterTopic(subject);
   await page.screenshot({ path: resolve(output, "navigation-topics-desktop.png"), fullPage: true, animations: "disabled" });
   await subject.locator('[data-menu-entry="chem-le-chatelier-starter-v1"]').click();

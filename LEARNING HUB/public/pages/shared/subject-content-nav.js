@@ -53,14 +53,15 @@ export function createSubjectContentNavigation({ root, subject, setStage, backTo
     const entries = [...menu.querySelectorAll("a")].map(link => {
       const d = link.dataset;
       const key = kind === "topics" ? d.topicId : d.contentId;
+      const href = (link.getAttribute("href") || "").trim();
       if (!idPattern.test(key || "") || seen.has(key) || !d.th || !d.en ||
-          !link.getAttribute("href") || (kind === "tools" && !["quiz", "simulation"].includes(d.toolKind))) {
+          (kind === "tools" && (!href || !["quiz", "simulation"].includes(d.toolKind)))) {
         throw new Error("Invalid menu entry");
       }
       seen.add(key);
       return { id: key, th: d.th, en: d.en, descriptionTh: d.descriptionTh || "",
         descriptionEn: d.descriptionEn || "", toolKind: d.toolKind,
-        source: urlFor(link.getAttribute("href"), url) };
+        source: href ? urlFor(href, url) : null };
     });
     return { url, entries, kind, topicId, th: menu.dataset.titleTh || chapter.th,
       en: menu.dataset.titleEn || chapter.en, descriptionTh: menu.dataset.descriptionTh || "",
@@ -103,7 +104,12 @@ export function createSubjectContentNavigation({ root, subject, setStage, backTo
       localized(button.querySelector("small"), mode === "topics" ? "เรื่องย่อย" : entry.toolKind === "quiz" ? "แบบฝึกหัด · Quiz" : "Simulation", mode === "topics" ? "Topic" : entry.toolKind === "quiz" ? "Quiz" : "Simulation");
       localized(button.querySelector("strong"), entry.th, entry.en);
       localized(button.querySelector(".activity-copy > span"), entry.descriptionTh, entry.descriptionEn);
-      button.addEventListener("click", () => menu.kind === "topics" ? showTools(entry) : openTool(entry, button));
+      if (!entry.source) {
+        button.disabled = true;
+        button.dataset.contentStatus = "preparing";
+        localized(button.querySelector("small"), "กำลังเตรียมเนื้อหา", "Content in preparation");
+        button.querySelector("b").textContent = "…";
+      } else button.addEventListener("click", () => menu.kind === "topics" ? showTools(entry) : openTool(entry, button));
       cards.append(button);
     });
     panel.querySelector("[data-menu-title]").focus({ preventScroll: true });
