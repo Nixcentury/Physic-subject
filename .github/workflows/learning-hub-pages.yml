@@ -1,8 +1,10 @@
-name: Learning Hub · GitHub Pages
+name: Standalone HTML · GitHub Pages
 
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'LEARNING HUB/**'
   workflow_dispatch:
 
 permissions:
@@ -21,54 +23,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 11.19.0
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: pnpm
-          cache-dependency-path: 'LEARNING HUB/pnpm-lock.yaml'
+          node-version: 24
 
-      - name: Install dependencies
-        working-directory: './LEARNING HUB'
-        run: pnpm install --frozen-lockfile
+      - name: Test independent packaging and content updates
+        run: node --test .github/scripts/package-legacy-pages.test.mjs
 
-      - name: Build Learning Hub
-        working-directory: './LEARNING HUB'
-        run: pnpm build
-
-      - name: Merge legacy quizzes and simulations
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          # GitHub Pages publishes one artifact. Keep the Learning Hub at the
-          # site root, then add every tracked legacy resource beside it while
-          # excluding the Hub source and workflow files.
-          git ls-files -z -- \
-            ':(exclude)LEARNING HUB/**' \
-            ':(exclude).github/**' \
-            | tar --null -T - -cf - \
-            | tar -xf - -C './LEARNING HUB/dist'
-
-          touch './LEARNING HUB/dist/.nojekyll'
-
-      - name: Verify critical legacy pages
-        shell: bash
-        run: |
-          set -euo pipefail
-          test -f './LEARNING HUB/dist/BASIC PRORAMING/TEST_python-foundations-operators-conditions-loops - Copy.html'
-          test -f './LEARNING HUB/dist/quiz with note and log in/chemistry/equlibrium/Chemical_Equilibrium_Mastery_Quiz_Round5_QA_FINAL.html'
-
-          html_count="$(find './LEARNING HUB/dist' -type f -name '*.html' | wc -l)"
-          if [ "$html_count" -lt 10 ]; then
-            echo "Expected legacy HTML pages, found only $html_count" >&2
-            exit 1
-          fi
+      - name: Package tracked standalone files without building Learning Hub
+        run: node .github/scripts/package-legacy-pages.mjs "$RUNNER_TEMP/legacy-pages"
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
@@ -76,7 +40,7 @@ jobs:
       - name: Upload static site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './LEARNING HUB/dist'
+          path: ${{ runner.temp }}/legacy-pages
 
   deploy:
     environment:
