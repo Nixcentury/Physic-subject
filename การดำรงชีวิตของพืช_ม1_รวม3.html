@@ -1,0 +1,2649 @@
+<!DOCTYPE html>
+
+<html lang="th">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>การดำรงชีวิตของพืช · IndexedDB AutoSave · QA PASSED · ม.1</title>
+<style>
+:root{
+  --ink:#111;
+  --muted:#5b5b5b;
+  --paper:#fff;
+  --soft:#f5f5f5;
+  --soft2:#fafafa;
+  --line:#222;
+  --ok:#e8f5e9;
+  --bad:#ffebee;
+}
+*{box-sizing:border-box}
+html,body{
+  margin:0;padding:0;background:#e9e9e9;color:var(--ink);
+  font-family:"Noto Sans Thai",Tahoma,Arial,sans-serif;
+  line-height:1.62;
+}
+body{font-size:15px}
+.toolbar{
+  position:sticky;top:0;z-index:50;background:#151515;color:#fff;
+  padding:10px 12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+  box-shadow:0 2px 8px #0003;
+}
+.toolbar button{
+  border:1px solid #777;background:#fff;color:#111;border-radius:7px;
+  padding:8px 11px;font-weight:800;cursor:pointer;
+}
+.toolbar button:hover{background:#eee}
+.toolbar .status{font-size:12px;opacity:.9;margin-left:auto}
+.game-summary{
+  font-size:12px;font-weight:900;padding:5px 8px;border:1px solid #777;
+  background:#fff;color:#111;border-radius:6px;
+}
+.sheet{
+  width:210mm;min-height:297mm;margin:10mm auto;background:#fff;
+  padding:12mm 13mm 14mm;box-shadow:0 2px 14px #0002;
+}
+header{border-bottom:2.5px solid #111;padding-bottom:9px;margin-bottom:11px}
+h1{font-size:26px;line-height:1.2;margin:0 0 3px}
+.subtitle{font-weight:800;font-size:16px}
+.level{font-size:14px;color:#444}
+.meta{
+  display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;margin-top:10px;
+  font-size:13px
+}
+.meta div{border-bottom:1px solid #333;min-height:23px;padding:2px 3px}
+.instruction,.play-help{
+  border:1.6px solid #111;background:#fafafa;padding:9px 11px;margin:9px 0 12px;
+  font-size:13px
+}
+.section{
+  border-top:2px solid #111;padding-top:10px;margin-top:17px;
+}
+.section-head{display:flex;align-items:flex-start;gap:9px;margin-bottom:8px}
+.num{
+  width:30px;height:30px;border:2px solid #111;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-weight:900;flex:0 0 auto
+}
+h2{font-size:19px;margin:1px 0 0;line-height:1.3}
+.coverage{font-size:11.5px;color:#555;margin-top:2px}
+.read-box{
+  border:1.6px solid #111;background:#fff;padding:10px 12px;margin:8px 0 11px;
+  break-inside:avoid;
+}
+.read-box .title{
+  font-size:14px;font-weight:900;border-bottom:1px solid #aaa;
+  padding-bottom:4px;margin-bottom:6px
+}
+.read-box p{margin:5px 0}
+.read-box ul{margin:6px 0 4px 20px;padding:0}
+.read-box li{margin:3px 0}
+.keyline{
+  border-left:5px solid #222;background:#f4f4f4;padding:7px 9px;margin:8px 0;
+  font-weight:800
+}
+.formula{
+  text-align:center;font-size:18px;font-weight:800;border:1.5px solid #111;
+  padding:10px 8px;margin:9px 0;background:#fff;break-inside:avoid
+}
+.wordbank{
+  border:1.4px solid #111;padding:8px 9px;margin:8px 0 9px;background:#f7f7f7;
+  font-size:13px
+}
+.wordbank strong{display:block;margin-bottom:5px}
+.words{display:flex;gap:7px 9px;flex-wrap:wrap}
+.word{
+  border:1px solid #888;border-radius:16px;padding:4px 9px;background:#fff;
+  cursor:grab;user-select:none;touch-action:manipulation;
+  transition:transform .12s ease,background .12s ease,opacity .12s ease;
+}
+.word:active{cursor:grabbing}
+.word.selected{
+  outline:3px solid #111;outline-offset:2px;background:#e7e7e7;
+  transform:translateY(-1px)
+}
+.word.used{opacity:.35;text-decoration:line-through;cursor:default}
+.practice-title{font-weight:900;font-size:14px;margin:10px 0 3px}
+.cloze{font-size:15.2px;text-align:justify;margin:7px 0}
+.blank{
+  display:inline-block;min-width:88px;min-height:26px;border-bottom:1.7px solid #111;
+  text-align:center;padding:0 5px;margin:0 2px;vertical-align:baseline;
+  border-radius:3px;cursor:pointer;transition:background .12s ease,outline .12s ease
+}
+.blank.wide{min-width:125px}
+.blank.xwide{min-width:170px}
+.blank.drop-ready{outline:2px dashed #555;outline-offset:2px;background:#f4f4f4}
+.blank.filled{background:#f7f7f7}
+.blank .placed{font-weight:900;white-space:nowrap}
+.blank.correct{background:var(--ok);outline:2px solid #2e7d32;outline-offset:1px}
+.blank.incorrect{background:var(--bad);outline:2px solid #b71c1c;outline-offset:1px}
+.blank .ans{display:none;font-weight:900}
+body.show-answers .blank .ans{display:inline}
+body.show-answers .blank .space{display:none}
+body.show-answers .blank .placed{display:none}
+.figure{
+  border:1px solid #777;border-radius:7px;padding:7px;margin:9px 0;background:#fff;
+  break-inside:avoid
+}
+.figure figcaption{font-size:11.5px;color:#444;text-align:center;margin-top:4px}
+.figure svg{width:100%;height:auto;display:block}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start}
+.mini-table{width:100%;border-collapse:collapse;margin:8px 0;font-size:12.5px}
+.mini-table th,.mini-table td{
+  border:1px solid #222;padding:6px;text-align:center;vertical-align:middle
+}
+.mini-table th{background:#eee}
+.memory{
+  border:1.5px solid #111;padding:8px 9px;margin:8px 0;background:#fff;
+  font-size:13px;break-inside:avoid
+}
+.section-playbar{
+  display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin:7px 0 9px;
+  padding:6px 8px;border:1px dashed #777;background:#fafafa;font-size:12px
+}
+.section-playbar button{
+  border:1px solid #555;background:#fff;color:#111;border-radius:6px;
+  padding:6px 9px;font-weight:800;cursor:pointer;min-height:36px
+}
+.section-playbar .progress{margin-left:auto;font-weight:900}
+.final{
+  border:2px solid #111;padding:10px;margin-top:18px;
+}
+.final h2{font-size:20px;margin:0 0 6px}
+.footer-note{
+  margin-top:16px;border-top:1px solid #555;padding-top:6px;font-size:10.5px;
+  color:#555;text-align:center
+}
+.teacher-only{display:none}
+body.show-answers .teacher-only{display:block}
+.page-break{break-before:page}
+body.hidden-summary .read-box,
+body.hidden-summary .supplement-box,
+body.hidden-summary .source-focus,
+body.hidden-summary .flowline,
+body.hidden-summary .figure,
+body.hidden-summary .compare-grid,
+.section.study-hidden .read-box,
+.section.study-hidden .supplement-box,
+.section.study-hidden .source-focus,
+.section.study-hidden .flowline,
+.section.study-hidden .figure,
+.section.study-hidden .compare-grid,
+.final.study-hidden .read-box,
+.final.study-hidden .supplement-box,
+.final.study-hidden .source-focus,
+.final.study-hidden .flowline,
+.final.study-hidden .figure,
+.final.study-hidden .compare-grid{display:none!important}
+.sr-only{
+  position:absolute!important;width:1px!important;height:1px!important;padding:0!important;
+  margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;
+  white-space:nowrap!important;border:0!important
+}
+@media(max-width:900px){
+  .sheet{width:auto;min-height:auto;margin:0;padding:18px}
+  .meta,.two-col{grid-template-columns:1fr}
+  .toolbar .status{width:100%;margin-left:0}
+  .word{padding:7px 10px;min-height:36px;display:inline-flex;align-items:center}
+  .blank{min-width:96px;min-height:30px}
+  .section-playbar .progress{width:100%;margin-left:0}
+}
+@media print{
+  @page{size:A4;margin:10mm 11mm 11mm}
+  html,body{background:#fff;font-size:12pt}
+  .toolbar,.section-playbar,.play-help{display:none!important}
+  .sheet{width:auto;min-height:auto;margin:0;padding:0;box-shadow:none}
+  .section-head{break-after:avoid-page}
+  .figure,.wordbank,.read-box,.mini-table,.memory{break-inside:avoid}
+  .wordbank{break-after:avoid-page}
+  .cloze{break-inside:avoid}
+  #s7 .wordbank,#s27 .wordbank,#s32 .wordbank{break-before:page}
+  #s28,#finalD{break-before:auto!important}
+  .blank{min-width:25mm;background:#fff!important;outline:none!important}
+  .blank.wide{min-width:34mm}.blank.xwide{min-width:44mm}
+  .word{opacity:1!important;text-decoration:none!important;outline:none!important;transform:none!important}
+  .blank .placed{display:none!important}
+  body.show-answers .blank .ans{display:inline!important}
+}
+
+.unit-banner{
+  border:2px solid #111;background:#f1f1f1;padding:10px 12px;margin:16px 0 12px;
+  break-inside:avoid;
+}
+.unit-banner .unit-no{font-size:12px;font-weight:900;color:#555;letter-spacing:.2px}
+.unit-banner .unit-title{font-size:21px;font-weight:900;line-height:1.3;margin-top:2px}
+.unit-banner .unit-desc{font-size:12.5px;color:#444;margin-top:3px}
+.flowline{
+  display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;
+  border:1px solid #777;padding:8px;margin:8px 0;background:#fff;break-inside:avoid
+}
+.flowline .step{
+  border:1.4px solid #111;border-radius:7px;padding:5px 8px;background:#fafafa;
+  font-weight:800;font-size:12.5px;text-align:center
+}
+.flowline .arrow{font-weight:900;font-size:18px}
+.source-focus{
+  border:1px dashed #666;background:#fafafa;padding:7px 9px;margin:8px 0;
+  font-size:12px;break-inside:avoid
+}
+@media print{
+  .unit-banner,.flowline,.source-focus{break-inside:avoid}
+}
+
+
+.supplement-box{
+  border:2px dashed #333;background:#fcfcfc;padding:9px 11px;margin:9px 0;
+  break-inside:avoid;
+}
+.supplement-box .sup-title{
+  font-weight:900;font-size:13.5px;margin-bottom:5px;
+}
+.supplement-box .sup-note{
+  font-size:11px;color:#555;margin-top:5px;
+}
+.compare-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0;
+  break-inside:avoid;
+}
+.compare-card{
+  border:1.5px solid #222;padding:8px 9px;background:#fff;
+}
+.compare-card h3{font-size:14px;margin:0 0 5px}
+.compare-card ul{margin:4px 0 2px 18px;padding:0}
+.compare-card li{margin:2px 0}
+.organ-grid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:8px 0;
+}
+.organ-card{border:1px solid #777;padding:7px 8px;background:#fff}
+.organ-card b{display:block;margin-bottom:3px}
+@media(max-width:900px){
+  .compare-grid,.organ-grid{grid-template-columns:1fr}
+}
+@media print{
+  .supplement-box,.compare-grid,.compare-card,.organ-grid,.organ-card{break-inside:avoid}
+}
+
+
+.vocab-unit{
+  border:2px solid #111;background:#f6f6f6;padding:11px 12px;margin:18px 0 12px;
+  break-inside:avoid;
+}
+.vocab-unit h2{margin:0;font-size:21px}
+.vocab-unit p{margin:4px 0 0;color:#444;font-size:12px}
+.vocab-toolbar{
+  display:flex;gap:7px;flex-wrap:wrap;align-items:center;
+  position:sticky;top:56px;z-index:8;background:#fff;border:1px solid #aaa;
+  padding:8px;margin:8px 0 12px;
+}
+.vocab-toolbar button,.vocab-toolbar select{
+  border:1px solid #333;background:#fff;padding:6px 9px;border-radius:6px;font-weight:700;
+}
+.vocab-count{font-weight:800;font-size:12px}
+.vocab-group{margin:14px 0 18px;break-inside:auto}
+.vocab-group h3{
+  border-bottom:2px solid #111;margin:0 0 6px;padding-bottom:4px;font-size:16px;
+}
+.vocab-table{width:100%;border-collapse:collapse;font-size:12px}
+.vocab-table th,.vocab-table td{border:1px solid #888;padding:5px 6px;vertical-align:top}
+.vocab-table th{background:#eee;text-align:left}
+.vocab-table td.eng{font-weight:800}
+body.vocab-hide-english .vocab-table td.eng{color:transparent}
+body.vocab-hide-english .vocab-table td.eng::selection{color:transparent}
+.vocab-practice{
+  border:2px solid #111;padding:10px 12px;margin:14px 0;background:#fff;
+}
+.vocab-practice h3{margin:0 0 4px}
+.vocab-note{font-size:11px;color:#555;margin-bottom:8px}
+.vocab-grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;
+}
+.vocab-q{
+  border:1px solid #aaa;padding:7px;display:grid;grid-template-columns:1fr 1.25fr;gap:6px;align-items:center;
+}
+.vocab-q .thai{font-weight:800}
+.vocab-input{
+  width:100%;box-sizing:border-box;border:1.5px solid #555;border-radius:5px;padding:6px;font-size:13px;
+}
+.vocab-input.correct{border:2px solid #111;background:#f3f3f3}
+.vocab-input.incorrect{border:2px dashed #111}
+.vocab-answer{font-size:11px;margin-top:3px;color:#444;display:none;grid-column:2}
+.vocab-q.show-answer .vocab-answer{display:block}
+.vocab-result{font-weight:900;margin-left:auto}
+@media(max-width:800px){
+  .vocab-grid{grid-template-columns:1fr}
+  .vocab-q{grid-template-columns:1fr}
+  .vocab-answer{grid-column:1}
+}
+@media print{
+  .vocab-toolbar,.vocab-practice{break-inside:avoid}
+  .vocab-toolbar{position:static}
+  .vocab-input{border-bottom:1px solid #111;border-top:0;border-left:0;border-right:0;border-radius:0}
+}
+
+
+.save-status{
+  font-size:11px;font-weight:800;padding:4px 7px;border:1px solid #777;
+  border-radius:5px;background:#fff;white-space:nowrap;
+}
+.save-status.saving{background:#f2f2f2}
+.save-status.ok{border-style:solid}
+.save-status.warn{border-style:dashed}
+@media print{.save-status{display:none!important}}
+
+</style>
+</head>
+<body>
+<div class="toolbar">
+<button onclick="printStudent()">พิมพ์ฉบับนักเรียน</button>
+<button onclick="printKey()">พิมพ์ฉบับเฉลย</button>
+<button onclick="toggleAnswers()">เปิด/ปิดเฉลย</button>
+<button onclick="toggleSummaries()">เปิด/ปิดสรุปอ่าน</button>
+<button onclick="checkAllAnswers()">ตรวจทั้งหมด</button>
+<button onclick="resetAllAnswers()">เริ่มใหม่ทั้งหมด</button>
+<button onclick="clearLocalProgress()">ล้างงานในเครื่อง</button>
+<span class="save-status" id="saveStatus">กำลังเตรียมระบบบันทึก…</span>
+<span class="game-summary" id="gameSummary">เติมแล้ว 0 / 0</span>
+<span class="status" id="status">โหมดนักเรียน · แสดงสรุปอ่าน</span>
+</div>
+<main class="sheet">
+<header>
+<h1>การดำรงชีวิตของพืช</h1>
+<div class="subtitle">สรุปอ่าน → ปิดสรุป → จำด้วยการลากวาง · ชุดรวมเนื้อหา ม.1</div>
+<div class="level">วิทยาศาสตร์ ชั้นมัธยมศึกษาปีที่ 1 · การสังเคราะห์ด้วยแสง + การสืบพันธุ์/ขยายพันธุ์ + การลำเลียงน้ำ ธาตุอาหาร และอาหารของพืช · ภาษาไทยล้วน</div>
+<div class="meta">
+<div>ชื่อ:</div><div>ห้อง:</div><div>เลขที่:</div>
+</div>
+</header>
+<div class="instruction">
+<b>วิธีใช้:</b> อ่านกล่อง “สรุปให้อ่านก่อน” ของแต่ละหัวข้อให้เข้าใจ แล้วลองปิดสรุปและลากคำจากคลังคำลงในช่องว่าง
+  เมื่อต้องการตรวจให้กด “ตรวจคำตอบ” สีเขียวคือถูก สีแดงคือยังไม่ถูก
+</div>
+<div class="play-help">
+<b>บันทึกอัตโนมัติ:</b> คำตอบและแบบฝึกศัพท์จะถูกเก็บในเครื่องด้วย IndexedDB พร้อมสำรองใน localStorage และกลับมาทำต่อได้หลังรีเฟรชหรือเปิดหน้าเดิมอีกครั้ง<br>
+<b>หมายเหตุ:</b> งานบันทึกอยู่ในเบราว์เซอร์ของเครื่องนี้ ไม่ได้ส่งขึ้นคลาวด์ และโหมดไม่ระบุตัวตนอาจไม่เก็บข้อมูลถาวร<br>
+<b>คอมพิวเตอร์:</b> ลากคำลงช่องว่างได้เลย  | 
+  <b>ไอแพด/มือถือ:</b> แตะคำหนึ่งครั้ง แล้วแตะช่องว่างที่ต้องการ
+  หากต้องการเอาคำออก ให้แตะช่องที่เติมไว้โดยไม่เลือกคำใหม่
+</div>
+<div class="unit-banner">
+<div class="unit-no">ส่วนที่ 1</div>
+<div class="unit-title">การสังเคราะห์ด้วยแสง</div>
+<div class="unit-desc">อ่านสรุปทีละหัวข้อ แล้วปิดสรุปเพื่อฝึกจำด้วยการลากวาง</div>
+</div>
+<section class="section" id="s1">
+<div class="section-head">
+<div class="num">1</div>
+<div>
+<h2>ความหมายและสมการของการสังเคราะห์ด้วยแสง</h2>
+<div class="coverage">รู้ว่าเกิดอะไรขึ้น วัตถุดิบคืออะไร พลังงานมาจากไหน และได้ผลผลิตอะไร</div>
+</div>
+</div>
+<div class="read-box">
+<div class="title">สรุปให้อ่านก่อน</div>
+<p><b>การสังเคราะห์ด้วยแสง</b> เป็นกระบวนการสร้างอาหารของพืช เกิดขึ้นในเซลล์พืชที่ยังมีชีวิตและมีคลอโรฟิลล์
+    กระบวนการนี้นำ <b>พลังงานแสง</b> มาเปลี่ยนเป็น <b>พลังงานเคมี</b> ที่สะสมอยู่ในอาหารของพืช</p>
+<p>วัตถุดิบสำคัญคือ <b>แก๊สคาร์บอนไดออกไซด์</b> และ <b>น้ำ</b> เมื่อได้รับพลังงานแสงและมีคลอโรฟิลล์
+    พืชจะสร้าง <b>น้ำตาลกลูโคส</b> และ <b>แก๊สออกซิเจน</b></p>
+<div class="formula">
+      6CO<sub>2</sub> + 12H<sub>2</sub>O
+        →  
+      C<sub>6</sub>H<sub>12</sub>O<sub>6</sub> + 6O<sub>2</sub> + 6H<sub>2</sub>O
+      <br/><span style="font-size:12px;font-weight:600">เกิดขึ้นเมื่อมีแสงและคลอโรฟิลล์</span>
+</div>
+<div class="keyline">ภาพจำ: รับคาร์บอนไดออกไซด์ + รับน้ำ + รับพลังงานแสง → สร้างน้ำตาล + ปล่อยออกซิเจน</div>
+</div>
+<div class="practice-title">ลองจำด้วยการลากวาง</div>
+<div class="wordbank"><strong>คลังคำ</strong><div class="words">
+<span class="word">สร้างอาหาร</span>
+<span class="word">พลังงานแสง</span>
+<span class="word">พลังงานเคมี</span>
+<span class="word">คาร์บอนไดออกไซด์</span>
+<span class="word">น้ำ</span>
+<span class="word">กลูโคส</span>
+<span class="word">ออกซิเจน</span>
+</div></div>
+<p class="cloze">
+    การสังเคราะห์ด้วยแสงเป็นกระบวนการ <span class="blank" data-answer="สร้างอาหาร"><span class="space"> </span><span class="ans">สร้างอาหาร</span></span>
+    ของพืช โดยเปลี่ยน <span class="blank wide" data-answer="พลังงานแสง"><span class="space"> </span><span class="ans">พลังงานแสง</span></span>
+    ให้เป็น <span class="blank wide" data-answer="พลังงานเคมี"><span class="space"> </span><span class="ans">พลังงานเคมี</span></span>
+    วัตถุดิบหลักคือ <span class="blank wide" data-answer="คาร์บอนไดออกไซด์"><span class="space"> </span><span class="ans">คาร์บอนไดออกไซด์</span></span>
+    และ <span class="blank" data-answer="น้ำ"><span class="space"> </span><span class="ans">น้ำ</span></span>
+    ผลผลิตสำคัญคือ <span class="blank" data-answer="กลูโคส"><span class="space"> </span><span class="ans">กลูโคส</span></span>
+    และแก๊ส <span class="blank" data-answer="ออกซิเจน"><span class="space"> </span><span class="ans">ออกซิเจน</span></span>
+</p>
+</section>
+<section class="section" id="s2">
+<div class="section-head">
+<div class="num">2</div>
+<div>
+<h2>ปัจจัยจำเป็น: คลอโรฟิลล์และแสง</h2>
+<div class="coverage">เข้าใจหน้าที่ของคลอโรฟิลล์และบทบาทของแสง</div>
+</div>
+</div>
+<div class="read-box">
+<div class="title">สรุปให้อ่านก่อน</div>
+<p><b>คลอโรฟิลล์</b> เป็นสารสีเขียวที่อยู่ใน <b>คลอโรพลาสต์</b> ทำหน้าที่ดูดกลืนพลังงานแสงเพื่อนำมาใช้ในกระบวนการสังเคราะห์ด้วยแสง
+    โดยในเอกสารบทเรียนระบุว่า คลอโรฟิลล์ดูดกลืนพลังงานแสงสีต่าง ๆ <b>ยกเว้นสีเขียวและสีเหลือง</b></p>
+<p><b>แสง</b> เป็นแหล่งพลังงานที่ช่วยให้เกิดปฏิกิริยาระหว่างน้ำกับแก๊สคาร์บอนไดออกไซด์
+    จนเกิดน้ำตาลกลูโคสและแก๊สออกซิเจน พืชแต่ละชนิดต้องการปริมาณแสงต่างกัน เช่น
+    <b>พลูด่าง</b> เป็นตัวอย่างพืชที่ต้องการแสงน้อย ส่วน <b>ทานตะวัน</b> เป็นตัวอย่างพืชที่ต้องการแสงมาก</p>
+<p>ในสไลด์บทเรียนมีคำถามว่า พืชสามารถใช้แสงจากแหล่งอื่นที่ไม่ใช่ดวงอาทิตย์ได้หรือไม่ และมีเครื่องหมายถูกกำกับ
+    จึงให้จำตามบทเรียนว่า <b>แสงที่ใช้ไม่จำเป็นต้องมาจากดวงอาทิตย์เพียงแหล่งเดียว</b> แต่สามารถมาจากแหล่งกำเนิดอื่นได้</p>
+<div class="keyline">อย่าสลับกัน: คลอโรพลาสต์ = โครงสร้างในเซลล์ · คลอโรฟิลล์ = สารสีที่ช่วยรับพลังงานแสง</div>
+</div>
+<div class="practice-title">ลองจำด้วยการลากวาง</div>
+<div class="wordbank"><strong>คลังคำ</strong><div class="words">
+<span class="word">คลอโรฟิลล์</span>
+<span class="word">คลอโรพลาสต์</span>
+<span class="word">ดูดกลืน</span>
+<span class="word">แสง</span>
+<span class="word">พลังงาน</span>
+<span class="word">ต่างกัน</span>
+<span class="word">สีเขียว</span>
+<span class="word">สีเหลือง</span>
+<span class="word">พลูด่าง</span>
+<span class="word">ทานตะวัน</span>
+<span class="word">แสงน้อย</span>
+<span class="word">แสงมาก</span>
+<span class="word">ดวงอาทิตย์</span>
+<span class="word">แหล่งกำเนิดอื่น</span>
+</div></div>
+<p class="cloze">
+    สารสีเขียวที่ช่วยในการสังเคราะห์ด้วยแสงเรียกว่า
+    <span class="blank" data-answer="คลอโรฟิลล์"><span class="space"> </span><span class="ans">คลอโรฟิลล์</span></span>
+    ซึ่งอยู่ใน <span class="blank" data-answer="คลอโรพลาสต์"><span class="space"> </span><span class="ans">คลอโรพลาสต์</span></span>
+    หน้าที่สำคัญคือ <span class="blank" data-answer="ดูดกลืน"><span class="space"> </span><span class="ans">ดูดกลืน</span></span>
+    พลังงานจาก <span class="blank" data-answer="แสง"><span class="space"> </span><span class="ans">แสง</span></span>
+    โดยแสงทำหน้าที่เป็นแหล่ง <span class="blank" data-answer="พลังงาน"><span class="space"> </span><span class="ans">พลังงาน</span></span>
+    และพืชแต่ละชนิดต้องการปริมาณแสง <span class="blank" data-answer="ต่างกัน"><span class="space"> </span><span class="ans">ต่างกัน</span></span>
+</p>
+<p class="cloze">
+    ตามเอกสารบทเรียน คลอโรฟิลล์ดูดกลืนพลังงานแสงสีต่าง ๆ ยกเว้น
+    <span class="blank" data-answer="สีเขียว"><span class="space"> </span><span class="ans">สีเขียว</span></span>
+    และ <span class="blank" data-answer="สีเหลือง"><span class="space"> </span><span class="ans">สีเหลือง</span></span>
+    ตัวอย่างในบทเรียนระบุว่า <span class="blank" data-answer="พลูด่าง"><span class="space"> </span><span class="ans">พลูด่าง</span></span>
+    ต้องการ <span class="blank" data-answer="แสงน้อย"><span class="space"> </span><span class="ans">แสงน้อย</span></span>
+    ส่วน <span class="blank" data-answer="ทานตะวัน"><span class="space"> </span><span class="ans">ทานตะวัน</span></span>
+    ต้องการ <span class="blank" data-answer="แสงมาก"><span class="space"> </span><span class="ans">แสงมาก</span></span>
+</p>
+<p class="cloze">
+    จากภาพเฉลยในบทเรียน แสงที่พืชใช้ไม่จำเป็นต้องมาจาก
+    <span class="blank wide" data-answer="ดวงอาทิตย์"><span class="space"> </span><span class="ans">ดวงอาทิตย์</span></span>
+    เพียงแหล่งเดียว แต่สามารถมาจาก
+    <span class="blank wide" data-answer="แหล่งกำเนิดอื่น"><span class="space"> </span><span class="ans">แหล่งกำเนิดอื่น</span></span>
+    ได้
+  </p>
+<div class="memory">
+<b>คำถามชวนคิดจากบทเรียน</b><br/>
+    • พืชที่ใบไม่ได้เห็นเป็นสีเขียว สามารถสังเคราะห์ด้วยแสงได้หรือไม่? <span style="font-size:11.5px;color:#555">(สไลด์ต้นฉบับยกเป็นคำถามชวนคิด)</span><br/>
+    • พืชจำเป็นต้องใช้แสงจากดวงอาทิตย์เท่านั้นหรือไม่? <b>ตามภาพในบทเรียน: ไม่จำเป็น</b><br/>
+<span style="font-size:11.5px;color:#555">ประเด็นที่ต้องจับให้ได้คือ “คลอโรฟิลล์เกี่ยวข้องกับการรับพลังงานแสง” และ “แสงเป็นแหล่งพลังงาน”</span>
+</div>
+</section>
+<section class="section page-break" id="s3">
+<div class="section-head">
+<div class="num">3</div>
+<div>
+<h2>ปัจจัยจำเป็น: คาร์บอนไดออกไซด์ น้ำ ปากใบ และเซลล์คุม</h2>
+<div class="coverage">รู้เส้นทางที่สารเข้าสู่พืชและบทบาทของปากใบ</div>
+</div>
+</div>
+<div class="read-box">
+<div class="title">สรุปให้อ่านก่อน</div>
+<p><b>แก๊สคาร์บอนไดออกไซด์</b> เป็นวัตถุดิบที่พืชใช้ร่วมกับน้ำในการสร้างอาหาร
+    แก๊สนี้ส่วนใหญ่เข้าสู่เซลล์พืชทาง <b>ปากใบ</b> โดยมี <b>เซลล์คุม</b> ทำหน้าที่ควบคุมการเปิดและปิดปากใบ</p>
+<p><b>น้ำ</b> เป็นวัตถุดิบสำคัญ พืชดูดน้ำและแร่ธาตุผ่าน <b>ราก</b> แล้วลำเลียงไปยังลำต้นและใบ
+    น้ำยังช่วยในการลำเลียงแร่ธาตุและอาหารระหว่างเซลล์ หากมีน้ำมากเกินความต้องการ พืชจะคายน้ำออกทางปากใบ</p>
+<p>ปากใบจึงเกี่ยวข้องกับหลายอย่างพร้อมกัน ได้แก่ รับคาร์บอนไดออกไซด์ ปล่อยออกซิเจน และคายน้ำ</p>
+<div class="keyline">จำเส้นทาง: CO₂ เข้า “ปากใบ” · O₂ ออก “ปากใบ” · น้ำเข้า “ราก”</div>
+</div>
+<figure class="figure">
+<svg aria-label="เส้นทางน้ำ คาร์บอนไดออกไซด์ และออกซิเจน" viewbox="0 0 760 245">
+<defs>
+<marker id="a3" markerheight="9" markerwidth="9" orient="auto" refx="7" refy="3">
+<path d="M0,0 L0,6 L8,3 z" fill="#111"></path>
+</marker>
+</defs>
+<rect fill="none" height="95" rx="45" stroke="#111" stroke-width="3" width="160" x="300" y="25"></rect>
+<text font-size="22" font-weight="700" x="355" y="72">ใบ</text>
+<rect fill="none" height="16" rx="8" stroke="#111" stroke-width="2" width="60" x="350" y="86"></rect>
+<text font-size="14" x="348" y="122">ปากใบ</text>
+<line marker-end="url(#a3)" stroke="#111" stroke-width="2.5" x1="110" x2="292" y1="70" y2="70"></line>
+<text font-size="16" x="118" y="54">คาร์บอนไดออกไซด์เข้า</text>
+<line marker-end="url(#a3)" stroke="#111" stroke-width="2.5" x1="468" x2="650" y1="55" y2="55"></line>
+<text font-size="16" x="505" y="40">ออกซิเจนออก</text>
+<line marker-end="url(#a3)" stroke="#111" stroke-width="2.5" x1="380" x2="380" y1="205" y2="130"></line>
+<text font-size="16" x="396" y="180">น้ำขึ้นสู่ใบ</text>
+<path d="M330 215 Q380 185 430 215 Q380 235 330 215" fill="none" stroke="#111" stroke-width="3"></path>
+<text font-size="16" x="354" y="239">ราก</text>
+</svg>
+<figcaption>แผนภาพจำเส้นทางสารแบบย่อ</figcaption>
+</figure>
+<div class="practice-title">ลองจำด้วยการลากวาง</div>
+<div class="wordbank"><strong>คลังคำ</strong><div class="words">
+<span class="word">คาร์บอนไดออกไซด์</span>
+<span class="word">ปากใบ</span>
+<span class="word">เซลล์คุม</span>
+<span class="word">ราก</span>
+<span class="word">แร่ธาตุ</span>
+<span class="word">ลำเลียง</span>
+<span class="word">คายน้ำ</span>
+<span class="word">ออกซิเจน</span>
+</div></div>
+<p class="cloze">
+    พืชรับแก๊ส <span class="blank wide" data-answer="คาร์บอนไดออกไซด์"><span class="space"> </span><span class="ans">คาร์บอนไดออกไซด์</span></span>
+    ส่วนใหญ่ทาง <span class="blank" data-answer="ปากใบ"><span class="space"> </span><span class="ans">ปากใบ</span></span>
+    โดยมี <span class="blank" data-answer="เซลล์คุม"><span class="space"> </span><span class="ans">เซลล์คุม</span></span>
+    ควบคุมการเปิดและปิด พืชดูดน้ำและ <span class="blank" data-answer="แร่ธาตุ"><span class="space"> </span><span class="ans">แร่ธาตุ</span></span>
+    ผ่านทาง <span class="blank" data-answer="ราก"><span class="space"> </span><span class="ans">ราก</span></span>
+    น้ำยังช่วยในการ <span class="blank" data-answer="ลำเลียง"><span class="space"> </span><span class="ans">ลำเลียง</span></span>
+    แร่ธาตุและอาหารระหว่างเซลล์ หากมีน้ำมากเกินไป พืชจะ <span class="blank" data-answer="คายน้ำ"><span class="space"> </span><span class="ans">คายน้ำ</span></span>
+    ทางปากใบ และแก๊ส <span class="blank" data-answer="ออกซิเจน"><span class="space"> </span><span class="ans">ออกซิเจน</span></span>
+    ที่เกิดจากการสังเคราะห์ด้วยแสงก็ออกทางปากใบเช่นกัน
+  </p>
+</section>
+<section class="section" id="s4">
+<div class="section-head">
+<div class="num">4</div>
+<div>
+<h2>ผลผลิตจากการสังเคราะห์ด้วยแสง</h2>
+<div class="coverage">รู้ว่าพืชสร้างอะไร และนำผลผลิตไปใช้ต่ออย่างไร</div>
+</div>
+</div>
+<div class="read-box">
+<div class="title">สรุปให้อ่านก่อน</div>
+<p>ผลผลิตสำคัญจากการสังเคราะห์ด้วยแสงคือ <b>น้ำตาลกลูโคส</b> และ <b>แก๊สออกซิเจน</b></p>
+<ul>
+<li>กลูโคสถูกนำไปใช้ในกระบวนการหายใจเพื่อสร้างพลังงานให้พืชใช้ในการเจริญเติบโต</li>
+<li>กลูโคสบางส่วนถูกเก็บสะสมในรูปของ <b>แป้ง</b> ที่ใบ ราก และลำต้น</li>
+<li>กลูโคสบางส่วนถูกนำไปสร้าง <b>เซลลูโลส</b> ซึ่งเป็นองค์ประกอบของผนังเซลล์พืช</li>
+<li>ออกซิเจนถูกปล่อยออกทางปากใบ และเป็นแหล่งออกซิเจนให้บรรยากาศ</li>
+</ul>
+<div class="keyline">กลูโคสไม่ได้มีไว้ “กินทันที” อย่างเดียว แต่ใช้สร้างพลังงาน เก็บเป็นแป้ง และสร้างเซลลูโลสได้</div>
+</div>
+<div class="practice-title">ลองจำด้วยการลากวาง</div>
+<div class="wordbank"><strong>คลังคำ</strong><div class="words">
+<span class="word">กลูโคส</span>
+<span class="word">หายใจ</span>
+<span class="word">พลังงาน</span>
+<span class="word">แป้ง</span>
+<span class="word">ใบ ราก และลำต้น</span>
+<span class="word">เซลลูโลส</span>
+<span class="word">ผนังเซลล์</span>
+<span class="word">ออกซิเจน</span>
+</div></div>
+<p class="cloze">
+    น้ำตาล <span class="blank" data-answer="กลูโคส"><span class="space"> </span><span class="ans">กลูโคส</span></span>
+    ถูกใช้ในกระบวนการ <span class="blank" data-answer="หายใจ"><span class="space"> </span><span class="ans">หายใจ</span></span>
+    เพื่อให้ได้ <span class="blank" data-answer="พลังงาน"><span class="space"> </span><span class="ans">พลังงาน</span></span>
+    บางส่วนสะสมเป็น <span class="blank" data-answer="แป้ง"><span class="space"> </span><span class="ans">แป้ง</span></span>
+    ที่ <span class="blank xwide" data-answer="ใบ ราก และลำต้น"><span class="space"> </span><span class="ans">ใบ ราก และลำต้น</span></span>
+    และบางส่วนใช้สร้าง <span class="blank" data-answer="เซลลูโลส"><span class="space"> </span><span class="ans">เซลลูโลส</span></span>
+    ซึ่งเป็นส่วนประกอบของ <span class="blank" data-answer="ผนังเซลล์"><span class="space"> </span><span class="ans">ผนังเซลล์</span></span>
+    ส่วนแก๊ส <span class="blank" data-answer="ออกซิเจน"><span class="space"> </span><span class="ans">ออกซิเจน</span></span>
+    จะถูกปล่อยออกสู่บรรยากาศ
+  </p>
+</section>
+<section class="section page-break" id="s5">
+<div class="section-head">
+<div class="num">5</div>
+<div>
+<h2>ความสำคัญต่อสิ่งมีชีวิต: ออกซิเจน การหายใจ และอาหาร</h2>
+<div class="coverage">เชื่อมการสังเคราะห์ด้วยแสงกับการดำรงชีวิตและการถ่ายทอดพลังงาน</div>
+</div>
+</div>
+<div class="read-box">
+<div class="title">สรุปให้อ่านก่อน</div>
+<p>การสังเคราะห์ด้วยแสงเป็นแหล่งสำคัญของ <b>แก๊สออกซิเจน</b>
+    สิ่งมีชีวิตใช้ออกซิเจนในกระบวนการหายใจ เพื่อเผาผลาญสารอาหารภายในเซลล์และให้ได้พลังงานสำหรับการดำรงชีวิต</p>
+<p>กระบวนการนี้ยังทำให้เกิดการหมุนเวียนของแก๊สออกซิเจนและแก๊สคาร์บอนไดออกไซด์ระหว่างพืช สิ่งมีชีวิต และสิ่งแวดล้อม
+    โดยแผนภาพในบทเรียนแสดงผลจากกระบวนการหายใจ ได้แก่ <b>พลังงาน แก๊สคาร์บอนไดออกไซด์ และไอน้ำ</b></p>
+<p>พืชเป็น <b>ผู้ผลิต</b> ในระบบนิเวศ เพราะสร้างอาหารได้เอง สัตว์กินพืชและสัตว์อื่นต่อกันเป็นลำดับ
+    จึงเกิดการถ่ายทอดอาหารและพลังงานในระบบนิเวศ</p>
+<p>ภาพห่วงโซ่อาหารในบทเรียนแสดงลำดับ <b>ผู้ผลิต → ผู้บริโภคอันดับที่ 1 → ผู้บริโภคอันดับที่ 2 → ผู้บริโภคอันดับที่ 3</b>
+    และมี <b>ผู้ย่อยสลาย</b> ช่วยให้ธาตุอาหารหมุนเวียนกลับสู่ระบบ โดยภาพใช้หญ้า ตั๊กแตน งู เหยี่ยว และเชื้อราเป็นตัวอย่าง</p>
+<div class="keyline">พืชไม่ได้สำคัญแค่ “ให้ออกซิเจน” แต่ยังเป็นจุดเริ่มต้นของอาหารและพลังงานในระบบนิเวศ</div>
+</div>
+<div class="practice-title">ลองจำด้วยการลากวาง</div>
+<div class="wordbank"><strong>คลังคำ</strong><div class="words">
+<span class="word">ออกซิเจน</span>
+<span class="word">หายใจ</span>
+<span class="word">พลังงาน</span>
+<span class="word">คาร์บอนไดออกไซด์</span>
+<span class="word">ผู้ผลิต</span>
+<span class="word">อาหาร</span>
+<span class="word">ถ่ายทอดพลังงาน</span>
+<span class="word">ไอน้ำ</span>
+<span class="word">ผู้บริโภคอันดับที่ 1</span>
+<span class="word">ผู้บริโภคอันดับที่ 2</span>
+<span class="word">ผู้บริโภคอันดับที่ 3</span>
+<span class="word">ผู้ย่อยสลาย</span>
+<span class="word">ธาตุอาหาร</span>
+</div></div>
+<p class="cloze">
+    การสังเคราะห์ด้วยแสงช่วยเพิ่มแก๊ส <span class="blank" data-answer="ออกซิเจน"><span class="space"> </span><span class="ans">ออกซิเจน</span></span>
+    ซึ่งสิ่งมีชีวิตใช้ในกระบวนการ <span class="blank" data-answer="หายใจ"><span class="space"> </span><span class="ans">หายใจ</span></span>
+    เพื่อให้ได้ <span class="blank" data-answer="พลังงาน"><span class="space"> </span><span class="ans">พลังงาน</span></span>
+    และทำให้เกิดการหมุนเวียนของออกซิเจนกับแก๊ส <span class="blank wide" data-answer="คาร์บอนไดออกไซด์"><span class="space"> </span><span class="ans">คาร์บอนไดออกไซด์</span></span>
+    พืชจัดเป็น <span class="blank" data-answer="ผู้ผลิต"><span class="space"> </span><span class="ans">ผู้ผลิต</span></span>
+    เพราะสร้าง <span class="blank" data-answer="อาหาร"><span class="space"> </span><span class="ans">อาหาร</span></span>
+    ได้เอง และเป็นจุดเริ่มต้นของการ <span class="blank wide" data-answer="ถ่ายทอดพลังงาน"><span class="space"> </span><span class="ans">ถ่ายทอดพลังงาน</span></span>
+    ในระบบนิเวศ โดยแผนภาพในบทเรียนแสดงว่าแก๊สคาร์บอนไดออกไซด์และ
+    <span class="blank" data-answer="ไอน้ำ"><span class="space"> </span><span class="ans">ไอน้ำ</span></span>
+    เป็นผลจากกระบวนการหายใจ
+  </p>
+<p class="cloze">
+    จากภาพห่วงโซ่อาหาร พลังงานจากผู้ผลิตถูกส่งต่อไปยัง
+    <span class="blank wide" data-answer="ผู้บริโภคอันดับที่ 1"><span class="space"> </span><span class="ans">ผู้บริโภคอันดับที่ 1</span></span>
+    ต่อไปยัง <span class="blank wide" data-answer="ผู้บริโภคอันดับที่ 2"><span class="space"> </span><span class="ans">ผู้บริโภคอันดับที่ 2</span></span>
+    และ <span class="blank wide" data-answer="ผู้บริโภคอันดับที่ 3"><span class="space"> </span><span class="ans">ผู้บริโภคอันดับที่ 3</span></span>
+    ส่วน <span class="blank wide" data-answer="ผู้ย่อยสลาย"><span class="space"> </span><span class="ans">ผู้ย่อยสลาย</span></span>
+    ช่วยให้ <span class="blank" data-answer="ธาตุอาหาร"><span class="space"> </span><span class="ans">ธาตุอาหาร</span></span>
+    หมุนเวียนกลับสู่ระบบ
+  </p>
+</section>
+<section class="section" id="s6">
+<div class="section-head">
+<div class="num">6</div>
+<div>
+<h2>ความสำคัญต่อสิ่งแวดล้อม: คาร์บอนไดออกไซด์และภาวะโลกร้อน</h2>
+<div class="coverage">เข้าใจว่าพืชช่วยลดคาร์บอนไดออกไซด์ได้อย่างไร</div>
+</div>
+</div>
+<div class="read-box">
+<div class="title">สรุปให้อ่านก่อน</div>
+<p>แก๊สคาร์บอนไดออกไซด์มีสมบัติกักเก็บความร้อนได้ดี จึงจัดเป็น <b>แก๊สเรือนกระจก</b>
+    ในเอกสารบทเรียนเชื่อมการกักเก็บความร้อนและการที่อุณหภูมิโลกสูงขึ้นกับ <b>ปรากฏการณ์เรือนกระจก</b></p>
+<p>พืชใช้คาร์บอนไดออกไซด์เป็นวัตถุดิบในการสังเคราะห์ด้วยแสง
+    จึงมีส่วนช่วยลดปริมาณคาร์บอนไดออกไซด์ในบรรยากาศ และช่วยลดปัจจัยหนึ่งที่เกี่ยวข้องกับภาวะโลกร้อน</p>
+<div class="keyline">พืชใช้ CO₂ ไปสร้างอาหาร จึงช่วยดึง CO₂ ออกจากบรรยากาศ</div>
+</div>
+<div class="practice-title">ลองจำด้วยการลากวาง</div>
+<div class="wordbank"><strong>คลังคำ</strong><div class="words">
+<span class="word">คาร์บอนไดออกไซด์</span>
+<span class="word">กักเก็บความร้อน</span>
+<span class="word">แก๊สเรือนกระจก</span>
+<span class="word">ปรากฏการณ์เรือนกระจก</span>
+<span class="word">สังเคราะห์ด้วยแสง</span>
+<span class="word">บรรยากาศ</span>
+<span class="word">ภาวะโลกร้อน</span>
+</div></div>
+<p class="cloze">
+    แก๊ส <span class="blank wide" data-answer="คาร์บอนไดออกไซด์"><span class="space"> </span><span class="ans">คาร์บอนไดออกไซด์</span></span>
+    มีสมบัติ <span class="blank wide" data-answer="กักเก็บความร้อน"><span class="space"> </span><span class="ans">กักเก็บความร้อน</span></span>
+    จึงจัดเป็น <span class="blank wide" data-answer="แก๊สเรือนกระจก"><span class="space"> </span><span class="ans">แก๊สเรือนกระจก</span></span>
+    และบทเรียนเชื่อมการกักเก็บความร้อนกับ <span class="blank xwide" data-answer="ปรากฏการณ์เรือนกระจก"><span class="space"> </span><span class="ans">ปรากฏการณ์เรือนกระจก</span></span>
+    พืชนำแก๊สนี้ไปใช้ในกระบวนการ <span class="blank wide" data-answer="สังเคราะห์ด้วยแสง"><span class="space"> </span><span class="ans">สังเคราะห์ด้วยแสง</span></span>
+    จึงช่วยลดคาร์บอนไดออกไซด์ใน <span class="blank" data-answer="บรรยากาศ"><span class="space"> </span><span class="ans">บรรยากาศ</span></span>
+    ซึ่งเป็นปัจจัยหนึ่งที่เกี่ยวข้องกับ <span class="blank wide" data-answer="ภาวะโลกร้อน"><span class="space"> </span><span class="ans">ภาวะโลกร้อน</span></span>
+</p>
+</section>
+<section class="section" id="s7">
+<div class="section-head">
+<div class="num">7</div>
+<div>
+<h2>ภาพรวมทั้งกระบวนการและจุดที่มักสับสน</h2>
+<div class="coverage">รวบทุกเส้นทางในภาพเดียวก่อนเข้าสู่ด่านรวม</div>
+</div>
+</div>
+<div class="read-box">
+<div class="title">สรุปให้อ่านก่อน</div>
+<table class="mini-table">
+<tr><th>สิ่งที่ต้องจำ</th><th>คำตอบ</th></tr>
+<tr><td>น้ำเข้าสู่พืชทางใด</td><td>ราก</td></tr>
+<tr><td>คาร์บอนไดออกไซด์เข้าส่วนใหญ่ทางใด</td><td>ปากใบ</td></tr>
+<tr><td>ออกซิเจนออกทางใด</td><td>ปากใบ</td></tr>
+<tr><td>สารสีที่รับพลังงานแสง</td><td>คลอโรฟิลล์</td></tr>
+<tr><td>โครงสร้างที่มีคลอโรฟิลล์</td><td>คลอโรพลาสต์</td></tr>
+<tr><td>อาหารหลักที่สร้างได้</td><td>น้ำตาลกลูโคส</td></tr>
+<tr><td>น้ำตาลสะสมในรูปใด</td><td>แป้ง</td></tr>
+<tr><td>สารสำคัญของผนังเซลล์พืช</td><td>เซลลูโลส</td></tr>
+</table>
+<p><b>เงื่อนไขสำคัญ:</b> ในบทเรียนนี้ แสง คลอโรฟิลล์ คาร์บอนไดออกไซด์ และน้ำถูกจัดเป็น <b>ปัจจัยที่จำเป็น</b> ของการสังเคราะห์ด้วยแสง
+    สไลด์คำถามเรื่อง “ถ้าขาดปัจจัยใดปัจจัยหนึ่ง” แสดงเครื่องหมายกากบาท จึงให้จำตามบทเรียนว่า <b>ถ้าขาดปัจจัยจำเป็นข้อใดข้อหนึ่ง พืชจะสังเคราะห์ด้วยแสงไม่ได้</b></p>
+<p><b>ภาพสรุปหมายเลขท้ายบท:</b> หมายเลข 1 คือคาร์บอนไดออกไซด์และน้ำที่เข้าสู่กระบวนการ หมายเลข 2 คือแสงจากดวงอาทิตย์ และหมายเลข 3 คือออกซิเจนกับน้ำตาลที่ได้จากกระบวนการ</p>
+</div>
+<figure class="figure">
+<svg aria-label="สรุปหมายเลขหนึ่งสองสามของการสังเคราะห์ด้วยแสง" viewbox="0 0 760 210">
+<defs>
+<marker id="a7" markerheight="9" markerwidth="9" orient="auto" refx="7" refy="3"><path d="M0,0 L0,6 L8,3 z" fill="#111"></path></marker>
+</defs>
+<rect fill="none" height="95" rx="45" stroke="#111" stroke-width="3" width="200" x="280" y="55"></rect>
+<text font-size="22" font-weight="700" x="350" y="110">พืช</text>
+<circle cx="105" cy="72" fill="none" r="24" stroke="#111" stroke-width="2"></circle><text font-size="22" font-weight="700" x="97" y="80">1</text>
+<text font-size="16" x="35" y="125">คาร์บอนไดออกไซด์ + น้ำ</text>
+<line marker-end="url(#a7)" stroke="#111" stroke-width="2" x1="180" x2="270" y1="95" y2="95"></line>
+<circle cx="380" cy="24" fill="none" r="22" stroke="#111" stroke-width="2"></circle><text font-size="21" font-weight="700" x="372" y="32">2</text>
+<text font-size="16" x="420" y="31">แสงจากดวงอาทิตย์</text>
+<line marker-end="url(#a7)" stroke="#111" stroke-width="2" x1="380" x2="380" y1="48" y2="55"></line>
+<circle cx="650" cy="72" fill="none" r="24" stroke="#111" stroke-width="2"></circle><text font-size="22" font-weight="700" x="642" y="80">3</text>
+<text font-size="16" x="560" y="125">ออกซิเจน + น้ำตาล</text>
+<line marker-end="url(#a7)" stroke="#111" stroke-width="2" x1="490" x2="610" y1="95" y2="95"></line>
+</svg>
+<figcaption>สรุปหมายเลข 1–2–3 ตามภาพท้ายบท</figcaption>
+</figure>
+<div class="practice-title">ลองจำด้วยการลากวาง</div>
+<div class="wordbank"><strong>คลังคำ</strong><div class="words">
+<span class="word">ราก</span>
+<span class="word">ปากใบ</span>
+<span class="word">คลอโรฟิลล์</span>
+<span class="word">คลอโรพลาสต์</span>
+<span class="word">กลูโคส</span>
+<span class="word">แป้ง</span>
+<span class="word">เซลลูโลส</span>
+<span class="word">ผนังเซลล์</span>
+<span class="word">ปัจจัยจำเป็น</span>
+<span class="word">ไม่ได้</span>
+<span class="word">คาร์บอนไดออกไซด์และน้ำ</span>
+<span class="word">แสงจากดวงอาทิตย์</span>
+<span class="word">ออกซิเจนและน้ำตาล</span>
+</div></div>
+<p class="cloze">
+    น้ำเข้าสู่พืชทาง <span class="blank" data-answer="ราก"><span class="space"> </span><span class="ans">ราก</span></span>
+    ส่วนคาร์บอนไดออกไซด์เข้าส่วนใหญ่ทาง <span class="blank" data-answer="ปากใบ"><span class="space"> </span><span class="ans">ปากใบ</span></span>
+    สารสีที่รับพลังงานแสงคือ <span class="blank" data-answer="คลอโรฟิลล์"><span class="space"> </span><span class="ans">คลอโรฟิลล์</span></span>
+    ซึ่งอยู่ใน <span class="blank" data-answer="คลอโรพลาสต์"><span class="space"> </span><span class="ans">คลอโรพลาสต์</span></span>
+    พืชสร้างน้ำตาล <span class="blank" data-answer="กลูโคส"><span class="space"> </span><span class="ans">กลูโคส</span></span>
+    และสะสมบางส่วนในรูป <span class="blank" data-answer="แป้ง"><span class="space"> </span><span class="ans">แป้ง</span></span>
+    อีกส่วนหนึ่งนำไปสร้าง <span class="blank" data-answer="เซลลูโลส"><span class="space"> </span><span class="ans">เซลลูโลส</span></span>
+    ซึ่งเป็นส่วนประกอบของ <span class="blank" data-answer="ผนังเซลล์"><span class="space"> </span><span class="ans">ผนังเซลล์</span></span>
+</p>
+<p class="cloze">
+    แสง คลอโรฟิลล์ คาร์บอนไดออกไซด์ และน้ำเป็น
+    <span class="blank wide" data-answer="ปัจจัยจำเป็น"><span class="space"> </span><span class="ans">ปัจจัยจำเป็น</span></span>
+    ของการสังเคราะห์ด้วยแสง หากขาดปัจจัยใดปัจจัยหนึ่ง ตามภาพในบทเรียนพืชจะสังเคราะห์ด้วยแสง
+    <span class="blank" data-answer="ไม่ได้"><span class="space"> </span><span class="ans">ไม่ได้</span></span>
+</p>
+<p class="cloze">
+    ในภาพสรุปท้ายบท หมายเลข 1 คือ
+    <span class="blank xwide" data-answer="คาร์บอนไดออกไซด์และน้ำ"><span class="space"> </span><span class="ans">คาร์บอนไดออกไซด์และน้ำ</span></span>
+    หมายเลข 2 คือ <span class="blank xwide" data-answer="แสงจากดวงอาทิตย์"><span class="space"> </span><span class="ans">แสงจากดวงอาทิตย์</span></span>
+    และหมายเลข 3 คือ <span class="blank xwide" data-answer="ออกซิเจนและน้ำตาล"><span class="space"> </span><span class="ans">ออกซิเจนและน้ำตาล</span></span>
+</p>
+</section>
+<section class="final page-break" id="final">
+<h2>ด่านรวมส่วนที่ 1 · การสังเคราะห์ด้วยแสง</h2>
+<div class="read-box">
+<div class="title">อ่านรอบสุดท้าย</div>
+<p>
+      พืชรับน้ำทางรากและรับคาร์บอนไดออกไซด์ส่วนใหญ่ทางปากใบ คลอโรฟิลล์ในคลอโรพลาสต์รับพลังงานแสง
+      แล้วพืชนำคาร์บอนไดออกไซด์กับน้ำไปสร้างน้ำตาลกลูโคสและออกซิเจน
+      กลูโคสใช้สร้างพลังงาน สะสมเป็นแป้ง หรือสร้างเซลลูโลส ส่วนออกซิเจนถูกปล่อยออกทางปากใบ
+      ในบทเรียนระบุว่าแสงไม่จำเป็นต้องมาจากดวงอาทิตย์เพียงแหล่งเดียว และถ้าขาดปัจจัยจำเป็นข้อใดข้อหนึ่งพืชจะสังเคราะห์ด้วยแสงไม่ได้
+      พืชจึงเป็นทั้งแหล่งอาหาร แหล่งออกซิเจน ผู้ผลิตในระบบนิเวศ โดยพลังงานถ่ายทอดผ่านผู้บริโภคและเชื่อมต่อกับผู้ย่อยสลาย
+      อีกทั้งพืชยังช่วยลดคาร์บอนไดออกไซด์ในบรรยากาศ
+    </p>
+</div>
+<div class="wordbank"><strong>คลังคำด่านรวม</strong><div class="words">
+<span class="word">ราก</span>
+<span class="word">ปากใบ</span>
+<span class="word">คาร์บอนไดออกไซด์</span>
+<span class="word">คลอโรฟิลล์</span>
+<span class="word">พลังงานแสง</span>
+<span class="word">กลูโคส</span>
+<span class="word">ออกซิเจน</span>
+<span class="word">แป้ง</span>
+<span class="word">เซลลูโลส</span>
+<span class="word">ผู้ผลิต</span>
+<span class="word">ถ่ายทอดพลังงาน</span>
+<span class="word">แก๊สเรือนกระจก</span>
+<span class="word">แหล่งกำเนิดอื่น</span>
+<span class="word">ไม่ได้</span>
+<span class="word">ผู้ย่อยสลาย</span>
+</div></div>
+<p class="cloze">
+    พืชรับน้ำทาง <span class="blank" data-answer="ราก"><span class="space"> </span><span class="ans">ราก</span></span>
+    และรับแก๊ส <span class="blank wide" data-answer="คาร์บอนไดออกไซด์"><span class="space"> </span><span class="ans">คาร์บอนไดออกไซด์</span></span>
+    ส่วนใหญ่ทาง <span class="blank" data-answer="ปากใบ"><span class="space"> </span><span class="ans">ปากใบ</span></span>
+    สารสี <span class="blank" data-answer="คลอโรฟิลล์"><span class="space"> </span><span class="ans">คลอโรฟิลล์</span></span>
+    รับ <span class="blank wide" data-answer="พลังงานแสง"><span class="space"> </span><span class="ans">พลังงานแสง</span></span>
+    แล้วพืชสร้างน้ำตาล <span class="blank" data-answer="กลูโคส"><span class="space"> </span><span class="ans">กลูโคส</span></span>
+    และแก๊ส <span class="blank" data-answer="ออกซิเจน"><span class="space"> </span><span class="ans">ออกซิเจน</span></span>
+    น้ำตาลบางส่วนสะสมเป็น <span class="blank" data-answer="แป้ง"><span class="space"> </span><span class="ans">แป้ง</span></span>
+    และบางส่วนใช้สร้าง <span class="blank" data-answer="เซลลูโลส"><span class="space"> </span><span class="ans">เซลลูโลส</span></span>
+    พืชจึงเป็น <span class="blank" data-answer="ผู้ผลิต"><span class="space"> </span><span class="ans">ผู้ผลิต</span></span>
+    และเป็นจุดเริ่มต้นของการ <span class="blank wide" data-answer="ถ่ายทอดพลังงาน"><span class="space"> </span><span class="ans">ถ่ายทอดพลังงาน</span></span>
+    ในระบบนิเวศ ขณะเดียวกันคาร์บอนไดออกไซด์เป็น
+    <span class="blank wide" data-answer="แก๊สเรือนกระจก"><span class="space"> </span><span class="ans">แก๊สเรือนกระจก</span></span>
+    ที่พืชนำไปใช้ในการสังเคราะห์ด้วยแสง
+  </p>
+<p class="cloze">
+    ตามบทเรียน พืชสามารถใช้แสงจาก <span class="blank wide" data-answer="แหล่งกำเนิดอื่น"><span class="space"> </span><span class="ans">แหล่งกำเนิดอื่น</span></span>
+    ที่ไม่ใช่ดวงอาทิตย์ได้ แต่ถ้าขาดปัจจัยจำเป็นข้อใดข้อหนึ่ง พืชจะสังเคราะห์ด้วยแสง
+    <span class="blank" data-answer="ไม่ได้"><span class="space"> </span><span class="ans">ไม่ได้</span></span>
+    และในภาพห่วงโซ่อาหารมี <span class="blank wide" data-answer="ผู้ย่อยสลาย"><span class="space"> </span><span class="ans">ผู้ย่อยสลาย</span></span>
+    ช่วยให้ธาตุอาหารหมุนเวียนกลับสู่ระบบ
+  </p>
+</section>
+<div class="unit-banner page-break">
+<div class="unit-no">ส่วนที่ 2</div>
+<div class="unit-title">การสืบพันธุ์และการขยายพันธุ์ของพืชดอก</div>
+<div class="unit-desc">เติมต่อจากไฟล์เดิม โดยยึดลำดับและรายละเอียดจากเอกสารประกอบการเรียนเรื่องการดำรงชีวิตของพืช</div>
+</div>
+<section class="section" id="s8">
+<div class="section-head">
+<div class="num">8</div>
+<div><h2>พืชดอกและหน้าที่ของดอก</h2><div class="coverage">ความหมายของพืชดอก · อวัยวะพื้นฐาน · ดอกเป็นอวัยวะสืบพันธุ์</div></div>
+</div>
+<div class="read-box"><div class="title">สรุปให้อ่านก่อน</div>
+<p><b>พืชดอก</b> หมายถึงพืชที่เมื่อเจริญเติบโตเต็มที่แล้วจะมีดอกให้เห็น เอกสารจัดพืชดอกเป็นพืชชั้นสูงที่มีอวัยวะต่าง ๆ ครบ ได้แก่
+<b>ราก ลำต้น ใบ ตา ดอก และเมล็ด</b> และพบได้ทั้งพืชที่อยู่บนบกและอยู่ในน้ำ</p>
+<p><b>ดอก</b> เป็นส่วนที่เปลี่ยนแปลงมาจากกิ่งและใบ และเป็นส่วนที่ใช้ในการสืบพันธุ์ของพืชดอก
+แม้ดอกไม้แต่ละชนิดมีรูปร่างแตกต่างกัน แต่มีโครงสร้างพื้นฐานที่คล้ายกัน</p>
+<div class="keyline">จำแก่น: ดอก = อวัยวะสำคัญในการสืบพันธุ์ของพืชดอก</div>
+</div>
+<div class="practice-title">ลองจำด้วยการลากวาง</div>
+<div class="wordbank"><strong>คลังคำ</strong><div class="words"><span class="word">เจริญเติบโตเต็มที่</span><span class="word">ดอก</span><span class="word">ราก ลำต้น ใบ ตา ดอก และเมล็ด</span><span class="word">กิ่งและใบ</span><span class="word">สืบพันธุ์</span></div></div>
+<div class="cloze"><p>พืชดอกคือพืชที่เมื่อ <span class="blank xwide" data-answer="เจริญเติบโตเต็มที่"><span class="space"> </span><span class="ans">เจริญเติบโตเต็มที่</span></span> แล้วจะมี <span class="blank" data-answer="ดอก"><span class="space"> </span><span class="ans">ดอก</span></span> ให้เห็น
+อวัยวะสำคัญที่เอกสารระบุคือ <span class="blank xwide" data-answer="ราก ลำต้น ใบ ตา ดอก และเมล็ด"><span class="space"> </span><span class="ans">ราก ลำต้น ใบ ตา ดอก และเมล็ด</span></span>
+ดอกเป็นส่วนที่เปลี่ยนแปลงมาจาก <span class="blank" data-answer="กิ่งและใบ"><span class="space"> </span><span class="ans">กิ่งและใบ</span></span> และทำหน้าที่เกี่ยวข้องกับการ <span class="blank" data-answer="สืบพันธุ์"><span class="space"> </span><span class="ans">สืบพันธุ์</span></span></p></div>
+</section>
+<section class="section" id="s9">
+<div class="section-head">
+<div class="num">9</div>
+<div><h2>ส่วนประกอบสำคัญของดอกและหน้าที่</h2><div class="coverage">กลีบเลี้ยง · กลีบดอก · เกสรเพศผู้ · เกสรเพศเมีย · โครงสร้างย่อย</div></div>
+</div>
+<div class="read-box"><div class="title">สรุปให้อ่านก่อน</div>
+<p>ดอกของพืชมีส่วนประกอบสำคัญ <b>4 ส่วน</b></p>
+<ul>
+<li><b>กลีบเลี้ยง</b> อยู่ด้านนอกสุด มักมีสีเขียวคล้ายใบ ทำหน้าที่ห่อหุ้มส่วนที่อยู่ด้านในของดอกขณะยังอ่อนหรือยังเป็นดอกตูม และช่วยป้องกันอันตราย</li>
+<li><b>กลีบดอก</b> อยู่ถัดจากกลีบเลี้ยง มักมีสีสวย บางชนิดมีกลิ่นหอม สีสันช่วยล่อแมลงให้มาตอมและช่วยในการผสมเกสร</li>
+<li><b>เกสรเพศผู้</b> เป็นอวัยวะสร้างเซลล์สืบพันธุ์เพศผู้ ประกอบด้วย <b>ก้านชูอับเรณู</b> และ <b>อับเรณู</b> โดยอับเรณูเป็นแหล่งสร้างและเก็บละอองเรณู</li>
+<li><b>เกสรเพศเมีย</b> อยู่ด้านในสุดบริเวณกลางดอก ทำหน้าที่สร้างเซลล์สืบพันธุ์เพศเมีย ประกอบด้วย <b>ยอดเกสรเพศเมีย ก้านชูเกสรเพศเมีย และรังไข่</b> ภายในรังไข่มี <b>ออวุล</b> และภายในออวุลมี <b>ถุงเอ็มบริโอ</b> ซึ่งเป็นบริเวณที่มีเซลล์ไข่</li>
+</ul>
+<p>ยอดเกสรเพศเมียมีลักษณะเป็นขนและมีน้ำเหนียวเคลือบอยู่ ช่วยดักจับละอองเรณู และน้ำเหนียวที่มีน้ำตาลช่วยกระตุ้นให้ละอองเรณูเกิดการงอกหลอด</p>
+<div class="source-focus"><b>เก็บตกจากใบงาน:</b> ภายในอับเรณูแบ่งเป็นถุงเล็ก ๆ 4 ถุง ซึ่งเป็นถุงเรณู และใบงานยังระบุว่ากลีบดอกของพืชบางชนิดสามารถเปลี่ยนสีได้</div></div>
+<div class="practice-title">ลองจำด้วยการลากวาง</div>
+<div class="wordbank"><strong>คลังคำ</strong><div class="words"><span class="word">กลีบเลี้ยง</span><span class="word">กลีบดอก</span><span class="word">เกสรเพศผู้</span><span class="word">ก้านชูอับเรณู</span><span class="word">อับเรณู</span><span class="word">เกสรเพศเมีย</span><span class="word">ยอดเกสรเพศเมีย</span><span class="word">ก้านชูเกสรเพศเมีย</span><span class="word">รังไข่</span><span class="word">ออวุล</span><span class="word">ถุงเอ็มบริโอ</span></div></div>
+<div class="cloze"><p>ส่วนที่อยู่ด้านนอกสุดและช่วยห่อหุ้มดอกตูมคือ <span class="blank" data-answer="กลีบเลี้ยง"><span class="space"> </span><span class="ans">กลีบเลี้ยง</span></span>
+ส่วนที่มักมีสีสวยเพื่อช่วยล่อแมลงคือ <span class="blank" data-answer="กลีบดอก"><span class="space"> </span><span class="ans">กลีบดอก</span></span>
+อวัยวะสร้างเซลล์สืบพันธุ์เพศผู้คือ <span class="blank" data-answer="เกสรเพศผู้"><span class="space"> </span><span class="ans">เกสรเพศผู้</span></span>
+ซึ่งมี <span class="blank wide" data-answer="ก้านชูอับเรณู"><span class="space"> </span><span class="ans">ก้านชูอับเรณู</span></span> และ <span class="blank" data-answer="อับเรณู"><span class="space"> </span><span class="ans">อับเรณู</span></span></p>
+<p>อวัยวะสร้างเซลล์สืบพันธุ์เพศเมียคือ <span class="blank" data-answer="เกสรเพศเมีย"><span class="space"> </span><span class="ans">เกสรเพศเมีย</span></span>
+โดยส่วนบนสุดคือ <span class="blank wide" data-answer="ยอดเกสรเพศเมีย"><span class="space"> </span><span class="ans">ยอดเกสรเพศเมีย</span></span>
+เชื่อมลงมาด้วย <span class="blank wide" data-answer="ก้านชูเกสรเพศเมีย"><span class="space"> </span><span class="ans">ก้านชูเกสรเพศเมีย</span></span>
+ส่วนล่างสุดคือ <span class="blank" data-answer="รังไข่"><span class="space"> </span><span class="ans">รังไข่</span></span> ภายในมี <span class="blank" data-answer="ออวุล"><span class="space"> </span><span class="ans">ออวุล</span></span>
+และภายในออวุลมี <span class="blank wide" data-answer="ถุงเอ็มบริโอ"><span class="space"> </span><span class="ans">ถุงเอ็มบริโอ</span></span></p></div>
+</section>
+<section class="section page-break" id="s10">
+<div class="section-head">
+<div class="num">10</div>
+<div><h2>การจำแนกประเภทของดอก</h2><div class="coverage">จำแนกด้วย 3 เกณฑ์: ส่วนประกอบ · อวัยวะสืบพันธุ์ · จำนวนดอกบนก้าน</div></div>
+</div>
+<div class="read-box"><div class="title">สรุปให้อ่านก่อน</div>
+<p><b>เกณฑ์ที่ 1 ใช้ส่วนประกอบของดอก</b></p>
+<ul>
+<li><b>ดอกครบส่วน</b> มีครบทั้ง 4 ส่วน คือ กลีบเลี้ยง กลีบดอก เกสรเพศผู้ และเกสรเพศเมีย ตัวอย่างในเอกสาร: ต้อยติ่ง บัวหลวง</li>
+<li><b>ดอกไม่ครบส่วน</b> ขาดส่วนใดส่วนหนึ่งหรือมากกว่า ตัวอย่างในเอกสาร: เฟื่องฟ้า กล้วยไม้</li>
+</ul>
+<p><b>เกณฑ์ที่ 2 ใช้อวัยวะสืบพันธุ์</b></p>
+<ul>
+<li><b>ดอกสมบูรณ์เพศ</b> มีทั้งเกสรเพศผู้และเกสรเพศเมียในดอกเดียวกัน ตัวอย่าง: ชบา กล้วยไม้</li>
+<li><b>ดอกไม่สมบูรณ์เพศ</b> มีอวัยวะสืบพันธุ์เพศผู้หรือเพศเมียเพียงอย่างเดียว ตัวอย่าง: ข้าวโพด มะพร้าว</li>
+</ul>
+<p><b>เกณฑ์ที่ 3 ใช้จำนวนดอกบนหนึ่งก้านดอก</b></p>
+<ul>
+<li><b>ดอกเดี่ยว</b> มีดอกเดี่ยวในแต่ละข้อของกิ่งหรือลำต้น</li>
+<li><b>ดอกช่อ</b> เกิดเป็นกลุ่มบนก้านดอกใหญ่เดียวกัน ประกอบด้วยดอกย่อยหลายดอก</li>
+</ul>
+<div class="keyline">“ครบส่วน” ดู 4 ส่วนของดอก · “สมบูรณ์เพศ” ดูเฉพาะว่ามีเกสรเพศผู้และเกสรเพศเมียครบหรือไม่</div>
+</div>
+<div class="practice-title">ลองจำด้วยการลากวาง</div>
+<div class="wordbank"><strong>คลังคำ</strong><div class="words"><span class="word">ดอกครบส่วน</span><span class="word">4 ส่วน</span><span class="word">ดอกไม่ครบส่วน</span><span class="word">ดอกสมบูรณ์เพศ</span><span class="word">เกสรเพศผู้และเกสรเพศเมีย</span><span class="word">ดอกไม่สมบูรณ์เพศ</span><span class="word">ดอกเดี่ยว</span><span class="word">ดอกช่อ</span><span class="word">ดอกย่อยหลายดอก</span></div></div>
+<div class="cloze"><p>ดอกที่มีส่วนประกอบครบ <span class="blank" data-answer="4 ส่วน"><span class="space"> </span><span class="ans">4 ส่วน</span></span> เรียกว่า <span class="blank wide" data-answer="ดอกครบส่วน"><span class="space"> </span><span class="ans">ดอกครบส่วน</span></span>
+ถ้าขาดส่วนใดส่วนหนึ่งหรือมากกว่าเรียกว่า <span class="blank wide" data-answer="ดอกไม่ครบส่วน"><span class="space"> </span><span class="ans">ดอกไม่ครบส่วน</span></span>
+ดอกที่มี <span class="blank xwide" data-answer="เกสรเพศผู้และเกสรเพศเมีย"><span class="space"> </span><span class="ans">เกสรเพศผู้และเกสรเพศเมีย</span></span> อยู่ในดอกเดียวกันเรียกว่า <span class="blank wide" data-answer="ดอกสมบูรณ์เพศ"><span class="space"> </span><span class="ans">ดอกสมบูรณ์เพศ</span></span>
+ส่วนดอกที่มีอวัยวะสืบพันธุ์เพียงเพศเดียวเรียกว่า <span class="blank wide" data-answer="ดอกไม่สมบูรณ์เพศ"><span class="space"> </span><span class="ans">ดอกไม่สมบูรณ์เพศ</span></span></p>
+<p>หากหนึ่งตำแหน่งมีดอกเดียวเรียกว่า <span class="blank" data-answer="ดอกเดี่ยว"><span class="space"> </span><span class="ans">ดอกเดี่ยว</span></span>
+ส่วนดอกที่เกิดเป็นกลุ่มอยู่บนก้านดอกใหญ่เดียวกันเรียกว่า <span class="blank" data-answer="ดอกช่อ"><span class="space"> </span><span class="ans">ดอกช่อ</span></span>
+และประกอบด้วย <span class="blank wide" data-answer="ดอกย่อยหลายดอก"><span class="space"> </span><span class="ans">ดอกย่อยหลายดอก</span></span></p></div>
+</section>
+<section class="section" id="s11">
+<div class="section-head">
+<div class="num">11</div>
+<div><h2>การสืบพันธุ์แบบอาศัยเพศและการถ่ายละอองเรณู</h2><div class="coverage">ลำดับขั้น · ความหมายของการถ่ายละอองเรณู · การถ่ายในดอกเดียวกันและข้ามดอก · ตัวกลาง</div></div>
+</div>
+<div class="read-box"><div class="title">สรุปให้อ่านก่อน</div>
+<p>การสืบพันธุ์แบบอาศัยเพศของพืชดอกต้องมีการรวมกันของเซลล์สืบพันธุ์เพศผู้กับเซลล์สืบพันธุ์เพศเมีย ซึ่งเกิดขึ้นในดอก
+เอกสารเรียงลำดับเป็น <b>การถ่ายละอองเรณู → การงอกของละอองเรณู → การปฏิสนธิ → การเปลี่ยนแปลงโครงสร้างหลังการปฏิสนธิ</b></p>
+<p><b>การถ่ายละอองเรณู</b> คือปรากฏการณ์ที่ละอองเรณูของเกสรเพศผู้ไปตกบนยอดเกสรเพศเมียของดอกชนิดเดียวกัน เมื่อละอองเรณูแก่เต็มที่</p>
+<p>เอกสารแบ่งการถ่ายละอองเรณูเป็น 2 ประเภท คือ <b>เกิดขึ้นภายในดอกเดียวกัน</b> และ <b>เกิดขึ้นข้ามดอก</b>
+การข้ามดอกอาศัยตัวกลางช่วย เช่น ลม น้ำ แมลง สัตว์ และมนุษย์ โดยตัวกลางมีทั้งสิ่งมีชีวิตและสิ่งไม่มีชีวิต</p>
+<div class="source-focus"><b>กิจกรรมในเอกสาร:</b> ให้นักเรียนสังเกตรูปร่าง กลีบเลี้ยง กลีบดอก เกสรเพศผู้ เกสรเพศเมีย และกลิ่นของดอก
+แล้วพิจารณาว่าลักษณะใดน่าจะช่วยในการถ่ายละอองเรณู</div>
+<div class="source-focus"><b>เก็บตกจากแผนภาพ:</b> การถ่ายละอองเรณูภายในดอกเดียวกันไม่ต้องอาศัยพาหะหรือตัวกลาง ส่วนการถ่ายละอองเรณูข้ามดอกต้องอาศัยพาหะหรือตัวกลางช่วย</div></div>
+<div class="flowline">
+<span class="step">ถ่ายละอองเรณู</span><span class="arrow">→</span>
+<span class="step">ละอองเรณูงอก</span><span class="arrow">→</span>
+<span class="step">ปฏิสนธิ</span><span class="arrow">→</span>
+<span class="step">เปลี่ยนแปลงหลังปฏิสนธิ</span>
+</div>
+<div class="practice-title">ลองจำด้วยการลากวาง</div>
+<div class="wordbank"><strong>คลังคำ</strong><div class="words"><span class="word">ละอองเรณู</span><span class="word">ยอดเกสรเพศเมีย</span><span class="word">ดอกชนิดเดียวกัน</span><span class="word">ภายในดอกเดียวกัน</span><span class="word">ข้ามดอก</span><span class="word">ลมและน้ำ</span><span class="word">แมลง สัตว์ และมนุษย์</span><span class="word">การงอกของละอองเรณู</span><span class="word">การปฏิสนธิ</span></div></div>
+<div class="cloze"><p>การถ่ายละอองเรณูคือการที่ <span class="blank" data-answer="ละอองเรณู"><span class="space"> </span><span class="ans">ละอองเรณู</span></span> ไปตกบน <span class="blank wide" data-answer="ยอดเกสรเพศเมีย"><span class="space"> </span><span class="ans">ยอดเกสรเพศเมีย</span></span>
+ของ <span class="blank wide" data-answer="ดอกชนิดเดียวกัน"><span class="space"> </span><span class="ans">ดอกชนิดเดียวกัน</span></span> การถ่ายเรณูเกิดได้ทั้ง <span class="blank wide" data-answer="ภายในดอกเดียวกัน"><span class="space"> </span><span class="ans">ภายในดอกเดียวกัน</span></span>
+และ <span class="blank" data-answer="ข้ามดอก"><span class="space"> </span><span class="ans">ข้ามดอก</span></span></p>
+<p>ตัวกลางที่ไม่มีชีวิต เช่น <span class="blank wide" data-answer="ลมและน้ำ"><span class="space"> </span><span class="ans">ลมและน้ำ</span></span>
+ส่วนตัวกลางที่มีชีวิต เช่น <span class="blank xwide" data-answer="แมลง สัตว์ และมนุษย์"><span class="space"> </span><span class="ans">แมลง สัตว์ และมนุษย์</span></span>
+หลังการถ่ายละอองเรณู ขั้นถัดไปคือ <span class="blank xwide" data-answer="การงอกของละอองเรณู"><span class="space"> </span><span class="ans">การงอกของละอองเรณู</span></span>
+แล้วจึงเข้าสู่ <span class="blank wide" data-answer="การปฏิสนธิ"><span class="space"> </span><span class="ans">การปฏิสนธิ</span></span></p></div>
+</section>
+<section class="section page-break" id="s12">
+<div class="section-head">
+<div class="num">12</div>
+<div><h2>การสร้างละอองเรณูและถุงเอ็มบริโอ</h2><div class="coverage">ไมโครสปอร์ · ไมโอซิส · ไมโทซิส · เจเนอเรทีฟเซลล์ · ทิวบ์เซลล์ · เมกะสปอร์ · ถุงเอ็มบริโอ</div></div>
+</div>
+<div class="read-box"><div class="title">สรุปให้อ่านก่อน</div>
+<p><b>ฝั่งเพศผู้:</b> ไมโครสปอร์มาเทอร์เซลล์มีโครโมโซมแบบ <b>2n</b> แบ่งเซลล์แบบ <b>ไมโอซิส</b>
+ได้ไมโครสปอร์แบบ <b>n</b> จำนวน 4 เซลล์ จากนั้นไมโครสปอร์พัฒนาต่อและแบ่งแบบ <b>ไมโทซิส</b>
+เกิดเป็นแกมีโทไฟต์เพศผู้ที่มี <b>เจเนอเรทีฟเซลล์</b> และ <b>ทิวบ์เซลล์</b> ก่อนพัฒนาเป็นละอองเรณู</p>
+<p><b>ฝั่งเพศเมีย:</b> เมกะสปอร์แบบ <b>n</b> แบ่งแบบไมโทซิส 3 ครั้ง จนมีนิวเคลียส 8 นิวเคลียส
+แล้วจัดเรียงเป็นถุงเอ็มบริโอ ซึ่งภาพในเอกสารแสดง <b>เซลล์ไข่ ซินเนอร์จิด โพลาร์นิวเคลียส แอนติโพแดล</b> และบริเวณ <b>ไมโครไพล์</b></p>
+<div class="keyline">แยกให้ชัด: ไมโอซิสลดจำนวนโครโมโซม · ไมโทซิสใช้พัฒนาต่อให้เกิดโครงสร้างของแกมีโทไฟต์</div>
+</div>
+<div class="practice-title">ลองจำด้วยการลากวาง</div>
+<div class="wordbank"><strong>คลังคำ</strong><div class="words"><span class="word">ไมโครสปอร์มาเทอร์เซลล์</span><span class="word">2n</span><span class="word">ไมโอซิส</span><span class="word">ไมโครสปอร์</span><span class="word">4 เซลล์</span><span class="word">ไมโทซิส</span><span class="word">เจเนอเรทีฟเซลล์</span><span class="word">ทิวบ์เซลล์</span><span class="word">เมกะสปอร์</span><span class="word">3 ครั้ง</span><span class="word">8 นิวเคลียส</span><span class="word">ถุงเอ็มบริโอ</span></div></div>
+<div class="cloze"><p>ฝั่งเพศผู้เริ่มจาก <span class="blank xwide" data-answer="ไมโครสปอร์มาเทอร์เซลล์"><span class="space"> </span><span class="ans">ไมโครสปอร์มาเทอร์เซลล์</span></span> ซึ่งเป็น <span class="blank" data-answer="2n"><span class="space"> </span><span class="ans">2n</span></span>
+แล้วแบ่งแบบ <span class="blank" data-answer="ไมโอซิส"><span class="space"> </span><span class="ans">ไมโอซิส</span></span> ได้ <span class="blank" data-answer="ไมโครสปอร์"><span class="space"> </span><span class="ans">ไมโครสปอร์</span></span> จำนวน <span class="blank" data-answer="4 เซลล์"><span class="space"> </span><span class="ans">4 เซลล์</span></span>
+จากนั้นแบ่งต่อแบบ <span class="blank" data-answer="ไมโทซิส"><span class="space"> </span><span class="ans">ไมโทซิส</span></span> จนมี <span class="blank wide" data-answer="เจเนอเรทีฟเซลล์"><span class="space"> </span><span class="ans">เจเนอเรทีฟเซลล์</span></span>
+และ <span class="blank" data-answer="ทิวบ์เซลล์"><span class="space"> </span><span class="ans">ทิวบ์เซลล์</span></span></p>
+<p>ฝั่งเพศเมียเริ่มจาก <span class="blank" data-answer="เมกะสปอร์"><span class="space"> </span><span class="ans">เมกะสปอร์</span></span> แบ่งไมโทซิส <span class="blank" data-answer="3 ครั้ง"><span class="space"> </span><span class="ans">3 ครั้ง</span></span>
+จนได้ <span class="blank wide" data-answer="8 นิวเคลียส"><span class="space"> </span><span class="ans">8 นิวเคลียส</span></span> แล้วจัดเรียงเป็น <span class="blank wide" data-answer="ถุงเอ็มบริโอ"><span class="space"> </span><span class="ans">ถุงเอ็มบริโอ</span></span></p></div>
+</section>
+<section class="section" id="s13">
+<div class="section-head">
+<div class="num">13</div>
+<div><h2>การงอกของละอองเรณูและการปฏิสนธิซ้อน</h2><div class="coverage">เจเนอเรทีฟนิวเคลียส · ทิวบ์นิวเคลียส · หลอดละอองเรณู · สเปิร์ม 2 ตัว · ไซโกต · เอนโดสเปิร์ม</div></div>
+</div>
+<div class="read-box"><div class="title">สรุปให้อ่านก่อน</div>
+<p>ละอองเรณูของพืชดอกมีนิวเคลียสสำคัญ 2 ชนิด คือ <b>เจเนอเรทีฟนิวเคลียส</b> และ <b>ทิวบ์นิวเคลียส</b></p>
+<p>เมื่อละอองเรณูตกบนยอดเกสรเพศเมีย ทิวบ์นิวเคลียสเกี่ยวข้องกับการงอกของ <b>หลอดละอองเรณู</b>
+ซึ่งเจริญลงไปตามก้านชูเกสรเพศเมียจนถึงออวุล ส่วนเจเนอเรทีฟนิวเคลียสแบ่งแบบไมโทซิสให้ได้ <b>สเปิร์มนิวเคลียส 2 อัน</b>
+ซึ่งเคลื่อนลงมาตามหลอดละอองเรณู</p>
+<p>เมื่อถึงออวุล สเปิร์มตัวที่ 1 รวมกับเซลล์ไข่เกิดเป็น <b>ไซโกต</b> และพัฒนาเป็น <b>เอ็มบริโอหรือต้นอ่อน</b>
+ส่วนสเปิร์มตัวที่ 2 รวมกับ <b>โพลาร์นิวเคลียส</b> เกิดเป็น <b>เอนโดสเปิร์ม</b> ซึ่งเป็นอาหารเลี้ยงเอ็มบริโอ
+การเกิดการผสม 2 ครั้งนี้เรียกว่า <b>การปฏิสนธิซ้อน</b></p>
+<div class="source-focus"><b>ถ้อยคำตามเอกสาร:</b> เอกสารอธิบายว่าทิวบ์นิวเคลียสมีลักษณะเป็นท่อ งอกลงไปภายในก้านเกสรเพศเมียจนถึงออวุล แล้วสลายตัวไป</div></div>
+<div class="flowline">
+<span class="step">สเปิร์มตัวที่ 1 + เซลล์ไข่</span><span class="arrow">→</span>
+<span class="step">ไซโกต</span><span class="arrow">→</span><span class="step">เอ็มบริโอ</span>
+</div>
+<div class="flowline">
+<span class="step">สเปิร์มตัวที่ 2 + โพลาร์นิวเคลียส</span><span class="arrow">→</span>
+<span class="step">เอนโดสเปิร์ม</span><span class="arrow">→</span><span class="step">อาหารเลี้ยงเอ็มบริโอ</span>
+</div>
+<div class="practice-title">ลองจำด้วยการลากวาง</div>
+<div class="wordbank"><strong>คลังคำ</strong><div class="words"><span class="word">เจเนอเรทีฟนิวเคลียส</span><span class="word">ทิวบ์นิวเคลียส</span><span class="word">หลอดละอองเรณู</span><span class="word">สเปิร์มนิวเคลียส 2 อัน</span><span class="word">เซลล์ไข่</span><span class="word">ไซโกต</span><span class="word">เอ็มบริโอ</span><span class="word">โพลาร์นิวเคลียส</span><span class="word">เอนโดสเปิร์ม</span><span class="word">การปฏิสนธิซ้อน</span></div></div>
+<div class="cloze"><p>ละอองเรณูมี <span class="blank xwide" data-answer="เจเนอเรทีฟนิวเคลียส"><span class="space"> </span><span class="ans">เจเนอเรทีฟนิวเคลียส</span></span> และ <span class="blank wide" data-answer="ทิวบ์นิวเคลียส"><span class="space"> </span><span class="ans">ทิวบ์นิวเคลียส</span></span>
+เมื่อเรณูงอกจะเกิด <span class="blank wide" data-answer="หลอดละอองเรณู"><span class="space"> </span><span class="ans">หลอดละอองเรณู</span></span>
+ส่วนเจเนอเรทีฟนิวเคลียสแบ่งจนได้ <span class="blank xwide" data-answer="สเปิร์มนิวเคลียส 2 อัน"><span class="space"> </span><span class="ans">สเปิร์มนิวเคลียส 2 อัน</span></span></p>
+<p>สเปิร์มตัวที่ 1 รวมกับ <span class="blank" data-answer="เซลล์ไข่"><span class="space"> </span><span class="ans">เซลล์ไข่</span></span> เกิดเป็น <span class="blank" data-answer="ไซโกต"><span class="space"> </span><span class="ans">ไซโกต</span></span> และพัฒนาเป็น <span class="blank" data-answer="เอ็มบริโอ"><span class="space"> </span><span class="ans">เอ็มบริโอ</span></span>
+ส่วนสเปิร์มตัวที่ 2 รวมกับ <span class="blank wide" data-answer="โพลาร์นิวเคลียส"><span class="space"> </span><span class="ans">โพลาร์นิวเคลียส</span></span> เกิดเป็น <span class="blank" data-answer="เอนโดสเปิร์ม"><span class="space"> </span><span class="ans">เอนโดสเปิร์ม</span></span>
+กระบวนการนี้เรียกว่า <span class="blank wide" data-answer="การปฏิสนธิซ้อน"><span class="space"> </span><span class="ans">การปฏิสนธิซ้อน</span></span></p></div>
+</section>
+<section class="final" id="finalA">
+<h2>ด่านรวมย่อย · ดอก การถ่ายเรณู และการปฏิสนธิ</h2>
+<div class="read-box"><div class="title">อ่านรอบสุดท้าย</div><p>ทบทวนเส้นทางตั้งแต่โครงสร้างของดอก → การถ่ายละอองเรณู → การงอกของเรณู → การปฏิสนธิซ้อน</p></div>
+<div class="wordbank"><strong>คลังคำด่านรวม</strong><div class="words"><span class="word">อับเรณู</span><span class="word">เกสรเพศผู้</span><span class="word">ยอดเกสรเพศเมีย</span><span class="word">เกสรเพศเมีย</span><span class="word">การถ่ายละอองเรณู</span><span class="word">หลอดละอองเรณู</span><span class="word">สเปิร์ม 2 ตัว</span><span class="word">ไซโกต</span><span class="word">เอนโดสเปิร์ม</span></div></div>
+<div class="cloze"><p>ละอองเรณูสร้างและเก็บอยู่ที่ <span class="blank" data-answer="อับเรณู"><span class="space"> </span><span class="ans">อับเรณู</span></span> ซึ่งเป็นส่วนหนึ่งของ <span class="blank wide" data-answer="เกสรเพศผู้"><span class="space"> </span><span class="ans">เกสรเพศผู้</span></span>
+เมื่อเรณูไปตกบน <span class="blank wide" data-answer="ยอดเกสรเพศเมีย"><span class="space"> </span><span class="ans">ยอดเกสรเพศเมีย</span></span> ของ <span class="blank wide" data-answer="เกสรเพศเมีย"><span class="space"> </span><span class="ans">เกสรเพศเมีย</span></span>
+เหตุการณ์นี้เรียกว่า <span class="blank xwide" data-answer="การถ่ายละอองเรณู"><span class="space"> </span><span class="ans">การถ่ายละอองเรณู</span></span> จากนั้นเกิด <span class="blank wide" data-answer="หลอดละอองเรณู"><span class="space"> </span><span class="ans">หลอดละอองเรณู</span></span>
+และมี <span class="blank wide" data-answer="สเปิร์ม 2 ตัว"><span class="space"> </span><span class="ans">สเปิร์ม 2 ตัว</span></span> เข้าร่วมการปฏิสนธิ ทำให้เกิด <span class="blank" data-answer="ไซโกต"><span class="space"> </span><span class="ans">ไซโกต</span></span> และ <span class="blank" data-answer="เอนโดสเปิร์ม"><span class="space"> </span><span class="ans">เอนโดสเปิร์ม</span></span></p></div>
+</section>
+<section class="section page-break" id="s14">
+<div class="section-head">
+<div class="num">14</div>
+<div><h2>การเปลี่ยนแปลงหลังการปฏิสนธิ</h2><div class="coverage">ออวุล → เมล็ด · รังไข่ → ผล · ผนังรังไข่ → เปลือกและเนื้อ · เยื่อหุ้มออวุล → เปลือกเมล็ด</div></div>
+</div>
+<div class="read-box"><div class="title">สรุปให้อ่านก่อน</div>
+<p>หลังการปฏิสนธิ โครงสร้างของดอกเปลี่ยนแปลงดังนี้</p>
+<table class="mini-table">
+<tr><th>โครงสร้างเดิม</th><th>การเปลี่ยนแปลง</th></tr>
+<tr><td>กลีบเลี้ยง</td><td>เหี่ยวแห้งหลุดไป แต่พืชบางชนิดยังคงอยู่ เช่น มังคุด</td></tr>
+<tr><td>กลีบดอก ยอดเกสร และก้านเกสรเพศเมีย</td><td>เหี่ยวแห้งและร่วงหลุดไป</td></tr>
+<tr><td>ออวุล</td><td>เมล็ด</td></tr>
+<tr><td>รังไข่</td><td>ผล</td></tr>
+<tr><td>ผนังรังไข่</td><td>เปลือกและเนื้อของผล</td></tr>
+<tr><td>เยื่อหุ้มออวุล</td><td>เปลือกหุ้มเมล็ด</td></tr>
+<tr><td>ไซโกต</td><td>เอ็มบริโอหรือต้นอ่อน</td></tr>
+<tr><td>เอนโดสเปิร์ม</td><td>อาหารเลี้ยงเอ็มบริโอ</td></tr>
+</table>
+<p>เอกสารระบุด้วยว่า ผลบางชนิดอาจมีส่วนที่เกิดจาก <b>ฐานรองดอก</b> ไม่ได้เกิดจากรังไข่เพียงอย่างเดียว</p>
+</div>
+<div class="practice-title">ลองจำด้วยการลากวาง</div>
+<div class="wordbank"><strong>คลังคำ</strong><div class="words"><span class="word">เมล็ด</span><span class="word">ผล</span><span class="word">เปลือกและเนื้อของผล</span><span class="word">เปลือกหุ้มเมล็ด</span><span class="word">เอ็มบริโอหรือต้นอ่อน</span><span class="word">อาหารเลี้ยงเอ็มบริโอ</span><span class="word">เหี่ยวแห้งและร่วงหลุดไป</span></div></div>
+<div class="cloze"><p>หลังการปฏิสนธิ ออวุลพัฒนาเป็น <span class="blank" data-answer="เมล็ด"><span class="space"> </span><span class="ans">เมล็ด</span></span> รังไข่พัฒนาเป็น <span class="blank" data-answer="ผล"><span class="space"> </span><span class="ans">ผล</span></span>
+ผนังรังไข่พัฒนาเป็น <span class="blank xwide" data-answer="เปลือกและเนื้อของผล"><span class="space"> </span><span class="ans">เปลือกและเนื้อของผล</span></span>
+เยื่อหุ้มออวุลพัฒนาเป็น <span class="blank wide" data-answer="เปลือกหุ้มเมล็ด"><span class="space"> </span><span class="ans">เปลือกหุ้มเมล็ด</span></span>
+ไซโกตพัฒนาเป็น <span class="blank xwide" data-answer="เอ็มบริโอหรือต้นอ่อน"><span class="space"> </span><span class="ans">เอ็มบริโอหรือต้นอ่อน</span></span>
+และเอนโดสเปิร์มเป็น <span class="blank xwide" data-answer="อาหารเลี้ยงเอ็มบริโอ"><span class="space"> </span><span class="ans">อาหารเลี้ยงเอ็มบริโอ</span></span>
+ส่วนกลีบดอก ยอดเกสร และก้านเกสรเพศเมียจะ <span class="blank xwide" data-answer="เหี่ยวแห้งและร่วงหลุดไป"><span class="space"> </span><span class="ans">เหี่ยวแห้งและร่วงหลุดไป</span></span></p></div>
+</section>
+<section class="section" id="s15">
+<div class="section-head">
+<div class="num">15</div>
+<div><h2>การเกิดผลและประเภทของผล</h2><div class="coverage">ผลเดี่ยว · ผลกลุ่ม · ผลรวม · ผลที่ไม่มีเมล็ดตามตัวอย่างในเอกสาร</div></div>
+</div>
+<div class="read-box"><div class="title">สรุปให้อ่านก่อน</div>
+<p>หลังการปฏิสนธิ ออวุลแต่ละออวุลเจริญเป็นเมล็ด และรังไข่เจริญเป็นผล
+เอกสารกล่าวว่าผลบางชนิดมีส่วนที่เจริญมาจากส่วนอื่นของดอก เช่น <b>ฐานรองดอก</b>
+และมีกรณีที่รังไข่สามารถเจริญเป็นผลโดยไม่มีเมล็ด เช่น <b>กล้วยหอม</b> และ <b>องุ่นไม่มีเมล็ด</b></p>
+<p>นักพฤกษศาสตร์แบ่งผลตามลักษณะของดอกและการเกิดผลเป็น 3 ชนิด</p>
+<ul>
+<li><b>ผลเดี่ยว</b> เกิดจากดอกเดี่ยว หรือจากดอกในช่อที่แต่ละดอกมีรังไข่เพียงอันเดียว ตัวอย่าง: ลิ้นจี่ เงาะ ลำไย ทุเรียน ตะขบ</li>
+<li><b>ผลกลุ่ม</b> เกิดจากดอกหนึ่งดอกที่มีหลายรังไข่อยู่แยกกันหรือติดกันบนฐานรองดอกเดียวกัน ตัวอย่าง: น้อยหน่า กระดังงา สตรอเบอรี</li>
+<li><b>ผลรวม</b> เกิดจากรังไข่ของดอกย่อยหลายดอกในช่อดอกรวมกันเป็นผลใหญ่ ตัวอย่าง: ยอ ขนุน หม่อน สับปะรด</li>
+</ul>
+<div class="source-focus"><b>เก็บตกเรื่องการเกิดผล:</b> ผลบางชนิดสามารถเจริญมาจากฐานรองดอก ตัวอย่างที่เอกสารยกไว้ ได้แก่ ชมพู่ แอปเปิล สาลี่ และฝรั่ง เอกสารยังกล่าวถึงผลไม่มีเมล็ด 2 กรณี คือ รังไข่เจริญเป็นผลโดยไม่มีการปฏิสนธิ หรือมีการปฏิสนธิตามปกติแต่ออวุลไม่เจริญเป็นเมล็ด ตัวอย่างคือกล้วยหอมและองุ่นไม่มีเมล็ด</div></div>
+<div class="practice-title">ลองจำด้วยการลากวาง</div>
+<div class="wordbank"><strong>คลังคำ</strong><div class="words"><span class="word">ผลเดี่ยว</span><span class="word">รังไข่เพียงอันเดียว</span><span class="word">ผลกลุ่ม</span><span class="word">หลายรังไข่</span><span class="word">ผลรวม</span><span class="word">ดอกย่อยหลายดอก</span><span class="word">ฐานรองดอก</span><span class="word">กล้วยหอมและองุ่นไม่มีเมล็ด</span></div></div>
+<div class="cloze"><p>ผลที่เกิดจากดอกที่มี <span class="blank xwide" data-answer="รังไข่เพียงอันเดียว"><span class="space"> </span><span class="ans">รังไข่เพียงอันเดียว</span></span> จัดเป็น <span class="blank" data-answer="ผลเดี่ยว"><span class="space"> </span><span class="ans">ผลเดี่ยว</span></span>
+ถ้าดอกหนึ่งดอกมี <span class="blank" data-answer="หลายรังไข่"><span class="space"> </span><span class="ans">หลายรังไข่</span></span> และแต่ละรังไข่พัฒนาเป็นผลย่อยรวมกัน จัดเป็น <span class="blank" data-answer="ผลกลุ่ม"><span class="space"> </span><span class="ans">ผลกลุ่ม</span></span>
+ส่วนผลที่เกิดจากรังไข่ของ <span class="blank wide" data-answer="ดอกย่อยหลายดอก"><span class="space"> </span><span class="ans">ดอกย่อยหลายดอก</span></span> ในช่อดอกมารวมกันจัดเป็น <span class="blank" data-answer="ผลรวม"><span class="space"> </span><span class="ans">ผลรวม</span></span></p>
+<p>ผลบางชนิดมีส่วนที่เจริญจาก <span class="blank wide" data-answer="ฐานรองดอก"><span class="space"> </span><span class="ans">ฐานรองดอก</span></span>
+และตัวอย่างผลไม่มีเมล็ดที่เอกสารยกไว้คือ <span class="blank xwide" data-answer="กล้วยหอมและองุ่นไม่มีเมล็ด"><span class="space"> </span><span class="ans">กล้วยหอมและองุ่นไม่มีเมล็ด</span></span></p></div>
+</section>
+
+<section class="section" id="sup-fruitwall">
+  <div class="section-head">
+    <div class="num">★</div>
+    <div>
+      <h2>ความรู้เสริม · ผนังผล 3 ชั้น</h2>
+      <div class="coverage">เสริมจากครูเพื่อช่วยเชื่อม “ผนังรังไข่ → ผนังผล” ให้เห็นภาพชัดขึ้น</div>
+    </div>
+  </div>
+
+  <div class="supplement-box">
+    <div class="sup-title">เสริมความรู้สำหรับเด็ก</div>
+    <p><b>ผนังรังไข่</b> หลังการปฏิสนธิสามารถพัฒนาเป็น <b>ผนังผล</b> ซึ่งเรียกรวมว่า <b>เพริคาร์ป</b>
+    และในผลหลายชนิดสามารถแบ่งผนังผลออกเป็น 3 ชั้นได้</p>
+    <ul>
+      <li><b>เอกโซคาร์ป</b> = ชั้นนอกของผล</li>
+      <li><b>มีโซคาร์ป</b> = ชั้นกลางของผล</li>
+      <li><b>เอนโดคาร์ป</b> = ชั้นในของผล อยู่ใกล้เมล็ดที่สุด</li>
+    </ul>
+    <p><b>ตัวอย่างมะม่วง:</b> ผิวด้านนอกเป็นเอกโซคาร์ป เนื้อที่รับประทานเป็นมีโซคาร์ป และชั้นแข็งที่หุ้มเมล็ดเป็นเอนโดคาร์ป</p>
+    <div class="sup-note">หัวข้อนี้เป็นความรู้เสริมจากครู ไม่ได้อ้างว่าเป็นข้อความโดยตรงจากใบงานเดิม และลักษณะของแต่ละชั้นอาจแตกต่างกันในผลแต่ละชนิด</div>
+  </div>
+
+  <div class="practice-title">ลองจำด้วยการลากวาง</div>
+  <div class="wordbank"><strong>คลังคำ</strong><div class="words">
+    <span class="word">ผนังรังไข่</span>
+    <span class="word">เพริคาร์ป</span>
+    <span class="word">เอกโซคาร์ป</span>
+    <span class="word">มีโซคาร์ป</span>
+    <span class="word">เอนโดคาร์ป</span>
+    <span class="word">ชั้นนอก</span>
+    <span class="word">ชั้นกลาง</span>
+    <span class="word">ชั้นใน</span>
+  </div></div>
+  <p class="cloze">
+    หลังการปฏิสนธิ <span class="blank" data-answer="ผนังรังไข่"><span class="space">&nbsp;</span><span class="ans">ผนังรังไข่</span></span>
+    พัฒนาเป็นผนังผล ซึ่งเรียกรวมว่า <span class="blank" data-answer="เพริคาร์ป"><span class="space">&nbsp;</span><span class="ans">เพริคาร์ป</span></span>
+    โดย <span class="blank" data-answer="เอกโซคาร์ป"><span class="space">&nbsp;</span><span class="ans">เอกโซคาร์ป</span></span>
+    คือ <span class="blank" data-answer="ชั้นนอก"><span class="space">&nbsp;</span><span class="ans">ชั้นนอก</span></span>
+    <span class="blank" data-answer="มีโซคาร์ป"><span class="space">&nbsp;</span><span class="ans">มีโซคาร์ป</span></span>
+    คือ <span class="blank" data-answer="ชั้นกลาง"><span class="space">&nbsp;</span><span class="ans">ชั้นกลาง</span></span>
+    และ <span class="blank" data-answer="เอนโดคาร์ป"><span class="space">&nbsp;</span><span class="ans">เอนโดคาร์ป</span></span>
+    คือ <span class="blank" data-answer="ชั้นใน"><span class="space">&nbsp;</span><span class="ans">ชั้นใน</span></span>
+  </p>
+</section>
+
+<section class="section page-break" id="s16">
+<div class="section-head">
+<div class="num">16</div>
+<div><h2>เมล็ดและส่วนประกอบของเมล็ด</h2><div class="coverage">เปลือกหุ้มเมล็ด · เอ็มบริโอ · เอนโดสเปิร์ม · รากแรกเกิด · ใบเลี้ยง · เอพิคอทิล · ไฮโพคอทิล · ยอดแรกเกิด</div></div>
+</div>
+<div class="read-box"><div class="title">สรุปให้อ่านก่อน</div>
+<p>เมล็ดเป็นส่วนที่เจริญมาจาก <b>ออวุล</b> ส่วนประกอบหลักของเมล็ดมี 3 ส่วน</p>
+<ul>
+<li><b>เปลือกหุ้มเมล็ด</b> เจริญมาจากเยื่อหุ้มออวุล ช่วยป้องกันอันตราย ลดการสูญเสียน้ำ และช่วยป้องกันจุลินทรีย์</li>
+<li><b>เอ็มบริโอ</b> เป็นส่วนที่จะเจริญเป็นต้นพืช ประกอบด้วย รากแรกเกิดหรือแรดิเคิล ใบเลี้ยง เอพิคอทิล ไฮโพคอทิล และยอดแรกเกิดหรือพลูมูล</li>
+<li><b>เอนโดสเปิร์ม</b> เป็นเนื้อเยื่อสะสมอาหารสำหรับเอ็มบริโอ อาหารส่วนใหญ่เป็นแป้ง โปรตีน และไขมัน</li>
+</ul>
+<p>พืชใบเลี้ยงคู่มีใบเลี้ยง <b>2 ใบ</b> ส่วนพืชใบเลี้ยงเดี่ยวมีใบเลี้ยง <b>1 ใบ</b>
+ภาพในเอกสารยังระบุ <b>รอยแผล</b> และ <b>รูไมโครไพล์</b> บนเมล็ดด้วย</p>
+<p>เอกสารอธิบายว่า ในพืชบางชนิดเอนโดสเปิร์มเหลือน้อยหรือไม่มีเมื่อเมล็ดโตเต็มที่ เพราะอาหารถูกสะสมไว้ที่ใบเลี้ยง</p>
+<div class="source-focus"><b>เก็บตกส่วนของเอ็มบริโอ:</b> รากแรกเกิดหรือแรดิเคิลจะเจริญเป็นรากแก้ว เอพิคอทิลอยู่เหนือบริเวณที่ติดกับใบเลี้ยงและเจริญต่อไปเป็นลำต้น ใบ และดอก โดยปลายสุดมียอดแรกเกิดหรือพลูมูล ส่วนไฮโพคอทิลอยู่ใต้ตำแหน่งที่ติดกับใบเลี้ยง และในการงอกของพืชใบเลี้ยงคู่หลายชนิดจะเจริญดึงใบเลี้ยงให้ขึ้นเหนือดิน</div></div>
+<div class="practice-title">ลองจำด้วยการลากวาง</div>
+<div class="wordbank"><strong>คลังคำ</strong><div class="words"><span class="word">ออวุล</span><span class="word">เปลือกหุ้มเมล็ด</span><span class="word">เอ็มบริโอ</span><span class="word">เอนโดสเปิร์ม</span><span class="word">แรดิเคิล</span><span class="word">ใบเลี้ยง</span><span class="word">เอพิคอทิล</span><span class="word">ไฮโพคอทิล</span><span class="word">พลูมูล</span><span class="word">2 ใบ</span><span class="word">1 ใบ</span><span class="word">แป้ง โปรตีน และไขมัน</span></div></div>
+<div class="cloze"><p>เมล็ดเจริญมาจาก <span class="blank" data-answer="ออวุล"><span class="space"> </span><span class="ans">ออวุล</span></span> และมีส่วนหลัก 3 ส่วน คือ <span class="blank wide" data-answer="เปลือกหุ้มเมล็ด"><span class="space"> </span><span class="ans">เปลือกหุ้มเมล็ด</span></span>
+<span class="blank" data-answer="เอ็มบริโอ"><span class="space"> </span><span class="ans">เอ็มบริโอ</span></span> และ <span class="blank" data-answer="เอนโดสเปิร์ม"><span class="space"> </span><span class="ans">เอนโดสเปิร์ม</span></span></p>
+<p>ส่วนที่จะเจริญเป็นรากเรียกว่า <span class="blank" data-answer="แรดิเคิล"><span class="space"> </span><span class="ans">แรดิเคิล</span></span> ส่วนที่สะสมอาหารและเป็นใบแรก ๆ คือ <span class="blank" data-answer="ใบเลี้ยง"><span class="space"> </span><span class="ans">ใบเลี้ยง</span></span>
+ส่วนเหนือใบเลี้ยงคือ <span class="blank" data-answer="เอพิคอทิล"><span class="space"> </span><span class="ans">เอพิคอทิล</span></span> ส่วนใต้ใบเลี้ยงคือ <span class="blank" data-answer="ไฮโพคอทิล"><span class="space"> </span><span class="ans">ไฮโพคอทิล</span></span>
+และยอดแรกเกิดเรียกว่า <span class="blank" data-answer="พลูมูล"><span class="space"> </span><span class="ans">พลูมูล</span></span></p>
+<p>พืชใบเลี้ยงคู่มีใบเลี้ยง <span class="blank" data-answer="2 ใบ"><span class="space"> </span><span class="ans">2 ใบ</span></span> ส่วนพืชใบเลี้ยงเดี่ยวมี <span class="blank" data-answer="1 ใบ"><span class="space"> </span><span class="ans">1 ใบ</span></span>
+อาหารสะสมในเอนโดสเปิร์มที่เอกสารยกตัวอย่างคือ <span class="blank xwide" data-answer="แป้ง โปรตีน และไขมัน"><span class="space"> </span><span class="ans">แป้ง โปรตีน และไขมัน</span></span></p></div>
+</section>
+<section class="section" id="s17">
+<div class="section-head">
+<div class="num">17</div>
+<div><h2>การงอกของเมล็ดและปัจจัยที่มีผล</h2><div class="coverage">การงอกเหนือดิน · การงอกใต้ดิน · น้ำ · ออกซิเจน · อุณหภูมิ · แสง</div></div>
+</div>
+<div class="read-box"><div class="title">สรุปให้อ่านก่อน</div>
+<p>เมื่อเอ็มบริโองอกออกจากเมล็ด จะเจริญเติบโตเป็นต้นพืชใหม่ เมล็ดที่แก่เต็มที่จะแยกออกจากต้นเดิม
+และเมื่ออยู่ในสภาพแวดล้อมที่เหมาะสมจึงสามารถงอกได้</p>
+<p>เอกสารแบ่งรูปแบบการงอกเป็น 2 แบบ คือ <b>การงอกที่ชูใบเลี้ยงขึ้นมาเหนือดิน</b> และ <b>การงอกใต้ดิน</b></p>
+<p>ปัจจัยที่มีผลต่อการงอกของเมล็ดมี 4 ประการ</p>
+<ul>
+<li><b>น้ำหรือความชื้น</b> ทำให้เปลือกหุ้มเมล็ดอ่อนตัว ช่วยให้เกิดปฏิกิริยาต่าง ๆ ภายในเมล็ด และช่วยลำเลียงอาหารไปยังตัวอ่อน</li>
+<li><b>ออกซิเจน</b> ใช้ในการหายใจเพื่อให้ได้พลังงานสำหรับกระบวนการต่าง ๆ ของเซลล์</li>
+<li><b>อุณหภูมิ</b> เมล็ดของพืชแต่ละชนิดต้องการอุณหภูมิที่เหมาะสมแตกต่างกัน</li>
+<li><b>แสง</b> เมล็ดบางชนิดต้องการแสงในการงอก ขณะที่บางชนิดไม่ต้องการแสง</li>
+</ul>
+<div class="source-focus"><b>เก็บตกจากหน้าปัจจัยการงอก:</b> น้ำช่วยให้เปลือกเมล็ดอ่อนตัว ทำให้น้ำและออกซิเจนผ่านเข้าเมล็ดได้ง่ายขึ้น และกระตุ้นปฏิกิริยาทางชีวเคมี ออกซิเจนใช้ในการหายใจเพื่อให้พลังงาน เอกสารยกตัวอย่างพืชเขตหนาวบางชนิดงอกดีที่ประมาณ 10–20 องศาเซลเซียส เช่น หอมหัวใหญ่และผักกาด และพืชบางชนิดต้องการอุณหภูมิกลางวันกับกลางคืนต่างกันหรือสลับต่ำ–สูง เช่น บวบเหลี่ยม สำหรับแสง เมล็ดที่ต้องการแสงมีตัวอย่าง วัชพืชต่าง ๆ หญ้า ยาสูบ ผักกาดหอม สาบเสือ และปอต่าง ๆ ส่วนตัวอย่างเมล็ดที่ไม่ต้องการแสง ได้แก่ กระเจี๊ยบ แตงกวา ผักบุ้งจีน ฝ้าย และข้าวโพด</div></div>
+<div class="practice-title">ลองจำด้วยการลากวาง</div>
+<div class="wordbank"><strong>คลังคำ</strong><div class="words"><span class="word">เหนือดิน</span><span class="word">ใต้ดิน</span><span class="word">น้ำหรือความชื้น</span><span class="word">อ่อนตัว</span><span class="word">ออกซิเจน</span><span class="word">หายใจ</span><span class="word">อุณหภูมิ</span><span class="word">แตกต่างกัน</span><span class="word">แสง</span><span class="word">บางชนิด</span></div></div>
+<div class="cloze"><p>รูปแบบการงอกมีทั้งแบบชูใบเลี้ยงขึ้น <span class="blank" data-answer="เหนือดิน"><span class="space"> </span><span class="ans">เหนือดิน</span></span> และแบบงอก <span class="blank" data-answer="ใต้ดิน"><span class="space"> </span><span class="ans">ใต้ดิน</span></span>
+ปัจจัยแรกคือ <span class="blank wide" data-answer="น้ำหรือความชื้น"><span class="space"> </span><span class="ans">น้ำหรือความชื้น</span></span> ซึ่งช่วยให้เปลือกเมล็ด <span class="blank" data-answer="อ่อนตัว"><span class="space"> </span><span class="ans">อ่อนตัว</span></span>
+ปัจจัยที่ใช้ในการหายใจคือ <span class="blank" data-answer="ออกซิเจน"><span class="space"> </span><span class="ans">ออกซิเจน</span></span> โดยการ <span class="blank" data-answer="หายใจ"><span class="space"> </span><span class="ans">หายใจ</span></span> ทำให้เมล็ดได้พลังงาน</p>
+<p>เมล็ดแต่ละชนิดต้องการ <span class="blank" data-answer="อุณหภูมิ"><span class="space"> </span><span class="ans">อุณหภูมิ</span></span> ที่เหมาะสม <span class="blank" data-answer="แตกต่างกัน"><span class="space"> </span><span class="ans">แตกต่างกัน</span></span>
+ส่วนปัจจัยด้าน <span class="blank" data-answer="แสง"><span class="space"> </span><span class="ans">แสง</span></span> นั้น เอกสารระบุว่าเมล็ด <span class="blank" data-answer="บางชนิด"><span class="space"> </span><span class="ans">บางชนิด</span></span> ต้องการแสง แต่บางชนิดไม่ต้องการ</p></div>
+</section>
+<section class="final" id="finalB">
+<h2>ด่านรวมย่อย · ผล เมล็ด และการงอก</h2>
+<div class="read-box"><div class="title">อ่านรอบสุดท้าย</div><p>ทบทวนความสัมพันธ์หลังการปฏิสนธิ: ออวุลเป็นเมล็ด รังไข่เป็นผล ภายในเมล็ดมีเอ็มบริโอและแหล่งอาหาร
+และเมล็ดจะงอกได้เมื่อมีปัจจัยที่เหมาะสมตามที่เอกสารระบุ</p></div>
+<div class="wordbank"><strong>คลังคำด่านรวม</strong><div class="words"><span class="word">ออวุล</span><span class="word">เมล็ด</span><span class="word">รังไข่</span><span class="word">ผล</span><span class="word">เอ็มบริโอ</span><span class="word">เอนโดสเปิร์ม</span><span class="word">น้ำหรือความชื้น</span><span class="word">ออกซิเจน</span><span class="word">อุณหภูมิ</span><span class="word">แสง</span></div></div>
+<div class="cloze"><p>หลังปฏิสนธิ <span class="blank" data-answer="ออวุล"><span class="space"> </span><span class="ans">ออวุล</span></span> พัฒนาเป็น <span class="blank" data-answer="เมล็ด"><span class="space"> </span><span class="ans">เมล็ด</span></span>
+ส่วน <span class="blank" data-answer="รังไข่"><span class="space"> </span><span class="ans">รังไข่</span></span> พัฒนาเป็น <span class="blank" data-answer="ผล"><span class="space"> </span><span class="ans">ผล</span></span>
+ภายในเมล็ดมี <span class="blank" data-answer="เอ็มบริโอ"><span class="space"> </span><span class="ans">เอ็มบริโอ</span></span> ซึ่งจะเจริญเป็นต้นใหม่ และมี <span class="blank" data-answer="เอนโดสเปิร์ม"><span class="space"> </span><span class="ans">เอนโดสเปิร์ม</span></span> เกี่ยวข้องกับอาหารสะสม</p>
+<p>ปัจจัยสำคัญต่อการงอกที่เอกสารระบุ ได้แก่ <span class="blank wide" data-answer="น้ำหรือความชื้น"><span class="space"> </span><span class="ans">น้ำหรือความชื้น</span></span>
+<span class="blank" data-answer="ออกซิเจน"><span class="space"> </span><span class="ans">ออกซิเจน</span></span> <span class="blank" data-answer="อุณหภูมิ"><span class="space"> </span><span class="ans">อุณหภูมิ</span></span> และ <span class="blank" data-answer="แสง"><span class="space"> </span><span class="ans">แสง</span></span></p></div>
+</section>
+<section class="section page-break" id="s18">
+<div class="section-head">
+<div class="num">18</div>
+<div><h2>การสืบพันธุ์แบบไม่อาศัยเพศของพืช</h2><div class="coverage">ไม่เกิดการปฏิสนธิ · หน่อ · สปอร์ · ไหล · เกิดต้นใหม่จากราก ลำต้น หรือใบ</div></div>
+</div>
+<div class="read-box"><div class="title">สรุปให้อ่านก่อน</div>
+<p><b>การสืบพันธุ์แบบไม่อาศัยเพศ</b> เป็นการสืบพันธุ์ที่ไม่เกิดจากการปฏิสนธิ หรือเป็นการสืบพันธุ์โดยใช้ส่วนต่าง ๆ ของพืชที่ไม่ใช่ดอก
+เช่น ราก ลำต้น และใบ เอกสารระบุว่าลูกที่ได้มีลักษณะทางพันธุกรรมเหมือนพ่อแม่</p>
+<ul>
+<li><b>การแตกหน่อหรือเหง้า</b> เซลล์ใหม่เจริญจากกลุ่มเซลล์ที่เรียกว่า “หน่อ” โดยงอกจากเซลล์ของต้นพ่อแม่</li>
+<li><b>การสร้างสปอร์</b> เมื่อพืชเจริญเต็มที่สามารถสร้างสปอร์ เช่น บริเวณด้านหลังใบ และแพร่กระจายโดยลมหรือน้ำ</li>
+<li><b>การใช้สโตลอนหรือไหล</b> เป็นส่วนของลำต้นที่งอกออกมาและสามารถเจริญเป็นต้นใหม่ได้ ตัวอย่างในเอกสาร ได้แก่ บัวบก ผักบุ้งชวา และบัว</li>
+<li><b>การเกิดต้นใหม่จากส่วนต่าง ๆ</b> ตัวอย่างในภาพ: ใบของต้นตายใบเป็น รากของมันสำปะหลัง และส่วนลำต้นของข่า</li>
+</ul>
+</div>
+<div class="practice-title">ลองจำด้วยการลากวาง</div>
+<div class="wordbank"><strong>คลังคำ</strong><div class="words"><span class="word">ไม่เกิดการปฏิสนธิ</span><span class="word">ราก ลำต้น และใบ</span><span class="word">เหมือนพ่อแม่</span><span class="word">หน่อ</span><span class="word">สปอร์</span><span class="word">ลมหรือน้ำ</span><span class="word">ไหล</span><span class="word">เจริญเป็นต้นใหม่ได้</span></div></div>
+<div class="cloze"><p>การสืบพันธุ์แบบไม่อาศัยเพศเป็นการสืบพันธุ์ที่ <span class="blank xwide" data-answer="ไม่เกิดการปฏิสนธิ"><span class="space"> </span><span class="ans">ไม่เกิดการปฏิสนธิ</span></span>
+และอาจใช้ส่วนต่าง ๆ เช่น <span class="blank xwide" data-answer="ราก ลำต้น และใบ"><span class="space"> </span><span class="ans">ราก ลำต้น และใบ</span></span>
+ลูกที่ได้ตามเอกสารมีลักษณะทางพันธุกรรม <span class="blank wide" data-answer="เหมือนพ่อแม่"><span class="space"> </span><span class="ans">เหมือนพ่อแม่</span></span></p>
+<p>การแตกหน่อเกิดจากกลุ่มเซลล์ที่เรียกว่า <span class="blank" data-answer="หน่อ"><span class="space"> </span><span class="ans">หน่อ</span></span>
+พืชบางชนิดสร้าง <span class="blank" data-answer="สปอร์"><span class="space"> </span><span class="ans">สปอร์</span></span> ซึ่งแพร่กระจายได้โดย <span class="blank" data-answer="ลมหรือน้ำ"><span class="space"> </span><span class="ans">ลมหรือน้ำ</span></span>
+ส่วน <span class="blank" data-answer="ไหล"><span class="space"> </span><span class="ans">ไหล</span></span> เป็นส่วนของลำต้นที่งอกออกมาและสามารถ <span class="blank wide" data-answer="เจริญเป็นต้นใหม่ได้"><span class="space"> </span><span class="ans">เจริญเป็นต้นใหม่ได้</span></span></p></div>
+</section>
+<section class="section" id="s19">
+<div class="section-head">
+<div class="num">19</div>
+<div><h2>การขยายพันธุ์โดยเมล็ดและการปักชำ</h2><div class="coverage">การเพาะเมล็ด · การเลือกเมล็ด · ความลึก · ความชื้น · การปักชำจากส่วนต่าง ๆ</div></div>
+</div>
+<div class="read-box"><div class="title">สรุปให้อ่านก่อน</div>
+<p>เอกสารแบ่งวิธีขยายพันธุ์เป็น 2 แบบใหญ่ คือ <b>แบบอาศัยเพศโดยใช้เมล็ด</b> และ
+<b>แบบไม่อาศัยเพศโดยใช้ส่วนต่าง ๆ ของต้นพืช</b> เช่น การปักชำ การตอนกิ่ง การติดตา การต่อกิ่ง รวมถึงการเพาะเลี้ยงเนื้อเยื่อ</p>
+<p><b>การเพาะเมล็ด</b> เป็นการขยายพันธุ์โดยนำเมล็ดพันธุ์ที่ผ่านการคัดคุณภาพมาปลูกจนกระทั่งเมล็ดงอกเป็นต้นกล้า
+แล้วจึงย้ายต้นกล้าไปปลูกในพื้นที่ต้องการ เอกสารยกตัวอย่าง แตงโม มะละกอ ทานตะวัน ข้าวโพด ดาวเรือง และบานชื่น</p>
+<p>ในการเพาะเมล็ด เอกสารแนะนำให้กดเมล็ดลงดินลึกประมาณ <b>2–3 เท่าของขนาดเส้นผ่านศูนย์กลางเมล็ด</b>
+ดูแลให้วัสดุมีความชื้นเหมาะสม และระวังอย่าให้น้ำแฉะ</p>
+<p><b>การปักชำ</b> คือการตัดส่วนหนึ่งของพืช เช่น ใบ กิ่ง ลำต้น หรือราก ออกจากต้นเดิม
+แล้วนำไปไว้ในสภาพแวดล้อมที่เหมาะสม เพื่อให้ส่วนต่าง ๆ ดังกล่าวออกรากและแตกยอดใหม่</p>
+</div>
+<div class="practice-title">ลองจำด้วยการลากวาง</div>
+<div class="wordbank"><strong>คลังคำ</strong><div class="words"><span class="word">ใช้เมล็ด</span><span class="word">ส่วนต่าง ๆ ของต้นพืช</span><span class="word">ต้นกล้า</span><span class="word">2–3 เท่า</span><span class="word">ความชื้นเหมาะสม</span><span class="word">การปักชำ</span><span class="word">ใบ กิ่ง ลำต้น หรือราก</span><span class="word">ออกรากและแตกยอดใหม่</span></div></div>
+<div class="cloze"><p>การขยายพันธุ์แบบอาศัยเพศในส่วนนี้ <span class="blank" data-answer="ใช้เมล็ด"><span class="space"> </span><span class="ans">ใช้เมล็ด</span></span>
+ส่วนแบบไม่อาศัยเพศใช้ <span class="blank xwide" data-answer="ส่วนต่าง ๆ ของต้นพืช"><span class="space"> </span><span class="ans">ส่วนต่าง ๆ ของต้นพืช</span></span>
+เมล็ดที่งอกแล้วเจริญเป็น <span class="blank" data-answer="ต้นกล้า"><span class="space"> </span><span class="ans">ต้นกล้า</span></span>
+และเอกสารแนะนำความลึกประมาณ <span class="blank" data-answer="2–3 เท่า"><span class="space"> </span><span class="ans">2–3 เท่า</span></span> ของเส้นผ่านศูนย์กลางเมล็ด พร้อมรักษา <span class="blank wide" data-answer="ความชื้นเหมาะสม"><span class="space"> </span><span class="ans">ความชื้นเหมาะสม</span></span></p>
+<p>การตัดส่วนของพืชออกจากต้นเดิมเพื่อนำไปทำให้เกิดต้นใหม่เรียกว่า <span class="blank" data-answer="การปักชำ"><span class="space"> </span><span class="ans">การปักชำ</span></span>
+โดยส่วนที่ใช้ได้ตามเอกสารคือ <span class="blank xwide" data-answer="ใบ กิ่ง ลำต้น หรือราก"><span class="space"> </span><span class="ans">ใบ กิ่ง ลำต้น หรือราก</span></span>
+เมื่ออยู่ในสภาพเหมาะสมจะ <span class="blank xwide" data-answer="ออกรากและแตกยอดใหม่"><span class="space"> </span><span class="ans">ออกรากและแตกยอดใหม่</span></span></p></div>
+</section>
+<section class="section page-break" id="s20">
+<div class="section-head">
+<div class="num">20</div>
+<div><h2>การติดตา การต่อกิ่ง การทาบกิ่ง และการตอนกิ่ง</h2><div class="coverage">จำหลักของแต่ละวิธีให้แยกกันได้</div></div>
+</div>
+<div class="read-box"><div class="title">สรุปให้อ่านก่อน</div>
+<p><b>การติดตา</b> เป็นการเชื่อมประสานส่วนของต้นพืชเข้าด้วยกันให้เจริญเป็นต้นเดียวกัน
+โดยนำแผ่นตาจากกิ่งพันธุ์ดีไปติดบนต้นตอ</p>
+<p><b>การต่อกิ่ง</b> นำกิ่งพันธุ์ดีมาต่อบนต้นตอ นิยมใช้กับไม้ผลและไม้ประดับ
+ปัจจัยสำคัญคือเมื่อต่อแล้ว เนื้อเยื่อเจริญของต้นตอและกิ่งพันธุ์ต้องเชื่อมต่อกันได้ เพื่อให้เจริญเติบโต ออกดอก และติดผล</p>
+<p><b>การทาบกิ่ง</b> นำพืชสองต้นมาต่อเชื่อมให้เป็นต้นเดียวกัน โดยมีเซลล์เนื้อเยื่อเป็นตัวเชื่อม
+ต้นตอทำหน้าที่เป็นระบบรากของต้นใหม่ ส่วนกิ่งพันธุ์อยู่เหนือรอยต่อและเป็นส่วนยอด</p>
+<p><b>การตอนกิ่ง</b> ตามเอกสารเป็นเทคนิคที่ทำให้กิ่งพันธุ์เกิดรากจากต้นแม่ก่อนแยกไปปลูก
+ข้อดีคือหน่อพันธุ์ได้ลักษณะของต้นแม่ค่อนข้างสมบูรณ์และใช้เวลาในการเพาะปลูกน้อยลง
+ข้อจำกัดที่เอกสารระบุคือระบบรากของกิ่งตอนอาจไม่แข็งแรง เพราะไม่มีรากแก้ว</p>
+<div class="source-focus"><b>เก็บตกวิธีขยายพันธุ์:</b> เอกสารระบุว่าการติดตาใช้ต้นไม้ 2 ต้น การต่อกิ่งมักใช้สำหรับการเปลี่ยนพันธุ์พืชมากกว่าการขยายพันธุ์ และนิยมใช้กับไม้ผลและไม้ประดับ เช่น มะม่วง ขนุน เฟื่องฟ้า ชบา และโกสน ส่วนการทาบกิ่ง ต้นตอทำหน้าที่เป็นระบบรากของต้นใหม่ และกิ่งพันธุ์อยู่เหนือรอยต่อเป็นส่วนยอดหรือกิ่งก้านลำต้น</div></div>
+<div class="practice-title">ลองจำด้วยการลากวาง</div>
+<div class="wordbank"><strong>คลังคำ</strong><div class="words"><span class="word">การติดตา</span><span class="word">แผ่นตาจากกิ่งพันธุ์ดี</span><span class="word">การต่อกิ่ง</span><span class="word">กิ่งพันธุ์ดี</span><span class="word">ต้นตอ</span><span class="word">การทาบกิ่ง</span><span class="word">ระบบราก</span><span class="word">การตอนกิ่ง</span><span class="word">เกิดรากจากต้นแม่</span><span class="word">ไม่มีรากแก้ว</span></div></div>
+<div class="cloze"><p>การนำ <span class="blank xwide" data-answer="แผ่นตาจากกิ่งพันธุ์ดี"><span class="space"> </span><span class="ans">แผ่นตาจากกิ่งพันธุ์ดี</span></span> ไปติดบนต้นตอคือ <span class="blank" data-answer="การติดตา"><span class="space"> </span><span class="ans">การติดตา</span></span>
+การนำ <span class="blank" data-answer="กิ่งพันธุ์ดี"><span class="space"> </span><span class="ans">กิ่งพันธุ์ดี</span></span> มาต่อบน <span class="blank" data-answer="ต้นตอ"><span class="space"> </span><span class="ans">ต้นตอ</span></span> คือ <span class="blank" data-answer="การต่อกิ่ง"><span class="space"> </span><span class="ans">การต่อกิ่ง</span></span></p>
+<p>วิธีที่นำพืชสองต้นมาเชื่อมเป็นต้นเดียว โดยต้นตอทำหน้าที่เป็น <span class="blank" data-answer="ระบบราก"><span class="space"> </span><span class="ans">ระบบราก</span></span>
+เรียกว่า <span class="blank" data-answer="การทาบกิ่ง"><span class="space"> </span><span class="ans">การทาบกิ่ง</span></span>
+ส่วนวิธีที่ทำให้กิ่ง <span class="blank xwide" data-answer="เกิดรากจากต้นแม่"><span class="space"> </span><span class="ans">เกิดรากจากต้นแม่</span></span> ก่อนนำไปปลูกคือ <span class="blank" data-answer="การตอนกิ่ง"><span class="space"> </span><span class="ans">การตอนกิ่ง</span></span>
+ซึ่งเอกสารระบุข้อจำกัดว่ารากอาจไม่แข็งแรงเพราะ <span class="blank wide" data-answer="ไม่มีรากแก้ว"><span class="space"> </span><span class="ans">ไม่มีรากแก้ว</span></span></p></div>
+</section>
+<section class="section" id="s21">
+<div class="section-head">
+<div class="num">21</div>
+<div><h2>การเพาะเลี้ยงเนื้อเยื่อ</h2><div class="coverage">ความหมาย · สภาพปลอดเชื้อ · ขั้นตอน 5 ขั้น · พืชที่นิยม · ประโยชน์</div></div>
+</div>
+<div class="read-box"><div class="title">สรุปให้อ่านก่อน</div>
+<p><b>การเพาะเลี้ยงเนื้อเยื่อ</b> เป็นเทคนิคการขยายพันธุ์พืชแบบใหม่ที่ทำให้ได้พืชต้นใหม่จำนวนมากอย่างรวดเร็วในเวลาจำกัด
+โดยมีคุณภาพเหมือนต้นเดิมและได้มาตรฐาน</p>
+<p>ความหมายตามเอกสารคือ การนำเอาส่วนใดส่วนหนึ่งของพืช ไม่ว่าจะเป็นอวัยวะ เนื้อเยื่อ เซลล์ หรือเซลล์ไม่มีผนัง
+มาเลี้ยงในอาหารเลี้ยงภายใต้ <b>สภาพปลอดเชื้อจุลินทรีย์</b> และควบคุมอุณหภูมิ แสง และความชื้น
+เพื่อให้เซลล์พืชที่นำมาเพาะเลี้ยงปราศจากเชื้อที่มารบกวนและทำลายการเจริญเติบโต</p>
+<p><b>พืชที่นิยม</b> เช่น กล้วยไม้ และพืชเศรษฐกิจ เช่น กุหลาบ ดาวเรือง ข้าว แครอท คาร์เนชัน</p>
+<p><b>ขั้นตอน 5 ขั้น</b>: เตรียมอาหาร → ฟอกฆ่าเชื้อส่วนเนื้อเยื่อ → นำเนื้อเยื่อลงขวดเลี้ยง → นำขวดเลี้ยงเนื้อเยื่อไปเลี้ยง → ย้ายเนื้อเยื่อออกจากขวด</p>
+<p><b>ประโยชน์ตามเอกสาร</b>: ผลิตต้นพันธุ์จำนวนมากในเวลารวดเร็ว, ผลิตพืชปลอดโรค, ปรับปรุงพันธุ์พืช,
+ผลิตพืชพันธุ์ต้านทาน, ผลิตพืชพันธุ์ทนทาน, ผลิตยาหรือสารเคมีจากพืช และเก็บรักษาพันธุ์พืชไม่ให้สูญพันธุ์</p>
+<div class="source-focus"><b>เก็บตกการเพาะเลี้ยงเนื้อเยื่อ:</b> เอกสารระบุว่ามักนิยมใช้กับพืชที่มีปัญหาเรื่องการขยายพันธุ์หรือมีปัญหาเรื่องโรค เช่น กล้วยไม้ และพืชเศรษฐกิจ เช่น กุหลาบ ดาวเรือง ข้าว แครอท และคาร์เนชัน</div></div>
+<div class="flowline">
+<span class="step">เตรียมอาหาร</span><span class="arrow">→</span>
+<span class="step">ฟอกฆ่าเชื้อ</span><span class="arrow">→</span>
+<span class="step">ลงขวดเลี้ยง</span><span class="arrow">→</span>
+<span class="step">นำขวดไปเลี้ยง</span><span class="arrow">→</span>
+<span class="step">ย้ายออกจากขวด</span>
+</div>
+<div class="practice-title">ลองจำด้วยการลากวาง</div>
+<div class="wordbank"><strong>คลังคำ</strong><div class="words"><span class="word">จำนวนมากอย่างรวดเร็ว</span><span class="word">สภาพปลอดเชื้อจุลินทรีย์</span><span class="word">อุณหภูมิ แสง และความชื้น</span><span class="word">เตรียมอาหาร</span><span class="word">ฟอกฆ่าเชื้อส่วนเนื้อเยื่อ</span><span class="word">นำเนื้อเยื่อลงขวดเลี้ยง</span><span class="word">นำขวดเลี้ยงเนื้อเยื่อไปเลี้ยง</span><span class="word">ย้ายเนื้อเยื่อออกจากขวด</span><span class="word">พืชปลอดโรค</span><span class="word">เก็บรักษาพันธุ์พืช</span></div></div>
+<div class="cloze"><p>การเพาะเลี้ยงเนื้อเยื่อช่วยให้ได้พืชต้นใหม่ <span class="blank xwide" data-answer="จำนวนมากอย่างรวดเร็ว"><span class="space"> </span><span class="ans">จำนวนมากอย่างรวดเร็ว</span></span>
+ต้องเลี้ยงภายใต้ <span class="blank xwide" data-answer="สภาพปลอดเชื้อจุลินทรีย์"><span class="space"> </span><span class="ans">สภาพปลอดเชื้อจุลินทรีย์</span></span>
+และควบคุม <span class="blank xwide" data-answer="อุณหภูมิ แสง และความชื้น"><span class="space"> </span><span class="ans">อุณหภูมิ แสง และความชื้น</span></span></p>
+<p>ขั้นตอนเริ่มจาก <span class="blank" data-answer="เตรียมอาหาร"><span class="space"> </span><span class="ans">เตรียมอาหาร</span></span> จากนั้น <span class="blank xwide" data-answer="ฟอกฆ่าเชื้อส่วนเนื้อเยื่อ"><span class="space"> </span><span class="ans">ฟอกฆ่าเชื้อส่วนเนื้อเยื่อ</span></span>
+แล้ว <span class="blank xwide" data-answer="นำเนื้อเยื่อลงขวดเลี้ยง"><span class="space"> </span><span class="ans">นำเนื้อเยื่อลงขวดเลี้ยง</span></span> ต่อด้วย <span class="blank xwide" data-answer="นำขวดเลี้ยงเนื้อเยื่อไปเลี้ยง"><span class="space"> </span><span class="ans">นำขวดเลี้ยงเนื้อเยื่อไปเลี้ยง</span></span>
+และสุดท้าย <span class="blank xwide" data-answer="ย้ายเนื้อเยื่อออกจากขวด"><span class="space"> </span><span class="ans">ย้ายเนื้อเยื่อออกจากขวด</span></span></p>
+<p>ประโยชน์ที่เอกสารระบุ เช่น การผลิต <span class="blank wide" data-answer="พืชปลอดโรค"><span class="space"> </span><span class="ans">พืชปลอดโรค</span></span>
+และการ <span class="blank xwide" data-answer="เก็บรักษาพันธุ์พืช"><span class="space"> </span><span class="ans">เก็บรักษาพันธุ์พืช</span></span> ไม่ให้สูญพันธุ์</p></div>
+</section>
+<section class="final page-break" id="finalC">
+<h2>ด่านรวมส่วนที่ 2 · การสืบพันธุ์และการขยายพันธุ์ของพืชดอก</h2>
+<div class="read-box"><div class="title">อ่านรอบสุดท้าย</div>
+<p>ดอกเป็นอวัยวะสืบพันธุ์ของพืชดอก มีส่วนสำคัญ 4 ส่วน คือ กลีบเลี้ยง กลีบดอก เกสรเพศผู้ และเกสรเพศเมีย
+การสืบพันธุ์แบบอาศัยเพศเริ่มจากการถ่ายละอองเรณู ตามด้วยการงอกของละอองเรณู การปฏิสนธิ และการเปลี่ยนแปลงหลังปฏิสนธิ
+พืชดอกเกิดการปฏิสนธิซ้อน ทำให้เกิดไซโกตและเอนโดสเปิร์ม หลังจากนั้นออวุลพัฒนาเป็นเมล็ดและรังไข่พัฒนาเป็นผล
+เมล็ดมีเปลือกหุ้มเมล็ด เอ็มบริโอ และเอนโดสเปิร์ม การงอกขึ้นกับน้ำหรือความชื้น ออกซิเจน อุณหภูมิ และแสง
+พืชยังสืบพันธุ์แบบไม่อาศัยเพศและขยายพันธุ์ได้หลายวิธี เช่น ปักชำ ติดตา ต่อกิ่ง ทาบกิ่ง ตอนกิ่ง และเพาะเลี้ยงเนื้อเยื่อ</p>
+</div>
+<div class="wordbank"><strong>คลังคำด่านรวม</strong><div class="words"><span class="word">กลีบเลี้ยง</span><span class="word">กลีบดอก</span><span class="word">เกสรเพศผู้</span><span class="word">เกสรเพศเมีย</span><span class="word">การถ่ายละอองเรณู</span><span class="word">การปฏิสนธิซ้อน</span><span class="word">ไซโกต</span><span class="word">เอนโดสเปิร์ม</span><span class="word">ออวุล</span><span class="word">เมล็ด</span><span class="word">รังไข่</span><span class="word">ผล</span><span class="word">น้ำหรือความชื้น</span><span class="word">ออกซิเจน</span><span class="word">อุณหภูมิ</span><span class="word">แสง</span><span class="word">ไม่อาศัยเพศ</span><span class="word">การปักชำ</span><span class="word">การตอนกิ่ง</span><span class="word">การเพาะเลี้ยงเนื้อเยื่อ</span></div></div>
+<div class="cloze"><p>ดอกมีส่วนสำคัญ 4 ส่วน ได้แก่ <span class="blank" data-answer="กลีบเลี้ยง"><span class="space"> </span><span class="ans">กลีบเลี้ยง</span></span> <span class="blank" data-answer="กลีบดอก"><span class="space"> </span><span class="ans">กลีบดอก</span></span>
+<span class="blank" data-answer="เกสรเพศผู้"><span class="space"> </span><span class="ans">เกสรเพศผู้</span></span> และ <span class="blank" data-answer="เกสรเพศเมีย"><span class="space"> </span><span class="ans">เกสรเพศเมีย</span></span>
+เมื่อเรณูไปตกบนยอดเกสรเพศเมีย เรียกว่า <span class="blank xwide" data-answer="การถ่ายละอองเรณู"><span class="space"> </span><span class="ans">การถ่ายละอองเรณู</span></span>
+พืชดอกมี <span class="blank wide" data-answer="การปฏิสนธิซ้อน"><span class="space"> </span><span class="ans">การปฏิสนธิซ้อน</span></span> ทำให้เกิด <span class="blank" data-answer="ไซโกต"><span class="space"> </span><span class="ans">ไซโกต</span></span> และ <span class="blank" data-answer="เอนโดสเปิร์ม"><span class="space"> </span><span class="ans">เอนโดสเปิร์ม</span></span></p>
+<p>หลังปฏิสนธิ <span class="blank" data-answer="ออวุล"><span class="space"> </span><span class="ans">ออวุล</span></span> พัฒนาเป็น <span class="blank" data-answer="เมล็ด"><span class="space"> </span><span class="ans">เมล็ด</span></span> และ <span class="blank" data-answer="รังไข่"><span class="space"> </span><span class="ans">รังไข่</span></span> พัฒนาเป็น <span class="blank" data-answer="ผล"><span class="space"> </span><span class="ans">ผล</span></span>
+ปัจจัยต่อการงอกที่เอกสารระบุ ได้แก่ <span class="blank wide" data-answer="น้ำหรือความชื้น"><span class="space"> </span><span class="ans">น้ำหรือความชื้น</span></span> <span class="blank" data-answer="ออกซิเจน"><span class="space"> </span><span class="ans">ออกซิเจน</span></span>
+<span class="blank" data-answer="อุณหภูมิ"><span class="space"> </span><span class="ans">อุณหภูมิ</span></span> และ <span class="blank" data-answer="แสง"><span class="space"> </span><span class="ans">แสง</span></span></p>
+<p>การสืบพันธุ์ที่ไม่เกิดจากการปฏิสนธิเรียกว่าแบบ <span class="blank wide" data-answer="ไม่อาศัยเพศ"><span class="space"> </span><span class="ans">ไม่อาศัยเพศ</span></span>
+วิธีขยายพันธุ์ที่ตัดส่วนของพืชออกจากต้นเดิมคือ <span class="blank" data-answer="การปักชำ"><span class="space"> </span><span class="ans">การปักชำ</span></span>
+วิธีที่ทำให้กิ่งเกิดรากก่อนแยกจากต้นแม่คือ <span class="blank" data-answer="การตอนกิ่ง"><span class="space"> </span><span class="ans">การตอนกิ่ง</span></span>
+และเทคนิคที่เลี้ยงชิ้นส่วนพืชในสภาพปลอดเชื้อคือ <span class="blank xwide" data-answer="การเพาะเลี้ยงเนื้อเยื่อ"><span class="space"> </span><span class="ans">การเพาะเลี้ยงเนื้อเยื่อ</span></span></p></div>
+</section>
+
+<div class="unit-banner page-break">
+  <div class="unit-no">ส่วนที่ 3</div>
+  <div class="unit-title">การลำเลียงน้ำ ธาตุอาหาร และอาหารของพืช</div>
+  <div class="unit-desc">เนื้อหาหลักยึดจากเอกสารชุดการลำเลียงของพืช และมีกล่อง “ความรู้เสริมจากครู” แยกให้เห็นชัด</div>
+</div>
+
+<section class="section" id="s22">
+  <div class="section-head">
+    <div class="num">22</div>
+    <div>
+      <h2>ธาตุอาหารที่พืชจำเป็นต้องใช้</h2>
+      <div class="coverage">17 ธาตุ · ได้จากน้ำและอากาศ 3 ธาตุ · ได้จากดิน 14 ธาตุ</div>
+    </div>
+  </div>
+
+  <div class="read-box">
+    <div class="title">สรุปให้อ่านก่อน</div>
+    <p>นอกจากพืชสร้างอาหารจากการสังเคราะห์ด้วยแสงแล้ว พืชยังต้องการ <b>น้ำและธาตุอาหาร</b> เพื่อใช้ในการเจริญเติบโต
+    เอกสารระบุว่าธาตุอาหารที่จำเป็นและพืชขาดไม่ได้มีทั้งหมด <b>17 ธาตุ</b></p>
+    <p><b>ได้จากน้ำและอากาศ 3 ธาตุ:</b> คาร์บอน ไฮโดรเจน และออกซิเจน</p>
+    <p><b>ได้จากดิน 14 ธาตุ:</b> ไนโตรเจน ฟอสฟอรัส โพแทสเซียม แคลเซียม แมกนีเซียม กำมะถัน เหล็ก แมงกานีส สังกะสี ทองแดง โบรอน โมลิบดีนัม คลอรีน และนิกเกิล</p>
+    <p>ในเอกสารแบ่งธาตุจากดินเป็น 3 กลุ่ม ได้แก่ <b>ธาตุอาหารหลัก</b> คือ ไนโตรเจน ฟอสฟอรัส โพแทสเซียม,
+    <b>ธาตุอาหารรอง</b> คือ แคลเซียม แมกนีเซียม กำมะถัน และ <b>ธาตุอาหารเสริม</b> ได้แก่
+    โบรอน สังกะสี เหล็ก ทองแดง แมงกานีส โมลิบดีนัม คลอรีน และนิกเกิล</p>
+    <div class="keyline">จำสั้น ๆ: 17 ธาตุ = จากน้ำและอากาศ 3 + จากดิน 14</div>
+  </div>
+
+  <div class="practice-title">ลองจำด้วยการลากวาง</div>
+  <div class="wordbank"><strong>คลังคำ</strong><div class="words">
+    <span class="word">17 ธาตุ</span>
+    <span class="word">3 ธาตุ</span>
+    <span class="word">14 ธาตุ</span>
+    <span class="word">คาร์บอน ไฮโดรเจน และออกซิเจน</span>
+    <span class="word">ไนโตรเจน ฟอสฟอรัส และโพแทสเซียม</span>
+    <span class="word">แคลเซียม แมกนีเซียม และกำมะถัน</span>
+    <span class="word">ธาตุอาหารหลัก</span>
+    <span class="word">ธาตุอาหารรอง</span>
+  </div></div>
+  <p class="cloze">
+    ธาตุอาหารที่จำเป็นต่อพืชมีทั้งหมด <span class="blank" data-answer="17 ธาตุ"><span class="space">&nbsp;</span><span class="ans">17 ธาตุ</span></span>
+    โดยได้รับจากน้ำและอากาศ <span class="blank" data-answer="3 ธาตุ"><span class="space">&nbsp;</span><span class="ans">3 ธาตุ</span></span>
+    ได้แก่ <span class="blank xwide" data-answer="คาร์บอน ไฮโดรเจน และออกซิเจน"><span class="space">&nbsp;</span><span class="ans">คาร์บอน ไฮโดรเจน และออกซิเจน</span></span>
+    และได้รับจากดินอีก <span class="blank" data-answer="14 ธาตุ"><span class="space">&nbsp;</span><span class="ans">14 ธาตุ</span></span>
+  </p>
+  <p class="cloze">
+    กลุ่ม <span class="blank wide" data-answer="ธาตุอาหารหลัก"><span class="space">&nbsp;</span><span class="ans">ธาตุอาหารหลัก</span></span>
+    ได้แก่ <span class="blank xwide" data-answer="ไนโตรเจน ฟอสฟอรัส และโพแทสเซียม"><span class="space">&nbsp;</span><span class="ans">ไนโตรเจน ฟอสฟอรัส และโพแทสเซียม</span></span>
+    ส่วน <span class="blank wide" data-answer="ธาตุอาหารรอง"><span class="space">&nbsp;</span><span class="ans">ธาตุอาหารรอง</span></span>
+    ได้แก่ <span class="blank xwide" data-answer="แคลเซียม แมกนีเซียม และกำมะถัน"><span class="space">&nbsp;</span><span class="ans">แคลเซียม แมกนีเซียม และกำมะถัน</span></span>
+  </p>
+</section>
+
+<section class="section" id="s23">
+  <div class="section-head">
+    <div class="num">23</div>
+    <div>
+      <h2>ธาตุอาหารหลัก N-P-K และอาการเมื่อขาด</h2>
+      <div class="coverage">ไนโตรเจน · ฟอสฟอรัส · โพแทสเซียม · หน้าที่สำคัญและจุดสังเกต</div>
+    </div>
+  </div>
+
+  <div class="read-box">
+    <div class="title">สรุปให้อ่านก่อน</div>
+    <p><b>ไนโตรเจน</b> เป็นองค์ประกอบของคลอโรฟิลล์ เกี่ยวข้องกับการสังเคราะห์ด้วยแสง
+    เป็นส่วนประกอบของโปรตีน สารพันธุกรรม และกรดอะมิโน และช่วยบำรุงใบ
+    เมื่อขาด ใบจะเหลืองเริ่มจากใบล่างขึ้นบน ลำต้นแคระแกร็น และผลผลิตต่ำ</p>
+    <p><b>ฟอสฟอรัส</b> ช่วยเร่งการออกดอก ทำให้ผลดก เร่งการเจริญของราก และเกี่ยวข้องกับการสังเคราะห์ด้วยแสงและสารพันธุกรรม
+    เมื่อขาด ใบแก่เปลี่ยนจากสีเขียวเป็นสีม่วง ต่อมาเป็นสีน้ำตาลและร่วง ลำต้นแคระแกร็น หักง่าย ออกดอกช้า และผลผลิตน้อย</p>
+    <p><b>โพแทสเซียม</b> ควบคุมออสโมซิสภายในเซลล์ การลำเลียงน้ำตาล และการเปิด-ปิดปากใบ
+    มีส่วนในการสร้างแป้งและโปรตีน ช่วยเร่งการออกดอกและสร้างเมล็ด และตามภาพสรุปช่วยให้ผลมีขนาดใหญ่ขึ้น รสหวานขึ้น และสีของผลมีคุณภาพ
+    เมื่อขาด จะมีจุดเล็กสีขาวหรือสีเหลืองเริ่มจากปลายใบ ผลผลิตต่ำ เมล็ดลีบและน้ำหนักเบา</p>
+  </div>
+
+  <div class="practice-title">ลองจำด้วยการลากวาง</div>
+  <div class="wordbank"><strong>คลังคำ</strong><div class="words">
+    <span class="word">ไนโตรเจน</span>
+    <span class="word">ใบล่างขึ้นบน</span>
+    <span class="word">ฟอสฟอรัส</span>
+    <span class="word">สีม่วง</span>
+    <span class="word">โพแทสเซียม</span>
+    <span class="word">เปิด-ปิดปากใบ</span>
+    <span class="word">ปลายใบ</span>
+    <span class="word">ราก</span>
+  </div></div>
+  <p class="cloze">
+    ธาตุที่เป็นองค์ประกอบของคลอโรฟิลล์และเมื่อขาดทำให้ใบเหลืองเริ่มจาก
+    <span class="blank wide" data-answer="ใบล่างขึ้นบน"><span class="space">&nbsp;</span><span class="ans">ใบล่างขึ้นบน</span></span>
+    คือ <span class="blank" data-answer="ไนโตรเจน"><span class="space">&nbsp;</span><span class="ans">ไนโตรเจน</span></span>
+    ธาตุที่ช่วยเร่งการเจริญของ <span class="blank" data-answer="ราก"><span class="space">&nbsp;</span><span class="ans">ราก</span></span>
+    และเมื่อขาดใบแก่อาจเปลี่ยนเป็น <span class="blank" data-answer="สีม่วง"><span class="space">&nbsp;</span><span class="ans">สีม่วง</span></span>
+    คือ <span class="blank" data-answer="ฟอสฟอรัส"><span class="space">&nbsp;</span><span class="ans">ฟอสฟอรัส</span></span>
+  </p>
+  <p class="cloze">
+    ธาตุที่ช่วยควบคุมการ <span class="blank wide" data-answer="เปิด-ปิดปากใบ"><span class="space">&nbsp;</span><span class="ans">เปิด-ปิดปากใบ</span></span>
+    คือ <span class="blank" data-answer="โพแทสเซียม"><span class="space">&nbsp;</span><span class="ans">โพแทสเซียม</span></span>
+    และเมื่อขาดมักเริ่มเห็นความผิดปกติบริเวณ <span class="blank" data-answer="ปลายใบ"><span class="space">&nbsp;</span><span class="ans">ปลายใบ</span></span>
+  </p>
+</section>
+
+<section class="section" id="s24">
+  <div class="section-head">
+    <div class="num">24</div>
+    <div>
+      <h2>ธาตุอาหารรองและการสังเกตอาการขาด</h2>
+      <div class="coverage">แคลเซียม · แมกนีเซียม · กำมะถัน · เก็บตกอาการขาดธาตุจากภาพรวม</div>
+    </div>
+  </div>
+
+  <div class="read-box">
+    <div class="title">สรุปให้อ่านก่อน</div>
+    <p><b>แคลเซียม</b> ช่วยการเคลื่อนย้ายและเก็บคาร์โบไฮเดรตกับโปรตีนที่จะใช้สร้างผลและเมล็ด
+    และช่วยให้พืชนำไนโตรเจนจากดินมาใช้ได้มากขึ้น เมื่อขาด ยอดอ่อนและแห้งตาย ใบม้วนงอและขาดเป็นริ้ว ๆ</p>
+    <p><b>แมกนีเซียม</b> เป็นองค์ประกอบของคลอโรฟิลล์ ช่วยการสังเคราะห์ด้วยแสง การสร้างโปรตีน และการงอกของเมล็ด
+    เมื่อขาด ใบแก่เหลืองซีดแต่เส้นใบยังเขียว อาจมีจุดขาว ใบกรอบและหักง่าย</p>
+    <p><b>กำมะถัน</b> เกี่ยวข้องกับการสังเคราะห์ด้วยแสง เป็นองค์ประกอบของกรดอะมิโน โปรตีน และวิตามิน
+    เมื่อขาดมีอาการคล้ายขาดไนโตรเจน ใบเล็กลง ลำต้นผอมและลีบเล็ก</p>
+    <div class="source-focus"><b>เก็บตกจากภาพอาการขาดธาตุ:</b>
+      ตำแหน่งที่เริ่มแสดงอาการมีความสำคัญ เช่น ใบอ่อนหรือใบแก่ เหลืองทั้งใบหรือเหลืองระหว่างเส้นใบ
+      รวมถึงอาการยอดตาย ใบผิดรูป ขอบใบแห้ง และต้นแคระแกร็น<br>
+      <b>ตัวอย่างจำเร็วจากภาพ:</b> ขาดโบรอน → ใบเล็ก หนา ผิดรูปและยอดใหม่แห้งตาย;
+      ขาดเหล็ก → ใบอ่อนเหลืองแล้วซีดจากส่วนยอด;
+      ขาดแมงกานีส → ใบอ่อนเหลืองซีดระหว่างเส้นใบแต่เส้นใบยังเขียว;
+      ขาดสังกะสี → ใบอาจเล็กเป็นกระจุกหรือมีอาการ “พุ่มแจ้”;
+      ขาดทองแดง → ใบอ่อนเล็กเรียวยาว ขอบใบโค้งขึ้น;
+      ขาดโมลิบดีนัม → ใบซีดผิดปกติ และในกะหล่ำดอกใบอาจแคบ/ช่องระหว่างเส้นใบเหลือง
+    </div>
+    <div class="source-focus"><b>เก็บตกวิธีแก้จากตาราง:</b> กรณีขาดแคลเซียม เอกสารยกตัวอย่างการเติมปูนขาว Ca(OH)<sub>2</sub> หรือปุ๋ยคอก</div>
+  </div>
+
+  <div class="practice-title">ลองจำด้วยการลากวาง</div>
+  <div class="wordbank"><strong>คลังคำ</strong><div class="words">
+    <span class="word">แคลเซียม</span>
+    <span class="word">ยอดอ่อนและแห้งตาย</span>
+    <span class="word">แมกนีเซียม</span>
+    <span class="word">เส้นใบยังเขียว</span>
+    <span class="word">กำมะถัน</span>
+    <span class="word">คล้ายขาดไนโตรเจน</span>
+    <span class="word">โบรอน</span>
+    <span class="word">เหล็ก</span>
+    <span class="word">แมงกานีส</span>
+    <span class="word">สังกะสี</span>
+  </div></div>
+  <p class="cloze">
+    เมื่อขาด <span class="blank" data-answer="แคลเซียม"><span class="space">&nbsp;</span><span class="ans">แคลเซียม</span></span>
+    มักพบอาการ <span class="blank xwide" data-answer="ยอดอ่อนและแห้งตาย"><span class="space">&nbsp;</span><span class="ans">ยอดอ่อนและแห้งตาย</span></span>
+    เมื่อขาด <span class="blank" data-answer="แมกนีเซียม"><span class="space">&nbsp;</span><span class="ans">แมกนีเซียม</span></span>
+    ใบแก่จะเหลืองซีดแต่ <span class="blank wide" data-answer="เส้นใบยังเขียว"><span class="space">&nbsp;</span><span class="ans">เส้นใบยังเขียว</span></span>
+    ส่วนการขาด <span class="blank" data-answer="กำมะถัน"><span class="space">&nbsp;</span><span class="ans">กำมะถัน</span></span>
+    มีอาการ <span class="blank wide" data-answer="คล้ายขาดไนโตรเจน"><span class="space">&nbsp;</span><span class="ans">คล้ายขาดไนโตรเจน</span></span>
+  </p>
+
+  <p class="cloze">
+    ถ้าใบเล็ก หนา รูปทรงผิดปกติและยอดใหม่แห้งตาย ให้นึกถึงการขาด
+    <span class="blank" data-answer="โบรอน"><span class="space">&nbsp;</span><span class="ans">โบรอน</span></span>
+    ถ้าใบอ่อนเหลืองและซีดจากส่วนยอด ให้นึกถึง
+    <span class="blank" data-answer="เหล็ก"><span class="space">&nbsp;</span><span class="ans">เหล็ก</span></span>
+    ถ้าใบอ่อนเหลืองซีดระหว่างเส้นใบแต่เส้นใบยังเขียว ให้นึกถึง
+    <span class="blank" data-answer="แมงกานีส"><span class="space">&nbsp;</span><span class="ans">แมงกานีส</span></span>
+    และถ้าใบเล็กเป็นกระจุกหรือมีอาการพุ่มแจ้ ให้นึกถึง
+    <span class="blank" data-answer="สังกะสี"><span class="space">&nbsp;</span><span class="ans">สังกะสี</span></span>
+  </p>
+</section>
+
+<section class="section page-break" id="s25">
+  <div class="section-head">
+    <div class="num">25</div>
+    <div>
+      <h2>สาเหตุของการขาดธาตุอาหารและปุ๋ย 3 ประเภท</h2>
+      <div class="coverage">ดินไม่เหมาะสม · ปลูกซ้ำ · ปุ๋ยเคมี · ปุ๋ยอินทรีย์ · ปุ๋ยชีวภาพ</div>
+    </div>
+  </div>
+
+  <div class="read-box">
+    <div class="title">สรุปให้อ่านก่อน</div>
+    <p>การขาดธาตุอาหารไม่ได้เกิดจาก “ไม่มีปุ๋ย” เพียงอย่างเดียว เอกสารระบุสาเหตุ เช่น
+    ดินมีธาตุอาหารไม่เพียงพอ, มีธาตุอาหารแต่ไม่อยู่ในรูปที่พืชใช้ได้, สภาพกรด-เบสไม่เหมาะสม,
+    ดินจับตัวแน่นจนรากชอนไชไม่ได้, สมบัติของดินไม่เหมาะต่อการดูดธาตุอาหาร
+    และการปลูกพืชชนิดเดิมในพื้นที่เดิมนาน ๆ โดยไม่พักหรือปรับปรุงดิน</p>
+    <p>การเพิ่มธาตุอาหารในดินทำได้ด้วยการใส่ปุ๋ย โดยเอกสารแบ่งเป็น 3 ประเภท</p>
+    <ul>
+      <li><b>ปุ๋ยเคมี</b> มาจากสารประกอบสังเคราะห์ มีธาตุอาหารในรูปที่พืชใช้ได้ทันที และมีเลขสูตร N-P-K เช่น 30-20-10</li>
+      <li><b>ปุ๋ยอินทรีย์</b> ได้จากการย่อยสลายซากพืชและซากสัตว์ เช่น ปุ๋ยคอก ปุ๋ยหมัก ปุ๋ยพืชสด ช่วยทั้งให้ธาตุอาหารและปรับสภาพดิน เช่น ช่วยการระบายน้ำ การถ่ายเทอากาศ และช่วยให้รากดูดธาตุอาหารได้ดีขึ้น</li>
+      <li><b>ปุ๋ยชีวภาพ</b> มีจุลินทรีย์ที่ยังมีชีวิต จุลินทรีย์บางชนิดช่วยตรึงไนโตรเจนจากอากาศให้อยู่ในรูปที่พืชใช้ได้ เอกสารยกตัวอย่างสาหร่ายสีเขียวแกมน้ำเงินที่อาศัยในโพรงใบแหนแดงเพื่อช่วยเพิ่มไนโตรเจนในนาข้าว</li>
+    </ul>
+    <div class="keyline">เลขสูตรปุ๋ยเรียงตาม N-P-K เช่น 30-20-10</div>
+  </div>
+
+  <div class="practice-title">ลองจำด้วยการลากวาง</div>
+  <div class="wordbank"><strong>คลังคำ</strong><div class="words">
+    <span class="word">ปุ๋ยเคมี</span>
+    <span class="word">30-20-10</span>
+    <span class="word">ปุ๋ยอินทรีย์</span>
+    <span class="word">ปุ๋ยคอก ปุ๋ยหมัก ปุ๋ยพืชสด</span>
+    <span class="word">ปุ๋ยชีวภาพ</span>
+    <span class="word">จุลินทรีย์</span>
+    <span class="word">ตรึงไนโตรเจน</span>
+    <span class="word">กรด-เบส</span>
+  </div></div>
+  <p class="cloze">
+    ปัจจัยของดินที่ไม่เหมาะสมประการหนึ่งคือสภาพ <span class="blank" data-answer="กรด-เบส"><span class="space">&nbsp;</span><span class="ans">กรด-เบส</span></span>
+    ปุ๋ยที่เป็นสารประกอบสังเคราะห์คือ <span class="blank" data-answer="ปุ๋ยเคมี"><span class="space">&nbsp;</span><span class="ans">ปุ๋ยเคมี</span></span>
+    ซึ่งอาจมีสูตร เช่น <span class="blank" data-answer="30-20-10"><span class="space">&nbsp;</span><span class="ans">30-20-10</span></span>
+  </p>
+  <p class="cloze">
+    ปุ๋ยจากซากพืชและซากสัตว์คือ <span class="blank" data-answer="ปุ๋ยอินทรีย์"><span class="space">&nbsp;</span><span class="ans">ปุ๋ยอินทรีย์</span></span>
+    ตัวอย่างคือ <span class="blank xwide" data-answer="ปุ๋ยคอก ปุ๋ยหมัก ปุ๋ยพืชสด"><span class="space">&nbsp;</span><span class="ans">ปุ๋ยคอก ปุ๋ยหมัก ปุ๋ยพืชสด</span></span>
+    ส่วน <span class="blank" data-answer="ปุ๋ยชีวภาพ"><span class="space">&nbsp;</span><span class="ans">ปุ๋ยชีวภาพ</span></span>
+    มี <span class="blank" data-answer="จุลินทรีย์"><span class="space">&nbsp;</span><span class="ans">จุลินทรีย์</span></span>
+    ที่บางชนิดช่วย <span class="blank" data-answer="ตรึงไนโตรเจน"><span class="space">&nbsp;</span><span class="ans">ตรึงไนโตรเจน</span></span>
+  </p>
+</section>
+
+<section class="section" id="s26">
+  <div class="section-head">
+    <div class="num">26</div>
+    <div>
+      <h2>รากและขนราก: จุดเริ่มต้นของการดูดน้ำและธาตุอาหาร</h2>
+      <div class="coverage">ราก · ขนราก · น้ำ · ธาตุอาหาร · เสริมหน้าที่สำคัญของราก</div>
+    </div>
+  </div>
+
+  <div class="read-box">
+    <div class="title">สรุปให้อ่านก่อน</div>
+    <p>เอกสารสรุปลำดับว่า พืชใช้ <b>รากและขนราก</b> ดูดน้ำและธาตุอาหารจากดิน
+    จากนั้นส่งต่อเข้าสู่ท่อลำเลียง และการคายน้ำของพืชมีความสัมพันธ์กับระบบลำเลียงน้ำ</p>
+    <p>ภาพรากแสดงขนรากยื่นออกจากเซลล์ผิวรากและสัมผัสกับดิน น้ำ และอากาศในช่องว่างของดิน</p>
+  </div>
+
+  <div class="supplement-box">
+    <div class="sup-title">ความรู้เสริมจากครู · ประโยชน์และลักษณะสำคัญของราก</div>
+    <ul>
+      <li>ช่วย <b>ยึดพืชกับดิน</b></li>
+      <li>ดูด <b>น้ำและธาตุอาหาร</b></li>
+      <li><b>ขนรากเพิ่มพื้นที่ผิว</b> ทำให้สัมผัสน้ำและสารละลายในดินได้มากขึ้น</li>
+      <li>รากของพืชบางชนิดใช้ <b>สะสมอาหาร</b> หรือช่วยขยายพันธุ์ได้</li>
+      <li>โดยทั่วไป พืชใบเลี้ยงคู่มักพบ <b>ระบบรากแก้ว</b> เด่น ส่วนพืชใบเลี้ยงเดี่ยวมักพบ <b>ระบบรากฝอย</b></li>
+    </ul>
+    <div class="sup-note">บรรทัดเรื่องรากแก้ว/รากฝอยและพื้นที่ผิวของขนรากเป็นความรู้เสริมสำหรับช่วยจำภาพรวม ไม่ใช่ข้อความตรงจากหน้ารากในใบงาน</div>
+  </div>
+
+  <div class="practice-title">ลองจำด้วยการลากวาง</div>
+  <div class="wordbank"><strong>คลังคำ</strong><div class="words">
+    <span class="word">รากและขนราก</span>
+    <span class="word">น้ำและธาตุอาหาร</span>
+    <span class="word">ท่อลำเลียง</span>
+    <span class="word">เพิ่มพื้นที่ผิว</span>
+    <span class="word">รากแก้ว</span>
+    <span class="word">รากฝอย</span>
+  </div></div>
+  <p class="cloze">
+    พืชใช้ <span class="blank wide" data-answer="รากและขนราก"><span class="space">&nbsp;</span><span class="ans">รากและขนราก</span></span>
+    ดูด <span class="blank wide" data-answer="น้ำและธาตุอาหาร"><span class="space">&nbsp;</span><span class="ans">น้ำและธาตุอาหาร</span></span>
+    จากดินแล้วส่งเข้าสู่ <span class="blank" data-answer="ท่อลำเลียง"><span class="space">&nbsp;</span><span class="ans">ท่อลำเลียง</span></span>
+    ขนรากช่วย <span class="blank wide" data-answer="เพิ่มพื้นที่ผิว"><span class="space">&nbsp;</span><span class="ans">เพิ่มพื้นที่ผิว</span></span>
+    ในการสัมผัสดิน โดยทั่วไปพืชใบเลี้ยงคู่มักมี <span class="blank" data-answer="รากแก้ว"><span class="space">&nbsp;</span><span class="ans">รากแก้ว</span></span>
+    เด่น ส่วนพืชใบเลี้ยงเดี่ยวมักมี <span class="blank" data-answer="รากฝอย"><span class="space">&nbsp;</span><span class="ans">รากฝอย</span></span>
+  </p>
+</section>
+
+<section class="section" id="s27">
+  <div class="section-head">
+    <div class="num">27</div>
+    <div>
+      <h2>ลำต้นและใบ: หน้าที่สำคัญที่ควรจำ</h2>
+      <div class="coverage">ความรู้เสริมจากครูเพื่อเชื่อมอวัยวะของพืชกับระบบลำเลียง</div>
+    </div>
+  </div>
+
+  <div class="supplement-box">
+    <div class="sup-title">ความรู้เสริมจากครู · ลำต้น</div>
+    <ul>
+      <li>พยุงใบ ดอก และผลให้ได้รับแสงหรืออยู่ในตำแหน่งเหมาะสม</li>
+      <li>เป็นทางผ่านของระบบลำเลียง โดยไซเล็มลำเลียงน้ำ/ธาตุอาหาร และโฟลเอ็มลำเลียงอาหาร</li>
+      <li>ลำต้นของพืชบางชนิดสะสมอาหารหรือน้ำ และบางชนิดใช้ขยายพันธุ์ได้</li>
+      <li>ลำต้นที่มีคลอโรฟิลล์บางชนิดสามารถสังเคราะห์ด้วยแสงได้</li>
+    </ul>
+  </div>
+
+  <div class="supplement-box">
+    <div class="sup-title">ความรู้เสริมจากครู · ใบ</div>
+    <ul>
+      <li>เป็นอวัยวะหลักของการ <b>สังเคราะห์ด้วยแสง</b></li>
+      <li>มีส่วนในการ <b>แลกเปลี่ยนแก๊ส</b> ผ่านปากใบ</li>
+      <li>มีส่วนในการ <b>คายน้ำ</b> ซึ่งเชื่อมกับการลำเลียงน้ำจากรากขึ้นสู่ใบ</li>
+      <li>ใบของพืชบางชนิดสะสมอาหาร น้ำ หรือใช้ขยายพันธุ์ได้</li>
+    </ul>
+    <div class="sup-note">กล่องลำต้นและใบนี้เป็นความรู้เสริมเพื่อทบทวนหน้าที่ของอวัยวะพืชทั้งต้น</div>
+  </div>
+
+  <div class="practice-title">ลองจำด้วยการลากวาง</div>
+  <div class="wordbank"><strong>คลังคำ</strong><div class="words">
+    <span class="word">พยุง</span>
+    <span class="word">ไซเล็ม</span>
+    <span class="word">โฟลเอ็ม</span>
+    <span class="word">สังเคราะห์ด้วยแสง</span>
+    <span class="word">แลกเปลี่ยนแก๊ส</span>
+    <span class="word">คายน้ำ</span>
+  </div></div>
+  <p class="cloze">
+    ลำต้นช่วย <span class="blank" data-answer="พยุง"><span class="space">&nbsp;</span><span class="ans">พยุง</span></span>
+    ใบ ดอก และผล และมีท่อลำเลียง ได้แก่ <span class="blank" data-answer="ไซเล็ม"><span class="space">&nbsp;</span><span class="ans">ไซเล็ม</span></span>
+    กับ <span class="blank" data-answer="โฟลเอ็ม"><span class="space">&nbsp;</span><span class="ans">โฟลเอ็ม</span></span>
+    ส่วนใบเป็นอวัยวะสำคัญในการ <span class="blank wide" data-answer="สังเคราะห์ด้วยแสง"><span class="space">&nbsp;</span><span class="ans">สังเคราะห์ด้วยแสง</span></span>
+    <span class="blank wide" data-answer="แลกเปลี่ยนแก๊ส"><span class="space">&nbsp;</span><span class="ans">แลกเปลี่ยนแก๊ส</span></span>
+    และ <span class="blank" data-answer="คายน้ำ"><span class="space">&nbsp;</span><span class="ans">คายน้ำ</span></span>
+  </p>
+</section>
+
+<section class="section page-break" id="s28">
+  <div class="section-head">
+    <div class="num">28</div>
+    <div>
+      <h2>ท่อลำเลียง: ไซเล็ม โฟลเอ็ม และแคมเบียม</h2>
+      <div class="coverage">โครงสร้างหลักที่เห็นทั้งภาพตัดตามยาวและภาพตัดตามขวาง</div>
+    </div>
+  </div>
+
+  <div class="read-box">
+    <div class="title">สรุปให้อ่านก่อน</div>
+    <p>เอกสารให้จำท่อลำเลียงหลัก 2 ระบบ</p>
+    <ul>
+      <li><b>ไซเล็ม</b> ลำเลียงน้ำและแร่ธาตุจากรากขึ้นไปยังลำต้น ใบ และส่วนต่าง ๆ ของพืช เพื่อนำไปใช้ในกระบวนการต่าง ๆ เช่น การสังเคราะห์ด้วยแสง</li>
+      <li><b>โฟลเอ็ม</b> ลำเลียงอาหารหรือน้ำตาลที่พืชสร้างได้จากใบไปยังส่วนต่าง ๆ ของพืช เพื่อใช้สร้างพลังงานหรือเก็บสะสม</li>
+    </ul>
+    <p><b>แคมเบียม</b> เป็นเนื้อเยื่อเจริญด้านข้างของต้นไม้ และในภาพอยู่บริเวณระหว่างไซเล็มกับโฟลเอ็ม</p>
+    <div class="keyline">จำเป็นคู่: ไซเล็ม = น้ำ/แร่ธาตุ · โฟลเอ็ม = อาหาร/น้ำตาล</div>
+  </div>
+
+  <div class="practice-title">ลองจำด้วยการลากวาง</div>
+  <div class="wordbank"><strong>คลังคำ</strong><div class="words">
+    <span class="word">ไซเล็ม</span>
+    <span class="word">น้ำและแร่ธาตุ</span>
+    <span class="word">โฟลเอ็ม</span>
+    <span class="word">อาหารหรือน้ำตาล</span>
+    <span class="word">แคมเบียม</span>
+    <span class="word">เนื้อเยื่อเจริญด้านข้าง</span>
+  </div></div>
+  <p class="cloze">
+    ท่อที่ลำเลียง <span class="blank wide" data-answer="น้ำและแร่ธาตุ"><span class="space">&nbsp;</span><span class="ans">น้ำและแร่ธาตุ</span></span>
+    คือ <span class="blank" data-answer="ไซเล็ม"><span class="space">&nbsp;</span><span class="ans">ไซเล็ม</span></span>
+    ส่วนท่อที่ลำเลียง <span class="blank wide" data-answer="อาหารหรือน้ำตาล"><span class="space">&nbsp;</span><span class="ans">อาหารหรือน้ำตาล</span></span>
+    คือ <span class="blank" data-answer="โฟลเอ็ม"><span class="space">&nbsp;</span><span class="ans">โฟลเอ็ม</span></span>
+    และ <span class="blank" data-answer="แคมเบียม"><span class="space">&nbsp;</span><span class="ans">แคมเบียม</span></span>
+    เป็น <span class="blank xwide" data-answer="เนื้อเยื่อเจริญด้านข้าง"><span class="space">&nbsp;</span><span class="ans">เนื้อเยื่อเจริญด้านข้าง</span></span>
+  </p>
+</section>
+
+<section class="section" id="s29">
+  <div class="section-head">
+    <div class="num">29</div>
+    <div>
+      <h2>ไซเล็ม: ลำเลียงน้ำและแร่ธาตุขึ้นด้านบน</h2>
+      <div class="coverage">ราก → ลำต้น → กิ่ง → ใบ · น้ำโดยออสโมซิส · แร่ธาตุโดยการแพร่ ตามเอกสาร</div>
+    </div>
+  </div>
+
+  <div class="read-box">
+    <div class="title">สรุปให้อ่านก่อน</div>
+    <p>ไซเล็มเป็นกลุ่มเซลล์ของพืชที่ทำหน้าที่ลำเลียงน้ำและแร่ธาตุจากดิน
+    มีลักษณะเป็นท่อยาวติดต่อกันจาก <b>ราก → ลำต้น → กิ่ง → ใบ</b></p>
+    <p>ในกรอบของเอกสารระบุว่า น้ำจากท่อลำเลียงเข้าสู่เซลล์อื่น ๆ โดย <b>ออสโมซิส</b>
+    และแร่ธาตุจากท่อลำเลียงน้ำเข้าสู่เซลล์อื่น ๆ โดย <b>การแพร่</b></p>
+    <div class="keyline">ทิศทางหลักของไซเล็ม: จากรากขึ้นไปด้านบน</div>
+  </div>
+
+  <div class="flowline">
+    <span class="step">ราก</span><span class="arrow">→</span>
+    <span class="step">ลำต้น</span><span class="arrow">→</span>
+    <span class="step">กิ่ง</span><span class="arrow">→</span>
+    <span class="step">ใบ</span>
+  </div>
+
+  <div class="practice-title">ลองจำด้วยการลากวาง</div>
+  <div class="wordbank"><strong>คลังคำ</strong><div class="words">
+    <span class="word">ไซเล็ม</span>
+    <span class="word">ราก</span>
+    <span class="word">ใบ</span>
+    <span class="word">ออสโมซิส</span>
+    <span class="word">การแพร่</span>
+    <span class="word">ขึ้นด้านบน</span>
+  </div></div>
+  <p class="cloze">
+    ท่อลำเลียงน้ำและแร่ธาตุคือ <span class="blank" data-answer="ไซเล็ม"><span class="space">&nbsp;</span><span class="ans">ไซเล็ม</span></span>
+    โดยลำเลียงเริ่มจาก <span class="blank" data-answer="ราก"><span class="space">&nbsp;</span><span class="ans">ราก</span></span>
+    และไปถึง <span class="blank" data-answer="ใบ"><span class="space">&nbsp;</span><span class="ans">ใบ</span></span>
+    มีทิศทางหลัก <span class="blank wide" data-answer="ขึ้นด้านบน"><span class="space">&nbsp;</span><span class="ans">ขึ้นด้านบน</span></span>
+    เอกสารระบุว่าน้ำเข้าสู่เซลล์อื่นด้วย <span class="blank" data-answer="ออสโมซิส"><span class="space">&nbsp;</span><span class="ans">ออสโมซิส</span></span>
+    ส่วนแร่ธาตุเข้าสู่เซลล์อื่นด้วย <span class="blank" data-answer="การแพร่"><span class="space">&nbsp;</span><span class="ans">การแพร่</span></span>
+  </p>
+</section>
+
+<section class="section" id="s30">
+  <div class="section-head">
+    <div class="num">30</div>
+    <div>
+      <h2>โฟลเอ็มและการคายน้ำ</h2>
+      <div class="coverage">อาหารจากใบ · ลำเลียงขึ้นและลง · แหล่งใช้/สะสม · เชื่อมกับการคายน้ำ</div>
+    </div>
+  </div>
+
+  <div class="read-box">
+    <div class="title">สรุปให้อ่านก่อน</div>
+    <p><b>โฟลเอ็ม</b> เป็นกลุ่มเซลล์ที่ลำเลียงอาหารหรือน้ำตาลที่ได้จากการสังเคราะห์ด้วยแสง
+    จากใบไปยังส่วนต่าง ๆ ของพืช หรือไปเก็บสะสมที่ราก ลำต้น และหัว
+    ภาพในเอกสารแสดงทิศทางการลำเลียงอาหารได้ <b>ทั้งขึ้นและลง</b></p>
+    <p>ภาพรวมของบทเชื่อมการดูดน้ำจากราก การผ่านท่อลำเลียง และ <b>การคายน้ำ</b> ไว้ในระบบเดียวกัน</p>
+  </div>
+
+  <div class="supplement-box">
+    <div class="sup-title">ความรู้เสริมจากครู · การคายน้ำช่วย “ดึงสายของน้ำ”</div>
+    <p>เมื่อน้ำระเหยออกจากใบ จะเกิดแรงดึงจากการคายน้ำที่ช่วยดึงน้ำในไซเล็มให้เคลื่อนขึ้นสู่ใบอย่างต่อเนื่อง จึงเชื่อมการคายน้ำกับการลำเลียงน้ำจากรากขึ้นด้านบน</p>
+    <div class="sup-note">แนวคิดเรื่องแรงดึงจากการคายน้ำเป็นความรู้เสริมเพื่ออธิบายความสัมพันธ์ที่ใบงานแสดงไว้ ไม่ใช่ถ้อยคำตรงจากใบงาน</div>
+  </div>
+
+  <div class="practice-title">ลองจำด้วยการลากวาง</div>
+  <div class="wordbank"><strong>คลังคำ</strong><div class="words">
+    <span class="word">โฟลเอ็ม</span>
+    <span class="word">ใบ</span>
+    <span class="word">ราก ลำต้น และหัว</span>
+    <span class="word">ทั้งขึ้นและลง</span>
+    <span class="word">การคายน้ำ</span>
+  </div></div>
+  <p class="cloze">
+    ท่อลำเลียงอาหารคือ <span class="blank" data-answer="โฟลเอ็ม"><span class="space">&nbsp;</span><span class="ans">โฟลเอ็ม</span></span>
+    โดยอาหารส่วนใหญ่เริ่มจาก <span class="blank" data-answer="ใบ"><span class="space">&nbsp;</span><span class="ans">ใบ</span></span>
+    แล้วส่งไปยังส่วนต่าง ๆ หรือสะสมที่ <span class="blank xwide" data-answer="ราก ลำต้น และหัว"><span class="space">&nbsp;</span><span class="ans">ราก ลำต้น และหัว</span></span>
+    ทิศทางการลำเลียงตามภาพมี <span class="blank wide" data-answer="ทั้งขึ้นและลง"><span class="space">&nbsp;</span><span class="ans">ทั้งขึ้นและลง</span></span>
+    และระบบลำเลียงน้ำเชื่อมโยงกับ <span class="blank" data-answer="การคายน้ำ"><span class="space">&nbsp;</span><span class="ans">การคายน้ำ</span></span>
+  </p>
+</section>
+
+<section class="section page-break" id="s31">
+  <div class="section-head">
+    <div class="num">31</div>
+    <div>
+      <h2>พืชใบเลี้ยงคู่และพืชใบเลี้ยงเดี่ยว</h2>
+      <div class="coverage">ลักษณะจากเอกสาร + ความรู้เสริมเรื่องราก ใบเลี้ยง และส่วนประกอบดอก</div>
+    </div>
+  </div>
+
+  <div class="compare-grid">
+    <div class="compare-card">
+      <h3>พืชใบเลี้ยงคู่ · ตามเอกสาร</h3>
+      <ul>
+        <li>มัดท่อลำเลียงเรียงเป็นวงอย่างเป็นระเบียบ</li>
+        <li>มีการเจริญเติบโตออกด้านข้าง</li>
+        <li>ข้อและปล้องของลำต้นไม่ชัดเจน</li>
+        <li>ลำต้นมักมีเปลือกแข็งห่อหุ้ม</li>
+        <li>เส้นใบแตกแขนงเป็นร่างแห</li>
+      </ul>
+    </div>
+    <div class="compare-card">
+      <h3>พืชใบเลี้ยงเดี่ยว · ตามเอกสาร</h3>
+      <ul>
+        <li>มัดท่อลำเลียงวางตัวกระจัดกระจาย</li>
+        <li>ไม่มีการเจริญออกด้านข้างตามภาพสรุปในเอกสาร</li>
+        <li>ลำต้นเป็นข้อปล้องชัดกว่า</li>
+        <li>อายุของพืชกลุ่มนี้ในกรอบตัวอย่างมักสั้นกว่า</li>
+        <li>เส้นใบเรียงขนานตามแนวยาวของใบ</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="source-focus"><b>ตัวอย่างจากภาพในเอกสาร:</b> พืชใบเลี้ยงคู่ เช่น มะละกอ มะม่วง กุหลาบ และพริก; พืชใบเลี้ยงเดี่ยว เช่น อ้อย มะพร้าว ข้าว และกล้วย</div>
+
+  <div class="supplement-box">
+    <div class="sup-title">ความรู้เสริมจากครู · ตารางจำรวดเดียว</div>
+    <table class="mini-table">
+      <tr><th>ลักษณะ</th><th>ใบเลี้ยงเดี่ยว</th><th>ใบเลี้ยงคู่</th></tr>
+      <tr><td>จำนวนใบเลี้ยง</td><td>1 ใบ</td><td>2 ใบ</td></tr>
+      <tr><td>ระบบรากที่พบบ่อย</td><td>รากฝอย</td><td>รากแก้ว</td></tr>
+      <tr><td>เส้นใบ</td><td>ขนาน</td><td>ร่างแห</td></tr>
+      <tr><td>มัดท่อลำเลียงในลำต้น</td><td>กระจัดกระจาย</td><td>เรียงเป็นวง</td></tr>
+      <tr><td>ส่วนประกอบดอกโดยทั่วไป</td><td>มักเป็น 3 หรือทวีคูณของ 3</td><td>มักเป็น 4–5 หรือทวีคูณของ 4–5</td></tr>
+    </table>
+    <div class="sup-note">จำนวนส่วนประกอบดอกและระบบรากเป็นความรู้เสริมทั่วไป ใช้คำว่า “โดยทั่วไป/พบบ่อย” เพราะธรรมชาติมีข้อยกเว้น</div>
+  </div>
+
+  <div class="practice-title">ลองจำด้วยการลากวาง</div>
+  <div class="wordbank"><strong>คลังคำ</strong><div class="words">
+    <span class="word">1 ใบ</span>
+    <span class="word">2 ใบ</span>
+    <span class="word">รากฝอย</span>
+    <span class="word">รากแก้ว</span>
+    <span class="word">เส้นใบขนาน</span>
+    <span class="word">เส้นใบร่างแห</span>
+    <span class="word">กระจัดกระจาย</span>
+    <span class="word">เรียงเป็นวง</span>
+  </div></div>
+  <p class="cloze">
+    พืชใบเลี้ยงเดี่ยวมีใบเลี้ยง <span class="blank" data-answer="1 ใบ"><span class="space">&nbsp;</span><span class="ans">1 ใบ</span></span>
+    มักมี <span class="blank" data-answer="รากฝอย"><span class="space">&nbsp;</span><span class="ans">รากฝอย</span></span>
+    เส้นใบเป็น <span class="blank" data-answer="เส้นใบขนาน"><span class="space">&nbsp;</span><span class="ans">เส้นใบขนาน</span></span>
+    และมัดท่อลำเลียง <span class="blank" data-answer="กระจัดกระจาย"><span class="space">&nbsp;</span><span class="ans">กระจัดกระจาย</span></span>
+  </p>
+  <p class="cloze">
+    พืชใบเลี้ยงคู่มีใบเลี้ยง <span class="blank" data-answer="2 ใบ"><span class="space">&nbsp;</span><span class="ans">2 ใบ</span></span>
+    มักมี <span class="blank" data-answer="รากแก้ว"><span class="space">&nbsp;</span><span class="ans">รากแก้ว</span></span>
+    เส้นใบเป็น <span class="blank" data-answer="เส้นใบร่างแห"><span class="space">&nbsp;</span><span class="ans">เส้นใบร่างแห</span></span>
+    และมัดท่อลำเลียง <span class="blank" data-answer="เรียงเป็นวง"><span class="space">&nbsp;</span><span class="ans">เรียงเป็นวง</span></span>
+  </p>
+</section>
+
+<section class="section" id="s32">
+  <div class="section-head">
+    <div class="num">32</div>
+    <div>
+      <h2>หน้าที่และประโยชน์ของอวัยวะพืชทั้งต้น</h2>
+      <div class="coverage">ความรู้เสริมสำหรับเก็บตกก่อนสอบ · ราก ลำต้น ใบ ดอก ผล เมล็ด ใบเลี้ยง</div>
+    </div>
+  </div>
+
+  <div class="supplement-box">
+    <div class="sup-title">ความรู้เสริมจากครู · จำพืชทั้งต้นเป็นระบบ</div>
+    <div class="organ-grid">
+      <div class="organ-card"><b>ราก</b>ยึดต้น ดูดน้ำและธาตุอาหาร บางชนิดสะสมอาหาร</div>
+      <div class="organ-card"><b>ลำต้น</b>พยุงอวัยวะและเป็นทางลำเลียง บางชนิดสะสมอาหาร/น้ำ</div>
+      <div class="organ-card"><b>ใบ</b>สังเคราะห์ด้วยแสง แลกเปลี่ยนแก๊ส และคายน้ำ</div>
+      <div class="organ-card"><b>ดอก</b>เกี่ยวข้องกับการสืบพันธุ์แบบอาศัยเพศ</div>
+      <div class="organ-card"><b>ผล</b>ช่วยห่อหุ้ม/ป้องกันเมล็ด และหลายชนิดช่วยการกระจายเมล็ด</div>
+      <div class="organ-card"><b>เมล็ด</b>มีเอ็มบริโอและอาหารสะสม ช่วยให้เกิดต้นรุ่นใหม่</div>
+      <div class="organ-card"><b>ใบเลี้ยง</b>เก็บหรือส่งต่ออาหารให้เอ็มบริโอในระยะแรก ขึ้นกับชนิดพืช</div>
+    </div>
+    <div class="sup-note">กล่องนี้เป็นความรู้เสริมสรุปบท ไม่ใช่ข้อความตรงทั้งหมดจากใบงาน</div>
+  </div>
+
+  <div class="practice-title">ลองจำด้วยการลากวาง</div>
+  <div class="wordbank"><strong>คลังคำ</strong><div class="words">
+    <span class="word">ยึดต้นและดูดน้ำ</span>
+    <span class="word">พยุงและลำเลียง</span>
+    <span class="word">สังเคราะห์ด้วยแสง</span>
+    <span class="word">สืบพันธุ์แบบอาศัยเพศ</span>
+    <span class="word">ป้องกันเมล็ด</span>
+    <span class="word">เอ็มบริโอ</span>
+    <span class="word">อาหารให้ตัวอ่อน</span>
+  </div></div>
+  <p class="cloze">
+    รากมีหน้าที่สำคัญคือ <span class="blank wide" data-answer="ยึดต้นและดูดน้ำ"><span class="space">&nbsp;</span><span class="ans">ยึดต้นและดูดน้ำ</span></span>
+    ลำต้นช่วย <span class="blank wide" data-answer="พยุงและลำเลียง"><span class="space">&nbsp;</span><span class="ans">พยุงและลำเลียง</span></span>
+    ใบเป็นอวัยวะหลักในการ <span class="blank wide" data-answer="สังเคราะห์ด้วยแสง"><span class="space">&nbsp;</span><span class="ans">สังเคราะห์ด้วยแสง</span></span>
+    ดอกเกี่ยวข้องกับการ <span class="blank xwide" data-answer="สืบพันธุ์แบบอาศัยเพศ"><span class="space">&nbsp;</span><span class="ans">สืบพันธุ์แบบอาศัยเพศ</span></span>
+  </p>
+  <p class="cloze">
+    ผลช่วย <span class="blank wide" data-answer="ป้องกันเมล็ด"><span class="space">&nbsp;</span><span class="ans">ป้องกันเมล็ด</span></span>
+    ภายในเมล็ดมี <span class="blank" data-answer="เอ็มบริโอ"><span class="space">&nbsp;</span><span class="ans">เอ็มบริโอ</span></span>
+    ส่วนใบเลี้ยงมีบทบาทเกี่ยวกับ <span class="blank wide" data-answer="อาหารให้ตัวอ่อน"><span class="space">&nbsp;</span><span class="ans">อาหารให้ตัวอ่อน</span></span>
+    ในระยะแรก
+  </p>
+</section>
+
+<section class="final page-break" id="finalD">
+  <h2>ด่านรวมส่วนที่ 3 · ธาตุอาหารและระบบลำเลียงของพืช</h2>
+  <div class="read-box">
+    <div class="title">อ่านรอบสุดท้าย</div>
+    <p>
+      พืชต้องการธาตุอาหารจำเป็น 17 ธาตุ โดยได้ 3 ธาตุจากน้ำและอากาศ และ 14 ธาตุจากดิน
+      ธาตุอาหารหลักคือไนโตรเจน ฟอสฟอรัส และโพแทสเซียม การแก้ปัญหาการขาดธาตุอาหารอาจใช้ปุ๋ยเคมี ปุ๋ยอินทรีย์ หรือปุ๋ยชีวภาพ
+      รากและขนรากดูดน้ำและธาตุอาหารจากดิน น้ำและแร่ธาตุลำเลียงขึ้นทางไซเล็ม ส่วนอาหารหรือน้ำตาลจากใบลำเลียงผ่านโฟลเอ็มไปยังส่วนต่าง ๆ
+      พืชใบเลี้ยงคู่มีมัดท่อลำเลียงเรียงเป็นวงและเส้นใบร่างแห ส่วนพืชใบเลี้ยงเดี่ยวมีมัดท่อลำเลียงกระจัดกระจายและเส้นใบขนาน
+    </p>
+  </div>
+
+  <div class="wordbank"><strong>คลังคำด่านรวม</strong><div class="words">
+    <span class="word">17 ธาตุ</span>
+    <span class="word">ไนโตรเจน ฟอสฟอรัส โพแทสเซียม</span>
+    <span class="word">รากและขนราก</span>
+    <span class="word">ไซเล็ม</span>
+    <span class="word">น้ำและแร่ธาตุ</span>
+    <span class="word">โฟลเอ็ม</span>
+    <span class="word">อาหารหรือน้ำตาล</span>
+    <span class="word">เรียงเป็นวง</span>
+    <span class="word">กระจัดกระจาย</span>
+    <span class="word">เส้นใบร่างแห</span>
+    <span class="word">เส้นใบขนาน</span>
+    <span class="word">ปุ๋ยอินทรีย์</span>
+  </div></div>
+  <p class="cloze">
+    พืชต้องการธาตุอาหารจำเป็นทั้งหมด <span class="blank" data-answer="17 ธาตุ"><span class="space">&nbsp;</span><span class="ans">17 ธาตุ</span></span>
+    ธาตุอาหารหลักคือ <span class="blank xwide" data-answer="ไนโตรเจน ฟอสฟอรัส โพแทสเซียม"><span class="space">&nbsp;</span><span class="ans">ไนโตรเจน ฟอสฟอรัส โพแทสเซียม</span></span>
+    พืชเริ่มดูดน้ำและธาตุอาหารด้วย <span class="blank wide" data-answer="รากและขนราก"><span class="space">&nbsp;</span><span class="ans">รากและขนราก</span></span>
+  </p>
+  <p class="cloze">
+    <span class="blank" data-answer="ไซเล็ม"><span class="space">&nbsp;</span><span class="ans">ไซเล็ม</span></span>
+    ลำเลียง <span class="blank wide" data-answer="น้ำและแร่ธาตุ"><span class="space">&nbsp;</span><span class="ans">น้ำและแร่ธาตุ</span></span>
+    ส่วน <span class="blank" data-answer="โฟลเอ็ม"><span class="space">&nbsp;</span><span class="ans">โฟลเอ็ม</span></span>
+    ลำเลียง <span class="blank wide" data-answer="อาหารหรือน้ำตาล"><span class="space">&nbsp;</span><span class="ans">อาหารหรือน้ำตาล</span></span>
+  </p>
+  <p class="cloze">
+    ในลำต้นพืชใบเลี้ยงคู่ มัดท่อลำเลียงมัก <span class="blank" data-answer="เรียงเป็นวง"><span class="space">&nbsp;</span><span class="ans">เรียงเป็นวง</span></span>
+    และเส้นใบเป็น <span class="blank" data-answer="เส้นใบร่างแห"><span class="space">&nbsp;</span><span class="ans">เส้นใบร่างแห</span></span>
+    ส่วนพืชใบเลี้ยงเดี่ยว มัดท่อลำเลียงมัก <span class="blank" data-answer="กระจัดกระจาย"><span class="space">&nbsp;</span><span class="ans">กระจัดกระจาย</span></span>
+    และเส้นใบเป็น <span class="blank" data-answer="เส้นใบขนาน"><span class="space">&nbsp;</span><span class="ans">เส้นใบขนาน</span></span>
+  </p>
+  <p class="cloze">
+    ปุ๋ยจากการย่อยสลายซากพืชหรือซากสัตว์เรียกว่า <span class="blank" data-answer="ปุ๋ยอินทรีย์"><span class="space">&nbsp;</span><span class="ans">ปุ๋ยอินทรีย์</span></span>
+  </p>
+</section>
+
+
+<div class="unit-banner page-break">
+  <div class="unit-no">ส่วนที่ 4</div>
+  <div class="unit-title">คำศัพท์อังกฤษรอบใหญ่ · English Vocabulary</div>
+  <div class="unit-desc">ดึงจากคลังคำของกิจกรรมเดิมทั้งหมด เน้นศัพท์วิทยาศาสตร์ที่เด็กต้องอ่าน เขียน และเชื่อมความหมายได้</div>
+</div>
+
+<section class="vocab-unit" id="vocab-master">
+  <h2>คลังคำศัพท์ไทย–อังกฤษจาก Word Bank เดิม</h2>
+  <p>รวมคำไม่ซ้ำทั้งหมด <b>247 คำ/วลี</b> จาก Word Bank ของทั้งหน่วย</p>
+</section>
+
+<div class="vocab-toolbar">
+  <button type="button" onclick="toggleVocabEnglish()">ซ่อน/เปิดคำอังกฤษ</button>
+  <button type="button" onclick="buildVocabQuiz(30)">สุ่มเขียน 30 คำ</button>
+  <button type="button" onclick="buildVocabQuiz(60)">สุ่มเขียน 60 คำ</button>
+  <button type="button" onclick="buildVocabQuiz('all')">เขียนทั้งหมด</button>
+  <button type="button" onclick="checkVocabQuiz()">ตรวจคำศัพท์</button>
+  <button type="button" onclick="resetVocabQuiz()">เริ่มใหม่</button>
+  <button type="button" onclick="revealVocabAnswers()">เฉลยชุดเขียน</button>
+  <span class="vocab-result" id="vocabResult">ยังไม่ได้เริ่มแบบฝึก</span>
+</div>
+
+
+    <div class="vocab-group">
+      <h3>การสังเคราะห์ด้วยแสงและนิเวศ</h3>
+      <table class="vocab-table">
+        <thead><tr><th style="width:42px">#</th><th>คำศัพท์ไทย</th><th>English vocabulary</th></tr></thead>
+        <tbody><tr><td>1</td><td>สร้างอาหาร</td><td class='eng'>make food</td></tr><tr><td>2</td><td>พลังงานแสง</td><td class='eng'>light energy</td></tr><tr><td>3</td><td>พลังงานเคมี</td><td class='eng'>chemical energy</td></tr><tr><td>4</td><td>คาร์บอนไดออกไซด์</td><td class='eng'>carbon dioxide</td></tr><tr><td>5</td><td>น้ำ</td><td class='eng'>water</td></tr><tr><td>6</td><td>กลูโคส</td><td class='eng'>glucose</td></tr><tr><td>7</td><td>ออกซิเจน</td><td class='eng'>oxygen</td></tr><tr><td>8</td><td>คลอโรฟิลล์</td><td class='eng'>chlorophyll</td></tr><tr><td>9</td><td>คลอโรพลาสต์</td><td class='eng'>chloroplast</td></tr><tr><td>10</td><td>ดูดกลืน</td><td class='eng'>absorb</td></tr><tr><td>11</td><td>แสง</td><td class='eng'>light</td></tr><tr><td>12</td><td>พลังงาน</td><td class='eng'>energy</td></tr><tr><td>13</td><td>ต่างกัน</td><td class='eng'>different</td></tr><tr><td>14</td><td>สีเขียว</td><td class='eng'>green</td></tr><tr><td>15</td><td>สีเหลือง</td><td class='eng'>yellow</td></tr><tr><td>16</td><td>พลูด่าง</td><td class='eng'>variegated pothos</td></tr><tr><td>17</td><td>ทานตะวัน</td><td class='eng'>sunflower</td></tr><tr><td>18</td><td>แสงน้อย</td><td class='eng'>low light</td></tr><tr><td>19</td><td>แสงมาก</td><td class='eng'>high light</td></tr><tr><td>20</td><td>ดวงอาทิตย์</td><td class='eng'>the Sun</td></tr><tr><td>21</td><td>แหล่งกำเนิดอื่น</td><td class='eng'>other light sources</td></tr><tr><td>22</td><td>ปากใบ</td><td class='eng'>stoma / stomata</td></tr><tr><td>23</td><td>เซลล์คุม</td><td class='eng'>guard cells</td></tr><tr><td>24</td><td>ราก</td><td class='eng'>root</td></tr><tr><td>25</td><td>แร่ธาตุ</td><td class='eng'>minerals</td></tr><tr><td>26</td><td>ลำเลียง</td><td class='eng'>transport</td></tr><tr><td>27</td><td>คายน้ำ</td><td class='eng'>transpire</td></tr><tr><td>28</td><td>หายใจ</td><td class='eng'>respire</td></tr><tr><td>29</td><td>แป้ง</td><td class='eng'>starch</td></tr><tr><td>30</td><td>ใบ ราก และลำต้น</td><td class='eng'>leaves, roots and stems</td></tr><tr><td>31</td><td>เซลลูโลส</td><td class='eng'>cellulose</td></tr><tr><td>32</td><td>ผนังเซลล์</td><td class='eng'>cell wall</td></tr><tr><td>33</td><td>ผู้ผลิต</td><td class='eng'>producer</td></tr><tr><td>34</td><td>อาหาร</td><td class='eng'>food</td></tr><tr><td>35</td><td>ถ่ายทอดพลังงาน</td><td class='eng'>energy transfer</td></tr><tr><td>36</td><td>ไอน้ำ</td><td class='eng'>water vapour</td></tr><tr><td>37</td><td>ผู้บริโภคอันดับที่ 1</td><td class='eng'>primary consumer</td></tr><tr><td>38</td><td>ผู้บริโภคอันดับที่ 2</td><td class='eng'>secondary consumer</td></tr><tr><td>39</td><td>ผู้บริโภคอันดับที่ 3</td><td class='eng'>tertiary consumer</td></tr><tr><td>40</td><td>ผู้ย่อยสลาย</td><td class='eng'>decomposer</td></tr><tr><td>41</td><td>ธาตุอาหาร</td><td class='eng'>nutrients</td></tr><tr><td>42</td><td>กักเก็บความร้อน</td><td class='eng'>trap heat</td></tr><tr><td>43</td><td>แก๊สเรือนกระจก</td><td class='eng'>greenhouse gas</td></tr><tr><td>44</td><td>ปรากฏการณ์เรือนกระจก</td><td class='eng'>greenhouse effect</td></tr><tr><td>45</td><td>สังเคราะห์ด้วยแสง</td><td class='eng'>photosynthesis</td></tr><tr><td>46</td><td>บรรยากาศ</td><td class='eng'>atmosphere</td></tr><tr><td>47</td><td>ภาวะโลกร้อน</td><td class='eng'>global warming</td></tr><tr><td>48</td><td>ปัจจัยจำเป็น</td><td class='eng'>essential factor</td></tr><tr><td>49</td><td>ไม่ได้</td><td class='eng'>cannot</td></tr><tr><td>50</td><td>คาร์บอนไดออกไซด์และน้ำ</td><td class='eng'>carbon dioxide and water</td></tr><tr><td>51</td><td>แสงจากดวงอาทิตย์</td><td class='eng'>sunlight</td></tr><tr><td>52</td><td>ออกซิเจนและน้ำตาล</td><td class='eng'>oxygen and sugar</td></tr></tbody>
+      </table>
+    </div>
+    
+    <div class="vocab-group">
+      <h3>การสืบพันธุ์ ผล เมล็ด และการขยายพันธุ์</h3>
+      <table class="vocab-table">
+        <thead><tr><th style="width:42px">#</th><th>คำศัพท์ไทย</th><th>English vocabulary</th></tr></thead>
+        <tbody><tr><td>53</td><td>เจริญเติบโตเต็มที่</td><td class='eng'>fully grown / mature</td></tr><tr><td>54</td><td>ดอก</td><td class='eng'>flower</td></tr><tr><td>55</td><td>ราก ลำต้น ใบ ตา ดอก และเมล็ด</td><td class='eng'>roots, stems, leaves, buds, flowers and seeds</td></tr><tr><td>56</td><td>กิ่งและใบ</td><td class='eng'>branches and leaves</td></tr><tr><td>57</td><td>สืบพันธุ์</td><td class='eng'>reproduce</td></tr><tr><td>58</td><td>กลีบเลี้ยง</td><td class='eng'>sepal</td></tr><tr><td>59</td><td>กลีบดอก</td><td class='eng'>petal</td></tr><tr><td>60</td><td>เกสรเพศผู้</td><td class='eng'>stamen</td></tr><tr><td>61</td><td>ก้านชูอับเรณู</td><td class='eng'>filament</td></tr><tr><td>62</td><td>อับเรณู</td><td class='eng'>anther</td></tr><tr><td>63</td><td>เกสรเพศเมีย</td><td class='eng'>pistil</td></tr><tr><td>64</td><td>ยอดเกสรเพศเมีย</td><td class='eng'>stigma</td></tr><tr><td>65</td><td>ก้านชูเกสรเพศเมีย</td><td class='eng'>style</td></tr><tr><td>66</td><td>รังไข่</td><td class='eng'>ovary</td></tr><tr><td>67</td><td>ออวุล</td><td class='eng'>ovule</td></tr><tr><td>68</td><td>ถุงเอ็มบริโอ</td><td class='eng'>embryo sac</td></tr><tr><td>69</td><td>ดอกครบส่วน</td><td class='eng'>complete flower</td></tr><tr><td>70</td><td>4 ส่วน</td><td class='eng'>four parts</td></tr><tr><td>71</td><td>ดอกไม่ครบส่วน</td><td class='eng'>incomplete flower</td></tr><tr><td>72</td><td>ดอกสมบูรณ์เพศ</td><td class='eng'>bisexual flower</td></tr><tr><td>73</td><td>เกสรเพศผู้และเกสรเพศเมีย</td><td class='eng'>stamen and pistil</td></tr><tr><td>74</td><td>ดอกไม่สมบูรณ์เพศ</td><td class='eng'>unisexual flower</td></tr><tr><td>75</td><td>ดอกเดี่ยว</td><td class='eng'>solitary flower</td></tr><tr><td>76</td><td>ดอกช่อ</td><td class='eng'>inflorescence</td></tr><tr><td>77</td><td>ดอกย่อยหลายดอก</td><td class='eng'>many small flowers / florets</td></tr><tr><td>78</td><td>ละอองเรณู</td><td class='eng'>pollen grain</td></tr><tr><td>79</td><td>ดอกชนิดเดียวกัน</td><td class='eng'>flower of the same species</td></tr><tr><td>80</td><td>ภายในดอกเดียวกัน</td><td class='eng'>within the same flower</td></tr><tr><td>81</td><td>ข้ามดอก</td><td class='eng'>between flowers</td></tr><tr><td>82</td><td>ลมและน้ำ</td><td class='eng'>wind and water</td></tr><tr><td>83</td><td>แมลง สัตว์ และมนุษย์</td><td class='eng'>insects, animals and humans</td></tr><tr><td>84</td><td>การงอกของละอองเรณู</td><td class='eng'>pollen germination</td></tr><tr><td>85</td><td>การปฏิสนธิ</td><td class='eng'>fertilization</td></tr><tr><td>86</td><td>ไมโครสปอร์มาเทอร์เซลล์</td><td class='eng'>microspore mother cell</td></tr><tr><td>87</td><td>2n</td><td class='eng'>diploid (2n)</td></tr><tr><td>88</td><td>ไมโอซิส</td><td class='eng'>meiosis</td></tr><tr><td>89</td><td>ไมโครสปอร์</td><td class='eng'>microspore</td></tr><tr><td>90</td><td>4 เซลล์</td><td class='eng'>four cells</td></tr><tr><td>91</td><td>ไมโทซิส</td><td class='eng'>mitosis</td></tr><tr><td>92</td><td>เจเนอเรทีฟเซลล์</td><td class='eng'>generative cell</td></tr><tr><td>93</td><td>ทิวบ์เซลล์</td><td class='eng'>tube cell</td></tr><tr><td>94</td><td>เมกะสปอร์</td><td class='eng'>megaspore</td></tr><tr><td>95</td><td>3 ครั้ง</td><td class='eng'>three times</td></tr><tr><td>96</td><td>8 นิวเคลียส</td><td class='eng'>eight nuclei</td></tr><tr><td>97</td><td>เจเนอเรทีฟนิวเคลียส</td><td class='eng'>generative nucleus</td></tr><tr><td>98</td><td>ทิวบ์นิวเคลียส</td><td class='eng'>tube nucleus</td></tr><tr><td>99</td><td>หลอดละอองเรณู</td><td class='eng'>pollen tube</td></tr><tr><td>100</td><td>สเปิร์มนิวเคลียส 2 อัน</td><td class='eng'>two sperm nuclei</td></tr><tr><td>101</td><td>เซลล์ไข่</td><td class='eng'>egg cell</td></tr><tr><td>102</td><td>ไซโกต</td><td class='eng'>zygote</td></tr><tr><td>103</td><td>เอ็มบริโอ</td><td class='eng'>embryo</td></tr><tr><td>104</td><td>โพลาร์นิวเคลียส</td><td class='eng'>polar nuclei</td></tr><tr><td>105</td><td>เอนโดสเปิร์ม</td><td class='eng'>endosperm</td></tr><tr><td>106</td><td>การปฏิสนธิซ้อน</td><td class='eng'>double fertilization</td></tr><tr><td>107</td><td>การถ่ายละอองเรณู</td><td class='eng'>pollination</td></tr><tr><td>108</td><td>สเปิร์ม 2 ตัว</td><td class='eng'>two sperm cells</td></tr><tr><td>109</td><td>เมล็ด</td><td class='eng'>seed</td></tr><tr><td>110</td><td>ผล</td><td class='eng'>fruit</td></tr><tr><td>111</td><td>เปลือกและเนื้อของผล</td><td class='eng'>fruit peel and flesh</td></tr><tr><td>112</td><td>เปลือกหุ้มเมล็ด</td><td class='eng'>seed coat</td></tr><tr><td>113</td><td>เอ็มบริโอหรือต้นอ่อน</td><td class='eng'>embryo / young plant</td></tr><tr><td>114</td><td>อาหารเลี้ยงเอ็มบริโอ</td><td class='eng'>food for the embryo</td></tr><tr><td>115</td><td>เหี่ยวแห้งและร่วงหลุดไป</td><td class='eng'>wither and fall off</td></tr><tr><td>116</td><td>ผลเดี่ยว</td><td class='eng'>simple fruit</td></tr><tr><td>117</td><td>รังไข่เพียงอันเดียว</td><td class='eng'>one ovary</td></tr><tr><td>118</td><td>ผลกลุ่ม</td><td class='eng'>aggregate fruit</td></tr><tr><td>119</td><td>หลายรังไข่</td><td class='eng'>many ovaries</td></tr><tr><td>120</td><td>ผลรวม</td><td class='eng'>multiple fruit</td></tr><tr><td>121</td><td>ฐานรองดอก</td><td class='eng'>receptacle</td></tr><tr><td>122</td><td>กล้วยหอมและองุ่นไม่มีเมล็ด</td><td class='eng'>banana and seedless grapes</td></tr><tr><td>123</td><td>ผนังรังไข่</td><td class='eng'>ovary wall</td></tr><tr><td>124</td><td>เพริคาร์ป</td><td class='eng'>pericarp</td></tr><tr><td>125</td><td>เอกโซคาร์ป</td><td class='eng'>exocarp</td></tr><tr><td>126</td><td>มีโซคาร์ป</td><td class='eng'>mesocarp</td></tr><tr><td>127</td><td>เอนโดคาร์ป</td><td class='eng'>endocarp</td></tr><tr><td>128</td><td>ชั้นนอก</td><td class='eng'>outer layer</td></tr><tr><td>129</td><td>ชั้นกลาง</td><td class='eng'>middle layer</td></tr><tr><td>130</td><td>ชั้นใน</td><td class='eng'>inner layer</td></tr><tr><td>131</td><td>แรดิเคิล</td><td class='eng'>radicle</td></tr><tr><td>132</td><td>ใบเลี้ยง</td><td class='eng'>cotyledon</td></tr><tr><td>133</td><td>เอพิคอทิล</td><td class='eng'>epicotyl</td></tr><tr><td>134</td><td>ไฮโพคอทิล</td><td class='eng'>hypocotyl</td></tr><tr><td>135</td><td>พลูมูล</td><td class='eng'>plumule</td></tr><tr><td>136</td><td>2 ใบ</td><td class='eng'>two cotyledons</td></tr><tr><td>137</td><td>1 ใบ</td><td class='eng'>one cotyledon</td></tr><tr><td>138</td><td>แป้ง โปรตีน และไขมัน</td><td class='eng'>starch, proteins and fats</td></tr><tr><td>139</td><td>เหนือดิน</td><td class='eng'>above ground</td></tr><tr><td>140</td><td>ใต้ดิน</td><td class='eng'>below ground</td></tr><tr><td>141</td><td>น้ำหรือความชื้น</td><td class='eng'>water or moisture</td></tr><tr><td>142</td><td>อ่อนตัว</td><td class='eng'>soften</td></tr><tr><td>143</td><td>อุณหภูมิ</td><td class='eng'>temperature</td></tr><tr><td>144</td><td>แตกต่างกัน</td><td class='eng'>vary / differ</td></tr><tr><td>145</td><td>บางชนิด</td><td class='eng'>some species</td></tr><tr><td>146</td><td>ไม่เกิดการปฏิสนธิ</td><td class='eng'>without fertilization</td></tr><tr><td>147</td><td>ราก ลำต้น และใบ</td><td class='eng'>roots, stems and leaves</td></tr><tr><td>148</td><td>เหมือนพ่อแม่</td><td class='eng'>same as the parent plant</td></tr><tr><td>149</td><td>หน่อ</td><td class='eng'>bud / offshoot</td></tr><tr><td>150</td><td>สปอร์</td><td class='eng'>spore</td></tr><tr><td>151</td><td>ลมหรือน้ำ</td><td class='eng'>wind or water</td></tr><tr><td>152</td><td>ไหล</td><td class='eng'>runner / stolon</td></tr><tr><td>153</td><td>เจริญเป็นต้นใหม่ได้</td><td class='eng'>can grow into a new plant</td></tr><tr><td>154</td><td>ใช้เมล็ด</td><td class='eng'>seed propagation</td></tr><tr><td>155</td><td>ส่วนต่าง ๆ ของต้นพืช</td><td class='eng'>vegetative plant parts</td></tr><tr><td>156</td><td>ต้นกล้า</td><td class='eng'>seedling</td></tr><tr><td>157</td><td>2–3 เท่า</td><td class='eng'>2–3 times</td></tr><tr><td>158</td><td>ความชื้นเหมาะสม</td><td class='eng'>suitable moisture</td></tr><tr><td>159</td><td>การปักชำ</td><td class='eng'>cutting</td></tr><tr><td>160</td><td>ใบ กิ่ง ลำต้น หรือราก</td><td class='eng'>leaves, branches, stems or roots</td></tr><tr><td>161</td><td>ออกรากและแตกยอดใหม่</td><td class='eng'>form roots and new shoots</td></tr><tr><td>162</td><td>การติดตา</td><td class='eng'>budding</td></tr><tr><td>163</td><td>แผ่นตาจากกิ่งพันธุ์ดี</td><td class='eng'>a bud from a desired variety</td></tr><tr><td>164</td><td>การต่อกิ่ง</td><td class='eng'>grafting</td></tr><tr><td>165</td><td>กิ่งพันธุ์ดี</td><td class='eng'>scion</td></tr><tr><td>166</td><td>ต้นตอ</td><td class='eng'>rootstock</td></tr><tr><td>167</td><td>การทาบกิ่ง</td><td class='eng'>approach grafting</td></tr><tr><td>168</td><td>ระบบราก</td><td class='eng'>root system</td></tr><tr><td>169</td><td>การตอนกิ่ง</td><td class='eng'>air layering</td></tr><tr><td>170</td><td>เกิดรากจากต้นแม่</td><td class='eng'>form roots while attached to the parent plant</td></tr><tr><td>171</td><td>ไม่มีรากแก้ว</td><td class='eng'>no taproot</td></tr><tr><td>172</td><td>จำนวนมากอย่างรวดเร็ว</td><td class='eng'>large numbers quickly</td></tr><tr><td>173</td><td>สภาพปลอดเชื้อจุลินทรีย์</td><td class='eng'>sterile conditions</td></tr><tr><td>174</td><td>อุณหภูมิ แสง และความชื้น</td><td class='eng'>temperature, light and humidity</td></tr><tr><td>175</td><td>เตรียมอาหาร</td><td class='eng'>prepare culture medium</td></tr><tr><td>176</td><td>ฟอกฆ่าเชื้อส่วนเนื้อเยื่อ</td><td class='eng'>surface-sterilize the explant</td></tr><tr><td>177</td><td>นำเนื้อเยื่อลงขวดเลี้ยง</td><td class='eng'>place the tissue in a culture vessel</td></tr><tr><td>178</td><td>นำขวดเลี้ยงเนื้อเยื่อไปเลี้ยง</td><td class='eng'>incubate the culture</td></tr><tr><td>179</td><td>ย้ายเนื้อเยื่อออกจากขวด</td><td class='eng'>remove the plantlets from the culture vessel</td></tr><tr><td>180</td><td>พืชปลอดโรค</td><td class='eng'>disease-free plants</td></tr><tr><td>181</td><td>เก็บรักษาพันธุ์พืช</td><td class='eng'>plant germplasm conservation</td></tr><tr><td>182</td><td>ไม่อาศัยเพศ</td><td class='eng'>asexual</td></tr><tr><td>183</td><td>การเพาะเลี้ยงเนื้อเยื่อ</td><td class='eng'>tissue culture</td></tr></tbody>
+      </table>
+    </div>
+    
+    <div class="vocab-group">
+      <h3>ธาตุอาหาร อวัยวะ และระบบลำเลียง</h3>
+      <table class="vocab-table">
+        <thead><tr><th style="width:42px">#</th><th>คำศัพท์ไทย</th><th>English vocabulary</th></tr></thead>
+        <tbody><tr><td>184</td><td>17 ธาตุ</td><td class='eng'>17 essential elements</td></tr><tr><td>185</td><td>3 ธาตุ</td><td class='eng'>three elements</td></tr><tr><td>186</td><td>14 ธาตุ</td><td class='eng'>fourteen elements</td></tr><tr><td>187</td><td>คาร์บอน ไฮโดรเจน และออกซิเจน</td><td class='eng'>carbon, hydrogen and oxygen</td></tr><tr><td>188</td><td>ไนโตรเจน ฟอสฟอรัส และโพแทสเซียม</td><td class='eng'>nitrogen, phosphorus and potassium</td></tr><tr><td>189</td><td>แคลเซียม แมกนีเซียม และกำมะถัน</td><td class='eng'>calcium, magnesium and sulfur</td></tr><tr><td>190</td><td>ธาตุอาหารหลัก</td><td class='eng'>primary nutrients</td></tr><tr><td>191</td><td>ธาตุอาหารรอง</td><td class='eng'>secondary nutrients</td></tr><tr><td>192</td><td>ไนโตรเจน</td><td class='eng'>nitrogen</td></tr><tr><td>193</td><td>ใบล่างขึ้นบน</td><td class='eng'>from lower leaves upward</td></tr><tr><td>194</td><td>ฟอสฟอรัส</td><td class='eng'>phosphorus</td></tr><tr><td>195</td><td>สีม่วง</td><td class='eng'>purple</td></tr><tr><td>196</td><td>โพแทสเซียม</td><td class='eng'>potassium</td></tr><tr><td>197</td><td>เปิด-ปิดปากใบ</td><td class='eng'>stomatal opening and closing</td></tr><tr><td>198</td><td>ปลายใบ</td><td class='eng'>leaf tip</td></tr><tr><td>199</td><td>แคลเซียม</td><td class='eng'>calcium</td></tr><tr><td>200</td><td>ยอดอ่อนและแห้งตาย</td><td class='eng'>young shoot tips die and dry out</td></tr><tr><td>201</td><td>แมกนีเซียม</td><td class='eng'>magnesium</td></tr><tr><td>202</td><td>เส้นใบยังเขียว</td><td class='eng'>veins remain green</td></tr><tr><td>203</td><td>กำมะถัน</td><td class='eng'>sulfur</td></tr><tr><td>204</td><td>คล้ายขาดไนโตรเจน</td><td class='eng'>similar to nitrogen deficiency</td></tr><tr><td>205</td><td>โบรอน</td><td class='eng'>boron</td></tr><tr><td>206</td><td>เหล็ก</td><td class='eng'>iron</td></tr><tr><td>207</td><td>แมงกานีส</td><td class='eng'>manganese</td></tr><tr><td>208</td><td>สังกะสี</td><td class='eng'>zinc</td></tr><tr><td>209</td><td>ปุ๋ยเคมี</td><td class='eng'>chemical fertilizer</td></tr><tr><td>210</td><td>30-20-10</td><td class='eng'>30-20-10 N-P-K</td></tr><tr><td>211</td><td>ปุ๋ยอินทรีย์</td><td class='eng'>organic fertilizer</td></tr><tr><td>212</td><td>ปุ๋ยคอก ปุ๋ยหมัก ปุ๋ยพืชสด</td><td class='eng'>manure, compost and green manure</td></tr><tr><td>213</td><td>ปุ๋ยชีวภาพ</td><td class='eng'>biofertilizer</td></tr><tr><td>214</td><td>จุลินทรีย์</td><td class='eng'>microorganisms</td></tr><tr><td>215</td><td>ตรึงไนโตรเจน</td><td class='eng'>nitrogen fixation</td></tr><tr><td>216</td><td>กรด-เบส</td><td class='eng'>acid-base balance / pH</td></tr><tr><td>217</td><td>รากและขนราก</td><td class='eng'>roots and root hairs</td></tr><tr><td>218</td><td>น้ำและธาตุอาหาร</td><td class='eng'>water and nutrients</td></tr><tr><td>219</td><td>ท่อลำเลียง</td><td class='eng'>vascular tissue</td></tr><tr><td>220</td><td>เพิ่มพื้นที่ผิว</td><td class='eng'>increase surface area</td></tr><tr><td>221</td><td>รากแก้ว</td><td class='eng'>taproot</td></tr><tr><td>222</td><td>รากฝอย</td><td class='eng'>fibrous root</td></tr><tr><td>223</td><td>พยุง</td><td class='eng'>support</td></tr><tr><td>224</td><td>ไซเล็ม</td><td class='eng'>xylem</td></tr><tr><td>225</td><td>โฟลเอ็ม</td><td class='eng'>phloem</td></tr><tr><td>226</td><td>แลกเปลี่ยนแก๊ส</td><td class='eng'>gas exchange</td></tr><tr><td>227</td><td>น้ำและแร่ธาตุ</td><td class='eng'>water and minerals</td></tr><tr><td>228</td><td>อาหารหรือน้ำตาล</td><td class='eng'>food or sugars</td></tr><tr><td>229</td><td>แคมเบียม</td><td class='eng'>cambium</td></tr><tr><td>230</td><td>เนื้อเยื่อเจริญด้านข้าง</td><td class='eng'>lateral meristem</td></tr><tr><td>231</td><td>ใบ</td><td class='eng'>leaf</td></tr><tr><td>232</td><td>ออสโมซิส</td><td class='eng'>osmosis</td></tr><tr><td>233</td><td>การแพร่</td><td class='eng'>diffusion</td></tr><tr><td>234</td><td>ขึ้นด้านบน</td><td class='eng'>upward</td></tr><tr><td>235</td><td>ราก ลำต้น และหัว</td><td class='eng'>roots, stems and storage organs</td></tr><tr><td>236</td><td>ทั้งขึ้นและลง</td><td class='eng'>both upward and downward</td></tr><tr><td>237</td><td>การคายน้ำ</td><td class='eng'>transpiration</td></tr><tr><td>238</td><td>เส้นใบขนาน</td><td class='eng'>parallel venation</td></tr><tr><td>239</td><td>เส้นใบร่างแห</td><td class='eng'>reticulate venation</td></tr><tr><td>240</td><td>กระจัดกระจาย</td><td class='eng'>scattered</td></tr><tr><td>241</td><td>เรียงเป็นวง</td><td class='eng'>arranged in a ring</td></tr><tr><td>242</td><td>ยึดต้นและดูดน้ำ</td><td class='eng'>anchor the plant and absorb water</td></tr><tr><td>243</td><td>พยุงและลำเลียง</td><td class='eng'>support and transport</td></tr><tr><td>244</td><td>สืบพันธุ์แบบอาศัยเพศ</td><td class='eng'>sexual reproduction</td></tr><tr><td>245</td><td>ป้องกันเมล็ด</td><td class='eng'>protect the seeds</td></tr><tr><td>246</td><td>อาหารให้ตัวอ่อน</td><td class='eng'>food for the embryo</td></tr><tr><td>247</td><td>ไนโตรเจน ฟอสฟอรัส โพแทสเซียม</td><td class='eng'>nitrogen, phosphorus, potassium</td></tr></tbody>
+      </table>
+    </div>
+    
+
+<section class="vocab-practice" id="vocabPractice">
+  <h3>แบบฝึกเขียนศัพท์อังกฤษ</h3>
+  <div class="vocab-note">
+    ดูคำไทยแล้วพิมพ์ศัพท์อังกฤษเอง · ไม่จำเป็นต้องพิมพ์ตัวพิมพ์ใหญ่/เล็กให้ตรง · สำหรับคำที่แสดงด้วย “/” ระบบยอมรับคำหลักด้านใดด้านหนึ่ง
+  </div>
+  <div class="vocab-grid" id="vocabGrid"></div>
+</section>
+
+<div class="teacher-only memory">
+<b>โหมดเฉลย:</b> ขณะนี้แสดงคำตอบในทุกช่องแล้ว ก่อนพิมพ์แจกนักเรียนให้เลือก “พิมพ์ฉบับนักเรียน”
+</div>
+<div class="footer-note">การดำรงชีวิตของพืช · วิทยาศาสตร์ ม.1 · ชุดรวม 3 เรื่อง + English Vocabulary · IndexedDB AutoSave · QA PASSED</div>
+</main>
+<script>
+let summariesVisible=true;
+let selectedChip=null;
+let dragChip=null;
+let chipSerial=0;
+
+
+const LOCAL_SAVE_DB = 'PlantLifeM1_StudyDB';
+const LOCAL_SAVE_STORE = 'studyStates';
+const LOCAL_SAVE_KEY = 'plantlife-m1-master';
+const LOCAL_SAVE_FALLBACK_KEY = 'plantlife-m1-master-fallback';
+let SAVE_READY = false;
+let SAVE_TIMER = null;
+let SAVE_BACKEND = 'IndexedDB';
+let SAVE_DB_PROMISE = null;
+
+function setSaveStatus(message, kind=''){
+  const el=document.getElementById('saveStatus');
+  if(!el) return;
+  el.textContent=message;
+  el.classList.remove('saving','ok','warn');
+  if(kind) el.classList.add(kind);
+}
+
+function openLocalSaveDB(){
+  if(SAVE_DB_PROMISE) return SAVE_DB_PROMISE;
+  SAVE_DB_PROMISE = new Promise((resolve,reject)=>{
+    if(!('indexedDB' in window)){
+      reject(new Error('IndexedDB unavailable'));
+      return;
+    }
+    const req=indexedDB.open(LOCAL_SAVE_DB,1);
+    req.onupgradeneeded=()=>{
+      const db=req.result;
+      if(!db.objectStoreNames.contains(LOCAL_SAVE_STORE)){
+        db.createObjectStore(LOCAL_SAVE_STORE,{keyPath:'id'});
+      }
+    };
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error || new Error('IndexedDB open failed'));
+    req.onblocked=()=>reject(new Error('IndexedDB blocked'));
+  });
+  return SAVE_DB_PROMISE;
+}
+
+async function idbPutState(record){
+  const db=await openLocalSaveDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(LOCAL_SAVE_STORE,'readwrite');
+    tx.objectStore(LOCAL_SAVE_STORE).put(record);
+    tx.oncomplete=()=>resolve();
+    tx.onerror=()=>reject(tx.error || new Error('IndexedDB write failed'));
+    tx.onabort=()=>reject(tx.error || new Error('IndexedDB write aborted'));
+  });
+}
+
+async function idbGetState(){
+  const db=await openLocalSaveDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(LOCAL_SAVE_STORE,'readonly');
+    const req=tx.objectStore(LOCAL_SAVE_STORE).get(LOCAL_SAVE_KEY);
+    req.onsuccess=()=>resolve(req.result || null);
+    req.onerror=()=>reject(req.error || new Error('IndexedDB read failed'));
+  });
+}
+
+async function idbDeleteState(){
+  const db=await openLocalSaveDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(LOCAL_SAVE_STORE,'readwrite');
+    tx.objectStore(LOCAL_SAVE_STORE).delete(LOCAL_SAVE_KEY);
+    tx.oncomplete=()=>resolve();
+    tx.onerror=()=>reject(tx.error || new Error('IndexedDB delete failed'));
+  });
+}
+
+function fallbackWrite(record){
+  localStorage.setItem(LOCAL_SAVE_FALLBACK_KEY,JSON.stringify(record));
+}
+function fallbackRead(){
+  try{
+    const raw=localStorage.getItem(LOCAL_SAVE_FALLBACK_KEY);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
+}
+function fallbackDelete(){
+  try{ localStorage.removeItem(LOCAL_SAVE_FALLBACK_KEY); }catch(e){}
+}
+
+function collectLocalState(){
+  const blanks={};
+  document.querySelectorAll('.blank[data-answer][data-save-id]').forEach(blank=>{
+    blanks[blank.dataset.saveId]={
+      value:blank.dataset.value || '',
+      correct:blank.classList.contains('correct'),
+      incorrect:blank.classList.contains('incorrect')
+    };
+  });
+
+  const hiddenScopes=[...document.querySelectorAll('.section.study-hidden, .final.study-hidden')]
+    .map(s=>s.id).filter(Boolean);
+
+  const checkedScopes={};
+  document.querySelectorAll('.section, .final').forEach(scope=>{
+    if(!scope.id) return;
+    const bs=blanksIn(scope);
+    checkedScopes[scope.id]=bs.some(b=>b.classList.contains('correct') || b.classList.contains('incorrect'));
+  });
+
+  const vocabQuiz=[...document.querySelectorAll('#vocabGrid .vocab-q')].map(q=>{
+    const inp=q.querySelector('.vocab-input');
+    return {
+      th:q.dataset.th || q.querySelector('.thai')?.textContent.replace(/^\s*\d+\.\s*/,'').trim() || '',
+      en:q.dataset.answer || '',
+      value:inp?.value || '',
+      correct:!!inp?.classList.contains('correct'),
+      incorrect:!!inp?.classList.contains('incorrect'),
+      showAnswer:q.classList.contains('show-answer')
+    };
+  });
+
+  return {
+    schema:2,
+    activityId:LOCAL_SAVE_KEY,
+    savedAt:new Date().toISOString(),
+    blanks,
+    hiddenScopes,
+    checkedScopes,
+    summariesVisible,
+    answersShown:document.body.classList.contains('show-answers'),
+    vocabEnglishHidden:document.body.classList.contains('vocab-hide-english'),
+    vocabQuiz,
+    vocabResult:document.getElementById('vocabResult')?.textContent || '',
+    scrollY:Math.round(window.scrollY || 0)
+  };
+}
+
+async function writeLocalState(state){
+  const record={id:LOCAL_SAVE_KEY,updatedAt:Date.now(),state};
+  let backupOK=false;
+  try{
+    fallbackWrite(record);
+    backupOK=true;
+  }catch(e){}
+
+  try{
+    await idbPutState(record);
+    SAVE_BACKEND=backupOK ? 'IndexedDB + backup' : 'IndexedDB';
+    return;
+  }catch(err){
+    if(backupOK){
+      SAVE_BACKEND='localStorage backup';
+      return;
+    }
+    throw err;
+  }
+}
+
+async function readLocalState(){
+  let idbRecord=null;
+  let fallbackRecord=null;
+
+  try{
+    idbRecord=await idbGetState();
+  }catch(e){}
+
+  try{
+    fallbackRecord=fallbackRead();
+  }catch(e){}
+
+  const candidates=[idbRecord,fallbackRecord]
+    .filter(r=>r && r.state)
+    .sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));
+
+  if(!candidates.length) return null;
+
+  const chosen=candidates[0];
+  if(chosen===idbRecord){
+    SAVE_BACKEND=fallbackRecord ? 'IndexedDB + backup' : 'IndexedDB';
+  }else{
+    SAVE_BACKEND='localStorage backup';
+  }
+  return chosen.state;
+}
+
+async function deleteLocalState(){
+  let deleted=false;
+  try{
+    await idbDeleteState();
+    deleted=true;
+  }catch(e){}
+  fallbackDelete();
+  return deleted;
+}
+
+function scheduleLocalSave(delay=300){
+  if(!SAVE_READY) return;
+  clearTimeout(SAVE_TIMER);
+  setSaveStatus('กำลังบันทึก…','saving');
+  SAVE_TIMER=setTimeout(()=>saveLocalStateNow(),delay);
+}
+
+async function saveLocalStateNow(){
+  if(!SAVE_READY) return;
+  clearTimeout(SAVE_TIMER);
+  try{
+    const state=collectLocalState();
+    await writeLocalState(state);
+    const t=new Date();
+    const hh=String(t.getHours()).padStart(2,'0');
+    const mm=String(t.getMinutes()).padStart(2,'0');
+    const ss=String(t.getSeconds()).padStart(2,'0');
+    setSaveStatus(`บันทึกแล้วในเครื่อง · ${SAVE_BACKEND} · ${hh}:${mm}:${ss}`,'ok');
+  }catch(err){
+    console.error('Local save failed',err);
+    setSaveStatus('บันทึกในเครื่องไม่สำเร็จ','warn');
+  }
+}
+
+function renderSavedVocabQuiz(items){
+  const grid=document.getElementById('vocabGrid');
+  if(!grid || !Array.isArray(items) || !items.length) return false;
+  grid.innerHTML='';
+  items.forEach((item,i)=>{
+    const q=document.createElement('div');
+    q.className='vocab-q';
+    q.dataset.th=item.th || '';
+    q.dataset.answer=item.en || '';
+    q.innerHTML=`<div class="thai">${i+1}. ${item.th || ''}</div>
+      <div><input class="vocab-input" type="text" autocomplete="off" spellcheck="false" placeholder="เขียนศัพท์อังกฤษ"></div>
+      <div class="vocab-answer">เฉลย: <b>${item.en || ''}</b></div>`;
+    const inp=q.querySelector('.vocab-input');
+    inp.value=item.value || '';
+    inp.classList.toggle('correct',!!item.correct);
+    inp.classList.toggle('incorrect',!!item.incorrect);
+    q.classList.toggle('show-answer',!!item.showAnswer);
+    grid.appendChild(q);
+  });
+  return true;
+}
+
+function restoreBlankState(savedBlanks){
+  if(!savedBlanks || typeof savedBlanks!=='object') return;
+  const blankMap=new Map(
+    [...document.querySelectorAll('.blank[data-answer][data-save-id]')]
+      .map(b=>[b.dataset.saveId,b])
+  );
+
+  Object.entries(savedBlanks).forEach(([saveId,item])=>{
+    const blank=blankMap.get(saveId);
+    if(!blank || !item?.value) return;
+    const scope=scopeFor(blank);
+    const chip=chipsIn(scope).find(c=>
+      !c.classList.contains('used') &&
+      normalize(c.dataset.value)===normalize(item.value)
+    );
+    if(chip) placeChip(chip,blank);
+    blank.classList.toggle('correct',!!item.correct);
+    blank.classList.toggle('incorrect',!!item.incorrect);
+  });
+}
+
+async function restoreLocalState(){
+  setSaveStatus('กำลังค้นหางานเดิม…','saving');
+  const state=await readLocalState();
+
+  if(!state){
+    setSaveStatus(`พร้อมบันทึกอัตโนมัติ · ${SAVE_BACKEND}`,'ok');
+    return false;
+  }
+
+  restoreBlankState(state.blanks);
+
+  document.querySelectorAll('.section.study-hidden, .final.study-hidden')
+    .forEach(s=>s.classList.remove('study-hidden'));
+  (state.hiddenScopes || []).forEach(id=>{
+    document.getElementById(id)?.classList.add('study-hidden');
+  });
+
+  summariesVisible = state.summariesVisible !== false;
+  document.body.classList.toggle('hidden-summary',!summariesVisible);
+  document.body.classList.toggle('show-answers',!!state.answersShown);
+  document.body.classList.toggle('vocab-hide-english',!!state.vocabEnglishHidden);
+
+  if(Array.isArray(state.vocabQuiz) && state.vocabQuiz.length){
+    renderSavedVocabQuiz(state.vocabQuiz);
+  }
+  if(state.vocabResult && document.getElementById('vocabResult')){
+    document.getElementById('vocabResult').textContent=state.vocabResult;
+  }
+
+  document.querySelectorAll('.section, .final').forEach(scope=>{
+    const checked=!!state.checkedScopes?.[scope.id];
+    const correct=blanksIn(scope).filter(b=>b.classList.contains('correct')).length;
+    updateProgress(scope,checked,correct);
+  });
+  updateGlobalSummary();
+  setAnswers(!!state.answersShown);
+
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      if(Number.isFinite(state.scrollY)) window.scrollTo(0,state.scrollY);
+    });
+  });
+
+  const when=state.savedAt ? new Date(state.savedAt) : null;
+  const stamp=when && !Number.isNaN(when.getTime())
+    ? when.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})
+    : '';
+  setSaveStatus(`กู้คืนงานเดิมแล้ว · ${SAVE_BACKEND}${stamp?' · '+stamp:''}`,'ok');
+  return true;
+}
+
+async function bootLocalPersistence(){
+  try{
+    await restoreLocalState();
+  }catch(err){
+    console.error('Restore failed',err);
+    setSaveStatus('ไม่พบงานเดิม · พร้อมเริ่มใหม่','warn');
+  }finally{
+    SAVE_READY=true;
+    scheduleLocalSave(1200);
+  }
+}
+
+async function clearLocalProgress(){
+  const ok=confirm('ล้างคำตอบ คำศัพท์ที่พิมพ์ และความคืบหน้าที่บันทึกไว้ในเครื่องทั้งหมดหรือไม่?');
+  if(!ok) return;
+  SAVE_READY=false;
+  clearTimeout(SAVE_TIMER);
+  await deleteLocalState();
+  setSaveStatus('ล้างงานในเครื่องแล้ว · กำลังเริ่มใหม่','ok');
+  location.reload();
+}
+
+
+function setAnswers(on){
+  document.body.classList.toggle('show-answers',on);
+  document.getElementById('status').textContent =
+    (on?'โหมดเฉลย':'โหมดนักเรียน') + ' · ' + (summariesVisible?'แสดงสรุปอ่าน':'ซ่อนสรุปอ่าน');
+}
+function toggleAnswers(){
+  setAnswers(!document.body.classList.contains('show-answers'));
+  scheduleLocalSave();
+}
+function showAllSummaries(){
+  document.body.classList.remove('hidden-summary');
+  document.querySelectorAll('.section.study-hidden, .final.study-hidden').forEach(scope=>scope.classList.remove('study-hidden'));
+  summariesVisible=true;
+}
+function toggleSummaries(){
+  summariesVisible=!summariesVisible;
+  document.body.classList.toggle('hidden-summary',!summariesVisible);
+  if(summariesVisible){
+    document.querySelectorAll('.section.study-hidden, .final.study-hidden').forEach(scope=>scope.classList.remove('study-hidden'));
+  }
+  setAnswers(document.body.classList.contains('show-answers'));
+  scheduleLocalSave();
+}
+function printStudent(){
+  const prevAnswers=document.body.classList.contains('show-answers');
+  const prevSummaries=summariesVisible;
+  const prevHidden=[...document.querySelectorAll('.section.study-hidden, .final.study-hidden')].map(s=>s.id);
+  setAnswers(false);
+  showAllSummaries();
+  setAnswers(false);
+  window.print();
+  summariesVisible=prevSummaries;
+  document.body.classList.toggle('hidden-summary',!prevSummaries);
+  prevHidden.forEach(id=>document.getElementById(id)?.classList.add('study-hidden'));
+  setAnswers(prevAnswers);
+}
+function printKey(){
+  const prevAnswers=document.body.classList.contains('show-answers');
+  const prevSummaries=summariesVisible;
+  const prevHidden=[...document.querySelectorAll('.section.study-hidden, .final.study-hidden')].map(s=>s.id);
+  setAnswers(true);
+  showAllSummaries();
+  setAnswers(true);
+  window.print();
+  summariesVisible=prevSummaries;
+  document.body.classList.toggle('hidden-summary',!prevSummaries);
+  prevHidden.forEach(id=>document.getElementById(id)?.classList.add('study-hidden'));
+  setAnswers(prevAnswers);
+}
+function scopeFor(node){return node.closest('.section, .final');}
+function chipsIn(scope){return [...scope.querySelectorAll('.wordbank .word')];}
+function blanksIn(scope){return [...scope.querySelectorAll('.blank[data-answer]')];}
+function normalize(v){return String(v||'').trim().replace(/\s+/g,' ').toLowerCase();}
+
+function clearSelection(){
+  if(selectedChip) selectedChip.classList.remove('selected');
+  selectedChip=null;
+  document.querySelectorAll('.blank.drop-ready').forEach(b=>b.classList.remove('drop-ready'));
+}
+function selectChip(chip){
+  if(chip.classList.contains('used')) return;
+  if(selectedChip===chip){clearSelection();return;}
+  clearSelection();
+  selectedChip=chip;
+  chip.classList.add('selected');
+  blanksIn(scopeFor(chip)).forEach(b=>b.classList.add('drop-ready'));
+  chip.focus();
+}
+function returnExistingWord(blank){
+  const oldId=blank.dataset.chipId;
+  if(oldId){
+    const old=document.querySelector('[data-chip-id="'+CSS.escape(oldId)+'"]');
+    if(old) old.classList.remove('used','selected');
+  }
+  blank.dataset.chipId='';
+  blank.dataset.value='';
+  blank.classList.remove('filled','correct','incorrect','drop-ready');
+  const placed=blank.querySelector('.placed');
+  if(placed) placed.remove();
+}
+function placeChip(chip, blank){
+  if(!chip || !blank || chip.classList.contains('used')) return;
+  if(scopeFor(chip)!==scopeFor(blank)) return;
+  returnExistingWord(blank);
+  const value=chip.dataset.value;
+  const span=document.createElement('span');
+  span.className='placed';
+  span.textContent=value;
+  blank.prepend(span);
+  blank.dataset.value=value;
+  blank.dataset.chipId=chip.dataset.chipId;
+  blank.classList.add('filled');
+  blank.classList.remove('correct','incorrect','drop-ready');
+  chip.classList.add('used');
+  chip.classList.remove('selected');
+  selectedChip=null;
+  updateProgress(scopeFor(blank));
+  updateGlobalSummary();
+  scheduleLocalSave();
+}
+function removeFromBlank(blank){
+  if(!blank.dataset.value) return;
+  returnExistingWord(blank);
+  updateProgress(scopeFor(blank));
+  updateGlobalSummary();
+  scheduleLocalSave();
+}
+function checkScope(scope){
+  let correct=0;
+  blanksIn(scope).forEach(blank=>{
+    blank.classList.remove('correct','incorrect');
+    if(!blank.dataset.value) return;
+    if(normalize(blank.dataset.value)===normalize(blank.dataset.answer)){
+      blank.classList.add('correct'); correct++;
+    }else{
+      blank.classList.add('incorrect');
+    }
+  });
+  updateProgress(scope,true,correct);
+  updateGlobalSummary();
+  scheduleLocalSave();
+}
+function resetScope(scope){
+  blanksIn(scope).forEach(returnExistingWord);
+  chipsIn(scope).forEach(c=>c.classList.remove('used','selected'));
+  clearSelection();
+  updateProgress(scope);
+  updateGlobalSummary();
+  scheduleLocalSave();
+}
+function checkAllAnswers(){
+  document.querySelectorAll('.section, .final').forEach(checkScope);
+}
+function resetAllAnswers(){
+  document.querySelectorAll('.section, .final').forEach(resetScope);
+}
+function updateProgress(scope,checked=false,forcedCorrect=0){
+  const blanks=blanksIn(scope);
+  const filled=blanks.filter(b=>b.dataset.value).length;
+  const correct=checked ? forcedCorrect : blanks.filter(b=>b.classList.contains('correct')).length;
+  const el=scope.querySelector('.section-playbar .progress');
+  if(el){
+    el.textContent=checked
+      ? `ถูก ${correct}/${blanks.length} · เติมแล้ว ${filled}/${blanks.length}`
+      : `เติมแล้ว ${filled}/${blanks.length}`;
+  }
+}
+function updateGlobalSummary(){
+  const blanks=[...document.querySelectorAll('.blank[data-answer]')];
+  const filled=blanks.filter(b=>b.dataset.value).length;
+  const correct=blanks.filter(b=>b.classList.contains('correct')).length;
+  const el=document.getElementById('gameSummary');
+  el.textContent = correct
+    ? `ถูก ${correct}/${blanks.length} · เติมแล้ว ${filled}`
+    : `เติมแล้ว ${filled} / ${blanks.length}`;
+}
+function addPlaybar(scope){
+  const wb=scope.querySelector('.wordbank');
+  if(!wb) return;
+  const bar=document.createElement('div');
+  bar.className='section-playbar';
+
+  const hide=document.createElement('button');
+  hide.type='button';
+  hide.textContent='ซ่อน/เปิดสรุปหัวข้อนี้';
+  hide.addEventListener('click',()=>{
+    scope.classList.toggle('study-hidden');
+    scheduleLocalSave();
+  });
+
+  const check=document.createElement('button');
+  check.type='button';
+  check.textContent='ตรวจคำตอบ';
+  check.addEventListener('click',()=>checkScope(scope));
+
+  const reset=document.createElement('button');
+  reset.type='button';
+  reset.textContent='เริ่มหัวข้อนี้ใหม่';
+  reset.addEventListener('click',()=>resetScope(scope));
+
+  const progress=document.createElement('span');
+  progress.className='progress';
+  progress.setAttribute('aria-live','polite');
+
+  bar.append(hide,check,reset,progress);
+  wb.insertAdjacentElement('afterend',bar);
+  updateProgress(scope);
+}
+function initGame(){
+  document.querySelectorAll('.section, .final').forEach(scope=>{
+    chipsIn(scope).forEach(chip=>{
+      chipSerial++;
+      chip.dataset.chipId='chip'+chipSerial;
+      chip.dataset.value=chip.textContent.trim();
+      chip.setAttribute('draggable','true');
+      chip.setAttribute('role','button');
+      chip.setAttribute('tabindex','0');
+      chip.setAttribute('aria-label','คำ '+chip.dataset.value+' แตะแล้วเลือกช่องว่าง หรือใช้การลาก');
+      chip.addEventListener('click',()=>selectChip(chip));
+      chip.addEventListener('keydown',e=>{
+        if(e.key==='Enter'||e.key===' '){
+          e.preventDefault();selectChip(chip);
+        }
+      });
+      chip.addEventListener('dragstart',e=>{
+        if(chip.classList.contains('used')){e.preventDefault();return;}
+        dragChip=chip;
+        e.dataTransfer.effectAllowed='move';
+        e.dataTransfer.setData('text/plain',chip.dataset.chipId);
+      });
+      chip.addEventListener('dragend',()=>{
+        dragChip=null;
+        document.querySelectorAll('.blank.drop-ready').forEach(b=>b.classList.remove('drop-ready'));
+      });
+    });
+    const blankAnswerCounts={};
+    blanksIn(scope).forEach(blank=>{
+      const answerKey=normalize(blank.dataset.answer);
+      blankAnswerCounts[answerKey]=(blankAnswerCounts[answerKey]||0)+1;
+      blank.dataset.saveId=(scope.id||'scope')+'|'+encodeURIComponent(answerKey)+'|'+blankAnswerCounts[answerKey];
+      blank.setAttribute('role','button');
+      blank.setAttribute('tabindex','0');
+      blank.setAttribute('aria-label','ช่องคำตอบ แตะเพื่อวางคำที่เลือก หรือแตะเพื่อนำคำออก');
+      blank.addEventListener('click',()=>{
+        if(selectedChip) placeChip(selectedChip,blank);
+        else if(blank.dataset.value) removeFromBlank(blank);
+      });
+      blank.addEventListener('keydown',e=>{
+        if(e.key==='Enter'||e.key===' '){
+          e.preventDefault();
+          if(selectedChip) placeChip(selectedChip,blank);
+          else if(blank.dataset.value) removeFromBlank(blank);
+        }
+      });
+      blank.addEventListener('dragover',e=>{
+        if(dragChip && scopeFor(dragChip)===scopeFor(blank)){
+          e.preventDefault();
+          blank.classList.add('drop-ready');
+          e.dataTransfer.dropEffect='move';
+        }
+      });
+      blank.addEventListener('dragleave',()=>blank.classList.remove('drop-ready'));
+      blank.addEventListener('drop',e=>{
+        e.preventDefault();
+        blank.classList.remove('drop-ready');
+        const id=e.dataTransfer.getData('text/plain');
+        const chip=document.querySelector('[data-chip-id="'+CSS.escape(id)+'"]')||dragChip;
+        placeChip(chip,blank);
+        dragChip=null;
+      });
+    });
+    addPlaybar(scope);
+  });
+  updateGlobalSummary();
+}
+setAnswers(false);
+initGame();
+
+const VOCAB_DATA = [{"th": "สร้างอาหาร", "en": "make food"}, {"th": "พลังงานแสง", "en": "light energy"}, {"th": "พลังงานเคมี", "en": "chemical energy"}, {"th": "คาร์บอนไดออกไซด์", "en": "carbon dioxide"}, {"th": "น้ำ", "en": "water"}, {"th": "กลูโคส", "en": "glucose"}, {"th": "ออกซิเจน", "en": "oxygen"}, {"th": "คลอโรฟิลล์", "en": "chlorophyll"}, {"th": "คลอโรพลาสต์", "en": "chloroplast"}, {"th": "ดูดกลืน", "en": "absorb"}, {"th": "แสง", "en": "light"}, {"th": "พลังงาน", "en": "energy"}, {"th": "ต่างกัน", "en": "different"}, {"th": "สีเขียว", "en": "green"}, {"th": "สีเหลือง", "en": "yellow"}, {"th": "พลูด่าง", "en": "variegated pothos"}, {"th": "ทานตะวัน", "en": "sunflower"}, {"th": "แสงน้อย", "en": "low light"}, {"th": "แสงมาก", "en": "high light"}, {"th": "ดวงอาทิตย์", "en": "the Sun"}, {"th": "แหล่งกำเนิดอื่น", "en": "other light sources"}, {"th": "ปากใบ", "en": "stoma / stomata"}, {"th": "เซลล์คุม", "en": "guard cells"}, {"th": "ราก", "en": "root"}, {"th": "แร่ธาตุ", "en": "minerals"}, {"th": "ลำเลียง", "en": "transport"}, {"th": "คายน้ำ", "en": "transpire"}, {"th": "หายใจ", "en": "respire"}, {"th": "แป้ง", "en": "starch"}, {"th": "ใบ ราก และลำต้น", "en": "leaves, roots and stems"}, {"th": "เซลลูโลส", "en": "cellulose"}, {"th": "ผนังเซลล์", "en": "cell wall"}, {"th": "ผู้ผลิต", "en": "producer"}, {"th": "อาหาร", "en": "food"}, {"th": "ถ่ายทอดพลังงาน", "en": "energy transfer"}, {"th": "ไอน้ำ", "en": "water vapour"}, {"th": "ผู้บริโภคอันดับที่ 1", "en": "primary consumer"}, {"th": "ผู้บริโภคอันดับที่ 2", "en": "secondary consumer"}, {"th": "ผู้บริโภคอันดับที่ 3", "en": "tertiary consumer"}, {"th": "ผู้ย่อยสลาย", "en": "decomposer"}, {"th": "ธาตุอาหาร", "en": "nutrients"}, {"th": "กักเก็บความร้อน", "en": "trap heat"}, {"th": "แก๊สเรือนกระจก", "en": "greenhouse gas"}, {"th": "ปรากฏการณ์เรือนกระจก", "en": "greenhouse effect"}, {"th": "สังเคราะห์ด้วยแสง", "en": "photosynthesis"}, {"th": "บรรยากาศ", "en": "atmosphere"}, {"th": "ภาวะโลกร้อน", "en": "global warming"}, {"th": "ปัจจัยจำเป็น", "en": "essential factor"}, {"th": "ไม่ได้", "en": "cannot"}, {"th": "คาร์บอนไดออกไซด์และน้ำ", "en": "carbon dioxide and water"}, {"th": "แสงจากดวงอาทิตย์", "en": "sunlight"}, {"th": "ออกซิเจนและน้ำตาล", "en": "oxygen and sugar"}, {"th": "เจริญเติบโตเต็มที่", "en": "fully grown / mature"}, {"th": "ดอก", "en": "flower"}, {"th": "ราก ลำต้น ใบ ตา ดอก และเมล็ด", "en": "roots, stems, leaves, buds, flowers and seeds"}, {"th": "กิ่งและใบ", "en": "branches and leaves"}, {"th": "สืบพันธุ์", "en": "reproduce"}, {"th": "กลีบเลี้ยง", "en": "sepal"}, {"th": "กลีบดอก", "en": "petal"}, {"th": "เกสรเพศผู้", "en": "stamen"}, {"th": "ก้านชูอับเรณู", "en": "filament"}, {"th": "อับเรณู", "en": "anther"}, {"th": "เกสรเพศเมีย", "en": "pistil"}, {"th": "ยอดเกสรเพศเมีย", "en": "stigma"}, {"th": "ก้านชูเกสรเพศเมีย", "en": "style"}, {"th": "รังไข่", "en": "ovary"}, {"th": "ออวุล", "en": "ovule"}, {"th": "ถุงเอ็มบริโอ", "en": "embryo sac"}, {"th": "ดอกครบส่วน", "en": "complete flower"}, {"th": "4 ส่วน", "en": "four parts"}, {"th": "ดอกไม่ครบส่วน", "en": "incomplete flower"}, {"th": "ดอกสมบูรณ์เพศ", "en": "bisexual flower"}, {"th": "เกสรเพศผู้และเกสรเพศเมีย", "en": "stamen and pistil"}, {"th": "ดอกไม่สมบูรณ์เพศ", "en": "unisexual flower"}, {"th": "ดอกเดี่ยว", "en": "solitary flower"}, {"th": "ดอกช่อ", "en": "inflorescence"}, {"th": "ดอกย่อยหลายดอก", "en": "many small flowers / florets"}, {"th": "ละอองเรณู", "en": "pollen grain"}, {"th": "ดอกชนิดเดียวกัน", "en": "flower of the same species"}, {"th": "ภายในดอกเดียวกัน", "en": "within the same flower"}, {"th": "ข้ามดอก", "en": "between flowers"}, {"th": "ลมและน้ำ", "en": "wind and water"}, {"th": "แมลง สัตว์ และมนุษย์", "en": "insects, animals and humans"}, {"th": "การงอกของละอองเรณู", "en": "pollen germination"}, {"th": "การปฏิสนธิ", "en": "fertilization"}, {"th": "ไมโครสปอร์มาเทอร์เซลล์", "en": "microspore mother cell"}, {"th": "2n", "en": "diploid (2n)"}, {"th": "ไมโอซิส", "en": "meiosis"}, {"th": "ไมโครสปอร์", "en": "microspore"}, {"th": "4 เซลล์", "en": "four cells"}, {"th": "ไมโทซิส", "en": "mitosis"}, {"th": "เจเนอเรทีฟเซลล์", "en": "generative cell"}, {"th": "ทิวบ์เซลล์", "en": "tube cell"}, {"th": "เมกะสปอร์", "en": "megaspore"}, {"th": "3 ครั้ง", "en": "three times"}, {"th": "8 นิวเคลียส", "en": "eight nuclei"}, {"th": "เจเนอเรทีฟนิวเคลียส", "en": "generative nucleus"}, {"th": "ทิวบ์นิวเคลียส", "en": "tube nucleus"}, {"th": "หลอดละอองเรณู", "en": "pollen tube"}, {"th": "สเปิร์มนิวเคลียส 2 อัน", "en": "two sperm nuclei"}, {"th": "เซลล์ไข่", "en": "egg cell"}, {"th": "ไซโกต", "en": "zygote"}, {"th": "เอ็มบริโอ", "en": "embryo"}, {"th": "โพลาร์นิวเคลียส", "en": "polar nuclei"}, {"th": "เอนโดสเปิร์ม", "en": "endosperm"}, {"th": "การปฏิสนธิซ้อน", "en": "double fertilization"}, {"th": "การถ่ายละอองเรณู", "en": "pollination"}, {"th": "สเปิร์ม 2 ตัว", "en": "two sperm cells"}, {"th": "เมล็ด", "en": "seed"}, {"th": "ผล", "en": "fruit"}, {"th": "เปลือกและเนื้อของผล", "en": "fruit peel and flesh"}, {"th": "เปลือกหุ้มเมล็ด", "en": "seed coat"}, {"th": "เอ็มบริโอหรือต้นอ่อน", "en": "embryo / young plant"}, {"th": "อาหารเลี้ยงเอ็มบริโอ", "en": "food for the embryo"}, {"th": "เหี่ยวแห้งและร่วงหลุดไป", "en": "wither and fall off"}, {"th": "ผลเดี่ยว", "en": "simple fruit"}, {"th": "รังไข่เพียงอันเดียว", "en": "one ovary"}, {"th": "ผลกลุ่ม", "en": "aggregate fruit"}, {"th": "หลายรังไข่", "en": "many ovaries"}, {"th": "ผลรวม", "en": "multiple fruit"}, {"th": "ฐานรองดอก", "en": "receptacle"}, {"th": "กล้วยหอมและองุ่นไม่มีเมล็ด", "en": "banana and seedless grapes"}, {"th": "ผนังรังไข่", "en": "ovary wall"}, {"th": "เพริคาร์ป", "en": "pericarp"}, {"th": "เอกโซคาร์ป", "en": "exocarp"}, {"th": "มีโซคาร์ป", "en": "mesocarp"}, {"th": "เอนโดคาร์ป", "en": "endocarp"}, {"th": "ชั้นนอก", "en": "outer layer"}, {"th": "ชั้นกลาง", "en": "middle layer"}, {"th": "ชั้นใน", "en": "inner layer"}, {"th": "แรดิเคิล", "en": "radicle"}, {"th": "ใบเลี้ยง", "en": "cotyledon"}, {"th": "เอพิคอทิล", "en": "epicotyl"}, {"th": "ไฮโพคอทิล", "en": "hypocotyl"}, {"th": "พลูมูล", "en": "plumule"}, {"th": "2 ใบ", "en": "two cotyledons"}, {"th": "1 ใบ", "en": "one cotyledon"}, {"th": "แป้ง โปรตีน และไขมัน", "en": "starch, proteins and fats"}, {"th": "เหนือดิน", "en": "above ground"}, {"th": "ใต้ดิน", "en": "below ground"}, {"th": "น้ำหรือความชื้น", "en": "water or moisture"}, {"th": "อ่อนตัว", "en": "soften"}, {"th": "อุณหภูมิ", "en": "temperature"}, {"th": "แตกต่างกัน", "en": "vary / differ"}, {"th": "บางชนิด", "en": "some species"}, {"th": "ไม่เกิดการปฏิสนธิ", "en": "without fertilization"}, {"th": "ราก ลำต้น และใบ", "en": "roots, stems and leaves"}, {"th": "เหมือนพ่อแม่", "en": "same as the parent plant"}, {"th": "หน่อ", "en": "bud / offshoot"}, {"th": "สปอร์", "en": "spore"}, {"th": "ลมหรือน้ำ", "en": "wind or water"}, {"th": "ไหล", "en": "runner / stolon"}, {"th": "เจริญเป็นต้นใหม่ได้", "en": "can grow into a new plant"}, {"th": "ใช้เมล็ด", "en": "seed propagation"}, {"th": "ส่วนต่าง ๆ ของต้นพืช", "en": "vegetative plant parts"}, {"th": "ต้นกล้า", "en": "seedling"}, {"th": "2–3 เท่า", "en": "2–3 times"}, {"th": "ความชื้นเหมาะสม", "en": "suitable moisture"}, {"th": "การปักชำ", "en": "cutting"}, {"th": "ใบ กิ่ง ลำต้น หรือราก", "en": "leaves, branches, stems or roots"}, {"th": "ออกรากและแตกยอดใหม่", "en": "form roots and new shoots"}, {"th": "การติดตา", "en": "budding"}, {"th": "แผ่นตาจากกิ่งพันธุ์ดี", "en": "a bud from a desired variety"}, {"th": "การต่อกิ่ง", "en": "grafting"}, {"th": "กิ่งพันธุ์ดี", "en": "scion"}, {"th": "ต้นตอ", "en": "rootstock"}, {"th": "การทาบกิ่ง", "en": "approach grafting"}, {"th": "ระบบราก", "en": "root system"}, {"th": "การตอนกิ่ง", "en": "air layering"}, {"th": "เกิดรากจากต้นแม่", "en": "form roots while attached to the parent plant"}, {"th": "ไม่มีรากแก้ว", "en": "no taproot"}, {"th": "จำนวนมากอย่างรวดเร็ว", "en": "large numbers quickly"}, {"th": "สภาพปลอดเชื้อจุลินทรีย์", "en": "sterile conditions"}, {"th": "อุณหภูมิ แสง และความชื้น", "en": "temperature, light and humidity"}, {"th": "เตรียมอาหาร", "en": "prepare culture medium"}, {"th": "ฟอกฆ่าเชื้อส่วนเนื้อเยื่อ", "en": "surface-sterilize the explant"}, {"th": "นำเนื้อเยื่อลงขวดเลี้ยง", "en": "place the tissue in a culture vessel"}, {"th": "นำขวดเลี้ยงเนื้อเยื่อไปเลี้ยง", "en": "incubate the culture"}, {"th": "ย้ายเนื้อเยื่อออกจากขวด", "en": "remove the plantlets from the culture vessel"}, {"th": "พืชปลอดโรค", "en": "disease-free plants"}, {"th": "เก็บรักษาพันธุ์พืช", "en": "plant germplasm conservation"}, {"th": "ไม่อาศัยเพศ", "en": "asexual"}, {"th": "การเพาะเลี้ยงเนื้อเยื่อ", "en": "tissue culture"}, {"th": "17 ธาตุ", "en": "17 essential elements"}, {"th": "3 ธาตุ", "en": "three elements"}, {"th": "14 ธาตุ", "en": "fourteen elements"}, {"th": "คาร์บอน ไฮโดรเจน และออกซิเจน", "en": "carbon, hydrogen and oxygen"}, {"th": "ไนโตรเจน ฟอสฟอรัส และโพแทสเซียม", "en": "nitrogen, phosphorus and potassium"}, {"th": "แคลเซียม แมกนีเซียม และกำมะถัน", "en": "calcium, magnesium and sulfur"}, {"th": "ธาตุอาหารหลัก", "en": "primary nutrients"}, {"th": "ธาตุอาหารรอง", "en": "secondary nutrients"}, {"th": "ไนโตรเจน", "en": "nitrogen"}, {"th": "ใบล่างขึ้นบน", "en": "from lower leaves upward"}, {"th": "ฟอสฟอรัส", "en": "phosphorus"}, {"th": "สีม่วง", "en": "purple"}, {"th": "โพแทสเซียม", "en": "potassium"}, {"th": "เปิด-ปิดปากใบ", "en": "stomatal opening and closing"}, {"th": "ปลายใบ", "en": "leaf tip"}, {"th": "แคลเซียม", "en": "calcium"}, {"th": "ยอดอ่อนและแห้งตาย", "en": "young shoot tips die and dry out"}, {"th": "แมกนีเซียม", "en": "magnesium"}, {"th": "เส้นใบยังเขียว", "en": "veins remain green"}, {"th": "กำมะถัน", "en": "sulfur"}, {"th": "คล้ายขาดไนโตรเจน", "en": "similar to nitrogen deficiency"}, {"th": "โบรอน", "en": "boron"}, {"th": "เหล็ก", "en": "iron"}, {"th": "แมงกานีส", "en": "manganese"}, {"th": "สังกะสี", "en": "zinc"}, {"th": "ปุ๋ยเคมี", "en": "chemical fertilizer"}, {"th": "30-20-10", "en": "30-20-10 N-P-K"}, {"th": "ปุ๋ยอินทรีย์", "en": "organic fertilizer"}, {"th": "ปุ๋ยคอก ปุ๋ยหมัก ปุ๋ยพืชสด", "en": "manure, compost and green manure"}, {"th": "ปุ๋ยชีวภาพ", "en": "biofertilizer"}, {"th": "จุลินทรีย์", "en": "microorganisms"}, {"th": "ตรึงไนโตรเจน", "en": "nitrogen fixation"}, {"th": "กรด-เบส", "en": "acid-base balance / pH"}, {"th": "รากและขนราก", "en": "roots and root hairs"}, {"th": "น้ำและธาตุอาหาร", "en": "water and nutrients"}, {"th": "ท่อลำเลียง", "en": "vascular tissue"}, {"th": "เพิ่มพื้นที่ผิว", "en": "increase surface area"}, {"th": "รากแก้ว", "en": "taproot"}, {"th": "รากฝอย", "en": "fibrous root"}, {"th": "พยุง", "en": "support"}, {"th": "ไซเล็ม", "en": "xylem"}, {"th": "โฟลเอ็ม", "en": "phloem"}, {"th": "แลกเปลี่ยนแก๊ส", "en": "gas exchange"}, {"th": "น้ำและแร่ธาตุ", "en": "water and minerals"}, {"th": "อาหารหรือน้ำตาล", "en": "food or sugars"}, {"th": "แคมเบียม", "en": "cambium"}, {"th": "เนื้อเยื่อเจริญด้านข้าง", "en": "lateral meristem"}, {"th": "ใบ", "en": "leaf"}, {"th": "ออสโมซิส", "en": "osmosis"}, {"th": "การแพร่", "en": "diffusion"}, {"th": "ขึ้นด้านบน", "en": "upward"}, {"th": "ราก ลำต้น และหัว", "en": "roots, stems and storage organs"}, {"th": "ทั้งขึ้นและลง", "en": "both upward and downward"}, {"th": "การคายน้ำ", "en": "transpiration"}, {"th": "เส้นใบขนาน", "en": "parallel venation"}, {"th": "เส้นใบร่างแห", "en": "reticulate venation"}, {"th": "กระจัดกระจาย", "en": "scattered"}, {"th": "เรียงเป็นวง", "en": "arranged in a ring"}, {"th": "ยึดต้นและดูดน้ำ", "en": "anchor the plant and absorb water"}, {"th": "พยุงและลำเลียง", "en": "support and transport"}, {"th": "สืบพันธุ์แบบอาศัยเพศ", "en": "sexual reproduction"}, {"th": "ป้องกันเมล็ด", "en": "protect the seeds"}, {"th": "อาหารให้ตัวอ่อน", "en": "food for the embryo"}, {"th": "ไนโตรเจน ฟอสฟอรัส โพแทสเซียม", "en": "nitrogen, phosphorus, potassium"}];
+
+function vocabNorm(s){
+  return String(s||'')
+    .toLowerCase()
+    .replace(/[().,]/g,' ')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+function vocabAnswers(display){
+  // ยอมรับคำที่คั่นด้วย / เป็นทางเลือก และตัดคำอธิบายในวงเล็บแบบง่าย
+  const parts = String(display).split('/').map(x=>x.trim()).filter(Boolean);
+  const out = new Set();
+  parts.forEach(p=>{
+    out.add(vocabNorm(p));
+    out.add(vocabNorm(p.replace(/\([^)]*\)/g,'')));
+  });
+  // aliases สำคัญ
+  const d=vocabNorm(display);
+  const aliases={
+    'stoma stomata':['stoma','stomata'],
+    'runner stolon':['runner','stolon'],
+    'fully grown mature':['fully grown','mature'],
+    'different':['different'],
+    'vary differ':['vary','differ'],
+    'bud offshoot':['bud','offshoot'],
+    'acid-base balance ph':['acid-base balance','ph'],
+    'embryo young plant':['embryo','young plant'],
+    'many small flowers florets':['many small flowers','florets'],
+  };
+  Object.entries(aliases).forEach(([k,arr])=>{
+    if(d===k) arr.forEach(a=>out.add(vocabNorm(a)));
+  });
+  return [...out].filter(Boolean);
+}
+function shuffleVocab(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function toggleVocabEnglish(){
+  document.body.classList.toggle('vocab-hide-english');
+  scheduleLocalSave();
+}
+function buildVocabQuiz(n=30){
+  const grid=document.getElementById('vocabGrid');
+  if(!grid) return;
+  const data=shuffleVocab(VOCAB_DATA);
+  const chosen=n==='all'?data:data.slice(0,Math.min(Number(n)||30,data.length));
+  grid.innerHTML='';
+  chosen.forEach((item,i)=>{
+    const q=document.createElement('div');
+    q.className='vocab-q';
+    q.dataset.th=item.th;
+    q.dataset.answer=item.en;
+    q.innerHTML=`<div class="thai">${i+1}. ${item.th}</div>
+      <div><input class="vocab-input" type="text" autocomplete="off" spellcheck="false" placeholder="เขียนศัพท์อังกฤษ"></div>
+      <div class="vocab-answer">เฉลย: <b>${item.en}</b></div>`;
+    grid.appendChild(q);
+  });
+  document.getElementById('vocabResult').textContent=`ชุดเขียน ${chosen.length} คำ`;
+  grid.querySelector('input')?.focus();
+  scheduleLocalSave();
+}
+function checkVocabQuiz(){
+  const qs=[...document.querySelectorAll('#vocabGrid .vocab-q')];
+  if(!qs.length){ buildVocabQuiz(30); return; }
+  let correct=0, filled=0;
+  qs.forEach(q=>{
+    const inp=q.querySelector('.vocab-input');
+    inp.classList.remove('correct','incorrect');
+    const val=vocabNorm(inp.value);
+    if(!val) return;
+    filled++;
+    if(vocabAnswers(q.dataset.answer).includes(val)){
+      correct++; inp.classList.add('correct');
+    }else inp.classList.add('incorrect');
+  });
+  document.getElementById('vocabResult').textContent=`ถูก ${correct}/${qs.length} · เขียนแล้ว ${filled}`;
+  scheduleLocalSave();
+}
+function resetVocabQuiz(){
+  document.querySelectorAll('#vocabGrid .vocab-input').forEach(i=>{
+    i.value=''; i.classList.remove('correct','incorrect');
+  });
+  document.querySelectorAll('#vocabGrid .vocab-q').forEach(q=>q.classList.remove('show-answer'));
+  const n=document.querySelectorAll('#vocabGrid .vocab-q').length;
+  document.getElementById('vocabResult').textContent=n?`ชุดเขียน ${n} คำ`:'ยังไม่ได้เริ่มแบบฝึก';
+  scheduleLocalSave();
+}
+function revealVocabAnswers(){
+  document.querySelectorAll('#vocabGrid .vocab-q').forEach(q=>q.classList.toggle('show-answer'));
+  scheduleLocalSave();
+}
+
+document.addEventListener('input',e=>{
+  if(e.target.matches('.vocab-input')) scheduleLocalSave(450);
+});
+window.addEventListener('scroll',()=>scheduleLocalSave(700),{passive:true});
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='hidden') saveLocalStateNow();
+});
+window.addEventListener('pagehide',()=>saveLocalStateNow());
+
+if(document.getElementById('vocabGrid')) buildVocabQuiz(30);
+bootLocalPersistence();
+
+</script>
+</body>
+</html>
