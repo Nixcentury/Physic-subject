@@ -1,0 +1,2720 @@
+<!DOCTYPE html>
+
+<html lang="th">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Chapter 7 Light · Science M3 · Round 10 · Final Source QA PASSED</title>
+<style>
+:root{
+  --ink:#111;
+  --muted:#5b5b5b;
+  --paper:#fff;
+  --soft:#f5f5f5;
+  --soft2:#fafafa;
+  --line:#222;
+  --ok:#e8f5e9;
+  --bad:#ffebee;
+}
+*{box-sizing:border-box}
+html,body{
+  margin:0;padding:0;background:#e9e9e9;color:var(--ink);
+  font-family:"Noto Sans Thai",Tahoma,Arial,sans-serif;
+  line-height:1.62;
+}
+body{font-size:15px}
+.toolbar{
+  position:sticky;top:0;z-index:50;background:#151515;color:#fff;
+  padding:10px 12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+  box-shadow:0 2px 8px #0003;
+}
+.toolbar button{
+  border:1px solid #777;background:#fff;color:#111;border-radius:7px;
+  padding:8px 11px;font-weight:800;cursor:pointer;
+}
+.toolbar button:hover{background:#eee}
+.toolbar button:focus-visible,.section-playbar button:focus-visible,.word:focus-visible,.blank:focus-visible{
+  outline:3px solid #111;outline-offset:2px
+}
+.toolbar button:focus-visible{outline-color:#fff}
+.toolbar .status{font-size:12px;opacity:.9;margin-left:auto}
+.game-summary{
+  font-size:12px;font-weight:900;padding:5px 8px;border:1px solid #777;
+  background:#fff;color:#111;border-radius:6px;
+}
+.sheet{
+  width:210mm;min-height:297mm;margin:10mm auto;background:#fff;
+  padding:12mm 13mm 14mm;box-shadow:0 2px 14px #0002;
+}
+header{border-bottom:2.5px solid #111;padding-bottom:9px;margin-bottom:11px}
+h1{font-size:26px;line-height:1.2;margin:0 0 3px}
+.subtitle{font-weight:800;font-size:16px}
+.level{font-size:14px;color:#444}
+.meta{
+  display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;margin-top:10px;
+  font-size:13px
+}
+.meta div{border-bottom:1px solid #333;min-height:23px;padding:2px 3px}
+.instruction,.play-help{
+  border:1.6px solid #111;background:#fafafa;padding:9px 11px;margin:9px 0 12px;
+  font-size:13px
+}
+.section{
+  border-top:2px solid #111;padding-top:10px;margin-top:17px;
+}
+.section-head{display:flex;align-items:flex-start;gap:9px;margin-bottom:8px}
+.num{
+  width:30px;height:30px;border:2px solid #111;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-weight:900;flex:0 0 auto
+}
+h2{font-size:19px;margin:1px 0 0;line-height:1.3}
+.coverage{font-size:11.5px;color:#555;margin-top:2px}
+.read-box{
+  border:1.6px solid #111;background:#fff;padding:10px 12px;margin:8px 0 11px;
+  break-inside:avoid;
+}
+.read-box .title{
+  font-size:14px;font-weight:900;border-bottom:1px solid #aaa;
+  padding-bottom:4px;margin-bottom:6px
+}
+.read-box p{margin:5px 0}
+.read-box ul{margin:6px 0 4px 20px;padding:0}
+.read-box li{margin:3px 0}
+.keyline{
+  border-left:5px solid #222;background:#f4f4f4;padding:7px 9px;margin:8px 0;
+  font-weight:800
+}
+.formula{
+  text-align:center;font-size:18px;font-weight:800;border:1.5px solid #111;
+  padding:10px 8px;margin:9px 0;background:#fff;break-inside:avoid
+}
+.wordbank{
+  border:1.4px solid #111;padding:8px 9px;margin:8px 0 9px;background:#f7f7f7;
+  font-size:13px
+}
+.wordbank strong{display:block;margin-bottom:5px}
+.words{display:flex;gap:7px 9px;flex-wrap:wrap}
+.word{
+  border:1px solid #888;border-radius:16px;padding:4px 9px;background:#fff;
+  cursor:grab;user-select:none;touch-action:manipulation;
+  transition:transform .12s ease,background .12s ease,opacity .12s ease;
+}
+.word:active{cursor:grabbing}
+.word.selected{
+  outline:3px solid #111;outline-offset:2px;background:#e7e7e7;
+  transform:translateY(-1px)
+}
+.word.used{opacity:.35;text-decoration:line-through;cursor:default}
+.practice-title{font-weight:900;font-size:14px;margin:10px 0 3px}
+.cloze{font-size:15.2px;text-align:justify;margin:7px 0}
+.blank{
+  display:inline-block;min-width:88px;min-height:26px;border-bottom:1.7px solid #111;
+  text-align:center;padding:0 5px;margin:0 2px;vertical-align:baseline;
+  border-radius:3px;cursor:pointer;transition:background .12s ease,outline .12s ease
+}
+.blank.wide{min-width:125px}
+.blank.xwide{min-width:170px}
+.blank.drop-ready{outline:2px dashed #555;outline-offset:2px;background:#f4f4f4}
+.blank.filled{background:#f7f7f7}
+.blank .placed{font-weight:900;white-space:nowrap}
+.blank.correct{background:var(--ok);outline:2px solid #2e7d32;outline-offset:1px}
+.blank.incorrect{background:var(--bad);outline:2px solid #b71c1c;outline-offset:1px}
+.blank .ans{display:none;font-weight:900}
+body.show-answers .blank .ans{display:inline}
+body.show-answers .blank .space{display:none}
+body.show-answers .blank .placed{display:none}
+.figure{
+  border:1px solid #777;border-radius:7px;padding:7px;margin:9px 0;background:#fff;
+  break-inside:avoid
+}
+.figure figcaption{font-size:11.5px;color:#444;text-align:center;margin-top:4px}
+.figure svg{width:100%;height:auto;display:block}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start}
+.mini-table{width:100%;border-collapse:collapse;margin:8px 0;font-size:12.5px}
+.mini-table th,.mini-table td{
+  border:1px solid #222;padding:6px;text-align:center;vertical-align:middle
+}
+.mini-table th{background:#eee}
+.memory{
+  border:1.5px solid #111;padding:8px 9px;margin:8px 0;background:#fff;
+  font-size:13px;break-inside:avoid
+}
+.section-playbar{
+  display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin:7px 0 9px;
+  padding:6px 8px;border:1px dashed #777;background:#fafafa;font-size:12px
+}
+.section-playbar button{
+  border:1px solid #555;background:#fff;color:#111;border-radius:6px;
+  padding:6px 9px;font-weight:800;cursor:pointer;min-height:36px
+}
+.section-playbar .progress{margin-left:auto;font-weight:900}
+.final{
+  border:2px solid #111;padding:10px;margin-top:18px;
+}
+.final h2{font-size:20px;margin:0 0 6px}
+.footer-note{
+  margin-top:16px;border-top:1px solid #555;padding-top:6px;font-size:10.5px;
+  color:#555;text-align:center
+}
+.teacher-only{display:none}
+body.show-answers .teacher-only{display:block}
+.page-break{break-before:page}
+body.hidden-summary .read-box,
+body.hidden-summary .supplement-box,
+body.hidden-summary .source-focus,
+body.hidden-summary .flowline,
+body.hidden-summary .figure,
+body.hidden-summary .compare-grid,
+.section.study-hidden .read-box,
+.section.study-hidden .supplement-box,
+.section.study-hidden .source-focus,
+.section.study-hidden .flowline,
+.section.study-hidden .figure,
+.section.study-hidden .compare-grid,
+.final.study-hidden .read-box,
+.final.study-hidden .supplement-box,
+.final.study-hidden .source-focus,
+.final.study-hidden .flowline,
+.final.study-hidden .figure,
+.final.study-hidden .compare-grid{display:none!important}
+.sr-only{
+  position:absolute!important;width:1px!important;height:1px!important;padding:0!important;
+  margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;
+  white-space:nowrap!important;border:0!important
+}
+@media(max-width:900px){
+  .sheet{width:auto;min-height:auto;margin:0;padding:18px}
+  .meta,.two-col{grid-template-columns:1fr}
+  .toolbar .status{width:100%;margin-left:0}
+  .word{padding:7px 10px;min-height:36px;display:inline-flex;align-items:center}
+  .blank{min-width:96px;min-height:30px}
+  .section-playbar .progress{width:100%;margin-left:0}
+}
+@media print{
+  @page{size:A4;margin:10mm 11mm 11mm}
+  html,body{background:#fff;font-size:12pt}
+  .toolbar,.section-playbar,.play-help{display:none!important}
+  .sheet{width:auto;min-height:auto;margin:0;padding:0;box-shadow:none}
+  .section-head{break-after:avoid-page}
+  .figure,.wordbank,.read-box,.mini-table,.memory{break-inside:avoid}
+  .wordbank{break-after:avoid-page}
+  .cloze{break-inside:avoid}
+  .blank{min-width:25mm;background:#fff!important;outline:none!important}
+  .blank.wide{min-width:34mm}.blank.xwide{min-width:44mm}
+  .word{opacity:1!important;text-decoration:none!important;outline:none!important;transform:none!important}
+  .blank .placed{display:none!important}
+  body.show-answers .blank .ans{display:inline!important}
+}
+
+.unit-banner{
+  border:2px solid #111;background:#f1f1f1;padding:10px 12px;margin:16px 0 12px;
+  break-inside:avoid;
+}
+.unit-banner .unit-no{font-size:12px;font-weight:900;color:#555;letter-spacing:.2px}
+.unit-banner .unit-title{font-size:21px;font-weight:900;line-height:1.3;margin-top:2px}
+.unit-banner .unit-desc{font-size:12.5px;color:#444;margin-top:3px}
+.flowline{
+  display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;
+  border:1px solid #777;padding:8px;margin:8px 0;background:#fff;break-inside:avoid
+}
+.flowline .step{
+  border:1.4px solid #111;border-radius:7px;padding:5px 8px;background:#fafafa;
+  font-weight:800;font-size:12.5px;text-align:center
+}
+.flowline .arrow{font-weight:900;font-size:18px}
+.source-focus{
+  border:1px dashed #666;background:#fafafa;padding:7px 9px;margin:8px 0;
+  font-size:12px;break-inside:avoid
+}
+@media print{
+  .unit-banner,.flowline,.source-focus{break-inside:avoid}
+}
+
+
+.supplement-box{
+  border:2px dashed #333;background:#fcfcfc;padding:9px 11px;margin:9px 0;
+  break-inside:avoid;
+}
+.supplement-box .sup-title{
+  font-weight:900;font-size:13.5px;margin-bottom:5px;
+}
+.supplement-box .sup-note{
+  font-size:11px;color:#555;margin-top:5px;
+}
+.compare-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0;
+  break-inside:avoid;
+}
+.compare-card{
+  border:1.5px solid #222;padding:8px 9px;background:#fff;
+}
+.compare-card h3{font-size:14px;margin:0 0 5px}
+.compare-card ul{margin:4px 0 2px 18px;padding:0}
+.compare-card li{margin:2px 0}
+.organ-grid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:8px 0;
+}
+.organ-card{border:1px solid #777;padding:7px 8px;background:#fff}
+.organ-card b{display:block;margin-bottom:3px}
+@media(max-width:900px){
+  .compare-grid,.organ-grid{grid-template-columns:1fr}
+}
+@media print{
+  .supplement-box,.compare-grid,.compare-card,.organ-grid,.organ-card{break-inside:avoid}
+}
+
+
+.vocab-unit{
+  border:2px solid #111;background:#f6f6f6;padding:11px 12px;margin:18px 0 12px;
+  break-inside:avoid;
+}
+.vocab-unit h2{margin:0;font-size:21px}
+.vocab-unit p{margin:4px 0 0;color:#444;font-size:12px}
+.vocab-toolbar{
+  display:flex;gap:7px;flex-wrap:wrap;align-items:center;
+  position:sticky;top:56px;z-index:8;background:#fff;border:1px solid #aaa;
+  padding:8px;margin:8px 0 12px;
+}
+.vocab-toolbar button,.vocab-toolbar select{
+  border:1px solid #333;background:#fff;padding:6px 9px;border-radius:6px;font-weight:700;
+}
+.vocab-count{font-weight:800;font-size:12px}
+.vocab-group{margin:14px 0 18px;break-inside:auto}
+.vocab-group h3{
+  border-bottom:2px solid #111;margin:0 0 6px;padding-bottom:4px;font-size:16px;
+}
+.vocab-table{width:100%;border-collapse:collapse;font-size:12px}
+.vocab-table th,.vocab-table td{border:1px solid #888;padding:5px 6px;vertical-align:top}
+.vocab-table th{background:#eee;text-align:left}
+.vocab-table td.eng{font-weight:800}
+body.vocab-hide-english .vocab-table td.eng{color:transparent}
+body.vocab-hide-english .vocab-table td.eng::selection{color:transparent}
+.vocab-practice{
+  border:2px solid #111;padding:10px 12px;margin:14px 0;background:#fff;
+}
+.vocab-practice h3{margin:0 0 4px}
+.vocab-note{font-size:11px;color:#555;margin-bottom:8px}
+.vocab-grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;
+}
+.vocab-q{
+  border:1px solid #aaa;padding:7px;display:grid;grid-template-columns:1fr 1.25fr;gap:6px;align-items:center;
+}
+.vocab-q .thai{font-weight:800}
+.vocab-input{
+  width:100%;box-sizing:border-box;border:1.5px solid #555;border-radius:5px;padding:6px;font-size:13px;
+}
+.vocab-input.correct{border:2px solid #111;background:#f3f3f3}
+.vocab-input.incorrect{border:2px dashed #111}
+.vocab-answer{font-size:11px;margin-top:3px;color:#444;display:none;grid-column:2}
+.vocab-q.show-answer .vocab-answer{display:block}
+.vocab-result{font-weight:900;margin-left:auto}
+@media(max-width:800px){
+  .vocab-grid{grid-template-columns:1fr}
+  .vocab-q{grid-template-columns:1fr}
+  .vocab-answer{grid-column:1}
+}
+@media print{
+  .vocab-toolbar,.vocab-practice{break-inside:avoid}
+  .vocab-toolbar{position:static}
+  .vocab-input{border-bottom:1px solid #111;border-top:0;border-left:0;border-right:0;border-radius:0}
+}
+
+
+.save-status{
+  font-size:11px;font-weight:800;padding:4px 7px;border:1px solid #777;
+  border-radius:5px;background:#fff;white-space:nowrap;
+}
+.save-status.saving{background:#f2f2f2}
+.save-status.ok{border-style:solid}
+.save-status.warn{border-style:dashed}
+@media print{.save-status{display:none!important}}
+
+
+
+.level-tag{display:inline-block;border:1px solid #333;border-radius:999px;padding:2px 7px;
+font-size:11px;font-weight:900;margin:0 4px 4px 0;background:#fff}
+.core-box{border:2px solid #222;padding:9px 11px;margin:9px 0;background:#fff;break-inside:avoid}
+.core-box .core-title{font-weight:900;margin-bottom:4px}
+.optional-box{border:1.5px dashed #666;padding:9px 11px;margin:9px 0;background:#fafafa;break-inside:avoid}
+.optional-box .optional-title{font-weight:900;margin-bottom:4px}
+@media print{.core-box,.optional-box{break-inside:avoid}}
+
+.vocab-level-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0 12px}
+.vocab-level-card{border:1.5px solid #333;border-radius:8px;padding:9px 10px;background:#fff}
+.vocab-level-card b{display:block;font-size:14px;margin-bottom:3px}
+.vocab-level-card small{color:#555}
+.vocab-level-badge{display:inline-block;border:1px solid #555;border-radius:999px;padding:2px 7px;font-size:10px;font-weight:900;white-space:nowrap}
+.vocab-level-badge.core{border-width:2px}
+.vocab-level-badge.should{border-style:solid}
+.vocab-level-badge.support{border-style:dashed;color:#555}
+.vocab-row-hidden{display:none!important}
+.vocab-filterbar{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 10px}
+.vocab-filterbar button.active{outline:3px solid #bbb}
+.vocab-table th.level-col,.vocab-table td.level-col{width:112px;text-align:center}
+.vocab-q .qlevel{font-size:10px;font-weight:900;border:1px solid #777;border-radius:999px;padding:1px 6px;margin-left:5px}
+@media(max-width:700px){
+  .vocab-level-summary{grid-template-columns:1fr}
+  .vocab-table th.level-col,.vocab-table td.level-col{width:auto}
+}
+@media print{.vocab-filterbar{display:none!important}}
+
+.vocab-level-badge.ep{border:2px solid #333;background:#fff;font-weight:900}
+.ep-source-note{border-left:4px solid #555;padding:7px 10px;background:#fafafa;margin:8px 0 10px}
+.toolbar-label{align-self:center;margin-right:3px}
+.vocab-drag-practice{border:2px solid #222;border-radius:10px;padding:14px;margin:14px 0 18px;background:#fff}
+.vocab-drag-toolbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0}
+.vocab-drag-board{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(250px,.9fr);gap:14px;align-items:start}
+.drag-subhead{font-size:14px;margin:4px 0 7px}
+.vocab-drag-targets{display:grid;gap:7px}
+.vdrag-target{display:grid;grid-template-columns:minmax(130px,1fr) minmax(160px,1fr);gap:8px;align-items:center;border:1.5px solid #888;border-radius:8px;padding:7px 8px;min-height:48px;background:#fff}
+.vdrag-target.correct{border:2px solid #111}
+.vdrag-target.incorrect{border:2px dashed #111}
+.vdrag-thai{font-weight:800}
+.vdrag-drop{min-height:34px;border:1.5px dashed #777;border-radius:6px;padding:5px 7px;display:flex;align-items:center;justify-content:center;text-align:center}
+.vdrag-drop.drop-ready{outline:3px solid #ccc}
+.vdrag-drop .placeholder{font-size:11px;color:#777}
+.vdrag-chip{border:1.5px solid #222;border-radius:999px;padding:7px 10px;background:#fff;cursor:grab;font-weight:800;display:inline-block;user-select:none}
+.vdrag-chip.selected{outline:3px solid #aaa}
+.vdrag-chip.used{display:none}
+.vocab-drag-bank{display:flex;flex-wrap:wrap;gap:7px;border:1.5px solid #999;border-radius:8px;padding:10px;min-height:100px;position:sticky;top:8px}
+.vdrag-placed{font-weight:900;cursor:pointer}
+.vdrag-answer{display:none;font-size:11px;margin-top:3px;color:#444}
+.vdrag-target.show-answer .vdrag-answer{display:block}
+@media(max-width:760px){
+  .vocab-drag-board{grid-template-columns:1fr}
+  .vocab-drag-bank{position:static}
+  .vdrag-target{grid-template-columns:1fr}
+}
+@media print{
+  .vocab-drag-toolbar{display:none!important}
+  .vocab-drag-bank{position:static}
+}
+
+.zone-picker-wrap{width:100%;border:1.5px solid #888;border-radius:9px;padding:9px;background:#fafafa}
+.zone-picker-title{font-weight:900;font-size:12px;margin:1px 0 6px}
+.zone-picker-title.ep-title{margin-top:9px}
+.zone-picker{display:flex;flex-wrap:wrap;gap:6px}
+.zone-picker button{font-size:12px}
+.zone-picker button.active-zone{outline:3px solid #aaa;font-weight:900}
+.vocab-drag-actions{display:flex;flex-wrap:wrap;gap:6px;align-items:center;width:100%;margin-top:8px}
+.zone-summary{font-size:11px;color:#555;border-left:4px solid #777;padding:6px 9px;margin:7px 0 10px;background:#fafafa}
+@media(max-width:760px){.zone-picker button{flex:1 1 46%}}
+
+.concept-zone-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%}
+.concept-zone-grid button{text-align:left;padding:10px 11px;border:1.5px solid #555;border-radius:9px;background:#fff}
+.concept-zone-grid button b{display:block;font-size:13px;margin-bottom:3px}
+.concept-zone-grid button small{display:block;font-size:10.5px;line-height:1.35;color:#555}
+.concept-zone-grid button.active-zone{outline:3px solid #aaa;border-width:2px}
+@media(max-width:700px){.concept-zone-grid{grid-template-columns:1fr}}
+</style>
+<style id="round8-drawing-core-skills-style">
+.skill-map{
+  border:2px solid #111;background:#fff;padding:10px 11px;margin:12px 0 16px;
+  break-inside:avoid;
+}
+.skill-map-title{font-weight:900;font-size:16px;margin-bottom:7px}
+.skill-map table{width:100%;border-collapse:collapse;font-size:12.2px}
+.skill-map th,.skill-map td{border:1px solid #444;padding:6px 7px;vertical-align:top}
+.skill-map th{background:#eee;text-align:left}
+.skill-map .topic{font-weight:900;white-space:nowrap}
+.draw-check{
+  border:2px dashed #333;background:#fafafa;padding:8px 10px;margin:9px 0;
+  break-inside:avoid;font-size:12.8px;
+}
+.draw-check b{font-weight:900}
+.draw-check .badge{
+  display:inline-block;border:1px solid #222;border-radius:999px;padding:1px 7px;
+  margin-right:5px;font-size:10.5px;font-weight:900;background:#fff;
+}
+.figure.draw-practice{border:2px solid #333}
+.figure.draw-practice figcaption{font-weight:800;color:#222}
+@media(max-width:700px){.skill-map{overflow-x:auto}.skill-map table{min-width:680px}}
+@media print{.skill-map,.draw-check{break-inside:avoid}.skill-map{font-size:10.5pt}}
+body.hidden-summary .draw-check,
+.section.study-hidden .draw-check,
+.final.study-hidden .draw-check{display:none!important}
+</style>
+</head>
+<body>
+<div class="toolbar">
+<button onclick="printStudent()">พิมพ์ฉบับนักเรียน</button>
+<button onclick="printKey()">พิมพ์ฉบับเฉลย</button>
+<button onclick="toggleAnswers()">เปิด/ปิดเฉลย</button>
+<button onclick="toggleSummaries()">เปิด/ปิดสรุปอ่าน</button>
+<button onclick="checkAllAnswers()">ตรวจทั้งหมด</button>
+<button onclick="resetAllAnswers()">เริ่มใหม่ทั้งหมด</button>
+<button onclick="clearLocalProgress()">ล้างงานในเครื่อง</button>
+<span class="save-status" id="saveStatus">กำลังเตรียมระบบบันทึก…</span>
+<span class="game-summary" id="gameSummary">เติมแล้ว 0 / 0</span>
+<span class="status" id="status">โหมดนักเรียน · แสดงสรุปอ่าน</span>
+</div>
+<main class="sheet">
+<!-- ROUND 10 · TOPICS 7.1–7.4 FINAL SOURCE QA PASSED
+Source only:
+1) Focus Smart Plus Science M3 Chapter 7 Topic 7.1 Reflection of Light.pptx
+2) Focus Smart Plus Science M3 Chapter 7 Topic 7.2 Refraction of Light.pptx
+3) Focus Smart Plus Science M3 Chapter 7 Topic 7.3 Lenses and Light.pptx
+4) Focus Smart Plus Science M3 Chapter 7 Topic 7.4 Brightness of Light.pptx
+Base engine: plantM1TEST.html
+No outside science content is to be added unless explicitly requested.
+-->
+<header>
+<h1>Chapter 7 · Light</h1>
+<div class="subtitle">อ่านสรุปไทย → ใช้วิธีคิด/วิธีวาดไทยเป็นที่พึ่ง → ทำโจทย์ → ลากคำตอบสุดท้าย</div>
+<div class="level">Science Mathayom 3 · Topics 7.1–7.4 · Source-only Core Skills · Round 10 · Final Source QA PASSED</div>
+<div class="meta"><div>ชื่อ:</div><div>ห้อง:</div><div>เลขที่:</div></div>
+</header>
+<div class="instruction">
+<b>หลักของชุดนี้:</b> ใช้เฉพาะเนื้อหาจาก source 7.1–7.4 เลือกเฉพาะหัวใจของแต่ละเรื่องและความสามารถพื้นฐานที่ต้องทำได้
+คำอธิบายและขั้นตอนการวาดเป็นภาษาไทย ส่วนคำตอบสุดท้ายจะใช้การลากวาง/แตะวาง โดยศัพท์หลักเป็นภาษาอังกฤษ และคำตอบตัวเลขมีตัวหลอก
+</div>
+<div class="play-help">
+<b>ระบบที่คงจาก Template:</b> drag-and-drop, tap-to-place บน iPad, check/reset, hide/show summary, progress, Student/Answer mode, print, IndexedDB AutoSave, localStorage backup, restore progress และ clear local progress<br/>
+<b>Round 10 · Final Source QA:</b> ไล่เทียบเนื้อหาและคำตอบกับ Source 7.1–7.4 อีกครั้ง ตรวจคำตอบกำกวม จุดขัดกันในต้นฉบับ วิธีวาด คำศัพท์ English-only, distractors และระบบเดิม โดยไม่เพิ่มเนื้อหานอก source
+</div>
+<div class="source-focus"><b>Scope rule:</b> ไม่เพิ่ม Snell's law, lens equation, inverse-square law หรือความรู้ภายนอกที่ source ไม่ได้สอน</div>
+<div class="source-focus"><b>FINAL QA PASSED:</b> สรุป/วิธีคิด/วิธีวาดเป็นภาษาไทยเพื่อใช้เป็นที่พึ่งตลอด · คำเติมข้อความและ Word Bank เป็น English only · คำตอบสุดท้ายทุกข้อใช้ drag/drop หรือ tap-to-place · จุดที่ source ขัดกันจะระบุไว้ ไม่แอบแก้ด้วยความรู้ภายนอก</div>
+<div class="skill-map">
+<div class="skill-map-title">แผนที่ความสามารถหลักที่ต้องทำได้จาก Source 7.1–7.4</div>
+<table>
+<tr><th>Topic</th><th>หัวใจที่ต้องเข้าใจ</th><th>คำนวณ / อ่านข้อมูล</th><th>รูปที่ต้องวาดหรืออ่านเป็น</th></tr>
+<tr><td class="topic">7.1 Reflection</td><td>incident ray, reflected ray, normal, i = r, plane / curved mirrors</td><td>มุมสะท้อน, มุมกับผิว, f = R/2 ตาม source</td><td>reflection ray, plane-mirror image, special rays ของ concave / convex mirror</td></tr>
+<tr><td class="topic">7.2 Refraction</td><td>towards / away from the normal, apparent position, prism, rainbow</td><td>อ่านค่าความเร็วที่ source ให้และหาผลต่างตรง ๆ</td><td>glass block, apparent depth, prism, water droplet</td></tr>
+<tr><td class="topic">7.3 Lenses</td><td>convex / concave, F, C, 2F, image properties, eye correction, applications</td><td>อ่านตำแหน่งภาพจาก F และ 2F ตามตาราง source</td><td>three important rays, convex / concave image diagrams, eye correction, lens-device sketches</td></tr>
+<tr><td class="topic">7.4 Brightness</td><td>brightness / intensity, lux, distance, iris / pupil</td><td>อ่านตาราง, หาผลต่าง, อ่านแนวโน้ม</td><td>experimental setup, Distance–Lux graph, pupil in dim / bright conditions</td></tr>
+</table>
+<div class="keyline">กติกาหลัก: สรุปและวิธีวาดเป็นภาษาไทยได้ตลอด แต่คำเติม/ชิปคำตอบข้อความเป็น English only และทุกคำตอบที่ระบบตรวจยังจบด้วย drag/drop หรือ tap-to-place</div>
+</div>
+<div class="unit-banner">
+<div class="unit-no">Topic 7.1</div>
+<div class="unit-title">การสะท้อนของแสง · Reflection of Light</div>
+<div class="unit-desc">อ่านสรุปภาษาไทยให้เข้าใจ → ใช้วิธีคิด/วิธีวาดไทยเป็นที่พึ่ง → ลากคำตอบสุดท้ายเป็นภาษาอังกฤษหรือตัวเลข</div>
+</div>
+<section class="section" id="s1">
+<div class="section-head"><div class="num">1</div><div><h2>การมองเห็นและความหมายของการสะท้อน</h2><div class="coverage">luminous object · non-luminous object · reflection · incident ray · reflected ray · normal</div></div></div>
+<div class="read-box">
+<div class="title">สรุปให้อ่านก่อน · ภาษาไทย</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">ต้องรู้</span> เรามองเห็นวัตถุได้อย่างไร</div>
+<p><b>วัตถุที่เปล่งแสงได้เอง</b> เช่น หลอดไฟ มองเห็นได้เพราะแสงจากวัตถุนั้นเดินทางเข้าสู่ตาโดยตรง ส่วน <b>วัตถุที่ไม่เปล่งแสงเอง</b> มองเห็นได้เมื่อมีแสงตกกระทบวัตถุ แล้วแสงสะท้อนเข้าสู่ตา</p>
+<p>เมื่อแสงตกกระทบวัตถุทึบ แสงอาจถูกดูดกลืนหรือสะท้อนกลับ การที่แสงเด้งออกจากผิววัตถุเรียกว่า <b>การสะท้อนของแสง (reflection of light)</b></p>
+</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">คำที่ต้องแยกให้ได้</span></div>
+<ul>
+<li><b>incident ray</b> = รังสีแสงที่เดินทางเข้าหาผิวสะท้อน</li>
+<li><b>reflected ray</b> = รังสีแสงที่สะท้อนออกจากผิว</li>
+<li><b>normal</b> = เส้นที่ลากตั้งฉาก 90° กับผิว ณ จุดที่แสงตกกระทบ</li>
+</ul>
+</div>
+<div class="keyline">ภาพจำ: แสงเข้า = incident ray · แสงเด้งออก = reflected ray · เส้นตั้งฉาก = normal</div>
+</div>
+<div class="practice-title">ลากคำศัพท์ภาษาอังกฤษลงในช่องว่าง</div>
+<div class="wordbank"><strong>Word Bank · English only · Source-only distractors</strong><div class="words">
+<span class="word">luminous object</span>
+<span class="word">non-luminous object</span>
+<span class="word">reflection</span>
+<span class="word">incident ray</span>
+<span class="word">reflected ray</span>
+<span class="word">normal</span>
+<span class="word">refraction</span>
+<span class="word">focal point</span>
+<span class="word">principal axis</span>
+</div></div>
+<p class="cloze">วัตถุที่เปล่งแสงได้เองเรียกว่า <span class="blank wide" data-answer="luminous object"><span class="space"> </span><span class="ans">luminous object</span></span>
+ส่วนวัตถุที่ต้องอาศัยแสงจากแหล่งอื่นแล้วสะท้อนเข้าตาเรียกว่า <span class="blank xwide" data-answer="non-luminous object"><span class="space"> </span><span class="ans">non-luminous object</span></span>
+การที่แสงเด้งกลับจากผิววัตถุเรียกว่า <span class="blank" data-answer="reflection"><span class="space"> </span><span class="ans">reflection</span></span></p>
+<p class="cloze">รังสีที่เดินทางเข้าหาผิวคือ <span class="blank wide" data-answer="incident ray"><span class="space"> </span><span class="ans">incident ray</span></span>
+รังสีที่เด้งออกจากผิวคือ <span class="blank wide" data-answer="reflected ray"><span class="space"> </span><span class="ans">reflected ray</span></span>
+และเส้นตั้งฉากกับผิว ณ จุดตกกระทบคือ <span class="blank" data-answer="normal"><span class="space"> </span><span class="ans">normal</span></span></p>
+</section>
+<section class="section" id="s2">
+<div class="section-head"><div class="num">2</div><div><h2>กฎการสะท้อนและการคำนวณมุม</h2><div class="coverage">angle of incidence · angle of reflection · i = r · มุมวัดจาก normal</div></div></div>
+<div class="read-box">
+<div class="title">สรุปให้อ่านก่อน · ภาษาไทย</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">ต้องรู้</span> Law of reflection</div>
+<p>มุมตกกระทบวัดระหว่าง <b>incident ray</b> กับ <b>normal</b> เรียกว่า <b>angle of incidence, i</b> ส่วนมุมระหว่าง <b>reflected ray</b> กับ <b>normal</b> เรียกว่า <b>angle of reflection, r</b></p>
+<p>กฎการสะท้อนระบุว่า incident ray, reflected ray และ normal อยู่ในระนาบเดียวกัน และ</p>
+<div class="formula">i = r</div>
+</div>
+<div class="optional-box">
+<div class="optional-title"><span class="level-tag">วิธีคิดไทย</span> ถ้าโจทย์ให้มุมกับ “ผิวกระจก”</div>
+<p>1) วาด normal ให้ตั้งฉาก 90° กับผิวก่อน<br/>2) ถ้ามุมที่ให้วัดจากผิว ต้องหามุมกับ normal โดยใช้ 90° ลบมุมนั้น<br/>3) เมื่อได้ i แล้ว ใช้กฎ <b>i = r</b></p>
+</div>
+<div class="optional-box">
+<div class="optional-title"><span class="level-tag">วิธีวาดไทย</span> รูปสะท้อนพื้นฐาน</div>
+<p>วาดผิวกระจก → ทำจุดตกกระทบ → วาด normal ตั้งฉาก → วาด incident ray เข้าหาจุด → วัด i จาก normal → วาด reflected ray อีกด้านโดยให้ r เท่ากับ i</p>
+</div>
+<div class="keyline">อย่าพลาด: i และ r วัดจาก normal ไม่ใช่วัดจากผิวกระจก</div>
+</div>
+<figure class="figure draw-practice">
+<svg aria-label="law of reflection drawing checkpoint" viewbox="0 0 760 300">
+<defs><marker id="r8arr1" markerheight="9" markerwidth="9" orient="auto" refx="8" refy="3"><path d="M0,0 L0,6 L8,3 z" fill="#111"></path></marker></defs>
+<line stroke="#111" stroke-width="5" x1="90" x2="680" y1="220" y2="220"></line>
+<text font-size="15" x="92" y="247">mirror surface</text>
+<line stroke="#555" stroke-dasharray="8 6" stroke-width="2" x1="385" x2="385" y1="45" y2="255"></line>
+<text font-size="15" x="398" y="67">normal</text>
+<line marker-end="url(#r8arr1)" stroke="#111" stroke-width="3" x1="155" x2="385" y1="70" y2="220"></line>
+<text font-size="15" x="150" y="54">incident ray</text>
+<path d="M350 197 A43 43 0 0 1 385 180" fill="none" stroke="#777" stroke-width="2"></path>
+<text font-size="15" x="348" y="177">i</text>
+<rect fill="none" height="110" rx="8" stroke="#777" stroke-dasharray="8 7" stroke-width="2" width="245" x="410" y="75"></rect>
+<text font-size="16" x="434" y="113">วาด reflected ray ในสมุด</text>
+<text font-size="15" x="434" y="139">ให้มุม r วัดจาก normal</text>
+<text font-size="15" x="434" y="163">และใช้ i = r</text>
+</svg>
+<figcaption>Drawing checkpoint 7.1: ต้องวาด normal ก่อน แล้วจึงวาด reflected ray โดยวัด i และ r จาก normal ตาม source</figcaption>
+</figure>
+<div class="draw-check"><span class="badge">ต้องทำได้</span><b>Reflection:</b> เห็นมุมที่โจทย์ให้แล้วระบุให้ได้ก่อนว่ามุมวัดจากผิวหรือจาก normal จากนั้นจึงใช้ i = r</div>
+<div class="practice-title">A · ลากคำศัพท์ภาษาอังกฤษ</div>
+<div class="wordbank"><strong>Word Bank · English only · Source-only distractors</strong><div class="words">
+<span class="word">angle of incidence</span>
+<span class="word">angle of reflection</span>
+<span class="word">normal</span>
+<span class="word">incident ray</span>
+<span class="word">reflected ray</span>
+<span class="word">focal length</span>
+<span class="word">60°</span>
+<span class="word">30°</span>
+<span class="word">90°</span>
+<span class="word">150°</span>
+<span class="word">45°</span>
+<span class="word">55°</span>
+<span class="word">35°</span>
+</div></div>
+<p class="cloze">มุมระหว่าง incident ray กับ normal คือ <span class="blank xwide" data-answer="angle of incidence"><span class="space"> </span><span class="ans">angle of incidence</span></span>
+และมุมระหว่าง reflected ray กับ normal คือ <span class="blank xwide" data-answer="angle of reflection"><span class="space"> </span><span class="ans">angle of reflection</span></span></p>
+<p class="cloze"><b>ตัวอย่างจาก source:</b> เมื่อมุมที่กำหนดเท่ากับ 150° ตามรูปในหนังสือ ต้องหามุมตกกระทบจาก 150° − 90° ก่อน ดังนั้นมุมสะท้อนสุดท้ายคือ <span class="blank" data-answer="60°"><span class="space"> </span><span class="ans">60°</span></span></p>
+<p class="cloze"><b>ฝึกเพิ่มด้วยกฎเดียวกัน:</b> ถ้ารังสีทำมุม 35° กับผิวกระจก มุมตกกระทบจะเป็น 90° − 35° และคำตอบสุดท้ายคือ <span class="blank" data-answer="55°"><span class="space"> </span><span class="ans">55°</span></span></p>
+</section>
+<section class="section page-break" id="s3">
+<div class="section-head"><div class="num">3</div><div><h2>กระจกเงาราบและลักษณะของภาพ</h2><div class="coverage">virtual image · upright · same size · laterally inverted · equal distance</div></div></div>
+<div class="read-box">
+<div class="title">สรุปให้อ่านก่อน · ภาษาไทย</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">ต้องรู้</span> Plane mirror</div>
+<p>ภาพที่เกิดจากกระจกเงาราบมีลักษณะสำคัญคือ <b>หัวตั้ง</b>, <b>ขนาดเท่าวัตถุ</b>, <b>กลับซ้าย-ขวา</b>, อยู่หลังกระจกเป็นระยะเท่ากับที่วัตถุอยู่หน้ากระจก และเป็น <b>ภาพเสมือน</b> ซึ่งรับบนฉากไม่ได้</p>
+</div>
+<div class="optional-box">
+<div class="optional-title"><span class="level-tag">วิธีวาดไทย</span> วางตำแหน่งภาพหลังกระจก</div>
+<p>1) วาดเส้นกระจกเงาราบ<br/>2) วางวัตถุหน้ากระจก<br/>3) วัดระยะวัตถุถึงกระจก<br/>4) ทำเครื่องหมายตำแหน่งภาพหลังกระจกให้มีระยะเท่ากัน<br/>5) วาดภาพหัวตั้งขนาดเท่าวัตถุ<br/>6) ถ้าวาดแนวรังสีเสมือน ให้ต่อแนวรังสีสะท้อนย้อนหลังด้วย <b>เส้นประ</b> ไปยังตำแหน่งภาพ</p>
+</div>
+<div class="keyline">Plane mirror: upright + same size + laterally inverted + same distance + virtual image</div>
+</div>
+<figure class="figure draw-practice">
+<svg aria-label="แบบฝึกวาดภาพกระจกเงาราบ" viewbox="0 0 760 220">
+<defs><marker id="arrow71" markerheight="9" markerwidth="9" orient="auto" refx="7" refy="3"><path d="M0,0 L0,6 L8,3 z" fill="#111"></path></marker></defs>
+<line stroke="#111" stroke-width="5" x1="380" x2="380" y1="25" y2="195"></line>
+<line marker-end="url(#arrow71)" stroke="#111" stroke-width="4" x1="250" x2="250" y1="170" y2="70"></line>
+<text font-size="18" x="205" y="200">Object</text>
+<text font-size="16" x="394" y="38">Plane mirror</text>
+<line stroke="#777" stroke-width="2" x1="250" x2="380" y1="205" y2="205"></line>
+<text font-size="15" x="300" y="200">d</text>
+<rect fill="none" height="120" stroke="#777" stroke-dasharray="8 7" stroke-width="2" width="150" x="470" y="55"></rect>
+<text font-size="16" x="482" y="110">วาดภาพที่นี่</text>
+<text font-size="14" x="475" y="136">ให้ระยะหลังกระจก = d</text>
+</svg>
+<figcaption>โจทย์วาด: วาดภาพของวัตถุหลัง plane mirror ตามขั้นตอนภาษาไทยด้านบน แล้วจึงลากคำสรุปด้านล่าง</figcaption>
+</figure><div class="draw-check"><span class="badge">ต้องวาดได้</span><b>Plane mirror:</b> วาง image หลัง mirror ให้ระยะเท่ากับ object และใช้เส้นประเมื่อแสดงแนว virtual ray หลัง mirror</div>
+<div class="practice-title">วาดก่อน แล้วลากคำตอบสุดท้าย</div>
+<div class="wordbank"><strong>Word Bank · English only · Source-only distractors</strong><div class="words">
+<span class="word">upright</span>
+<span class="word">inverted</span>
+<span class="word">same size</span>
+<span class="word">diminished</span>
+<span class="word">magnified</span>
+<span class="word">laterally inverted</span>
+<span class="word">virtual image</span>
+<span class="word">real image</span>
+<span class="word">6 cm</span>
+<span class="word">3 cm</span>
+<span class="word">12 cm</span>
+</div></div>
+<p class="cloze">หลังจากวาดแล้ว ภาพของ plane mirror เป็น <span class="blank" data-answer="upright"><span class="space"> </span><span class="ans">upright</span></span>,
+มีขนาด <span class="blank wide" data-answer="same size"><span class="space"> </span><span class="ans">same size</span></span>,
+มีการกลับซ้าย-ขวาแบบ <span class="blank xwide" data-answer="laterally inverted"><span class="space"> </span><span class="ans">laterally inverted</span></span>
+และเป็น <span class="blank wide" data-answer="virtual image"><span class="space"> </span><span class="ans">virtual image</span></span></p>
+<p class="cloze">ถ้าวัตถุอยู่หน้ากระจก 6 cm ภาพจะอยู่หลังกระจกเป็นระยะ <span class="blank" data-answer="6 cm"><span class="space"> </span><span class="ans">6 cm</span></span></p>
+</section>
+<section class="section" id="s4">
+<div class="section-head"><div class="num">4</div><div><h2>กระจกเว้าและกระจกนูน</h2><div class="coverage">concave mirror · convex mirror · P · F · C · R · f · three special rays</div></div></div>
+<div class="read-box">
+<div class="title">สรุปให้อ่านก่อน · ภาษาไทย</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">ต้องรู้</span> Curved mirrors</div>
+<p>ถ้าผิวด้านในของกระจกโค้งเป็นผิวสะท้อน เรียกว่า <b>concave mirror</b> และเมื่อรังสีขนานตกกระทบ รังสีสะท้อนจะลู่เข้าหากันที่ <b>focal point, F</b> ด้านหน้ากระจก</p>
+<p>ถ้าผิวด้านนอกเป็นผิวสะท้อน เรียกว่า <b>convex mirror</b> รังสีสะท้อนจะแยกออก และดูเสมือนว่าแยกออกมาจาก <b>F</b> ที่อยู่หลังกระจก</p>
+</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">จุดสำคัญบนแกน</span></div>
+<ul>
+<li><b>vertex, P</b> = จุดยอดของกระจก</li>
+<li><b>centre of curvature, C</b> = ศูนย์กลางของทรงกลมที่ใช้สร้างผิวกระจก</li>
+<li><b>radius of curvature, R</b> = รัศมีของทรงกลมนั้น</li>
+<li><b>principal axis</b> = เส้นที่ผ่าน P และ C</li>
+<li><b>focal length, f</b> = ระยะจาก P ถึง F และใน source ให้ความสัมพันธ์ <b>f = R/2</b></li>
+</ul>
+</div>
+<div class="optional-box">
+<div class="optional-title"><span class="level-tag">วิธีวาดไทย</span> 3 รังสีสำคัญของ concave mirror</div>
+<p>1) รังสีที่ขนาน principal axis สะท้อนผ่าน F<br/>2) รังสีที่ผ่าน C สะท้อนย้อนกลับตามแนวเดิม<br/>3) รังสีที่ผ่าน F สะท้อนออกไปขนาน principal axis</p>
+</div>
+<div class="optional-box">
+<div class="optional-title"><span class="level-tag">วิธีวาดไทย</span> 3 รังสีสำคัญของ convex mirror</div>
+<p>1) รังสีขนานแกนสะท้อนออก โดยต่อเส้นย้อนหลังแล้วดูเสมือนมาจาก F หลังกระจก<br/>2) รังสีที่มีแนวมุ่งไป C หลังกระจกสะท้อนย้อนตามแนวเดิม<br/>3) รังสีที่มีแนวมุ่งไป F หลังกระจกสะท้อนออกขนาน principal axis</p>
+<p>เส้นที่ต่อย้อนหลังหลังกระจกควรวาดเป็น <b>เส้นประ</b> เพื่อแยกจากทางเดินจริงของแสง</p>
+</div>
+<div class="keyline">จำคู่: concave = converge · convex = diverge</div>
+</div>
+<figure class="figure draw-practice">
+<svg aria-label="แบบฝึกวาดรังสีกระจกเว้า" viewbox="0 0 760 250">
+<defs><marker id="arr72" markerheight="9" markerwidth="9" orient="auto" refx="7" refy="3"><path d="M0,0 L0,6 L8,3 z" fill="#111"></path></marker></defs>
+<line stroke="#333" stroke-width="2" x1="60" x2="700" y1="125" y2="125"></line>
+<path d="M610 45 Q555 125 610 205" fill="none" stroke="#111" stroke-width="5"></path>
+<circle cx="610" cy="125" fill="#111" r="4"></circle><text font-size="15" x="616" y="119">P</text>
+<circle cx="460" cy="125" fill="#111" r="4"></circle><text font-size="15" x="452" y="148">F</text>
+<circle cx="310" cy="125" fill="#111" r="4"></circle><text font-size="15" x="300" y="148">C</text>
+<line marker-end="url(#arr72)" stroke="#111" stroke-width="2.5" x1="130" x2="610" y1="80" y2="80"></line>
+<text font-size="15" x="135" y="67">parallel ray</text>
+<text font-size="15" x="120" y="222">โจทย์วาด: เติม reflected ray หลังชนกระจกให้ถูกต้อง</text>
+</svg>
+<figcaption>ใช้วิธีวาดไทย: parallel ray ของ concave mirror ต้องสะท้อนผ่าน F</figcaption>
+</figure><div class="draw-check"><span class="badge">ต้องวาดได้</span><b>Curved mirrors:</b> จำทิศของ parallel ray, ray through C และ ray through F และแยก concave = converge กับ convex = diverge ให้ได้</div>
+<div class="practice-title">ลากคำตอบสุดท้ายหลังคิด/วาด</div>
+<div class="wordbank"><strong>Word Bank · English only · Source-only distractors</strong><div class="words">
+<span class="word">concave mirror</span>
+<span class="word">convex mirror</span>
+<span class="word">converge</span>
+<span class="word">diverge</span>
+<span class="word">focal point</span>
+<span class="word">principal axis</span>
+<span class="word">centre of curvature</span>
+<span class="word">6 cm</span>
+<span class="word">3 cm</span>
+<span class="word">12 cm</span>
+<span class="word">virtual</span>
+<span class="word">upright</span>
+<span class="word">diminished</span>
+<span class="word">real</span>
+<span class="word">inverted</span>
+<span class="word">magnified</span>
+</div></div>
+<p class="cloze">กระจกที่ทำให้รังสีขนานสะท้อนแล้วลู่เข้าหากันคือ <span class="blank xwide" data-answer="concave mirror"><span class="space"> </span><span class="ans">concave mirror</span></span>
+และพฤติกรรมของรังสีคือ <span class="blank" data-answer="converge"><span class="space"> </span><span class="ans">converge</span></span></p>
+<p class="cloze">กระจกที่ทำให้รังสีขนานสะท้อนแล้วแยกออกคือ <span class="blank xwide" data-answer="convex mirror"><span class="space"> </span><span class="ans">convex mirror</span></span>
+และพฤติกรรมของรังสีคือ <span class="blank" data-answer="diverge"><span class="space"> </span><span class="ans">diverge</span></span></p>
+<p class="cloze">ถ้า radius of curvature, R = 6 cm จากความสัมพันธ์ใน source จะได้ focal length, f = <span class="blank" data-answer="3 cm"><span class="space"> </span><span class="ans">3 cm</span></span></p>
+<p class="cloze">สำหรับ convex mirror ไม่ว่าวัตถุจะอยู่ที่ระยะใด ภาพเป็น <span class="blank" data-answer="virtual"><span class="space"> </span><span class="ans">virtual</span></span>,
+<span class="blank" data-answer="upright"><span class="space"> </span><span class="ans">upright</span></span>
+และ <span class="blank" data-answer="diminished"><span class="space"> </span><span class="ans">diminished</span></span></p>
+</section>
+<section class="final" id="final71">
+<h2>ด่านรวม Topic 7.1 · Reflection of Light</h2>
+<div class="read-box">
+<div class="title">อ่านรอบสุดท้าย · ภาษาไทย</div>
+<p>การสะท้อนเกิดเมื่อแสงเด้งกลับจากผิววัตถุ มุมตกกระทบและมุมสะท้อนวัดจาก normal และมีค่าเท่ากัน กระจกเงาราบให้ภาพหัวตั้ง ขนาดเท่า กลับซ้าย-ขวา อยู่ห่างกระจกเท่ากับวัตถุ และเป็นภาพเสมือน ส่วนกระจกเว้าทำให้รังสีขนานลู่เข้า กระจกนูนทำให้รังสีขนานแยกออก</p>
+<div class="keyline">ก่อนตอบ: ถ้าเป็นโจทย์รูป ให้วาด normal / P-F-C / principal rays ตามขั้นตอนภาษาไทยก่อน แล้วค่อยลากคำตอบสุดท้าย</div>
+</div>
+<div class="wordbank"><strong>Final Word Bank · English only · Source-only distractors</strong><div class="words">
+<span class="word">normal</span>
+<span class="word">angle of incidence</span>
+<span class="word">angle of reflection</span>
+<span class="word">virtual image</span>
+<span class="word">concave mirror</span>
+<span class="word">convex mirror</span>
+<span class="word">refraction</span>
+<span class="word">real image</span>
+<span class="word">principal focus</span>
+<span class="word">reflection</span><span class="word">reflected ray</span><span class="word">focal point</span><span class="word">centre of curvature</span></div></div>
+<p class="cloze">เส้นตั้งฉากกับผิวที่จุดตกกระทบคือ <span class="blank" data-answer="normal"><span class="space"> </span><span class="ans">normal</span></span>
+มุมที่อยู่ระหว่าง incident ray กับเส้นนี้คือ <span class="blank xwide" data-answer="angle of incidence"><span class="space"> </span><span class="ans">angle of incidence</span></span>
+ส่วนมุมของ reflected ray คือ <span class="blank xwide" data-answer="angle of reflection"><span class="space"> </span><span class="ans">angle of reflection</span></span></p>
+<p class="cloze">ภาพจาก plane mirror เป็น <span class="blank wide" data-answer="virtual image"><span class="space"> </span><span class="ans">virtual image</span></span>
+กระจกที่รวมรังสีคือ <span class="blank xwide" data-answer="concave mirror"><span class="space"> </span><span class="ans">concave mirror</span></span>
+และกระจกที่กระจายรังสีคือ <span class="blank xwide" data-answer="convex mirror"><span class="space"> </span><span class="ans">convex mirror</span></span></p>
+</section>
+<div class="unit-banner page-break">
+<div class="unit-no">Topic 7.2</div>
+<div class="unit-title">การหักเหของแสง · Refraction of Light</div>
+<div class="unit-desc">สรุปไทยเฉพาะแกนสำคัญ · ฝึกสิ่งที่ต้องทำได้ · ทุกคำตอบสุดท้ายเป็น drag/drop</div>
+</div>
+<section class="section" id="s5">
+<div class="section-head"><div class="num">5</div><div><h2>ความหมาย ความเร็ว และทิศการหักเห</h2><div class="coverage">refraction · transparent media · slows down · speeds up · towards / away from the normal</div></div></div>
+<div class="read-box">
+<div class="title">สรุปให้อ่านก่อน · ภาษาไทย</div>
+<p><b>การหักเหของแสง (refraction of light)</b> เกิดเมื่อแสงเดินทางจากตัวกลางโปร่งใสหนึ่งไปยังอีกตัวกลางหนึ่ง เช่น อากาศ น้ำ แก้ว หรือพลาสติกบางชนิด แล้วความเร็วของแสงเปลี่ยนไป ถ้าแสงตกกระทบที่มุมเอียง ทิศทางของแสงจึงเปลี่ยนหรือ “หักเห”</p>
+<table class="mini-table">
+<tr><th>ตัวกลางจาก source</th><th>อัตราเร็วของแสง</th></tr>
+<tr><td>Air</td><td>300,000 km s<sup>−1</sup></td></tr>
+<tr><td>Water</td><td>225,000 km s<sup>−1</sup></td></tr>
+<tr><td>Glass</td><td>197,000 km s<sup>−1</sup></td></tr>
+</table>
+<div class="core-box">
+<div class="core-title">แกนสำคัญที่ต้องใช้ตอบโจทย์</div>
+<p><b>จากตัวกลางหนาแน่นน้อยกว่า → หนาแน่นมากกว่า</b> แสงช้าลง และหักเห <b>เข้าหา normal</b></p>
+<p><b>จากตัวกลางหนาแน่นมากกว่า → หนาแน่นน้อยกว่า</b> แสงเร็วขึ้น และหักเห <b>ออกจาก normal</b></p>
+<p>ถ้ารังสีตกกระทบที่ <b>มุมฉากกับผิว</b> แสงเดินทางเป็นเส้นตรง และ source ระบุว่าไม่หักเห</p>
+</div>
+<div class="core-box">
+<div class="core-title">วิธีวาดทิศการหักเห · ใช้เป็นที่พึ่งได้ตลอด</div>
+<ol>
+<li>วาดเส้นแบ่งตัวกลางก่อน</li>
+<li>วาด <b>normal</b> ตั้งฉากกับผิว ณ จุดที่รังสีกระทบ</li>
+<li>ใส่ลูกศรให้ incident ray เพื่อบอกทิศทาง</li>
+<li>ดูว่ารังสีเข้าไปในตัวกลางที่หนาแน่นมากขึ้นหรือน้อยลง</li>
+<li>ถ้าช้าลง ให้วาด refracted ray ใกล้ normal มากขึ้น ถ้าเร็วขึ้น ให้วาดออกห่าง normal มากขึ้น</li>
+<li>ถ้ารังสีตั้งฉากกับผิว ให้ลากต่อเป็นเส้นตรง</li>
+</ol>
+</div>
+<div class="keyline">ภาพจำจาก source: slower → towards the normal · faster → away from the normal · right angle → straight line</div>
+</div>
+<figure class="figure draw-practice">
+<svg aria-label="basic refraction directions" viewbox="0 0 760 300">
+<defs><marker id="r72a" markerheight="8" markerwidth="8" orient="auto" refx="7" refy="3"><path d="M0,0 L0,6 L8,3 z" fill="#111"></path></marker></defs>
+<line stroke="#111" stroke-width="3" x1="40" x2="720" y1="150" y2="150"></line>
+<line stroke="#777" stroke-dasharray="7 6" stroke-width="2" x1="380" x2="380" y1="25" y2="275"></line>
+<text font-size="17" x="392" y="45">normal</text>
+<text font-size="17" x="55" y="130">less dense medium</text>
+<text font-size="17" x="55" y="180">denser medium</text>
+<line marker-end="url(#r72a)" stroke="#111" stroke-width="3" x1="205" x2="380" y1="55" y2="150"></line>
+<line marker-end="url(#r72a)" stroke="#111" stroke-width="3" x1="380" x2="455" y1="150" y2="270"></line>
+<text font-size="16" x="185" y="45">incident ray</text>
+<text font-size="16" x="465" y="260">refracted ray</text>
+<text font-size="16" x="500" y="205">towards the normal</text>
+</svg>
+<figcaption>ภาพช่วยจำ: เข้าสู่ตัวกลางที่หนาแน่นกว่า รังสีหักเหเข้าหา normal</figcaption>
+</figure><div class="draw-check"><span class="badge">ต้องวาดได้</span><b>Refraction:</b> วาด boundary → normal → incident ray ก่อน แล้วค่อยตัดสิน towards / away from the normal ตามการเปลี่ยนความเร็วใน source</div>
+<div class="practice-title">ลากคำตอบสุดท้าย · คำเติมเป็นอังกฤษล้วน</div>
+<div class="wordbank"><strong>Word Bank · English only · Source-only distractors</strong><div class="words">
+<span class="word">refraction</span>
+<span class="word">reflection</span>
+<span class="word">transparent media</span>
+<span class="word">slows down</span>
+<span class="word">speeds up</span>
+<span class="word">towards the normal</span>
+<span class="word">away from the normal</span>
+<span class="word">straight line</span>
+<span class="word">bounces off</span>
+</div></div>
+<p class="cloze">การเปลี่ยนทิศของแสงเนื่องจากความเร็วเปลี่ยนเมื่อผ่านจากตัวกลางโปร่งใสหนึ่งไปสู่อีกตัวกลางหนึ่งเรียกว่า <span class="blank wide" data-answer="refraction"><span class="space"> </span><span class="ans">refraction</span></span></p>
+<p class="cloze">เมื่อแสงเดินทางจาก less dense medium ไป denser medium แสง <span class="blank" data-answer="slows down"><span class="space"> </span><span class="ans">slows down</span></span> และหักเห <span class="blank xwide" data-answer="towards the normal"><span class="space"> </span><span class="ans">towards the normal</span></span></p>
+<p class="cloze">เมื่อแสงเดินทางจาก denser medium ไป less dense medium แสง <span class="blank" data-answer="speeds up"><span class="space"> </span><span class="ans">speeds up</span></span> และหักเห <span class="blank xwide" data-answer="away from the normal"><span class="space"> </span><span class="ans">away from the normal</span></span></p>
+<p class="cloze">ถ้ารังสีตกกระทบตั้งฉากกับผิว รังสีเดินทางต่อเป็น <span class="blank wide" data-answer="straight line"><span class="space"> </span><span class="ans">straight line</span></span></p>
+<div class="practice-title">อ่านข้อมูลตัวเลขจาก source แล้วคำนวณ</div>
+<div class="wordbank"><strong>Word Bank · English only · Source-only distractors</strong><div class="words">
+<span class="word">28,000 km s⁻¹</span>
+<span class="word">75,000 km s⁻¹</span>
+<span class="word">103,000 km s⁻¹</span>
+<span class="word">197,000 km s⁻¹</span>
+<span class="word">225,000 km s⁻¹</span>
+<span class="word">300,000 km s⁻¹</span>
+</div></div>
+<p class="cloze">จากข้อมูลใน source อัตราเร็วของแสงใน air มากกว่าใน glass เท่ากับ 300,000 − 197,000 = <span class="blank xwide" data-answer="103,000 km s⁻¹"><span class="space"> </span><span class="ans">103,000 km s⁻¹</span></span></p>
+</section>
+<section class="section" id="s6">
+<div class="section-head"><div class="num">6</div><div><h2>Glass block และตำแหน่งที่มองเห็นคลาดเคลื่อน</h2><div class="coverage">glass block · normal · refracted ray · pond appears shallower · pencil appears bent</div></div></div>
+<div class="read-box">
+<div class="title">สรุปให้อ่านก่อน · ภาษาไทย</div>
+<p>การทดลองใน source ใช้ <b>glass block</b> และ <b>ray box with a single slit</b> เมื่อลำแสงยิงเอียงเข้าสู่ glass block รังสีเกิด refraction แต่เมื่อยิงตั้งฉากกับผิว รังสีเดินทางตรง</p>
+<p>การหักเหยังทำให้เราประเมินตำแหน่งหรือความลึกของวัตถุผิดไปได้ เช่น ก้นสระหรือก้นบ่อดู <b>ตื้นกว่าความจริง</b> เพราะแสงจากก้นบ่อเดินทางจาก water สู่อากาศแล้วหักเหก่อนเข้าตา ผู้สังเกตจึงเห็นภาพของก้นบ่ออยู่สูงขึ้น</p>
+<p>ในทำนองเดียวกัน ดินสอที่จุ่มน้ำดูเหมือน <b>งอ</b> เพราะแสงจากส่วนของดินสอในน้ำหักเหเมื่อเดินทางจาก water สู่อากาศ</p>
+<div class="core-box">
+<div class="core-title">วิธีวาด glass block · ภาษาไทย</div>
+<ol>
+<li>วาดรูปแท่งแก้วเป็นสี่เหลี่ยมที่มีผิวสองด้านขนานกัน</li>
+<li>ที่จุดตกกระทบด้านแรก วาด normal ตั้งฉากกับผิว</li>
+<li>วาด incident ray เอียงเข้าหาแก้ว</li>
+<li>Air → glass: วาดรังสีในแก้วให้เข้าหา normal</li>
+<li>ที่ผิวอีกด้าน วาด normal อีกครั้ง</li>
+<li>Glass → air: วาดรังสีออกจากแก้วให้ห่าง normal มากขึ้น</li>
+<li>ใส่ลูกศรบนรังสีทุกช่วงเพื่อบอกทิศทาง</li>
+</ol>
+</div>
+<div class="core-box">
+<div class="core-title">วิธีวาดภาพก้นบ่อที่ดูตื้น · ภาษาไทย</div>
+<ol>
+<li>วาดเส้นผิวน้ำแนวนอน แล้ววางวัตถุหรือก้นบ่อไว้ใต้น้ำ</li>
+<li>วาดรังสีจากวัตถุขึ้นสู่ผิวน้ำ</li>
+<li>วาด normal ที่จุดที่รังสีกระทบผิวน้ำ</li>
+<li>Water → air: วาด refracted ray ออกจาก normal ไปยังตาผู้สังเกต</li>
+<li>ต่อแนว refracted ray ย้อนกลับลงไปในน้ำด้วยเส้นประ</li>
+<li>จุดที่แนวย้อนกลับมาบรรจบกันคือบริเวณที่ผู้สังเกตรับรู้ภาพ ซึ่งอยู่สูงกว่าตำแหน่งจริง จึงดูตื้นกว่า</li>
+</ol>
+</div>
+<div class="keyline">ก่อนตอบข้อวาด ให้ใช้ normal เป็น “เสาหลัก” ทุกครั้ง แล้วค่อยตัดสิน towards / away</div>
+</div>
+<figure class="figure draw-practice">
+<svg aria-label="pond apparent position" viewbox="0 0 760 330">
+<defs><marker id="r72b" markerheight="8" markerwidth="8" orient="auto" refx="7" refy="3"><path d="M0,0 L0,6 L8,3 z" fill="#111"></path></marker></defs>
+<line stroke="#111" stroke-width="3" x1="40" x2="720" y1="120" y2="120"></line>
+<text font-size="18" x="55" y="95">Air</text><text font-size="18" x="55" y="150">Water</text>
+<circle cx="380" cy="280" fill="#111" r="8"></circle><text font-size="16" x="395" y="287">bottom of the pond</text>
+<ellipse cx="620" cy="60" fill="none" rx="30" ry="14" stroke="#111" stroke-width="2"></ellipse><circle cx="630" cy="60" fill="#111" r="4"></circle><text font-size="16" x="575" y="35">observer</text>
+<line marker-end="url(#r72b)" stroke="#111" stroke-width="2.5" x1="380" x2="500" y1="280" y2="120"></line>
+<line marker-end="url(#r72b)" stroke="#111" stroke-width="2.5" x1="500" x2="615" y1="120" y2="66"></line>
+<line stroke="#777" stroke-dasharray="7 6" stroke-width="2" x1="500" x2="405" y1="120" y2="190"></line>
+<circle cx="405" cy="190" fill="none" r="6" stroke="#111" stroke-width="2"></circle><text font-size="16" x="420" y="195">apparent image</text>
+<line stroke="#777" stroke-dasharray="6 5" stroke-width="2" x1="500" x2="500" y1="65" y2="175"></line><text font-size="15" x="510" y="83">normal</text>
+</svg>
+<figcaption>วาดแนวย้อนกลับของ refracted ray เพื่อช่วยอธิบายว่าก้นบ่อดูตื้นขึ้น</figcaption>
+</figure><div class="draw-check"><span class="badge">ต้องวาดได้</span><b>Glass block / apparent depth:</b> วาด normal ที่ทุกผิวที่แสงผ่าน และใช้เส้นประย้อนหลังเพื่อแสดง apparent position ตาม source</div>
+<div class="practice-title">ลากคำตอบสุดท้าย · คำเติมเป็นอังกฤษล้วน</div>
+<div class="wordbank"><strong>Word Bank · English only · Source-only distractors</strong><div class="words">
+<span class="word">glass block</span>
+<span class="word">ray box</span>
+<span class="word">refracted</span>
+<span class="word">reflected</span>
+<span class="word">straight line</span>
+<span class="word">shallower</span>
+<span class="word">bottom of the pond</span>
+<span class="word">bent</span>
+<span class="word">straight</span>
+<span class="word">water</span>
+<span class="word">air</span>
+<span class="word">away from the normal</span>
+<span class="word">towards the normal</span>
+</div></div>
+<p class="cloze">อุปกรณ์โปร่งใสที่ใช้ในการทดลองหลักของ source คือ <span class="blank wide" data-answer="glass block"><span class="space"> </span><span class="ans">glass block</span></span></p>
+<p class="cloze">เมื่อรังสีตกกระทบ glass block ด้วยมุมเอียง รังสีเป็น <span class="blank wide" data-answer="refracted"><span class="space"> </span><span class="ans">refracted</span></span> แต่เมื่อตกกระทบที่มุมฉาก รังสีเดินทางเป็น <span class="blank wide" data-answer="straight line"><span class="space"> </span><span class="ans">straight line</span></span></p>
+<p class="cloze">ก้นบ่อหรือสระน้ำดู <span class="blank" data-answer="shallower"><span class="space"> </span><span class="ans">shallower</span></span> กว่าความจริง และดินสอที่จุ่มน้ำดู <span class="blank" data-answer="bent"><span class="space"> </span><span class="ans">bent</span></span></p>
+<p class="cloze">ในตัวอย่างก้นบ่อและดินสอ แสงเดินทางจาก <span class="blank" data-answer="water"><span class="space"> </span><span class="ans">water</span></span> ไป <span class="blank" data-answer="air"><span class="space"> </span><span class="ans">air</span></span> จึงหักเห <span class="blank xwide" data-answer="away from the normal"><span class="space"> </span><span class="ans">away from the normal</span></span></p>
+</section>
+<section class="section" id="s7">
+<div class="section-head"><div class="num">7</div><div><h2>Mirage, Prism และ Rainbow</h2><div class="coverage">mirage · prism · spectrum · refraction twice · reflection · water droplets</div></div></div>
+<div class="read-box">
+<div class="title">สรุปให้อ่านก่อน · ภาษาไทย</div>
+<div class="core-box">
+<div class="core-title">Mirage</div>
+<p>source อธิบายว่า mirage เกิดจากแสงเดินทางผ่านชั้นอากาศที่มีอุณหภูมิและความหนาแน่นต่างกัน แสงจึงหักเหต่อเนื่องจนทำให้ตาเห็นภาพที่ไม่ได้อยู่ตรงตำแหน่งนั้นจริง ตัวอย่างภาพคล้ายแอ่งน้ำบนถนนหรือทะเลทรายอาจเป็นภาพของเมฆบนท้องฟ้า</p>
+</div>
+<div class="core-box">
+<div class="core-title">Prism</div>
+<p>เมื่อ white light ผ่าน prism ซึ่งเป็นแท่งโปร่งใสรูปฐานสามเหลี่ยม แสงหักเห <b>สองครั้ง</b> ตอนเข้าและตอนออกจาก prism เพราะผิวสองด้านไม่ขนานกัน จากนั้นแสงแยกเป็น <b>spectrum</b> 7 สี และแต่ละสีหักเหไม่เท่ากัน</p>
+<p>source เรียงสีว่า red, orange, yellow, green, blue, violet และ indigo</p>
+</div>
+<div class="core-box">
+<div class="core-title">Rainbow</div>
+<p>source ระบุว่า rainbow เกิดเมื่อแสงถูกทั้ง <b>reflected</b> และ <b>refracted</b> โดยหยดน้ำขนาดเล็กในอากาศ แสงหักเหเมื่อเข้า water droplet สะท้อนที่ด้านหลังหยดน้ำ และหักเหอีกครั้งเมื่อออกจากหยดน้ำ ทำให้แสงแยกเป็นองค์ประกอบต่าง ๆ</p>
+<p>เงื่อนไขการมองเห็นตาม source คือมีฝนปรอย ๆ และดวงอาทิตย์อยู่ต่ำและอยู่ด้านหลังผู้สังเกต</p>
+</div>
+<div class="core-box">
+<div class="core-title">วิธีวาด prism · ภาษาไทย</div>
+<ol>
+<li>วาดรูป prism เป็นสามเหลี่ยม</li>
+<li>วาด white light เข้าด้านหนึ่ง พร้อมลูกศร</li>
+<li>ที่ผิวแรก วาดแนวแสงเปลี่ยนทิศภายใน prism เพื่อแสดงการหักเหครั้งที่ 1</li>
+<li>ที่ผิวอีกด้าน วาดรังสีเปลี่ยนทิศอีกครั้งเมื่อออก เพื่อแสดงการหักเหครั้งที่ 2</li>
+<li>วาดรังสีหลายเส้นแยกออกจากกันด้านขาออกและเขียน spectrum</li>
+</ol>
+</div>
+<div class="core-box">
+<div class="core-title">วิธีวาด rainbow แบบย่อ · ภาษาไทย</div>
+<ol>
+<li>วาด water droplet เป็นวงกลม</li>
+<li>วาด sunlight เข้าด้านหนึ่ง แล้วเปลี่ยนทิศเมื่อเข้า</li>
+<li>วาดรังสีไปถึงด้านหลังของหยดน้ำแล้วสะท้อนกลับ</li>
+<li>วาดรังสีออกจากหยดน้ำและเปลี่ยนทิศอีกครั้ง</li>
+<li>ใส่คำกำกับลำดับในใจว่า refraction → reflection → refraction</li>
+</ol>
+</div>
+<div class="keyline">ภาพจำ: prism = refraction twice → spectrum · rainbow = refraction → reflection → refraction</div>
+<div class="optional-box">
+<div class="optional-title">หมายเหตุจากต้นฉบับ</div>
+<p>สไลด์ Conclusion ตอนท้ายใช้คำว่า “Reflection of light makes ponds appear shallower…” แต่สไลด์ 14–16 อธิบายปรากฏการณ์ก้นบ่อและดินสอด้วย <b>refraction</b> ในแบบฝึกนี้จึงยึดคำอธิบายหลักของหัวข้อ 7.2 และเก็บข้อสังเกตนี้ไว้ให้เห็นความไม่สอดคล้องของ source โดยไม่ซ่อน</p>
+</div>
+</div>
+<div class="two-col">
+<figure class="figure draw-practice">
+<svg aria-label="prism diagram" viewbox="0 0 360 240">
+<defs><marker id="r72c" markerheight="8" markerwidth="8" orient="auto" refx="7" refy="3"><path d="M0,0 L0,6 L8,3 z" fill="#111"></path></marker></defs>
+<polygon fill="none" points="170,30 85,205 275,205" stroke="#111" stroke-width="3"></polygon>
+<line marker-end="url(#r72c)" stroke="#111" stroke-width="3" x1="20" x2="128" y1="120" y2="120"></line>
+<line marker-end="url(#r72c)" stroke="#111" stroke-width="3" x1="128" x2="220" y1="120" y2="145"></line>
+<line marker-end="url(#r72c)" stroke="#111" stroke-width="2" x1="220" x2="338" y1="145" y2="95"></line>
+<line marker-end="url(#r72c)" stroke="#111" stroke-width="2" x1="220" x2="338" y1="145" y2="125"></line>
+<line marker-end="url(#r72c)" stroke="#111" stroke-width="2" x1="220" x2="338" y1="145" y2="155"></line>
+<line marker-end="url(#r72c)" stroke="#111" stroke-width="2" x1="220" x2="338" y1="145" y2="185"></line>
+<text font-size="15" x="18" y="105">white light</text><text font-size="15" x="264" y="225">spectrum</text>
+</svg>
+<figcaption>Prism: แสงหักเหตอนเข้าและตอนออก แล้วแยกเป็น spectrum</figcaption>
+</figure>
+<figure class="figure draw-practice">
+<svg aria-label="rainbow droplet sequence" viewbox="0 0 360 240">
+<defs><marker id="r72d" markerheight="8" markerwidth="8" orient="auto" refx="7" refy="3"><path d="M0,0 L0,6 L8,3 z" fill="#111"></path></marker></defs>
+<circle cx="190" cy="120" fill="none" r="82" stroke="#111" stroke-width="3"></circle>
+<line marker-end="url(#r72d)" stroke="#111" stroke-width="3" x1="15" x2="125" y1="85" y2="95"></line>
+<line marker-end="url(#r72d)" stroke="#111" stroke-width="3" x1="125" x2="250" y1="95" y2="145"></line>
+<line marker-end="url(#r72d)" stroke="#111" stroke-width="3" x1="250" x2="155" y1="145" y2="178"></line>
+<line marker-end="url(#r72d)" stroke="#111" stroke-width="2.5" x1="155" x2="55" y1="178" y2="218"></line>
+<text font-size="15" x="15" y="68">sunlight</text><text font-size="15" x="208" y="30">water droplet</text>
+</svg>
+<figcaption>Water droplet: เข้า = refraction · ด้านหลัง = reflection · ออก = refraction</figcaption>
+</figure><div class="draw-check"><span class="badge">ต้องวาดได้</span><b>Prism / rainbow:</b> Prism มี refraction ตอนเข้าและออก ส่วน water droplet ใช้ลำดับ refraction → reflection → refraction ตาม source</div>
+</div>
+<div class="practice-title">ลากคำตอบสุดท้าย · คำเติมเป็นอังกฤษล้วน</div>
+<div class="wordbank"><strong>Word Bank · English only · Source-only distractors</strong><div class="words">
+<span class="word">mirage</span>
+<span class="word">prism</span>
+<span class="word">spectrum</span>
+<span class="word">refraction</span>
+<span class="word">reflection</span>
+<span class="word">twice</span>
+<span class="word">refracted light</span>
+<span class="word">water droplets</span>
+<span class="word">clouds</span>
+<span class="word">sun is low and behind us</span>
+<span class="word">cool air</span>
+<span class="word">straight line</span>
+<span class="word">refraction</span><span class="word">transparent medium</span><span class="word">towards the normal</span><span class="word">away from the normal</span><span class="word">water</span></div></div>
+<p class="cloze">ภาพลวงที่ source อธิบายจากชั้นอากาศอุณหภูมิต่างกันเรียกว่า <span class="blank" data-answer="mirage"><span class="space"> </span><span class="ans">mirage</span></span> และภาพคล้ายแอ่งน้ำอาจเป็นภาพของ <span class="blank" data-answer="clouds"><span class="space"> </span><span class="ans">clouds</span></span></p>
+<p class="cloze">แท่งโปร่งใสรูปฐานสามเหลี่ยมคือ <span class="blank" data-answer="prism"><span class="space"> </span><span class="ans">prism</span></span> โดยแสงหักเห <span class="blank" data-answer="twice"><span class="space"> </span><span class="ans">twice</span></span> และแยกเป็น <span class="blank" data-answer="spectrum"><span class="space"> </span><span class="ans">spectrum</span></span></p>
+<p class="cloze">ใน water droplet ของ rainbow ลำดับสำคัญคือ <span class="blank" data-answer="refraction"><span class="space"> </span><span class="ans">refraction</span></span> → <span class="blank" data-answer="reflection"><span class="space"> </span><span class="ans">reflection</span></span> → <span class="blank" data-answer="refraction"><span class="space"> </span><span class="ans">refraction</span></span></p>
+<p class="cloze">source ระบุว่า rainbow เกี่ยวข้องกับ <span class="blank wide" data-answer="water droplets"><span class="space"> </span><span class="ans">water droplets</span></span> และมองเห็นได้เมื่อ <span class="blank xwide" data-answer="sun is low and behind us"><span class="space"> </span><span class="ans">sun is low and behind us</span></span></p>
+</section>
+<section class="final" id="final72">
+<h2>ด่านรวม Topic 7.2 · Refraction of Light</h2>
+<div class="read-box">
+<div class="title">อ่านรอบสุดท้าย · ภาษาไทย</div>
+<p>การหักเหเกิดเมื่อความเร็วของแสงเปลี่ยนขณะผ่านตัวกลางโปร่งใสต่างชนิดด้วยมุมเอียง จาก less dense medium ไป denser medium แสงช้าลงและเบนเข้าหา normal ส่วนทิศกลับกันแสงเร็วขึ้นและเบนออกจาก normal ถ้าตกกระทบตั้งฉาก แสงเดินทางตรง</p>
+<p>ปรากฏการณ์สำคัญจาก source ได้แก่ ก้นบ่อดูตื้น ดินสอในน้ำดูงอ mirage การแยก white light ด้วย prism และ rainbow จากการหักเหกับการสะท้อนใน water droplets</p>
+<div class="core-box">
+<div class="core-title">วิธีใช้ด่านรวม</div>
+<p>ถ้าข้อเกี่ยวกับทิศรังสี ให้วาด boundary และ normal ก่อนเสมอ ถ้าเป็น prism หรือ rainbow ให้วาดลำดับการเดินทางของรังสีตามขั้นตอนภาษาไทยด้านบน แล้วค่อยลากคำตอบสุดท้าย</p>
+</div>
+</div>
+<div class="wordbank"><strong>Final Word Bank · English only · Source-only distractors</strong><div class="words">
+<span class="word">refraction</span>
+<span class="word">reflection</span>
+<span class="word">towards the normal</span>
+<span class="word">away from the normal</span>
+<span class="word">straight line</span>
+<span class="word">shallower</span>
+<span class="word">bottom of the pond</span>
+<span class="word">prism</span>
+<span class="word">spectrum</span>
+<span class="word">mirage</span>
+<span class="word">water droplets</span>
+<span class="word">transparent medium</span>
+<span class="word">refracted ray</span><span class="word">air</span><span class="word">water</span></div></div>
+<p class="cloze">แสงเปลี่ยนทิศเพราะความเร็วเปลี่ยนเมื่อผ่าน transparent media เรียกว่า <span class="blank" data-answer="refraction"><span class="space"> </span><span class="ans">refraction</span></span></p>
+<p class="cloze">เมื่อแสงช้าลง รังสีหักเห <span class="blank xwide" data-answer="towards the normal"><span class="space"> </span><span class="ans">towards the normal</span></span> แต่เมื่อเร็วขึ้น รังสีหักเห <span class="blank xwide" data-answer="away from the normal"><span class="space"> </span><span class="ans">away from the normal</span></span></p>
+<p class="cloze">ก้นบ่อดู <span class="blank" data-answer="shallower"><span class="space"> </span><span class="ans">shallower</span></span> และภาพลวงจากชั้นอากาศอุณหภูมิต่างกันเรียกว่า <span class="blank" data-answer="mirage"><span class="space"> </span><span class="ans">mirage</span></span></p>
+<p class="cloze"><span class="blank" data-answer="prism"><span class="space"> </span><span class="ans">prism</span></span> แยก white light เป็น <span class="blank" data-answer="spectrum"><span class="space"> </span><span class="ans">spectrum</span></span> ส่วน rainbow เกิดกับ <span class="blank wide" data-answer="water droplets"><span class="space"> </span><span class="ans">water droplets</span></span></p>
+</section>
+<div class="unit-banner page-break">
+<div class="unit-no">Topic 7.3</div>
+<div class="unit-title">เลนส์และแสง · Lenses and Light</div>
+<div class="unit-desc">สรุปไทยเฉพาะแกนสำคัญ · ฝึกสิ่งที่ต้องทำได้ · ทุกคำตอบสุดท้ายเป็น drag/drop</div>
+</div>
+<section class="section" id="s8">
+<div class="section-head"><div class="num">8</div><div><h2>ชนิดของเลนส์และจุดสำคัญ</h2><div class="coverage">convex lens · concave lens · converging · diverging · principal axis · optical centre · focal point · focal length</div></div></div>
+<div class="read-box">
+<div class="title">สรุปให้อ่านก่อน · ภาษาไทย</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">ต้องรู้</span> เลนส์ทำให้แสงหักเหและเกิดภาพ</div>
+<p><b>เลนส์ (lens)</b> ทำจากวัสดุโปร่งใส เช่น แก้วหรือพลาสติก และมีผิวโค้ง เมื่อรังสีแสงเข้าสู่เลนส์ แสงจะเกิดการหักเห และเมื่อออกจากเลนส์ก็หักเหอีกครั้ง การหักเหของรังสีทำให้เกิดภาพได้</p>
+<p>source แบ่งเลนส์เป็น 2 กลุ่มหลัก คือ <b>เลนส์นูน (convex lens)</b> และ <b>เลนส์เว้า (concave lens)</b></p>
+<ul>
+<li><b>convex lens</b> มีส่วนกลางหนากว่า รังสีที่ขนานและอยู่ใกล้ principal axis จะหักเหเข้าด้านในและ <b>มาบรรจบ</b> ที่ focal point, F</li>
+<li><b>concave lens</b> มีส่วนกลางบางกว่า รังสีที่ขนานและอยู่ใกล้ principal axis จะหักเหออกด้านนอกและดูเสมือนว่า <b>แยกออก</b> มาจาก focal point, F</li>
+</ul>
+</div>
+<div class="two-col">
+<div class="core-box">
+<div class="core-title">ชนิดย่อยที่ source แสดง</div>
+<p><b>Convex:</b> Biconvex lens, Plano-convex lens, Concavo-convex lens</p>
+<p><b>Concave:</b> Biconcave lens, Plano-concave lens, Convexo-concave lens</p>
+</div>
+<div class="core-box">
+<div class="core-title">จุดและเส้นที่ต้องรู้</div>
+<ul>
+<li><b>principal axis</b> = เส้นแกนหลักของเลนส์</li>
+<li><b>optical centre, C</b> = จุดศูนย์กลางเชิงแสงของเลนส์</li>
+<li><b>focal point, F</b> = จุดบน principal axis ที่รังสีขนานมาบรรจบ หรือดูเสมือนแยกออกจากจุดนั้น</li>
+<li><b>focal length, f</b> = ระยะจาก focal point ถึง optical centre</li>
+</ul>
+</div>
+</div>
+<figure class="figure">
+<svg aria-label="convex and concave lens parallel rays" viewbox="0 0 780 330">
+<defs>
+<marker id="r3a" markerheight="9" markerwidth="9" orient="auto" refx="8" refy="3"><path d="M0,0 L0,6 L8,3 z" fill="#111"></path></marker>
+</defs>
+<text font-size="18" font-weight="700" x="95" y="28">Convex lens</text>
+<line stroke="#777" stroke-width="1.5" x1="35" x2="350" y1="125" y2="125"></line>
+<path d="M185 50 Q225 125 185 200 Q265 125 185 50" fill="none" stroke="#111" stroke-width="3"></path>
+<line stroke="#111" stroke-width="2.2" x1="55" x2="196" y1="85" y2="85"></line>
+<line stroke="#111" stroke-width="2.2" x1="55" x2="196" y1="125" y2="125"></line>
+<line stroke="#111" stroke-width="2.2" x1="55" x2="196" y1="165" y2="165"></line>
+<line marker-end="url(#r3a)" stroke="#111" stroke-width="2.2" x1="196" x2="320" y1="85" y2="125"></line>
+<line marker-end="url(#r3a)" stroke="#111" stroke-width="2.2" x1="196" x2="320" y1="125" y2="125"></line>
+<line marker-end="url(#r3a)" stroke="#111" stroke-width="2.2" x1="196" x2="320" y1="165" y2="125"></line>
+<circle cx="320" cy="125" fill="#111" r="4"></circle><text font-size="15" x="314" y="150">F</text>
+<circle cx="205" cy="125" fill="#111" r="4"></circle><text font-size="15" x="198" y="150">C</text>
+<line stroke="#111" stroke-width="1.7" x1="205" x2="320" y1="215" y2="215"></line>
+<line stroke="#111" x1="205" x2="205" y1="208" y2="222"></line><line stroke="#111" x1="320" x2="320" y1="208" y2="222"></line>
+<text font-size="15" x="258" y="238">f</text>
+<text font-size="18" font-weight="700" x="505" y="28">Concave lens</text>
+<line stroke="#777" stroke-width="1.5" x1="430" x2="745" y1="125" y2="125"></line>
+<path d="M585 50 Q545 125 585 200 M625 50 Q665 125 625 200" fill="none" stroke="#111" stroke-width="3"></path>
+<line stroke="#111" stroke-width="2.2" x1="445" x2="595" y1="85" y2="85"></line>
+<line stroke="#111" stroke-width="2.2" x1="445" x2="595" y1="125" y2="125"></line>
+<line stroke="#111" stroke-width="2.2" x1="445" x2="595" y1="165" y2="165"></line>
+<line marker-end="url(#r3a)" stroke="#111" stroke-width="2.2" x1="595" x2="735" y1="85" y2="50"></line>
+<line marker-end="url(#r3a)" stroke="#111" stroke-width="2.2" x1="595" x2="735" y1="125" y2="125"></line>
+<line marker-end="url(#r3a)" stroke="#111" stroke-width="2.2" x1="595" x2="735" y1="165" y2="200"></line>
+<line stroke="#777" stroke-dasharray="6 5" stroke-width="1.7" x1="595" x2="490" y1="85" y2="125"></line>
+<line stroke="#777" stroke-dasharray="6 5" stroke-width="1.7" x1="595" x2="490" y1="165" y2="125"></line>
+<circle cx="490" cy="125" fill="#111" r="4"></circle><text font-size="15" x="484" y="150">F</text>
+<circle cx="605" cy="125" fill="#111" r="4"></circle><text font-size="15" x="598" y="150">C</text>
+<line stroke="#111" stroke-width="1.7" x1="490" x2="605" y1="215" y2="215"></line>
+<line stroke="#111" x1="490" x2="490" y1="208" y2="222"></line><line stroke="#111" x1="605" x2="605" y1="208" y2="222"></line>
+<text font-size="15" x="543" y="238">f</text>
+<text font-size="13" x="300" y="305">principal axis</text>
+</svg>
+<figcaption>ภาพช่วยจำจากแนวคิดใน source: convex lens ทำให้รังสีขนาน converge ส่วน concave lens ทำให้รังสีขนาน diverge</figcaption>
+</figure>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">วิธีวาดไทย</span> วาดรังสีขนานผ่านเลนส์อย่างง่าย</div>
+<ol>
+<li>วาด <b>principal axis</b> เป็นเส้นตรงแนวนอน</li>
+<li>วาดเลนส์ตรงกลางและทำเครื่องหมาย <b>optical centre, C</b></li>
+<li>ทำเครื่องหมาย <b>focal point, F</b> บน principal axis</li>
+<li>วาดรังสีหลายเส้นเข้าหาเลนส์โดยให้รังสีขนานกับ principal axis</li>
+<li>ถ้าเป็น convex lens ให้รังสีหลังเลนส์หักเหเข้าหาและมาบรรจบที่ F</li>
+<li>ถ้าเป็น concave lens ให้รังสีหลังเลนส์หักเหออก และใช้เส้นประย้อนหลังเพื่อให้เห็นว่ารังสีดูเสมือนแยกออกมาจาก F</li>
+</ol>
+</div>
+<div class="optional-box">
+<div class="optional-title"><span class="level-tag">ตาม source</span> ความหนากับ focal length</div>
+<p>source ระบุว่า convex lens ที่ <b>หนากว่าบริเวณกลาง</b> จะมี focal length สั้นกว่า และ concave lens ที่ <b>บางกว่าบริเวณกลาง</b> จะมี focal length สั้นกว่า ในชุดนี้ให้ยึดข้อความตาม source เท่านั้น</p>
+</div>
+<div class="keyline">ภาพจำ: convex lens → converge · concave lens → diverge · f = ระยะระหว่าง F กับ C</div>
+</div>
+<div class="practice-title">ลากคำตอบสุดท้าย · English only</div>
+<div class="wordbank"><strong>Word Bank · English only · Source-only distractors</strong><div class="words">
+<span class="word">transparent materials</span><span class="word">refracted</span><span class="word">convex lens</span><span class="word">concave lens</span>
+<span class="word">refracted inwards</span><span class="word">refracted outwards</span><span class="word">converge</span><span class="word">diverge</span>
+<span class="word">principal axis</span><span class="word">optical centre</span><span class="word">focal point</span><span class="word">focal length</span>
+<span class="word">parallel rays</span><span class="word">object distance</span><span class="word">image distance</span><span class="word">real image</span><span class="word">2F</span>
+</div></div>
+<p class="cloze">เลนส์ทำจาก <span class="blank wide" data-answer="transparent materials"><span class="space"> </span><span class="ans">transparent materials</span></span> และเมื่อแสงเข้าสู่หรือออกจากเลนส์ แสงจะถูก <span class="blank" data-answer="refracted"><span class="space"> </span><span class="ans">refracted</span></span></p>
+<p class="cloze">เลนส์ที่ทำให้รังสีขนานหักเหเข้าด้านในคือ <span class="blank" data-answer="convex lens"><span class="space"> </span><span class="ans">convex lens</span></span> รังสีจะ <span class="blank" data-answer="converge"><span class="space"> </span><span class="ans">converge</span></span> ที่ <span class="blank" data-answer="focal point"><span class="space"> </span><span class="ans">focal point</span></span></p>
+<p class="cloze">เลนส์ที่ทำให้รังสีขนานหักเหออกด้านนอกคือ <span class="blank" data-answer="concave lens"><span class="space"> </span><span class="ans">concave lens</span></span> รังสีจะดูเสมือน <span class="blank" data-answer="diverge"><span class="space"> </span><span class="ans">diverge</span></span> ออกจาก F</p>
+<p class="cloze">เส้นแกนหลักเรียกว่า <span class="blank wide" data-answer="principal axis"><span class="space"> </span><span class="ans">principal axis</span></span> จุด C คือ <span class="blank wide" data-answer="optical centre"><span class="space"> </span><span class="ans">optical centre</span></span> และระยะจาก F ถึง C คือ <span class="blank wide" data-answer="focal length"><span class="space"> </span><span class="ans">focal length</span></span></p>
+</section>
+<section class="section" id="s9">
+<div class="section-head"><div class="num">9</div><div><h2>สามรังสีสำคัญของเลนส์นูน</h2><div class="coverage">parallel ray · focal point · optical centre · straight line · three important rays</div></div></div>
+<div class="read-box">
+<div class="title">สรุปให้อ่านก่อน · ภาษาไทย</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">ต้องทำได้</span> ขั้นตอนวาด ray diagram ของ convex lens ตาม source</div>
+<ol>
+<li>วาดเส้นตรงเป็น <b>principal axis</b> แล้ววาด <b>convex lens</b></li>
+<li>ทำเครื่องหมาย <b>optical centre</b>, <b>F</b> และ <b>2F</b> ทั้งสองด้านตามภาพต้นฉบับ</li>
+<li>วาดลูกศรวัตถุตั้งตรงบน principal axis ตามระยะที่โจทย์กำหนด</li>
+<li>จากยอดวัตถุ วาดรังสีเส้นที่ 1 <b>ขนาน principal axis</b> เมื่อผ่านเลนส์ให้รังสีผ่าน <b>F ฝั่งตรงข้าม</b></li>
+<li>วาดรังสีเส้นที่ 2 จากยอดวัตถุ <b>ผ่าน optical centre</b> แล้วเดินต่อเป็น <b>เส้นตรง</b></li>
+<li>วาดรังสีเส้นที่ 3 จากยอดวัตถุผ่าน <b>F ฝั่งวัตถุ</b> เมื่อผ่านเลนส์แล้วให้รังสี <b>ขนาน principal axis</b></li>
+<li>วาดภาพเป็นลูกศร โดยฐานอยู่บน axis และยอดภาพอยู่ตรงจุดที่รังสีหักเหมาพบกัน ในตัวอย่างขั้นตอนของ source ภาพที่ได้เป็น <b>real image</b></li>
+</ol>
+</div>
+<div class="keyline">source ย้ำว่า: Always draw the three important rays when constructing any ray diagrams.</div>
+</div>
+<figure class="figure draw-practice">
+<svg aria-label="three important rays for a convex lens" viewbox="0 0 820 360">
+<defs>
+<marker id="r3b" markerheight="9" markerwidth="9" orient="auto" refx="8" refy="3"><path d="M0,0 L0,6 L8,3 z" fill="#111"></path></marker>
+</defs>
+<line stroke="#111" stroke-width="2" x1="45" x2="775" y1="190" y2="190"></line>
+<path d="M398 45 Q438 190 398 335 Q478 190 398 45" fill="none" stroke="#111" stroke-width="3"></path>
+<circle cx="438" cy="190" fill="#111" r="4"></circle><text font-size="15" x="429" y="214">C</text>
+<circle cx="300" cy="190" fill="#111" r="4"></circle><text font-size="15" x="294" y="214">F</text>
+<circle cx="175" cy="190" fill="#111" r="4"></circle><text font-size="15" x="165" y="214">2F</text>
+<circle cx="575" cy="190" fill="#111" r="4"></circle><text font-size="15" x="569" y="214">F</text>
+<circle cx="700" cy="190" fill="#111" r="4"></circle><text font-size="15" x="690" y="214">2F</text>
+<line marker-end="url(#r3b)" stroke="#111" stroke-width="4" x1="225" x2="225" y1="190" y2="90"></line>
+<text font-size="14" x="188" y="78">Object</text>
+<!-- ray 1 -->
+<line stroke="#111" stroke-width="2.3" x1="225" x2="438" y1="90" y2="90"></line>
+<line marker-end="url(#r3b)" stroke="#111" stroke-width="2.3" x1="438" x2="690" y1="90" y2="275"></line>
+<!-- ray 2 -->
+<line marker-end="url(#r3b)" stroke="#555" stroke-width="2.3" x1="225" x2="690" y1="90" y2="310"></line>
+<!-- ray 3 -->
+<line stroke="#777" stroke-width="2.3" x1="225" x2="438" y1="90" y2="260"></line>
+<line marker-end="url(#r3b)" stroke="#777" stroke-width="2.3" x1="438" x2="735" y1="260" y2="260"></line>
+<text font-size="13" x="535" y="32">รังสี 1: parallel → F</text>
+<text font-size="13" x="535" y="52">รังสี 2: through C → straight</text>
+<text font-size="13" x="535" y="72">รังสี 3: through F → parallel</text>
+</svg>
+<figcaption>ภาพช่วยทบทวนกฎรังสี 3 เส้นของ convex lens ตามขั้นตอนใน source</figcaption>
+</figure><div class="draw-check"><span class="badge">ต้องวาดได้</span><b>Convex lens:</b> เริ่มทุก ray จากยอด object และวาด three important rays ตาม source ก่อนอ่านตำแหน่ง image</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">วิธีวาดไทย</span> ถ้าต้องวาดเอง ให้ทำทีละเส้น</div>
+<p><b>อย่าวาดสามเส้นพร้อมกัน</b> ให้เริ่มจากยอดวัตถุทุกครั้ง แล้วทำตามลำดับ: เส้นขนาน → เส้นผ่าน C → เส้นผ่าน F ฝั่งวัตถุ จากนั้นจึงดูว่ารังสีหลังเลนส์พบกันตรงไหน</p>
+<p>ก่อนเริ่มให้ตรวจว่าเขียน <b>F และ 2F ทั้งสองด้าน</b> และวางวัตถุบน principal axis แล้ว วิธีนี้ช่วยลดการสลับ F ฝั่งวัตถุกับ F ฝั่งตรงข้าม</p>
+</div>
+<div class="practice-title">โจทย์วาดก่อน แล้วลากคำตอบสุดท้าย · English only</div>
+<div class="source-focus"><b>ให้วาดลงกระดาษ/สมุดก่อน:</b> วาด principal axis, convex lens, C, F, 2F และวัตถุ จากนั้นวาดรังสีสำคัญ 3 เส้นตามวิธีวาดภาษาไทยด้านบน แล้วจึงตอบช่องด้านล่างด้วยการลากคำจาก Word Bank</div>
+<div class="wordbank"><strong>Word Bank · English only · Source-only distractors</strong><div class="words">
+<span class="word">focal point</span><span class="word">optical centre</span><span class="word">straight line</span><span class="word">object's side</span>
+<span class="word">opposite side</span><span class="word">parallel</span><span class="word">real image</span><span class="word">principal axis</span>
+<span class="word">refracted outwards</span><span class="word">diverge</span><span class="word">concave lens</span><span class="word">focal length</span><span class="word">2F</span>
+</div></div>
+<p class="cloze">รังสีเส้นที่ 1 เริ่มขนานกับ principal axis และหลังผ่านเลนส์จะผ่าน <span class="blank wide" data-answer="focal point"><span class="space"> </span><span class="ans">focal point</span></span> ที่ <span class="blank wide" data-answer="opposite side"><span class="space"> </span><span class="ans">opposite side</span></span></p>
+<p class="cloze">รังสีเส้นที่ 2 ผ่าน <span class="blank wide" data-answer="optical centre"><span class="space"> </span><span class="ans">optical centre</span></span> และเดินต่อเป็น <span class="blank wide" data-answer="straight line"><span class="space"> </span><span class="ans">straight line</span></span></p>
+<p class="cloze">รังสีเส้นที่ 3 ผ่าน F ที่ <span class="blank wide" data-answer="object's side"><span class="space"> </span><span class="ans">object's side</span></span> แล้วหลังผ่านเลนส์จะเป็น <span class="blank" data-answer="parallel"><span class="space"> </span><span class="ans">parallel</span></span> กับ principal axis</p>
+<p class="cloze">ในตัวอย่างขั้นตอนของ source เมื่อรังสีหักเหพบกัน ภาพที่วาดกำกับไว้เป็น <span class="blank wide" data-answer="real image"><span class="space"> </span><span class="ans">real image</span></span></p>
+</section>
+<section class="final" id="final73a">
+<h2>ด่านรวมย่อย Topic 7.3A · Lens Basics &amp; Convex-Lens Rays</h2>
+<div class="read-box">
+<div class="title">อ่านรอบสุดท้าย · ภาษาไทย</div>
+<p>เลนส์เป็นวัสดุโปร่งใสผิวโค้ง แสงหักเหเมื่อเข้าและออกจากเลนส์ เลนส์นูนทำให้รังสีขนานใกล้ principal axis หักเหเข้าหากันและมาบรรจบที่ F ส่วนเลนส์เว้าทำให้รังสีหักเหออกและดูเสมือนแยกออกจาก F</p>
+<p>เวลาเขียน ray diagram ของ convex lens ให้ทำเครื่องหมาย optical centre, F และ 2F ก่อน แล้วใช้รังสีสำคัญ 3 เส้น: ขนานแกนแล้วผ่าน F ฝั่งตรงข้าม, ผ่าน optical centre เป็นเส้นตรง, และผ่าน F ฝั่งวัตถุแล้วออกขนานแกน</p>
+<div class="keyline">ที่พึ่งก่อนทำ: ถ้าสับสน ให้กลับไปดู “วิธีวาดไทย” ใน Section 8–9 แล้วค่อยปิดสรุปลองใหม่</div>
+</div>
+<div class="wordbank"><strong>Final Word Bank · English only · Source-only distractors</strong><div class="words">
+<span class="word">convex lens</span><span class="word">concave lens</span><span class="word">converge</span><span class="word">diverge</span>
+<span class="word">principal axis</span><span class="word">optical centre</span><span class="word">focal point</span><span class="word">focal length</span>
+<span class="word">straight line</span><span class="word">parallel</span><span class="word">real image</span><span class="word">refracted outwards</span><span class="word">object distance</span>
+<span class="word">2F</span></div></div>
+<p class="cloze">รังสีขนานผ่าน <span class="blank" data-answer="convex lens"><span class="space"> </span><span class="ans">convex lens</span></span> จะ <span class="blank" data-answer="converge"><span class="space"> </span><span class="ans">converge</span></span> ส่วนผ่าน <span class="blank" data-answer="concave lens"><span class="space"> </span><span class="ans">concave lens</span></span> จะดูเสมือน <span class="blank" data-answer="diverge"><span class="space"> </span><span class="ans">diverge</span></span></p>
+<p class="cloze">จุด C คือ <span class="blank wide" data-answer="optical centre"><span class="space"> </span><span class="ans">optical centre</span></span> จุด F คือ <span class="blank wide" data-answer="focal point"><span class="space"> </span><span class="ans">focal point</span></span> และระยะ FC คือ <span class="blank wide" data-answer="focal length"><span class="space"> </span><span class="ans">focal length</span></span></p>
+<p class="cloze">รังสีผ่าน C เดินต่อเป็น <span class="blank wide" data-answer="straight line"><span class="space"> </span><span class="ans">straight line</span></span> ส่วนรังสีที่ผ่าน F ฝั่งวัตถุจะออกจากเลนส์เป็น <span class="blank" data-answer="parallel"><span class="space"> </span><span class="ans">parallel</span></span></p>
+</section>
+<section class="section" id="s10">
+<div class="section-head"><div class="num">10</div><div><h2>ตำแหน่งวัตถุและภาพของเลนส์นูน</h2><div class="coverage">beyond 2F · at 2F · between F and 2F · at F · between F and C</div></div></div>
+<div class="read-box">
+<div class="title">สรุปให้อ่านก่อน · ภาษาไทย</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">ต้องรู้</span> ตำแหน่งวัตถุเปลี่ยนตำแหน่งและลักษณะของภาพ</div>
+<p>ตามตารางใน source ลักษณะภาพจาก <b>convex lens</b> ขึ้นกับระยะของวัตถุจากเลนส์ โดยใช้ <b>F</b> และ <b>2F</b> เป็นตำแหน่งอ้างอิงสำคัญ</p>
+<table class="mini-table">
+<tr><th>ตำแหน่งวัตถุ</th><th>ตำแหน่งภาพตาม source</th><th>ลักษณะภาพตาม source</th></tr>
+<tr><td>At infinity</td><td>At F, opposite side</td><td>real · inverted · diminished</td></tr>
+<tr><td>Beyond 2F</td><td>Between F and 2F, opposite side</td><td>real · inverted · diminished</td></tr>
+<tr><td>At 2F</td><td>At 2F, opposite side</td><td>real · inverted · same size</td></tr>
+<tr><td>Between F and 2F</td><td>Beyond 2F, opposite side</td><td>real · inverted · magnified</td></tr>
+<tr><td>At F</td><td>At infinity</td><td>source ระบุ virtual · upright · magnified</td></tr>
+<tr><td>Between F and C</td><td>Behind the object, same side</td><td>virtual · upright · magnified</td></tr>
+</table>
+</div>
+<div class="source-focus"><b>หมายเหตุจาก source:</b> แถว <b>At F</b> ระบุทั้ง <b>v = ∞</b> และระบุลักษณะภาพว่า <b>virtual, upright and magnified</b> ในบรรทัดเดียวกัน ไฟล์นี้คงข้อมูลตาม source โดยไม่เติมหรือแก้จากภายนอก</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">ต้องทำได้</span> อ่าน ray diagram เป็น 4 คำถาม</div>
+<p>หลังวาด ray diagram ให้ถามตามลำดับ: <b>ภาพอยู่ด้านไหน?</b> → <b>real หรือ virtual?</b> → <b>upright หรือ inverted?</b> → <b>ขนาด magnified / same size / diminished?</b></p>
+<p>อีกจุดที่ source ย้ำคือ <b>focal length, object distance และ image distance ต้องวัดจาก optical centre, C</b> ไม่ใช่จากขอบเลนส์</p>
+</div>
+<figure class="figure draw-practice">
+<svg aria-label="convex lens object positions summary" viewbox="0 0 800 360">
+<defs><marker id="r4a" markerheight="9" markerwidth="9" orient="auto" refx="8" refy="3"><path d="M0,0 L0,6 L8,3 z" fill="#111"></path></marker></defs>
+<line stroke="#777" stroke-width="1.5" x1="40" x2="760" y1="205" y2="205"></line>
+<path d="M385 65 Q425 205 385 335 Q465 205 385 65" fill="none" stroke="#111" stroke-width="3"></path>
+<circle cx="420" cy="205" fill="#111" r="4"></circle><text font-size="14" x="410" y="228">C</text>
+<circle cx="300" cy="205" fill="#111" r="4"></circle><text font-size="14" x="292" y="228">F</text>
+<circle cx="180" cy="205" fill="#111" r="4"></circle><text font-size="14" x="168" y="228">2F</text>
+<circle cx="540" cy="205" fill="#111" r="4"></circle><text font-size="14" x="532" y="228">F</text>
+<circle cx="660" cy="205" fill="#111" r="4"></circle><text font-size="14" x="648" y="228">2F</text>
+<!-- object between F and 2F -->
+<line marker-end="url(#r4a)" stroke="#111" stroke-width="4" x1="235" x2="235" y1="205" y2="105"></line>
+<text font-size="14" x="198" y="90">Object</text>
+<!-- ray parallel then through far F -->
+<line stroke="#111" stroke-width="2.2" x1="235" x2="420" y1="105" y2="105"></line>
+<line stroke="#111" stroke-width="2.2" x1="420" x2="690" y1="105" y2="330"></line>
+<!-- ray through C -->
+<line stroke="#555" stroke-width="2.2" x1="235" x2="690" y1="105" y2="320"></line>
+<!-- image beyond 2F -->
+<line marker-end="url(#r4a)" stroke="#111" stroke-width="4" x1="690" x2="690" y1="205" y2="325"></line>
+<text font-size="14" x="675" y="350">Image</text>
+<text font-size="15" font-weight="700" x="72" y="35">ตัวอย่างการอ่านภาพ: object อยู่ between F and 2F → image อยู่ beyond 2F</text>
+</svg>
+<figcaption>ภาพช่วยฝึกอ่านตำแหน่งตามแนวทาง ray diagram ใน source</figcaption>
+</figure><div class="draw-check"><span class="badge">ต้องทำได้</span><b>Image cases:</b> หลังวาดให้ตอบ 4 อย่างทุกครั้ง: position → real/virtual → upright/inverted → size</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">วิธีวาดไทย</span> วาดภาพของ convex lens แล้วค่อยลากคำตอบ</div>
+<ol>
+<li>วาด principal axis และ convex lens แล้วทำเครื่องหมาย C, F และ 2F ทั้งสองด้าน</li>
+<li>วางวัตถุตามตำแหน่งที่โจทย์กำหนด เช่น beyond 2F, at 2F หรือ between F and 2F</li>
+<li>จากยอดวัตถุ วาดรังสีขนาน principal axis แล้วหักผ่าน F ฝั่งตรงข้าม</li>
+<li>วาดรังสีผ่าน optical centre, C ให้เดินต่อเป็นเส้นตรง</li>
+<li>ถ้าต้องการรังสีที่ 3 ให้วาดผ่าน F ฝั่งวัตถุ แล้วหลังเลนส์ออกขนาน principal axis</li>
+<li>หาจุดที่รังสีหลังเลนส์พบกัน แล้ววาด image arrow ที่จุดนั้น</li>
+<li>อ่านคำตอบสุดท้าย 4 อย่าง: ตำแหน่ง, real/virtual, upright/inverted และ size</li>
+</ol>
+</div>
+<div class="keyline">จำจาก source: beyond 2F → between F and 2F · at 2F → at 2F · between F and 2F → beyond 2F</div>
+</div>
+<div class="practice-title">วาดก่อน แล้วลากคำตอบสุดท้าย · English only</div>
+<div class="wordbank"><strong>Word Bank · English only · Source-only distractors</strong><div class="words">
+<span class="word">beyond 2F</span><span class="word">at 2F</span><span class="word">between F and 2F</span><span class="word">at infinity</span><span class="word">behind the object</span>
+<span class="word">opposite side</span><span class="word">same side</span><span class="word">real</span><span class="word">virtual</span><span class="word">upright</span><span class="word">inverted</span>
+<span class="word">magnified</span><span class="word">same size</span><span class="word">diminished</span><span class="word">optical centre</span><span class="word">edge of the lens</span>
+<span class="word">u &gt; 2f</span><span class="word">u = 2f</span><span class="word">f &lt; u &lt; 2f</span><span class="word">u = f</span><span class="word">u &lt; f</span>
+<span class="word">real</span><span class="word">real</span><span class="word">inverted</span><span class="word">inverted</span><span class="word">magnified</span><span class="word">focal point</span><span class="word">principal axis</span><span class="word">image distance</span><span class="word">concave lens</span><span class="word">diverge</span></div></div>
+<p class="cloze"><b>Case A:</b> วัตถุอยู่ beyond 2F ภาพอยู่ <span class="blank xwide" data-answer="between F and 2F"><span class="space"> </span><span class="ans">between F and 2F</span></span> ที่ <span class="blank wide" data-answer="opposite side"><span class="space"> </span><span class="ans">opposite side</span></span> และเป็น <span class="blank" data-answer="real"><span class="space"> </span><span class="ans">real</span></span>, <span class="blank" data-answer="inverted"><span class="space"> </span><span class="ans">inverted</span></span>, <span class="blank" data-answer="diminished"><span class="space"> </span><span class="ans">diminished</span></span></p>
+<p class="cloze"><b>Case B:</b> วัตถุอยู่ at 2F ภาพอยู่ <span class="blank" data-answer="at 2F"><span class="space"> </span><span class="ans">at 2F</span></span> และเป็น <span class="blank" data-answer="real"><span class="space"> </span><span class="ans">real</span></span>, <span class="blank" data-answer="inverted"><span class="space"> </span><span class="ans">inverted</span></span>, <span class="blank wide" data-answer="same size"><span class="space"> </span><span class="ans">same size</span></span></p>
+<p class="cloze"><b>Case C:</b> วัตถุอยู่ between F and 2F ภาพอยู่ <span class="blank wide" data-answer="beyond 2F"><span class="space"> </span><span class="ans">beyond 2F</span></span> และเป็น <span class="blank" data-answer="real"><span class="space"> </span><span class="ans">real</span></span>, <span class="blank" data-answer="inverted"><span class="space"> </span><span class="ans">inverted</span></span>, <span class="blank" data-answer="magnified"><span class="space"> </span><span class="ans">magnified</span></span></p>
+<p class="cloze"><b>Case D:</b> ตามตาราง source เมื่อวัตถุอยู่ at F ภาพอยู่ <span class="blank wide" data-answer="at infinity"><span class="space"> </span><span class="ans">at infinity</span></span></p>
+<p class="cloze"><b>Case E:</b> วัตถุอยู่ between F and C ภาพอยู่ <span class="blank xwide" data-answer="behind the object"><span class="space"> </span><span class="ans">behind the object</span></span> ที่ <span class="blank wide" data-answer="same side"><span class="space"> </span><span class="ans">same side</span></span> และเป็น <span class="blank" data-answer="virtual"><span class="space"> </span><span class="ans">virtual</span></span>, <span class="blank" data-answer="upright"><span class="space"> </span><span class="ans">upright</span></span>, <span class="blank" data-answer="magnified"><span class="space"> </span><span class="ans">magnified</span></span></p>
+<p class="cloze">ตาม source ระยะ focal length, object distance และ image distance ต้องวัดจาก <span class="blank wide" data-answer="optical centre"><span class="space"> </span><span class="ans">optical centre</span></span></p>
+</section>
+<section class="section" id="s11">
+<div class="section-head"><div class="num">11</div><div><h2>เลนส์เว้าและภาพ</h2><div class="coverage">concave lens · virtual · upright · diminished · same side</div></div></div>
+<div class="read-box">
+<div class="title">สรุปให้อ่านก่อน · ภาษาไทย</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">ต้องรู้</span> Concave lens ให้ลักษณะภาพเหมือนกันทุกตำแหน่งวัตถุตาม source</div>
+<p>source ระบุว่า <b>ไม่ว่าวัตถุจะอยู่ที่ตำแหน่งใด</b> ภาพจาก concave lens จะอยู่ <b>ด้านเดียวกับวัตถุ</b> และอยู่ <b>ระหว่างวัตถุกับเลนส์</b></p>
+<p>ลักษณะภาพมี 3 คำที่ต้องจำให้แม่น คือ <b>virtual, upright, diminished</b></p>
+</div>
+<figure class="figure draw-practice">
+<svg aria-label="concave lens three key rays" viewbox="0 0 800 390">
+<defs><marker id="r4b" markerheight="9" markerwidth="9" orient="auto" refx="8" refy="3"><path d="M0,0 L0,6 L8,3 z" fill="#111"></path></marker></defs>
+<line stroke="#777" stroke-width="1.5" x1="45" x2="755" y1="220" y2="220"></line>
+<path d="M385 75 Q345 220 385 350 M455 75 Q495 220 455 350" fill="none" stroke="#111" stroke-width="3"></path>
+<circle cx="420" cy="220" fill="#111" r="4"></circle><text font-size="14" x="411" y="244">C</text>
+<circle cx="295" cy="220" fill="#111" r="4"></circle><text font-size="14" x="287" y="244">F</text>
+<circle cx="545" cy="220" fill="#111" r="4"></circle><text font-size="14" x="537" y="244">F</text>
+<!-- object -->
+<line marker-end="url(#r4b)" stroke="#111" stroke-width="4" x1="180" x2="180" y1="220" y2="105"></line>
+<text font-size="14" x="146" y="92">Object</text>
+<!-- ray1 parallel, diverges -->
+<line stroke="#111" stroke-width="2.2" x1="180" x2="420" y1="105" y2="105"></line>
+<line marker-end="url(#r4b)" stroke="#111" stroke-width="2.2" x1="420" x2="700" y1="105" y2="38"></line>
+<line stroke="#777" stroke-dasharray="7 5" stroke-width="1.8" x1="420" x2="295" y1="105" y2="220"></line>
+<!-- ray2 through C -->
+<line marker-end="url(#r4b)" stroke="#555" stroke-width="2.2" x1="180" x2="690" y1="105" y2="335"></line>
+<!-- ray3 aimed toward far F then parallel -->
+<line stroke="#999" stroke-width="2.1" x1="180" x2="420" y1="105" y2="175"></line>
+<line marker-end="url(#r4b)" stroke="#999" stroke-width="2.1" x1="420" x2="700" y1="175" y2="175"></line>
+<!-- image approximate -->
+<line marker-end="url(#r4b)" stroke="#111" stroke-width="4" x1="330" x2="330" y1="220" y2="165"></line>
+<text font-size="14" x="308" y="152">Image</text>
+<text font-size="15" font-weight="700" x="50" y="35">เส้นประย้อนหลังช่วยหาตำแหน่ง virtual image</text>
+</svg>
+<figcaption>ภาพฝึกรังสีสำคัญของ concave lens ตาม figure ใน source</figcaption>
+</figure><div class="draw-check"><span class="badge">ต้องวาดได้</span><b>Concave lens:</b> รังสีจริง diverge หลังเลนส์ และใช้เส้นประย้อนหลังเพื่อหา virtual image ด้านเดียวกับ object</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">วิธีวาดไทย</span> สามรังสีสำคัญของ concave lens</div>
+<ol>
+<li>วาด principal axis และ concave lens แล้วทำเครื่องหมาย C และ F ทั้งสองด้าน</li>
+<li>วางวัตถุด้านซ้ายของเลนส์ และเริ่มรังสีทุกเส้นจากยอดวัตถุ</li>
+<li>รังสีที่ขนาน principal axis เมื่อผ่านเลนส์จะหักเหออก ให้ลากเส้นประย้อนหลังไปยัง F ฝั่งวัตถุ</li>
+<li>รังสีที่ผ่าน optical centre, C เดินต่อเป็นเส้นตรง</li>
+<li>รังสีที่มุ่งไปยัง F ฝั่งตรงข้าม เมื่อออกจากเลนส์จะขนาน principal axis</li>
+<li>หาจุดตัดของเส้นประย้อนหลัง แล้ววาด image arrow ตรงจุดนั้น</li>
+<li>ตรวจคำตอบสุดท้ายจาก source: virtual, upright, diminished และอยู่ด้านเดียวกับวัตถุ</li>
+</ol>
+</div>
+<div class="keyline">ภาพจำตาม source: concave lens → same side as object · between object and lens · virtual · upright · diminished</div>
+</div>
+<div class="practice-title">วาดก่อน แล้วลากคำตอบสุดท้าย · English only</div>
+<div class="source-focus"><b>ให้วาดลงกระดาษ/สมุดก่อน:</b> วาด concave lens และรังสีสำคัญตามวิธีวาดไทยด้านบน จากนั้นใช้เส้นประย้อนหลังเพื่อหาภาพ แล้วค่อยลากคำตอบสุดท้าย</div>
+<div class="wordbank"><strong>Word Bank · English only · Source-only distractors</strong><div class="words">
+<span class="word">concave lens</span><span class="word">convex lens</span><span class="word">virtual</span><span class="word">real</span><span class="word">upright</span><span class="word">inverted</span>
+<span class="word">diminished</span><span class="word">magnified</span><span class="word">same size</span><span class="word">same side as the object</span><span class="word">opposite side</span>
+<span class="word">between the object and the lens</span><span class="word">beyond 2F</span><span class="word">focal point</span><span class="word">optical centre</span><span class="word">parallel</span><span class="word">straight line</span>
+</div></div>
+<p class="cloze">ไม่ว่าวัตถุจะอยู่ที่ใด ภาพจาก <span class="blank wide" data-answer="concave lens"><span class="space"> </span><span class="ans">concave lens</span></span> อยู่ที่ <span class="blank xwide" data-answer="same side as the object"><span class="space"> </span><span class="ans">same side as the object</span></span> และ <span class="blank xwide" data-answer="between the object and the lens"><span class="space"> </span><span class="ans">between the object and the lens</span></span></p>
+<p class="cloze">ลักษณะภาพคือ <span class="blank" data-answer="virtual"><span class="space"> </span><span class="ans">virtual</span></span>, <span class="blank" data-answer="upright"><span class="space"> </span><span class="ans">upright</span></span> และ <span class="blank" data-answer="diminished"><span class="space"> </span><span class="ans">diminished</span></span></p>
+<p class="cloze">รังสีผ่าน <span class="blank wide" data-answer="optical centre"><span class="space"> </span><span class="ans">optical centre</span></span> เดินต่อเป็น <span class="blank wide" data-answer="straight line"><span class="space"> </span><span class="ans">straight line</span></span> ส่วนรังสีที่มุ่งไปยัง F ฝั่งตรงข้ามจะออกจากเลนส์เป็น <span class="blank" data-answer="parallel"><span class="space"> </span><span class="ans">parallel</span></span></p>
+</section>
+<section class="final" id="final73b">
+<h2>ด่านรวมย่อย Topic 7.3B · Image Formation by Lenses</h2>
+<div class="read-box">
+<div class="title">อ่านรอบสุดท้าย · ภาษาไทย</div>
+<p>สำหรับ convex lens ให้ใช้ F และ 2F เป็นจุดอ้างอิง แล้ววาดรังสีสำคัญเพื่อหาภาพ ตำแหน่งวัตถุที่ต่างกันทำให้ตำแหน่ง ขนาด ทิศ และชนิดภาพต่างกันตามตารางใน source</p>
+<p>สำหรับ concave lens source สรุปง่ายกว่า คือทุกตำแหน่งวัตถุให้ภาพ virtual, upright และ diminished อยู่ด้านเดียวกับวัตถุและระหว่างวัตถุกับเลนส์</p>
+<div class="keyline">ที่พึ่งก่อนทำ: วาด C, F, 2F ให้ครบก่อน แล้วใช้รังสีจากยอดวัตถุทีละเส้น อย่าพยายามเดาภาพจากความจำอย่างเดียว</div>
+</div>
+<div class="wordbank"><strong>Final Word Bank · English only · Source-only distractors</strong><div class="words">
+<span class="word">between F and 2F</span><span class="word">beyond 2F</span><span class="word">at 2F</span><span class="word">real</span><span class="word">virtual</span><span class="word">upright</span><span class="word">inverted</span><span class="word">magnified</span><span class="word">diminished</span><span class="word">same size</span><span class="word">same side as the object</span><span class="word">opposite side</span>
+<span class="word">real</span><span class="word">inverted</span><span class="word">diminished</span><span class="word">focal point</span><span class="word">optical centre</span><span class="word">concave lens</span><span class="word">parallel</span></div></div>
+<p class="cloze">Convex lens: object beyond 2F → image <span class="blank xwide" data-answer="between F and 2F"><span class="space"> </span><span class="ans">between F and 2F</span></span>, <span class="blank" data-answer="real"><span class="space"> </span><span class="ans">real</span></span>, <span class="blank" data-answer="inverted"><span class="space"> </span><span class="ans">inverted</span></span>, <span class="blank" data-answer="diminished"><span class="space"> </span><span class="ans">diminished</span></span></p>
+<p class="cloze">Convex lens: object between F and 2F → image <span class="blank wide" data-answer="beyond 2F"><span class="space"> </span><span class="ans">beyond 2F</span></span>, <span class="blank" data-answer="real"><span class="space"> </span><span class="ans">real</span></span>, <span class="blank" data-answer="inverted"><span class="space"> </span><span class="ans">inverted</span></span>, <span class="blank" data-answer="magnified"><span class="space"> </span><span class="ans">magnified</span></span></p>
+<p class="cloze">Concave lens → <span class="blank" data-answer="virtual"><span class="space"> </span><span class="ans">virtual</span></span>, <span class="blank" data-answer="upright"><span class="space"> </span><span class="ans">upright</span></span>, <span class="blank" data-answer="diminished"><span class="space"> </span><span class="ans">diminished</span></span>, <span class="blank xwide" data-answer="same side as the object"><span class="space"> </span><span class="ans">same side as the object</span></span></p>
+</section>
+<section class="section" id="s12">
+<div class="section-head"><div class="num">12</div><div><h2>การปรับโฟกัสของตาและการแก้สายตา</h2><div class="coverage">retina · myopia · hypermetropia · concave lens · convex lens</div></div></div>
+<div class="read-box">
+<div class="title">สรุปให้อ่านก่อน · ภาษาไทย</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">ต้องรู้</span> ตาปรับความหนาของเลนส์เพื่อให้ภาพตกบน retina</div>
+<p>source ระบุว่าเมื่อมองวัตถุไกล เลนส์ตาจะถูกดึงให้ <b>บางลง</b> และเมื่อมองวัตถุใกล้ เลนส์ตาจะ <b>หนาขึ้น</b> สำหรับสายตาปกติ แสงจากวัตถุจะถูกโฟกัสให้ตกพอดีบน <b>retina</b> จึงเห็นภาพชัด</p>
+<p>ความผิดปกติที่ source เน้นมี 2 แบบ คือ <b>myopia</b> และ <b>hypermetropia</b></p>
+</div>
+<table class="mini-table">
+<tr><th>ภาวะตาม source</th><th>สิ่งที่มองเห็น</th><th>ตำแหน่ง focus</th><th>สาเหตุที่ source ให้</th><th>เลนส์แก้ไข</th></tr>
+<tr><td>Myopia</td><td>ใกล้ชัด ไกลเบลอ</td><td>หน้าจอประสาทตา</td><td>เลนส์ตาหนาเกินไป หรือ eyeball ยาวเกินไป</td><td>Concave lens</td></tr>
+<tr><td>Hypermetropia</td><td>ไกลชัด ใกล้เบลอ</td><td>หลังจอประสาทตา</td><td>เลนส์ตาบางเกินไป หรือ eyeball สั้นเกินไป</td><td>Convex lens</td></tr>
+</table>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">วิธีคิดไทย</span> อ่านโจทย์เรื่องสายตาเป็นลำดับ</div>
+<ol>
+<li>ดูว่าโจทย์บอกว่า <b>วัตถุใกล้</b> หรือ <b>วัตถุไกล</b> มองไม่ชัด</li>
+<li>ระบุชนิดความผิดปกติ: ไกลเบลอ → myopia, ใกล้เบลอ → hypermetropia</li>
+<li>ตาม source ให้ตรวจตำแหน่ง focus: myopia อยู่ <b>in front of the retina</b>, hypermetropia อยู่ <b>behind the retina</b></li>
+<li>เลือกเลนส์แก้ไข: myopia ใช้ <b>concave lens</b> เพื่อ diverge light ก่อนเข้าตา, hypermetropia ใช้ <b>convex lens</b> เพื่อ converge light ก่อนเข้าตา</li>
+<li>ผลที่ต้องการคือให้แสง focus ตรงบน <b>retina</b></li>
+</ol>
+</div>
+<figure class="figure draw-practice">
+<svg aria-label="eye correction summary" viewbox="0 0 900 360">
+<defs><marker id="eyeArrow" markerheight="9" markerwidth="9" orient="auto" refx="8" refy="3"><path d="M0,0 L0,6 L8,3 z" fill="#111"></path></marker></defs>
+<text font-size="18" font-weight="700" x="80" y="35">Myopia</text>
+<ellipse cx="245" cy="115" fill="none" rx="120" ry="70" stroke="#111" stroke-width="2"></ellipse>
+<line stroke="#111" stroke-width="3" x1="335" x2="335" y1="60" y2="170"></line><text font-size="14" x="345" y="118">retina</text>
+<line stroke="#111" stroke-width="2" x1="55" x2="205" y1="95" y2="108"></line><line stroke="#111" stroke-width="2" x1="55" x2="205" y1="135" y2="122"></line>
+<line stroke="#111" stroke-width="2" x1="205" x2="290" y1="108" y2="115"></line><line stroke="#111" stroke-width="2" x1="205" x2="290" y1="122" y2="115"></line>
+<circle cx="290" cy="115" fill="#111" r="4"></circle><text font-size="14" x="220" y="200">focus in front of retina</text>
+<text font-size="18" font-weight="700" x="575" y="35">Hypermetropia</text>
+<ellipse cx="710" cy="115" fill="none" rx="120" ry="70" stroke="#111" stroke-width="2"></ellipse>
+<line stroke="#111" stroke-width="3" x1="800" x2="800" y1="60" y2="170"></line><text font-size="14" x="810" y="118">retina</text>
+<line stroke="#111" stroke-width="2" x1="520" x2="670" y1="95" y2="108"></line><line stroke="#111" stroke-width="2" x1="520" x2="670" y1="135" y2="122"></line>
+<line stroke="#111" stroke-width="2" x1="670" x2="845" y1="108" y2="115"></line><line stroke="#111" stroke-width="2" x1="670" x2="845" y1="122" y2="115"></line>
+<circle cx="845" cy="115" fill="#111" r="4"></circle><text font-size="14" x="650" y="200">focus behind retina</text>
+<text font-size="16" x="70" y="270">Correction:</text><text font-size="16" font-weight="700" x="165" y="270">concave lens</text>
+<text font-size="16" x="550" y="270">Correction:</text><text font-size="16" font-weight="700" x="645" y="270">convex lens</text>
+<line marker-end="url(#eyeArrow)" stroke="#777" stroke-width="1.5" x1="165" x2="335" y1="288" y2="330"></line>
+<line marker-end="url(#eyeArrow)" stroke="#777" stroke-width="1.5" x1="645" x2="800" y1="288" y2="330"></line>
+<text font-size="14" x="300" y="345">เป้าหมาย: focus on retina</text>
+</svg>
+<figcaption>ภาพช่วยจำตำแหน่ง focus และชนิดเลนส์แก้ไขตาม source</figcaption>
+</figure><div class="draw-check"><span class="badge">ต้องทำได้</span><b>Eye correction:</b> วาดตำแหน่ง focus เทียบ retina ก่อน แล้วจึงเลือก concave lens สำหรับ myopia หรือ convex lens สำหรับ hypermetropia ตาม source</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">วิธีวาดไทย</span> วาดรูปแก้สายตาแบบง่ายจาก source</div>
+<ol>
+<li>วาดวงรีแทนลูกตา และวาดเส้นตั้งด้านหลังแทน retina</li>
+<li>ถ้าเป็น myopia ให้ทำจุดรวมแสง <b>ก่อนถึง retina</b> แล้วเขียนกำกับว่า focus in front of the retina</li>
+<li>เติม concave lens หน้า eye เพื่อแสดงว่าช่วย diverge light ก่อนเข้าตา</li>
+<li>ถ้าเป็น hypermetropia ให้ทำจุดรวมแสง <b>เลย retina ไปด้านหลัง</b> แล้วเขียนกำกับว่า focus behind the retina</li>
+<li>เติม convex lens หน้า eye เพื่อแสดงว่าช่วย converge light ก่อนเข้าตา</li>
+<li>รูปแก้ไขสุดท้ายให้รังสีมารวมที่ retina ตามข้อความใน source</li>
+</ol>
+</div>
+<div class="keyline">ภาพจำ: distant object → lens pulled thin · near object → lens becomes thicker · myopia → concave lens · hypermetropia → convex lens</div>
+</div>
+<div class="practice-title">อ่านสถานการณ์ แล้วลากคำตอบสุดท้าย · English only</div>
+<div class="wordbank"><strong>Word Bank · English only · Source-only distractors</strong><div class="words">
+<span class="word">pulled thin</span><span class="word">becomes thicker</span><span class="word">retina</span><span class="word">myopia</span><span class="word">hypermetropia</span><span class="word">concave lens</span><span class="word">convex lens</span><span class="word">in front of the retina</span><span class="word">behind the retina</span><span class="word">near objects</span><span class="word">distant objects</span><span class="word">diverge light</span><span class="word">converge light</span><span class="word">eye lenses are too thick</span><span class="word">eye lenses are too thin</span><span class="word">eyeballs are too long</span><span class="word">eyeballs are too short</span>
+</div></div>
+<p class="cloze">เมื่อตามองวัตถุไกล เลนส์ตาจะ <span class="blank xwide" data-answer="pulled thin"><span class="space"></span><span class="ans">pulled thin</span></span> แต่เมื่อตามองวัตถุใกล้ เลนส์ตาจะ <span class="blank xwide" data-answer="becomes thicker"><span class="space"></span><span class="ans">becomes thicker</span></span></p>
+<p class="cloze">สายตาปกติต้องทำให้แสง focus บน <span class="blank wide" data-answer="retina"><span class="space"></span><span class="ans">retina</span></span></p>
+<p class="cloze">มองวัตถุใกล้ชัด แต่วัตถุไกลเบลอ คือ <span class="blank wide" data-answer="myopia"><span class="space"></span><span class="ans">myopia</span></span> และแสงจากวัตถุไกล focus <span class="blank xwide" data-answer="in front of the retina"><span class="space"></span><span class="ans">in front of the retina</span></span></p>
+<p class="cloze">Myopia แก้ด้วย <span class="blank wide" data-answer="concave lens"><span class="space"></span><span class="ans">concave lens</span></span> เพื่อ <span class="blank wide" data-answer="diverge light"><span class="space"></span><span class="ans">diverge light</span></span> ก่อนแสงเข้าตา</p>
+<p class="cloze">มองวัตถุไกลชัด แต่วัตถุใกล้เบลอ คือ <span class="blank wide" data-answer="hypermetropia"><span class="space"></span><span class="ans">hypermetropia</span></span> และแสงจากวัตถุใกล้ focus <span class="blank xwide" data-answer="behind the retina"><span class="space"></span><span class="ans">behind the retina</span></span></p>
+<p class="cloze">Hypermetropia แก้ด้วย <span class="blank wide" data-answer="convex lens"><span class="space"></span><span class="ans">convex lens</span></span> เพื่อ <span class="blank wide" data-answer="converge light"><span class="space"></span><span class="ans">converge light</span></span> ก่อนแสงเข้าตา</p>
+</section>
+<section class="section" id="s13">
+<div class="section-head"><div class="num">13</div><div><h2>การใช้เลนส์</h2><div class="coverage">magnifying glass · refracting telescope · compound microscope · objective lens · eyepiece</div></div></div>
+<div class="read-box">
+<div class="title">สรุปให้อ่านก่อน · ภาษาไทย</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">ต้องรู้</span> Magnifying glass</div>
+<p>เมื่อวางวัตถุระหว่าง <b>focal point, F</b> กับ <b>convex lens</b> จะเกิดภาพ <b>magnified, upright, virtual</b> ภาพอยู่ด้านเดียวกับวัตถุ และต้องมองผ่านเลนส์จึงเห็นภาพตามที่ source อธิบาย</p>
+</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">ต้องรู้</span> Refracting telescope</div>
+<p>source ระบุว่า refracting telescope ใช้ดู <b>วัตถุที่อยู่ไกลมาก</b> และมีเลนส์ 2 ชิ้น คือ <b>objective lens</b> กับ <b>eyepiece</b> โดย objective lens โฟกัสแสงไปยัง focal point และ focal point นี้เป็น focal point ของ eyepiece ที่มีกำลังมากกว่า จากนั้น eyepiece ทำภาพที่ได้จาก objective lens ให้ magnified สำหรับผู้สังเกต</p>
+</div>
+<div class="source-focus"><b>หมายเหตุจากต้นฉบับ:</b> เนื้อหาหลักในสไลด์ 22–23 สอน <b>refracting telescope</b> และอธิบาย objective lens + eyepiece แต่สไลด์ Conclusion ตอนท้ายใช้คำว่า <b>reflecting telescopes</b>. ไฟล์นี้ใช้รายละเอียดจากหัวข้อหลักของ source และเก็บข้อสังเกตนี้ไว้โดยไม่แก้ความไม่สอดคล้องแบบเงียบ ๆ</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">ต้องรู้</span> Compound microscope</div>
+<p>compound microscope ใช้ดู <b>วัตถุใกล้และมีขนาดเล็กมาก</b> ประกอบด้วย convex lenses 2 ชิ้น คือ <b>objective lens</b> และ <b>eyepiece</b> โดย objective lens ที่มีกำลังมากกว่าสร้างภาพขยายก่อน แล้ว eyepiece ทำหน้าที่เหมือน magnifying glass ขยายภาพแรกอีกครั้ง</p>
+</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">วิธีคิดไทย</span> แยกอุปกรณ์จากหน้าที่</div>
+<ol>
+<li>ถ้าใช้เลนส์เดียวเพื่อดูวัตถุใกล้ให้ใหญ่ขึ้น → magnifying glass</li>
+<li>ถ้าดูวัตถุที่อยู่ไกลมาก และมี objective lens + eyepiece → refracting telescope</li>
+<li>ถ้าดูวัตถุใกล้และเล็กมาก และใช้ convex lenses 2 ชิ้น → compound microscope</li>
+<li>ทั้ง telescope และ microscope มีคำว่า objective lens และ eyepiece แต่หน้าที่และชนิดวัตถุที่ดูต่างกันตาม source</li>
+</ol>
+</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">วิธีวาดไทย</span> สเก็ตช์อุปกรณ์ให้จำโครงได้</div>
+<ol>
+<li><b>Magnifying glass:</b> วาด convex lens, ทำเครื่องหมาย F, วาง object ระหว่าง F กับเลนส์ แล้วเขียน image ด้านเดียวกับ object พร้อมกำกับ magnified · upright · virtual</li>
+<li><b>Refracting telescope:</b> วาดเลนส์ 2 ชิ้นห่างกัน เขียน objective lens ฝั่งรับแสงจากวัตถุไกล และ eyepiece ฝั่งตา วาดแสงจากวัตถุไกลเข้าสู่ objective แล้วรวมที่ focal point ก่อนเข้าสู่ eyepiece</li>
+<li><b>Compound microscope:</b> วาดเลนส์ 2 ชิ้น เขียน objective lens ใกล้วัตถุเล็ก และ eyepiece ฝั่งตา วาด first magnified image หลัง objective แล้วแสดงว่า eyepiece ขยาย first image อีกครั้ง</li>
+</ol>
+</div>
+<div class="keyline">จำหน้าที่: telescope → very distant objects · microscope → near and very small objects · magnifying glass → object between F and convex lens</div>
+</div>
+
+<figure class="figure draw-practice">
+<svg aria-label="lens applications drawing checkpoint" viewbox="0 0 860 390">
+<defs><marker id="r8arr13" markerheight="9" markerwidth="9" orient="auto" refx="8" refy="3"><path d="M0,0 L0,6 L8,3 z" fill="#111"></path></marker></defs>
+<text font-size="18" font-weight="700" x="35" y="35">Refracting telescope</text>
+<line marker-end="url(#r8arr13)" stroke="#111" stroke-width="2.5" x1="45" x2="180" y1="120" y2="120"></line>
+<line marker-end="url(#r8arr13)" stroke="#111" stroke-width="2.5" x1="45" x2="180" y1="155" y2="155"></line>
+<path d="M200 55 Q235 137 200 220 Q270 137 200 55" fill="none" stroke="#111" stroke-width="3"></path>
+<text font-size="14" x="165" y="245">objective lens</text>
+<circle cx="405" cy="137" fill="#111" r="5"></circle><text font-size="14" x="385" y="163">focal point</text>
+<line stroke="#555" stroke-width="2" x1="235" x2="405" y1="120" y2="137"></line>
+<line stroke="#555" stroke-width="2" x1="235" x2="405" y1="155" y2="137"></line>
+<path d="M505 70 Q535 137 505 205 Q565 137 505 70" fill="none" stroke="#111" stroke-width="3"></path>
+<text font-size="14" x="492" y="230">eyepiece</text>
+<text font-size="15" x="575" y="137">viewer</text>
+<line stroke="#aaa" stroke-width="1.5" x1="20" x2="840" y1="280" y2="280"></line>
+<text font-size="18" font-weight="700" x="35" y="315">Compound microscope</text>
+<line marker-end="url(#r8arr13)" stroke="#111" stroke-width="4" x1="90" x2="90" y1="360" y2="330"></line>
+<text font-size="14" x="45" y="380">small object</text>
+<path d="M210 300 Q240 345 210 390 Q270 345 210 300" fill="none" stroke="#111" stroke-width="3"></path>
+<text font-size="14" x="180" y="292">objective lens</text>
+<line marker-end="url(#r8arr13)" stroke="#555" stroke-width="2" x1="270" x2="385" y1="345" y2="345"></line>
+<text font-size="14" x="300" y="330">first image</text>
+<path d="M500 300 Q530 345 500 390 Q560 345 500 300" fill="none" stroke="#111" stroke-width="3"></path>
+<text font-size="14" x="490" y="292">eyepiece</text>
+<text font-size="14" x="600" y="350">magnifies the first image</text>
+</svg>
+<figcaption>Drawing checkpoint 7.3 applications: แยกโครง objective lens + eyepiece และหน้าที่ของ telescope กับ microscope ตาม source โดยไม่ต้องวาดกลไกเกินกว่าที่ source อธิบาย</figcaption>
+</figure>
+<div class="draw-check"><span class="badge">ต้องแยกได้</span><b>Applications:</b> telescope → very distant objects; microscope → near and very small objects; magnifying glass → object between F and convex lens</div>
+<div class="practice-title">เลือกอุปกรณ์และหน้าที่ แล้วลากคำตอบสุดท้าย · English only</div>
+<div class="wordbank"><strong>Word Bank · English only · Source-only distractors</strong><div class="words">
+<span class="word">magnifying glass</span><span class="word">refracting telescope</span><span class="word">compound microscope</span><span class="word">convex lens</span><span class="word">concave lens</span><span class="word">objective lens</span><span class="word">eyepiece</span><span class="word">very distant objects</span><span class="word">near and very small objects</span><span class="word">magnified</span><span class="word">upright</span><span class="word">virtual</span><span class="word">inverted</span><span class="word">diminished</span><span class="word">first image</span><span class="word">focal point</span><span class="word">two powerful convex lenses</span><span class="word">between F and the lens</span>
+<span class="word">eyepiece</span><span class="word">real image</span><span class="word">focal length</span><span class="word">principal axis</span><span class="word">optical centre</span><span class="word">retina</span></div></div>
+<p class="cloze">เมื่อ object อยู่ <span class="blank xwide" data-answer="between F and the lens"><span class="space"></span><span class="ans">between F and the lens</span></span> ของ <span class="blank wide" data-answer="convex lens"><span class="space"></span><span class="ans">convex lens</span></span> จะใช้หลักนี้ใน <span class="blank xwide" data-answer="magnifying glass"><span class="space"></span><span class="ans">magnifying glass</span></span></p>
+<p class="cloze">ภาพจาก magnifying glass ตาม source คือ <span class="blank" data-answer="magnified"><span class="space"></span><span class="ans">magnified</span></span>, <span class="blank" data-answer="upright"><span class="space"></span><span class="ans">upright</span></span>, <span class="blank" data-answer="virtual"><span class="space"></span><span class="ans">virtual</span></span></p>
+<p class="cloze"><span class="blank xwide" data-answer="refracting telescope"><span class="space"></span><span class="ans">refracting telescope</span></span> ใช้ดู <span class="blank xwide" data-answer="very distant objects"><span class="space"></span><span class="ans">very distant objects</span></span></p>
+<p class="cloze">Refracting telescope มี <span class="blank xwide" data-answer="objective lens"><span class="space"></span><span class="ans">objective lens</span></span> สำหรับ focus light ไปยัง <span class="blank wide" data-answer="focal point"><span class="space"></span><span class="ans">focal point</span></span> และมี <span class="blank wide" data-answer="eyepiece"><span class="space"></span><span class="ans">eyepiece</span></span> สำหรับสร้างภาพที่ขยายจากภาพของ objective lens</p>
+<p class="cloze"><span class="blank xwide" data-answer="compound microscope"><span class="space"></span><span class="ans">compound microscope</span></span> ใช้ดู <span class="blank xwide" data-answer="near and very small objects"><span class="space"></span><span class="ans">near and very small objects</span></span> และทำจาก <span class="blank xwide" data-answer="two powerful convex lenses"><span class="space"></span><span class="ans">two powerful convex lenses</span></span></p>
+<p class="cloze">ใน compound microscope, objective lens สร้าง <span class="blank wide" data-answer="first image"><span class="space"></span><span class="ans">first image</span></span> ก่อน แล้ว <span class="blank wide" data-answer="eyepiece"><span class="space"></span><span class="ans">eyepiece</span></span> ขยายภาพนั้นอีกครั้ง</p>
+</section>
+<section class="final" id="final73c">
+<h2>ด่านรวมย่อย Topic 7.3C · Eye &amp; Applications</h2>
+<div class="read-box">
+<div class="title">อ่านรอบสุดท้าย · ภาษาไทย</div>
+<p>สายตาปกติต้อง focus แสงบน retina. Myopia ทำให้แสงจากวัตถุไกล focus in front of the retina และ source ให้แก้ด้วย concave lens. Hypermetropia ทำให้แสงจากวัตถุใกล้ focus behind the retina และ source ให้แก้ด้วย convex lens.</p>
+<p>ด้านการใช้งาน: magnifying glass ใช้ convex lens กับ object ที่อยู่ระหว่าง F กับเลนส์, refracting telescope ใช้ดู very distant objects, compound microscope ใช้ดู near and very small objects.</p>
+<div class="keyline">ที่พึ่งก่อนตอบ: ดู “วัตถุใกล้หรือไกล” → ดู “focus อยู่หน้า/หลัง retina” → เลือกเลนส์แก้ไข หรือดูว่าอุปกรณ์กำลังใช้ objective lens/eyepiece เพื่อดูวัตถุประเภทใด</div>
+</div>
+<div class="wordbank"><strong>Final Word Bank · English only · Source-only distractors</strong><div class="words">
+<span class="word">myopia</span><span class="word">hypermetropia</span><span class="word">concave lens</span><span class="word">convex lens</span><span class="word">in front of the retina</span><span class="word">behind the retina</span><span class="word">retina</span><span class="word">refracting telescope</span><span class="word">compound microscope</span><span class="word">magnifying glass</span><span class="word">very distant objects</span><span class="word">near and very small objects</span><span class="word">objective lens</span><span class="word">eyepiece</span><span class="word">virtual</span><span class="word">real</span><span class="word">upright</span><span class="word">inverted</span>
+<span class="word">pulled thin</span><span class="word">becomes thicker</span><span class="word">focal point</span></div></div>
+<p class="cloze">ไกลเบลอ → <span class="blank wide" data-answer="myopia"><span class="space"></span><span class="ans">myopia</span></span> → focus <span class="blank xwide" data-answer="in front of the retina"><span class="space"></span><span class="ans">in front of the retina</span></span> → corrected by <span class="blank wide" data-answer="concave lens"><span class="space"></span><span class="ans">concave lens</span></span></p>
+<p class="cloze">ใกล้เบลอ → <span class="blank wide" data-answer="hypermetropia"><span class="space"></span><span class="ans">hypermetropia</span></span> → focus <span class="blank xwide" data-answer="behind the retina"><span class="space"></span><span class="ans">behind the retina</span></span> → corrected by <span class="blank wide" data-answer="convex lens"><span class="space"></span><span class="ans">convex lens</span></span></p>
+<p class="cloze">ใช้ดูวัตถุไกลมาก → <span class="blank xwide" data-answer="refracting telescope"><span class="space"></span><span class="ans">refracting telescope</span></span> · ใช้ดูวัตถุใกล้และเล็กมาก → <span class="blank xwide" data-answer="compound microscope"><span class="space"></span><span class="ans">compound microscope</span></span></p>
+<p class="cloze">วาง object ระหว่าง F กับ convex lens เพื่อให้ภาพขยายตั้งตรงเสมือน → <span class="blank xwide" data-answer="magnifying glass"><span class="space"></span><span class="ans">magnifying glass</span></span></p>
+</section><div class="unit-banner page-break">
+<div class="unit-no">Topic 7.4</div>
+<div class="unit-title">ความสว่างของแสง · Brightness of Light</div>
+<div class="unit-desc">สรุปไทยเฉพาะแกนสำคัญ · ฝึกสิ่งที่ต้องทำได้ · ทุกคำตอบสุดท้ายเป็น drag/drop</div>
+</div>
+<section class="section" id="s14">
+<div class="section-head"><div class="num">14</div><div><h2>ความสว่างของแสงและปัจจัยที่มีผล</h2><div class="coverage">brightness / intensity · lux (lx) · distance · power · medium</div></div></div>
+<div class="read-box">
+<div class="title">สรุปให้อ่านก่อน · ภาษาไทย</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">หัวใจของเรื่อง</span> Brightness of light</div>
+<p>source นิยาม <b>brightness หรือ intensity of light</b> ว่าเป็นการวัดปริมาณแสงที่ให้ในพื้นที่หนึ่ง และระบุหน่วยเป็น <b>lux (lx)</b></p>
+<p>ความสว่างไม่เท่ากันเมื่ออยู่ห่างจากแหล่งกำเนิดแสงต่างกัน ยิ่งอยู่ <b>ไกลจากแหล่งกำเนิดแสงมากขึ้น</b> ความสว่างจะ <b>ลดลง</b></p>
+<p>นอกจากระยะทางแล้ว source ยังระบุว่า <b>power of the light source</b> และ <b>medium the light passes through</b> มีผลต่อความสว่างด้วย</p>
+</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">วิธีคิดไทย</span> เวลาตอบโจทย์ความสว่าง</div>
+<ol>
+<li>ดูว่าโจทย์กำลังถาม <b>ปริมาณที่วัด</b> หรือ <b>หน่วย</b></li>
+<li>ถ้าถามหน่วย ให้มองหา <b>lux (lx)</b></li>
+<li>ถ้าถามผลของระยะ ให้จำจาก source ว่า <b>ไกลขึ้น → ความสว่างลดลง</b></li>
+<li>ถ้าถามปัจจัยอื่น ให้ย้อนมาที่ <b>power</b> และ <b>medium</b></li>
+</ol>
+</div>
+<div class="keyline">ที่พึ่งสั้น ๆ: farther from the light source → brightness is reduced</div>
+</div>
+<div class="practice-title">ลากคำตอบสุดท้าย · คำเติมเป็นอังกฤษล้วน</div>
+<div class="wordbank"><strong>Word Bank · English only · Source-only distractors</strong><div class="words">
+<span class="word">brightness</span><span class="word">intensity</span><span class="word">lux (lx)</span><span class="word">distance</span><span class="word">power</span><span class="word">medium</span><span class="word">reduced</span><span class="word">increased</span><span class="word">reflection</span><span class="word">refraction</span><span class="word">light meter</span><span class="word">retina</span>
+<span class="word">iris</span><span class="word">pupil</span></div></div>
+<p class="cloze">การวัดปริมาณแสงที่ให้ในพื้นที่หนึ่ง source เรียกว่า <span class="blank wide" data-answer="brightness"><span class="space"></span><span class="ans">brightness</span></span> และใช้คำอีกคำว่า <span class="blank wide" data-answer="intensity"><span class="space"></span><span class="ans">intensity</span></span></p>
+<p class="cloze">หน่วยที่ source ระบุสำหรับความสว่างคือ <span class="blank wide" data-answer="lux (lx)"><span class="space"></span><span class="ans">lux (lx)</span></span></p>
+<p class="cloze">เมื่อ <span class="blank wide" data-answer="distance"><span class="space"></span><span class="ans">distance</span></span> จากแหล่งกำเนิดมากขึ้น ความสว่างจะ <span class="blank wide" data-answer="reduced"><span class="space"></span><span class="ans">reduced</span></span></p>
+<p class="cloze">ปัจจัยอื่นที่ source ระบุคือ <span class="blank wide" data-answer="power"><span class="space"></span><span class="ans">power</span></span> ของแหล่งกำเนิด และ <span class="blank wide" data-answer="medium"><span class="space"></span><span class="ans">medium</span></span> ที่แสงเดินทางผ่าน</p>
+</section>
+<section class="section" id="s15">
+<div class="section-head"><div class="num">15</div><div><h2>การทดลองระยะทางกับความสว่าง</h2><div class="coverage">hypothesis · manipulated / responding / constant variable · torch · light meter · table calculation</div></div></div>
+<div class="read-box">
+<div class="title">สรุปการทดลอง · ภาษาไทย</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">ต้องทำได้</span> อ่านตัวแปรจากการทดลอง</div>
+<p><b>Problem:</b> ระยะจากแหล่งกำเนิดแสงมีผลต่อความสว่างอย่างไร</p>
+<p><b>Hypothesis:</b> ระยะมากขึ้น → ความสว่างต่ำลง</p>
+<table class="mini-table">
+<tr><th>หน้าที่</th><th>สิ่งที่ source กำหนด</th></tr>
+<tr><td>Manipulated variable</td><td>Distance from the bulb</td></tr>
+<tr><td>Responding variable</td><td>Reading of the light meter</td></tr>
+<tr><td>Constant variable</td><td>Type of bulb</td></tr>
+</table>
+<p>อุปกรณ์ใน source ได้แก่ meter ruler, torch, light meter และ retort stand</p>
+</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">วิธีทำไทย</span> ขั้นตอนการทดลองตาม source</div>
+<ol>
+<li>เปิด torch</li>
+<li>วาง light meter ห่างจาก torch <b>5 cm</b></li>
+<li>อ่านค่า light meter และบันทึกลงตาราง</li>
+<li>ทำซ้ำที่ระยะ <b>10, 15, 20 และ 25 cm</b></li>
+<li>เปรียบเทียบค่าความสว่างเมื่อระยะเพิ่มขึ้น</li>
+</ol>
+</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">วิธีวาดไทย</span> วาดชุดทดลองให้เป็น</div>
+<ol>
+<li>วาด <b>torch</b> ไว้ด้านซ้าย และวาดลำแสงพุ่งไปด้านขวา</li>
+<li>วาด <b>light meter</b> อยู่บนแนวลำแสง</li>
+<li>วาด <b>meter ruler</b> ด้านล่าง เชื่อมตำแหน่ง torch ถึง light meter</li>
+<li>ทำเครื่องหมายระยะที่กำลังวัด เช่น 5 cm</li>
+<li>ถ้าต้องการให้เหมือนชุดทดลองใน source ให้ใส่ <b>retort stand</b> รองรับเครื่องมือ</li>
+</ol>
+</div>
+<div class="keyline">สิ่งที่ต้องคุมให้เหมือนเดิมคือ type of bulb ส่วนสิ่งที่ตั้งใจเปลี่ยนคือ distance from the bulb</div>
+</div>
+<figure class="figure draw-practice">
+<svg aria-label="brightness experiment setup" viewbox="0 0 820 300">
+<defs><marker id="r74setup" markerheight="9" markerwidth="9" orient="auto" refx="8" refy="3"><path d="M0,0 L0,6 L8,3 z" fill="#111"></path></marker></defs>
+<rect fill="none" height="70" rx="8" stroke="#111" stroke-width="3" width="110" x="70" y="95"></rect>
+<path d="M180 105 L230 78 L230 182 L180 155 Z" fill="none" stroke="#111" stroke-width="3"></path>
+<text font-size="20" x="90" y="138">torch</text>
+<line marker-end="url(#r74setup)" stroke="#555" stroke-width="2.5" x1="235" x2="575" y1="115" y2="115"></line>
+<line marker-end="url(#r74setup)" stroke="#777" stroke-width="2.5" x1="235" x2="575" y1="142" y2="142"></line>
+<rect fill="none" height="115" rx="8" stroke="#111" stroke-width="3" width="120" x="585" y="75"></rect>
+<text font-size="18" x="602" y="125">light meter</text>
+<text font-size="15" x="622" y="153">reading</text>
+<line stroke="#111" stroke-width="2" x1="135" x2="645" y1="225" y2="225"></line>
+<line stroke="#111" stroke-width="2" x1="235" x2="235" y1="213" y2="237"></line>
+<line stroke="#111" stroke-width="2" x1="585" x2="585" y1="213" y2="237"></line>
+<text font-size="18" x="365" y="254">distance from the bulb</text>
+<text font-size="16" x="325" y="286">meter ruler</text>
+</svg>
+<figcaption>แบบวาดชุดทดลองจากองค์ประกอบที่ source ระบุ: torch → ระยะที่วัด → light meter</figcaption>
+</figure><div class="draw-check"><span class="badge">ต้องวาดได้</span><b>Experiment:</b> แสดง torch, measured distance, light meter และ meter ruler ให้เห็นความสัมพันธ์ของ manipulated / responding variables</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">ข้อมูล source</span> ตารางผลการทดลอง</div>
+<table class="mini-table">
+<tr><th>Distance (cm)</th><th>5</th><th>10</th><th>15</th><th>20</th><th>25</th></tr>
+<tr><th>Reading of the light meter (lux)</th><td>264</td><td>102</td><td>48</td><td>20</td><td>10</td></tr>
+</table>
+<div class="keyline">วิธีคำนวณ: อ่านค่าจากตารางก่อน ถ้าถาม “ลดลงเท่าไร” ให้เอาค่าเริ่มต้น − ค่าสุดท้าย</div>
+</div>
+<div class="practice-title">ลากคำตอบสุดท้าย · English only / ตัวเลขใช้ค่าจาก source</div>
+<div class="wordbank"><strong>Word Bank · English only · Source-only distractors</strong><div class="words">
+<span class="word">manipulated variable</span><span class="word">responding variable</span><span class="word">constant variable</span><span class="word">distance from the bulb</span><span class="word">reading of the light meter</span><span class="word">type of bulb</span><span class="word">meter ruler</span><span class="word">torch</span><span class="word">light meter</span><span class="word">retort stand</span><span class="word">hypothesis</span><span class="word">problem</span><span class="word">264 lx</span><span class="word">102 lx</span><span class="word">48 lx</span><span class="word">20 lx</span><span class="word">10 lx</span><span class="word">254 lx</span><span class="word">82 lx</span><span class="word">15 cm</span><span class="word">25 cm</span>
+</div></div>
+<p class="cloze">ตัวแปรต้นของการทดลองคือ <span class="blank xwide" data-answer="manipulated variable"><span class="space"></span><span class="ans">manipulated variable</span></span> ซึ่งใน source คือ <span class="blank xwide" data-answer="distance from the bulb"><span class="space"></span><span class="ans">distance from the bulb</span></span></p>
+<p class="cloze">ตัวแปรตามคือ <span class="blank xwide" data-answer="responding variable"><span class="space"></span><span class="ans">responding variable</span></span> ซึ่งวัดเป็น <span class="blank xwide" data-answer="reading of the light meter"><span class="space"></span><span class="ans">reading of the light meter</span></span></p>
+<p class="cloze">สิ่งที่คงเดิมคือ <span class="blank xwide" data-answer="constant variable"><span class="space"></span><span class="ans">constant variable</span></span> และ source กำหนดเป็น <span class="blank xwide" data-answer="type of bulb"><span class="space"></span><span class="ans">type of bulb</span></span></p>
+<p class="cloze">อุปกรณ์ที่ใช้อ่านค่าความสว่างคือ <span class="blank wide" data-answer="light meter"><span class="space"></span><span class="ans">light meter</span></span> และเครื่องมือวัดระยะคือ <span class="blank wide" data-answer="meter ruler"><span class="space"></span><span class="ans">meter ruler</span></span></p>
+<p class="cloze">จากตาราง ที่ 15 cm อ่านได้ <span class="blank wide" data-answer="48 lx"><span class="space"></span><span class="ans">48 lx</span></span> และที่ 25 cm อ่านได้ <span class="blank wide" data-answer="10 lx"><span class="space"></span><span class="ans">10 lx</span></span></p>
+<p class="cloze">จาก 5 cm ไป 25 cm ความสว่างลดลง \(264-10=\) <span class="blank wide" data-answer="254 lx"><span class="space"></span><span class="ans">254 lx</span></span></p>
+<p class="cloze">จาก 10 cm ไป 20 cm ความสว่างลดลง \(102-20=\) <span class="blank wide" data-answer="82 lx"><span class="space"></span><span class="ans">82 lx</span></span></p>
+</section>
+<section class="section" id="s16">
+<div class="section-head"><div class="num">16</div><div><h2>กราฟ ความสว่างที่เหมาะสม และการตอบสนองของตา</h2><div class="coverage">Distance (cm) vs Lux (lx) · iris · pupil · dim / bright · retina · eye care</div></div></div>
+<div class="read-box">
+<div class="title">อ่านกราฟและวาดกราฟ · ภาษาไทย</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">วิธีวาดไทย</span> กราฟจากข้อมูล source</div>
+<ol>
+<li>วาดแกนนอนเป็น <b>Distance (cm)</b></li>
+<li>วาดแกนตั้งเป็น <b>Lux (lx)</b></li>
+<li>ลงจุดทั้ง 5 คู่: (5,264), (10,102), (15,48), (20,20), (25,10)</li>
+<li>เชื่อมแนวโน้มให้เห็นว่าค่า <b>ลดลง</b> เมื่อระยะเพิ่มขึ้น</li>
+<li>อ่านข้อสรุปจากกราฟว่า source ยอมรับ hypothesis: ระยะมากขึ้น → ความสว่างต่ำลง</li>
+</ol>
+</div>
+</div>
+<figure class="figure draw-practice">
+<svg aria-label="distance versus brightness graph" viewbox="0 0 820 440">
+<line stroke="#111" stroke-width="3" x1="105" x2="760" y1="365" y2="365"></line>
+<line stroke="#111" stroke-width="3" x1="105" x2="105" y1="365" y2="45"></line>
+<text font-size="20" x="620" y="410">Distance (cm)</text>
+<text font-size="20" x="22" y="38">Lux (lx)</text>
+<!-- x ticks -->
+<g font-size="15" text-anchor="middle">
+<line stroke="#111" x1="205" x2="205" y1="355" y2="375"></line><text x="205" y="397">5</text>
+<line stroke="#111" x1="315" x2="315" y1="355" y2="375"></line><text x="315" y="397">10</text>
+<line stroke="#111" x1="425" x2="425" y1="355" y2="375"></line><text x="425" y="397">15</text>
+<line stroke="#111" x1="535" x2="535" y1="355" y2="375"></line><text x="535" y="397">20</text>
+<line stroke="#111" x1="645" x2="645" y1="355" y2="375"></line><text x="645" y="397">25</text>
+</g>
+<!-- y ticks approximate -->
+<g font-size="15" text-anchor="end">
+<line stroke="#111" x1="95" x2="115" y1="275" y2="275"></line><text x="88" y="281">100</text>
+<line stroke="#111" x1="95" x2="115" y1="185" y2="185"></line><text x="88" y="191">200</text>
+<line stroke="#111" x1="95" x2="115" y1="95" y2="95"></line><text x="88" y="101">300</text>
+</g>
+<polyline fill="none" points="205,127 315,273 425,322 535,347 645,356" stroke="#111" stroke-width="3"></polyline>
+<g fill="#fff" stroke="#111" stroke-width="3">
+<circle cx="205" cy="127" r="6"></circle><circle cx="315" cy="273" r="6"></circle><circle cx="425" cy="322" r="6"></circle><circle cx="535" cy="347" r="6"></circle><circle cx="645" cy="356" r="6"></circle>
+</g>
+</svg>
+<figcaption>กราฟช่วยทบทวนข้อมูล source: เมื่อ Distance เพิ่มขึ้น ค่า Lux ลดลง</figcaption>
+</figure><div class="draw-check"><span class="badge">ต้องวาดได้</span><b>Graph &amp; eye:</b> กราฟต้องมี Distance (cm) บนแกนนอนและ Lux (lx) บนแกนตั้ง ส่วน dim / bright ต้องแยกขนาด pupil ให้ถูกตาม source</div>
+<div class="read-box">
+<div class="title">ตาและความสว่าง · ภาษาไทย</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">หัวใจของเรื่อง</span> Iris ควบคุมปริมาณแสง</div>
+<p>source ระบุว่าตาต้องการความสว่างในระดับหนึ่งเพื่อให้ <b>retina</b> ทำงาน และ <b>iris</b> ควบคุมปริมาณแสงที่เข้าสู่ตาด้วยการปรับขนาด <b>pupil</b></p>
+<table class="mini-table">
+<tr><th>สภาพแสง</th><th>Iris</th><th>Pupil</th><th>ผล</th></tr>
+<tr><td>Dim area</td><td>dilates</td><td>bigger</td><td>more light enters</td></tr>
+<tr><td>Bright area</td><td>constricts</td><td>smaller</td><td>less light enters</td></tr>
+</table>
+</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">วิธีวาดไทย</span> วาด pupil ในที่มืดและที่สว่าง</div>
+<ol>
+<li>วาดวงกลมตา 2 รูปเท่ากัน</li>
+<li>รูปแรกเขียน <b>Dim</b> แล้ววาด pupil ตรงกลางให้ใหญ่กว่า</li>
+<li>รูปที่สองเขียน <b>Bright</b> แล้ววาด pupil ตรงกลางให้เล็กกว่า</li>
+<li>กำกับลูกศรปริมาณแสง: Dim → more light enters, Bright → less light enters</li>
+</ol>
+</div>
+<div class="core-box">
+<div class="core-title"><span class="level-tag">การดูแลตาตาม source</span></div>
+<p>source เตือนว่าแสงมากเกินไปเป็นเวลานานอาจทำลาย retina และยกตัวอย่างการดูแล ได้แก่ <b>wear sunglasses</b>, <b>wear hats</b>, <b>use proper lighting</b>, <b>go for an eye check every two years</b> และ <b>rest the eyes when they feel tired</b></p>
+<p>สรุปท้าย source ยังย้ำว่าการมองในสภาพที่สว่างเกินไปหรือสว่างไม่พอ และการจ้องหน้าจอนานเกินไป อาจเป็นอันตรายต่อดวงตา จึงควรปรับแสงให้เหมาะกับกิจกรรม</p>
+</div>
+<div class="optional-box">
+<div class="optional-title">ค่าความสว่างในอาคารที่ source แนะนำ</div>
+<table class="mini-table">
+<tr><th>Area</th><th>Lux</th></tr>
+<tr><td>Bathroom</td><td>250</td></tr>
+<tr><td>Bedroom</td><td>400</td></tr>
+<tr><td>Kitchen</td><td>600</td></tr>
+<tr><td>Reading room</td><td>700</td></tr>
+<tr><td>Classroom and laboratory</td><td>1000</td></tr>
+</table>
+</div>
+<div class="keyline">ภาพจำ: Dim → dilates → bigger pupil → more light · Bright → constricts → smaller pupil → less light</div>
+</div>
+<div class="practice-title">ลากคำตอบสุดท้าย · English only</div>
+<div class="wordbank"><strong>Word Bank · English only · Source-only distractors</strong><div class="words">
+<span class="word">Distance (cm)</span><span class="word">Lux (lx)</span><span class="word">decreases</span><span class="word">accepted</span><span class="word">iris</span><span class="word">pupil</span><span class="word">dilates</span><span class="word">bigger</span><span class="word">more light</span><span class="word">constricts</span><span class="word">smaller</span><span class="word">less light</span><span class="word">retina</span><span class="word">sunglasses</span><span class="word">proper lighting</span><span class="word">rest the eyes</span><span class="word">250 lx</span><span class="word">400 lx</span><span class="word">600 lx</span><span class="word">700 lx</span><span class="word">1000 lx</span><span class="word">increases</span><span class="word">rejected</span>
+<span class="word">light meter</span><span class="word">power</span><span class="word">medium</span></div></div>
+<p class="cloze">กราฟใช้แกนนอนเป็น <span class="blank xwide" data-answer="Distance (cm)"><span class="space"></span><span class="ans">Distance (cm)</span></span> และแกนตั้งเป็น <span class="blank wide" data-answer="Lux (lx)"><span class="space"></span><span class="ans">Lux (lx)</span></span></p>
+<p class="cloze">เมื่อระยะเพิ่มขึ้น กราฟแสดงว่าความสว่าง <span class="blank wide" data-answer="decreases"><span class="space"></span><span class="ans">decreases</span></span> และ hypothesis ถูก <span class="blank wide" data-answer="accepted"><span class="space"></span><span class="ans">accepted</span></span></p>
+<p class="cloze"><span class="blank wide" data-answer="iris"><span class="space"></span><span class="ans">iris</span></span> ควบคุมปริมาณแสงโดยปรับขนาดของ <span class="blank wide" data-answer="pupil"><span class="space"></span><span class="ans">pupil</span></span></p>
+<p class="cloze">ในบริเวณมืด iris <span class="blank wide" data-answer="dilates"><span class="space"></span><span class="ans">dilates</span></span> ทำให้ pupil <span class="blank wide" data-answer="bigger"><span class="space"></span><span class="ans">bigger</span></span> จึงมี <span class="blank wide" data-answer="more light"><span class="space"></span><span class="ans">more light</span></span> เข้าตา</p>
+<p class="cloze">ในบริเวณสว่าง iris <span class="blank wide" data-answer="constricts"><span class="space"></span><span class="ans">constricts</span></span> ทำให้ pupil <span class="blank wide" data-answer="smaller"><span class="space"></span><span class="ans">smaller</span></span> จึงมี <span class="blank wide" data-answer="less light"><span class="space"></span><span class="ans">less light</span></span> เข้าตา</p>
+<p class="cloze">แสงมากเกินไปเป็นเวลานานอาจทำอันตรายต่อ <span class="blank wide" data-answer="retina"><span class="space"></span><span class="ans">retina</span></span></p>
+<p class="cloze">ค่าที่ source แนะนำ: reading room = <span class="blank wide" data-answer="700 lx"><span class="space"></span><span class="ans">700 lx</span></span> และ classroom/laboratory = <span class="blank wide" data-answer="1000 lx"><span class="space"></span><span class="ans">1000 lx</span></span></p>
+<p class="cloze">ตัวอย่างการดูแลตาตาม source: wear <span class="blank wide" data-answer="sunglasses"><span class="space"></span><span class="ans">sunglasses</span></span>, use <span class="blank wide" data-answer="proper lighting"><span class="space"></span><span class="ans">proper lighting</span></span> และ <span class="blank wide" data-answer="rest the eyes"><span class="space"></span><span class="ans">rest the eyes</span></span> เมื่อรู้สึกล้า</p>
+</section>
+<section class="final page-break" id="final74">
+<h2>ด่านรวม Topic 7.4 · Brightness of Light</h2>
+<div class="read-box">
+<div class="title">อ่านรอบสุดท้าย · ภาษาไทย</div>
+<p>หัวใจของ 7.4 คือวัดความสว่างด้วย lux, เข้าใจว่าระยะมากขึ้นทำให้ความสว่างลดลง, อ่านตัวแปรและข้อมูลจากการทดลอง, วาดกราฟจากตาราง และอธิบายการปรับ pupil โดย iris ในบริเวณมืดกับสว่าง</p>
+<div class="keyline">ที่พึ่งก่อนตอบ: unit → lux · manipulated → distance · responding → light meter reading · constant → type of bulb · graph → decreases · dim → bigger pupil · bright → smaller pupil</div>
+</div>
+<div class="wordbank"><strong>Final Word Bank · English only · Source-only distractors</strong><div class="words">
+<span class="word">brightness</span><span class="word">intensity</span><span class="word">lux (lx)</span><span class="word">manipulated variable</span><span class="word">distance from the bulb</span><span class="word">responding variable</span><span class="word">reading of the light meter</span><span class="word">constant variable</span><span class="word">type of bulb</span><span class="word">48 lx</span><span class="word">decreases</span><span class="word">increases</span><span class="word">iris</span><span class="word">bigger</span><span class="word">more light</span><span class="word">smaller</span><span class="word">less light</span><span class="word">retina</span><span class="word">power</span><span class="word">medium</span>
+<span class="word">light meter</span><span class="word">meter ruler</span><span class="word">pupil</span><span class="word">dilates</span><span class="word">constricts</span><span class="word">700 lx</span><span class="word">1000 lx</span><span class="word">accepted</span></div></div>
+<p class="cloze">ปริมาณแสงในพื้นที่หนึ่ง → <span class="blank wide" data-answer="brightness"><span class="space"></span><span class="ans">brightness</span></span> · หน่วย → <span class="blank wide" data-answer="lux (lx)"><span class="space"></span><span class="ans">lux (lx)</span></span></p>
+<p class="cloze">ตัวแปรต้น → <span class="blank xwide" data-answer="manipulated variable"><span class="space"></span><span class="ans">manipulated variable</span></span> → <span class="blank xwide" data-answer="distance from the bulb"><span class="space"></span><span class="ans">distance from the bulb</span></span></p>
+<p class="cloze">ตัวแปรตาม → <span class="blank xwide" data-answer="responding variable"><span class="space"></span><span class="ans">responding variable</span></span> → <span class="blank xwide" data-answer="reading of the light meter"><span class="space"></span><span class="ans">reading of the light meter</span></span></p>
+<p class="cloze">ตัวแปรคงที่ → <span class="blank xwide" data-answer="constant variable"><span class="space"></span><span class="ans">constant variable</span></span> → <span class="blank xwide" data-answer="type of bulb"><span class="space"></span><span class="ans">type of bulb</span></span></p>
+<p class="cloze">ที่ 15 cm → <span class="blank wide" data-answer="48 lx"><span class="space"></span><span class="ans">48 lx</span></span> · เมื่อระยะเพิ่มขึ้น brightness <span class="blank wide" data-answer="decreases"><span class="space"></span><span class="ans">decreases</span></span></p>
+<p class="cloze">ผู้ควบคุมขนาด pupil คือ <span class="blank wide" data-answer="iris"><span class="space"></span><span class="ans">iris</span></span></p>
+<p class="cloze">Dim → pupil <span class="blank wide" data-answer="bigger"><span class="space"></span><span class="ans">bigger</span></span> → <span class="blank wide" data-answer="more light"><span class="space"></span><span class="ans">more light</span></span></p>
+<p class="cloze">Bright → pupil <span class="blank wide" data-answer="smaller"><span class="space"></span><span class="ans">smaller</span></span> → <span class="blank wide" data-answer="less light"><span class="space"></span><span class="ans">less light</span></span></p>
+<p class="cloze">แสงมากเกินไปเป็นเวลานานอาจทำอันตรายต่อ <span class="blank wide" data-answer="retina"><span class="space"></span><span class="ans">retina</span></span></p>
+</section>
+<div class="footer-note">Chapter 7 Light · Science M3 · Round 10 · Topics 7.1–7.4 · Source-only · FINAL QA PASSED</div>
+</main>
+<script>
+let summariesVisible=true;
+let selectedChip=null;
+let dragChip=null;
+let chipSerial=0;
+
+
+const LOCAL_SAVE_DB = 'ScienceM3_Ch7_Light_StudyDB';
+const LOCAL_SAVE_STORE = 'studyStates';
+const LOCAL_SAVE_KEY = 'science-m3-ch7-light';
+const LOCAL_SAVE_FALLBACK_KEY = 'science-m3-ch7-light-fallback';
+let SAVE_READY = false;
+let SAVE_TIMER = null;
+let SAVE_BACKEND = 'IndexedDB';
+let SAVE_DB_PROMISE = null;
+
+function setSaveStatus(message, kind=''){
+  const el=document.getElementById('saveStatus');
+  if(!el) return;
+  el.textContent=message;
+  el.classList.remove('saving','ok','warn');
+  if(kind) el.classList.add(kind);
+}
+
+function openLocalSaveDB(){
+  if(SAVE_DB_PROMISE) return SAVE_DB_PROMISE;
+  SAVE_DB_PROMISE = new Promise((resolve,reject)=>{
+    if(!('indexedDB' in window)){
+      reject(new Error('IndexedDB unavailable'));
+      return;
+    }
+    const req=indexedDB.open(LOCAL_SAVE_DB,1);
+    req.onupgradeneeded=()=>{
+      const db=req.result;
+      if(!db.objectStoreNames.contains(LOCAL_SAVE_STORE)){
+        db.createObjectStore(LOCAL_SAVE_STORE,{keyPath:'id'});
+      }
+    };
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error || new Error('IndexedDB open failed'));
+    req.onblocked=()=>reject(new Error('IndexedDB blocked'));
+  });
+  return SAVE_DB_PROMISE;
+}
+
+async function idbPutState(record){
+  const db=await openLocalSaveDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(LOCAL_SAVE_STORE,'readwrite');
+    tx.objectStore(LOCAL_SAVE_STORE).put(record);
+    tx.oncomplete=()=>resolve();
+    tx.onerror=()=>reject(tx.error || new Error('IndexedDB write failed'));
+    tx.onabort=()=>reject(tx.error || new Error('IndexedDB write aborted'));
+  });
+}
+
+async function idbGetState(){
+  const db=await openLocalSaveDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(LOCAL_SAVE_STORE,'readonly');
+    const req=tx.objectStore(LOCAL_SAVE_STORE).get(LOCAL_SAVE_KEY);
+    req.onsuccess=()=>resolve(req.result || null);
+    req.onerror=()=>reject(req.error || new Error('IndexedDB read failed'));
+  });
+}
+
+async function idbDeleteState(){
+  const db=await openLocalSaveDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(LOCAL_SAVE_STORE,'readwrite');
+    tx.objectStore(LOCAL_SAVE_STORE).delete(LOCAL_SAVE_KEY);
+    tx.oncomplete=()=>resolve();
+    tx.onerror=()=>reject(tx.error || new Error('IndexedDB delete failed'));
+  });
+}
+
+function fallbackWrite(record){
+  localStorage.setItem(LOCAL_SAVE_FALLBACK_KEY,JSON.stringify(record));
+}
+function fallbackRead(){
+  try{
+    const raw=localStorage.getItem(LOCAL_SAVE_FALLBACK_KEY);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
+}
+function fallbackDelete(){
+  try{ localStorage.removeItem(LOCAL_SAVE_FALLBACK_KEY); }catch(e){}
+}
+
+function collectLocalState(){
+  const blanks={};
+  document.querySelectorAll('.blank[data-answer][data-save-id]').forEach(blank=>{
+    blanks[blank.dataset.saveId]={
+      value:blank.dataset.value || '',
+      correct:blank.classList.contains('correct'),
+      incorrect:blank.classList.contains('incorrect')
+    };
+  });
+
+  const hiddenScopes=[...document.querySelectorAll('.section.study-hidden, .final.study-hidden')]
+    .map(s=>s.id).filter(Boolean);
+
+  const checkedScopes={};
+  document.querySelectorAll('.section, .final').forEach(scope=>{
+    if(!scope.id) return;
+    const bs=blanksIn(scope);
+    checkedScopes[scope.id]=bs.some(b=>b.classList.contains('correct') || b.classList.contains('incorrect'));
+  });
+
+  const vocabQuiz=[...document.querySelectorAll('#vocabGrid .vocab-q')].map(q=>{
+    const inp=q.querySelector('.vocab-input');
+    return {
+      th:q.dataset.th || q.querySelector('.thai')?.textContent.replace(/^\s*\d+\.\s*/,'').trim() || '',
+      en:q.dataset.answer || '',
+      level:q.dataset.level || 'support',
+      value:inp?.value || '',
+      correct:!!inp?.classList.contains('correct'),
+      incorrect:!!inp?.classList.contains('incorrect'),
+      showAnswer:q.classList.contains('show-answer')
+    };
+  });
+
+  const vocabDragQuiz=[...document.querySelectorAll('#vocabDragTargets .vdrag-target')].map(t=>({
+    th:t.dataset.th || '',
+    en:t.dataset.en || '',
+    level:t.dataset.level || 'support',
+    zone:t.dataset.zone || '',
+    placedTh:t.dataset.placedTh || '',
+    correct:t.classList.contains('correct'),
+    incorrect:t.classList.contains('incorrect'),
+    showAnswer:t.classList.contains('show-answer')
+  }));
+
+  return {
+    schema:3,
+    activityId:LOCAL_SAVE_KEY,
+    savedAt:new Date().toISOString(),
+    blanks,
+    hiddenScopes,
+    checkedScopes,
+    summariesVisible,
+    answersShown:document.body.classList.contains('show-answers'),
+    vocabEnglishHidden:document.body.classList.contains('vocab-hide-english'),
+    vocabQuiz,
+    vocabResult:document.getElementById('vocabResult')?.textContent || '',
+    vocabDragQuiz,
+    vocabDragResult:document.getElementById('vocabDragResult')?.textContent || '',
+    scrollY:Math.round(window.scrollY || 0)
+  };
+}
+
+async function writeLocalState(state){
+  const record={id:LOCAL_SAVE_KEY,updatedAt:Date.now(),state};
+  let backupOK=false;
+  try{
+    fallbackWrite(record);
+    backupOK=true;
+  }catch(e){}
+
+  try{
+    await idbPutState(record);
+    SAVE_BACKEND=backupOK ? 'IndexedDB + backup' : 'IndexedDB';
+    return;
+  }catch(err){
+    if(backupOK){
+      SAVE_BACKEND='localStorage backup';
+      return;
+    }
+    throw err;
+  }
+}
+
+async function readLocalState(){
+  let idbRecord=null;
+  let fallbackRecord=null;
+
+  try{
+    idbRecord=await idbGetState();
+  }catch(e){}
+
+  try{
+    fallbackRecord=fallbackRead();
+  }catch(e){}
+
+  const candidates=[idbRecord,fallbackRecord]
+    .filter(r=>r && r.state)
+    .sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));
+
+  if(!candidates.length) return null;
+
+  const chosen=candidates[0];
+  if(chosen===idbRecord){
+    SAVE_BACKEND=fallbackRecord ? 'IndexedDB + backup' : 'IndexedDB';
+  }else{
+    SAVE_BACKEND='localStorage backup';
+  }
+  return chosen.state;
+}
+
+async function deleteLocalState(){
+  let deleted=false;
+  try{
+    await idbDeleteState();
+    deleted=true;
+  }catch(e){}
+  fallbackDelete();
+  return deleted;
+}
+
+function scheduleLocalSave(delay=300){
+  if(!SAVE_READY) return;
+  clearTimeout(SAVE_TIMER);
+  setSaveStatus('กำลังบันทึก…','saving');
+  SAVE_TIMER=setTimeout(()=>saveLocalStateNow(),delay);
+}
+
+async function saveLocalStateNow(){
+  if(!SAVE_READY) return;
+  clearTimeout(SAVE_TIMER);
+  try{
+    const state=collectLocalState();
+    await writeLocalState(state);
+    const t=new Date();
+    const hh=String(t.getHours()).padStart(2,'0');
+    const mm=String(t.getMinutes()).padStart(2,'0');
+    const ss=String(t.getSeconds()).padStart(2,'0');
+    setSaveStatus(`บันทึกแล้วในเครื่อง · ${SAVE_BACKEND} · ${hh}:${mm}:${ss}`,'ok');
+  }catch(err){
+    console.error('Local save failed',err);
+    setSaveStatus('บันทึกในเครื่องไม่สำเร็จ','warn');
+  }
+}
+
+function renderSavedVocabQuiz(items){
+  const grid=document.getElementById('vocabGrid');
+  if(!grid || !Array.isArray(items) || !items.length) return false;
+  const allowed=new Set(VOCAB_DATA.map(x=>x.th));
+  items=items.filter(item=>allowed.has(item.th));
+  if(!items.length) return false;
+  grid.innerHTML='';
+  items.forEach((item,i)=>{
+    const q=document.createElement('div');
+    q.className='vocab-q';
+    q.dataset.th=item.th || '';
+    q.dataset.answer=item.en || '';
+    q.dataset.level=item.level || 'support';
+    q.innerHTML=`<div class="thai">${i+1}. ${item.th || ''}<span class="qlevel">${vocabLevelLabel(item.level || 'support')}</span></div>
+      <div><input class="vocab-input" type="text" autocomplete="off" spellcheck="false" placeholder="เขียนศัพท์อังกฤษ"></div>
+      <div class="vocab-answer">เฉลย: <b>${item.en || ''}</b></div>`;
+    const inp=q.querySelector('.vocab-input');
+    inp.value=item.value || '';
+    inp.classList.toggle('correct',!!item.correct);
+    inp.classList.toggle('incorrect',!!item.incorrect);
+    q.classList.toggle('show-answer',!!item.showAnswer);
+    grid.appendChild(q);
+  });
+  return true;
+}
+
+function restoreBlankState(savedBlanks){
+  if(!savedBlanks || typeof savedBlanks!=='object') return;
+  const blankMap=new Map(
+    [...document.querySelectorAll('.blank[data-answer][data-save-id]')]
+      .map(b=>[b.dataset.saveId,b])
+  );
+
+  Object.entries(savedBlanks).forEach(([saveId,item])=>{
+    const blank=blankMap.get(saveId);
+    if(!blank || !item?.value) return;
+    const scope=scopeFor(blank);
+    const chip=chipsIn(scope).find(c=>
+      !c.classList.contains('used') &&
+      normalize(c.dataset.value)===normalize(item.value)
+    );
+    if(chip) placeChip(chip,blank);
+    blank.classList.toggle('correct',!!item.correct);
+    blank.classList.toggle('incorrect',!!item.incorrect);
+  });
+}
+
+async function restoreLocalState(){
+  setSaveStatus('กำลังค้นหางานเดิม…','saving');
+  const state=await readLocalState();
+
+  if(!state){
+    setSaveStatus(`พร้อมบันทึกอัตโนมัติ · ${SAVE_BACKEND}`,'ok');
+    return false;
+  }
+
+  restoreBlankState(state.blanks);
+
+  document.querySelectorAll('.section.study-hidden, .final.study-hidden')
+    .forEach(s=>s.classList.remove('study-hidden'));
+  (state.hiddenScopes || []).forEach(id=>{
+    document.getElementById(id)?.classList.add('study-hidden');
+  });
+
+  summariesVisible = state.summariesVisible !== false;
+  document.body.classList.toggle('hidden-summary',!summariesVisible);
+  document.body.classList.toggle('show-answers',!!state.answersShown);
+  document.body.classList.toggle('vocab-hide-english',!!state.vocabEnglishHidden);
+
+  if(Array.isArray(state.vocabQuiz) && state.vocabQuiz.length){
+    renderSavedVocabQuiz(state.vocabQuiz);
+  }
+  if(state.vocabResult && document.getElementById('vocabResult')){
+    document.getElementById('vocabResult').textContent=state.vocabResult;
+  }
+  if(Array.isArray(state.vocabDragQuiz) && state.vocabDragQuiz.length){
+    renderSavedVocabDrag(state.vocabDragQuiz);
+  }
+  if(state.vocabDragResult && document.getElementById('vocabDragResult')){
+    document.getElementById('vocabDragResult').textContent=state.vocabDragResult;
+  }
+
+  document.querySelectorAll('.section, .final').forEach(scope=>{
+    const checked=!!state.checkedScopes?.[scope.id];
+    const correct=blanksIn(scope).filter(b=>b.classList.contains('correct')).length;
+    updateProgress(scope,checked,correct);
+  });
+  updateGlobalSummary();
+  setAnswers(!!state.answersShown);
+
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      if(Number.isFinite(state.scrollY)) window.scrollTo(0,state.scrollY);
+    });
+  });
+
+  const when=state.savedAt ? new Date(state.savedAt) : null;
+  const stamp=when && !Number.isNaN(when.getTime())
+    ? when.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})
+    : '';
+  setSaveStatus(`กู้คืนงานเดิมแล้ว · ${SAVE_BACKEND}${stamp?' · '+stamp:''}`,'ok');
+  return true;
+}
+
+async function bootLocalPersistence(){
+  try{
+    await restoreLocalState();
+  }catch(err){
+    console.error('Restore failed',err);
+    setSaveStatus('ไม่พบงานเดิม · พร้อมเริ่มใหม่','warn');
+  }finally{
+    SAVE_READY=true;
+    scheduleLocalSave(1200);
+  }
+}
+
+async function clearLocalProgress(){
+  const ok=confirm('ล้างคำตอบ คำศัพท์ที่พิมพ์ และความคืบหน้าที่บันทึกไว้ในเครื่องทั้งหมดหรือไม่?');
+  if(!ok) return;
+  SAVE_READY=false;
+  clearTimeout(SAVE_TIMER);
+  await deleteLocalState();
+  setSaveStatus('ล้างงานในเครื่องแล้ว · กำลังเริ่มใหม่','ok');
+  location.reload();
+}
+
+
+function setAnswers(on){
+  document.body.classList.toggle('show-answers',on);
+  document.getElementById('status').textContent =
+    (on?'โหมดเฉลย':'โหมดนักเรียน') + ' · ' + (summariesVisible?'แสดงสรุปอ่าน':'ซ่อนสรุปอ่าน');
+}
+function toggleAnswers(){
+  setAnswers(!document.body.classList.contains('show-answers'));
+  scheduleLocalSave();
+}
+function showAllSummaries(){
+  document.body.classList.remove('hidden-summary');
+  document.querySelectorAll('.section.study-hidden, .final.study-hidden').forEach(scope=>scope.classList.remove('study-hidden'));
+  summariesVisible=true;
+}
+function toggleSummaries(){
+  summariesVisible=!summariesVisible;
+  document.body.classList.toggle('hidden-summary',!summariesVisible);
+  if(summariesVisible){
+    document.querySelectorAll('.section.study-hidden, .final.study-hidden').forEach(scope=>scope.classList.remove('study-hidden'));
+  }
+  setAnswers(document.body.classList.contains('show-answers'));
+  scheduleLocalSave();
+}
+function printStudent(){
+  const prevAnswers=document.body.classList.contains('show-answers');
+  const prevSummaries=summariesVisible;
+  const prevHidden=[...document.querySelectorAll('.section.study-hidden, .final.study-hidden')].map(s=>s.id);
+  try{
+    setAnswers(false);
+    showAllSummaries();
+    setAnswers(false);
+    window.print();
+  }finally{
+    summariesVisible=prevSummaries;
+    document.body.classList.toggle('hidden-summary',!prevSummaries);
+    prevHidden.forEach(id=>document.getElementById(id)?.classList.add('study-hidden'));
+    setAnswers(prevAnswers);
+  }
+}
+function printKey(){
+  const prevAnswers=document.body.classList.contains('show-answers');
+  const prevSummaries=summariesVisible;
+  const prevHidden=[...document.querySelectorAll('.section.study-hidden, .final.study-hidden')].map(s=>s.id);
+  try{
+    setAnswers(true);
+    showAllSummaries();
+    setAnswers(true);
+    window.print();
+  }finally{
+    summariesVisible=prevSummaries;
+    document.body.classList.toggle('hidden-summary',!prevSummaries);
+    prevHidden.forEach(id=>document.getElementById(id)?.classList.add('study-hidden'));
+    setAnswers(prevAnswers);
+  }
+}
+function scopeFor(node){return node.closest('.section, .final');}
+function chipsIn(scope){return [...scope.querySelectorAll('.wordbank .word')];}
+function blanksIn(scope){return [...scope.querySelectorAll('.blank[data-answer]')];}
+function normalize(v){return String(v||'').trim().replace(/\s+/g,' ').toLowerCase();}
+
+function clearSelection(){
+  if(selectedChip) selectedChip.classList.remove('selected');
+  selectedChip=null;
+  document.querySelectorAll('.blank.drop-ready').forEach(b=>b.classList.remove('drop-ready'));
+}
+function selectChip(chip){
+  if(chip.classList.contains('used')) return;
+  if(selectedChip===chip){clearSelection();return;}
+  clearSelection();
+  selectedChip=chip;
+  chip.classList.add('selected');
+  blanksIn(scopeFor(chip)).forEach(b=>b.classList.add('drop-ready'));
+  chip.focus();
+}
+function returnExistingWord(blank){
+  const oldId=blank.dataset.chipId;
+  if(oldId){
+    const old=document.querySelector('[data-chip-id="'+CSS.escape(oldId)+'"]');
+    if(old) old.classList.remove('used','selected');
+  }
+  blank.dataset.chipId='';
+  blank.dataset.value='';
+  blank.classList.remove('filled','correct','incorrect','drop-ready');
+  const placed=blank.querySelector('.placed');
+  if(placed) placed.remove();
+}
+function placeChip(chip, blank){
+  if(!chip || !blank || chip.classList.contains('used')) return;
+  if(scopeFor(chip)!==scopeFor(blank)) return;
+  returnExistingWord(blank);
+  const value=chip.dataset.value;
+  const span=document.createElement('span');
+  span.className='placed';
+  span.textContent=value;
+  blank.prepend(span);
+  blank.dataset.value=value;
+  blank.dataset.chipId=chip.dataset.chipId;
+  blank.classList.add('filled');
+  blank.classList.remove('correct','incorrect','drop-ready');
+  chip.classList.add('used');
+  chip.classList.remove('selected');
+  selectedChip=null;
+  updateProgress(scopeFor(blank));
+  updateGlobalSummary();
+  scheduleLocalSave();
+}
+function removeFromBlank(blank){
+  if(!blank.dataset.value) return;
+  returnExistingWord(blank);
+  updateProgress(scopeFor(blank));
+  updateGlobalSummary();
+  scheduleLocalSave();
+}
+function checkScope(scope){
+  let correct=0;
+  blanksIn(scope).forEach(blank=>{
+    blank.classList.remove('correct','incorrect');
+    if(!blank.dataset.value) return;
+    if(normalize(blank.dataset.value)===normalize(blank.dataset.answer)){
+      blank.classList.add('correct'); correct++;
+    }else{
+      blank.classList.add('incorrect');
+    }
+  });
+  updateProgress(scope,true,correct);
+  updateGlobalSummary();
+  scheduleLocalSave();
+}
+function resetScope(scope){
+  blanksIn(scope).forEach(returnExistingWord);
+  chipsIn(scope).forEach(c=>c.classList.remove('used','selected'));
+  clearSelection();
+  updateProgress(scope);
+  updateGlobalSummary();
+  scheduleLocalSave();
+}
+function checkAllAnswers(){
+  document.querySelectorAll('.section, .final').forEach(checkScope);
+}
+function resetAllAnswers(){
+  const ok=confirm('เริ่มใหม่ทั้งหมดหรือไม่? คำตอบที่วางไว้ทั้งบทจะถูกล้าง แต่ไฟล์และเนื้อหาจะไม่เปลี่ยน');
+  if(!ok) return;
+  document.querySelectorAll('.section, .final').forEach(resetScope);
+}
+function updateProgress(scope,checked=false,forcedCorrect=0){
+  const blanks=blanksIn(scope);
+  const filled=blanks.filter(b=>b.dataset.value).length;
+  const correct=checked ? forcedCorrect : blanks.filter(b=>b.classList.contains('correct')).length;
+  const el=scope.querySelector('.section-playbar .progress');
+  if(el){
+    el.textContent=checked
+      ? `ถูก ${correct}/${blanks.length} · เติมแล้ว ${filled}/${blanks.length}`
+      : `เติมแล้ว ${filled}/${blanks.length}`;
+  }
+}
+function updateGlobalSummary(){
+  const blanks=[...document.querySelectorAll('.blank[data-answer]')];
+  const filled=blanks.filter(b=>b.dataset.value).length;
+  const correct=blanks.filter(b=>b.classList.contains('correct')).length;
+  const el=document.getElementById('gameSummary');
+  el.textContent = correct
+    ? `ถูก ${correct}/${blanks.length} · เติมแล้ว ${filled}`
+    : `เติมแล้ว ${filled} / ${blanks.length}`;
+}
+function addPlaybar(scope){
+  const wb=scope.querySelector('.wordbank');
+  if(!wb) return;
+  const bar=document.createElement('div');
+  bar.className='section-playbar';
+
+  const hide=document.createElement('button');
+  hide.type='button';
+  hide.textContent='ซ่อน/เปิดสรุปหัวข้อนี้';
+  hide.addEventListener('click',()=>{
+    scope.classList.toggle('study-hidden');
+    scheduleLocalSave();
+  });
+
+  const check=document.createElement('button');
+  check.type='button';
+  check.textContent='ตรวจคำตอบ';
+  check.addEventListener('click',()=>checkScope(scope));
+
+  const reset=document.createElement('button');
+  reset.type='button';
+  reset.textContent='เริ่มหัวข้อนี้ใหม่';
+  reset.addEventListener('click',()=>resetScope(scope));
+
+  const progress=document.createElement('span');
+  progress.className='progress';
+  progress.setAttribute('aria-live','polite');
+
+  bar.append(hide,check,reset,progress);
+  wb.insertAdjacentElement('afterend',bar);
+  updateProgress(scope);
+}
+function initGame(){
+  document.querySelectorAll('.section, .final').forEach(scope=>{
+    chipsIn(scope).forEach(chip=>{
+      chipSerial++;
+      chip.dataset.chipId='chip'+chipSerial;
+      chip.dataset.value=chip.textContent.trim();
+      chip.setAttribute('draggable','true');
+      chip.setAttribute('role','button');
+      chip.setAttribute('tabindex','0');
+      chip.setAttribute('aria-label','คำ '+chip.dataset.value+' แตะแล้วเลือกช่องว่าง หรือใช้การลาก');
+      chip.addEventListener('click',()=>selectChip(chip));
+      chip.addEventListener('keydown',e=>{
+        if(e.key==='Enter'||e.key===' '){
+          e.preventDefault();selectChip(chip);
+        }
+      });
+      chip.addEventListener('dragstart',e=>{
+        if(chip.classList.contains('used')){e.preventDefault();return;}
+        dragChip=chip;
+        e.dataTransfer.effectAllowed='move';
+        e.dataTransfer.setData('text/plain',chip.dataset.chipId);
+      });
+      chip.addEventListener('dragend',()=>{
+        dragChip=null;
+        document.querySelectorAll('.blank.drop-ready').forEach(b=>b.classList.remove('drop-ready'));
+      });
+    });
+    const blankAnswerCounts={};
+    blanksIn(scope).forEach(blank=>{
+      const answerKey=normalize(blank.dataset.answer);
+      blankAnswerCounts[answerKey]=(blankAnswerCounts[answerKey]||0)+1;
+      blank.dataset.saveId=(scope.id||'scope')+'|'+encodeURIComponent(answerKey)+'|'+blankAnswerCounts[answerKey];
+      blank.setAttribute('role','button');
+      blank.setAttribute('tabindex','0');
+      blank.setAttribute('aria-label','ช่องคำตอบ แตะเพื่อวางคำที่เลือก หรือแตะเพื่อนำคำออก');
+      blank.addEventListener('click',()=>{
+        if(selectedChip) placeChip(selectedChip,blank);
+        else if(blank.dataset.value) removeFromBlank(blank);
+      });
+      blank.addEventListener('keydown',e=>{
+        if(e.key==='Enter'||e.key===' '){
+          e.preventDefault();
+          if(selectedChip) placeChip(selectedChip,blank);
+          else if(blank.dataset.value) removeFromBlank(blank);
+        }
+      });
+      blank.addEventListener('dragover',e=>{
+        if(dragChip && scopeFor(dragChip)===scopeFor(blank)){
+          e.preventDefault();
+          blank.classList.add('drop-ready');
+          e.dataTransfer.dropEffect='move';
+        }
+      });
+      blank.addEventListener('dragleave',()=>blank.classList.remove('drop-ready'));
+      blank.addEventListener('drop',e=>{
+        e.preventDefault();
+        blank.classList.remove('drop-ready');
+        const id=e.dataTransfer.getData('text/plain');
+        const chip=document.querySelector('[data-chip-id="'+CSS.escape(id)+'"]')||dragChip;
+        placeChip(chip,blank);
+        dragChip=null;
+      });
+    });
+    addPlaybar(scope);
+  });
+  updateGlobalSummary();
+}
+setAnswers(false);
+initGame();
+
+const VOCAB_DATA = [];
+function vocabNorm(s){
+  return String(s||'')
+    .toLowerCase()
+    .replace(/[().,]/g,' ')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+function vocabAnswers(display){
+  // ยอมรับคำที่คั่นด้วย / เป็นทางเลือก และตัดคำอธิบายในวงเล็บแบบง่าย
+  const parts = String(display).split('/').map(x=>x.trim()).filter(Boolean);
+  const out = new Set();
+  parts.forEach(p=>{
+    out.add(vocabNorm(p));
+    out.add(vocabNorm(p.replace(/\([^)]*\)/g,'')));
+  });
+  // aliases สำคัญ
+  const d=vocabNorm(display);
+  const aliases={
+    'stoma stomata':['stoma','stomata'],
+    'runner stolon':['runner','stolon'],
+    'fully grown mature':['fully grown','mature'],
+    'different':['different'],
+    'vary differ':['vary','differ'],
+    'bud offshoot':['bud','offshoot'],
+    'acid-base balance ph':['acid-base balance','ph'],
+    'embryo young plant':['embryo','young plant'],
+    'many small flowers florets':['many small flowers','florets'],
+    'perfect flower bisexual flower':['perfect flower','bisexual flower'],
+    'imperfect flower unisexual flower':['imperfect flower','unisexual flower'],
+    'pollen pollen grain':['pollen','pollen grain'],
+    'vegetative cell tube cell':['vegetative cell','tube cell'],
+    'vegetative nucleus tube nucleus':['vegetative nucleus','tube nucleus'],
+    'propagation by cuttings cutting':['propagation by cuttings','cutting'],
+    'fix nitrogen nitrogen fixation':['fix nitrogen','nitrogen fixation'],
+    'primary macronutrients':['primary macronutrients','primary nutrients'],
+    'secondary macronutrients':['secondary macronutrients','secondary nutrients'],
+    'sulfur':['sulfur','sulphur'],
+  };
+  Object.entries(aliases).forEach(([k,arr])=>{
+    if(d===k) arr.forEach(a=>out.add(vocabNorm(a)));
+  });
+  return [...out].filter(Boolean);
+}
+function shuffleVocab(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+let vocabDragSelected=null;
+let vocabDragNative=null;
+let vocabDragCurrentZone='structure';
+let vocabDragCurrentSize=12;
+
+function vocabDragCanonical(en){
+  return String(en||'').split('/')[0].trim().replace(/\s*\([^)]*\)\s*$/,'').trim();
+}
+function vocabDragPool(mode='mix'){
+  if(mode==='ep') return VOCAB_DATA.filter(x=>x.level==='ep');
+  if(mode==='core') return VOCAB_DATA.filter(x=>x.level==='core');
+  return VOCAB_DATA.filter(x=>x.level==='core' || x.level==='ep');
+}
+function vocabZoneLabel(zone){
+  const labels={
+    structure:'โซน 1 · โครงสร้างดอก ผล เมล็ด และเอ็มบริโอ',
+    nutrients:'โซน 2 · ธาตุอาหารและปุ๋ย',
+    photosynthesis:'โซน 3 · การสังเคราะห์ด้วยแสงและสิ่งแวดล้อม',
+    transport:'โซน 4 · ราก ลำต้น ใบ และการลำเลียง',
+    reproduction:'โซน 5 · การสืบพันธุ์และการงอก',
+    propagation:'โซน 6 · การขยายพันธุ์และเพาะเลี้ยงเนื้อเยื่อ'
+  };
+  return labels[zone] || zone;
+}
+function highlightVocabZoneButton(zone){
+  document.querySelectorAll('[data-zone-btn]').forEach(b=>{
+    b.classList.toggle('active-zone',b.dataset.zoneBtn===zone);
+  });
+}
+function buildVocabDragZone(zone='structure',n=12,btn=null){
+  const pool=shuffleVocab(VOCAB_DATA.filter(x=>x.zone===zone));
+  const size=Math.min(Number(n)||12,pool.length);
+  const chosen=pool.slice(0,size);
+  vocabDragCurrentZone=zone;
+  vocabDragCurrentSize=Number(n)||12;
+  renderVocabDrag(chosen);
+  highlightVocabZoneButton(zone);
+  document.getElementById('vocabDragResult').textContent=`${vocabZoneLabel(zone)} · ${chosen.length}/${pool.length} คำ`;
+  scheduleLocalSave();
+}
+function rerollCurrentVocabZone(){
+  buildVocabDragZone(vocabDragCurrentZone,vocabDragCurrentSize);
+}
+function clearVocabDragSelection(){
+  if(vocabDragSelected) vocabDragSelected.classList.remove('selected');
+  vocabDragSelected=null;
+  document.querySelectorAll('.vdrag-drop.drop-ready').forEach(x=>x.classList.remove('drop-ready'));
+}
+function makeVocabDragChip(item){
+  const chip=document.createElement('span');
+  chip.className='vdrag-chip';
+  chip.textContent=vocabDragCanonical(item.en);
+  chip.dataset.th=item.th;
+  chip.dataset.en=item.en;
+  chip.dataset.level=item.level || 'support';
+  chip.dataset.zone=item.zone || '';
+  chip.draggable=true;
+  chip.tabIndex=0;
+  chip.setAttribute('role','button');
+  chip.setAttribute('aria-label','ศัพท์อังกฤษ '+chip.textContent+' แตะเพื่อเลือกหรือใช้การลาก');
+  chip.addEventListener('click',()=>{
+    if(vocabDragSelected===chip){ clearVocabDragSelection(); return; }
+    clearVocabDragSelection();
+    vocabDragSelected=chip;
+    chip.classList.add('selected');
+    document.querySelectorAll('.vdrag-drop').forEach(x=>x.classList.add('drop-ready'));
+  });
+  chip.addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key===' '){ e.preventDefault(); chip.click(); }
+  });
+  chip.addEventListener('dragstart',e=>{
+    vocabDragNative=chip;
+    e.dataTransfer.effectAllowed='move';
+    e.dataTransfer.setData('text/plain',chip.dataset.th);
+  });
+  chip.addEventListener('dragend',()=>{
+    vocabDragNative=null;
+    document.querySelectorAll('.vdrag-drop.drop-ready').forEach(x=>x.classList.remove('drop-ready'));
+  });
+  return chip;
+}
+function returnVocabDragChip(target){
+  const old=target.dataset.placedTh;
+  if(!old) return;
+  const bank=document.getElementById('vocabDragBank');
+  const chip=[...document.querySelectorAll('.vdrag-chip')].find(c=>c.dataset.th===old);
+  if(chip){
+    chip.classList.remove('used','selected');
+    if(bank && chip.parentElement!==bank) bank.appendChild(chip);
+  }
+  target.dataset.placedTh='';
+  target.classList.remove('correct','incorrect');
+  const drop=target.querySelector('.vdrag-drop');
+  if(drop) drop.innerHTML='<span class="placeholder">วาง English ตรงนี้</span>';
+}
+function placeVocabDragChip(chip,target){
+  if(!chip || !target) return;
+  const previous=[...document.querySelectorAll('#vocabDragTargets .vdrag-target')]
+    .find(t=>t.dataset.placedTh===chip.dataset.th);
+  if(previous && previous!==target) returnVocabDragChip(previous);
+  returnVocabDragChip(target);
+  target.dataset.placedTh=chip.dataset.th;
+  target.classList.remove('correct','incorrect');
+  const drop=target.querySelector('.vdrag-drop');
+  drop.innerHTML='';
+  const placed=document.createElement('span');
+  placed.className='vdrag-placed';
+  placed.textContent=vocabDragCanonical(chip.dataset.en);
+  placed.title='แตะเพื่อนำคำกลับ';
+  placed.addEventListener('click',e=>{ e.stopPropagation(); returnVocabDragChip(target); scheduleLocalSave(); });
+  drop.appendChild(placed);
+  chip.classList.add('used');
+  chip.classList.remove('selected');
+  clearVocabDragSelection();
+  scheduleLocalSave();
+}
+function wireVocabDragTarget(target){
+  const drop=target.querySelector('.vdrag-drop');
+  drop.tabIndex=0;
+  drop.setAttribute('role','button');
+  drop.addEventListener('click',()=>{
+    if(vocabDragSelected) placeVocabDragChip(vocabDragSelected,target);
+    else if(target.dataset.placedTh) returnVocabDragChip(target);
+  });
+  drop.addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key===' '){ e.preventDefault(); drop.click(); }
+  });
+  drop.addEventListener('dragover',e=>{
+    if(vocabDragNative){ e.preventDefault(); drop.classList.add('drop-ready'); e.dataTransfer.dropEffect='move'; }
+  });
+  drop.addEventListener('dragleave',()=>drop.classList.remove('drop-ready'));
+  drop.addEventListener('drop',e=>{
+    e.preventDefault();
+    drop.classList.remove('drop-ready');
+    const th=e.dataTransfer.getData('text/plain');
+    const chip=[...document.querySelectorAll('.vdrag-chip')].find(c=>c.dataset.th===th) || vocabDragNative;
+    placeVocabDragChip(chip,target);
+    vocabDragNative=null;
+  });
+}
+function renderVocabDrag(items){
+  const targets=document.getElementById('vocabDragTargets');
+  const bank=document.getElementById('vocabDragBank');
+  if(!targets||!bank) return;
+  targets.innerHTML='';
+  bank.innerHTML='';
+  items.forEach((item,i)=>{
+    const t=document.createElement('div');
+    t.className='vdrag-target';
+    t.dataset.th=item.th;
+    t.dataset.en=item.en;
+    t.dataset.level=item.level || 'support';
+    t.dataset.zone=item.zone || '';
+    t.innerHTML=`<div class="vdrag-thai">${i+1}. ${item.th}</div>
+      <div><div class="vdrag-drop"><span class="placeholder">วาง English ตรงนี้</span></div>
+      <div class="vdrag-answer">เฉลย: <b>${vocabDragCanonical(item.en)}</b></div></div>`;
+    targets.appendChild(t);
+    wireVocabDragTarget(t);
+  });
+  shuffleVocab(items).forEach(item=>bank.appendChild(makeVocabDragChip(item)));
+}
+function buildVocabDrag(n=12,mode='mix'){
+  const pool=shuffleVocab(vocabDragPool(mode));
+  const chosen=pool.slice(0,Math.min(Number(n)||12,pool.length));
+  renderVocabDrag(chosen);
+  const label=mode==='core'?'ศัพท์หลัก':mode==='ep'?'ศัพท์ EP':'ศัพท์หลัก + EP';
+  document.getElementById('vocabDragResult').textContent=`ชุดลาก ${chosen.length} คำ · ${label}`;
+  scheduleLocalSave();
+}
+function checkVocabDrag(){
+  const targets=[...document.querySelectorAll('#vocabDragTargets .vdrag-target')];
+  if(!targets.length){ buildVocabDrag(12,'core'); return; }
+  let correct=0,filled=0;
+  targets.forEach(t=>{
+    t.classList.remove('correct','incorrect');
+    if(!t.dataset.placedTh) return;
+    filled++;
+    if(t.dataset.placedTh===t.dataset.th){ t.classList.add('correct'); correct++; }
+    else t.classList.add('incorrect');
+  });
+  document.getElementById('vocabDragResult').textContent=`ถูก ${correct}/${targets.length} · วางแล้ว ${filled}`;
+  scheduleLocalSave();
+}
+function resetVocabDrag(){
+  [...document.querySelectorAll('#vocabDragTargets .vdrag-target')].forEach(t=>{
+    t.classList.remove('show-answer');
+    returnVocabDragChip(t);
+  });
+  document.querySelectorAll('.vdrag-target').forEach(t=>t.classList.remove('correct','incorrect'));
+  const n=document.querySelectorAll('#vocabDragTargets .vdrag-target').length;
+  document.getElementById('vocabDragResult').textContent=n?`ชุดลาก ${n} คำ`:'ยังไม่ได้เริ่ม';
+  scheduleLocalSave();
+}
+function revealVocabDrag(){
+  document.querySelectorAll('#vocabDragTargets .vdrag-target').forEach(t=>t.classList.toggle('show-answer'));
+  scheduleLocalSave();
+}
+function renderSavedVocabDrag(items){
+  const allowed=new Map(VOCAB_DATA.map(x=>[x.th,x]));
+  items=items.filter(x=>allowed.has(x.th)).map(x=>{
+    const latest=allowed.get(x.th);
+    return {th:latest.th,en:latest.en,level:latest.level,zone:latest.zone||'',placedTh:x.placedTh||'',correct:!!x.correct,incorrect:!!x.incorrect,showAnswer:!!x.showAnswer};
+  });
+  if(!items.length) return false;
+  renderVocabDrag(items);
+  vocabDragCurrentZone=items[0]?.zone || 'structure';
+  vocabDragCurrentSize=items.length || 12;
+  highlightVocabZoneButton(vocabDragCurrentZone);
+  items.forEach(saved=>{
+    const target=[...document.querySelectorAll('#vocabDragTargets .vdrag-target')].find(t=>t.dataset.th===saved.th);
+    if(!target) return;
+    if(saved.placedTh){
+      const chip=[...document.querySelectorAll('.vdrag-chip')].find(c=>c.dataset.th===saved.placedTh);
+      if(chip) placeVocabDragChip(chip,target);
+    }
+    target.classList.toggle('correct',saved.correct);
+    target.classList.toggle('incorrect',saved.incorrect);
+    target.classList.toggle('show-answer',saved.showAnswer);
+  });
+  return true;
+}
+
+function toggleVocabEnglish(){
+  document.body.classList.toggle('vocab-hide-english');
+  scheduleLocalSave();
+}
+function filterVocabLevel(level='all',btn=null){
+  document.querySelectorAll('.vocab-table tbody tr[data-level]').forEach(row=>{
+    row.classList.toggle('vocab-row-hidden', level!=='all' && row.dataset.level!==level);
+  });
+  document.querySelectorAll('#vocabFilterBar button').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+}
+function vocabLevelLabel(level){
+  if(level==='core') return 'ต้องรู้';
+  if(level==='should') return 'ควรรู้';
+  if(level==='ep') return 'EP เสริม';
+  return 'เสริม';
+}
+function buildVocabQuiz(n=30,level='all'){
+  const grid=document.getElementById('vocabGrid');
+  if(!grid) return;
+  const pool=level==='all'?VOCAB_DATA:VOCAB_DATA.filter(x=>x.level===level);
+  const data=shuffleVocab(pool);
+  const chosen=n==='all'?data:data.slice(0,Math.min(Number(n)||30,data.length));
+  grid.innerHTML='';
+  chosen.forEach((item,i)=>{
+    const q=document.createElement('div');
+    q.className='vocab-q';
+    q.dataset.th=item.th;
+    q.dataset.answer=item.en;
+    q.dataset.level=item.level || 'support';
+    q.innerHTML=`<div class="thai">${i+1}. ${item.th}<span class="qlevel">${vocabLevelLabel(item.level)}</span></div>
+      <div><input class="vocab-input" type="text" autocomplete="off" spellcheck="false" placeholder="เขียนศัพท์อังกฤษ"></div>
+      <div class="vocab-answer">เฉลย: <b>${item.en}</b></div>`;
+    grid.appendChild(q);
+  });
+  const levelText=level==='all'?'ทุกระดับ':vocabLevelLabel(level);
+  document.getElementById('vocabResult').textContent=`ชุดเขียน ${chosen.length} คำ · ${levelText}`;
+  grid.querySelector('input')?.focus();
+  scheduleLocalSave();
+}
+function checkVocabQuiz(){
+  const qs=[...document.querySelectorAll('#vocabGrid .vocab-q')];
+  if(!qs.length){ buildVocabQuiz(30); return; }
+  let correct=0, filled=0;
+  qs.forEach(q=>{
+    const inp=q.querySelector('.vocab-input');
+    inp.classList.remove('correct','incorrect');
+    const val=vocabNorm(inp.value);
+    if(!val) return;
+    filled++;
+    if(vocabAnswers(q.dataset.answer).includes(val)){
+      correct++; inp.classList.add('correct');
+    }else inp.classList.add('incorrect');
+  });
+  document.getElementById('vocabResult').textContent=`ถูก ${correct}/${qs.length} · เขียนแล้ว ${filled}`;
+  scheduleLocalSave();
+}
+function resetVocabQuiz(){
+  document.querySelectorAll('#vocabGrid .vocab-input').forEach(i=>{
+    i.value=''; i.classList.remove('correct','incorrect');
+  });
+  document.querySelectorAll('#vocabGrid .vocab-q').forEach(q=>q.classList.remove('show-answer'));
+  const n=document.querySelectorAll('#vocabGrid .vocab-q').length;
+  document.getElementById('vocabResult').textContent=n?`ชุดเขียน ${n} คำ`:'ยังไม่ได้เริ่มแบบฝึก';
+  scheduleLocalSave();
+}
+function revealVocabAnswers(){
+  document.querySelectorAll('#vocabGrid .vocab-q').forEach(q=>q.classList.toggle('show-answer'));
+  scheduleLocalSave();
+}
+
+document.addEventListener('input',e=>{
+  if(e.target.matches('.vocab-input')) scheduleLocalSave(450);
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') clearSelection();
+});
+window.addEventListener('scroll',()=>scheduleLocalSave(700),{passive:true});
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='hidden') saveLocalStateNow();
+});
+window.addEventListener('pagehide',()=>saveLocalStateNow());
+
+if(document.getElementById('vocabGrid')) buildVocabQuiz(30,'core');
+if(document.getElementById('vocabDragTargets')) buildVocabDragZone('structure',12);
+bootLocalPersistence();
+
+</script>
+</body>
+</html>
