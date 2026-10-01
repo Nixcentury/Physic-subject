@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Loading Physics Knowledge Scan…</title>
+<style>
+html,body{height:100%;margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#f8fafc;color:#0f172a}
+main{height:100%;display:grid;place-items:center;padding:24px;text-align:center}
+small{color:#64748b}
+</style>
+</head>
+<body>
+<main><div><h2>กำลังเปิด Physics Knowledge Scan…</h2><small>Loading quiz</small></div></main>
+<script>
+(async()=>{
+  const base='page-assets/physics-knowledge-scan-40q/';
+  const parts=await Promise.all(
+    Array.from({length:9},(_,i)=>fetch(base+'part'+String(i).padStart(2,'0')+'.txt',{cache:'no-store'}).then(r=>{
+      if(!r.ok) throw new Error('Missing page payload part '+i);
+      return r.text();
+    }))
+  );
+  const b64=parts.join('').trim();
+  const bin=atob(b64);
+  const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));
+  let html;
+  if('DecompressionStream' in window){
+    const ds=new DecompressionStream('gzip');
+    const stream=new Blob([bytes]).stream().pipeThrough(ds);
+    html=await new Response(stream).text();
+  }else{
+    await new Promise((resolve,reject)=>{
+      const s=document.createElement('script');
+      s.src='https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js';
+      s.onload=resolve; s.onerror=reject; document.head.appendChild(s);
+    });
+    html=new TextDecoder().decode(window.pako.ungzip(bytes));
+  }
+  document.open();
+  document.write(html);
+  document.close();
+})().catch(err=>{
+  const safe=String(err).replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[m]||m));
+  document.body.innerHTML='<main><div><h2>เปิดหน้าไม่ได้</h2><small>'+safe+'</small></div></main>';
+});
+</script>
+</body>
+</html>
