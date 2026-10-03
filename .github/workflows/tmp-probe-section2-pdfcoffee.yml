@@ -1,0 +1,26 @@
+name: Probe PDFCoffee thermal file URL
+
+on:
+  push:
+    branches:
+      - tmp-section2-thermal-pastpaper-merge-v2
+    paths:
+      - '.github/workflows/tmp-probe-section2-pdfcoffee.yml'
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe PDFCoffee endpoint
+        run: |
+          python - <<'PY'
+          import requests
+          urls=[
+          'https://pdfcoffee.com/21-simple-kinetic-molecular-model-of-matter-topic-booklet-2-cie-igcse-physics-md-pdf-pdf-free.html',
+          'https://pdfcoffee.com/download/21-simple-kinetic-molecular-model-of-matter-topic-booklet-2-cie-igcse-physics-md-pdf-pdf-free.html'
+          ]
+          s=requests.Session(); s.headers.update({'User-Agent':'Mozilla/5.0'})
+          for u in urls:
+            r=s.get(u,timeout=30,allow_redirects=True)
+            print('URL',u,'STATUS',r.status_code,'TYPE',r.headers.get('content-type'),'LEN',len(r.content),'FINAL',r.url,'HEAD',r.content[:30])
+          PY
