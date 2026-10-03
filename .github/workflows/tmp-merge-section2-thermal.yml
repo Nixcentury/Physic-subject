@@ -30,14 +30,14 @@ jobs:
           from pypdf import PdfReader, PdfWriter
           import pymupdf
 
-          base='https://xtrapapers.co/papers/caie/igcse/physics-0625/topical-past-papers/physics-topical-past-papers/thermal-physics/'
+          base='https://pastpapers.papacambridge.com/directories/CAIE/CAIE-pastpapers/upload/'
           items=[
-            ('01_Kinetic_Model_1.pdf','21-Simple-Kinetic-Molecular-Model-of-Matter-Topic-Booklet-1-CIE-IGCSE-Physics_md.pdf'),
-            ('02_Kinetic_Model_2.pdf','21-Simple-Kinetic-Molecular-Model-of-Matter-Topic-Booklet-2-CIE-IGCSE-Physics_md.pdf'),
-            ('03_Thermal_Properties_Temperature_1.pdf','22-Thermal-properties-and-temperature-Topic-Booklet-1-CIE-IGCSE-Physics_md.pdf'),
-            ('04_Thermal_Properties_Temperature_2.pdf','22-Thermal-properties-and-temperature-Topic-Booklet-2-CIE-IGCSE-Physics_md.pdf'),
-            ('05_Thermal_Processes_1.pdf','23-Thermal-Processes-Topic-Booklet-1-CIE-IGCSE-Physics_md.pdf'),
-            ('06_Thermal_Processes_2.pdf','23-Thermal-Processes-Topic-Booklet-2-CIE-IGCSE-Physics_md.pdf'),
+            ('01_Kinetic_Model_1.pdf',base+'21-Simple-Kinetic-Molecular-Model-of-Matter-Topic-Booklet-1-CIE-IGCSE-Physics_md.pdf'),
+            ('02_Kinetic_Model_2.pdf',base+'21-Simple-Kinetic-Molecular-Model-of-Matter-Topic-Booklet-2-CIE-IGCSE-Physics_md.pdf'),
+            ('03_Thermal_Properties_Temperature_1.pdf',base+'22-Thermal-properties-and-temperature-Topic-Booklet-1-CIE-IGCSE-Physics_md.pdf'),
+            ('04_Thermal_Properties_Temperature_2.pdf',base+'22-Thermal-properties-and-temperature-Topic-Booklet-2-CIE-IGCSE-Physics_md.pdf'),
+            ('05_Thermal_Processes_1.pdf',base+'23-Thermal-Processes-Topic-Booklet-1-CIE-IGCSE-Physics_md.pdf'),
+            ('06_Thermal_Processes_2.pdf',base+'23-Thermal-Processes-Topic-Booklet-2-CIE-IGCSE-Physics_md.pdf'),
           ]
 
           session=requests.Session()
@@ -46,8 +46,7 @@ jobs:
           rows=[]
           writer=PdfWriter()
 
-          for outname,remote in items:
-            url=base+remote+'/download'
+          for outname,url in items:
             r=session.get(url,timeout=45,allow_redirects=True)
             print(outname,r.status_code,r.headers.get('content-type'),len(r.content),r.url)
             if r.status_code!=200 or r.content[:4]!=b'%PDF':
