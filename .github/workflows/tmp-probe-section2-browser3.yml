@@ -1,0 +1,42 @@
+name: Probe XtraPapers exact download link
+
+on:
+  push:
+    branches:
+      - tmp-section2-thermal-pastpaper-merge-v2
+    paths:
+      - '.github/workflows/tmp-probe-section2-browser3.yml'
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Selenium
+        run: pip install --quiet selenium
+      - name: Click exact download anchor
+        timeout-minutes: 2
+        run: |
+          rm -rf /tmp/dl && mkdir -p /tmp/dl
+          xvfb-run -a python - <<'PY'
+          import os,time
+          from selenium import webdriver
+          from selenium.webdriver.common.by import By
+          from selenium.webdriver.chrome.options import Options
+          opts=Options(); opts.add_argument('--no-sandbox'); opts.add_argument('--disable-dev-shm-usage'); opts.add_argument('--window-size=1365,900'); opts.add_argument('--disable-blink-features=AutomationControlled'); opts.add_experimental_option('excludeSwitches',['enable-automation']); opts.add_experimental_option('prefs',{'download.default_directory':'/tmp/dl','download.prompt_for_download':False,'download.directory_upgrade':True,'plugins.always_open_pdf_externally':True})
+          d=webdriver.Chrome(options=opts); d.set_page_load_timeout(30)
+          page='https://xtrapapers.co/papers/caie/igcse/physics-0625/topical-past-papers/physics-topical-past-papers/thermal-physics/21-Simple-Kinetic-Molecular-Model-of-Matter-Topic-Booklet-1-CIE-IGCSE-Physics_md.pdf'
+          d.get(page); print('PAGE_OK',d.title)
+          a=d.find_element(By.CSS_SELECTOR,'a[href$="/download"]')
+          print('ANCHOR',a.get_attribute('href'),a.text)
+          d.execute_script('arguments[0].click();',a)
+          for i in range(40):
+              time.sleep(.5); fs=os.listdir('/tmp/dl'); print('WAIT',i,fs)
+              done=[f for f in fs if not f.endswith('.crdownload') and not f.endswith('.tmp')]
+              if done: break
+          for f in os.listdir('/tmp/dl'):
+              p='/tmp/dl/'+f; print('FILE',f,os.path.getsize(p),open(p,'rb').read(20))
+          d.quit()
+          PY
