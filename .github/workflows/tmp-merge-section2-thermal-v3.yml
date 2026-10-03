@@ -1,0 +1,84 @@
+name: Merge Section 2 Thermal Physics past papers v3
+
+on:
+  push:
+    branches:
+      - tmp-section2-thermal-pastpaper-merge-v3
+    paths:
+      - '.github/workflows/tmp-merge-section2-thermal-v3.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tmp-section2-thermal-pastpaper-merge-v3
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install --quiet requests pypdf pymupdf
+      - name: Download validate and merge
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import requests, urllib.parse
+          from pypdf import PdfReader, PdfWriter
+          import pymupdf
+
+          rawbase='https://pastpapers.papacambridge.com/directories/CAIE/CAIE-pastpapers/upload/'
+          dlbase='https://pastpapers.papacambridge.com/papers/caie/download_file.php?files='
+          names=[
+            '21-Simple-Kinetic-Molecular-Model-of-Matter-Topic-Booklet-1-CIE-IGCSE-Physics_md.pdf',
+            '21-Simple-Kinetic-Molecular-Model-of-Matter-Topic-Booklet-2-CIE-IGCSE-Physics_md.pdf',
+            '22-Thermal-properties-and-temperature-Topic-Booklet-1-CIE-IGCSE-Physics_md.pdf',
+            '22-Thermal-properties-and-temperature-Topic-Booklet-2-CIE-IGCSE-Physics_md.pdf',
+            '23-Thermal-Processes-Topic-Booklet-1-CIE-IGCSE-Physics_md.pdf',
+            '23-Thermal-Processes-Topic-Booklet-2-CIE-IGCSE-Physics_md.pdf',
+          ]
+          s=requests.Session(); s.headers.update({'User-Agent':'Mozilla/5.0','Accept':'application/pdf,*/*','Referer':'https://pastpapers.papacambridge.com/'})
+          src=Path('_section2_sources'); src.mkdir(exist_ok=True)
+          rows=[]; writer=PdfWriter()
+          for i,name in enumerate(names,1):
+            raw=rawbase+name
+            url=dlbase+urllib.parse.quote(raw,safe='')
+            r=s.get(url,timeout=60,allow_redirects=True)
+            print(name,r.status_code,r.headers.get('content-type'),len(r.content),r.url,r.content[:12])
+            if r.status_code!=200 or r.content[:4]!=b'%PDF':
+              raise SystemExit(f'Bad PDF response for {name}: {r.status_code} {r.url} {r.content[:120]!r}')
+            p=src/f'{i:02d}_{name}'; p.write_bytes(r.content)
+            reader=PdfReader(str(p)); n=len(reader.pages)
+            rows.append((name,n,url))
+            for pg in reader.pages: writer.add_page(pg)
+            print('OK',name,n,'pages')
+          out=Path('IGCSE_Section2_Thermal_Physics_Topical_Past_Papers.pdf')
+          with out.open('wb') as f: writer.write(f)
+          total=len(PdfReader(str(out)).pages); expected=sum(n for _,n,_ in rows)
+          assert total==expected,(total,expected)
+          doc=pymupdf.open(out)
+          for i in sorted(set([0,total//4,total//2,(3*total)//4,total-1])):
+            pix=doc.load_page(i).get_pixmap(matrix=pymupdf.Matrix(1.15,1.15),alpha=False)
+            print('RENDER_OK',i+1,pix.width,pix.height)
+          doc.close()
+          Path('IGCSE_Section2_merge_report.txt').write_text('\n'.join([f'{n}: {p} pages | {u}' for n,p,u in rows])+f'\nTOTAL: {total} pages\n',encoding='utf-8')
+          print('MERGE_OK',total,'pages',out.stat().st_size,'bytes')
+          PY
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: IGCSE-Section2-Thermal-Physics-Topical-Past-Papers
+          path: |
+            IGCSE_Section2_Thermal_Physics_Topical_Past_Papers.pdf
+            IGCSE_Section2_merge_report.txt
+      - name: Commit output
+        run: |
+          git config user.name 'ChatGPT Automation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add IGCSE_Section2_Thermal_Physics_Topical_Past_Papers.pdf IGCSE_Section2_merge_report.txt
+          git rm .github/workflows/tmp-merge-section2-thermal-v3.yml
+          git commit -m 'Add merged IGCSE Section 2 thermal topical past papers'
+          git push origin HEAD:tmp-section2-thermal-pastpaper-merge-v3
