@@ -1,0 +1,29 @@
+name: Probe PDFCoffee qdownload HTML
+
+on:
+  push:
+    branches:
+      - tmp-section2-thermal-pastpaper-merge-v2
+    paths:
+      - '.github/workflows/tmp-probe-section2-pdfcoffee2.yml'
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect qdownload HTML
+        run: |
+          python - <<'PY'
+          import requests,re
+          u='https://pdfcoffee.com/qdownload/21-simple-kinetic-molecular-model-of-matter-topic-booklet-2-cie-igcse-physics-md-pdf-pdf-free.html'
+          r=requests.get(u,headers={'User-Agent':'Mozilla/5.0'},timeout=30)
+          print('STATUS',r.status_code,'TYPE',r.headers.get('content-type'),'LEN',len(r.text))
+          t=r.text
+          for line in t.splitlines():
+              low=line.lower()
+              if any(k in low for k in ['.pdf','download','form','action=','href=','src=','token','file']):
+                  print(line[:3000])
+          print('URLS')
+          for x in sorted(set(re.findall(r'https?://[^\"\'<> ]+',t))):
+              if any(k in x.lower() for k in ['pdf','download','file','coffee']): print(x[:3000])
+          PY
