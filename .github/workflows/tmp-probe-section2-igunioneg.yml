@@ -1,0 +1,30 @@
+name: Probe IGCSE Union Egypt thermal links
+
+on:
+  push:
+    branches:
+      - tmp-section2-thermal-pastpaper-merge-v2
+    paths:
+      - '.github/workflows/tmp-probe-section2-igunioneg.yml'
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect listing HTML
+        run: |
+          python - <<'PY'
+          import requests,re,html
+          u='https://igunioneg.com/past-papers/cambridge/?dir=%2FIGCSE%2FPhysics+0625%2FTopical+Past+Papers%2FPhysics+Topical+Past+Papers%2FThermal+Physics'
+          r=requests.get(u,headers={'User-Agent':'Mozilla/5.0'},timeout=30,allow_redirects=True)
+          print('STATUS',r.status_code,'TYPE',r.headers.get('content-type'),'LEN',len(r.text),'FINAL',r.url)
+          t=r.text
+          for line in t.splitlines():
+              low=line.lower()
+              if '21-simple' in low or '22-thermal' in low or '23-thermal' in low or 'download' in low:
+                  print(line[:5000])
+          print('HREFS')
+          for x in re.findall(r'href=["\']([^"\']+)',t,re.I):
+              x=html.unescape(x)
+              if any(k in x.lower() for k in ['21-simple','22-thermal','23-thermal','download']): print(x[:5000])
+          PY
