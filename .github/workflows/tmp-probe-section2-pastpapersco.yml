@@ -1,0 +1,29 @@
+name: Probe PastPapersCo thermal file URL
+
+on:
+  push:
+    branches:
+      - tmp-section2-thermal-pastpaper-merge-v2
+    paths:
+      - '.github/workflows/tmp-probe-section2-pastpapersco.yml'
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe page HTML
+        run: |
+          python - <<'PY'
+          import requests,re
+          url='https://pastpapers.co/caie/igcse/physics-0625/topical-past-papers/physics-pastpapers-topic-questions/thermal-physics/21-simple-kinetic-molecular-model-of-matter-topic-booklet-1-cie-igcse-physics_md.pdf'
+          r=requests.get(url,headers={'User-Agent':'Mozilla/5.0'},timeout=30)
+          print('STATUS',r.status_code,'TYPE',r.headers.get('content-type'),'LEN',len(r.content),'FINAL',r.url)
+          text=r.text
+          for line in text.splitlines():
+              low=line.lower()
+              if any(k in low for k in ['iframe','embed','download','pdf','viewer','file=','src=']):
+                  print(line[:2000])
+          print('URLS')
+          for u in sorted(set(re.findall(r'https?://[^\"\'<> ]+',text))):
+              if 'pdf' in u.lower() or 'download' in u.lower(): print(u[:2000])
+          PY
