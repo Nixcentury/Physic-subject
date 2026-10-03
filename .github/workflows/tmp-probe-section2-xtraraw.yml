@@ -1,0 +1,21 @@
+name: Probe XtraPapers raw thermal file URL
+
+on:
+  push:
+    branches:
+      - tmp-section2-thermal-pastpaper-merge-v2
+    paths:
+      - '.github/workflows/tmp-probe-section2-xtraraw.yml'
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe raw endpoint
+        run: |
+          python - <<'PY'
+          import requests
+          u='https://xtrapapers.co/papers/caie/igcse/physics-0625/topical-past-papers/physics-topical-past-papers/thermal-physics/21-Simple-Kinetic-Molecular-Model-of-Matter-Topic-Booklet-1-CIE-IGCSE-Physics_md.pdf/raw'
+          r=requests.get(u,headers={'User-Agent':'Mozilla/5.0','Accept':'application/pdf,*/*'},timeout=30,allow_redirects=True)
+          print('STATUS',r.status_code,'TYPE',r.headers.get('content-type'),'LEN',len(r.content),'FINAL',r.url,'HEAD',r.content[:20])
+          PY
