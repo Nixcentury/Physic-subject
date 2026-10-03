@@ -1,0 +1,63 @@
+name: Probe XtraPapers with browser
+
+on:
+  push:
+    branches:
+      - tmp-section2-thermal-pastpaper-merge-v2
+    paths:
+      - '.github/workflows/tmp-probe-section2-browser.yml'
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install browser tools
+        run: |
+          pip install --quiet selenium
+          google-chrome --version || chromium-browser --version || chromium --version || true
+          which chromedriver || true
+      - name: Try browser download
+        run: |
+          mkdir -p /tmp/dl
+          xvfb-run -a python - <<'PY'
+          import os,time
+          from selenium import webdriver
+          from selenium.webdriver.common.by import By
+          from selenium.webdriver.chrome.options import Options
+          from selenium.webdriver.support.ui import WebDriverWait
+          from selenium.webdriver.support import expected_conditions as EC
+          opts=Options()
+          # headful under Xvfb
+          opts.add_argument('--no-sandbox'); opts.add_argument('--disable-dev-shm-usage')
+          opts.add_argument('--window-size=1365,900')
+          opts.add_argument('--disable-blink-features=AutomationControlled')
+          opts.add_experimental_option('excludeSwitches',['enable-automation'])
+          opts.add_experimental_option('prefs',{'download.default_directory':'/tmp/dl','download.prompt_for_download':False,'plugins.always_open_pdf_externally':True})
+          d=webdriver.Chrome(options=opts)
+          u='https://xtrapapers.co/papers/caie/igcse/physics-0625/topical-past-papers/physics-topical-past-papers/thermal-physics/21-Simple-Kinetic-Molecular-Model-of-Matter-Topic-Booklet-1-CIE-IGCSE-Physics_md.pdf'
+          d.get(u)
+          print('TITLE1',d.title,'URL1',d.current_url)
+          for i in range(20):
+              time.sleep(1)
+              print('WAIT',i+1,'TITLE',d.title,'URL',d.current_url,'SRCHEAD',d.page_source[:120].replace('\n',' '))
+              if 'just a moment' not in d.title.lower() and 'challenge' not in d.page_source[:5000].lower(): break
+          print('PAGE',d.page_source[:5000])
+          els=d.find_elements(By.XPATH,"//*[contains(translate(normalize-space(.),'DOWNLOAD','download'),'download')]")
+          print('DOWNLOAD_ELS',len(els),[(e.tag_name,e.get_attribute('href'),e.text[:80]) for e in els[:10]])
+          for e in els:
+              try:
+                  href=e.get_attribute('href') or ''
+                  txt=(e.text or '').lower()
+                  if 'download' in txt or href.endswith('/download'):
+                      d.execute_script('arguments[0].click();',e); print('CLICKED',href,txt); break
+              except Exception as ex: print('CLICKERR',ex)
+          time.sleep(8)
+          print('FILES',os.listdir('/tmp/dl'))
+          for f in os.listdir('/tmp/dl'):
+              p='/tmp/dl/'+f
+              print('FILE',f,os.path.getsize(p),open(p,'rb').read(16))
+          d.quit()
+          PY
