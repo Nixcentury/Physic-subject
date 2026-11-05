@@ -583,6 +583,18 @@ function articleUsesSupplement(m){
 if(state.scope==='full')return state.tier!=='core';
 return SCHOOL_SETS[state.scope].supplementArticles.includes(m.id);
 }
+function coreArticleFor(m,article){
+if(state.scope!=='quiz1')return article.core;
+const selected={current:[0],resistance:[0,1],power:[0,1,2],symbols:[0,1],build:[1,2]};
+return selected[m.id]?selected[m.id].map(i=>article.core[i]):article.core;
+}
+function referenceDiagramFor(m){
+if(state.scope==='quiz1'&&m.id==='symbols'){
+const selected=new Set(['cell','resistor','ammeter','voltmeter','lamp','switch']);
+return '<div class="symbol-gallery" aria-label="School quiz circuit symbols">'+symbolNames.filter(x=>selected.has(x[0])).map(x=>'<div class="symbol-card">'+symbolArt(x[0])+'<strong>'+esc(x[1])+'</strong><span class="th">'+esc(x[2])+'</span></div>').join('')+'</div>';
+}
+return diagrams[m.vis]?diagrams[m.vis]():'';}
+
 function complete(q){return Object.prototype.hasOwnProperty.call(state.checked,q.id)}
 function correct(q){return state.checked[q.id]===true}
 function renderNav(){
@@ -599,11 +611,12 @@ $('missionNav').querySelectorAll('button').forEach(b=>b.onclick=()=>{state.mi=Nu
 }
 function render(){document.body.classList.toggle('lang-th',state.lang==='th');document.body.classList.toggle('lang-en',state.lang==='en');$('language').value=state.lang;$('tier').value=state.tier;document.querySelectorAll('[data-ui]').forEach(n=>n.textContent=(state.lang==='th'?locales[n.dataset.ui].th:locales[n.dataset.ui].en));$('scope').value=state.scope;$('tierControl').hidden=state.scope!=='full';$('scopeTitle').innerHTML=dual(SCHOOL_SETS[state.scope].title);$('scopeDescription').innerHTML=dual(SCHOOL_SETS[state.scope].desc);$('scopeTag').textContent=SCHOOL_SETS[state.scope].tag;const visible=missionIndices();if(!visible.includes(state.mi))state.mi=visible[0];const m=missions[state.mi],qs=qa();if(state.qi>=qs.length)state.qi=Math.max(0,qs.length-1);renderNav();$('chapterLabel').textContent=m.code+(m.id==='planning'?' · EXPERIMENTAL SKILLS':state.mi<6?' · 4.2 ELECTRICAL QUANTITIES':' · 4.3 ELECTRIC CIRCUITS');$('missionTitle').innerHTML=dual(m.title);$('missionSubtitle').innerHTML=dual(m.desc);$('missionPosition').textContent=String(visible.indexOf(state.mi)+1).padStart(2,'0')+' / '+visible.length;$('missionCompletion').textContent=qs.filter(complete).length+' / '+qs.length;$('noteTitle').innerHTML=dual(m.title);
 const chapterArticle=topicArticles[m.id];if(!chapterArticle)throw Error('Missing revision article for '+m.id);
-const articleParagraphs=[...chapterArticle.core,...(articleUsesSupplement(m)?chapterArticle.supplement:[])];
-$('noteParagraphs').innerHTML=articleParagraphs.map((pair,i)=>'<p class="article-paragraph'+(i>=chapterArticle.core.length?' supplement-paragraph':'')+'">'+dual(L(pair[0],pair[1]))+'</p>').join('');
+const coreParagraphs=coreArticleFor(m,chapterArticle);
+const articleParagraphs=[...coreParagraphs,...(articleUsesSupplement(m)?chapterArticle.supplement:[])];
+$('noteParagraphs').innerHTML=articleParagraphs.map((pair,i)=>'<p class="article-paragraph'+(i>=coreParagraphs.length?' supplement-paragraph':'')+'">'+dual(L(pair[0],pair[1]))+'</p>').join('');
 $('workedContent').innerHTML='<p class="example-intro">'+dual(L('Select a question to see an analogous worked example.','เลือกข้อเพื่อดูตัวอย่างโจทย์คล้ายพร้อมวิธีทำ'))+'</p>';
 $('mistakeContent').innerHTML='<p>'+dual(m.mistake)+'</p>';
-$('referenceVisual').innerHTML=diagrams[m.vis]?diagrams[m.vis]():'';if(!qs.length){$('qCounter').textContent='SUPPLEMENT ONLY';$('questionTitle').innerHTML=dual(L('This mission is part of the Extended Supplement.','ภารกิจนี้เป็นเนื้อหา Supplement ของ Extended'));$('questionPrompt').innerHTML=dual(L('Choose Core + Extended or Supplement only in the Level menu to practise these questions.','เลือก Core + Extended หรือ Supplement only ที่เมนู Level เพื่อทำโจทย์ส่วนนี้'));$('answerArea').textContent='';$('visual').textContent='';$('checkBtn').disabled=true;$('prevQ').disabled=true;$('nextQ').disabled=true;$('feedback').hidden=true;$('qMarks').textContent='';$('qTier').textContent='SUPPLEMENT';$('qTier').classList.add('extended');return}
+$('referenceVisual').innerHTML=referenceDiagramFor(m);if(!qs.length){$('qCounter').textContent='SUPPLEMENT ONLY';$('questionTitle').innerHTML=dual(L('This mission is part of the Extended Supplement.','ภารกิจนี้เป็นเนื้อหา Supplement ของ Extended'));$('questionPrompt').innerHTML=dual(L('Choose Core + Extended or Supplement only in the Level menu to practise these questions.','เลือก Core + Extended หรือ Supplement only ที่เมนู Level เพื่อทำโจทย์ส่วนนี้'));$('answerArea').textContent='';$('visual').textContent='';$('checkBtn').disabled=true;$('prevQ').disabled=true;$('nextQ').disabled=true;$('feedback').hidden=true;$('qMarks').textContent='';$('qTier').textContent='SUPPLEMENT';$('qTier').classList.add('extended');return}
 const q=qs[state.qi];const help=questionGuide[q.id];if(!help)throw Error('Missing worked example for '+q.id);
 $('workedContent').innerHTML='<p class="example-intro">'+dual(L('A different, closely related question with a complete solution. Use the article above to solve your own question.','ตัวอย่างโจทย์คล้ายกันที่เปลี่ยนข้อมูลและมีเฉลยครบ ใช้ความรู้จากบทอ่านด้านบนทำโจทย์ของตนเอง'))+'</p><p class="example-method">'+dual(help.focus)+'</p><p class="example-steps">'+dual(help.worked)+'</p>';
 $('qCounter').textContent=(state.lang==='th'?'ข้อ ':'Question ')+(state.qi+1)+' / '+qs.length;$('qTier').textContent=q.lv==='core'?'CORE':state.scope==='full'?'SUPPLEMENT':'SUPPLEMENT · SCHOOL TAUGHT';$('qTier').classList.toggle('extended',q.lv==='extended');$('qMarks').textContent='['+q.marks+' '+(q.marks===1?'mark':'marks')+']';$('questionTitle').innerHTML='<span class="verb">'+esc(q.verb)+'.</span> '+dual(q.text);$('questionPrompt').innerHTML='<p>'+(q.type==='written'?dual(L('Answer in your own words; compare with the mark-scheme points after checking.','ตอบด้วยคำของตนเอง แล้วเปรียบเทียบกับแนวคำตอบหลังตรวจ')):q.type==='drag'?dual(L('Drag an option to the answer slot, or tap an option then tap the slot.','ลากตัวเลือกใส่ช่องคำตอบ หรือแตะตัวเลือกแล้วแตะช่อง')):q.type==='number'?dual(L('Enter a number only. Units are shown beside the answer field.','กรอกตัวเลขเท่านั้น มีหน่วยแสดงข้างช่อง')):dual(L('Choose the single best answer.','เลือกคำตอบที่ถูกต้องที่สุดเพียงข้อเดียว')) )+'</p>';$('visual').innerHTML=diagrams[q.vis]?diagrams[q.vis]():'';$('feedback').hidden=!complete(q);$('feedback').classList.toggle('bad',complete(q)&&!correct(q)&&q.type!=='written');$('prevQ').disabled=state.qi===0;$('nextQ').disabled=state.qi===qs.length-1;$('checkBtn').disabled=complete(q);$('answerArea').innerHTML='';const a=state.answers[q.id];
