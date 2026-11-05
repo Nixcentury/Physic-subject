@@ -222,8 +222,276 @@ const guideRows=[
 ];
 const questionGuide=Object.fromEntries(guideRows.map(([id,en,th,exEn,exTh])=>[id,{focus:L(en,th),worked:L(exEn,exTh)}]));
 
+const topicArticles={
+  "charge": {
+    "core": [
+      [
+        "Electric charge is a property of matter that causes electrical forces. We use the words positive and negative to describe its two kinds. Two objects with the same type of charge repel each other, while objects with opposite charges attract. Therefore, before predicting how two charged objects interact, identify the sign of each object. A negative rod near another negative rod repels it, whereas a positive rod near a negative rod attracts it.",
+        "ประจุไฟฟ้าเป็นสมบัติของสสารที่ทำให้เกิดแรงทางไฟฟ้า เราแบ่งประจุเป็นสองชนิดคือบวกและลบ วัตถุที่มีประจุชนิดเดียวกันจะผลักกัน ส่วนวัตถุที่มีประจุต่างชนิดจะดึงดูดกัน ดังนั้นก่อนทำนายแรงระหว่างวัตถุสองชิ้น ต้องพิจารณาเครื่องหมายของประจุทั้งสองก่อน เช่น แท่งที่มีประจุลบสองแท่งผลักกัน แต่แท่งบวกกับแท่งลบดึงดูดกัน"
+      ],
+      [
+        "Charging by friction involves the transfer of electrons between materials, not the movement of protons from one atom to another. An object that gains electrons has an excess of negative charge and becomes negatively charged. An object that loses electrons is left positively charged. For example, if a plastic rod gains electrons during rubbing, the rod becomes negative while the other material loses an equal amount of negative charge.",
+        "การทำให้วัตถุมีประจุด้วยการเสียดสีเกิดจากการถ่ายโอนอิเล็กตรอนระหว่างวัสดุ ไม่ใช่การย้ายโปรตอนจากอะตอมหนึ่งไปอีกอะตอมหนึ่ง วัตถุที่ได้รับอิเล็กตรอนจะมีประจุลบมากเกินไปจึงมีประจุสุทธิเป็นลบ ส่วนวัตถุที่สูญเสียอิเล็กตรอนจะมีประจุสุทธิเป็นบวก ตัวอย่างเช่น เมื่อแท่งพลาสติกได้รับอิเล็กตรอนขณะถู แท่งนั้นมีประจุลบ ขณะที่วัสดุอีกชิ้นสูญเสียอิเล็กตรอน"
+      ],
+      [
+        "Whether charge can move easily through a material also matters. In a metal such as copper or aluminium, some electrons are mobile, so the metal is a good electrical conductor. Materials such as dry rubber, glass and plastic do not allow electrons to move freely and normally act as insulators. This is why an electrical cable has a metal conducting core and an insulating outer covering.",
+        "การเคลื่อนที่ของประจุผ่านวัสดุเป็นอีกเรื่องที่ต้องเข้าใจ โลหะอย่างทองแดงและอะลูมิเนียมมีอิเล็กตรอนบางส่วนเคลื่อนที่ได้ จึงเป็นตัวนำไฟฟ้าที่ดี ส่วนยางแห้ง แก้ว และพลาสติกไม่ยอมให้อิเล็กตรอนเคลื่อนที่ได้อย่างอิสระ จึงมักทำหน้าที่เป็นฉนวน สายไฟจึงมีแกนโลหะสำหรับนำกระแสและมีฉนวนหุ้มด้านนอก"
+      ]
+    ],
+    "supplement": [
+      [
+        "Supplement / Extended: An electric field describes the region where a charged object experiences an electric force. The direction of the field at a point is defined by the force on a small positive test charge placed there. Field lines point away from an isolated positive charge because that test charge would be repelled. They point toward an isolated negative charge because the test charge would be attracted. A field diagram shows direction, not the movement of electrons.",
+        "Supplement / Extended: สนามไฟฟ้าบอกบริเวณที่ประจุจะได้รับแรงไฟฟ้า โดยกำหนดทิศสนาม ณ จุดหนึ่งจากทิศแรงที่กระทำต่อประจุทดสอบบวกขนาดเล็ก เส้นสนามจึงชี้ออกจากประจุบวกโดดเดี่ยว เพราะประจุทดสอบบวกถูกผลัก และชี้เข้าหาประจุลบโดดเดี่ยว เพราะประจุทดสอบบวกถูกดึงดูด แผนภาพสนามแสดงทิศแรง ไม่ใช่เส้นทางการเคลื่อนที่ของอิเล็กตรอน"
+      ]
+    ]
+  },
+  "current": {
+    "core": [
+      [
+        "Electric current describes the flow of electric charge through a conductor. The unit of current is the ampere (A), and an ammeter measures it. To measure the current through a lamp or motor, the ammeter must be inserted into the same path as that component, so the current passes through both in series. An ammeter should not be connected directly across a battery.",
+        "กระแสไฟฟ้าเกี่ยวข้องกับการไหลของประจุผ่านตัวนำ หน่วยของกระแสคือแอมแปร์ (A) และใช้แอมมิเตอร์วัด หากต้องการวัดกระแสผ่านหลอดไฟหรือมอเตอร์ ต้องแทรกแอมมิเตอร์ลงในเส้นทางเดียวกับอุปกรณ์นั้น เพื่อให้กระแสไหลผ่านทั้งสองแบบอนุกรม ไม่ควรต่อแอมมิเตอร์คร่อมแบตเตอรี่โดยตรง"
+      ],
+      [
+        "In a metal wire, the moving charge carriers are free electrons. Protons remain bound inside atomic nuclei and do not travel through the wire. Conventional current is drawn from the positive terminal toward the negative terminal in an external circuit, although the electrons in a metal drift in the opposite direction. The two descriptions refer to the same electrical process, but use opposite direction conventions.",
+        "ในลวดโลหะ อนุภาคที่เคลื่อนที่เพื่อนำกระแสคืออิเล็กตรอนอิสระ ส่วนโปรตอนอยู่ในนิวเคลียสของอะตอม ไม่ได้วิ่งไปตามลวด เรากำหนดทิศกระแสตามแบบแผนในวงจรภายนอกให้ไหลจากขั้วบวกไปขั้วลบ แม้อิเล็กตรอนในโลหะจะเคลื่อนที่โดยรวมในทิศตรงข้าม ทั้งสองเป็นการอธิบายกระบวนการไฟฟ้าเดียวกันด้วยข้อตกลงเรื่องทิศต่างกัน"
+      ],
+      [
+        "A battery usually provides direct current, or d.c.: current that does not reverse direction. The size of a d.c. current can still change with time. Alternating current, or a.c., changes direction repeatedly. When an exam question asks whether a supply is a.c. or d.c., look for whether the current reverses direction, not merely whether its magnitude is constant.",
+        "แบตเตอรี่มักให้กระแสตรงหรือ DC ซึ่งไม่กลับทิศทางการไหล แม้ขนาดกระแส DC จะเปลี่ยนตามเวลาได้ก็ตาม ส่วนกระแสสลับหรือ AC มีการกลับทิศซ้ำ ๆ เมื่อโจทย์ถามว่าแหล่งจ่ายเป็น AC หรือ DC ต้องดูว่ากระแสกลับทิศหรือไม่ ไม่ใช่ดูเพียงว่าขนาดของกระแสคงที่หรือเปลี่ยนแปลง"
+      ]
+    ],
+    "supplement": [
+      [
+        "Supplement / Extended: Current can be calculated using I = Q/t, where Q is charge passing a point in coulombs (C) and t is the time in seconds (s). The quotient has units C/s, which is the ampere. For instance, if 32 C passes a point in 8 s, the current is 32 ÷ 8 = 4 A. When answering, first identify charge and time, then divide and include A.",
+        "Supplement / Extended: คำนวณกระแสได้จาก I = Q/t โดย Q คือประจุที่ผ่านจุดหนึ่ง มีหน่วยคูลอมบ์ (C) และ t คือเวลาหน่วยวินาที (s) เมื่อนำ C หารด้วย s จะได้หน่วยแอมแปร์ (A) เช่น หากประจุ 32 C ผ่านในเวลา 8 s จะมีกระแส 32 ÷ 8 = 4 A ในข้อสอบควรระบุ Q และ t ให้ถูกต้องก่อนหาร แล้วตอบพร้อมหน่วย A"
+      ]
+    ]
+  },
+  "emf": {
+    "core": [
+      [
+        "Electromotive force, written e.m.f., is the energy supplied by an electrical source per unit charge passing through the source. Potential difference, written p.d., is the energy transferred per unit charge as charge passes through a component such as a resistor or lamp. Both quantities are measured in volts (V). Although their units match, one describes energy supplied by the source and the other describes energy transferred in part of the circuit.",
+        "แรงเคลื่อนไฟฟ้า หรือ EMF คือพลังงานที่แหล่งจ่ายไฟฟ้าให้ต่อหนึ่งหน่วยประจุที่ผ่านแหล่งจ่าย ส่วนความต่างศักย์ หรือ P.D. คือพลังงานที่ถ่ายโอนต่อหนึ่งหน่วยประจุขณะผ่านอุปกรณ์ เช่น ตัวต้านทานหรือหลอดไฟ ทั้งสองปริมาณมีหน่วยเป็นโวลต์ (V) เหมือนกัน แต่ EMF อธิบายพลังงานที่แหล่งจ่ายมอบให้ ส่วน P.D. อธิบายการถ่ายโอนพลังงานในส่วนหนึ่งของวงจร"
+      ],
+      [
+        "A voltmeter measures the potential difference between two points. It must be connected in parallel across the component being investigated, with one lead at each terminal. Unlike an ammeter, a voltmeter is not inserted in the main current path. The circle containing V in a circuit diagram means a voltmeter; the circle containing A means an ammeter.",
+        "โวลต์มิเตอร์วัดความต่างศักย์ระหว่างสองจุด จึงต้องต่อขนานคร่อมอุปกรณ์ที่ต้องการศึกษาโดยต่อสายเข้ากับปลายอุปกรณ์ทั้งสองด้าน โวลต์มิเตอร์ไม่ได้แทรกในทางเดินกระแสหลักแบบแอมมิเตอร์ ในแผนภาพวงจร วงกลมที่มีตัว V หมายถึงโวลต์มิเตอร์ ส่วนวงกลมที่มี A หมายถึงแอมมิเตอร์"
+      ],
+      [
+        "A volt is one joule of energy supplied or transferred per coulomb of charge (1 V = 1 J/C). This helps distinguish common examination definitions: current concerns charge flow, power concerns energy transferred each second, and potential difference concerns energy transferred by each coulomb. Read the quantity asked for before choosing a definition or formula.",
+        "หนึ่งโวลต์เท่ากับพลังงานหนึ่งจูลต่อประจุหนึ่งคูลอมบ์ (1 V = 1 J/C) ความหมายนี้ช่วยแยกนิยามที่มักสับสนในข้อสอบ กระแสเกี่ยวกับการไหลของประจุ กำลังเกี่ยวกับพลังงานที่ถ่ายโอนต่อวินาที ส่วนความต่างศักย์เกี่ยวกับพลังงานที่ถ่ายโอนต่อหนึ่งคูลอมบ์ ควรอ่านให้ชัดว่าโจทย์ถามปริมาณใดก่อนเลือกนิยามหรือสูตร"
+      ]
+    ],
+    "supplement": [
+      [
+        "Supplement / Extended: Use e.m.f. = W/Q for energy W supplied by a source to charge Q, or p.d. = W/Q for energy W transferred in a component by charge Q. Here W represents work or energy in joules, not power in watts. For example, if a supply gives 45 J to 9 C, its e.m.f. is 45/9 = 5 V. State whether your calculation refers to the source e.m.f. or a component p.d.",
+        "Supplement / Extended: ใช้ EMF = W/Q เมื่อ W เป็นพลังงานที่แหล่งจ่ายให้แก่ประจุ Q และใช้ P.D. = W/Q เมื่อ W เป็นพลังงานที่ถ่ายโอนในอุปกรณ์ โดย W ในสูตรนี้หมายถึงงานหรือพลังงานหน่วยจูล ไม่ใช่กำลังหน่วยวัตต์ เช่น แหล่งจ่ายให้พลังงาน 45 J แก่ประจุ 9 C จะมี EMF = 45/9 = 5 V ต้องระบุให้ชัดด้วยว่าคำนวณ EMF ของแหล่งจ่ายหรือ P.D. ของอุปกรณ์"
+      ]
+    ]
+  },
+  "resistance": {
+    "core": [
+      [
+        "Electrical resistance is the opposition a component gives to the flow of current. For a component, resistance is calculated using R = V/I, where V is the potential difference across it and I is the current through it. The unit is the ohm (Ω). For example, a component with 15 V across it and current 3 A has a resistance of 15/3 = 5 Ω. If the unknown is current, rearrange to I = V/R; if it is voltage, use V = IR.",
+        "ความต้านทานไฟฟ้าคือสมบัติที่อุปกรณ์ขัดขวางการไหลของกระแส คำนวณจาก R = V/I โดย V คือความต่างศักย์คร่อมอุปกรณ์ และ I คือกระแสที่ผ่านอุปกรณ์ หน่วยของความต้านทานคือโอห์ม (Ω) เช่น หากแรงดันคร่อม 15 V และมีกระแส 3 A จะได้ R = 15/3 = 5 Ω ถ้าโจทย์ถามกระแสให้จัดรูปเป็น I = V/R และถ้าถามแรงดันใช้ V = IR"
+      ],
+      [
+        "To measure resistance experimentally, connect the ammeter in series with the test resistor and the voltmeter across the resistor in parallel. Read the current in amperes and the voltage in volts, then calculate V/I. A good diagram must show the meter symbols correctly and the voltmeter attached to the two ends of the resistor. If readings change as the device warms up, consider whether its resistance may have changed.",
+        "เมื่อต้องการวัดความต้านทานจากการทดลอง ให้ต่อแอมมิเตอร์อนุกรมกับตัวต้านทานที่ทดสอบ และต่อโวลต์มิเตอร์ขนานคร่อมตัวต้านทาน อ่านกระแสเป็นแอมแปร์และแรงดันเป็นโวลต์ แล้วคำนวณ V/I แผนภาพที่ถูกต้องต้องแสดงสัญลักษณ์มิเตอร์และจุดต่อโวลต์มิเตอร์ที่ปลายทั้งสองของตัวต้านทาน หากค่าที่อ่านเปลี่ยนหลังอุปกรณ์ร้อนขึ้น ควรพิจารณาว่าความต้านทานอาจเปลี่ยนไป"
+      ],
+      [
+        "The dimensions of a metal wire affect resistance. With the same material, temperature and thickness, a longer wire has more resistance. With the same material, temperature and length, a thicker wire with greater cross-sectional area has less resistance. Examination questions often hold other variables constant, so read the comparison carefully before deciding which wire has the greater resistance.",
+        "ขนาดของลวดโลหะมีผลต่อความต้านทาน เมื่อชนิดวัสดุ อุณหภูมิ และความหนาเท่ากัน ลวดที่ยาวกว่าจะมีความต้านทานมากกว่า แต่ถ้าชนิดวัสดุ อุณหภูมิ และความยาวเท่ากัน ลวดที่หนากว่าและมีพื้นที่หน้าตัดมากกว่าจะมีความต้านทานน้อยกว่า โจทย์สอบมักระบุให้ปัจจัยอื่นคงที่ จึงควรตรวจเงื่อนไขก่อนเปรียบเทียบลวด"
+      ]
+    ],
+    "supplement": [
+      [
+        "Supplement / Extended: For a wire of fixed material at constant temperature, resistance is directly proportional to length and inversely proportional to cross-sectional area. When the area is unchanged, multiplying length by three multiplies resistance by three. For example, if a 2 Ω wire is made twice as long without changing its area, its resistance becomes 4 Ω. Avoid applying this proportion when the material, area or temperature has also changed.",
+        "Supplement / Extended: สำหรับลวดวัสดุชนิดเดียวกันที่อุณหภูมิคงที่ ความต้านทานแปรผันตรงกับความยาวและแปรผกผันกับพื้นที่หน้าตัด เมื่อพื้นที่หน้าตัดเท่าเดิม หากความยาวเพิ่มเป็นสามเท่า ความต้านทานก็เพิ่มเป็นสามเท่า เช่น ลวด 2 Ω ที่มีความยาวเพิ่มเป็นสองเท่าโดยพื้นที่หน้าตัดคงที่ จะมีความต้านทานเป็น 4 Ω ไม่ควรใช้สัดส่วนนี้โดยตรงหากวัสดุ พื้นที่หน้าตัด หรืออุณหภูมิเปลี่ยนด้วย"
+      ]
+    ]
+  },
+  "graphs": {
+    "core": [
+      [
+        "An electrical graph relates a measured current to a measured potential difference. Before interpreting its shape, identify which quantity is on each axis and check the units. Resistance is linked to these quantities through R = V/I, but how you interpret a gradient depends on which variable is plotted vertically.",
+        "กราฟไฟฟ้าแสดงความสัมพันธ์ระหว่างกระแสกับความต่างศักย์ ก่อนอ่านกราฟต้องดูว่าแต่ละแกนแทนปริมาณใดและใช้หน่วยอะไร ความต้านทานสัมพันธ์กับปริมาณเหล่านี้ผ่าน R = V/I แต่ความหมายของความชันขึ้นอยู่กับว่าแกนตั้งเป็นปริมาณใด"
+      ]
+    ],
+    "supplement": [
+      [
+        "Supplement / Extended: An ohmic resistor at constant temperature has current directly proportional to potential difference. With current I on the vertical axis and potential difference V on the horizontal axis, its graph is a straight line through the origin. If V doubles, I doubles. On this particular graph, gradient = I/V = 1/R. Therefore the steeper of two straight resistor lines represents the smaller resistance, not the larger one.",
+        "Supplement / Extended: ตัวต้านทานที่เป็นไปตามกฎของโอห์ม ณ อุณหภูมิคงที่มีกระแสแปรผันตรงกับความต่างศักย์ หากแกนตั้งเป็น I และแกนนอนเป็น V กราฟจะเป็นเส้นตรงผ่านจุดกำเนิด เมื่อ V เพิ่มสองเท่า I ก็เพิ่มสองเท่า สำหรับกราฟชนิดนี้ ความชัน = I/V = 1/R ดังนั้นเส้นตรงที่ชันกว่าจะมีความต้านทานน้อยกว่า ไม่ใช่มากกว่า"
+      ],
+      [
+        "A filament lamp behaves differently because the filament warms as current increases. As its temperature rises, the filament resistance increases, so each additional increase in voltage causes a progressively smaller increase in current. The I–V characteristic curves and becomes less steep. A straight-line model should not be used across the entire operating range of a hot filament lamp.",
+        "หลอดไส้มีพฤติกรรมต่างออกไป เพราะเมื่อกระแสเพิ่ม ไส้หลอดจะร้อนขึ้น ความต้านทานของไส้จึงเพิ่ม ทำให้เมื่อเพิ่มแรงดันอีกเท่าเดิม กระแสเพิ่มขึ้นน้อยลงเรื่อย ๆ กราฟ I–V จึงโค้งและชันลดลง ไม่ควรสมมติว่าหลอดไส้ร้อนมีกราฟเส้นตรงตลอดช่วงการทำงาน"
+      ],
+      [
+        "A diode mainly conducts when connected in its forward direction and blocks current in the reverse direction under ordinary conditions. Its characteristic is therefore strongly asymmetric, unlike that of an ohmic resistor. When asked to identify an I–V graph, compare its shape: a straight line through the origin for an ohmic resistor, a curved line for a filament lamp, and current mainly in one direction for a diode.",
+        "ไดโอดนำกระแสได้เด่นเมื่ออยู่ในทิศไบแอสไปหน้า และโดยปกติกั้นกระแสเมื่อกลับทิศ กราฟจึงไม่สมมาตร ต่างจากตัวต้านทานแบบโอห์ม เมื่อโจทย์ให้เลือกกราฟ I–V ให้เปรียบเทียบรูปร่าง ได้แก่ เส้นตรงผ่านจุดกำเนิดสำหรับตัวต้านทานแบบโอห์ม เส้นโค้งสำหรับหลอดไส้ และกราฟที่มีกระแสเด่นเพียงทิศหนึ่งสำหรับไดโอด"
+      ]
+    ]
+  },
+  "power": {
+    "core": [
+      [
+        "Electrical power describes how quickly electrical energy is transferred. The unit of power is the watt (W), which means joule per second. In a circuit, P = IV, so power is obtained by multiplying potential difference in volts by current in amperes. For instance, a 10 V appliance drawing 0.4 A has power 10 × 0.4 = 4 W. Power is not the same physical quantity as electrical energy.",
+        "กำลังไฟฟ้าคืออัตราการถ่ายโอนพลังงานไฟฟ้า มีหน่วยเป็นวัตต์ (W) ซึ่งเท่ากับจูลต่อวินาที ในวงจรไฟฟ้าใช้ P = IV จึงคำนวณกำลังจากแรงดันหน่วยโวลต์คูณกระแสหน่วยแอมแปร์ เช่น เครื่องใช้ไฟฟ้า 10 V ที่มีกระแส 0.4 A จะมีกำลัง 10 × 0.4 = 4 W กำลังไฟฟ้าไม่ใช่ปริมาณเดียวกับพลังงานไฟฟ้า"
+      ],
+      [
+        "The energy transferred while a device operates is E = Pt, or equivalently E = IVt. When P is in watts and time t is in seconds, energy E is in joules (J). For example, a 30 W lamp operating for 10 s transfers 30 × 10 = 300 J. If time is given in minutes, convert it into seconds before using this joule calculation.",
+        "พลังงานที่ถ่ายโอนขณะอุปกรณ์ทำงานคำนวณจาก E = Pt หรือเขียนเป็น E = IVt ได้ ถ้า P มีหน่วยวัตต์และเวลา t เป็นวินาที พลังงาน E จะมีหน่วยจูล (J) เช่น หลอดไฟ 30 W ทำงาน 10 s จะถ่ายโอนพลังงาน 30 × 10 = 300 J หากโจทย์ให้เวลาเป็นนาที ต้องแปลงเป็นวินาทีก่อนคำนวณพลังงานหน่วยจูล"
+      ],
+      [
+        "For household electricity, energy is often measured in kilowatt-hours (kWh). One kilowatt is 1000 W, so convert power in watts to kilowatts by dividing by 1000. Then energy in kWh = power in kW × operating time in hours. For example, a 600 W heater running for 5 h uses 0.6 × 5 = 3 kWh. One kWh is 3.6 × 10⁶ J. Remember: kW measures power while kWh measures energy.",
+        "ในการใช้ไฟฟ้าในบ้าน มักวัดพลังงานเป็นกิโลวัตต์-ชั่วโมง (kWh) โดย 1 kW = 1000 W จึงต้องหารกำลังหน่วยวัตต์ด้วย 1000 ก่อน แล้วคำนวณพลังงาน (kWh) = กำลัง (kW) × เวลา (h) เช่น เครื่องทำความร้อน 600 W ทำงาน 5 h จะใช้พลังงาน 0.6 × 5 = 3 kWh และ 1 kWh = 3.6 × 10⁶ J จำให้ได้ว่า kW เป็นหน่วยกำลัง ส่วน kWh เป็นหน่วยพลังงาน"
+      ],
+      [
+        "Electricity cost is calculated by multiplying energy used in kWh by the tariff per kWh. If a device uses 6 kWh at 4 baht/kWh, the cost is 6 × 4 = 24 baht. In a multi-step examination calculation, identify what is given, convert units, choose the equation, substitute the values, and put the correct unit after the final answer.",
+        "ค่าไฟฟ้าคำนวณจากพลังงานที่ใช้หน่วย kWh คูณอัตราค่าไฟต่อ kWh เช่น เครื่องใช้พลังงาน 6 kWh และราคาหน่วยละ 4 บาท จะมีค่าไฟ 6 × 4 = 24 บาท สำหรับโจทย์หลายขั้นตอน ควรเริ่มจากระบุข้อมูลที่โจทย์ให้ แปลงหน่วย เลือกสมการ แทนค่า และใส่หน่วยให้คำตอบสุดท้ายเสมอ"
+      ]
+    ],
+    "supplement": []
+  },
+  "symbols": {
+    "core": [
+      [
+        "Circuit diagrams use standard symbols to show how components are electrically connected; they do not need to look like the physical equipment. In the Cambridge symbol set, a cell is shown by a longer and shorter parallel line, while a battery uses multiple cells. A fixed resistor is shown as a rectangle, not a zigzag line. A lamp is a circle with a cross, a switch can open or close a circuit, and a fuse protects a circuit by melting if the current becomes excessive.",
+        "แผนภาพวงจรใช้สัญลักษณ์มาตรฐานเพื่อแสดงว่าอุปกรณ์เชื่อมต่อกันทางไฟฟ้าอย่างไร ไม่จำเป็นต้องวาดให้มีหน้าตาเหมือนอุปกรณ์จริง ตามสัญลักษณ์ของ Cambridge เซลล์ไฟฟ้าใช้เส้นคู่ขนานยาวสั้น ส่วนแบตเตอรี่แสดงหลายเซลล์ ตัวต้านทานคงที่เป็นรูปสี่เหลี่ยม ไม่ใช่เส้นซิกแซก หลอดไฟเป็นวงกลมมีกากบาท สวิตช์ใช้เปิดหรือปิดวงจร และฟิวส์ช่วยป้องกันอันตรายโดยหลอมเมื่อกระแสมากเกินไป"
+      ],
+      [
+        "Meters and other components are distinguished by their symbols and functions. A circle containing A is an ammeter, which measures current in series. A circle containing V is a voltmeter, which measures p.d. across a component. Variable resistors can adjust resistance, motors convert electrical energy into movement, and generators produce electrical energy from mechanical input. Read both the symbol and the question wording rather than guessing from the visual shape alone.",
+        "มิเตอร์และอุปกรณ์อื่นต้องแยกจากสัญลักษณ์และหน้าที่ วงกลมที่มี A คือแอมมิเตอร์ซึ่งวัดกระแสแบบอนุกรม วงกลมที่มี V คือโวลต์มิเตอร์ซึ่งวัดความต่างศักย์คร่อมอุปกรณ์ ตัวต้านทานปรับค่าได้ช่วยเปลี่ยนความต้านทาน มอเตอร์เปลี่ยนพลังงานไฟฟ้าเป็นการเคลื่อนที่ ส่วนเครื่องกำเนิดไฟฟ้าเปลี่ยนพลังงานกลเป็นไฟฟ้า ให้ดูทั้งสัญลักษณ์และคำสั่งของโจทย์ ไม่เดาจากหน้าตาภาพอย่างเดียว"
+      ],
+      [
+        "Two important sensors are the light-dependent resistor (LDR) and the negative-temperature-coefficient (NTC) thermistor. An LDR has lower resistance when more light falls on it, so it is useful in lighting control. An NTC thermistor has lower resistance at higher temperature, so it can be used in temperature-sensitive circuits. The symbol atlas alongside this article also shows switches, supplies, earth, junctions and other Cambridge-style component symbols.",
+        "เซนเซอร์สำคัญสองชนิดคือ LDR หรือตัวต้านทานไวแสง และ NTC thermistor หรือตัวต้านทานไวต่ออุณหภูมิชนิดสัมประสิทธิ์ลบ LDR มีความต้านทานลดลงเมื่อได้รับแสงมากขึ้น จึงใช้ควบคุมไฟตามความสว่างได้ ส่วน NTC มีความต้านทานลดลงเมื่ออุณหภูมิสูงขึ้น จึงใช้ในวงจรตรวจจับอุณหภูมิได้ แผงสัญลักษณ์ประกอบบทความยังแสดงสวิตช์ แหล่งจ่าย สายดิน จุดต่อสาย และสัญลักษณ์อื่นตามแนว Cambridge"
+      ]
+    ],
+    "supplement": [
+      [
+        "Supplement / Extended: A diode allows current mainly in one direction, while an LED is a light-emitting diode that emits light when it conducts in the forward direction. Learn the direction and symbol of these components separately from a fixed resistor or lamp. When a multiple-choice question shows four symbols, identify distinctive features such as a letter inside a meter or a cross inside a lamp before selecting the answer.",
+        "Supplement / Extended: ไดโอดยอมให้กระแสไหลได้เด่นในทิศเดียว ส่วน LED คือไดโอดเปล่งแสงที่ให้แสงเมื่อมีกระแสไหลในทิศไปหน้า ต้องแยกทิศการทำงานและสัญลักษณ์ของอุปกรณ์เหล่านี้ออกจากตัวต้านทานและหลอดไฟ หากข้อสอบให้รูปสี่ตัวเลือก ควรสังเกตลักษณะเด่น เช่น ตัวอักษรในวงกลมของมิเตอร์ หรือกากบาทในวงกลมของหลอด ก่อนเลือกคำตอบ"
+      ]
+    ]
+  },
+  "build": {
+    "core": [
+      [
+        "A good circuit diagram is a map of electrical connections. Begin with the source, then follow every conducting path until it returns to the source. If a switch is open in the only path, the circuit is incomplete and no steady current flows. Closing the switch completes the path. Draw straight connecting wires, clear junctions and Cambridge-style symbols so another reader can see which components are connected.",
+        "แผนภาพวงจรที่ดีคือแผนที่แสดงการเชื่อมต่อทางไฟฟ้า เริ่มจากแหล่งจ่ายแล้วไล่ตามทางเดินตัวนำแต่ละเส้นจนกลับมายังแหล่งจ่าย หากสวิตช์เปิดอยู่ในเส้นทางเดียว วงจรจะไม่ครบและไม่มีกระแสคงตัวไหลผ่าน เมื่อปิดสวิตช์ทางเดินจึงครบ การวาดควรใช้สายเชื่อมที่อ่านง่าย จุดต่อที่ชัดเจน และสัญลักษณ์แบบ Cambridge เพื่อให้ผู้อื่นเข้าใจการต่อวงจร"
+      ],
+      [
+        "Two meters are connected in different ways because they measure different quantities. To measure current through a lamp, insert an ammeter in series with the lamp so the same current passes through it. To measure the potential difference across the lamp, connect a voltmeter between the lamp's two terminals; this is a parallel connection. Putting a voltmeter in series or an ammeter directly across a source is a common examination error.",
+        "มิเตอร์สองชนิดต่อไม่เหมือนกันเพราะวัดปริมาณต่างกัน ถ้าต้องการวัดกระแสผ่านหลอดไฟ ต้องแทรกแอมมิเตอร์อนุกรมกับหลอดเพื่อให้กระแสเดียวกันไหลผ่าน ถ้าต้องการวัดความต่างศักย์คร่อมหลอด ต้องต่อโวลต์มิเตอร์เข้ากับปลายทั้งสองของหลอด ซึ่งเป็นการต่อขนาน การต่อโวลต์มิเตอร์อนุกรมหรือแอมมิเตอร์คร่อมแหล่งจ่ายโดยตรงเป็นข้อผิดพลาดที่พบในข้อสอบบ่อย"
+      ],
+      [
+        "When reading a diagram, ask what the examination command requires. Identify may ask for the name or symbol of an instrument; Describe may ask for the correct connections and readings; Explain needs a reason such as 'there is no complete path'. In a practical resistance measurement, connect the ammeter in series and voltmeter in parallel, read I and V, then work out R = V/I. The right circuit is the one that measures the stated component without changing the intended measurement path.",
+        "เมื่ออ่านแผนภาพ ต้องดูคำสั่งของข้อสอบด้วย Identify อาจให้ระบุชื่อหรือสัญลักษณ์ของเครื่องมือ Describe อาจให้บรรยายการต่อและการอ่านค่า ส่วน Explain ต้องมีเหตุผล เช่น 'ไม่มีทางเดินกระแสที่ต่อเนื่อง' ในการทดลองวัดความต้านทานให้ต่อแอมมิเตอร์อนุกรมและโวลต์มิเตอร์ขนาน อ่าน I และ V แล้วหา R = V/I วงจรที่ถูกต้องต้องวัดอุปกรณ์เป้าหมายโดยไม่เปลี่ยนเส้นทางที่ตั้งใจวัด"
+      ]
+    ],
+    "supplement": []
+  },
+  "series": {
+    "core": [
+      [
+        "A series circuit contains only one conducting path. Every component along that path carries the same current, even if the components have different resistances. If an ammeter reads 0.4 A at one point in a single series loop, it reads 0.4 A elsewhere in the same loop. Do not add the currents through separate series components; they are equal, not separate branches.",
+        "วงจรอนุกรมมีทางเดินกระแสเพียงทางเดียว อุปกรณ์ทุกตัวตามเส้นทางนั้นจึงมีกระแสเท่ากัน แม้ตัวต้านทานแต่ละตัวมีค่าไม่เท่ากัน หากแอมมิเตอร์อ่านได้ 0.4 A ที่จุดหนึ่งในวงจรอนุกรมเส้นเดียว จุดอื่นในวงจรเดียวกันก็จะมี 0.4 A ด้วย ไม่ควรนำกระแสผ่านอุปกรณ์อนุกรมมาบวกกัน เพราะเป็นกระแสเดียวกันไม่ใช่คนละแขนง"
+      ],
+      [
+        "The total resistance of resistors in series is the sum of their individual resistances: R_total = R₁ + R₂ + R₃ + ... . For example, resistors of 2 Ω, 3 Ω and 4 Ω in one loop have R_total = 9 Ω. Once the total resistance is known, the circuit current from a stated supply potential difference can be calculated using I = V/R_total. A 9 V supply with R_total = 9 Ω gives I = 1 A.",
+        "ความต้านทานรวมของตัวต้านทานอนุกรมเท่ากับผลบวกของความต้านทานแต่ละตัว คือ Rรวม = R₁ + R₂ + R₃ + ... เช่น R 2 Ω, 3 Ω และ 4 Ω ที่ต่ออนุกรมกันจะมี Rรวม = 9 Ω เมื่อทราบความต้านทานรวมและแรงดันแหล่งจ่ายแล้ว ใช้ I = V/Rรวม เพื่อหากระแสได้ หากแหล่งจ่ายเป็น 9 V และ Rรวม = 9 Ω จะได้ I = 1 A"
+      ],
+      [
+        "Cells connected in series with their positive and negative terminals arranged to assist one another have a combined e.m.f. equal to the sum of their individual e.m.f.s. Thus two 1.5 V cells connected in the same supporting orientation provide 3.0 V, while three such cells provide 4.5 V. Always check that the cells point in the same supporting direction; cells connected to oppose one another do not simply add.",
+        "เซลล์ไฟฟ้าที่ต่ออนุกรมให้ขั้วเสริมกันจะมี EMF รวมเท่ากับผลบวกของ EMF แต่ละเซลล์ ดังนั้นเซลล์ 1.5 V สองก้อนที่ต่อในทิศเสริมกันให้ EMF รวม 3.0 V และสามก้อนให้ 4.5 V ต้องตรวจทิศของเซลล์ด้วย เพราะหากต่อสวนกันจะไม่สามารถบวกค่าแรงเคลื่อนไฟฟ้าตรง ๆ ได้"
+      ]
+    ],
+    "supplement": [
+      [
+        "Supplement / Extended: The potential differences across series components add up to the total supplied potential difference, provided the components form the stated loop. For instance, if two resistors in series have drops of 4 V and 6 V, the total is 10 V. The current is still the same through both components, but the voltage drop across each may differ according to its resistance.",
+        "Supplement / Extended: ความต่างศักย์คร่อมอุปกรณ์อนุกรมในลูปเดียวกันรวมกันได้เท่ากับความต่างศักย์จากแหล่งจ่าย เช่น หาก R สองตัวที่ต่ออนุกรมมีแรงดันคร่อม 4 V และ 6 V แรงดันรวมจะเป็น 10 V กระแสยังคงเท่ากันผ่านทั้งสองตัว แต่แรงดันคร่อมแต่ละตัวอาจต่างกันตามค่าความต้านทาน"
+      ]
+    ]
+  },
+  "parallel": {
+    "core": [
+      [
+        "A parallel circuit has two or more conducting branches between common junctions. Charge can travel through different paths and the total current supplied by the source divides among those branches. This is unlike a series circuit, which has just one path. The combined resistance of two positive resistors in parallel is smaller than either of the individual resistances because the extra path makes it easier for charge to flow.",
+        "วงจรขนานมีทางเดินกระแสตั้งแต่สองแขนงขึ้นไประหว่างจุดต่อร่วม กระแสจากแหล่งจ่ายจึงแบ่งไหลตามแขนงต่าง ๆ ไม่เหมือนวงจรอนุกรมที่มีทางเดินเดียว ความต้านทานรวมของตัวต้านทานที่มีค่าเป็นบวกสองตัวต่อขนานจะน้อยกว่าความต้านทานของตัวใดตัวหนึ่ง เพราะการเพิ่มทางเดินทำให้กระแสไหลได้สะดวกขึ้น"
+      ],
+      [
+        "Parallel connections allow devices to operate independently. For example, a lamp and a fan connected to separate parallel branches can have separate switches. Opening the fan branch does not necessarily stop the lamp, because the lamp still has a complete path. This independence is one reason household lighting and appliances are normally arranged in parallel rather than all in one series loop.",
+        "การต่อขนานทำให้อุปกรณ์ในแต่ละแขนงทำงานได้อย่างอิสระ เช่น หลอดไฟกับพัดลมที่ต่อคนละแขนงและมีสวิตช์แยกกัน เมื่อเปิดสวิตช์แขนงพัดลม หลอดไฟไม่จำเป็นต้องดับ เพราะยังมีทางเดินกระแสของตัวเองที่ครบวงจร ความเป็นอิสระนี้เป็นเหตุผลหนึ่งที่ระบบไฟในบ้านมักต่ออุปกรณ์ขนานกัน ไม่ได้ต่อทุกตัวเป็นอนุกรมเส้นเดียว"
+      ],
+      [
+        "Before calculating, identify whether a diagram really has parallel branches: each branch must connect between the same two junctions. A wire drawn straight across components could short-circuit them, so look at the connections rather than the positions of symbols. Qualitatively, adding an extra parallel resistor lowers the total resistance and, for constant supply voltage, increases the total source current.",
+        "ก่อนคำนวณต้องตรวจว่าในรูปมีแขนงขนานจริงหรือไม่ อุปกรณ์ที่ต่อขนานต้องเชื่อมระหว่างจุดร่วมสองจุดเดียวกัน หากมีสายไฟต่อคร่อมอุปกรณ์โดยตรงอาจเกิดการลัดวงจร จึงต้องดูการต่อสายไม่ใช่ดูเพียงตำแหน่งสัญลักษณ์ ในเชิงคุณภาพ การเพิ่มตัวต้านทานขนานทำให้ Rรวมลดลง และเมื่อแรงดันแหล่งจ่ายคงที่ กระแสรวมจากแหล่งจ่ายจะเพิ่ม"
+      ]
+    ],
+    "supplement": [
+      [
+        "Supplement / Extended: At a junction, the sum of the currents entering equals the sum leaving. If 0.3 A and 0.8 A combine, the outgoing current is 1.1 A. All components connected directly across the same two ideal junctions have the same potential difference, even though the currents in their branches may be different. These are separate rules, so identify whether the exam asks about current or voltage.",
+        "Supplement / Extended: ที่จุดต่อสาย ผลรวมกระแสที่ไหลเข้าต้องเท่ากับผลรวมกระแสที่ไหลออก เช่น กระแส 0.3 A กับ 0.8 A รวมกันจะให้กระแสออก 1.1 A อุปกรณ์ที่ต่อคร่อมจุดร่วมสองจุดเดียวกันจะมีความต่างศักย์เท่ากัน แม้ว่ากระแสในแต่ละแขนงอาจต่างกัน กฎกระแสกับกฎแรงดันเป็นคนละเรื่อง ต้องดูว่าโจทย์ถามปริมาณใด"
+      ],
+      [
+        "For numerical equivalent resistance of parallel resistors, use 1/R_total = 1/R₁ + 1/R₂ + ... . Two equal resistors of 10 Ω in parallel have equivalent resistance 5 Ω. Do not confuse this reciprocal equation with the series rule, where resistances add directly. Always check the result: the equivalent parallel resistance must be smaller than the smallest branch resistance for positive finite resistors.",
+        "การคำนวณความต้านทานรวมของตัวต้านทานขนานใช้ 1/Rรวม = 1/R₁ + 1/R₂ + ... เช่น R 10 Ω สองตัวต่อขนานจะมี Rรวม = 5 Ω อย่าสับสนสมการเศษส่วนกลับนี้กับการต่ออนุกรมซึ่งนำ R มาบวกตรง ๆ ควรตรวจคำตอบด้วยว่า Rรวมแบบขนานต้องน้อยกว่าตัวต้านทานที่มีค่าน้อยที่สุด เมื่อแต่ละแขนงมีความต้านทานบวกและมีค่าจำกัด"
+      ]
+    ]
+  },
+  "challenge": {
+    "core": [
+      [
+        "Circuit problems often mix several ideas into one question. Begin by reading the diagram, not by looking for a familiar formula. Trace the source and the current path, decide which resistors lie in series and which form separate branches, and identify what quantity the question asks for. In a simple series circuit, add the resistances before using the supplied voltage to find the current.",
+        "โจทย์วงจรมักรวมหลายแนวคิดไว้ในข้อเดียว ควรเริ่มจากอ่านแผนภาพ ไม่ใช่มองหาสูตรที่คุ้นเคยทันที ให้ไล่จากแหล่งจ่ายตามเส้นทางกระแส พิจารณาว่าตัวต้านทานใดอยู่ในเส้นทางเดียวกันแบบอนุกรม และจุดใดแยกเป็นแขนงขนาน พร้อมระบุว่าโจทย์ต้องการหาปริมาณอะไร ในวงจรอนุกรมอย่างง่ายต้องรวมความต้านทานก่อนใช้แรงดันเพื่อหากระแส"
+      ],
+      [
+        "For example, suppose a 20 V battery is connected across 2 Ω and 3 Ω resistors in series. First calculate R_total = 2 + 3 = 5 Ω. Then apply I = V/R_total = 20/5 = 4 A. This two-step method is more reliable than dividing voltage by one resistor only. Show your working in the order Given → Formula → Substitution → Answer with unit.",
+        "ตัวอย่างเช่น แบตเตอรี่ 20 V ต่อกับ R 2 Ω และ 3 Ω แบบอนุกรม เริ่มจากหา Rรวม = 2 + 3 = 5 Ω แล้วใช้ I = V/Rรวม = 20/5 = 4 A การทำสองขั้นตอนนี้ถูกต้องกว่าการนำแรงดันไปหารด้วย R เพียงตัวเดียว การเขียนวิธีทำควรเรียงเป็น ข้อมูลที่กำหนด → สูตร → แทนค่า → คำตอบพร้อมหน่วย"
+      ],
+      [
+        "Predicting a change is another common Cambridge-style task. If the supply voltage stays constant and an extra resistor is added in series, the total resistance rises and the current decreases. If the only switch in a loop is open, the circuit is incomplete and the current becomes zero. An Explain answer must connect the observed effect with the physical reason, for example 'current decreases because total resistance increases at constant voltage'.",
+        "การทำนายผลเมื่อมีการเปลี่ยนวงจรเป็นทักษะที่พบบ่อยในโจทย์ Cambridge หากแรงดันแหล่งจ่ายคงที่แล้วเพิ่ม R อนุกรม Rรวมจะเพิ่มและกระแสจะลดลง หากเปิดสวิตช์เพียงตัวเดียวที่อยู่ในวงจรทางเดียว วงจรจะขาดและกระแสเป็นศูนย์ คำตอบแบบ Explain ต้องเชื่อมผลที่เกิดขึ้นกับเหตุผลทางฟิสิกส์ เช่น 'กระแสลดลงเพราะความต้านทานรวมเพิ่มขึ้นขณะที่แรงดันคงที่'"
+      ]
+    ],
+    "supplement": [
+      [
+        "Supplement / Extended: A mixed network combines series and parallel sections. Simplify one group at a time: find the equivalent resistance of a parallel pair, add any series resistance, and then use I = V/R_total. For instance, two 4 Ω resistors in parallel are equivalent to 2 Ω; if this pair is in series with 3 Ω, the total is 5 Ω. At 10 V the source current is 10/5 = 2 A. Draw the connections carefully to avoid accidentally creating a direct short across a component.",
+        "Supplement / Extended: วงจรผสมมีส่วนที่ต่ออนุกรมและขนานร่วมกัน ต้องลดวงจรทีละกลุ่ม เริ่มจากหาค่าทดแทนของกลุ่มขนาน แล้วบวก R ที่ต่ออนุกรม จากนั้นใช้ I = V/Rรวม เช่น R 4 Ω สองตัวขนานกันมีค่าเทียบเท่า 2 Ω เมื่อนำไปต่ออนุกรมกับ R 3 Ω จะได้ Rรวม = 5 Ω ถ้าแหล่งจ่าย 10 V กระแสรวมคือ 10/5 = 2 A ควรตรวจการต่อสายไม่ให้มีการต่อคร่อมจนลัดวงจรโดยไม่ตั้งใจ"
+      ]
+    ]
+  },
+  "components": {
+    "core": [
+      [
+        "Circuit components can have different resistances, and potential difference changes accordingly. Ohm's relation R = V/I can be rearranged to V = IR. If the current through a conductor is kept constant, increasing its resistance increases the potential difference across it. As a numerical example, 2 A through 6 Ω gives V = 2 × 6 = 12 V. Choose the rearrangement that matches the quantity requested.",
+        "อุปกรณ์ในวงจรอาจมีความต้านทานต่างกัน และความต่างศักย์จะสัมพันธ์กับกระแสและความต้านทานตามสมการ R = V/I ซึ่งจัดรูปเป็น V = IR ได้ หากกระแสผ่านตัวนำคงที่ เมื่อ R เพิ่ม แรงดันคร่อมจะเพิ่มด้วย เช่น กระแส 2 A ผ่าน R 6 Ω ให้ V = 2 × 6 = 12 V ต้องเลือกการจัดรูปสูตรให้ตรงกับสิ่งที่โจทย์ถาม"
+      ],
+      [
+        "An LDR, or light-dependent resistor, is a light sensor whose resistance decreases when the light shining on it becomes brighter. Thus moving the LDR into darkness increases its resistance. This behaviour can be used in automatic lighting systems. When answering a question about an LDR, focus on the light intensity rather than temperature.",
+        "LDR หรือตัวต้านทานไวแสงเป็นเซนเซอร์ที่มีความต้านทานลดลงเมื่อได้รับแสงสว่างมากขึ้น ดังนั้นเมื่อย้าย LDR ไปยังบริเวณมืด ความต้านทานจะเพิ่มขึ้น สมบัตินี้สามารถใช้ในระบบเปิดปิดไฟอัตโนมัติ เมื่อโจทย์ถามเกี่ยวกับ LDR ให้พิจารณาความเข้มแสง ไม่ใช่อุณหภูมิ"
+      ],
+      [
+        "An NTC thermistor responds to temperature rather than light. NTC stands for negative temperature coefficient, so its resistance decreases as temperature increases, and increases when it becomes cooler. Therefore the two sensors react to different environmental changes: brighter light reduces an LDR's resistance, while higher temperature reduces an NTC thermistor's resistance. This contrast is especially important in Predict and Explain questions.",
+        "NTC thermistor เป็นเซนเซอร์ที่ตอบสนองต่ออุณหภูมิ ไม่ใช่แสง โดย NTC หมายถึงสัมประสิทธิ์อุณหภูมิลบ ความต้านทานจึงลดลงเมื่ออุณหภูมิสูงขึ้น และเพิ่มเมื่ออุณหภูมิต่ำลง เซนเซอร์ทั้งสองตอบสนองต่อสิ่งแวดล้อมคนละอย่าง กล่าวคือแสงมากทำให้ R ของ LDR ลด ส่วนร้อนขึ้นทำให้ R ของ NTC ลด ความแตกต่างนี้สำคัญมากในโจทย์แบบ Predict และ Explain"
+      ]
+    ],
+    "supplement": [
+      [
+        "Supplement / Extended: A potential divider uses components in series across a supply to provide an output potential difference that is a fraction of the supply. For two fixed resistors without any load connected to the output, the p.d. across one resistor is V_supply × R_that resistor/(R₁ + R₂). Always identify which resistor the output is measured across; an output measured across the other resistor gives a different value.",
+        "Supplement / Extended: ตัวแบ่งแรงดันใช้ตัวต้านทานที่ต่ออนุกรมกับแหล่งจ่ายเพื่อให้แรงดันเอาต์พุตเป็นส่วนหนึ่งของแรงดันทั้งหมด สำหรับ R คงที่สองตัวที่ไม่มีโหลดต่อออกจากจุดแบ่ง แรงดันคร่อม R ตัวหนึ่ง = Vแหล่งจ่าย × Rตัวนั้น/(R₁ + R₂) ต้องสังเกตว่าโจทย์วัดเอาต์พุตคร่อม R ตัวไหน เพราะถ้าวัดอีกตัวจะได้ค่าต่างกัน"
+      ],
+      [
+        "For example, a 15 V source is applied across a 2 Ω and 3 Ω series divider. The total resistance is 5 Ω; across the 3 Ω resistor the output is 15 × 3/5 = 9 V, while across the 2 Ω resistor the potential difference is 15 × 2/5 = 6 V. Changing one resistance changes the division of voltage. The simple ratio assumes that the output is not loaded by another component.",
+        "เช่น แหล่งจ่าย 15 V ต่อกับ R 2 Ω และ 3 Ω แบบอนุกรม มี Rรวม = 5 Ω แรงดันคร่อม R 3 Ω จึงเท่ากับ 15 × 3/5 = 9 V ส่วนแรงดันคร่อม R 2 Ω เท่ากับ 15 × 2/5 = 6 V เมื่อเปลี่ยน R ตัวใด การแบ่งแรงดันก็จะเปลี่ยน สูตรอัตราส่วนอย่างง่ายนี้ใช้ภายใต้เงื่อนไขว่าไม่มีอุปกรณ์อื่นต่อเป็นโหลดที่เอาต์พุต"
+      ]
+    ]
+  }
+};
 const locales={
-reset:L('Reset','เริ่มใหม่'),missions:L('12 Missions','12 ภารกิจ'),progressInfo:L('Answers and flashcards are stored on this device.','คำตอบและแฟลชการ์ดบันทึกในเครื่องนี้'),workspace:L('01 · MISSION WORKSPACE','01 · พื้นที่ทำภารกิจ'),do:L('Try it yourself','ลองทำด้วยตัวเอง'),scratch:L('Scratchpad','กระดานทด'),calculator:L('Calculator','เครื่องคิดเลข'),previous:L('Previous','ก่อนหน้า'),check:L('Check Answer','ตรวจคำตอบ'),next:L('Next','ถัดไป'),exit:L('Exit Flashcards','แฟลชการ์ดท้ายบท'),autosave:L('Saved on this device','บันทึกในเครื่อง'),reference:L('02 · REFERENCE NOTES','02 · เนื้อหาอ้างอิง'),learn:L('Read · Understand · Apply','อ่าน · เข้าใจ · ประยุกต์'),example:L('WORKED EXAMPLE','ตัวอย่างพร้อมวิธีทำ'),common:L('COMMON MISTAKE','จุดผิดที่พบบ่อย'),notCambridge:L('Independent revision resource. Not endorsed by Cambridge International.','ชุดติวที่สร้างขึ้นอย่างอิสระ ไม่ใช่ข้อสอบอย่างเป็นทางการของ Cambridge'),pencil:L('Apple Pencil · touch · mouse','Apple Pencil · สัมผัส · เมาส์'),pen:L('Black pen','ปากกาดำ'),blue:L('Blue pen','ปากกาน้ำเงิน'),eraser:L('Eraser','ยางลบ'),undo:L('Undo','ย้อนกลับ'),clear:L('Clear','ล้างกระดาน'),scratchNote:L('Sketches stay until reset or reload; answers are saved separately.','ลายเส้นอยู่ในกระดานระหว่างใช้งาน คำตอบบันทึกแยก'),reveal:L('Reveal answer','เปิดเฉลย'),again:L('Review again','ทวนอีกครั้ง'),known:L('I remember this','จำได้แล้ว')};
+reset:L('Reset','เริ่มใหม่'),missions:L('12 Missions','12 ภารกิจ'),progressInfo:L('Answers and flashcards are stored on this device.','คำตอบและแฟลชการ์ดบันทึกในเครื่องนี้'),workspace:L('01 · MISSION WORKSPACE','01 · พื้นที่ทำภารกิจ'),do:L('Try it yourself','ลองทำด้วยตัวเอง'),scratch:L('Scratchpad','กระดานทด'),calculator:L('Calculator','เครื่องคิดเลข'),previous:L('Previous','ก่อนหน้า'),check:L('Check Answer','ตรวจคำตอบ'),next:L('Next','ถัดไป'),exit:L('Exit Flashcards','แฟลชการ์ดท้ายบท'),autosave:L('Saved on this device','บันทึกในเครื่อง'),reference:L('02 · REVISION READING','02 · บทอ่านทบทวน'),learn:L('Read · Understand · Apply','อ่าน · เข้าใจ · ประยุกต์'),reading:L('TOPIC REVISION ARTICLE','บทความทบทวนประจำหัวข้อ'),articleJump:L('Read the article','อ่านบทความ'),exampleJump:L('Similar worked example','ตัวอย่างโจทย์คล้าย'),illustrations:L('DIAGRAMS & SYMBOLS','รูปวงจรและสัญลักษณ์'),example:L('SIMILAR WORKED EXAMPLE','ตัวอย่างโจทย์คล้ายพร้อมเฉลย'),common:L('COMMON MISTAKE','จุดผิดที่พบบ่อย'),notCambridge:L('Independent revision resource. Not endorsed by Cambridge International.','ชุดติวที่สร้างขึ้นอย่างอิสระ ไม่ใช่ข้อสอบอย่างเป็นทางการของ Cambridge'),pencil:L('Apple Pencil · touch · mouse','Apple Pencil · สัมผัส · เมาส์'),pen:L('Black pen','ปากกาดำ'),blue:L('Blue pen','ปากกาน้ำเงิน'),eraser:L('Eraser','ยางลบ'),undo:L('Undo','ย้อนกลับ'),clear:L('Clear','ล้างกระดาน'),scratchNote:L('Sketches stay until reset or reload; answers are saved separately.','ลายเส้นอยู่ในกระดานระหว่างใช้งาน คำตอบบันทึกแยก'),reveal:L('Reveal answer','เปิดเฉลย'),again:L('Review again','ทวนอีกครั้ง'),known:L('I remember this','จำได้แล้ว')};
 const STORAGE='igcse-0625-electricity-revision-v4';
 let state={answers:{},checked:{},reviewed:{},known:{},lang:'both',tier:'core',mi:0,qi:0};
 try{const old=JSON.parse(localStorage.getItem(STORAGE)||'null');if(old&&typeof old==='object'){state={...state,...old,answers:old.answers||{},checked:old.checked||{},reviewed:old.reviewed||{},known:old.known||{}}}}catch(_){}
@@ -236,11 +504,15 @@ function qa(){const m=missions[state.mi];let qs=m.questions.filter(q=>state.tier
 function complete(q){return Object.prototype.hasOwnProperty.call(state.checked,q.id)}
 function correct(q){return state.checked[q.id]===true}
 function renderNav(){const all=missions.flatMap(m=>m.questions).filter(q=>state.tier==='all'||q.lv===(state.tier==='core'?'core':'extended'));const done=all.filter(complete).length;const percent=all.length?Math.round(100*done/all.length):0;$('overallPercent').textContent=percent+'%';$('overallBar').style.width=percent+'%';$('missionNav').innerHTML=missions.map((m,i)=>{const qs=m.questions.filter(q=>state.tier==='all'||q.lv===(state.tier==='core'?'core':'extended'));const dd=qs.filter(complete).length;return '<button type="button" data-mi="'+i+'" class="'+(i===state.mi?'active':'')+'" aria-current="'+(i===state.mi?'step':'false')+'"><span class="num">'+String(i+1).padStart(2,'0')+'</span><span>'+esc(m.title.en)+'<small class="th">'+esc(m.title.th)+'</small></span>'+(qs.length>0&&dd===qs.length?'<span class="done">✓</span>':'')+'</button>'}).join('');$('missionNav').querySelectorAll('button').forEach(b=>b.onclick=()=>{state.mi=Number(b.dataset.mi);state.qi=0;save();render()})}
-function render(){document.body.classList.toggle('lang-th',state.lang==='th');document.body.classList.toggle('lang-en',state.lang==='en');$('language').value=state.lang;$('tier').value=state.tier;document.querySelectorAll('[data-ui]').forEach(n=>n.textContent=(state.lang==='th'?locales[n.dataset.ui].th:locales[n.dataset.ui].en));if(state.mi>=missions.length)state.mi=0;if(state.mi<0)state.mi=0;const m=missions[state.mi],qs=qa();if(state.qi>=qs.length)state.qi=Math.max(0,qs.length-1);renderNav();$('chapterLabel').textContent=m.code+(state.mi<6?' · 4.2 ELECTRICAL QUANTITIES':' · 4.3 ELECTRIC CIRCUITS');$('missionTitle').innerHTML=dual(m.title);$('missionSubtitle').innerHTML=dual(m.desc);$('missionPosition').textContent=String(state.mi+1).padStart(2,'0')+' / 12';$('missionCompletion').textContent=qs.filter(complete).length+' / '+qs.length;$('noteTitle').innerHTML=dual(m.title);$('noteParagraphs').innerHTML=m.notes.map(n=>'<p>'+dual(n)+'</p>').join('');$('workedContent').innerHTML='<p>'+dual(m.example)+'</p>';$('mistakeContent').innerHTML='<p>'+dual(m.mistake)+'</p>';$('referenceVisual').innerHTML=diagrams[m.vis]?diagrams[m.vis]():'';if(!qs.length){$('qCounter').textContent='SUPPLEMENT ONLY';$('questionTitle').innerHTML=dual(L('This mission is part of the Extended Supplement.','ภารกิจนี้เป็นเนื้อหา Supplement ของ Extended'));$('questionPrompt').innerHTML=dual(L('Choose Core + Extended or Supplement only in the Level menu to practise these questions.','เลือก Core + Extended หรือ Supplement only ที่เมนู Level เพื่อทำโจทย์ส่วนนี้'));$('answerArea').textContent='';$('visual').textContent='';$('checkBtn').disabled=true;$('prevQ').disabled=true;$('nextQ').disabled=true;$('feedback').hidden=true;$('qMarks').textContent='';$('qTier').textContent='SUPPLEMENT';$('qTier').classList.add('extended');return}
+function render(){document.body.classList.toggle('lang-th',state.lang==='th');document.body.classList.toggle('lang-en',state.lang==='en');$('language').value=state.lang;$('tier').value=state.tier;document.querySelectorAll('[data-ui]').forEach(n=>n.textContent=(state.lang==='th'?locales[n.dataset.ui].th:locales[n.dataset.ui].en));if(state.mi>=missions.length)state.mi=0;if(state.mi<0)state.mi=0;const m=missions[state.mi],qs=qa();if(state.qi>=qs.length)state.qi=Math.max(0,qs.length-1);renderNav();$('chapterLabel').textContent=m.code+(state.mi<6?' · 4.2 ELECTRICAL QUANTITIES':' · 4.3 ELECTRIC CIRCUITS');$('missionTitle').innerHTML=dual(m.title);$('missionSubtitle').innerHTML=dual(m.desc);$('missionPosition').textContent=String(state.mi+1).padStart(2,'0')+' / 12';$('missionCompletion').textContent=qs.filter(complete).length+' / '+qs.length;$('noteTitle').innerHTML=dual(m.title);
+const chapterArticle=topicArticles[m.id];if(!chapterArticle)throw Error('Missing revision article for '+m.id);
+const articleParagraphs=[...chapterArticle.core,...(state.tier==='core'?[]:chapterArticle.supplement)];
+$('noteParagraphs').innerHTML=articleParagraphs.map((pair,i)=>'<p class="article-paragraph'+(i>=chapterArticle.core.length?' supplement-paragraph':'')+'">'+dual(L(pair[0],pair[1]))+'</p>').join('');
+$('workedContent').innerHTML='<p class="example-intro">'+dual(L('Select a question to see an analogous worked example.','เลือกข้อเพื่อดูตัวอย่างโจทย์คล้ายพร้อมวิธีทำ'))+'</p>';
+$('mistakeContent').innerHTML='<p>'+dual(m.mistake)+'</p>';
+$('referenceVisual').innerHTML=diagrams[m.vis]?diagrams[m.vis]():'';if(!qs.length){$('qCounter').textContent='SUPPLEMENT ONLY';$('questionTitle').innerHTML=dual(L('This mission is part of the Extended Supplement.','ภารกิจนี้เป็นเนื้อหา Supplement ของ Extended'));$('questionPrompt').innerHTML=dual(L('Choose Core + Extended or Supplement only in the Level menu to practise these questions.','เลือก Core + Extended หรือ Supplement only ที่เมนู Level เพื่อทำโจทย์ส่วนนี้'));$('answerArea').textContent='';$('visual').textContent='';$('checkBtn').disabled=true;$('prevQ').disabled=true;$('nextQ').disabled=true;$('feedback').hidden=true;$('qMarks').textContent='';$('qTier').textContent='SUPPLEMENT';$('qTier').classList.add('extended');return}
 const q=qs[state.qi];const help=questionGuide[q.id];if(!help)throw Error('Missing worked example for '+q.id);
-$('noteTitle').innerHTML=dual(m.title)+' <small class="current-question-tag">'+esc(q.verb)+' · '+esc(q.id.toUpperCase())+'</small>';
-$('noteParagraphs').innerHTML=(state.tier==='core'?m.notes.slice(0,2):m.notes).map(n=>'<p>'+dual(n)+'</p>').join('')+'<div class="focus-guide"><strong>'+dual(L('HOW TO SOLVE THIS QUESTION TYPE','วิธีคิดสำหรับโจทย์ลักษณะนี้'))+'</strong><p>'+dual(help.focus)+'</p></div>';
-$('workedContent').innerHTML='<p class="example-intro">'+dual(L('A DIFFERENT but closely related question, solved step by step:','ตัวอย่างโจทย์คล้ายกัน แต่เปลี่ยนข้อมูล พร้อมวิธีทำทีละขั้น'))+'</p><p class="example-steps">'+dual(help.worked)+'</p>';
+$('workedContent').innerHTML='<p class="example-intro">'+dual(L('A different, closely related question with a complete solution. Use the article above to solve your own question.','ตัวอย่างโจทย์คล้ายกันที่เปลี่ยนข้อมูลและมีเฉลยครบ ใช้ความรู้จากบทอ่านด้านบนทำโจทย์ของตนเอง'))+'</p><p class="example-method">'+dual(help.focus)+'</p><p class="example-steps">'+dual(help.worked)+'</p>';
 $('qCounter').textContent=(state.lang==='th'?'ข้อ ':'Question ')+(state.qi+1)+' / '+qs.length;$('qTier').textContent=q.lv==='core'?'CORE':'SUPPLEMENT';$('qTier').classList.toggle('extended',q.lv==='extended');$('qMarks').textContent='['+q.marks+' '+(q.marks===1?'mark':'marks')+']';$('questionTitle').innerHTML='<span class="verb">'+esc(q.verb)+'.</span> '+dual(q.text);$('questionPrompt').innerHTML='<p>'+(q.type==='written'?dual(L('Answer in your own words; compare with the mark-scheme points after checking.','ตอบด้วยคำของตนเอง แล้วเปรียบเทียบกับแนวคำตอบหลังตรวจ')):q.type==='drag'?dual(L('Drag an option to the answer slot, or tap an option then tap the slot.','ลากตัวเลือกใส่ช่องคำตอบ หรือแตะตัวเลือกแล้วแตะช่อง')):q.type==='number'?dual(L('Enter a number only. Units are shown beside the answer field.','กรอกตัวเลขเท่านั้น มีหน่วยแสดงข้างช่อง')):dual(L('Choose the single best answer.','เลือกคำตอบที่ถูกต้องที่สุดเพียงข้อเดียว')) )+'</p>';$('visual').innerHTML=diagrams[q.vis]?diagrams[q.vis]():'';$('feedback').hidden=!complete(q);$('feedback').classList.toggle('bad',complete(q)&&!correct(q)&&q.type!=='written');$('prevQ').disabled=state.qi===0;$('nextQ').disabled=state.qi===qs.length-1;$('checkBtn').disabled=complete(q);$('answerArea').innerHTML='';const a=state.answers[q.id];
 if(q.type==='choice'||q.type==='drag'){const options=q.options.map((op,i)=>'<button type="button" class="choice '+(a===i?'selected':'')+(complete(q)&&i===q.key?' correct-choice':'')+(complete(q)&&i===a&&a!==q.key?' wrong-choice':'')+'" data-option="'+i+'" '+(complete(q)?'disabled':'')+'><span class="letter">'+String.fromCharCode(65+i)+'</span><span>'+(q.id==='sy1'?symbolArt(['ammeter','voltmeter','lamp','resistor'][op.originalIndex]):q.id==='sy3'?symbolArt(['lamp','ammeter','resistor','cell'][op.originalIndex]):'')+dual(op)+'</span></button>').join('');$('answerArea').innerHTML=q.type==='drag'?'<div class="drag-bank">'+options+'</div><div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Selected answer"><span class="placeholder">'+(a===undefined?'Drag / Tap to choose':dual(q.options[a]))+'</span></div>':options;$('answerArea').querySelectorAll('[data-option]').forEach(btn=>{btn.onclick=()=>{state.answers[q.id]=Number(btn.dataset.option);save();render()};if(q.type==='drag'){btn.draggable=true;btn.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain',btn.dataset.option))}});const zone=$('dropZone');if(zone){zone.ondragover=e=>{e.preventDefault();zone.classList.add('ready')};zone.ondragleave=()=>zone.classList.remove('ready');zone.ondrop=e=>{e.preventDefault();zone.classList.remove('ready');const v=Number(e.dataTransfer.getData('text/plain'));if(!complete(q)&&Number.isInteger(v)&&v>=0&&v<q.options.length){state.answers[q.id]=v;save();render()}};zone.onclick=()=>{};zone.onkeydown=e=>{if(e.key==='Enter'){const x=$('answerArea').querySelector('.choice.selected');if(x)x.focus()}}}}
 else if(q.type==='number'){$('answerArea').innerHTML='<div class="input-row"><input type="number" step="any" id="numericAnswer" inputmode="decimal" placeholder="0.00" '+(complete(q)?'disabled':'')+' value="'+esc(a??'')+'"><span class="unit">'+esc(q.unit)+'</span></div>';if(!complete(q))$('numericAnswer').oninput=e=>{state.answers[q.id]=e.target.value;save()}}
@@ -286,5 +558,7 @@ $('exitBtn').onclick=()=>{flashSet=flashCards();flashIndex=0;flashRender();$('fl
 $('flashReveal').onclick=()=>{$('flashReveal').hidden=true;$('flashAnswer').hidden=false};
 $('flashKnown').onclick=()=>{const f=flashSet[flashIndex];state.known[f.id]=true;save();flashIndex++;if(flashIndex>=flashSet.length){$('flashDialog').close();return}flashRender()};
 $('flashAgain').onclick=()=>{const f=flashSet[flashIndex];delete state.known[f.id];save();flashIndex++;if(flashIndex>=flashSet.length){$('flashDialog').close();return}flashRender()};
+$('articleJump').onclick=()=>{$('noteTitle').scrollIntoView({behavior:'smooth',block:'start'})};
+$('exampleJump').onclick=()=>{$('workedContent').scrollIntoView({behavior:'smooth',block:'center'})};
 redraw();render();
 })();
