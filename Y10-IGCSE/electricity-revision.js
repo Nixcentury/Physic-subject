@@ -538,28 +538,75 @@ supplement:[]
 
 const locales={
 reset:L('Reset','เริ่มใหม่'),missions:L('12 Missions','12 ภารกิจ'),progressInfo:L('Answers and flashcards are stored on this device.','คำตอบและแฟลชการ์ดบันทึกในเครื่องนี้'),workspace:L('01 · MISSION WORKSPACE','01 · พื้นที่ทำภารกิจ'),do:L('Try it yourself','ลองทำด้วยตัวเอง'),scratch:L('Scratchpad','กระดานทด'),calculator:L('Calculator','เครื่องคิดเลข'),previous:L('Previous','ก่อนหน้า'),check:L('Check Answer','ตรวจคำตอบ'),next:L('Next','ถัดไป'),exit:L('Exit Flashcards','แฟลชการ์ดท้ายบท'),autosave:L('Saved on this device','บันทึกในเครื่อง'),reference:L('02 · REVISION READING','02 · บทอ่านทบทวน'),learn:L('Read · Understand · Apply','อ่าน · เข้าใจ · ประยุกต์'),reading:L('TOPIC REVISION ARTICLE','บทความทบทวนประจำหัวข้อ'),articleJump:L('Read the article','อ่านบทความ'),exampleJump:L('Similar worked example','ตัวอย่างโจทย์คล้าย'),illustrations:L('DIAGRAMS & SYMBOLS','รูปวงจรและสัญลักษณ์'),example:L('SIMILAR WORKED EXAMPLE','ตัวอย่างโจทย์คล้ายพร้อมเฉลย'),common:L('COMMON MISTAKE','จุดผิดที่พบบ่อย'),notCambridge:L('Independent revision resource. Not endorsed by Cambridge International.','ชุดติวที่สร้างขึ้นอย่างอิสระ ไม่ใช่ข้อสอบอย่างเป็นทางการของ Cambridge'),pencil:L('Apple Pencil · touch · mouse','Apple Pencil · สัมผัส · เมาส์'),pen:L('Black pen','ปากกาดำ'),blue:L('Blue pen','ปากกาน้ำเงิน'),eraser:L('Eraser','ยางลบ'),undo:L('Undo','ย้อนกลับ'),clear:L('Clear','ล้างกระดาน'),scratchNote:L('Sketches stay until reset or reload; answers are saved separately.','ลายเส้นอยู่ในกระดานระหว่างใช้งาน คำตอบบันทึกแยก'),reveal:L('Reveal answer','เปิดเฉลย'),again:L('Review again','ทวนอีกครั้ง'),known:L('I remember this','จำได้แล้ว')};
-const STORAGE='igcse-0625-electricity-revision-v4';
-let state={answers:{},checked:{},reviewed:{},known:{},lang:'both',tier:'core',mi:0,qi:0};
+const STORAGE='igcse-0625-electricity-revision-v5';
+let state={answers:{},checked:{},reviewed:{},known:{},lang:'both',tier:'all',scope:'quiz1',mi:0,qi:0};
 try{const old=JSON.parse(localStorage.getItem(STORAGE)||'null');if(old&&typeof old==='object'){state={...state,...old,answers:old.answers||{},checked:old.checked||{},reviewed:old.reviewed||{},known:old.known||{}}}}catch(_){}
 if(!['both','en','th'].includes(state.lang))state.lang='both';
-if(!['all','core','extended'].includes(state.tier))state.tier='core';
+if(!['all','core','extended'].includes(state.tier))state.tier='all';
+if(!['quiz1','week3','full'].includes(state.scope))state.scope='quiz1';
 function save(){try{localStorage.setItem(STORAGE,JSON.stringify(state))}catch(_){}}
 const esc=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 function dual(val){if(typeof val==='string')return esc(val);return state.lang==='en'?'<span class="en">'+esc(val.en)+'</span>':state.lang==='th'?'<span class="th">'+esc(val.th)+'</span>':'<span class="en">'+esc(val.en)+'</span><span class="th">'+esc(val.th)+'</span>'}
-function qa(){const m=missions[state.mi];let qs=m.questions.filter(q=>state.tier==='all'||q.lv===(state.tier==='core'?'core':'extended'));return qs}
+// School assessment scope is based on the provided Term 2 plan, not a claim about the
+// school's exact unpublished Quiz 1 paper. Content remains available in Full Cambridge.
+const SCHOOL_SETS={
+quiz1:{
+title:L('School Quiz 1 · Electrical Quantities','แบบติว Quiz 1 · ปริมาณทางไฟฟ้า'),
+desc:L('Week 1–2 focus: resistance (V = IR), series ammeter and parallel voltmeter, I–V characteristics of resistors, filament lamps and diodes, plus electrical power and energy. Series/parallel are taught in Week 2 but not expressly confirmed in Quiz 1: use Week 3 mode for those.','เน้นสัปดาห์ 1–2: ความต้านทาน V = IR, แอมมิเตอร์อนุกรมและโวลต์มิเตอร์ขนาน, กราฟ I–V ของตัวต้านทาน หลอดไส้ และไดโอด, กำลังและพลังงานไฟฟ้า วงจรอนุกรม–ขนานเริ่มสอนสัปดาห์ 2 แต่ตารางยังไม่ยืนยันว่าอยู่ใน Quiz 1 จึงแยกไว้โหมด Week 3'),
+tag:'WEEK 2 · QUIZ 1',
+questions:{
+current:['cu1'],emf:['em1','em2','em3'],resistance:['re1','re3','re5'],graphs:['gr1','gr2','gr3','gr4','gr5'],power:['po1','po2','po3','po5'],symbols:['sy1','sy3'],build:['bu1','bu2']
+},supplementArticles:['graphs']
+},
+week3:{
+title:L('Week 3 · Circuits & Experimental Planning','สัปดาห์ 3 · วงจรและการวางแผนทดลอง'),
+desc:L('Practise current, potential difference and resistance in series/parallel circuits, combined resistance, and planning how wire resistance depends on length: variables, range, method, repeats, graph and hazards. This is separate from the explicitly labelled Quiz 1.','ฝึกกระแส ความต่างศักย์ และ R ในวงจรอนุกรม–ขนาน การหาความต้านทานรวม และการวางแผนทดลองผลของความยาวลวด ได้แก่ ตัวแปร ช่วงค่า ขั้นตอน วัดซ้ำ กราฟ และอันตราย เป็นคนละชุดกับ Quiz 1 ที่ตารางระบุไว้'),
+tag:'WEEK 3 · PRACTICE',
+questions:{
+resistance:['re2','re4'],build:['bu1','bu2'],series:['se1','se2','se3','se0','se4'],parallel:['pa1','pa2','pa3','pa4'],challenge:['cx1','cx2','cx3'],planning:['wp1','wp2','wp3','wp4','wp5','wp6']
+},supplementArticles:['resistance','series','parallel','challenge']
+},
+full:{
+title:L('Full Cambridge 0625 · Topics 4.2–4.3','Cambridge 0625 ฉบับเต็ม · หัวข้อ 4.2–4.3'),
+desc:L('Study the entire Core and Supplement content, plus the separate practical planning extension. Select a syllabus level above. Original exam-style questions, not past-paper reproductions.','ทบทวนเนื้อหาทั้ง Core และ Supplement พร้อมภารกิจวางแผนทดลองเพิ่มเติม เลือกระดับที่เมนูด้านบน โจทย์แต่งใหม่ตามแนวสอบ ไม่ใช่การคัดลอกข้อสอบเก่า'),
+tag:'FULL 0625 · + PRACTICAL'
+}
+};
+function questionsFor(m){
+if(state.scope==='full')return m.questions.filter(q=>state.tier==='all'||q.lv===(state.tier==='core'?'core':'extended'));
+const allowed=SCHOOL_SETS[state.scope].questions[m.id]||[];
+return m.questions.filter(q=>allowed.includes(q.id));
+}
+function missionIndices(){return missions.map((m,i)=>({m,i})).filter(({m})=>questionsFor(m).length>0).map(({i})=>i)}
+function qa(){return questionsFor(missions[state.mi])}
+function articleUsesSupplement(m){
+if(state.scope==='full')return state.tier!=='core';
+return SCHOOL_SETS[state.scope].supplementArticles.includes(m.id);
+}
 function complete(q){return Object.prototype.hasOwnProperty.call(state.checked,q.id)}
 function correct(q){return state.checked[q.id]===true}
-function renderNav(){const all=missions.flatMap(m=>m.questions).filter(q=>state.tier==='all'||q.lv===(state.tier==='core'?'core':'extended'));const done=all.filter(complete).length;const percent=all.length?Math.round(100*done/all.length):0;$('overallPercent').textContent=percent+'%';$('overallBar').style.width=percent+'%';$('missionNav').innerHTML=missions.map((m,i)=>{const qs=m.questions.filter(q=>state.tier==='all'||q.lv===(state.tier==='core'?'core':'extended'));const dd=qs.filter(complete).length;return '<button type="button" data-mi="'+i+'" class="'+(i===state.mi?'active':'')+'" aria-current="'+(i===state.mi?'step':'false')+'"><span class="num">'+String(i+1).padStart(2,'0')+'</span><span>'+esc(m.title.en)+'<small class="th">'+esc(m.title.th)+'</small></span>'+(qs.length>0&&dd===qs.length?'<span class="done">✓</span>':'')+'</button>'}).join('');$('missionNav').querySelectorAll('button').forEach(b=>b.onclick=()=>{state.mi=Number(b.dataset.mi);state.qi=0;save();render()})}
-function render(){document.body.classList.toggle('lang-th',state.lang==='th');document.body.classList.toggle('lang-en',state.lang==='en');$('language').value=state.lang;$('tier').value=state.tier;document.querySelectorAll('[data-ui]').forEach(n=>n.textContent=(state.lang==='th'?locales[n.dataset.ui].th:locales[n.dataset.ui].en));if(state.mi>=missions.length)state.mi=0;if(state.mi<0)state.mi=0;const m=missions[state.mi],qs=qa();if(state.qi>=qs.length)state.qi=Math.max(0,qs.length-1);renderNav();$('chapterLabel').textContent=m.code+(state.mi<6?' · 4.2 ELECTRICAL QUANTITIES':' · 4.3 ELECTRIC CIRCUITS');$('missionTitle').innerHTML=dual(m.title);$('missionSubtitle').innerHTML=dual(m.desc);$('missionPosition').textContent=String(state.mi+1).padStart(2,'0')+' / 12';$('missionCompletion').textContent=qs.filter(complete).length+' / '+qs.length;$('noteTitle').innerHTML=dual(m.title);
+function renderNav(){
+const visible=missionIndices();const all=visible.flatMap(i=>questionsFor(missions[i]));
+const done=all.filter(complete).length;
+const percent=all.length?Math.round(100*done/all.length):0;
+$('missionCount').textContent=visible.length+' '+(state.lang==='th'?'ภารกิจ':'Missions')+' · '+all.length+' '+(state.lang==='th'?'ข้อ':'questions');
+$('overallPercent').textContent=percent+'%';$('overallBar').style.width=percent+'%';
+$('missionNav').innerHTML=visible.map((i,n)=>{
+const m=missions[i],qs=questionsFor(m),dd=qs.filter(complete).length;
+return '<button type="button" data-mi="'+i+'" class="'+(i===state.mi?'active':'')+'" aria-current="'+(i===state.mi?'step':'false')+'"><span class="num">'+String(n+1).padStart(2,'0')+'</span><span>'+esc(m.title.en)+'<small class="th">'+esc(m.title.th)+'</small></span>'+(dd===qs.length?'<span class="done">✓</span>':'')+'</button>'
+}).join('');
+$('missionNav').querySelectorAll('button').forEach(b=>b.onclick=()=>{state.mi=Number(b.dataset.mi);state.qi=0;save();render()});
+}
+function render(){document.body.classList.toggle('lang-th',state.lang==='th');document.body.classList.toggle('lang-en',state.lang==='en');$('language').value=state.lang;$('tier').value=state.tier;document.querySelectorAll('[data-ui]').forEach(n=>n.textContent=(state.lang==='th'?locales[n.dataset.ui].th:locales[n.dataset.ui].en));$('scope').value=state.scope;$('tierControl').hidden=state.scope!=='full';$('scopeTitle').innerHTML=dual(SCHOOL_SETS[state.scope].title);$('scopeDescription').innerHTML=dual(SCHOOL_SETS[state.scope].desc);$('scopeTag').textContent=SCHOOL_SETS[state.scope].tag;const visible=missionIndices();if(!visible.includes(state.mi))state.mi=visible[0];const m=missions[state.mi],qs=qa();if(state.qi>=qs.length)state.qi=Math.max(0,qs.length-1);renderNav();$('chapterLabel').textContent=m.code+(m.id==='planning'?' · EXPERIMENTAL SKILLS':state.mi<6?' · 4.2 ELECTRICAL QUANTITIES':' · 4.3 ELECTRIC CIRCUITS');$('missionTitle').innerHTML=dual(m.title);$('missionSubtitle').innerHTML=dual(m.desc);$('missionPosition').textContent=String(visible.indexOf(state.mi)+1).padStart(2,'0')+' / '+visible.length;$('missionCompletion').textContent=qs.filter(complete).length+' / '+qs.length;$('noteTitle').innerHTML=dual(m.title);
 const chapterArticle=topicArticles[m.id];if(!chapterArticle)throw Error('Missing revision article for '+m.id);
-const articleParagraphs=[...chapterArticle.core,...(state.tier==='core'?[]:chapterArticle.supplement)];
+const articleParagraphs=[...chapterArticle.core,...(articleUsesSupplement(m)?chapterArticle.supplement:[])];
 $('noteParagraphs').innerHTML=articleParagraphs.map((pair,i)=>'<p class="article-paragraph'+(i>=chapterArticle.core.length?' supplement-paragraph':'')+'">'+dual(L(pair[0],pair[1]))+'</p>').join('');
 $('workedContent').innerHTML='<p class="example-intro">'+dual(L('Select a question to see an analogous worked example.','เลือกข้อเพื่อดูตัวอย่างโจทย์คล้ายพร้อมวิธีทำ'))+'</p>';
 $('mistakeContent').innerHTML='<p>'+dual(m.mistake)+'</p>';
 $('referenceVisual').innerHTML=diagrams[m.vis]?diagrams[m.vis]():'';if(!qs.length){$('qCounter').textContent='SUPPLEMENT ONLY';$('questionTitle').innerHTML=dual(L('This mission is part of the Extended Supplement.','ภารกิจนี้เป็นเนื้อหา Supplement ของ Extended'));$('questionPrompt').innerHTML=dual(L('Choose Core + Extended or Supplement only in the Level menu to practise these questions.','เลือก Core + Extended หรือ Supplement only ที่เมนู Level เพื่อทำโจทย์ส่วนนี้'));$('answerArea').textContent='';$('visual').textContent='';$('checkBtn').disabled=true;$('prevQ').disabled=true;$('nextQ').disabled=true;$('feedback').hidden=true;$('qMarks').textContent='';$('qTier').textContent='SUPPLEMENT';$('qTier').classList.add('extended');return}
 const q=qs[state.qi];const help=questionGuide[q.id];if(!help)throw Error('Missing worked example for '+q.id);
 $('workedContent').innerHTML='<p class="example-intro">'+dual(L('A different, closely related question with a complete solution. Use the article above to solve your own question.','ตัวอย่างโจทย์คล้ายกันที่เปลี่ยนข้อมูลและมีเฉลยครบ ใช้ความรู้จากบทอ่านด้านบนทำโจทย์ของตนเอง'))+'</p><p class="example-method">'+dual(help.focus)+'</p><p class="example-steps">'+dual(help.worked)+'</p>';
-$('qCounter').textContent=(state.lang==='th'?'ข้อ ':'Question ')+(state.qi+1)+' / '+qs.length;$('qTier').textContent=q.lv==='core'?'CORE':'SUPPLEMENT';$('qTier').classList.toggle('extended',q.lv==='extended');$('qMarks').textContent='['+q.marks+' '+(q.marks===1?'mark':'marks')+']';$('questionTitle').innerHTML='<span class="verb">'+esc(q.verb)+'.</span> '+dual(q.text);$('questionPrompt').innerHTML='<p>'+(q.type==='written'?dual(L('Answer in your own words; compare with the mark-scheme points after checking.','ตอบด้วยคำของตนเอง แล้วเปรียบเทียบกับแนวคำตอบหลังตรวจ')):q.type==='drag'?dual(L('Drag an option to the answer slot, or tap an option then tap the slot.','ลากตัวเลือกใส่ช่องคำตอบ หรือแตะตัวเลือกแล้วแตะช่อง')):q.type==='number'?dual(L('Enter a number only. Units are shown beside the answer field.','กรอกตัวเลขเท่านั้น มีหน่วยแสดงข้างช่อง')):dual(L('Choose the single best answer.','เลือกคำตอบที่ถูกต้องที่สุดเพียงข้อเดียว')) )+'</p>';$('visual').innerHTML=diagrams[q.vis]?diagrams[q.vis]():'';$('feedback').hidden=!complete(q);$('feedback').classList.toggle('bad',complete(q)&&!correct(q)&&q.type!=='written');$('prevQ').disabled=state.qi===0;$('nextQ').disabled=state.qi===qs.length-1;$('checkBtn').disabled=complete(q);$('answerArea').innerHTML='';const a=state.answers[q.id];
+$('qCounter').textContent=(state.lang==='th'?'ข้อ ':'Question ')+(state.qi+1)+' / '+qs.length;$('qTier').textContent=q.lv==='core'?'CORE':state.scope==='full'?'SUPPLEMENT':'SUPPLEMENT · SCHOOL TAUGHT';$('qTier').classList.toggle('extended',q.lv==='extended');$('qMarks').textContent='['+q.marks+' '+(q.marks===1?'mark':'marks')+']';$('questionTitle').innerHTML='<span class="verb">'+esc(q.verb)+'.</span> '+dual(q.text);$('questionPrompt').innerHTML='<p>'+(q.type==='written'?dual(L('Answer in your own words; compare with the mark-scheme points after checking.','ตอบด้วยคำของตนเอง แล้วเปรียบเทียบกับแนวคำตอบหลังตรวจ')):q.type==='drag'?dual(L('Drag an option to the answer slot, or tap an option then tap the slot.','ลากตัวเลือกใส่ช่องคำตอบ หรือแตะตัวเลือกแล้วแตะช่อง')):q.type==='number'?dual(L('Enter a number only. Units are shown beside the answer field.','กรอกตัวเลขเท่านั้น มีหน่วยแสดงข้างช่อง')):dual(L('Choose the single best answer.','เลือกคำตอบที่ถูกต้องที่สุดเพียงข้อเดียว')) )+'</p>';$('visual').innerHTML=diagrams[q.vis]?diagrams[q.vis]():'';$('feedback').hidden=!complete(q);$('feedback').classList.toggle('bad',complete(q)&&!correct(q)&&q.type!=='written');$('prevQ').disabled=state.qi===0;$('nextQ').disabled=state.qi===qs.length-1;$('checkBtn').disabled=complete(q);$('answerArea').innerHTML='';const a=state.answers[q.id];
 if(q.type==='choice'||q.type==='drag'){const options=q.options.map((op,i)=>'<button type="button" class="choice '+(a===i?'selected':'')+(complete(q)&&i===q.key?' correct-choice':'')+(complete(q)&&i===a&&a!==q.key?' wrong-choice':'')+'" data-option="'+i+'" '+(complete(q)?'disabled':'')+'><span class="letter">'+String.fromCharCode(65+i)+'</span><span>'+(q.id==='sy1'?symbolArt(['ammeter','voltmeter','lamp','resistor'][op.originalIndex]):q.id==='sy3'?symbolArt(['lamp','ammeter','resistor','cell'][op.originalIndex]):'')+dual(op)+'</span></button>').join('');$('answerArea').innerHTML=q.type==='drag'?'<div class="drag-bank">'+options+'</div><div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="Selected answer"><span class="placeholder">'+(a===undefined?'Drag / Tap to choose':dual(q.options[a]))+'</span></div>':options;$('answerArea').querySelectorAll('[data-option]').forEach(btn=>{btn.onclick=()=>{state.answers[q.id]=Number(btn.dataset.option);save();render()};if(q.type==='drag'){btn.draggable=true;btn.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain',btn.dataset.option))}});const zone=$('dropZone');if(zone){zone.ondragover=e=>{e.preventDefault();zone.classList.add('ready')};zone.ondragleave=()=>zone.classList.remove('ready');zone.ondrop=e=>{e.preventDefault();zone.classList.remove('ready');const v=Number(e.dataTransfer.getData('text/plain'));if(!complete(q)&&Number.isInteger(v)&&v>=0&&v<q.options.length){state.answers[q.id]=v;save();render()}};zone.onclick=()=>{};zone.onkeydown=e=>{if(e.key==='Enter'){const x=$('answerArea').querySelector('.choice.selected');if(x)x.focus()}}}}
 else if(q.type==='number'){$('answerArea').innerHTML='<div class="input-row"><input type="number" step="any" id="numericAnswer" inputmode="decimal" placeholder="0.00" '+(complete(q)?'disabled':'')+' value="'+esc(a??'')+'"><span class="unit">'+esc(q.unit)+'</span></div>';if(!complete(q))$('numericAnswer').oninput=e=>{state.answers[q.id]=e.target.value;save()}}
 else{$('answerArea').innerHTML='<textarea id="writtenAnswer" placeholder="Write a short explanation / เขียนคำอธิบายสั้น ๆ" '+(complete(q)?'disabled':'')+'>'+esc(a??'')+'</textarea>';if(!complete(q))$('writtenAnswer').oninput=e=>{state.answers[q.id]=e.target.value;save()}}
@@ -568,10 +615,11 @@ save()}
 function check(){const q=qa()[state.qi];if(!q||complete(q))return;const a=state.answers[q.id];if(q.type==='number'){const v=Number(a);if(a===undefined||a===''||!Number.isFinite(v)){alert(state.lang==='th'?'กรอกตัวเลขก่อนตรวจ':'Enter a numerical answer first.');return}state.checked[q.id]=Math.abs(v-q.key)<=Math.max(0.000001,Math.abs(q.key)*0.001)}else if(q.type==='written'){if(typeof a!=='string'||a.trim().length<4){alert(state.lang==='th'?'เขียนคำอธิบายก่อน':'Write your explanation first.');return}state.checked[q.id]='reviewed'}else{if(!Number.isInteger(a)){alert(state.lang==='th'?'เลือกคำตอบก่อน':'Select an answer first.');return}state.checked[q.id]=a===q.key}save();render()}
 $('language').onchange=e=>{state.lang=e.target.value;save();render()};
 $('tier').onchange=e=>{state.tier=e.target.value;state.qi=0;save();render()};
+$('scope').onchange=e=>{state.scope=e.target.value;state.mi=missionIndices()[0];state.qi=0;save();render()};
 $('prevQ').onclick=()=>{state.qi=Math.max(0,state.qi-1);save();render();$('questionTitle').focus()};
 $('nextQ').onclick=()=>{state.qi=Math.min(qa().length-1,state.qi+1);save();render();$('questionTitle').focus()};
 $('checkBtn').onclick=check;
-$('resetBtn').onclick=()=>{if(confirm(state.lang==='th'?'ล้างคำตอบและความคืบหน้าทั้งหมดในเครื่องนี้?':'Clear all answers and progress on this device?')){const lang=state.lang,tier=state.tier;state={answers:{},checked:{},reviewed:{},known:{},lang,tier,mi:0,qi:0};save();render()}};
+$('resetBtn').onclick=()=>{if(confirm(state.lang==='th'?'ล้างคำตอบและความคืบหน้าทั้งหมดในเครื่องนี้?':'Clear all answers and progress on this device?')){const lang=state.lang,tier=state.tier,scope=state.scope;state={answers:{},checked:{},reviewed:{},known:{},lang,tier,scope,mi:missionIndices()[0],qi:0};save();render()}};
 // Standalone calculator: only arithmetic tokens accepted.
 let calc='';
 const calcButtons=['7','8','9','÷','4','5','6','×','1','2','3','−','0','.','(',')','C','⌫','=','+'];
