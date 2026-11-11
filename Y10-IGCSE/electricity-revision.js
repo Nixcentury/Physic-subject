@@ -135,7 +135,7 @@ W('wp6','core','Plan','Describe a method to investigate how the resistance of a 
 ];
 
 // Cambridge 0625 Core: relays are circuit components, not just a symbol.
-missions.splice(missions.findIndex(m=>m.id==='planning'),0,
+missions.splice(missions.findIndex(m=>m.id==='series'),0,
 M('relay','4.3.1','Relays and Sensor-Controlled Circuits','รีเลย์และวงจรควบคุมด้วยเซนเซอร์',
 'Electromagnetic switching, LDRs and thermistors','สวิตช์แม่เหล็กไฟฟ้า LDR และเทอร์มิสเตอร์',
 ['A relay uses an electromagnet to move an armature, opening or closing contacts in a separate circuit. The control coil and switched circuit can have different current and voltage requirements.','When current flows through the relay coil, the electromagnet attracts the iron armature. Contacts change position and can switch on a lamp or motor in the other circuit.','In sensing circuits an LDR has lower resistance in brighter light and an NTC thermistor has lower resistance at higher temperature. Which change switches the relay depends on the actual circuit connections.'],
@@ -446,6 +446,13 @@ const guideRows=[
 ];
 const questionGuide=Object.fromEntries(guideRows.map(([id,en,th,exEn,exTh])=>[id,{focus:L(en,th),worked:L(exEn,exTh)}]));
 Object.assign(questionGuide,extraExamGuides);
+Object.assign(questionGuide,{
+rl1:{focus:L('Relay coil current produces an electromagnet and moves contacts.','กระแสในขดลวดรีเลย์สร้างแม่เหล็กไฟฟ้าควบคุมหน้าสัมผัส'),worked:L('Example: closing a small control switch energises a coil and closes a buzzer contact in a separate loop.','ตัวอย่าง: ปิดสวิตช์ควบคุมขนาดเล็กแล้วขดลวดดูดอาร์มาเจอร์ให้วงจรออดอีกชุดปิด')},
+rl2:{focus:L('Trace coil current, magnetic field, armature and contacts, then load circuit.','ไล่กระแสขดลวด สนามแม่เหล็ก อาร์มาเจอร์ หน้าสัมผัส และวงจรโหลด'),worked:L('Example: a separate low-power coil closes a contact to allow current through a motor circuit.','ตัวอย่าง: ขดลวดกำลังต่ำควบคุมหน้าสัมผัสให้กระแสไหลในวงจรมอเตอร์อีกชุด')},
+rl3:{focus:L('A normally open contact returns to open when coil current stops.','หน้าสัมผัสแบบปกติเปิดจะเปิดอีกเมื่อขดลวดไม่มีกระแส'),worked:L('Example: if a control switch opens, the coil stops attracting its armature and a lamp contact opens.','ตัวอย่าง: เมื่อเปิดสวิตช์ควบคุม ขดลวดหยุดดูดอาร์มาเจอร์และหน้าสัมผัสหลอดไฟเปิด')},
+rl4:{focus:L('Control circuit and load circuit are electrically separate.','วงจรควบคุมกับวงจรโหลดแยกทางไฟฟ้า'),worked:L('Example: a temperature sensor controls a small relay coil, whose contacts operate a separate fan supply.','ตัวอย่าง: เซนเซอร์อุณหภูมิควบคุมขดลวดรีเลย์ขนาดเล็กซึ่งสวิตช์ไฟให้พัดลมอีกวงจร')},
+rl5:{focus:L('NTC thermistor resistance falls as temperature rises.','NTC thermistor มี R ลดเมื่ออุณหภูมิสูงขึ้น'),worked:L('Example: an LDR responds instead to light; brighter light normally makes its resistance lower.','ตัวอย่าง: LDR ตอบสนองต่อแสงโดย R ลดลงเมื่อแสงสว่างมากขึ้น')}
+});
 
 const topicArticles={
   "charge": {
