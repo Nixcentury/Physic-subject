@@ -610,12 +610,12 @@ function renderCloze(m){
 
 const locales={
 scopeLabel:L('Revision set','ชุดติว'),reset:L('Reset','เริ่มใหม่'),missions:L('12 Missions','12 ภารกิจ'),progressInfo:L('Answers and flashcards are stored on this device.','คำตอบและแฟลชการ์ดบันทึกในเครื่องนี้'),workspace:L('01 · MISSION WORKSPACE','01 · พื้นที่ทำภารกิจ'),do:L('Try it yourself','ลองทำด้วยตัวเอง'),scratch:L('Scratchpad','กระดานทด'),calculator:L('Calculator','เครื่องคิดเลข'),previous:L('Previous','ก่อนหน้า'),check:L('Check Answer','ตรวจคำตอบ'),next:L('Next','ถัดไป'),exit:L('Exit Flashcards','แฟลชการ์ดท้ายบท'),autosave:L('Saved on this device','บันทึกในเครื่อง'),reference:L('02 · REVISION READING','02 · บทอ่านทบทวน'),learn:L('Read · Understand · Apply','อ่าน · เข้าใจ · ประยุกต์'),reading:L('TOPIC REVISION ARTICLE','บทความทบทวนประจำหัวข้อ'),articleJump:L('Read the article','อ่านบทความ'),exampleJump:L('Similar worked example','ตัวอย่างโจทย์คล้าย'),illustrations:L('DIAGRAMS & SYMBOLS','รูปวงจรและสัญลักษณ์'),example:L('SIMILAR WORKED EXAMPLE','ตัวอย่างโจทย์คล้ายพร้อมเฉลย'),common:L('COMMON MISTAKE','จุดผิดที่พบบ่อย'),notCambridge:L('Independent revision resource. Not endorsed by Cambridge International.','ชุดติวที่สร้างขึ้นอย่างอิสระ ไม่ใช่ข้อสอบอย่างเป็นทางการของ Cambridge'),pencil:L('Apple Pencil · touch · mouse','Apple Pencil · สัมผัส · เมาส์'),pen:L('Black pen','ปากกาดำ'),blue:L('Blue pen','ปากกาน้ำเงิน'),eraser:L('Eraser','ยางลบ'),undo:L('Undo','ย้อนกลับ'),clear:L('Clear','ล้างกระดาน'),scratchNote:L('Sketches stay until reset or reload; answers are saved separately.','ลายเส้นอยู่ในกระดานระหว่างใช้งาน คำตอบบันทึกแยก'),reveal:L('Reveal answer','เปิดเฉลย'),again:L('Review again','ทวนอีกครั้ง'),known:L('I remember this','จำได้แล้ว')};
-const STORAGE='igcse-0625-electricity-revision-v5';
-let state={answers:{},checked:{},reviewed:{},known:{},lang:'both',tier:'all',scope:'quiz1',mi:0,qi:0};
+const STORAGE='igcse-0625-electricity-revision-v6-complete';
+let state={answers:{},checked:{},reviewed:{},known:{},lang:'both',tier:'all',scope:'full',mi:0,qi:0};
 try{const old=JSON.parse(localStorage.getItem(STORAGE)||'null');if(old&&typeof old==='object'){state={...state,...old,answers:old.answers||{},checked:old.checked||{},reviewed:old.reviewed||{},known:old.known||{}}}}catch(_){}
 if(!['both','en','th'].includes(state.lang))state.lang='both';
 if(!['all','core','extended'].includes(state.tier))state.tier='all';
-if(!['quiz1','week3','full'].includes(state.scope))state.scope='quiz1';
+if(!['quiz1','quiz2','week3','full'].includes(state.scope))state.scope='full';
 function save(){try{localStorage.setItem(STORAGE,JSON.stringify(state))}catch(_){}}
 const esc=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 function dual(val){if(typeof val==='string')return esc(val);return state.lang==='en'?'<span class="en">'+esc(val.en)+'</span>':state.lang==='th'?'<span class="th">'+esc(val.th)+'</span>':'<span class="en">'+esc(val.en)+'</span><span class="th">'+esc(val.th)+'</span>'}
@@ -630,6 +630,22 @@ questions:{
 current:['cu1'],emf:['em1','em2','em3'],resistance:['re1','re3','re5'],graphs:['gr1','gr2','gr3','gr4','gr5'],power:['po1','po2','po3','po5'],symbols:['sy1','sy3'],build:['bu1','bu2']
 },supplementArticles:['graphs']
 },
+quiz2:{
+title:L('School Quiz 2 · Electrical Circuits','แบบติว Quiz 2 · วงจรไฟฟ้า'),
+desc:L('Weeks 3–4: current, p.d. and resistance in series and parallel; combined resistances, parallel lamps, LDRs, NTC thermistors, relays, potential dividers and wire-length experimental planning. The exact school test questions have not been provided.','เน้นสัปดาห์ 3–4: กระแส แรงดัน และ R ในวงจรอนุกรม–ขนาน ความต้านทานรวม หลอดขนาน LDR, NTC, รีเลย์ ตัวแบ่งแรงดัน และการวางแผนทดลองลวด เรายังไม่ได้เห็นข้อสอบจริงของโรงเรียน'),
+tag:'WEEK 4 · QUIZ 2',
+questions:{
+resistance:['re2','re4'],
+symbols:['sy1','sy2','sy3','sy4'],
+build:['bu1','bu2'],
+series:['se1','se2','se3','se0','se4'],
+parallel:['pa1','pa2','pa3','pa4'],
+challenge:['cx1','cx2','cx3'],
+components:['co1','co2','co3','co4'],
+planning:['wp1','wp2','wp3','wp4','wp5','wp6']
+},
+supplementArticles:['resistance','series','parallel','challenge','components']
+},
 week3:{
 title:L('Week 3 · Circuits & Experimental Planning','สัปดาห์ 3 · วงจรและการวางแผนทดลอง'),
 desc:L('Practise current, potential difference and resistance in series/parallel circuits, combined resistance, and planning how wire resistance depends on length: variables, range, method, repeats, graph and hazards. This is separate from the explicitly labelled Quiz 1.','ฝึกกระแส ความต่างศักย์ และ R ในวงจรอนุกรม–ขนาน การหาความต้านทานรวม และการวางแผนทดลองผลของความยาวลวด ได้แก่ ตัวแปร ช่วงค่า ขั้นตอน วัดซ้ำ กราฟ และอันตราย เป็นคนละชุดกับ Quiz 1 ที่ตารางระบุไว้'),
@@ -639,19 +655,21 @@ resistance:['re2','re4'],build:['bu1','bu2'],series:['se1','se2','se3','se0','se
 },supplementArticles:['resistance','series','parallel','challenge']
 },
 full:{
-title:L('Full Cambridge 0625 · Topics 4.2–4.3','Cambridge 0625 ฉบับเต็ม · หัวข้อ 4.2–4.3'),
-desc:L('Study the entire Core and Supplement content, plus the separate practical planning extension. Select a syllabus level above. Original exam-style questions, not past-paper reproductions.','ทบทวนเนื้อหาทั้ง Core และ Supplement พร้อมภารกิจวางแผนทดลองเพิ่มเติม เลือกระดับที่เมนูด้านบน โจทย์แต่งใหม่ตามแนวสอบ ไม่ใช่การคัดลอกข้อสอบเก่า'),
+title:L('Complete Cambridge Exam Prep · 4.2–4.3','เตรียมสอบ Cambridge ครบ 4.2–4.3 รวม Quiz 1 + Quiz 2'),
+desc:L('Review all of 4.2.1–4.3.3 for both school quizzes, including Core, Supplement and practical planning. Every mission begins with bilingual academic cloze recall before original Cambridge-style examination practice.','ทบทวนครบ 4.2.1–4.3.3 สำหรับทั้งสอง Quiz ทั้ง Core, Supplement และการวางแผนทดลอง ทุกภารกิจเริ่มด้วยบทความลากวางสองภาษาก่อนฝึกโจทย์แต่งใหม่ตามแนว Cambridge'),
 tag:'FULL 0625 · + PRACTICAL'
 }
 };
 function questionsFor(m){
-if(state.scope==='full')return m.questions.filter(q=>state.tier==='all'||q.lv===(state.tier==='core'?'core':'extended'));
+const byTier=q=>state.tier==='all'||q.lv===(state.tier==='core'?'core':'extended');
+if(state.scope==='full')return m.questions.filter(byTier);
 const allowed=SCHOOL_SETS[state.scope].questions[m.id]||[];
-return m.questions.filter(q=>allowed.includes(q.id));
+return m.questions.filter(q=>allowed.includes(q.id)&&byTier(q));
 }
 function missionIndices(){return missions.map((m,i)=>({m,i})).filter(({m})=>questionsFor(m).length>0).map(({i})=>i)}
 function qa(){return questionsFor(missions[state.mi])}
 function articleUsesSupplement(m){
+if(state.tier==='core')return false;
 if(state.scope==='full')return state.tier!=='core';
 return SCHOOL_SETS[state.scope].supplementArticles.includes(m.id);
 }
@@ -681,7 +699,7 @@ return '<button type="button" data-mi="'+i+'" class="'+(i===state.mi?'active':''
 }).join('');
 $('missionNav').querySelectorAll('button').forEach(b=>b.onclick=()=>{state.mi=Number(b.dataset.mi);state.qi=0;resetCloze();save();render()});
 }
-function render(){document.body.classList.toggle('lang-th',state.lang==='th');document.body.classList.toggle('lang-en',state.lang==='en');$('language').value=state.lang;$('tier').value=state.tier;document.querySelectorAll('[data-ui]').forEach(n=>n.textContent=(state.lang==='th'?locales[n.dataset.ui].th:locales[n.dataset.ui].en));$('scope').value=state.scope;$('tierControl').hidden=state.scope!=='full';$('scopeTitle').innerHTML=dual(SCHOOL_SETS[state.scope].title);$('scopeDescription').innerHTML=dual(SCHOOL_SETS[state.scope].desc);$('scopeTag').textContent=SCHOOL_SETS[state.scope].tag;const visible=missionIndices();if(!visible.includes(state.mi))state.mi=visible[0];const m=missions[state.mi],qs=qa();if(state.qi>=qs.length)state.qi=Math.max(0,qs.length-1);renderNav();$('chapterLabel').textContent=m.code+(m.id==='planning'?' · EXPERIMENTAL SKILLS':state.mi<6?' · 4.2 ELECTRICAL QUANTITIES':' · 4.3 ELECTRIC CIRCUITS');$('missionTitle').innerHTML=dual(m.title);$('missionSubtitle').innerHTML=dual(m.desc);$('missionPosition').textContent=String(visible.indexOf(state.mi)+1).padStart(2,'0')+' / '+visible.length;$('missionCompletion').textContent=qs.filter(complete).length+' / '+qs.length;$('noteTitle').innerHTML=dual(m.title);
+function render(){document.body.classList.toggle('lang-th',state.lang==='th');document.body.classList.toggle('lang-en',state.lang==='en');$('language').value=state.lang;$('tier').value=state.tier;document.querySelectorAll('[data-ui]').forEach(n=>n.textContent=(state.lang==='th'?locales[n.dataset.ui].th:locales[n.dataset.ui].en));$('scope').value=state.scope;$('tierControl').hidden=false;$('scopeTitle').innerHTML=dual(SCHOOL_SETS[state.scope].title);$('scopeDescription').innerHTML=dual(SCHOOL_SETS[state.scope].desc);$('scopeTag').textContent=SCHOOL_SETS[state.scope].tag;const visible=missionIndices();if(!visible.includes(state.mi))state.mi=visible[0];const m=missions[state.mi],qs=qa();if(state.qi>=qs.length)state.qi=Math.max(0,qs.length-1);renderNav();$('chapterLabel').textContent=m.code+(m.id==='planning'?' · EXPERIMENTAL SKILLS':state.mi<6?' · 4.2 ELECTRICAL QUANTITIES':' · 4.3 ELECTRIC CIRCUITS');$('missionTitle').innerHTML=dual(m.title);$('missionSubtitle').innerHTML=dual(m.desc);$('missionPosition').textContent=String(visible.indexOf(state.mi)+1).padStart(2,'0')+' / '+visible.length;$('missionCompletion').textContent=qs.filter(complete).length+' / '+qs.length;$('noteTitle').innerHTML=dual(m.title);
 const chapterArticle=topicArticles[m.id];if(!chapterArticle)throw Error('Missing revision article for '+m.id);
 const coreParagraphs=coreArticleFor(m,chapterArticle);
 const articleParagraphs=[...coreParagraphs,...(articleUsesSupplement(m)?chapterArticle.supplement:[])];
