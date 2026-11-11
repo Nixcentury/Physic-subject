@@ -505,6 +505,8 @@ X('planning',W('xp_wp8','core','Plan','A resistance–length graph is nearly str
 'Similar case: if one reading of pendulum period is unusually long, check timing and repeat it rather than deleting it without evidence.',
 'ตัวอย่างคล้าย: หากค่าคาบลูกตุ้มจุดหนึ่งสูงผิดปกติ ควรตรวจการจับเวลาและวัดซ้ำก่อนตัดทิ้ง');
 
+// Avoid repeating marks in the stem when the interface already shows [n marks].
+missions.forEach(m=>m.questions.forEach(q=>{q.text.en=q.text.en.replace(/\s*\[\d+ marks?\]/g,'');q.text.th=q.text.th.replace(/\s*\[\d+ คะแนน\]/g,'');}));
 // Deterministically vary answer positions A–D while keeping them balanced.
 // Preserve the original identity of each pictured symbol when options move.
 function stableHash(value){let h=2166136261;for(const ch of value){h=Math.imul(h^ch.charCodeAt(0),16777619)}return h>>>0}
