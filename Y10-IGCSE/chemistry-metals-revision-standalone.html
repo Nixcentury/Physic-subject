@@ -31,6 +31,7 @@
 .cloze-slot.filled{border-style:solid;background:#eaf5f1;border-color:#6fb4a0;color:#0b5750}
 .cloze-slot.incorrect{border-color:#d98184;background:#fff3f1;color:#943539}
 .cloze-slot.correct{border-color:#70b693;background:#eaf9f1}
+.cloze-slot.forfeited{border-color:#bd9768;background:#fff4e7;color:#785026}
 .cloze-bank{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0;max-height:210px;overflow-y:auto;padding:8px;border:1px solid #dcece8;border-radius:11px;background:#fff;position:sticky;top:8px;z-index:2}
 .cloze-token{text-align:center;padding:8px 7px;min-height:49px;font-size:12px;line-height:1.35;border:1px solid #aacdc6;border-radius:10px;background:#fff;cursor:grab;touch-action:manipulation;overflow-wrap:anywhere}
 .cloze-token .thai{font-size:10px;margin-top:2px;line-height:1.3}
@@ -518,9 +519,9 @@ function clozeBank(l){
 (function(){
 const $=id=>document.getElementById(id); const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const key='metals-revision-y10-0620-v2'; let saved={};try{saved=JSON.parse(localStorage.getItem(key)||'{}')}catch(e){};
-const state={topic:saved.topic||'all',tier:saved.tier||'all',language:saved.language||'both',lesson:saved.lesson||lessons[0].id,q:0,positions:saved.positions||{},answers:saved.answers||{},review:false,reviewKeys:null,selection:null,order:null,writeText:'',clozeDone:{},clozeValues:{},clozeSelected:null,clozeChecked:false,clozeHits:0};
+const state={clozeGaveUp:saved.clozeGaveUp||{},topic:saved.topic||'all',tier:saved.tier||'all',language:saved.language||'both',lesson:saved.lesson||lessons[0].id,q:0,positions:saved.positions||{},answers:saved.answers||{},review:false,reviewKeys:null,selection:null,order:null,writeText:'',clozeDone:{},clozeValues:{},clozeSelected:null,clozeChecked:false,clozeHits:0};
 const byId=Object.fromEntries(lessons.map(l=>[l.id,l]));
-const keep=()=>{try{localStorage.setItem(key,JSON.stringify({topic:state.topic,tier:state.tier,language:state.language,lesson:state.lesson,positions:state.positions,answers:state.answers}))}catch(e){}};
+const keep=()=>{try{localStorage.setItem(key,JSON.stringify({topic:state.topic,tier:state.tier,language:state.language,lesson:state.lesson,positions:state.positions,answers:state.answers,clozeGaveUp:state.clozeGaveUp}))}catch(e){}};
 const bi=(en,th)=>'<span class="english" lang="en">'+esc(en)+'</span><span class="thai" lang="th">'+esc(th)+'</span>';
 const filtered=()=>lessons.filter(l=>(state.topic==='all'||state.topic===l.topic)&&(state.tier==='all'||state.tier===l.tier)&&(!state.review||l.questions.some((q,i)=>state.reviewKeys?.includes(l.id+':'+i))));
 const allVisibleQuestions=()=>filtered().flatMap(l=>l.questions.filter(q=>state.tier!=='core'||q.level==='core').map((q,i)=>({l,q,i:l.questions.indexOf(q),key:l.id+':'+l.questions.indexOf(q)}))).filter(x=>!state.review||state.reviewKeys?.includes(x.key));
@@ -548,16 +549,25 @@ function render(){
  if(warming){renderCloze(l)}else{renderQuestion(q)}
  $('prev').disabled=warming||state.q===0;
  $('next').disabled=warming||(state.q===qs.length-1&&!filtered().some((x,i)=>i>filtered().indexOf(l)&&questionsFor(x).length));
- const rec=state.answers[q._key];$('check').disabled=warming||!!rec;$('giveup').disabled=warming||!!rec;
+ const rec=state.answers[q._key];$('check').disabled=warming||!!rec;$('giveup').disabled=warming?(!!state.clozeGaveUp[l.id]||(state.clozeChecked&&state.clozeHits===CLOZE_PASSAGES[l.id].answers.length)):!!rec;
  $('check').textContent=q.type==='write'?'Show model / ดูตัวอย่าง':'Check answer / ตรวจคำตอบ';
 }
 function renderReading(l){const r=$('reading-scroll');r.innerHTML=`<div id="article-start"><div class="eyebrow">${esc(l.topic)} · ${esc(l.tier.toUpperCase())}</div><h3>${bi(l.titleEn,l.titleTh)}</h3>${l.reading.map(pair=>`<p class="para">${bi(pair[0],pair[1])}</p>`).join('')}</div>${figure(l.visual)}<div class="worked" id="example-start"><strong>🧩 ANALOGOUS WORKED EXAMPLE / ตัวอย่างคล้ายโจทย์</strong><p>${bi(l.exampleEn,l.exampleTh)}</p></div>${l.keywords.length?'<div class="glossary"><h4>Vocabulary / คำศัพท์ช่วยจำ</h4><div class="tags">'+l.keywords.map(t=>`<span class="tag">${esc(t)}</span>`).join('')+'</div></div>':''}${l.vocab?.length?'<div class="glossary"><h4>Vocabulary Review · ทบทวนศัพท์หลังแต่ละหัวข้อ</h4><p class="note">Recall the English word first, then tap each card to reveal it. / ทบทวนคำศัพท์อังกฤษจากคำไทยก่อนแตะเปิดเฉลย</p><div class="vocab-grid">'+l.vocab.map(pair=>'<details class="vocab-card"><summary>'+esc(pair[0])+'</summary><div lang="en">'+esc(pair[1])+'</div></details>').join('')+'</div></div>':''}<p class="note">The article explains methods and concepts; questions use new cases. / บทอ่านให้หลักการและวิธีคิด ส่วนโจทย์ใช้สถานการณ์อีกชุด</p>`}
 
 // The cloze is a prerequisite, not a scored Cambridge question.
 // It is intentionally repeated when the learner re-enters a mission and after each reload.
-function restartCloze(id){state.clozeDone[id]=false;delete state.clozeValues[id];state.clozeSelected=null;state.clozeChecked=false;state.clozeHits=0}
+function restartCloze(id){state.clozeDone[id]=false;delete state.clozeValues[id];state.clozeSelected=null;state.clozeChecked=!!state.clozeGaveUp[id];state.clozeHits=0}
+function giveUpCloze(l){
+ if(state.clozeDone[l.id]||state.clozeGaveUp[l.id])return;
+ if(state.clozeChecked&&state.clozeHits===CLOZE_PASSAGES[l.id].answers.length)return;
+ if(!confirm('Give up this passage? Score 0/3 and lock this passage until Reset. You can still do the practice questions. / ยอมแพ้บทความนี้ใช่ไหม? ได้ 0/3 และล็อกจนกว่าจะกด Reset แต่ยังทำโจทย์ต่อได้'))return;
+ state.clozeGaveUp[l.id]=true;
+ state.clozeValues[l.id]=CLOZE_PASSAGES[l.id].answers.slice();
+ state.clozeSelected=null;state.clozeChecked=true;state.clozeHits=0;
+ keep();render();
+}
 function setClozeValue(l,idx,word){
- const p=CLOZE_PASSAGES[l.id];if(!p||state.clozeDone[l.id]||!p.answers[idx])return;
+ const p=CLOZE_PASSAGES[l.id];if(!p||state.clozeDone[l.id]||state.clozeGaveUp[l.id]||!p.answers[idx])return;
  const arr=(state.clozeValues[l.id]||Array(p.answers.length).fill('')).slice();
  if(word && !clozeBank(l).includes(word))return;
  if(word){for(let i=0;i<arr.length;i++)if(arr[i]===word)arr[i]=''}
@@ -566,28 +576,28 @@ function setClozeValue(l,idx,word){
  renderCloze(l);
 }
 function renderCloze(l){
- const p=CLOZE_PASSAGES[l.id],values=state.clozeValues[l.id]||Array(p.answers.length).fill('');
+ const p=CLOZE_PASSAGES[l.id],abandoned=!!state.clozeGaveUp[l.id],values=abandoned?p.answers.slice():(state.clozeValues[l.id]||Array(p.answers.length).fill(''));
  const fmt=text=>text.split(/(\[\[[012]\]\])/g).map(chunk=>{
   const match=chunk.match(/^\[\[([012])\]\]$/);if(!match)return esc(chunk);
-  const i=Number(match[1]),v=values[i],mark=state.clozeChecked?(v===p.answers[i]?'correct':'incorrect'):'';
+  const i=Number(match[1]),v=values[i],mark=abandoned?'forfeited':state.clozeChecked?(v===p.answers[i]?'correct':'incorrect'):'';
   return `<button type="button" class="cloze-slot ${v?'filled':''} ${mark}" data-gap="${i}" aria-label="Blank ${i+1}: ${v||'empty'}">${v?esc(v):'('+String(i+1)+') ________'}</button>`;
  }).join('');
  const tokens=clozeBank(l);
- const tokensHtml=tokens.map(word=>`<button type="button" class="cloze-token ${state.clozeSelected===word?'active':''} ${values.includes(word)?'used':''}" data-word="${esc(word)}" draggable="true" ${values.includes(word)?'disabled':''}>${bi(word,CLOZE_LABELS[word]||word)}</button>`).join('');
+ const tokensHtml=tokens.map(word=>`<button type="button" class="cloze-token ${state.clozeSelected===word?'active':''} ${values.includes(word)?'used':''}" data-word="${esc(word)}" draggable="${!abandoned}" ${abandoned||values.includes(word)?'disabled':''}>${bi(word,CLOZE_LABELS[word]||word)}</button>`).join('');
  let html=`<div class="qmeta"><span>STEP 1 / 2 · ACADEMIC CLOZE</span><span>${esc(l.topic)} · ${l.tier.toUpperCase()}</span></div>`+
   '<div class="qtitle">Scientific reading · บทความทบทวนวิชาการ</div>'+
   '<p class="cloze-intro">Complete the scientific passage before attempting the quiz. Drag words into gaps, or tap a word then tap a gap on iPad. / เติมคำในบทความให้ครบก่อนเริ่มข้อสอบ ลากคำลงช่องว่าง หรือแตะคำศัพท์แล้วแตะช่องว่างบน iPad</p>'+
-  `<div class="cloze-progress">${values.filter(Boolean).length} / ${p.answers.length} filled · จำนวนที่เติมแล้ว</div>`+
+  `<div class="cloze-progress">${abandoned?'Give Up · 0 / '+p.answers.length+' · locked / ยอมแพ้แล้ว ล็อกคะแนน':values.filter(Boolean).length+' / '+p.answers.length+' filled · จำนวนที่เติมแล้ว'}</div>`+
   `<div class="cloze-counter">Word Bank · ${tokens.length} choices for ${p.answers.length} gaps / คำศัพท์ ${tokens.length} คำ สำหรับ ${p.answers.length} ช่อง</div>`+
   `<div class="cloze-bank">${tokensHtml}</div>`+
   `<div class="cloze-passage"><p class="cloze-paragraph english" lang="en">${fmt(p.en)}</p><p class="cloze-paragraph thai" lang="th">${fmt(p.th)}</p></div>`+
-  '<div class="cloze-actions"><button type="button" class="primary" id="cloze-check">Check passage / ตรวจบทความ</button><button type="button" id="cloze-clear">Clear answers / ล้างคำตอบ</button></div>';
- if(state.clozeChecked){
-  const ok=state.clozeHits===p.answers.length;
-  html+=`<div class="cloze-result ${ok?'success':''}" role="status" aria-live="polite"><strong>${ok?'✓ Ready for questions / พร้อมทำข้อสอบ':'Review and try again / ทบทวนแล้วลองอีกครั้ง'}: ${state.clozeHits} / ${p.answers.length}</strong><p>${bi(p.whyEn,p.whyTh)}</p>${ok?'<div class="cloze-actions"><button type="button" id="cloze-continue" class="primary">Continue to questions / เริ่มทำโจทย์ →</button></div>':''}</div>`;
+  `<div class="cloze-actions">${abandoned?'<button type="button" class="primary" id="cloze-continue">Continue to questions / เริ่มทำโจทย์ →</button>':'<button type="button" class="primary" id="cloze-check">Check passage / ตรวจบทความ</button><button type="button" id="cloze-clear">Clear answers / ล้างคำตอบ</button><button type="button" id="cloze-giveup">Give up · 0/3 / ยอมแพ้</button>'}</div>`;
+ if(state.clozeChecked||abandoned){
+  const ok=!abandoned&&state.clozeHits===p.answers.length;
+  html+=`<div class="cloze-result ${ok?'success':''}" role="status" aria-live="polite"><strong>${abandoned?'Give Up · 0 points, locked / ยอมแพ้ · 0 คะแนน ล็อกแล้ว':ok?'✓ Ready for questions / พร้อมทำข้อสอบ':'Review and try again / ทบทวนแล้วลองอีกครั้ง'}: ${abandoned?0:state.clozeHits} / ${p.answers.length}</strong><p>${abandoned?bi('The correct words are displayed above. This passage remains 0/3 until a full Reset; the separate practice questions are still available.','แสดงคำตอบที่ถูกต้องแล้ว บทความนี้ยังได้ 0/3 จนกว่าจะ Reset ทั้งหมด แต่ยังทำโจทย์ถัดไปได้'):bi(p.whyEn,p.whyTh)}</p>${ok?'<div class="cloze-actions"><button type="button" id="cloze-continue" class="primary">Continue to questions / เริ่มทำโจทย์ →</button></div>':''}</div>`;
  }
  const root=$('cloze-stage');root.innerHTML=html;
- const choose=word=>{state.clozeSelected=state.clozeSelected===word?null:word;renderCloze(l)};
+ const choose=word=>{if(abandoned)return;state.clozeSelected=state.clozeSelected===word?null:word;renderCloze(l)};
  root.querySelectorAll('[data-word]').forEach(el=>{
   el.addEventListener('click',()=>choose(el.dataset.word));
   el.addEventListener('dragstart',e=>{state.clozeSelected=el.dataset.word;e.dataTransfer.setData('text/plain',el.dataset.word);e.dataTransfer.effectAllowed='move'});
@@ -597,11 +607,12 @@ function renderCloze(l){
   el.addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect='move'});
   el.addEventListener('drop',e=>{e.preventDefault();const word=e.dataTransfer.getData('text/plain');setClozeValue(l,Number(el.dataset.gap),word)});
  });
- root.querySelector('#cloze-clear').addEventListener('click',()=>{state.clozeValues[l.id]=Array(p.answers.length).fill('');state.clozeSelected=null;state.clozeChecked=false;renderCloze(l)});
- root.querySelector('#cloze-check').addEventListener('click',()=>{
+ root.querySelector('#cloze-clear')?.addEventListener('click',()=>{state.clozeValues[l.id]=Array(p.answers.length).fill('');state.clozeSelected=null;state.clozeChecked=false;renderCloze(l)});
+ root.querySelector('#cloze-check')?.addEventListener('click',()=>{
   if(values.some(v=>!v)){alert(state.language==='en'?'Fill all blanks first.':'กรุณาเติมคำให้ครบทุกช่องก่อนตรวจ');return}
   state.clozeHits=values.filter((v,i)=>v===p.answers[i]).length;state.clozeChecked=true;renderCloze(l);
  });
+ root.querySelector('#cloze-giveup')?.addEventListener('click',()=>giveUpCloze(l));
  root.querySelector('#cloze-continue')?.addEventListener('click',()=>{state.clozeDone[l.id]=true;state.clozeSelected=null;state.clozeChecked=false;render()});
 }
 
@@ -617,7 +628,7 @@ function retryWrong(){
  state.selection=null;state.order=null;state.writeText='';state.clozeDone={};state.clozeValues={};
  ensure();keep();render();
 }
-$('topic').addEventListener('change',e=>{state.topic=e.target.value;state.clozeDone={};state.clozeValues={};state.positions={};state.review=false;state.reviewKeys=null;ensure();keep();render()});$('tier').addEventListener('change',e=>{state.tier=e.target.value;state.clozeDone={};state.clozeValues={};state.positions={};state.review=false;state.reviewKeys=null;ensure();keep();render()});$('language').addEventListener('change',e=>{state.language=e.target.value;keep();render()});$('check').addEventListener('click',()=>submit());$('giveup').addEventListener('click',()=>submit(true));$('prev').addEventListener('click',()=>setQuestion(state.q-1));$('next').addEventListener('click',goNext);$('review-wrong').addEventListener('click',retryWrong);$('show-all').addEventListener('click',()=>{state.topic='all';state.tier='all';state.clozeDone={};state.clozeValues={};state.review=false;state.reviewKeys=null;ensure();keep();render()});$('print').addEventListener('click',()=>window.print());$('reset').addEventListener('click',()=>{if(confirm('Clear all locally saved answers? / ลบคำตอบและความคืบหน้าในเครื่องทั้งหมด?')){try{localStorage.removeItem(key)}catch(e){};state.answers={};state.positions={};state.clozeDone={};state.clozeValues={};state.review=false;state.reviewKeys=null;state.q=0;state.lesson=lessons[0].id;state.selection=null;state.order=null;render()}});$('jump-reading').addEventListener('click',()=>{$('article-start').scrollIntoView({block:'start',behavior:'smooth'})});$('jump-example').addEventListener('click',()=>{$('example-start').scrollIntoView({block:'start',behavior:'smooth'})});
+$('topic').addEventListener('change',e=>{state.topic=e.target.value;state.clozeDone={};state.clozeValues={};state.positions={};state.review=false;state.reviewKeys=null;ensure();keep();render()});$('tier').addEventListener('change',e=>{state.tier=e.target.value;state.clozeDone={};state.clozeValues={};state.positions={};state.review=false;state.reviewKeys=null;ensure();keep();render()});$('language').addEventListener('change',e=>{state.language=e.target.value;keep();render()});$('check').addEventListener('click',()=>submit());$('giveup').addEventListener('click',()=>{const l=byId[state.lesson];if(!state.clozeDone[l.id])giveUpCloze(l);else submit(true)});$('prev').addEventListener('click',()=>setQuestion(state.q-1));$('next').addEventListener('click',goNext);$('review-wrong').addEventListener('click',retryWrong);$('show-all').addEventListener('click',()=>{state.topic='all';state.tier='all';state.clozeDone={};state.clozeValues={};state.review=false;state.reviewKeys=null;ensure();keep();render()});$('print').addEventListener('click',()=>window.print());$('reset').addEventListener('click',()=>{if(confirm('Clear all locally saved answers? / ลบคำตอบและความคืบหน้าในเครื่องทั้งหมด?')){try{localStorage.removeItem(key)}catch(e){};state.answers={};state.positions={};state.clozeGaveUp={};state.clozeDone={};state.clozeValues={};state.review=false;state.reviewKeys=null;state.q=0;state.lesson=lessons[0].id;state.selection=null;state.order=null;render()}});$('jump-reading').addEventListener('click',()=>{$('article-start').scrollIntoView({block:'start',behavior:'smooth'})});$('jump-example').addEventListener('click',()=>{$('example-start').scrollIntoView({block:'start',behavior:'smooth'})});
 function figure(k){const sz='width="520" height="270" viewBox="0 0 520 270"';const txt=(x,y,s,size=13,fill='#315b65')=>`<text x="${x}" y="${y}" text-anchor="middle" font-family="sans-serif" font-size="${size}" fill="${fill}">${esc(s)}</text>`;
 const frame=(inner,caption)=>`<figure class="figure"><svg ${sz} role="img" aria-label="${esc(caption)}" xmlns="http://www.w3.org/2000/svg">${inner}</svg><figcaption>${esc(caption)}</figcaption></figure>`;
 if(k==='series')return frame([['K','Potassium'],['Na','Sodium'],['Ca','Calcium'],['Mg','Magnesium'],['Al','Aluminium'],['C','Carbon marker'],['Zn','Zinc'],['Fe','Iron'],['H','Hydrogen marker'],['Cu','Copper'],['Ag','Silver'],['Au','Gold']].map(([s,n],i)=>{const y=15+21*i;return `<rect x="80" y="${y-12}" width="360" height="20" rx="3" fill="${s==='C'||s==='H'?'#f5e8bf':i<5?'#fbe9df':'#e4f3ed'}"/>${txt(116,y+2,s,12)}${txt(280,y+2,n,12)}`}).join(''), 'Complete Cambridge 0620 reactivity order (most to least reactive, top to bottom) / เรียงความว่องไวจากมากไปน้อยครบ 12 ธาตุ');
