@@ -592,7 +592,7 @@ function renderCloze(l){
   `<div class="cloze-bank">${tokensHtml}</div>`+
   `<div class="cloze-passage"><p class="cloze-paragraph english" lang="en">${fmt(p.en)}</p><p class="cloze-paragraph thai" lang="th">${fmt(p.th)}</p></div>`+
   `<div class="cloze-actions">${abandoned?'<button type="button" class="primary" id="cloze-continue">Continue to questions / เริ่มทำโจทย์ →</button>':'<button type="button" class="primary" id="cloze-check">Check passage / ตรวจบทความ</button><button type="button" id="cloze-clear">Clear answers / ล้างคำตอบ</button><button type="button" id="cloze-giveup">Give up · 0/3 / ยอมแพ้</button>'}</div>`;
- if(state.clozeChecked){
+ if(state.clozeChecked||abandoned){
   const ok=!abandoned&&state.clozeHits===p.answers.length;
   html+=`<div class="cloze-result ${ok?'success':''}" role="status" aria-live="polite"><strong>${abandoned?'Give Up · 0 points, locked / ยอมแพ้ · 0 คะแนน ล็อกแล้ว':ok?'✓ Ready for questions / พร้อมทำข้อสอบ':'Review and try again / ทบทวนแล้วลองอีกครั้ง'}: ${abandoned?0:state.clozeHits} / ${p.answers.length}</strong><p>${abandoned?bi('The correct words are displayed above. This passage remains 0/3 until a full Reset; the separate practice questions are still available.','แสดงคำตอบที่ถูกต้องแล้ว บทความนี้ยังได้ 0/3 จนกว่าจะ Reset ทั้งหมด แต่ยังทำโจทย์ถัดไปได้'):bi(p.whyEn,p.whyTh)}</p>${ok?'<div class="cloze-actions"><button type="button" id="cloze-continue" class="primary">Continue to questions / เริ่มทำโจทย์ →</button></div>':''}</div>`;
  }
