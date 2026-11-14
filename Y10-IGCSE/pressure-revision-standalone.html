@@ -68,6 +68,10 @@ main{padding:clamp(18px,3vw,36px);min-width:0}
 .syllabus a{color:var(--blue)}
 body[data-lang="en"] [lang="th"],body[data-lang="th"] [lang="en"]{display:none!important}
 body[data-lang="en"] .focus,body[data-lang="th"] .focus{grid-template-columns:1fr}
+.intro h1 span,.lesson-head h2 span,.lesson-head p span,.section-block h3 span{display:block}
+.lesson-head h2 span[lang="en"],.section-block h3 span[lang="en"]{font-size:.8em;color:#506f91;font-weight:650}
+body[data-lang="en"] .lesson-head h2 span[lang="en"],body[data-lang="en"] .section-block h3 span[lang="en"]{font-size:1em;color:inherit}
+body[data-lang="th"] .lesson-head h2 span[lang="th"],body[data-lang="th"] .section-block h3 span[lang="th"]{font-size:1em;color:inherit}
 body[data-tier="core"] .supplement-only{display:none!important}
 @media(max-width:920px){.layout{display:block}aside{position:static;max-height:none;border-right:0;border-bottom:1px solid var(--line);padding:14px}.mission-nav{display:flex;overflow:auto;padding-bottom:5px}.mission-btn{flex:0 0 200px}main{padding:16px}.topbar{position:static}.focus{grid-template-columns:1fr}}
 @media print{.topbar,aside,.next,.side-note{display:none!important}.layout{display:block}main{padding:0}.intro{border:0;margin:0;padding:0 0 12px}.reading{border:0}.section-block{break-inside:avoid}.key-points{background:#fff}body{background:white;color:black}}
@@ -89,7 +93,7 @@ body[data-tier="core"] .supplement-only{display:none!important}
   <div class="side-note"><strong>R01 · Academic Reading</strong><p>This is the reading-stage prototype. Word banks, scored questions, worked examples per question, flashcards and progress tracking are scheduled for R02–R06. / ฉบับนี้เน้นบทอ่าน ยังไม่มีแบบฝึกและระบบคะแนน</p></div>
  </aside>
  <main id="lesson">
-  <div class="intro"><div class="stage">CAMBRIDGE IGCSE PHYSICS 0625 · 2026–2028</div><h1>Pressure / ความดัน</h1><p>Original bilingual study articles for all six missions, aligned to syllabus §1.8. Read the explanation, examine the worked examples and then revisit the key ideas. No additional textbook is required for this R01 reading.</p></div>
+  <div class="intro"><div class="stage">CAMBRIDGE IGCSE PHYSICS 0625 · 2026–2028</div><h1><span lang="th">ความดัน</span><span lang="en">Pressure</span></h1><p lang="th">บทอ่านทบทวนวิชาการสองภาษาครบ 6 Missions ตรงตามหลักสูตรหัวข้อ 1.8 พร้อมตัวอย่างและสรุปสำคัญ โดยไม่จำเป็นต้องเปิดหนังสืออื่นสำหรับการอ่านรอบ R01</p><p lang="en">Original bilingual study articles for all six missions, aligned to syllabus §1.8. Read the explanations, examine the worked examples and review key ideas. No additional textbook is needed for this R01 reading.</p></div>
   <article class="reading" id="articleHost" aria-live="polite"></article>
   <div class="next"><button id="prevBtn" type="button">← Previous / ก่อนหน้า</button><button id="nextBtn" type="button">Next / ถัดไป →</button></div>
   <p class="syllabus">Curriculum reference for teachers (optional): <a href="https://www.cambridgeinternational.org/Images/697209-2026-2028-syllabus.pdf" target="_blank" rel="noopener">Cambridge 0625 syllabus 2026–2028, p.18, §1.8</a>. Original educational text; not endorsed by Cambridge International.</p>
@@ -106,11 +110,11 @@ function render(){
  const visible=getVisible();
  if(!visible.some(m=>m.id===active))active=visible[0].id;
  const m=MISSIONS.find(x=>x.id===active);
- nav.innerHTML=visible.map((x,i)=>'<button type="button" class="mission-btn '+(x.id===active?"active":"")+'" data-go="'+x.id+'" aria-current="'+(x.id===active?"page":"false")+'"><span class="number">'+String(i+1).padStart(2,"0")+'</span><span class="names"><b>'+x.title.en+'</b><small>'+x.title.th+'</small></span></button>').join("");
+ nav.innerHTML=visible.map((x,i)=>'<button type="button" class="mission-btn '+(x.id===active?"active":"")+'" data-go="'+x.id+'" aria-current="'+(x.id===active?"page":"false")+'"><span class="number">'+String(i+1).padStart(2,"0")+'</span><span class="names"><b lang="th">'+x.title.th+'</b><small lang="en">'+x.title.en+'</small></span></button>').join("");
  const level=m.level==="supplement"?"supplement":m.level==="mixed"?"core + supplement":"core";
- host.innerHTML='<div class="lesson-head"><span class="pill '+(m.level==="supplement"?"sup":"")+'">'+level.toUpperCase()+'</span><h2>'+m.title.en+' / '+m.title.th+'</h2><p>'+m.subtitle.en+' · '+m.subtitle.th+'</p><div class="focus">'+langBox("en","LEARNING GOAL",'<p>'+m.objective.en+'</p>')+langBox("th","จุดประสงค์",'<p>'+m.objective.th+'</p>')+'</div></div>'+
- '<div class="sections">'+m.blocks.map((b,i)=>'<section class="section-block '+(b.supplement?"supplement-only":"")+'">'+(b.supplement?'<div class="note-sup">SUPPLEMENT / EXTENDED ONLY</div>':"")+'<h3>'+String(i+1)+'. '+b.heading.en+' / '+b.heading.th+'</h3>'+langBox("en","ENGLISH",b.en)+langBox("th","ภาษาไทย",b.th)+'</section>').join("")+'</div>'+
- '<section class="key-points"><h3>Key ideas / ประเด็นสำคัญ</h3>'+langBox("en","ENGLISH",'<ul>'+m.key.en.map(x=>'<li>'+x+'</li>').join("")+'</ul>')+langBox("th","ภาษาไทย",'<ul>'+m.key.th.map(x=>'<li>'+x+'</li>').join("")+'</ul>')+'</section>';
+ host.innerHTML='<div class="lesson-head"><span class="pill '+(m.level==="supplement"?"sup":"")+'">'+level.toUpperCase()+'</span><h2><span lang="th">'+m.title.th+'</span><span lang="en">'+m.title.en+'</span></h2><p><span lang="th">'+m.subtitle.th+'</span><span lang="en">'+m.subtitle.en+'</span></p><div class="focus">'+langBox("th","จุดประสงค์",'<p>'+m.objective.th+'</p>')+langBox("en","LEARNING GOAL",'<p>'+m.objective.en+'</p>')+'</div></div>'+
+ '<div class="sections">'+m.blocks.map((b,i)=>'<section class="section-block '+(b.supplement?"supplement-only":"")+'">'+(b.supplement?'<div class="note-sup">SUPPLEMENT / EXTENDED ONLY</div>':"")+'<h3>'+String(i+1)+'. <span lang="th">'+b.heading.th+'</span><span lang="en">'+b.heading.en+'</span></h3>'+langBox("th","ภาษาไทย",b.th)+langBox("en","ENGLISH",b.en)+'</section>').join("")+'</div>'+
+ '<section class="key-points"><h3>Key ideas / ประเด็นสำคัญ</h3>'+langBox("th","ภาษาไทย",'<ul>'+(m.level==="mixed"&&document.body.dataset.tier==="core"?m.key.th.slice(0,2):m.key.th).map(x=>'<li>'+x+'</li>').join("")+'</ul>')+langBox("en","ENGLISH",'<ul>'+(m.level==="mixed"&&document.body.dataset.tier==="core"?m.key.en.slice(0,2):m.key.en).map(x=>'<li>'+x+'</li>').join("")+'</ul>')+'</section>';
  const i=visible.findIndex(x=>x.id===active);
  document.getElementById("prevBtn").disabled=i===0;
  document.getElementById("nextBtn").disabled=i===visible.length-1;
