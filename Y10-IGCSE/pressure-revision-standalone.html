@@ -453,7 +453,7 @@ function loadProgress(){
    records[q.id]={status:r.status,score:r.status==="givenup"?0:Math.min(q.marks,Math.max(0,Number(r.score)||0)),
     response:String(r.response||"").slice(0,2500),
     attempts:Array.isArray(r.attempts)?r.attempts.slice(-25).filter(a=>a&&Number.isFinite(a.score)).map(a=>({
-     score:Math.min(q.marks,Math.max(0,Number(a.score))),kind:String(a.kind||"check"),at:Number(a.at)||0
+     score:Math.min(q.marks,Math.max(0,Number(a.score))),kind:String(a.kind||"check"),at:Number(a.at)||0,response:String(a.response||"").slice(0,2500)
     })) : []};
   }
   if(typeof data.drafts?.[q.id]==="string")drafts[q.id]=data.drafts[q.id].slice(0,2500);
@@ -494,7 +494,7 @@ function answerDraft(q){const r=progress.records[q.id];return r&&retryId!==q.id?
 function locked(q){return !!progress.records[q.id]&&retryId!==q.id;}
 function saveAttempt(q,response,marks,kind){
  const old=progress.records[q.id],hist=old?.attempts?.slice(-24)||[];
- hist.push({score:marks,kind,at:Date.now()});
+ hist.push({score:marks,kind,at:Date.now(),response:String(response||"").slice(0,2500)});
  progress.records[q.id]={status:kind==="giveup"?"givenup":"graded",score:kind==="giveup"?0:Math.max(marks,old?.score||0),
   response:String(response||"").slice(0,2500),attempts:hist};
  delete progress.drafts[q.id];retryId=null;showRubric=false;rubricTicks=new Set();practiceHint="";persist();
@@ -517,7 +517,7 @@ function historyPanel(){
  if(!showHistory)return "";
  const rows=availablePractice().flatMap(q=>(progress.records[q.id]?.attempts||[]).map((a,i)=>({id:q.id,...a}))).sort((a,b)=>b.at-a.at).slice(0,50);
  return '<section class="attempts-panel"><h3>'+dual("Attempt History","Attempt History")+'</h3>'+
-  (rows.length?'<ul>'+rows.map(a=>'<li>'+safe(a.id)+' · '+safe(a.kind)+' · '+a.score+' marks · '+safe(a.at?new Date(a.at).toLocaleString():"")+'</li>').join("")+'</ul>':
+  (rows.length?'<ul>'+rows.map(a=>'<li>'+safe(a.id)+' · '+safe(a.kind)+' · '+a.score+' marks · '+safe(a.at?new Date(a.at).toLocaleString():"")+(a.response?'<div>'+dual("คำตอบที่ส่ง: ","Submitted: ")+safe(a.response.slice(0,220))+'</div>':"")+'</li>').join("")+'</ul>':
    '<p>'+dual("ยังไม่มีประวัติการส่งคำตอบ","No submissions yet.")+'</p>')+'</section>';
 }
 function renderPractice(){
@@ -672,7 +672,10 @@ function render(){
  const visible=getVisible();
  if(!visible.some(m=>m.id===active))active=visible[0].id;
  const m=MISSIONS.find(x=>x.id===active);
- nav.innerHTML=visible.map((x,i)=>'<button type="button" class="mission-btn '+(x.id===active?"active":"")+'" data-go="'+x.id+'" aria-current="'+(x.id===active?"page":"false")+'"><span class="number">'+String(i+1).padStart(2,"0")+'</span><span class="names"><b lang="th">'+x.title.th+'</b><small lang="en">'+x.title.en+'</small></span></button>').join("");
+ nav.innerHTML=visible.map((x,i)=>{
+ const p=counts(x.id),done=p.done===p.total&&p.total>0,passed=!!progress.exits[document.body.dataset.tier+":"+x.id]&&done;
+ return '<button type="button" class="mission-btn '+(x.id===active?"active":"")+'" data-go="'+x.id+'" aria-current="'+(x.id===active?"page":"false")+'"><span class="number">'+String(i+1).padStart(2,"0")+'</span><span class="names"><b lang="th">'+x.title.th+'</b><small lang="en">'+x.title.en+'</small><small class="progress-tag">'+(passed?"✓ Exit Ticket · ":done?"Questions done · ":"")+p.done+'/'+p.total+' · '+p.score+'/'+p.max+' marks</small></span></button>';
+ }).join("");
  const level=m.level==="supplement"?"supplement":m.level==="mixed"?"core + supplement":"core";
  studyArticleMarkup='<div class="lesson-head"><span class="pill '+(m.level==="supplement"?"sup":"")+'">'+level.toUpperCase()+'</span><h2><span lang="th">'+m.title.th+'</span><span lang="en">'+m.title.en+'</span></h2><p><span lang="th">'+m.subtitle.th+'</span><span lang="en">'+m.subtitle.en+'</span></p><div class="focus">'+langBox("th","จุดประสงค์",'<p>'+m.objective.th+'</p>')+langBox("en","LEARNING GOAL",'<p>'+m.objective.en+'</p>')+'</div></div>'+
  '<div class="sections">'+m.blocks.map((b,i)=>'<section class="section-block '+(b.supplement?"supplement-only":"")+'">'+(b.supplement?'<div class="note-sup">SUPPLEMENT / EXTENDED ONLY</div>':"")+'<h3>'+String(i+1)+'. <span lang="th">'+b.heading.th+'</span><span lang="en">'+b.heading.en+'</span></h3>'+langBox("th","ภาษาไทย",b.th)+langBox("en","ENGLISH",b.en)+'</section>').join("")+'</div>'+
