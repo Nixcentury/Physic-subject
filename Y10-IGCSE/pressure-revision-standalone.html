@@ -294,7 +294,7 @@ function drawCloze(){
  '<button data-action="clear" type="button" '+(locked?"disabled":"")+'>'+dual("ล้างช่องตอบ","Clear blanks")+'</button>'+
  '<button class="giveup" data-action="giveup" type="button" '+(locked?"disabled":"")+'>'+dual("ยอมแพ้ 0/3","Give Up · 0/3")+'</button></div>'+
  '<div role="status" class="cloze-status '+state+'">'+message+'</div>'+reasons+'</div>'+
- '<div class="cloze-footer"><button type="button" data-action="reset">'+dual("Full Reset: ล้างสถานะยอมแพ้ทุก Mission","Full Reset: clear all forfeits")+'</button></div>';
+ '<div class="cloze-footer"><button type="button" data-action="reset">'+dual("Full Reset: ล้างคะแนนและสถานะทุก Mission","Full Reset: clear all progress")+'</button></div>';
 }
 function assignWord(id,position){
  if(complete||forfeited[active]||!currentCloze().words.some(w=>w.id===id))return;
@@ -325,9 +325,8 @@ clozeHost.addEventListener("click",e=>{
   choices=c.solution.slice();checked=true;selectedWord=null;notice="";drawCloze();renderPractice();
  }
  if(action==="reset"){
-  if(!window.confirm("รีเซ็ตสถานะยอมแพ้ทุก Mission? / Clear all mission forfeits?"))return;
-  forfeited={};try{localStorage.removeItem(STORAGE_KEY);}catch(e){}
-  startCloze();resetPractice();setActivity("recall");drawCloze();renderPractice();
+  if(!window.confirm("ล้างคะแนน คำตอบ ประวัติและสถานะทั้งหมด? / Full Reset all scores, answers and history?"))return;
+  resetAllData();
  }
 });
 clozeHost.addEventListener("dragstart",e=>{
@@ -441,116 +440,232 @@ host.addEventListener("click",e=>{
  referenceView=b.dataset.ref==="worked"?"worked":"article";renderCompanion();
 });
 
-/* R04 practice preview: assessment persistence still planned for R05. */
-let activity="recall",practiceIndex=0,practiceDraft=null,practiceChecked=false,practiceCorrect=false,practiceHint="",optionOrder=[];
-function availablePractice(){return PRACTICE_QUESTIONS.filter(q=>q.mission===active&&(document.body.dataset.tier==="extended"||q.tier==="core"));}
+
+/* R05 persistent local assessment */
+const PROGRESS_KEY="pressure-igcse-r05-progress-v1";
+const validQuestions=new Map(PRACTICE_QUESTIONS.map(q=>[q.id,q]));
+function loadProgress(){
+ let data={};try{data=JSON.parse(localStorage.getItem(PROGRESS_KEY)||"{}")||{};}catch(_){}
+ const records={},drafts={},exits={};
+ for(const q of PRACTICE_QUESTIONS){
+  const r=data.records?.[q.id];
+  if(r&&["graded","givenup"].includes(r.status)){
+   records[q.id]={status:r.status,score:r.status==="givenup"?0:Math.min(q.marks,Math.max(0,Number(r.score)||0)),
+    response:String(r.response||"").slice(0,2500),
+    attempts:Array.isArray(r.attempts)?r.attempts.slice(-25).filter(a=>a&&Number.isFinite(a.score)).map(a=>({
+     score:Math.min(q.marks,Math.max(0,Number(a.score))),kind:String(a.kind||"check"),at:Number(a.at)||0
+    })) : []};
+  }
+  if(typeof data.drafts?.[q.id]==="string")drafts[q.id]=data.drafts[q.id].slice(0,2500);
+ }
+ for(const k of Object.keys(data.exits||{}))if(/^(core|extended):p0[1-6]$/.test(k)&&data.exits[k]===true)exits[k]=true;
+ return {records,drafts,exits};
+}
+let progress=loadProgress(),saveError="";
+function persist(){try{localStorage.setItem(PROGRESS_KEY,JSON.stringify(progress));saveError="";}catch(_){saveError="บันทึกในเครื่องไม่สำเร็จ / Device save failed";}}
+let activity="recall",practiceIndex=0,practiceHint="",optionOrder=[],retryId=null,showRubric=false,rubricTicks=new Set(),showHistory=false;
+let cardIndex=0,cardFlip=false,seenCards=new Set();
+const scoped=id=>PRACTICE_QUESTIONS.filter(q=>q.mission===id&&(document.body.dataset.tier==="extended"||q.tier==="core"));
+function availablePractice(){return scoped(active);}
 function selectedQuestion(){return availablePractice()[practiceIndex]||null;}
+function counts(id=active){const list=scoped(id);return {done:list.filter(q=>!!progress.records[q.id]).length,total:list.length,
+ score:list.reduce((n,q)=>n+(progress.records[q.id]?.score||0),0),max:list.reduce((n,q)=>n+q.marks,0)};}
+function allAnswered(){const x=counts();return x.total>0&&x.done===x.total;}
+function recallReady(){return complete||!!forfeited[active];}
+function keyExit(){return document.body.dataset.tier+":"+active;}
 function buildOrder(){
- const q=selectedQuestion();
- optionOrder=q&&q.type==="mcq"?[0,1,2,3]:[];
- for(let i=optionOrder.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[optionOrder[i],optionOrder[j]]=[optionOrder[j],optionOrder[i]];}
+ const q=selectedQuestion();optionOrder=q?.type==="mcq"?[0,1,2,3]:[];
+ for(let i=optionOrder.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[optionOrder[i],optionOrder[j]]=[optionOrder[j],optionOrder[i]];}
 }
 function resetPractice(){
- practiceIndex=0;practiceDraft=null;practiceChecked=false;practiceCorrect=false;practiceHint="";buildOrder();
+ practiceIndex=0;retryId=null;practiceHint="";showRubric=false;rubricTicks=new Set();showHistory=false;
+ cardIndex=0;cardFlip=false;seenCards=new Set();buildOrder();
 }
 function setActivity(mode){
- activity=(mode==="practice"?"practice":"recall");
- clozeHost.hidden=activity!=="recall";practiceHost.hidden=activity!=="practice";
- const a=document.getElementById("recallTab"),b=document.getElementById("practiceTab");
- a.classList.toggle("active",activity==="recall");b.classList.toggle("active",activity==="practice");
- a.setAttribute("aria-pressed",String(activity==="recall"));b.setAttribute("aria-pressed",String(activity==="practice"));
+ const flashAllowed=recallReady()&&allAnswered();
+ activity=mode==="flash"&&flashAllowed?"flash":mode==="practice"?"practice":"recall";
+ clozeHost.hidden=activity!=="recall";practiceHost.hidden=activity!=="practice";flashHost.hidden=activity!=="flash";
+ for(const [id,tab] of [["recallTab","recall"],["practiceTab","practice"],["flashTab","flash"]]){
+  const b=document.getElementById(id);b.classList.toggle("active",activity===tab);
+  b.setAttribute("aria-pressed",String(activity===tab));if(tab==="flash")b.disabled=!flashAllowed;
+ }
+}
+function answerDraft(q){const r=progress.records[q.id];return r&&retryId!==q.id?r.response:(progress.drafts[q.id]||"");}
+function locked(q){return !!progress.records[q.id]&&retryId!==q.id;}
+function saveAttempt(q,response,marks,kind){
+ const old=progress.records[q.id],hist=old?.attempts?.slice(-24)||[];
+ hist.push({score:marks,kind,at:Date.now()});
+ progress.records[q.id]={status:kind==="giveup"?"givenup":"graded",score:kind==="giveup"?0:Math.max(marks,old?.score||0),
+  response:String(response||"").slice(0,2500),attempts:hist};
+ delete progress.drafts[q.id];retryId=null;showRubric=false;rubricTicks=new Set();practiceHint="";persist();
+}
+function retryIncorrect(q){
+ const r=progress.records[q.id];if(!r||r.status!=="graded"||r.score>=q.marks)return;
+ retryId=q.id;progress.drafts[q.id]="";practiceHint="";showRubric=false;rubricTicks=new Set();buildOrder();persist();renderPractice();
+}
+function resultPanel(q,r){
+ if(!r)return "";
+ const giving=r.status==="givenup";
+ const label=giving?dual("Give Up · 0 คะแนน (ล็อกข้อแล้ว)","Give Up · 0 marks (locked)"):
+  dual("บันทึกแล้ว · คะแนนดีที่สุด "+r.score+"/"+q.marks,"Saved · Best marks "+r.score+"/"+q.marks);
+ const sol=q.type==="written"?'<p>'+dual(q.model.th,q.model.en)+'</p><ul class="rubric">'+q.rubric.map((point,i)=>'<li>'+(i+1)+". "+dual(point.th,point.en)+'</li>').join("")+'</ul>':
+  '<p>'+dual("เฉลย: ","Answer: ")+(q.type==="mcq"?dual(q.options[q.answer].th,q.options[q.answer].en):safe(q.answer+" "+q.unit))+'</p>'+
+  '<p>'+dual(q.explanation.th,q.explanation.en)+'</p>';
+ return '<div class="question-feedback '+(giving||r.score<q.marks?"incorrect":"")+'"><strong>'+label+'</strong>'+sol+'</div>';
+}
+function historyPanel(){
+ if(!showHistory)return "";
+ const rows=availablePractice().flatMap(q=>(progress.records[q.id]?.attempts||[]).map((a,i)=>({id:q.id,...a}))).sort((a,b)=>b.at-a.at).slice(0,50);
+ return '<section class="attempts-panel"><h3>'+dual("Attempt History","Attempt History")+'</h3>'+
+  (rows.length?'<ul>'+rows.map(a=>'<li>'+safe(a.id)+' · '+safe(a.kind)+' · '+a.score+' marks · '+safe(a.at?new Date(a.at).toLocaleString():"")+'</li>').join("")+'</ul>':
+   '<p>'+dual("ยังไม่มีประวัติการส่งคำตอบ","No submissions yet.")+'</p>')+'</section>';
 }
 function renderPractice(){
- const unlocked=complete||!!forfeited[active];
- const q=selectedQuestion(),qs=availablePractice();
- if(!q){
-  practiceHost.innerHTML='<div class="practice-locked">'+dual("ยังไม่มีโจทย์ใน Mission นี้","No questions in this mission")+'</div>';return;
+ const q=selectedQuestion(),cs=counts();
+ if(!q){practiceHost.innerHTML='<p>No questions</p>';return;}
+ if(!recallReady()){
+  practiceHost.innerHTML='<div class="practice-locked"><h2>'+dual("เติมคำก่อนฝึกโจทย์","Complete recall first")+'</h2><p>'+
+   dual("ผ่าน Cloze 3/3 หรือ Give Up 0/3 เพื่อเปิดโจทย์ คะแนนเก่ายังคงบันทึกอยู่","Complete Cloze 3/3 or Give Up 0/3. Previous marks are preserved.")+'</p>'+
+   '<button type="button" data-practice="recall">'+dual("กลับไปบทเติมคำ","Return to recall")+'</button></div>';return;
  }
- if(!unlocked){
-  practiceHost.innerHTML='<div class="practice-head"><span class="stage">R03 · CAMBRIDGE PRACTICE</span><h2>'+dual("ปลดล็อกก่อนทำโจทย์","Unlock practice first")+'</h2></div><div class="practice-locked"><p>'+dual("ทำบทเติมคำ 3 ช่องให้ถูกทั้งหมด หรือเลือก Give Up 0/3 ในหน้าบทเติมคำก่อนเริ่มข้อสอบ","Complete all three cloze blanks or use Give Up 0/3 to unlock the practice questions.")+'</p><button type="button" data-practice="recall">'+dual("กลับไปบทเติมคำ","Return to recall")+'</button></div>';
-  return;
- }
- let answer="";
+ const r=progress.records[q.id],isLocked=locked(q),draft=answerDraft(q);
+ let input="";
  if(q.type==="mcq"){
-  answer='<div class="answer-options">'+optionOrder.map((original,i)=>{
-   const o=q.options[original],letter="ABCD"[i];
-   return '<button type="button" class="answer-choice" data-choice="'+original+'" aria-pressed="'+(practiceDraft===original)+'"><span class="letter">'+letter+'</span><span class="option-lines">'+dual(o.th,o.en)+'</span></button>';
-  }).join("")+'</div>';
+  input='<div class="answer-options">'+optionOrder.map((idx,i)=>'<button class="answer-choice" type="button" data-choice="'+idx+'" aria-pressed="'+(String(idx)===String(draft))+'" '+(isLocked?'disabled':'')+'>'+
+   '<span class="letter">'+"ABCD"[i]+'</span><span class="option-lines">'+dual(q.options[idx].th,q.options[idx].en)+'</span></button>').join("")+'</div>';
  }else if(q.type==="numeric"){
-  answer='<label class="answer-guide" for="numericResponse">'+dual("ตอบเฉพาะตัวเลข ไม่ต้องพิมพ์หน่วย (ระบบแสดงหน่วยไว้แล้ว)","Enter the number only; the required unit is shown.")+'</label>'+
-  '<input id="numericResponse" class="number-answer" type="text" inputmode="decimal" autocomplete="off" placeholder="'+safe(q.unit)+'" value="'+(practiceDraft===null?"":safe(practiceDraft))+'">';
+  input='<label class="answer-guide" for="numericResponse">'+dual("ตอบตัวเลขอย่างเดียว หน่วย "+q.unit,"Number only, unit "+q.unit)+'</label>'+
+   '<input id="numericResponse" type="text" inputmode="decimal" class="number-answer" value="'+safe(draft)+'" '+(isLocked?'disabled':'')+'>';
  }else{
-  answer='<label class="answer-guide" for="writtenResponse">'+dual("เขียนเหตุผลด้วยตนเองก่อนเปิดตัวอย่างเฉลย คะแนนจะประเมินด้วยตนเอง","Write your reasoning before viewing the model response. Self-assessment only.")+'</label>'+
-  '<textarea id="writtenResponse" class="written-answer" rows="5" placeholder="..." >'+(practiceDraft===null?"":safe(practiceDraft))+'</textarea>';
+  input='<label class="answer-guide" for="writtenResponse">'+dual("เขียนเหตุผลแล้วประเมินด้วยตนเอง","Write your explanation, then self-assess")+'</label>'+
+   '<textarea id="writtenResponse" class="written-answer" rows="5" '+(isLocked?'disabled':'')+'>'+safe(draft)+'</textarea>';
  }
- let feedback="";
- if(practiceChecked){
-  if(q.type==="written"){
-   feedback='<div class="question-feedback no-mark"><strong>'+dual("แนวคำตอบและเกณฑ์คะแนน (ตรวจด้วยตนเอง)","Model response and marking points (self-assess)")+'</strong>'+
-     '<p>'+dual(q.model.th,q.model.en)+'</p><ul class="rubric">'+q.rubric.map((r,i)=>'<li>'+(i+1)+'. '+dual(r.th,r.en)+'</li>').join("")+'</ul></div>';
-  }else{
-   const result=practiceCorrect?dual("ถูกต้อง","Correct"):dual("ยังไม่ถูก ลองดูวิธีคิดและแก้คำตอบได้","Not correct. Review the method and try again.");
-   const answerLabel=q.type==="mcq"?dual(q.options[q.answer].th,q.options[q.answer].en):safe(q.answer+" "+q.unit);
-   feedback='<div class="question-feedback '+(practiceCorrect?"":"incorrect")+'"><strong>'+result+'</strong><p>'+dual("คำตอบ: ","Answer: ")+answerLabel+'</p><p>'+dual(q.explanation.th,q.explanation.en)+'</p></div>';
-  }
+ const canRetry=r?.status==="graded"&&r.score<q.marks;
+ let actions=isLocked?(canRetry?'<button type="button" data-practice="retry" class="retry-incorrect">'+dual("Retry Incorrect ข้อนี้","Retry Incorrect: this question")+'</button>':""):
+  '<button type="button" data-practice="check" class="submit">'+dual(q.type==="written"?"เปิดเกณฑ์ตรวจ":"ตรวจคำตอบ",q.type==="written"?"Reveal mark scheme":"Check answer")+'</button>'+
+  '<button type="button" data-practice="giveup" class="giveup-question">'+dual("Give Up = 0","Give Up = 0")+'</button>';
+ actions+='<button type="button" data-practice="example" class="example-link">'+dual("ตัวอย่างคล้าย","Similar example")+'</button>'+
+  '<button type="button" data-practice="article" class="article-link">'+dual("บทอ่าน","Study article")+'</button>';
+ let feedback=isLocked?resultPanel(q,r):"";
+ if(!isLocked&&q.type==="written"&&showRubric){
+  feedback='<div class="question-feedback no-mark"><strong>'+dual("เกณฑ์ตรวจด้วยตนเอง","Self-assessment rubric")+'</strong>'+
+  '<p>'+dual(q.model.th,q.model.en)+'</p><div class="assess-criteria">'+q.rubric.map((point,i)=>'<label>'+
+   '<input type="checkbox" data-rubric="'+i+'" '+(rubricTicks.has(i)?'checked':'')+'><span>'+dual(point.th,point.en)+'</span></label>').join("")+'</div>'+
+   '<button type="button" data-practice="selfmark" class="submit">'+dual("บันทึก "+rubricTicks.size+"/"+q.marks+" คะแนน","Save "+rubricTicks.size+"/"+q.marks+" self-marked points")+'</button></div>';
  }
  if(practiceHint)feedback+='<div class="question-feedback incorrect" role="status">'+safe(practiceHint)+'</div>';
- practiceHost.innerHTML='<div class="practice-head"><span class="stage">R03 · ORIGINAL CAMBRIDGE-STYLE PRACTICE</span><h2>'+dual("ฝึกข้อสอบ","Exam practice")+'</h2><p>'+dual("ตัวอย่างข้อสอบ ไม่ใช่ข้อสอบ Cambridge จริง และยังไม่เก็บคะแนนจนถึง R05","Original practice questions, not official Cambridge past-paper items. Marks are not stored until R05.")+'</p></div>'+
- '<div class="practice-body"><div class="question-number"><span class="pill '+(q.tier==="supplement"?"sup":"")+'">'+q.tier.toUpperCase()+'</span><strong>Q '+(practiceIndex+1)+' / '+qs.length+' · '+q.marks+' marks</strong></div>'+
- '<div class="question-stem">'+dual(q.stem.th,q.stem.en)+'</div>'+figureFor(exampleFor(q.id),"question")+answer+
- '<div class="question-actions"><button type="button" class="submit" data-practice="check">'+dual(q.type==="written"?"ดูเกณฑ์เฉลย":"ตรวจคำตอบ",q.type==="written"?"Show model answer":"Check answer")+'</button>'+
- '<button type="button" class="example-link" data-practice="example">'+dual("ตัวอย่างคล้าย","Similar example")+'</button>'+
- '<button type="button" class="article-link" data-practice="article">'+dual("อ่านบทเรียน","Study article")+'</button>'+
- '<button type="button" data-practice="retry">'+dual("เริ่มข้อนี้ใหม่","Reset this question")+'</button></div>'+feedback+
- '<div class="question-navigation"><button type="button" data-practice="prev" '+(practiceIndex===0?"disabled":"")+'>'+dual("← ข้อก่อนหน้า","← Previous")+'</button><button type="button" data-practice="next" '+(practiceIndex===qs.length-1?"disabled":"")+'>'+dual("ข้อถัดไป →","Next →")+'</button></div>'+
- '<div class="practice-small">'+dual("ยังไม่มีการเก็บคะแนนหรือประวัติการทำในรอบ R03","R03 preview: no saved marks, attempt history or question-specific SVGs yet.")+'</div></div>';
+ const incorrect=availablePractice().filter(x=>{const rr=progress.records[x.id];return rr?.status==="graded"&&rr.score<x.marks;}).length;
+ const summary='<div class="progress-summary"><span>'+dual("ทำแล้ว "+cs.done+"/"+cs.total,"Answered "+cs.done+"/"+cs.total)+'</span>'+
+  '<strong>'+dual("คะแนนดีที่สุด "+cs.score+"/"+cs.max,"Best "+cs.score+"/"+cs.max+" marks")+'</strong></div>'+
+  '<div class="progress-track"><span style="width:'+(cs.total?Math.round(cs.done/cs.total*100):0)+'%"></span></div>'+
+  '<div class="question-actions"><button type="button" data-practice="history">'+dual(showHistory?"ปิดประวัติ":"ประวัติการทำ",showHistory?"Hide history":"Attempt History")+'</button>'+
+  '<button type="button" data-practice="retry-all" '+(!incorrect?'disabled':'')+'>Retry Incorrect ('+incorrect+')</button></div>';
+ const end=allAnswered()?'<div class="mission-finish"><strong>'+dual("ตอบครบทุกข้อแล้ว","All questions completed")+'</strong><p>'+
+  dual("ผ่าน Exit Flashcards 6 ใบเพื่อปิด Mission","Complete the six Exit Flashcards to finish the mission")+'</p>'+
+  '<button type="button" data-practice="flash">'+dual(progress.exits[keyExit()]?"ทบทวน Exit Flashcards":"เริ่ม Exit Flashcards",""+(progress.exits[keyExit()]?"Review Exit Flashcards":"Start Exit Flashcards"))+'</button></div>':"";
+ practiceHost.innerHTML='<div class="practice-head"><span class="stage">R05 · CAMBRIDGE-STYLE PRACTICE</span><h2>'+dual("ฝึกข้อสอบ","Exam practice")+'</h2><p>'+
+  dual("ข้อมูลเก็บในเครื่องนี้ · ข้อเขียนประเมินคะแนนด้วยตนเอง","Saved on this device · Written answers are self-marked")+'</p></div>'+
+  '<div class="practice-body">'+summary+'<div class="question-number"><span class="pill '+(q.tier==="supplement"?"sup":"")+'">'+q.tier.toUpperCase()+
+  '</span><strong>Q '+(practiceIndex+1)+' / '+availablePractice().length+' · '+q.marks+' marks</strong></div>'+
+  '<div class="question-stem">'+dual(q.stem.th,q.stem.en)+'</div>'+figureFor(exampleFor(q.id),"question")+input+
+  '<div class="question-actions">'+actions+'</div>'+feedback+
+  '<div class="question-navigation"><button type="button" data-practice="prev" '+(practiceIndex===0?'disabled':'')+'>'+dual("← ก่อนหน้า","← Previous")+'</button>'+
+  '<button type="button" data-practice="next" '+(practiceIndex===availablePractice().length-1?'disabled':'')+'>'+dual("ถัดไป →","Next →")+'</button></div>'+
+  end+historyPanel()+(saveError?'<p role="alert">'+safe(saveError)+'</p>':"")+'</div>';
+ setActivity(activity);
 }
-function moveQuestion(direction){
- const qs=availablePractice();
- practiceIndex=Math.max(0,Math.min(qs.length-1,practiceIndex+direction));
- practiceDraft=null;practiceChecked=false;practiceCorrect=false;practiceHint="";buildOrder();renderPractice();renderCompanion();
+function moveQuestion(step){
+ practiceIndex=Math.max(0,Math.min(availablePractice().length-1,practiceIndex+step));
+ retryId=null;showRubric=false;rubricTicks=new Set();practiceHint="";
+ buildOrder();renderPractice();renderCompanion();
 }
-document.querySelectorAll("[data-tab]").forEach(btn=>btn.addEventListener("click",()=>{
- setActivity(btn.dataset.tab);if(activity==="practice")renderPractice();
+function renderFlash(){
+ if(!recallReady()||!allAnswered()){flashHost.innerHTML='<p>'+dual("ทำโจทย์ครบก่อน","Finish all questions first")+'</p>';return;}
+ const cards=EXIT_CARDS[active],c=cards[cardIndex];
+ flashHost.innerHTML='<div class="flash-head"><span class="stage">R05 · EXIT TICKET</span><h2>Exit Flashcards</h2><p>'+
+ dual("บัตร "+(cardIndex+1)+"/6 · ต้องแตะดูคำตอบก่อนถัดไป","Card "+(cardIndex+1)+"/6 · Flip before continuing")+'</p></div>'+
+ '<div class="flash-body"><button type="button" class="flash-card '+(cardFlip?'show-answer':'')+'" data-flash="flip">'+
+ '<small>'+dual(cardFlip?"คำตอบ":"คำถาม",cardFlip?"ANSWER":"QUESTION")+'</small><h3>'+
+ (cardFlip?dual(c.answer.th,c.answer.en):dual(c.question.th,c.question.en))+'</h3><small>'+dual("แตะเพื่อพลิก","Tap to flip")+'</small></button>'+
+ '<div class="flash-controls"><button type="button" data-flash="prev" '+(cardIndex===0?'disabled':'')+'>'+dual("← ก่อนหน้า","← Previous")+'</button>'+
+ '<button type="button" data-flash="next" '+(!cardFlip||cardIndex===5?'disabled':'')+'>'+dual("ถัดไป →","Next →")+'</button>'+
+ '<button type="button" class="finish-cards" data-flash="finish" '+(seenCards.size!==6||!cardFlip?'disabled':'')+'>'+dual("จบ Exit Ticket","Finish Exit Ticket")+'</button>'+
+ '<button type="button" data-flash="close">'+dual("กลับไปข้อสอบ","Back to practice")+'</button></div>'+
+ '<p class="flash-note">'+dual("เปิดคำตอบแล้ว "+seenCards.size+"/6 ใบ","Answers revealed "+seenCards.size+"/6")+'</p></div>';
+}
+function resetAllData(){
+ progress={records:{},drafts:{},exits:{}};forfeited={};
+ try{localStorage.removeItem(PROGRESS_KEY);localStorage.removeItem(STORAGE_KEY);}catch(_){}
+ active="p01";referenceView="article";startCloze();resetPractice();setActivity("recall");render();
+}
+document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>{
+ if(b.dataset.tab==="flash"){if(!allAnswered()||!recallReady())return;cardIndex=0;cardFlip=false;seenCards=new Set();}
+ setActivity(b.dataset.tab);if(activity==="practice")renderPractice();if(activity==="flash")renderFlash();
 }));
+practiceHost.addEventListener("input",e=>{
+ if(!["numericResponse","writtenResponse"].includes(e.target.id))return;
+ const q=selectedQuestion();if(!q||locked(q))return;
+ progress.drafts[q.id]=String(e.target.value).slice(0,2500);showRubric=false;rubricTicks=new Set();persist();
+});
+practiceHost.addEventListener("change",e=>{
+ const c=e.target.closest("[data-rubric]");if(!c)return;
+ const i=Number(c.dataset.rubric);
+ if(c.checked)rubricTicks.add(i);else rubricTicks.delete(i);renderPractice();
+});
 practiceHost.addEventListener("click",e=>{
- const choice=e.target.closest("[data-choice]"),action=e.target.closest("[data-practice]");
+ const choice=e.target.closest("[data-choice]"),b=e.target.closest("[data-practice]");
  if(choice){
-  if(!complete&&!forfeited[active])return;
-  practiceDraft=Number(choice.dataset.choice);practiceChecked=false;practiceCorrect=false;practiceHint="";renderPractice();return;
+  const q=selectedQuestion();if(!q||locked(q)||!recallReady())return;
+  progress.drafts[q.id]=String(Number(choice.dataset.choice));persist();renderPractice();return;
  }
- if(!action)return;
- switch(action.dataset.practice){
- case "recall":setActivity("recall");break;
- case "example":referenceView="worked";renderCompanion();break;
- case "article":referenceView="article";renderCompanion();break;
- case "prev":moveQuestion(-1);break;
- case "next":moveQuestion(1);break;
- case "retry":practiceDraft=null;practiceChecked=false;practiceCorrect=false;practiceHint="";renderPractice();break;
- case "check":{
-  if(!complete&&!forfeited[active])return;
-  const q=selectedQuestion();
-  if(q.type==="mcq"){
-   if(practiceDraft===null){practiceHint="เลือกตัวเลือกก่อน / Select an option first.";renderPractice();return;}
-   practiceCorrect=practiceDraft===q.answer;
-  }else{
-   const textValue=String(practiceDraft??"").trim();
-   if(!textValue){practiceHint="ตอบคำถามก่อนตรวจ / Enter your answer first.";renderPractice();return;}
-   if(q.type==="numeric"){
-    const normalized=textValue.replace(/,/g,"").replace(/\s/g,"");
-    const value=Number(normalized);
-    if(!Number.isFinite(value)){practiceHint="กรุณาพิมพ์ตัวเลข / Enter a valid number.";renderPractice();return;}
-    practiceCorrect=Math.abs(value-q.answer)<=Math.max(q.tolerance,Math.abs(q.answer)*1e-6);
-   }
-  }
-  practiceHint="";practiceChecked=true;renderPractice();break;
+ if(!b)return;
+ const op=b.dataset.practice;
+ if(op==="recall"){setActivity("recall");return;}
+ if(op==="example"){referenceView="worked";renderCompanion();return;}
+ if(op==="article"){referenceView="article";renderCompanion();return;}
+ if(op==="prev"){moveQuestion(-1);return;}
+ if(op==="next"){moveQuestion(1);return;}
+ if(op==="history"){showHistory=!showHistory;renderPractice();return;}
+ if(op==="flash"){if(!allAnswered())return;cardIndex=0;cardFlip=false;seenCards=new Set();setActivity("flash");renderFlash();return;}
+ if(op==="retry-all"){
+  const i=availablePractice().findIndex(q=>{const r=progress.records[q.id];return r?.status==="graded"&&r.score<q.marks;});
+  if(i>=0){practiceIndex=i;retryId=null;buildOrder();retryIncorrect(selectedQuestion());renderCompanion();}
+  return;
  }
+ const q=selectedQuestion();if(!q||!recallReady())return;
+ if(op==="retry"){retryIncorrect(q);return;}
+ if(locked(q))return;
+ if(op==="giveup"){
+  if(!window.confirm("ยอมแพ้ข้อนี้ 0 คะแนนและล็อกถึง Full Reset? / Give up for 0 marks and lock until Full Reset?"))return;
+  saveAttempt(q,"",0,"giveup");render();return;
+ }
+ if(op==="check"){
+  const v=String(answerDraft(q)).trim();
+  if(!v){practiceHint="กรุณาตอบก่อนตรวจ / Answer before checking";renderPractice();return;}
+  if(q.type==="written"){showRubric=true;rubricTicks=new Set();practiceHint="";renderPractice();return;}
+  if(q.type==="numeric"){
+   const val=Number(v.replace(/,/g,"").replace(/\s/g,""));
+   if(!Number.isFinite(val)){practiceHint="ใส่ตัวเลขที่ถูกต้อง / Enter a number";renderPractice();return;}
+   saveAttempt(q,v,Math.abs(val-q.answer)<=Math.max(q.tolerance,Math.abs(q.answer)*1e-6)?q.marks:0,"check");
+  }else saveAttempt(q,v,Number(v)===q.answer?q.marks:0,"check");
+  render();return;
+ }
+ if(op==="selfmark"&&q.type==="written"&&showRubric){
+  saveAttempt(q,answerDraft(q),Math.min(q.marks,rubricTicks.size),"self");render();return;
  }
 });
-practiceHost.addEventListener("input",e=>{
- if(e.target.id==="numericResponse"||e.target.id==="writtenResponse"){
-  practiceDraft=e.target.value;practiceChecked=false;practiceCorrect=false;practiceHint="";
+flashHost.addEventListener("click",e=>{
+ const b=e.target.closest("[data-flash]");if(!b||!recallReady()||!allAnswered())return;
+ const op=b.dataset.flash;
+ if(op==="flip"){cardFlip=!cardFlip;if(cardFlip)seenCards.add(cardIndex);}
+ if(op==="prev"&&cardIndex>0){cardIndex--;cardFlip=seenCards.has(cardIndex);}
+ if(op==="next"&&cardFlip&&cardIndex<5){cardIndex++;cardFlip=seenCards.has(cardIndex);}
+ if(op==="close"){setActivity("practice");renderPractice();return;}
+ if(op==="finish"){
+  if(seenCards.size!==6||!cardFlip)return;
+  progress.exits[keyExit()]=true;persist();setActivity("practice");render();return;
  }
+ renderFlash();
 });
 
 function render(){
@@ -562,7 +677,7 @@ function render(){
  studyArticleMarkup='<div class="lesson-head"><span class="pill '+(m.level==="supplement"?"sup":"")+'">'+level.toUpperCase()+'</span><h2><span lang="th">'+m.title.th+'</span><span lang="en">'+m.title.en+'</span></h2><p><span lang="th">'+m.subtitle.th+'</span><span lang="en">'+m.subtitle.en+'</span></p><div class="focus">'+langBox("th","จุดประสงค์",'<p>'+m.objective.th+'</p>')+langBox("en","LEARNING GOAL",'<p>'+m.objective.en+'</p>')+'</div></div>'+
  '<div class="sections">'+m.blocks.map((b,i)=>'<section class="section-block '+(b.supplement?"supplement-only":"")+'">'+(b.supplement?'<div class="note-sup">SUPPLEMENT / EXTENDED ONLY</div>':"")+'<h3>'+String(i+1)+'. <span lang="th">'+b.heading.th+'</span><span lang="en">'+b.heading.en+'</span></h3>'+langBox("th","ภาษาไทย",b.th)+langBox("en","ENGLISH",b.en)+'</section>').join("")+'</div>'+
  '<section class="key-points"><h3>Key ideas / ประเด็นสำคัญ</h3>'+langBox("th","ภาษาไทย",'<ul>'+(m.level==="mixed"&&document.body.dataset.tier==="core"?m.key.th.slice(0,2):m.key.th).map(x=>'<li>'+x+'</li>').join("")+'</ul>')+langBox("en","ENGLISH",'<ul>'+(m.level==="mixed"&&document.body.dataset.tier==="core"?m.key.en.slice(0,2):m.key.en).map(x=>'<li>'+x+'</li>').join("")+'</ul>')+'</section>';
- renderCompanion();drawCloze();renderPractice();
+ renderCompanion();drawCloze();renderPractice();renderFlash();setActivity(activity);
  const i=visible.findIndex(x=>x.id===active);
  document.getElementById("prevBtn").disabled=i===0;
  document.getElementById("nextBtn").disabled=i===visible.length-1;
