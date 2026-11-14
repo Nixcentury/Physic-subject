@@ -261,7 +261,8 @@ function startCloze(){
  const c=currentCloze();
  bankOrder=c.words.map(w=>w.id);
  for(let i=bankOrder.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[bankOrder[i],bankOrder[j]]=[bankOrder[j],bankOrder[i]];}
- choices=forfeited[active]?c.solution.slice():[null,null,null];selectedWord=null;checked=!!forfeited[active];complete=false;notice="";
+ const won=!!progress.recallPassed[active]&&!forfeited[active];
+ choices=(forfeited[active]||won)?c.solution.slice():[null,null,null];selectedWord=null;checked=!!forfeited[active]||won;complete=won;notice="";
 }
 function word(c,id,l){return c.words.find(w=>w.id===id)?.[l]||"";}
 function passage(c,l){
@@ -316,7 +317,9 @@ clozeHost.addEventListener("click",e=>{
  const action=act.dataset.action,c=currentCloze();
  if(action==="check"&&!complete&&!forfeited[active]){
   if(choices.some(x=>x===null)){notice="กรอกให้ครบทั้ง 3 ช่อง / Fill all 3 blanks first.";drawCloze();return;}
-  checked=true;complete=c.solution.every((ans,i)=>choices[i]===ans);notice="";drawCloze();renderPractice();
+  checked=true;complete=c.solution.every((ans,i)=>choices[i]===ans);notice="";
+  if(complete){progress.recallPassed[active]=true;persist();}
+  drawCloze();renderPractice();
  }
  if(action==="clear"&&!complete&&!forfeited[active]){choices=[null,null,null];selectedWord=null;checked=false;notice="";drawCloze();}
  if(action==="giveup"&&!complete&&!forfeited[active]){
@@ -457,7 +460,7 @@ const PROGRESS_KEY="pressure-igcse-r05-progress-v1";
 const validQuestions=new Map(PRACTICE_QUESTIONS.map(q=>[q.id,q]));
 function loadProgress(){
  let data={};try{data=JSON.parse(localStorage.getItem(PROGRESS_KEY)||"{}")||{};}catch(_){}
- const records={},drafts={},exits={};
+ const records={},drafts={},exits={},recallPassed={};
  for(const q of PRACTICE_QUESTIONS){
   const r=data.records?.[q.id];
   if(r&&["graded","givenup"].includes(r.status)){
@@ -470,7 +473,8 @@ function loadProgress(){
   if(typeof data.drafts?.[q.id]==="string")drafts[q.id]=data.drafts[q.id].slice(0,2500);
  }
  for(const k of Object.keys(data.exits||{}))if(/^(core|extended):p0[1-6]$/.test(k)&&data.exits[k]===true)exits[k]=true;
- return {records,drafts,exits};
+ for(const k of Object.keys(data.recallPassed||{}))if(/^p0[1-6]$/.test(k)&&data.recallPassed[k]===true)recallPassed[k]=true;
+ return {records,drafts,exits,recallPassed};
 }
 let progress=loadProgress(),saveError="";
 function persist(){try{localStorage.setItem(PROGRESS_KEY,JSON.stringify(progress));saveError="";}catch(_){saveError="บันทึกในเครื่องไม่สำเร็จ / Device save failed";}}
@@ -605,7 +609,7 @@ function renderFlash(){
  '<p class="flash-note">'+dual("เปิดคำตอบแล้ว "+seenCards.size+"/6 ใบ","Answers revealed "+seenCards.size+"/6")+'</p></div>';
 }
 function resetAllData(){
- progress={records:{},drafts:{},exits:{}};forfeited={};
+ progress={records:{},drafts:{},exits:{},recallPassed:{}};forfeited={};
  try{localStorage.removeItem(PROGRESS_KEY);localStorage.removeItem(STORAGE_KEY);}catch(_){}
  active="p01";referenceView="article";startCloze();resetPractice();setActivity("recall");render();
 }
@@ -690,7 +694,7 @@ function render(){
  const level=m.level==="supplement"?"supplement":m.level==="mixed"?"core + supplement":"core";
  studyArticleMarkup='<div class="lesson-head"><span class="pill '+(m.level==="supplement"?"sup":"")+'">'+level.toUpperCase()+'</span><h2><span lang="th">'+m.title.th+'</span><span lang="en">'+m.title.en+'</span></h2><p><span lang="th">'+m.subtitle.th+'</span><span lang="en">'+m.subtitle.en+'</span></p><div class="focus">'+langBox("th","จุดประสงค์",'<p>'+m.objective.th+'</p>')+langBox("en","LEARNING GOAL",'<p>'+m.objective.en+'</p>')+'</div></div>'+
  '<div class="sections">'+m.blocks.map((b,i)=>'<section class="section-block '+(b.supplement?"supplement-only":"")+'">'+(b.supplement?'<div class="note-sup">SUPPLEMENT / EXTENDED ONLY</div>':"")+'<h3>'+String(i+1)+'. <span lang="th">'+b.heading.th+'</span><span lang="en">'+b.heading.en+'</span></h3>'+langBox("th","ภาษาไทย",b.th)+langBox("en","ENGLISH",b.en)+'</section>').join("")+'</div>'+
- '<section class="key-points"><h3>Key ideas / ประเด็นสำคัญ</h3>'+langBox("th","ภาษาไทย",'<ul>'+(m.level==="mixed"&&document.body.dataset.tier==="core"?m.key.th.slice(0,2):m.key.th).map(x=>'<li>'+x+'</li>').join("")+'</ul>')+langBox("en","ENGLISH",'<ul>'+(m.level==="mixed"&&document.body.dataset.tier==="core"?m.key.en.slice(0,2):m.key.en).map(x=>'<li>'+x+'</li>').join("")+'</ul>')+'</section>';
+ '<section class="key-points"><h3>Key ideas / ประเด็นสำคัญ</h3>'+langBox("th","ภาษาไทย",'<ul>'+(m.level==="mixed"&&document.body.dataset.tier==="core"?[...m.key.th.slice(0,2),"สำหรับของเหลว ความดันเพิ่มเมื่อความลึกเพิ่ม และความหนาแน่นสูงกว่าทำให้ความดันส่วนที่เพิ่มจากผิวสูงกว่า"]:m.key.th).map(x=>'<li>'+x+'</li>').join("")+'</ul>')+langBox("en","ENGLISH",'<ul>'+(m.level==="mixed"&&document.body.dataset.tier==="core"?[...m.key.en.slice(0,2),"In liquids, pressure rises with depth; greater density produces a larger pressure increase from the surface."]:m.key.en).map(x=>'<li>'+x+'</li>').join("")+'</ul>')+'</section>';
  renderCompanion();drawCloze();renderPractice();renderFlash();setActivity(activity);
  const i=visible.findIndex(x=>x.id===active);
  document.getElementById("prevBtn").disabled=i===0;
