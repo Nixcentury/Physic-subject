@@ -359,8 +359,68 @@ function svgFrame(type){
    text(167,30,label("ของไหลหนาแน่นกว่า","Denser fluid"),14)+
    text(422,30,label("ของไหลหนาแน่นน้อย","Less dense fluid"),14)+
    text(165,275,"ρ₁ > ρ₂",18)+text(420,275,"F_B1 > F_B2",18);
+
+ }else if(["floating-balance","floating-fraction","neutral-floating","apparent-weight","hold-submerged","bottom-forces","loaded-raft"].includes(type)){
+  const tank='<path d="M86 52 V256 H491 V52" fill="none" stroke="#547f9e" stroke-width="5"/>'+
+    rect(89,105,399,149,"#d6edfa")+line(89,105,488,105,"#55aed1",3);
+  const obj=(x,y,w,h)=>'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="4" fill="#b1c8d8" stroke="#55738a" stroke-width="3"/>';
+  const arrow=(x1,y1,x2,y2,color,labelText,tx,ty)=>{
+    const up=y2<y1;
+    return line(x1,y1,x2,y2,color,4)+
+      '<polygon points="'+(x2-8)+','+(up?y2+10:y2-10)+' '+(x2+8)+','+(up?y2+10:y2-10)+' '+x2+','+(up?y2-6:y2+6)+'" fill="'+color+'"/>'+
+      text(tx,ty,labelText,17,color);
+  };
+  if(type==="floating-balance"){
+    body=tank+obj(236,71,102,147)+
+     arrow(202,117,202,191,"#ac4f43","W",180,113)+
+     arrow(381,211,381,140,"#17876c","F_B",416,180)+
+     text(292,29,label("ลอยนิ่ง: สมดุลแรง","Floating at rest: balanced forces"),17)+
+     text(289,283,"F_B = W",21);
+  }else if(type==="floating-fraction"){
+    body=rect(40,113,225,143,"#d6edfa")+rect(322,113,223,143,"#d6edfa")+
+     line(41,113,263,113,"#55aed1",3)+line(324,113,544,113,"#55aed1",3)+
+     obj(118,63,79,142)+obj(400,88,79,142)+
+     text(153,32,label("ความหนาแน่นน้อย","Lower average density"),13)+
+     text(439,32,label("ความหนาแน่นมาก","Higher average density"),13)+
+     text(295,282,"Vsub / Vobj = ρobj / ρfluid",18);
+  }else if(type==="neutral-floating"){
+    body=tank+obj(236,145,102,75)+
+     arrow(199,149,199,218,"#ac4f43","W",183,137)+
+     arrow(383,220,383,150,"#17876c","F_B",415,189)+
+     text(291,29,label("ลอยตัวเป็นกลาง: จมทั้งก้อน","Neutral buoyancy: fully immersed"),16)+
+     text(291,283,"ρobj = ρfluid",19);
+  }else if(type==="apparent-weight"){
+    body=tank+
+     '<rect x="249" y="8" width="84" height="32" rx="6" fill="#f5e4bf" stroke="#a88850" stroke-width="2"/>'+
+     line(291,40,291,144,"#687c8a",3)+obj(237,145,108,87)+
+     arrow(193,151,193,225,"#ac4f43","W",177,140)+
+     arrow(391,229,391,163,"#17876c","F_B",425,197)+
+     text(322,66,"T ↑",18)+text(289,283,"T + F_B = W",19);
+  }else if(type==="hold-submerged"){
+    body=tank+obj(236,141,108,84)+
+     arrow(173,149,173,221,"#ac4f43","W",154,136)+
+     arrow(211,148,211,222,"#bc833b","Fdown",211,123)+
+     arrow(394,218,394,145,"#17876c","F_B",424,179)+
+     text(294,29,label("แรงกดลงเพื่อให้จมนิ่ง","Downward hold keeps object submerged"),16)+
+     text(291,283,"W + Fdown = F_B",18);
+  }else if(type==="bottom-forces"){
+    body=tank+rect(103,247,373,8,"#8291a2")+obj(238,183,106,64)+
+     arrow(193,160,193,229,"#ac4f43","W",177,145)+
+     arrow(391,231,391,171,"#17876c","F_B",426,198)+
+     arrow(291,246,291,201,"#c07f37","N",290,182)+
+     text(292,28,label("สมดุลบนพื้น: ให้ F_B มา","Bottom equilibrium: given F_B"),16)+
+     text(291,283,"N + F_B = W",19);
+  }else{
+    body=rect(47,111,224,146,"#d6edfa")+rect(313,111,220,146,"#d6edfa")+
+     line(49,111,269,111,"#55aed1",3)+line(315,111,531,111,"#55aed1",3)+
+     obj(118,77,79,113)+obj(390,99,79,113)+
+     '<rect x="415" y="69" width="29" height="29" fill="#c8a87e" stroke="#98764b" stroke-width="2"/>'+
+     text(156,31,label("ก่อนเพิ่มของ","Before load"),15)+
+     text(426,31,label("หลังเพิ่มของ","After load"),15)+
+     text(292,283,label("บรรทุกเพิ่ม → แทนที่น้ำเพิ่ม","Added load → more displacement"),17);
+  }
  }
- return '<figure class="figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 295" role="img" aria-label="'+esc(type)+' pressure physics diagram">'+body+'</svg>'+
+ return '<figure class="figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 295" role="img" aria-label="'+esc(type)+' fluid physics diagram">'+body+'</svg>'+
  '<figcaption>'+bi(
  type==="scale"?"จุดอ้างอิงต่างกันทำให้ตัวเลขความดันต่างกัน":"แผนภาพสรุปแนวคิด ตำแหน่งและความสูงเป็นภาพเชิงสัญลักษณ์ ไม่ได้ใช้มาตราส่วนจริง",
  type==="scale"?"Different pressure references produce different readings.":"Concept diagram, not drawn to scale.")+'</figcaption></figure>';
