@@ -289,6 +289,65 @@ function svgFrame(type){
     text(391,141,"+Δp",18)+text(391,218,"+Δp",18)+
     text(284,44,label("เพิ่มแรงกด → เพิ่มความดัน","Apply pressure change"),16)+
     text(285,280,label("Δp เท่ากัน แต่ p รวมอาจต่างกัน","Equal Δp; total p can differ"),14);
+ }else if(type==="buoyancy"||type==="pressure-buoyancy"||type==="spring-buoyancy"){
+  const spring=type==="spring-buoyancy",pressure=type==="pressure-buoyancy";
+  body=rect(104,73,370,184,"#d6edfa")+
+   '<path d="M100 35 V259 H480 V35" stroke="#537f9e" stroke-width="5" fill="none"/>'+
+   line(105,73,475,73,"#56acd0",3)+
+   '<rect x="248" y="125" width="105" height="94" rx="4" fill="#bccbd9" stroke="#536f86" stroke-width="3"/>';
+  if(spring){
+   body+='<rect x="260" y="7" width="82" height="31" rx="7" fill="#f3e5c9" stroke="#a88252" stroke-width="3"/>'+
+    line(300,38,300,125,"#687685",3)+text(300,28,"T",17)+
+    line(366,212,366,148,"#c27438",4)+
+    '<polygon points="358,156 374,156 366,141" fill="#c27438"/>'+
+    text(390,184,"F_B",19,"#a85f30","start")+
+    line(236,128,236,211,"#b14c4c",3)+
+    '<polygon points="228,204 244,204 236,218" fill="#b14c4c"/>'+
+    text(221,174,"W",19,"#a43838","end");
+  }else if(pressure){
+   body+=line(300,86,300,120,"#c27438",4)+
+    '<polygon points="292,113 308,113 300,126" fill="#c27438"/>'+
+    line(300,254,300,222,"#c27438",4)+
+    '<polygon points="292,230 308,230 300,217" fill="#c27438"/>'+
+    text(378,101,label("p บน","p top"),15)+
+    text(403,243,label("p ล่าง > p บน","p bottom > p top"),14)+
+    text(300,280,label("แรงดันขึ้นลัพธ์ = F_B","Net upward force = F_B"),14);
+  }else{
+   body+=line(373,211,373,143,"#b56936",4)+
+    '<polygon points="364,151 382,151 373,136" fill="#b56936"/>'+
+    text(415,183,"F_B",20,"#99572d")+
+    text(284,280,label("V ที่แทนที่ = V ส่วนที่จม","Displaced volume = immersed volume"),13);
+  }
+ }else if(type==="partial-full"){
+  body=rect(61,105,206,140,"#d5edf9")+rect(319,105,206,140,"#d5edf9")+
+   '<path d="M60 55 V247 H268 V55 M317 55 V247 H525 V55" fill="none" stroke="#5681a1" stroke-width="5"/>'+
+   line(64,105,264,105,"#56acd0")+line(321,105,521,105,"#56acd0")+
+   '<rect x="124" y="125" width="75" height="94" fill="#aebed1" stroke="#627a94" stroke-width="2"/>'+
+   '<rect x="384" y="75" width="75" height="94" fill="#aebed1" stroke="#627a94" stroke-width="2"/>'+
+   text(164,42,label("จมทั้งหมด","Fully immersed"),15)+text(422,42,label("จมบางส่วน","Partly immersed"),15)+
+   text(165,276,label("แทนที่ทั้งปริมาตร","All volume displaced"),13)+
+   text(422,276,label("แทนที่เฉพาะส่วนที่จม","Only immersed volume displaced"),13);
+ }else if(type==="overflow-can"){
+  body=rect(86,102,266,151,"#d6ecf8")+
+   '<path d="M84 40 V254 H353 V41" stroke="#5580a2" stroke-width="5" fill="none"/>'+
+   line(88,102,350,102,"#54afd1",3)+
+   '<path d="M350 106 H415 V126" stroke="#5580a2" stroke-width="6" fill="none"/>'+
+   '<rect x="183" y="127" width="86" height="90" rx="5" fill="#9db5cc" stroke="#5b7a91" stroke-width="3"/>'+
+   line(226,23,226,127,"#7b8086",3)+
+   '<path d="M408 149 Q417 129 426 149 Q428 161 417 164 Q407 160 408 149" fill="#73b9dd"/>'+
+   '<path d="M402 185 V244 H472 V185" stroke="#6088a7" stroke-width="5" fill="#d5eefb"/>'+
+   text(292,29,label("วัตถุที่แขวน","Suspended object"),15)+
+   text(458,95,label("พวยน้ำล้น","Overflow spout"),14)+
+   text(439,277,label("เก็บน้ำที่แทนที่","Collect displaced water"),13);
+ }else if(type==="compare-buoyancy"){
+  body=rect(65,90,202,154,"#d8edfb")+rect(318,90,202,154,"#d6e8f3")+
+   '<path d="M63 39 V249 H270 V39 M316 39 V249 H524 V39" fill="none" stroke="#527e9f" stroke-width="5"/>'+
+   line(67,90,266,90,"#5fa7cc")+line(320,90,520,90,"#5fa7cc")+
+   '<rect x="129" y="130" width="80" height="90" fill="#b9c8d7" stroke="#647990" stroke-width="2"/>'+
+   '<rect x="382" y="130" width="80" height="90" fill="#b9c8d7" stroke="#647990" stroke-width="2"/>'+
+   text(167,30,label("ของไหลหนาแน่นกว่า","Denser fluid"),14)+
+   text(422,30,label("ของไหลหนาแน่นน้อย","Less dense fluid"),14)+
+   text(165,275,"ρ₁ > ρ₂",18)+text(420,275,"F_B1 > F_B2",18);
  }
  return '<figure class="figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 295" role="img" aria-label="'+esc(type)+' pressure physics diagram">'+body+'</svg>'+
  '<figcaption>'+bi(
@@ -299,7 +358,7 @@ function diagramForQuestion(q){
  if(missionKey==="m03"){
   if(["F03-09"].includes(q.id))return "spring-buoyancy";
   if(["F03-10","F03-15"].includes(q.id))return "overflow-can";
-  if(["F03-07","F03-14"].includes(q.id))return "compare-buoyancy";
+  if(q.id==="F03-14")return "compare-buoyancy";
   if(["F03-01","F03-13"].includes(q.id))return "pressure-buoyancy";
   if(["F03-02","F03-05"].includes(q.id))return "partial-full";
   return "buoyancy";
