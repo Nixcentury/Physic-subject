@@ -243,6 +243,41 @@ function svgFrame(type){
     line(352,80,352,213,"#c67146",3)+text(366,150,"h",22,"#c67146","start")+
     text(280,63,label("เกือบสุญญากาศ","Near vacuum"),12)+
     text(423,193,"Pₐₜₘ",16)+text(290,277,label("ระดับผิวในอ่างเป็นจุดอ้างอิง","Reservoir surface is reference"),12);
+ }else if(type==="hydraulic"||type==="hydraulic-distance"){
+  // Original schematic: one narrow and one wide piston linked by enclosed fluid.
+  const motion=type==="hydraulic-distance";
+  body=rect(103,138,85,103,"#c9e6f8")+rect(354,138,155,103,"#c9e6f8")+rect(185,211,171,30,"#c9e6f8")+
+    '<path d="M99 92 V245 H513 V92 M191 92 V211 H351 V92" fill="none" stroke="#48789d" stroke-width="5"/>'+
+    '<rect x="102" y="125" width="87" height="13" fill="#446783" stroke="#355e7e" stroke-width="2"/>'+
+    '<rect x="353" y="125" width="157" height="13" fill="#446783" stroke="#355e7e" stroke-width="2"/>'+
+    line(146,44,146,119,"#cd6d40",4)+
+    '<polygon points="139,111 153,111 146,123" fill="#cd6d40"/>'+
+    line(433,121,433,48,"#cd6d40",4)+
+    '<polygon points="426,56 440,56 433,43" fill="#cd6d40"/>'+
+    text(145,28,"F₁ ↓",19)+text(432,28,"F₂ ↑",19)+
+    text(145,183,"A₁",18)+text(431,183,"A₂",18);
+  if(motion){
+   body+=text(290,68,"A₁s₁ = A₂s₂",20,"#8a5528")+
+    line(78,111,78,199,"#b67242",3)+line(67,111,89,111,"#b67242",2)+line(67,199,89,199,"#b67242",2)+
+    line(533,130,533,158,"#b67242",3)+line(522,130,544,130,"#b67242",2)+line(522,158,544,158,"#b67242",2)+
+    text(69,158,"s₁",14,"#a86530","end")+text(541,148,"s₂",14,"#a86530","start")+
+    text(291,274,label("แรงมากขึ้น แลกกับระยะสั้นลง","Force increases; travel decreases"),14);
+  }else{
+   body+=text(291,274,label("ความดันส่วนเพิ่มเท่ากัน: Δp₁ = Δp₂","Equal added pressure: Δp₁ = Δp₂"),14);
+  }
+ }else if(type==="pascal-depth"){
+  body=rect(102,87,375,164,"#cce9f8")+
+    '<path d="M100 45 V254 H480 V45" fill="none" stroke="#4b799e" stroke-width="5"/>'+
+    line(103,87,477,87,"#509dc6",3)+
+    '<circle cx="207" cy="135" r="7" fill="#cf7443"/>'+
+    '<circle cx="207" cy="212" r="7" fill="#cf7443"/>'+
+    line(222,135,321,135,"#d07642",3)+
+    line(222,212,321,212,"#d07642",3)+
+    '<polygon points="320,129 332,135 320,141" fill="#d07642"/>'+
+    '<polygon points="320,206 332,212 320,218" fill="#d07642"/>'+
+    text(391,141,"+Δp",18)+text(391,218,"+Δp",18)+
+    text(284,44,label("เพิ่มแรงกด → เพิ่มความดัน","Apply pressure change"),16)+
+    text(285,280,label("Δp เท่ากัน แต่ p รวมอาจต่างกัน","Equal Δp; total p can differ"),14);
  }
  return '<figure class="figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 295" role="img" aria-label="'+esc(type)+' pressure physics diagram">'+body+'</svg>'+
  '<figcaption>'+bi(
