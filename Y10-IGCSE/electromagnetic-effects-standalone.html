@@ -228,9 +228,10 @@ let dcStep=0,dcBattery=1,dcTurns=1,dcCurrent=1,dcField=1,dcGuess="",dcReveal=fal
 let flashIndex=0,flipped=false,seen=new Set(),message="",attemptsOpen=false,retrying=false;
 let level="all",lang="both",saved=loadState(currentId);
 function current(){return LESSONS[currentId]}
-function isCoreDc(){return currentId==="dc-motor"&&level==="core"}
-function activeCloze(){return isCoreDc()?current().coreCloze:current().cloze}
-function activeFlashcards(){return isCoreDc()?current().coreFlashcards:current().flashcards}
+function useCoreCloze(){return level==="core"&&!!current().coreCloze}
+function useCoreExit(){return level==="core"&&!!current().coreFlashcards}
+function activeCloze(){return useCoreCloze()?current().coreCloze:current().cloze}
+function activeFlashcards(){return useCoreExit()?current().coreFlashcards:current().flashcards}
 function loadState(id){
  let source={};try{source=JSON.parse(localStorage.getItem(STORAGE_BASE+id)||"{}")||{}}catch(_){}
  const sourceRecords=source.records&&typeof source.records==="object"?source.records:{};
@@ -731,7 +732,7 @@ function renderRecall(){
  '<div class="flex"><button class="primary" type="button" data-recall="check">'+tr("ตรวจคำตอบ","Check answers")+'</button>'+
  '<button type="button" data-recall="clear">'+tr("ล้างคำตอบ","Clear blanks")+'</button></div>'+
  (message?'<div class="feedback '+(!done?"bad":"")+'">'+esc(message)+'</div>':"")+
- ((isCoreDc()?saved.recallCore:saved.recallComplete)?'<p class="muted">✓ '+tr("เคยผ่านบทเติมคำแล้ว","Recall completed")+'</p>':"")+'</div>';
+ ((useCoreCloze()?saved.recallCore:saved.recallComplete)?'<p class="muted">✓ '+tr("เคยผ่านบทเติมคำแล้ว","Recall completed")+'</p>':"")+'</div>';
 }
 function motorQuestionDiagram(q,reveal){
  if(currentId!=="motor-effect"||!q?.diagram)return "";
@@ -814,7 +815,7 @@ function renderExit(){
  '<button type="button" data-flash="next" '+(!flipped||flashIndex===activeFlashcards().length-1?"disabled":"")+'>'+tr("ถัดไป →","Next →")+'</button>'+
  '<button type="button" class="primary" data-flash="finish" '+(!done?"disabled":"")+'>'+tr("จบบท","Finish")+'</button></div>'+
  '<p class="muted">'+tr("เปิดคำตอบแล้ว "+seen.size+"/"+activeFlashcards().length,"Answers revealed "+seen.size+"/"+activeFlashcards().length)+
- ((isCoreDc()?saved.exitDoneCore:saved.exitDone)?" · ✓ Exit Ticket":"")+'</p></div>';
+ ((useCoreExit()?saved.exitDoneCore:saved.exitDone)?" · ✓ Exit Ticket":"")+'</p></div>';
 }
 function renderReference(){
  const q=currentQuestion();
@@ -1009,7 +1010,7 @@ $("mainPanel").addEventListener("click",e=>{
   else{
    const correct=activeCloze().solution.filter((a,i)=>clozeSlots[i]===a).length;
    message=correct===3?"ถูกต้อง 3/3 · Correct 3/3":"ถูก "+correct+"/3 · "+correct+"/3 correct. Check the reading and try again.";
-   if(correct===3){if(isCoreDc())saved.recallCore=true;else saved.recallComplete=true;store();}
+   if(correct===3){if(useCoreCloze())saved.recallCore=true;else saved.recallComplete=true;store();}
   }render();return;
  }
  const step=e.target.closest("[data-page]");if(step){navigateQuestion(Number(step.dataset.page));return}
@@ -1039,7 +1040,7 @@ $("mainPanel").addEventListener("click",e=>{
   if(kind==="flip"){flipped=!flipped;if(flipped)seen.add(flashIndex)}
   if(kind==="next"&&flipped&&flashIndex<activeFlashcards().length-1){flashIndex++;flipped=seen.has(flashIndex)}
   if(kind==="prev"&&flashIndex>0){flashIndex--;flipped=seen.has(flashIndex)}
-  if(kind==="finish"&&seen.size===activeFlashcards().length){if(isCoreDc())saved.exitDoneCore=true;else saved.exitDone=true;store();view="check"}
+  if(kind==="finish"&&seen.size===activeFlashcards().length){if(useCoreExit())saved.exitDoneCore=true;else saved.exitDone=true;store();view="check"}
   render();
  }
 });
