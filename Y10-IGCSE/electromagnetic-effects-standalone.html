@@ -37,7 +37,10 @@ button:hover:not(:disabled){background:#eaf3ff}.primary{background:var(--blue);b
 .reference{position:sticky;top:93px;max-height:calc(100vh - 110px);overflow:auto}.reference .content{font-size:13px}.reference .worked{background:#eef6ff;border:1px solid #c7dbef;padding:12px;border-radius:11px}
 .muted{font-size:12px;color:var(--muted)}.badge{display:inline-block;border-radius:99px;background:#e7f3ff;color:#2862a0;font-size:11px;font-weight:800;padding:3px 9px}
 .badge.supplement{background:#fff1da;color:#9a5b16}.rule{border-left:4px solid #4f8cc6;background:#eef6ff;padding:12px 15px;border-radius:7px;margin:13px 0}
-.figure{border:1px solid #d7e5f3;background:#f6faff;border-radius:13px;padding:10px;margin:15px 0}.figure svg{width:100%;height:auto;display:block;max-height:270px}.figure figcaption{font-size:12px;color:var(--muted);text-align:center}
+.figure{border:1px solid #d7e5f3;background:#f6faff;border-radius:13px;padding:10px;margin:15px 0}.figure svg{width:100%;height:auto;display:block;max-height:270px}
+.motor-figure-panes{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+.motor-figure-panes svg{max-height:none;width:100%;height:auto;display:block}
+.motor-figure-panes svg+svg{border-top:1px solid var(--line);padding-top:8px}.figure figcaption{font-size:12px;color:var(--muted);text-align:center}
 .option{display:block;width:100%;text-align:left;padding:12px;margin:8px 0;border:1px solid #cbd9e8;border-radius:10px;background:white;color:#204668;font-weight:500}
 .option.chosen{background:#e5f1ff;border-color:#3779bd}.option.correct{background:#e4f5ec;border-color:#60ad88}.option.incorrect{background:#fff0eb;border-color:#d98977}
 .feedback{margin:14px 0 0;border:1px solid #a9d6bf;border-radius:11px;background:#eef9f2;padding:12px;font-size:13px}.feedback.bad{background:#fff3ec;border-color:#e5bc9c}
@@ -621,7 +624,9 @@ function dcMotorDiagram(step=dcStep,battery=dcBattery,reveal=false,showCommutato
  }
  const desc=state.neutral?"Neutral position; torque zero; in this idealised model the commutator contacts are briefly interrupted":
   state.torqueDirection+" turning tendency, current in coil A "+state.aCurrent+", coil B "+state.bCurrent;
- return '<figure class="figure"><svg viewBox="0 0 880 356" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+esc(desc)+'">'+main+right+'</svg>'+
+ return '<figure class="figure"><div class="motor-figure-panes">'+
+ '<svg viewBox="0 0 510 352" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+esc(desc)+'">'+main+'</svg>'+
+ '<svg viewBox="505 0 365 352" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+esc(showCommutator?"Split-ring commutator and stationary brushes":"Three factors increasing turning effect")+'">'+right+'</svg></div>'+
  '<figcaption>'+tr("ภาพมองตามแกนมอเตอร์พร้อมวงแหวนผ่าซีกแบบจำลอง: มุมทีละ 45°; ไม่จำลองความเร็วหรือแรงเสียดทาน",
  "End-on motor and schematic commutator: 45° steps; this model does not simulate speed or friction")+'</figcaption></figure>';
 }
@@ -663,7 +668,7 @@ function renderDcMotorExplore(){
  btn("current","1",tr("กระแสน้อย","Lower current"),dcCurrent===1)+btn("current","2",tr("กระแสมาก","Higher current"),dcCurrent===2)+
  btn("field","1",tr("สนามอ่อน","Weaker field"),dcField===1)+btn("field","2",tr("สนามแรง","Stronger field"),dcField===2)+
  '</div>'+
- '<div class="stat" style="margin-top:14px"><strong>'+tr("ดัชนีแรงหมุนสัมพัทธ์","Relative turning-effect factor")+': '+factor+'×</strong>'+
+ '<div class="stat" style="margin-top:14px"><strong>'+tr("ดัชนีแรงหมุนสัมพัทธ์","Relative turning-effect factor")+': '+(state.neutral?tr("0 (แนวกลาง)","0 (neutral)"):factor+'×')+'</strong>'+
  '<span>'+tr("เปรียบเทียบเฉพาะตำแหน่งที่ไม่ใช่แนวกลาง และรูปทรงขดลวดเดิม",
  "Compare only at the same non-neutral angle and coil geometry")+'</span></div>'+
  '<h3>'+tr("ในมุมปัจจุบัน แรงหมุนมีแนวโน้มอย่างไร?","At this angle, what is the turning tendency?")+'</h3>'+
