@@ -221,6 +221,7 @@ let currentId="orientation",view="learn",questionIndex=0,chosen=null,practiceCho
 let refMode="reading",direction="out",exploreAnswer="",chosenWord=null,clozeSlots=[null,null,null];
 let fieldScene="wire",coilSense="ccw",currentStrength="low",relayOn=false,speakerPhase="out",fieldAnswer="";
 let motorMode="lab",motorI="in",motorB="right",motorCharge="positive",motorGuess="";
+let dcStep=0,dcBattery=1,dcTurns=1,dcCurrent=1,dcField=1,dcGuess="",dcReveal=false;
 let flashIndex=0,flipped=false,seen=new Set(),message="",attemptsOpen=false,retrying=false;
 let level="all",lang="both",saved=loadState(currentId);
 function current(){return LESSONS[currentId]}
@@ -251,7 +252,7 @@ function currentQuestion(){return allQuestions()[Math.min(questionIndex,allQuest
 function enterLesson(id){
  if(!LESSONS[id])return;
  currentId=id;saved=loadState(id);view="learn";questionIndex=0;chosen=null;practiceChoice=null;practiceChecked=false;
- refMode="reading";direction="out";exploreAnswer="";chosenWord=null;clozeSlots=[null,null,null];fieldScene="wire";coilSense="ccw";currentStrength="low";relayOn=false;speakerPhase="out";fieldAnswer="";motorMode="lab";motorI="in";motorB="right";motorCharge="positive";motorGuess="";flashIndex=0;flipped=false;seen=new Set();message="";retrying=false;
+ refMode="reading";direction="out";exploreAnswer="";chosenWord=null;clozeSlots=[null,null,null];fieldScene="wire";coilSense="ccw";currentStrength="low";relayOn=false;speakerPhase="out";fieldAnswer="";motorMode="lab";motorI="in";motorB="right";motorCharge="positive";motorGuess="";dcStep=0;dcBattery=1;dcTurns=1;dcCurrent=1;dcField=1;dcGuess="";dcReveal=false;flashIndex=0;flipped=false;seen=new Set();message="";retrying=false;
  render();
 }
 function gotoView(next){
@@ -541,6 +542,135 @@ function renderMotorExplore(){
  dirButtons("guess",directions,chosen)+'</div>'+verdict+
  '<p class="muted">'+tr("ทิศ F คำนวณจาก I × B สำหรับลวดตัวนำ หรือ q(v × B) สำหรับอนุภาคมีประจุ; ถ้า I หรือ v ขนาน B แรงเป็นศูนย์",
  "Force follows I × B for a wire or q(v × B) for a charged particle. Parallel or antiparallel directions give zero magnetic force.")+'</p></div>';
+}
+
+// A simple end-on teaching model, not a real time/dynamics solver.
+// φ advances in 45° increments. Commutation is shown at 90° and 270°
+// where the torque goes through zero; momentum carries a rotating coil past neutral.
+function dcMotorState(step=dcStep,battery=dcBattery){
+ const n=((step%8)+8)%8,angleDeg=(battery===1?-1:1)*step*45;
+ const angle=angleDeg*Math.PI/180,neutral=n===2||n===6;
+ const coilPolarity=neutral?0:(Math.cos(angle)>=0?1:-1)*battery;
+ const clockwise=battery===1;
+ const torqueDirection=neutral?"zero":clockwise?"clockwise":"anticlockwise";
+ return {step,angle,angleDeg,neutral,coilPolarity,torqueDirection,
+  aCurrent:coilPolarity>0?"out":coilPolarity<0?"in":"off",
+  bCurrent:coilPolarity>0?"in":coilPolarity<0?"out":"off",
+  aForce:coilPolarity>0?"up":coilPolarity<0?"down":"zero",
+  bForce:coilPolarity>0?"down":coilPolarity<0?"up":"zero"};
+}
+function dcMotorDiagram(step=dcStep,battery=dcBattery,reveal=false,showCommutator=true){
+ const state=dcMotorState(step,battery),angle=state.angle;
+ const to=(x)=>Math.round(x*10)/10;
+ const xA=246-77*Math.cos(angle),yA=170-77*Math.sin(angle);
+ const xB=246+77*Math.cos(angle),yB=170+77*Math.sin(angle);
+ const txt=(x,y,t,size=15,col="#294c6a",weight="600")=>'<text x="'+to(x)+'" y="'+to(y)+'" text-anchor="middle" fill="'+col+'" font-size="'+size+'" font-weight="'+weight+'">'+esc(t)+'</text>';
+ const line=(x1,y1,x2,y2,col="#6087aa",w=3)=>'<line x1="'+to(x1)+'" y1="'+to(y1)+'" x2="'+to(x2)+'" y2="'+to(y2)+'" stroke="'+col+'" stroke-width="'+w+'" stroke-linecap="round"/>';
+ const arrow=(x1,y1,x2,y2,col="#257a9d")=>{
+  const a=Math.atan2(y2-y1,x2-x1),z=10;
+  return line(x1,y1,x2,y2,col,3)+
+  '<polygon points="'+to(x2)+','+to(y2)+' '+to(x2-z*Math.cos(a-.44))+','+to(y2-z*Math.sin(a-.44))+' '+to(x2-z*Math.cos(a+.44))+','+to(y2-z*Math.sin(a+.44))+'" fill="'+col+'"/>';
+ };
+ const pole=(x,n)=>'<rect x="'+x+'" y="80" width="77" height="180" rx="9" fill="'+(n==="N"?"#c7625b":"#557fb3")+'"/>'+txt(x+38,177,n,29,"#fff");
+ const conductor=(x,y,id,current,force)=>{
+  const symbol=current==="out"?'<circle cx="'+to(x)+'" cy="'+to(y)+'" r="6" fill="#ab732b"/>':
+   current==="in"?line(x-7,y-7,x+7,y+7,"#aa752e",3)+line(x+7,y-7,x-7,y+7,"#aa752e",3):"";
+  return '<circle cx="'+to(x)+'" cy="'+to(y)+'" r="21" fill="#fff" stroke="#997244" stroke-width="3"/>'+symbol+
+   txt(x,y-29,id,17,"#795522")+
+   (reveal&&force!=="zero"?arrow(x+27,y+(force==="up"?14:-14),x+27,y+(force==="up"?-27:27),"#188463"):"");
+ };
+ const main='<rect x="12" y="12" width="483" height="331" rx="15" fill="#f5faff" stroke="#cfe1f1" stroke-width="2"/>'+
+ txt(253,37,"END-ON COIL VIEW  •  B : N → S",17)+pole(28,"N")+pole(403,"S")+
+ arrow(131,71,369,71,"#2673a3")+
+ '<circle cx="246" cy="170" r="89" fill="none" stroke="#afc8db" stroke-dasharray="7 5" stroke-width="2"/>'+
+ line(xA,yA,xB,yB,"#697e99",5)+
+ '<circle cx="246" cy="170" r="9" fill="#6c86a0"/>'+txt(245,193,"AXLE",12)+
+ conductor(xA,yA,"A",state.aCurrent,state.aForce)+
+ conductor(xB,yB,"B",state.bCurrent,state.bForce)+
+ txt(253,294,"ANGLE "+(step*45)+"°  ·  "+(state.torqueDirection==="clockwise"?"CLOCKWISE":state.torqueDirection==="anticlockwise"?"ANTICLOCKWISE":"NEUTRAL"),14)+
+ txt(250,320,state.neutral?"NEUTRAL: TORQUE = 0":reveal?"A: "+state.aCurrent+" / "+state.aForce+"   B: "+state.bCurrent+" / "+state.bForce:"PREDICT FORCES • REVEAL TO CHECK",12,"#22775b");
+ let right="";
+ if(showCommutator){
+  const rotatingDeg=state.angleDeg;
+  // Two arcs form two insulated split-ring halves. Fixed brushes face left and right.
+  right='<rect x="512" y="12" width="351" height="331" rx="15" fill="#f7faff" stroke="#cfe1f1" stroke-width="2"/>'+
+   txt(687,37,"SPLIT-RING COMMUTATOR",16)+
+   '<circle cx="689" cy="157" r="72" fill="none" stroke="#d9e3ef" stroke-width="2" stroke-dasharray="4 6"/>'+
+   '<g transform="rotate('+to(rotatingDeg)+' 689 157)">'+
+   '<path d="M689 105 A52 52 0 0 0 689 209" fill="none" stroke="#d28b42" stroke-width="17" stroke-linecap="butt"/>'+
+   '<path d="M689 209 A52 52 0 0 0 689 105" fill="none" stroke="#5397ad" stroke-width="17" stroke-linecap="butt"/>'+
+   '</g>'+
+   '<rect x="605" y="146" width="35" height="22" rx="4" fill="#4d5969"/>'+
+   '<rect x="738" y="146" width="35" height="22" rx="4" fill="#4d5969"/>'+
+   line(580,157,605,157,"#8a9cb4",4)+line(773,157,801,157,"#8a9cb4",4)+
+   txt(615,196,"BRUSH −",13)+txt(765,196,"BRUSH +",13)+
+   txt(689,244,state.neutral?"BRIEF CONTACT GAP":"SLIDING CONTACT",14,state.neutral?"#a16033":"#24826a")+
+   txt(689,271,"HALVES ROTATE  •  BRUSHES STAY FIXED",12)+
+   txt(689,300,"COIL A CURRENT: "+(state.aCurrent==="out"?"OUT ⊙":state.aCurrent==="in"?"IN ⊗":"OFF"),14);
+ }else{
+  right='<rect x="512" y="12" width="351" height="331" rx="15" fill="#f7faff" stroke="#cfe1f1" stroke-width="2"/>'+
+   txt(688,57,"CORE · TURNING EFFECT",18)+
+   txt(688,107,"NUMBER OF COIL TURNS",15)+
+   txt(688,130,"CURRENT",15)+txt(688,153,"MAGNETIC FIELD STRENGTH",15)+
+   txt(688,210,"MORE OF EACH → GREATER TURNING EFFECT",14,"#1e7c62")+
+   txt(688,252,"COMPARE AT THE SAME COIL ANGLE",13)+
+   txt(688,280,"Actual speed also depends on the load",13);
+ }
+ const desc=state.neutral?"Neutral position; torque zero; in this idealised model the commutator contacts are briefly interrupted":
+  state.torqueDirection+" turning tendency, current in coil A "+state.aCurrent+", coil B "+state.bCurrent;
+ return '<figure class="figure"><svg viewBox="0 0 880 356" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+esc(desc)+'">'+main+right+'</svg>'+
+ '<figcaption>'+tr("ภาพมองตามแกนมอเตอร์พร้อมวงแหวนผ่าซีกแบบจำลอง: มุมทีละ 45°; ไม่จำลองความเร็วหรือแรงเสียดทาน",
+ "End-on motor and schematic commutator: 45° steps; this model does not simulate speed or friction")+'</figcaption></figure>';
+}
+function dcMotorReadingFigure(index){
+ if(index===0)return dcMotorDiagram(0,1,true,false);
+ if(index===1)return dcMotorDiagram(1,1,true,false)+dcMotorDiagram(2,1,true,false);
+ if(index===2||index===3)return dcMotorDiagram(0,1,true,false);
+ if(index===4)return dcMotorDiagram(0,1,true,false)+dcMotorDiagram(0,-1,true,false);
+ if(index===5)return dcMotorDiagram(0,1,true,true);
+ if(index===6)return dcMotorDiagram(2,1,true,true)+dcMotorDiagram(3,1,true,true);
+ if(index===7)return dcMotorDiagram(1,1,true,true)+dcMotorDiagram(4,1,true,true);
+ return "";
+}
+function renderDcMotorExplore(){
+ const state=dcMotorState(),factor=dcTurns*dcCurrent*dcField,showComm=level==="all";
+ const btn=(name,val,label,selected)=>
+  '<button type="button" data-dc-'+name+'="'+val+'" class="'+(selected?"primary":"")+'">'+label+'</button>';
+ const dirLabels={clockwise:{th:"ตามเข็มนาฬิกา ↻",en:"Clockwise ↻"},
+ anticlockwise:{th:"ทวนเข็มนาฬิกา ↺",en:"Anticlockwise ↺"},zero:{th:"จุดแนวกลาง แรงบิดศูนย์",en:"Neutral: zero torque"}};
+ const verdict=dcGuess?'<div class="feedback '+(dcGuess===state.torqueDirection?"":"bad")+'"><b>'+
+ (dcGuess===state.torqueDirection?tr("ถูกต้อง!","Correct!"):tr("ตรวจลูกศรแรงบนด้าน A และ B","Check the force arrows on coil sides A and B"))+'</b><p>'+
+ tr(esc(dirLabels[state.torqueDirection].th),esc(dirLabels[state.torqueDirection].en))+'</p></div>':"";
+ return head("d.c. Motor · Step-by-Step Lab","d.c. Motor · Step-by-Step Lab",
+ "หมุนขดลวดทีละ 45° เพิ่มแรงหมุน และสังเกตการสลับกระแสทุกครึ่งรอบ",
+ "Step the coil by 45°, strengthen the turning effect and examine commutation each half-turn")+
+ '<div class="content">'+dcMotorDiagram(dcStep,dcBattery,dcReveal,showComm)+
+ '<div class="flex">'+
+ btn("step","prev",tr("← ย้อนมุม","← Previous angle"),false)+
+ btn("step","next",tr("หมุนต่อ 45° →","Rotate 45° →"),false)+
+ btn("step","reset",tr("เริ่มใหม่ 0°","Reset to 0°"),false)+
+ btn("battery","reverse",tr("กลับขั้วแบตเตอรี่ · เริ่มมุม 0°","Reverse battery · reset angle"),false)+
+ '</div><p class="muted">'+tr("มุมที่หมุนจากเริ่มต้น: "+(dcStep*45)+"° · "+(state.neutral?"ตำแหน่งแนวกลาง (แรงบิดศูนย์)":"ขดลวดยังมีแนวโน้มหมุน"),
+ "Rotation from start: "+(dcStep*45)+"° · "+(state.neutral?"Neutral, zero torque":"Coil has a turning tendency"))+'</p>'+
+ '<div class="rule">'+tr("Core: จำนวนรอบของขดลวด กระแส และความแรงสนามช่วยเพิ่มผลของแรงหมุนที่มุมเดียวกัน",
+ "Core: more coil turns, greater current and stronger field increase the turning effect at the same angle")+'</div>'+
+ '<div class="flex">'+
+ btn("turns","1",tr("ลวด 1 รอบ","1 turn"),dcTurns===1)+btn("turns","2",tr("ลวด 2 รอบ","2 turns"),dcTurns===2)+
+ btn("turns","3",tr("ลวด 3 รอบ","3 turns"),dcTurns===3)+
+ btn("current","1",tr("กระแสน้อย","Lower current"),dcCurrent===1)+btn("current","2",tr("กระแสมาก","Higher current"),dcCurrent===2)+
+ btn("field","1",tr("สนามอ่อน","Weaker field"),dcField===1)+btn("field","2",tr("สนามแรง","Stronger field"),dcField===2)+
+ '</div>'+
+ '<div class="stat" style="margin-top:14px"><strong>'+tr("ดัชนีแรงหมุนสัมพัทธ์","Relative turning-effect factor")+': '+factor+'×</strong>'+
+ '<span>'+tr("เปรียบเทียบเฉพาะตำแหน่งที่ไม่ใช่แนวกลาง และรูปทรงขดลวดเดิม",
+ "Compare only at the same non-neutral angle and coil geometry")+'</span></div>'+
+ '<h3>'+tr("ในมุมปัจจุบัน แรงหมุนมีแนวโน้มอย่างไร?","At this angle, what is the turning tendency?")+'</h3>'+
+ '<div class="flex">'+Object.entries(dirLabels).map(([id,v])=>btn("guess",id,tr(esc(v.th),esc(v.en)),dcGuess===id)).join("")+'</div>'+
+ '<div class="flex" style="margin-top:10px">'+btn("reveal","toggle",dcReveal?tr("ซ่อนแรงบนลวด","Hide wire forces"):tr("แสดงแรงบนลวด","Show wire forces"),dcReveal)+'</div>'+
+ verdict+
+ (showComm?'<p class="muted">'+tr("Supplement: วงแหวนผ่าซีกหมุนพร้อมเพลา ส่วนแปรงอยู่กับที่ ช่วง 90° และ 270° เป็นแนวกลางในแบบจำลอง เมื่อผ่านแนวกลาง กระแสด้าน A/B กลับทิศแต่แนวโน้มหมุนยังทิศเดิม",
+ "Supplement: split-ring halves rotate with the axle while brushes remain fixed. At 90° and 270° this model reaches neutral; current reverses in labelled sides A/B after neutral while the turning tendency stays in the same direction.")+'</p>':
+ '<p class="muted">'+tr("เลือก Core+Supplement หากต้องการศึกษา split-ring และ brushes","Switch to Core+Supplement to study the split-ring and brushes")+'</p>')+
+ '</div>';
 }
 function renderLearn(){
  const l=current();
