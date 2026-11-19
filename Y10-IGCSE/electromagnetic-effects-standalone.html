@@ -15,8 +15,8 @@ header{position:sticky;top:0;background:var(--navy);color:#fff;z-index:5;padding
 .brand strong{font-size:20px;display:block}.brand small{font-size:11px;color:#bbd3ed}.toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .toolbar label{font-size:12px;color:#c6d9ee}.toolbar select{border:1px solid #7190b3;color:#fff;background:#244565;padding:7px 10px;border-radius:9px}
 .shell{display:grid;grid-template-columns:249px minmax(0,1fr);max-width:1560px;margin:0 auto;align-items:start}
-aside{position:sticky;top:75px;max-height:calc(100vh - 75px);overflow:auto;padding:22px 13px;background:white;border-right:1px solid var(--line);min-height:calc(100vh - 75px)}
-aside h2{font-size:14px;margin:0 8px 14px}.nav-item{display:block;text-align:left;width:100%;border:1px solid var(--line);padding:11px 12px;margin-bottom:7px;border-radius:11px;background:#fff;color:#24496d}
+.course-rail{position:sticky;top:75px;max-height:calc(100vh - 75px);overflow:auto;padding:22px 13px;background:white;border-right:1px solid var(--line);min-height:calc(100vh - 75px)}
+.course-rail h2{font-size:14px;margin:0 8px 14px}.nav-item{display:block;text-align:left;width:100%;border:1px solid var(--line);padding:11px 12px;margin-bottom:7px;border-radius:11px;background:#fff;color:#24496d}
 .nav-item.active{background:#eaf3ff;border-color:#8eb9e1;box-shadow:inset 3px 0 #2672c3}
 .nav-item .num{display:block;color:#386a9f;font-size:11px;font-weight:800}.nav-item .name{display:block;font-size:13px;font-weight:750}.nav-item .meta{display:block;color:var(--muted);font-size:11px}
 .nav-item.pending{background:#f8fafc;color:#758599}.nav-item.pending .name{font-weight:600}
@@ -52,7 +52,7 @@ body[data-lang=th] .only-en,body[data-lang=en] .only-th{display:none!important}
 body[data-lang=both] .only-en{margin-top:6px}
 #printArea{display:none}.row-between{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.history-row{padding:7px 0;border-bottom:1px solid var(--line);font-size:12px}
 @media(max-width:1090px){.layout{grid-template-columns:1fr}.reference{position:static;max-height:none}}
-@media(max-width:720px){header{position:static}.shell{display:block}aside{min-height:0;position:static;max-height:none;display:block;padding:12px}aside h2{margin:3px 6px 9px}#courseNav{display:flex;overflow:auto;gap:7px}.nav-item{min-width:190px;margin:0}main{padding:12px}.viewbar button{font-size:12px;min-width:78px}.bank{grid-template-columns:repeat(2,minmax(0,1fr))}.content{padding:15px}}
+@media(max-width:720px){header{position:static}.shell{display:block}.course-rail{min-height:0;position:static;max-height:none;display:block;padding:12px}.course-rail h2{margin:3px 6px 9px}#courseNav{display:flex;overflow:auto;gap:7px}.nav-item{min-width:190px;margin:0}main{padding:12px}.viewbar button{font-size:12px;min-width:78px}.bank{grid-template-columns:repeat(2,minmax(0,1fr))}.content{padding:15px}}
 @media print{
 @page{size:A4;margin:13mm}
 body{background:#fff;color:#000;font:11pt/1.45 "Times New Roman",serif}
@@ -78,7 +78,7 @@ body[data-lang=th] #printArea .only-en,body[data-lang=en] #printArea .only-th{di
   </div>
 </header>
 <div class="shell">
-<aside aria-label="Course navigation">
+<aside class="course-rail" aria-label="Course navigation">
   <h2>Learning Path</h2><div id="courseNav"></div>
   <div class="rail-note"><b class="only-th">แนวทางเรียนล่วงหน้า</b><b class="only-en">Learn-first pathway</b>
    <p class="only-th">อ่านก่อน → ทดลองเปลี่ยนทิศ → ฝึกตอบพร้อมเฉลย → ทำข้อสอบสะสมคะแนน</p>
@@ -113,6 +113,10 @@ body[data-lang=th] #printArea .only-en,body[data-lang=en] #printArea .only-th{di
  <section id="printArea"></section>
 </main></div>
 <script>
+window.MathJax={tex:{inlineMath:[["\\(","\\)"]],displayMath:[["\\[","\\]"]]},options:{skipHtmlTags:["script","noscript","style","textarea","pre","code"]}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script>
 "use strict";
 const ROUTE=[
  {id:"orientation",section:"START",th:"เริ่มต้น: อ่านทิศทาง",en:"Start Here: Reading Directions",ready:true,planned:6},
@@ -123,6 +127,18 @@ const ROUTE=[
  {id:"generator",section:"4.5.2",th:"เครื่องกำเนิดไฟฟ้ากระแสสลับ",en:"The a.c. Generator",ready:false,planned:8},
  {id:"transformer",section:"4.5.6",th:"หม้อแปลงไฟฟ้า",en:"The Transformer",ready:false,planned:10}
 ];
+/*
+EDIT CONTRACT FOR R01-R06:
+- Add a complete LESSONS[id] object, then set the matching ROUTE entry to ready:true.
+- LESSONS: title:{th,en}, intro:{th,en}, reading:[{title:{th,en},th,en}],
+  cloze:{parts:{th,en},solution:[3 term IDs],bank:[{id,th,en}]},
+  questions:[{id,tier:"core"|"supplement"|"foundation",stem:{th,en},
+    options:[[th,en],...4],correct:0..3,why:{th,en},example:{th,en}}],
+  flashcards:[{th,en,answerTH,answerEN}].
+- Match Thai/English content, all question conditions and solution steps exactly.
+- Keep all direction SVG physics consistent; do not randomize image vs answer independently.
+- Keep unfinished lessons unavailable to students. Do not rebuild shared engines.
+*/
 // Lesson data are deliberately separated from UI code. Future rounds add ready lessons here.
 const LESSONS={
  orientation:{
@@ -397,7 +413,10 @@ function render(){
  else if(view==="recall")body=renderRecall();
  else if(view==="try"||view==="check")body=questionCard(view);
  else body=renderExit();
- $$("mainPanel").innerHTML=body;renderReference();
+ $("mainPanel").innerHTML=body;renderReference();
+ if(window.MathJax&&typeof window.MathJax.typesetPromise==="function"){
+  window.MathJax.typesetPromise([$("mainPanel"),$("referencePanel")]).catch(()=>{});
+ }
 }
 function navigateQuestion(step){
  questionIndex=Math.max(0,Math.min(allQuestions().length-1,questionIndex+step));
