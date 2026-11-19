@@ -253,6 +253,29 @@ async function testGiveUpReset(browser,url){
   assert.match(await page.locator("#mainPanel .stat").innerText(),/Recorded 0\/8/);
  }finally{await ctx.close()}
 }
+async function testAttemptHistoryIsolation(browser,url){
+ const ctx=await browser.newContext({viewport:{width:1200,height:840}});
+ try{
+  const page=await ctx.newPage();
+  page.on("dialog",d=>d.accept());
+  await page.route("https://cdn.jsdelivr.net/**",r=>r.abort());
+  await load(page,url);
+  await choosePage(page,"field");await mode(page,"check");
+  await press(page,"answer",1);await press(page,"action","submit");
+  await press(page,"action","history");
+  assert.equal(await page.locator("#mainPanel .history-row").count(),1,"R01 history should show its answer");
+  await choosePage(page,"dc-motor");await mode(page,"check");
+  assert.equal(await page.locator("#mainPanel .history-row").count(),0,"History panel must not follow the user into another mission");
+  await press(page,"answer",1);await press(page,"action","submit");
+  await press(page,"action","history");
+  assert.equal(await page.locator("#mainPanel .history-row").count(),1,"R03 has only R03 attempt");
+  await page.locator("#resetTopic").click();await mode(page,"check");
+  assert.equal(await page.locator("#mainPanel .history-row").count(),0,"Reset must clear open history panel");
+  await choosePage(page,"field");await mode(page,"check");
+  await press(page,"action","history");
+  assert.equal(await page.locator("#mainPanel .history-row").count(),1,"R01 history must survive unrelated R03 reset");
+ }finally{await ctx.close()}
+}
 async function testPrinting(page){
  await choosePage(page,"dc-motor");
  await page.locator("#level").selectOption("all");
@@ -292,6 +315,7 @@ async function testPrinting(page){
   await run("Core/Supplement switching, no content leak",()=>testTiers(page));
   await run("Print Learning vs Problems, Core vs all",()=>testPrinting(page));
   await run("Actual browser Give Up=0 lock, Reset and mission isolation",()=>testGiveUpReset(browser,url));
+  await run("Attempt History panel and stored records remain mission-isolated",()=>testAttemptHistoryIsolation(browser,url));
   await run("Three viewport screenshots, no horizontal overflow or JS errors",()=>testResponsive(browser,url));
   await run("WebKit Safari-engine touch simulation, directions, print & reload",()=>testWebKitSafariEngine(url));
   await run("Global runtime error check",async()=>assert.deepEqual(pageErrors,[]));
