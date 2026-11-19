@@ -259,7 +259,7 @@ function currentQuestion(){return allQuestions()[Math.min(questionIndex,allQuest
 function enterLesson(id){
  if(!LESSONS[id])return;
  currentId=id;saved=loadState(id);view="learn";questionIndex=0;chosen=null;practiceChoice=null;practiceChecked=false;
- refMode="reading";direction="out";exploreAnswer="";chosenWord=null;clozeSlots=[null,null,null];fieldScene="wire";coilSense="ccw";currentStrength="low";relayOn=false;speakerPhase="out";fieldAnswer="";motorMode="lab";motorI="in";motorB="right";motorCharge="positive";motorGuess="";dcStep=0;dcBattery=1;dcTurns=1;dcCurrent=1;dcField=1;dcGuess="";dcReveal=false;flashIndex=0;flipped=false;seen=new Set();message="";retrying=false;
+ refMode="reading";direction="out";exploreAnswer="";chosenWord=null;clozeSlots=[null,null,null];fieldScene="wire";coilSense="ccw";currentStrength="low";relayOn=false;speakerPhase="out";fieldAnswer="";motorMode="lab";motorI="in";motorB="right";motorCharge="positive";motorGuess="";dcStep=0;dcBattery=1;dcTurns=1;dcCurrent=1;dcField=1;dcGuess="";dcReveal=false;flashIndex=0;flipped=false;seen=new Set();message="";retrying=false;attemptsOpen=false;
  render();
 }
 function gotoView(next){
@@ -1050,7 +1050,7 @@ $("level").addEventListener("change",e=>{level=e.target.value;questionIndex=0;ch
 $("resetTopic").addEventListener("click",()=>{
  if(!window.confirm("Clear only this lesson's saved answers, history and flashcards? / ล้างเฉพาะบทนี้?"))return;
  try{localStorage.removeItem(STORAGE_BASE+currentId)}catch(_){}
- saved=loadState(currentId);questionIndex=0;chosen=null;practiceChoice=null;practiceChecked=false;retrying=false;clozeSlots=[null,null,null];seen=new Set();flashIndex=0;flipped=false;message="";view="learn";render();
+ saved=loadState(currentId);questionIndex=0;chosen=null;practiceChoice=null;practiceChecked=false;retrying=false;clozeSlots=[null,null,null];seen=new Set();flashIndex=0;flipped=false;message="";attemptsOpen=false;view="learn";render();
 });
 $("printNotes").addEventListener("click",()=>printKind("learn"));
 $("printQuestions").addEventListener("click",()=>printKind("questions"));
