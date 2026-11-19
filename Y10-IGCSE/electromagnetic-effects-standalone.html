@@ -738,6 +738,15 @@ function motorQuestionDiagram(q,reveal){
   showForce,hideCurrent
  });
 }
+function dcQuestionDiagram(q){
+ if(currentId!=="dc-motor"||!q)return "";
+ if(q.id==="D01")return dcMotorDiagram(0,1,false,false);
+ if(q.id==="D05")return dcMotorDiagram(1,1,false,false);
+ if(q.id==="D06")return dcMotorDiagram(3,1,false,true);
+ if(q.id==="D07")return dcMotorDiagram(0,1,false,true);
+ if(q.id==="D08")return dcMotorDiagram(2,1,false,true);
+ return "";
+}
 function questionCard(mode){
  const arr=allQuestions(),q=currentQuestion();if(!q)return '<div class="content">No questions available for this level.</div>';
  const isCheck=mode==="check",rec=saved.records[q.id],locked=isCheck&&!!rec&&!retrying;
@@ -779,7 +788,7 @@ function questionCard(mode){
    mode==="try"?"Retry freely with instant feedback":"Your result is saved in this browser")+
  '<div class="content">'+status+'<div class="row-between" style="margin-top:14px"><span class="eyebrow">QUESTION '+(questionIndex+1)+' / '+arr.length+'</span>'+
  '<span class="badge '+(total==="Supplement"?"supplement":"")+'">'+total+'</span></div>'+
- '<h3>'+tr(esc(q.stem.th),esc(q.stem.en))+'</h3>'+motorQuestionDiagram(q,showOptions||locked)+opt+
+ '<h3>'+tr(esc(q.stem.th),esc(q.stem.en))+'</h3>'+motorQuestionDiagram(q,showOptions||locked)+dcQuestionDiagram(q)+opt+
  '<div class="flex" style="margin-top:16px">'+action+
  '<button type="button" data-action="example">'+tr("ดูตัวอย่างคล้าย","Similar example")+'</button>'+
  '<button type="button" data-action="read">'+tr("อ่านบทเรียน","Read lesson")+'</button></div>'+
@@ -811,6 +820,21 @@ function renderReference(){
     '<li>'+tr(esc(th),esc(q.exampleSteps.en[i]||""))+'</li>').join("")+'</ol>';
   }
   inner+='<p class="muted">'+tr("ตัวอย่างนี้ต่างจากโจทย์ข้อจริง เพื่อฝึกวิธีคิดก่อนตอบ","This is not the assessed question. Study the method before choosing an answer.")+'</p></div>';
+ }else if(currentId==="dc-motor"){
+  const showComm=q?.tier==="supplement"&&level==="all";
+  inner+='<div class="rule">'+tr("ดูแรงบนด้าน A และ B แยกกันก่อนหาทิศหมุน",
+    "Trace the forces on sides A and B before deciding rotation")+'</div>'+
+    dcMotorDiagram(showComm?3:0,1,true,showComm)+
+    '<ol class="topic-plan">'+
+    '<li>'+tr("ด้านซ้ายแรงขึ้น ด้านขวาแรงลง → มองตามแกนแล้วหมุนตามเข็ม",
+      "Left side up and right side down → clockwise viewed along the axle")+'</li>'+
+    '<li>'+tr("Core: เพิ่มจำนวนรอบขดลวด กระแส และสนาม → ผลของแรงหมุนเพิ่ม",
+      "Core: more turns, greater current, stronger field → greater turning effect")+'</li>'+
+    (level==="all"?'<li>'+tr("Supplement: split-ring หมุนไปกับเพลา กลับกระแสในขดลวดทุกครึ่งรอบ",
+      "Supplement: split-ring rotates with the axle and reverses coil current every half-turn")+'</li>'+
+    '<li>'+tr("แปรงสัมผัสอยู่นิ่ง ต่อวงจรภายนอกกับวงแหวนที่หมุน",
+      "Stationary brushes connect the supply to the rotating commutator")+'</li>':"")+
+    '</ol>';
  }else if(currentId==="motor-effect"){
   const illustrative=(q&&q.tier==="supplement")?
     (["E11","E12"].includes(q.id)?motorDiagram("up","right",{mode:"beam",charge:"positive",showForce:true}):
@@ -896,7 +920,7 @@ function printKind(kind){
    (currentId==="dc-motor"?dcMotorReadingFigure(i):"")+'</div>';
  }).join(""):
  q.map((x,i)=>'<div class="print-question"><b>'+(i+1)+'. [1 mark] · '+esc(x.tier==="foundation"?"Foundation":x.tier==="supplement"?"Supplement":"Core")+'</b>'+
- '<p>'+tr(esc(x.stem.th),esc(x.stem.en))+'</p>'+motorQuestionDiagram(x,false)+
+ '<p>'+tr(esc(x.stem.th),esc(x.stem.en))+'</p>'+motorQuestionDiagram(x,false)+dcQuestionDiagram(x)+
  x.options.map((o,j)=>'<p>'+String.fromCharCode(65+j)+'. '+tr(esc(o[0]),esc(o[1]))+'</p>').join("")+
  '<div class="print-space"></div></div>').join("");
  $("printArea").innerHTML=title+content;window.print();
