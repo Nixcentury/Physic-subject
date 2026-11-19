@@ -510,8 +510,22 @@ function renderReference(){
  inner+='<div class="content"><div class="flex"><button type="button" data-ref="reading" class="'+(refMode==="reading"?"primary":"")+'">'+tr("เนื้อหา","Concepts")+'</button>'+
  '<button type="button" data-ref="example" class="'+(refMode==="example"?"primary":"")+'">'+tr("ตัวอย่างคล้าย","Worked Example")+'</button></div>';
  if(refMode==="example"&&q){
-  inner+='<div class="worked" style="margin-top:14px"><span class="eyebrow">SIMILAR WORKED EXAMPLE</span><p>'+tr(esc(q.example.th),esc(q.example.en))+'</p>'+
-   '<p class="muted">'+tr("ตัวอย่างนี้ต่างจากโจทย์ข้อจริง เพื่อฝึกวิธีคิดก่อนตอบ","This is not the assessed question. Study the method before choosing an answer.")+'</p></div>';
+  inner+='<div class="worked" style="margin-top:14px"><span class="eyebrow">SIMILAR WORKED EXAMPLE</span><p>'+tr(esc(q.example.th),esc(q.example.en))+'</p>';
+  if(q.exampleSteps&&q.exampleSteps.th&&q.exampleSteps.en){
+   inner+='<ol class="topic-plan">'+q.exampleSteps.th.map((th,i)=>
+    '<li>'+tr(esc(th),esc(q.exampleSteps.en[i]||""))+'</li>').join("")+'</ol>';
+  }
+  inner+='<p class="muted">'+tr("ตัวอย่างนี้ต่างจากโจทย์ข้อจริง เพื่อฝึกวิธีคิดก่อนตอบ","This is not the assessed question. Study the method before choosing an answer.")+'</p></div>';
+ }else if(currentId==="field"){
+  const refScene=q?.id==="M05"?"relay":q?.id==="M06"?"speaker":
+   ["M02","M03","M08"].includes(q?.id)?"solenoid":"wire";
+  inner+='<div class="rule">'+tr("สังเกตทิศกระแสและรูปแบบสนามก่อนตอบ","Check current direction and field pattern first")+'</div>'+
+   fieldFigure(refScene)+
+   '<ol class="topic-plan"><li>'+tr("ลวดตรง: นิ้วหัวแม่มือขวาชี้ตาม I นิ้วกำบอกทิศ B","Straight wire: right thumb along I; curled fingers show B")+'</li>'+
+   '<li>'+tr("มองปลายโซลินอยด์: ทวนเข็ม = N, ตามเข็ม = S","View a solenoid end: CCW = N; CW = S")+'</li>'+
+   '<li>'+tr("ผงตะไบบอกรูปแบบ เข็มทิศบอกลูกศรทิศสนาม","Iron filings show pattern; a compass shows arrow direction")+'</li>'+
+   '<li>'+tr("รีเลย์ใช้แม่เหล็กไฟฟ้าดึงหน้าสัมผัส ส่วนลำโพงใช้แรงกับขดลวดทำให้กรวยสั่น","A relay moves a switch with an electromagnet; a speaker vibrates a cone via coil force")+'</li></ol>'+
+   '<p class="muted">'+tr("Core: รูปแบบ ทิศสนาม การทดลอง รีเลย์และลำโพง · Supplement: ผลของขนาดและทิศกระแส","Core: field patterns, directions, investigation, relay and speaker. Supplement: changes in current magnitude and direction.")+'</p>';
  }else{
   inner+='<div class="rule">'+tr("กฎทิศทางที่ต้องจำ","Direction reference")+'</div>'+figure()+
    '<ol class="topic-plan"><li>'+tr("⊙ ออกจากกระดาษ","⊙ out of the page")+'</li><li>'+tr("⊗ เข้ากระดาษ","⊗ into the page")+'</li>'+
