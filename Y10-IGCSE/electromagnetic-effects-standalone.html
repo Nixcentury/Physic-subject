@@ -219,6 +219,7 @@ const tr=(th,en)=>'<span class="only-th">'+th+'</span><span class="only-en">'+en
 let currentId="orientation",view="learn",questionIndex=0,chosen=null,practiceChoice=null,practiceChecked=false;
 let refMode="reading",direction="out",exploreAnswer="",chosenWord=null,clozeSlots=[null,null,null];
 let fieldScene="wire",coilSense="ccw",currentStrength="low",relayOn=false,speakerPhase="out",fieldAnswer="";
+let motorMode="lab",motorI="in",motorB="right",motorCharge="positive",motorGuess="";
 let flashIndex=0,flipped=false,seen=new Set(),message="",attemptsOpen=false,retrying=false;
 let level="all",lang="both",saved=loadState(currentId);
 function current(){return LESSONS[currentId]}
@@ -249,7 +250,7 @@ function currentQuestion(){return allQuestions()[Math.min(questionIndex,allQuest
 function enterLesson(id){
  if(!LESSONS[id])return;
  currentId=id;saved=loadState(id);view="learn";questionIndex=0;chosen=null;practiceChoice=null;practiceChecked=false;
- refMode="reading";direction="out";exploreAnswer="";chosenWord=null;clozeSlots=[null,null,null];fieldScene="wire";coilSense="ccw";currentStrength="low";relayOn=false;speakerPhase="out";fieldAnswer="";flashIndex=0;flipped=false;seen=new Set();message="";retrying=false;
+ refMode="reading";direction="out";exploreAnswer="";chosenWord=null;clozeSlots=[null,null,null];fieldScene="wire";coilSense="ccw";currentStrength="low";relayOn=false;speakerPhase="out";fieldAnswer="";motorMode="lab";motorI="in";motorB="right";motorCharge="positive";motorGuess="";flashIndex=0;flipped=false;seen=new Set();message="";retrying=false;
  render();
 }
 function gotoView(next){
@@ -395,6 +396,115 @@ function renderFieldExplore(){
  answers.map(([id,th,en])=>'<button type="button" data-field-answer="'+id+'" class="'+(fieldAnswer===id?"primary":"")+'">'+tr(th,en)+'</button>').join("")+
  '</div>'+verdict+
  '<p class="muted">'+tr("เส้นและลูกศรเป็นภาพเชิงแนวคิด ไม่ใช่อุปกรณ์จริงที่มีขนาดตามสเกล","Schematic field and device views; not drawn to mechanical scale.")+'</p></div>';
+}
+
+const DIRECTION_VECTORS={right:[1,0,0],left:[-1,0,0],up:[0,1,0],down:[0,-1,0],out:[0,0,1],in:[0,0,-1]};
+const DIRECTION_LABELS={
+ right:{th:"ขวา →",en:"Right →"},left:{th:"← ซ้าย",en:"← Left"},
+ up:{th:"↑ ขึ้น",en:"↑ Up"},down:{th:"↓ ลง",en:"↓ Down"},
+ out:{th:"ออก ⊙",en:"Out ⊙"},in:{th:"เข้า ⊗",en:"In ⊗"},
+ zero:{th:"ไม่มีแรง",en:"No force"}};
+function computeMotorForce(I,B,mode="wire",charge="positive"){
+ const a=DIRECTION_VECTORS[I],b=DIRECTION_VECTORS[B];
+ if(!a||!b)throw Error("Unknown direction for motor force");
+ const cross=[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+ const sign=mode==="beam"&&charge==="negative"?-1:1;
+ const v=cross.map(x=>x*sign);
+ for(const [name,xyz] of Object.entries(DIRECTION_VECTORS)){
+  if(xyz.every((component,i)=>component===v[i]))return name;
+ }
+ return "zero";
+}
+function motorDiagram(I,B,{mode="wire",charge="positive",showForce=false,hideCurrent=false,hideField=false}={}){
+ const force=computeMotorForce(I,B,mode,charge);
+ const dlabel=(d)=>DIRECTION_LABELS[d]?.en||d;
+ const t=(x,y,value,size=15,color="#2d567f",anchor="middle")=>
+  '<text x="'+x+'" y="'+y+'" font-size="'+size+'" font-weight="650" fill="'+color+'" text-anchor="'+anchor+'">'+esc(value)+'</text>';
+ const ln=(x1,y1,x2,y2,color,width=4)=>
+  '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+color+'" stroke-width="'+width+'" stroke-linecap="round"/>';
+ const vect=(x,y,d,color,size=43)=>{
+  if(d==="zero")return t(x,y,"0",24,color);
+  if(d==="in")return '<circle cx="'+x+'" cy="'+y+'" r="21" fill="#fff" stroke="'+color+'" stroke-width="3"/>'+
+    ln(x-10,y-10,x+10,y+10,color,4)+ln(x+10,y-10,x-10,y+10,color,4);
+  if(d==="out")return '<circle cx="'+x+'" cy="'+y+'" r="21" fill="#fff" stroke="'+color+'" stroke-width="3"/>'+
+    '<circle cx="'+x+'" cy="'+y+'" r="7" fill="'+color+'"/>';
+  const a=d==="right"?0:d==="up"?-Math.PI/2:d==="left"?Math.PI:Math.PI/2;
+  const x1=x-Math.cos(a)*size*.65,y1=y-Math.sin(a)*size*.65;
+  const x2=x+Math.cos(a)*size*.65,y2=y+Math.sin(a)*size*.65;
+  const hx=x2-Math.cos(a-.48)*13,hy=y2-Math.sin(a-.48)*13;
+  const rx=x2-Math.cos(a+.48)*13,ry=y2-Math.sin(a+.48)*13;
+  return ln(x1,y1,x2,y2,color,4)+
+   '<polygon points="'+x2+','+y2+' '+hx+','+hy+' '+rx+','+ry+'" fill="'+color+'"/>';
+ };
+ const fieldGlyph=hideField?t(270,115,"B = ?",19,"#2765a7"):vect(270,115,B,"#2765a7",67);
+ const currentGlyph=hideCurrent?t(157,209,mode==="beam"?"v = ?":"I = ?",19,"#ad6a29"):vect(157,209,I,"#b27b2b",63);
+ const forceGlyph=showForce?vect(412,209,force,"#198166",64):t(412,213,"?",35,"#198166");
+ const magLabel=mode==="beam"?(charge==="negative"?"q = −":"q = +"):"I";
+ const unit=mode==="beam"?"v":"I";
+ const caption=showForce?"F = "+dlabel(force):"Predict F / ทำนายทิศแรง";
+ let v='<rect x="12" y="12" width="526" height="305" rx="15" fill="#f3f9ff" stroke="#d4e3f2" stroke-width="2"/>'+
+   '<rect x="37" y="55" width="92" height="64" rx="8" fill="#d56f68"/>'+
+   '<rect x="421" y="55" width="92" height="64" rx="8" fill="#5b88bd"/>'+
+   t(83,93,"N",24,"#fff")+t(467,93,"S",24,"#fff")+
+   t(270,48,mode==="beam"?"CHARGED PARTICLE BEAM":"CURRENT-CARRYING WIRE",17)+
+   '<rect x="230" y="159" width="83" height="97" rx="15" fill="#ffffff" stroke="#a6bfd6" stroke-width="2"/>'+
+   t(270,187,"B",20,"#2765a7")+
+   t(157,156,unit,21,"#a96f25")+
+   t(412,156,"F",21,"#198166")+
+   fieldGlyph+currentGlyph+forceGlyph+
+   t(277,283,hideField?"B = ?":"B : "+dlabel(B),14,"#2765a7")+
+   t(277,306,hideCurrent?unit+" = ?":(magLabel+" : "+dlabel(I)),14,"#8d642c")+
+   t(277,333,caption,15,"#178165");
+ // In arbitrary 3-D direction modes, N/S blocks are symbolic, not physical pole geometry.
+ // Mark the two blocks as conceptual field-source markers, not as fixed N->S regardless of B.
+ v=v.replace('<rect x="37" y="55" width="92" height="64" rx="8" fill="#d56f68"/>'+
+   '<rect x="421" y="55" width="92" height="64" rx="8" fill="#5b88bd"/>'+
+   t(83,93,"N",24,"#fff")+t(467,93,"S",24,"#fff"),
+   '<rect x="38" y="61" width="97" height="41" rx="8" fill="#e2eefb" stroke="#aac7e2"/>'+
+   '<rect x="408" y="61" width="97" height="41" rx="8" fill="#e2eefb" stroke="#aac7e2"/>'+
+   t(85,89,"I / v",14)+t(458,89,"B",14));
+ return '<figure class="figure"><svg viewBox="0 0 550 352" role="img" xmlns="http://www.w3.org/2000/svg" aria-label="'+
+ esc("Current or velocity "+I+", magnetic field "+B+", "+(showForce?"force "+force:"force to predict"))+'">'+v+'</svg>'+
+ '<figcaption>'+tr("ภาพแกนทิศทางเชิงสัญลักษณ์: I หรือ v, B และ F แยกตำแหน่งเพื่ออ่านง่าย ไม่ใช่ตำแหน่งจริงของลวดกับขั้วแม่เหล็ก",
+ "Schematic direction chart: I or v, B and F are placed apart for clarity, not at their physical positions.")+'</figcaption></figure>';
+}
+function motorExpected(){return computeMotorForce(motorI,motorB,motorMode==="beam"?"beam":"wire",motorCharge)}
+function renderMotorExplore(){
+ const chosen=motorGuess,correct=motorExpected(),extended=level==="all";
+ const dirButtons=(kind,choiceSet,selected)=>choiceSet.map(d=>
+  '<button type="button" data-motor-'+kind+'="'+d+'" class="'+(selected===d?"primary":"")+'">'+
+  tr(esc(DIRECTION_LABELS[d].th),esc(DIRECTION_LABELS[d].en))+'</button>').join("");
+ const modeButtons=extended?
+ '<div class="flex"><button type="button" data-motor-mode="lab" class="'+(motorMode==="lab"?"primary":"")+'">Core Lab</button>'+
+ '<button type="button" data-motor-mode="wire" class="'+(motorMode==="wire"?"primary":"")+'">Extended · Wire</button>'+
+ '<button type="button" data-motor-mode="beam" class="'+(motorMode==="beam"?"primary":"")+'">Extended · Charged Beam</button></div>':"";
+ const data=extended&&motorMode!=="lab"?["right","left","up","down","in","out"]:null;
+ const iChoices=data||["in","out"],bChoices=data||["right","left"];
+ const qControls=motorMode==="beam"?'<div class="flex">'+
+ '<button type="button" data-motor-charge="positive" class="'+(motorCharge==="positive"?"primary":"")+'">'+tr("อนุภาคบวก (+)","Positive charge (+)")+'</button>'+
+ '<button type="button" data-motor-charge="negative" class="'+(motorCharge==="negative"?"primary":"")+'">'+tr("อิเล็กตรอน (−)","Electron (−)")+'</button></div>':"";
+ const qTitle=motorMode==="beam"?tr("เลือกทิศความเร็ว v ของอนุภาค","Choose particle velocity v"):
+ tr("เลือกทิศกระแสตามแบบแผน I","Choose conventional current I");
+ const question=tr("แรงแม่เหล็กมีทิศใด? (อ่านภาพก่อนตอบ)","Which direction is the magnetic force? Check the diagram first.");
+ const directions=extended&&motorMode!=="lab"?["up","down","left","right","out","in","zero"]:["up","down"];
+ const verdict=chosen?'<div class="feedback '+(chosen===correct?"":"bad")+'"><b>'+
+  (chosen===correct?tr("ถูกต้อง!","Correct!"):tr("ยังไม่ถูก ดูแรงที่แสดงในภาพแล้วลองกรณีใหม่","Not correct. Check the revealed force and try another combination."))+'</b><p>'+
+  tr("ผลการทำนายจากทิศ I (หรือ v ของประจุบวก), B และเครื่องหมายประจุ คือ ",
+     "Computed from conventional current (or positive-charge velocity), B and charge sign: ")+
+  tr(esc(DIRECTION_LABELS[correct].th),esc(DIRECTION_LABELS[correct].en))+'</p></div>':"";
+ return head("Motor Effect · Direction Lab","Motor Effect · Direction Lab",
+ "กลับทิศกระแส สนาม และประจุ แล้วคาดการณ์แรงก่อนเปิดเฉลย",
+ "Reverse current, field or charge sign and predict the force before revealing the answer")+
+ '<div class="content">'+modeButtons+
+ '<div class="rule">'+tr(motorMode==="lab"?"Core: สลับกระแสเข้า–ออก หรือสนามซ้าย–ขวา แล้วสังเกตผลของแรง":"Supplement: เลือกทิศสามมิติของกระแส/ความเร็วและสนามเพื่อฝึกกฎมือซ้าย",
+ motorMode==="lab"?"Core: reverse current into/out of the page, or field left/right, and observe the force":"Supplement: select any 3-D current/velocity and field directions to practise the hand rule")+'</div>'+
+ motorDiagram(motorI,motorB,{mode:motorMode==="beam"?"beam":"wire",charge:motorCharge,showForce:!!chosen})+
+ '<h3>'+qTitle+'</h3><div class="flex">'+dirButtons("i",iChoices,motorI)+'</div>'+
+ '<h3>'+tr("เลือกทิศสนามแม่เหล็ก B","Choose magnetic field B")+'</h3><div class="flex">'+dirButtons("b",bChoices,motorB)+'</div>'+
+ qControls+'<h3>'+question+'</h3><div class="flex">'+
+ dirButtons("guess",directions,chosen)+'</div>'+verdict+
+ '<p class="muted">'+tr("ทิศ F คำนวณจาก I × B สำหรับลวดตัวนำ หรือ q(v × B) สำหรับอนุภาคมีประจุ; ถ้า I หรือ v ขนาน B แรงเป็นศูนย์",
+ "Force follows I × B for a wire or q(v × B) for a charged particle. Parallel or antiparallel directions give zero magnetic force.")+'</p></div>';
 }
 function renderLearn(){
  const l=current();
