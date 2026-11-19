@@ -123,7 +123,7 @@ const ROUTE=[
  {id:"orientation",section:"START",th:"เริ่มต้น: อ่านทิศทาง",en:"Start Here: Reading Directions",ready:true,planned:6},
  {id:"field",section:"4.5.3",th:"สนามแม่เหล็กจากกระแส",en:"Magnetic Effect of a Current",ready:true,planned:8},
  {id:"motor-effect",section:"4.5.4",th:"แรงบนตัวนำที่มีกระแส",en:"Motor Effect",ready:true,planned:12},
- {id:"dc-motor",section:"4.5.5",th:"มอเตอร์กระแสตรง",en:"The d.c. Motor",ready:false,planned:8},
+ {id:"dc-motor",section:"4.5.5",th:"มอเตอร์กระแสตรง",en:"The d.c. Motor",ready:true,planned:8},
  {id:"induction",section:"4.5.1",th:"การเหนี่ยวนำแม่เหล็กไฟฟ้า",en:"Electromagnetic Induction",ready:false,planned:10},
  {id:"generator",section:"4.5.2",th:"เครื่องกำเนิดไฟฟ้ากระแสสลับ",en:"The a.c. Generator",ready:false,planned:8},
  {id:"transformer",section:"4.5.6",th:"หม้อแปลงไฟฟ้า",en:"The Transformer",ready:false,planned:10}
@@ -681,7 +681,8 @@ function renderLearn(){
    (a.tier==="supplement"?'<span class="badge supplement">Supplement</span>':"")+
    '<p class="only-th">'+esc(a.th)+'</p><p class="only-en">'+esc(a.en)+'</p>'+
    (currentId==="field"&&illustrations[i]?fieldFigure(illustrations[i]):"")+
-   (currentId==="motor-effect"?motorReadingFigure(i):"")+'</section>';
+   (currentId==="motor-effect"?motorReadingFigure(i):"")+
+   (currentId==="dc-motor"?dcMotorReadingFigure(i):"")+'</section>';
  }).join("");
  return head("อ่านก่อนตอบ","Read Before You Answer",
  "บทอ่านสองภาษาที่ครอบคลุมก่อนทำโจทย์ทุกข้อ",
@@ -692,6 +693,7 @@ function renderLearn(){
 function renderExplore(){
  if(currentId==="field")return renderFieldExplore();
  if(currentId==="motor-effect")return renderMotorExplore();
+ if(currentId==="dc-motor")return renderDcMotorExplore();
  const ccw=direction==="out";
  const right=ccw?"left":"right";
  let feedback="";
@@ -890,7 +892,8 @@ function printKind(kind){
     (x.tier==="supplement"?'<strong>Supplement</strong>':"")+
     '<p class="only-th">'+esc(x.th)+'</p><p class="only-en">'+esc(x.en)+'</p>'+
     (currentId==="field"&&figures[i]?fieldFigure(figures[i]):"")+
-    (currentId==="motor-effect"?motorReadingFigure(i):"")+'</div>';
+    (currentId==="motor-effect"?motorReadingFigure(i):"")+
+   (currentId==="dc-motor"?dcMotorReadingFigure(i):"")+'</div>';
  }).join(""):
  q.map((x,i)=>'<div class="print-question"><b>'+(i+1)+'. [1 mark] · '+esc(x.tier==="foundation"?"Foundation":x.tier==="supplement"?"Supplement":"Core")+'</b>'+
  '<p>'+tr(esc(x.stem.th),esc(x.stem.en))+'</p>'+motorQuestionDiagram(x,false)+
@@ -909,6 +912,25 @@ $("mainPanel").addEventListener("click",e=>{
   }else if(!practiceChecked)practiceChoice=Number(answer.dataset.answer);
   message="";render();return;
  }
+ const dcStepBtn=e.target.closest("[data-dc-step]");
+ if(dcStepBtn){
+  if(dcStepBtn.dataset.dcStep==="next")dcStep=dcStep===8?0:dcStep+1;
+  else if(dcStepBtn.dataset.dcStep==="prev")dcStep=Math.max(0,dcStep-1);
+  else dcStep=0;
+  dcGuess="";dcReveal=false;render();return;
+ }
+ const dcBatteryBtn=e.target.closest("[data-dc-battery]");
+ if(dcBatteryBtn){dcBattery*=-1;dcStep=0;dcGuess="";dcReveal=false;render();return}
+ const dcTurnsBtn=e.target.closest("[data-dc-turns]");
+ if(dcTurnsBtn){dcTurns=Number(dcTurnsBtn.dataset.dcTurns);dcGuess="";render();return}
+ const dcCurrentBtn=e.target.closest("[data-dc-current]");
+ if(dcCurrentBtn){dcCurrent=Number(dcCurrentBtn.dataset.dcCurrent);dcGuess="";render();return}
+ const dcFieldBtn=e.target.closest("[data-dc-field]");
+ if(dcFieldBtn){dcField=Number(dcFieldBtn.dataset.dcField);dcGuess="";render();return}
+ const dcGuessBtn=e.target.closest("[data-dc-guess]");
+ if(dcGuessBtn){dcGuess=dcGuessBtn.dataset.dcGuess;dcReveal=true;render();return}
+ const dcRevealBtn=e.target.closest("[data-dc-reveal]");
+ if(dcRevealBtn){dcReveal=!dcReveal;render();return}
  const motorModeBtn=e.target.closest("[data-motor-mode]");
  if(motorModeBtn){
   motorMode=motorModeBtn.dataset.motorMode;
