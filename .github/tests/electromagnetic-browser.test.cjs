@@ -52,6 +52,13 @@ async function testResponsive(browser,url){
   const dim=await page.evaluate(()=>({doc:document.documentElement.scrollWidth,viewport:window.innerWidth,main:document.querySelector("main").getBoundingClientRect().width,svg:document.querySelector("#mainPanel svg")?.getBoundingClientRect().width}));
   assert(dim.doc<=dim.viewport+2,"horizontal overflow "+name+" "+JSON.stringify(dim));
   assert(dim.main>200&&dim.svg>100,"content hidden or too small "+name+" "+JSON.stringify(dim));
+  const paneWidths=await page.locator("#mainPanel .motor-figure-panes svg").evaluateAll(els=>els.map(e=>Math.round(e.getBoundingClientRect().width)));
+  assert.equal(paneWidths.length,2,"motor and commutator should have separate diagrams "+name);
+  assert(paneWidths.every(w=>w>=275),"motor SVG text would be unreadably small "+name+" "+JSON.stringify(paneWidths));
+  if(name==="mobile"){
+    const r=await page.locator('#viewNav [data-view="exit"]').boundingBox();
+    assert(r&&r.x>=0&&r.x+r.width<=width+2,"Exit tab must be visible without horizontal scrolling on mobile");
+  }
   assert.deepEqual(errors,[],"runtime errors "+name);
   await ctx.close();
  }
@@ -180,22 +187,71 @@ async function testAllLessonFlow(page){
  }
 }
 async function testTiers(page){
- await choosePage(page,"dc-motor");
- await page.locator("#level").selectOption("core");
- assert.equal(await page.locator("#mainPanel section").count(),5,"R03 Core should have 5 readings");
- await mode(page,"recall");
- assert(!(await page.locator("#mainPanel").innerText()).includes("split-ring"),"Core recall must hide commutator");
- await mode(page,"exit");
- assert(!(await page.locator("#mainPanel").innerText()).includes("split-ring"),"Core Exit must hide commutator");
- // Switch while the Exit deck is open.
- await page.locator("#level").selectOption("all");
- assert(!(await page.locator('#viewNav [data-view="exit"]').isDisabled()),"All exit remains unlocked when all eight answered");
- await mode(page,"recall");
- assert.match(await page.locator("#mainPanel").innerText(),/split-ring commutator/);
- await page.locator("#level").selectOption("core");
- await mode(page,"explore");
- assert(!(await page.locator("#mainPanel").innerText()).includes("SPLIT-RING COMMUTATOR"),"Core Explore hides commutator");
- await page.locator("#level").selectOption("all");
+ const cases=[
+  ["field",6,"bar magnet"],
+  ["motor-effect",6,"current direction"],
+  ["dc-motor",5,"friction"]
+ ];
+ for(const [id,coreCount,lastTerm] of cases){
+  await choosePage(page,id);
+  await page.locator("#level").selectOption("core");
+  await mode(page,"learn");
+  const expectedSections=id==="motor-effect"||id==="dc-motor"?5:6;
+  assert.equal(await page.locator("#mainPanel section").count(),expectedSections,id+" Core reading sections");
+  await mode(page,"recall");
+  const recallText=await page.locator("#mainPanel").innerText();
+  if(id==="motor-effect")assert(!recallText.includes("Fleming"),"R02 Core recall leaks Supplement");
+  if(id==="dc-motor")assert(!recallText.includes("split-ring"),"R03 Core recall leaks Supplement");
+  await mode(page,"exit");
+  for(let i=0;i<6;i++){
+    await press(page,"flash","flip");
+    if(i===5){
+      const text=await page.locator("#mainPanel").innerText();
+      assert(text.toLowerCase().includes(lastTerm.toLowerCase()),id+" Core last card unexpected");
+      if(id!=="field")assert(!text.includes("Fleming"),"Core flashcard leaks hand-rule");
+      if(id==="dc-motor")assert(!text.includes("split-ring"),"R03 Core Exit leaks commutator");
+    }
+    if(i<5)await press(page,"flash","next");
+  }
+  await press(page,"flash","finish");
+  await page.locator("#level").selectOption("all");
+  assert(await page.locator('#viewNav [data-view="exit"]').isEnabled(),id+" all-level Exit should remain available");
+  if(id==="motor-effect"||id==="dc-motor"){
+   await mode(page,"recall");
+   const text=await page.locator("#mainPanel").innerText();
+   assert(text.includes(id==="dc-motor"?"split-ring":"Fleming") || (id==="motor-effect"&&text.includes("thumb")),id+" all-level recall should include Supplement");
+  }
+  if(id==="dc-motor"){
+   await page.locator("#level").selectOption("core");
+   await mode(page,"explore");
+   assert(!(await page.locator("#mainPanel").innerText()).includes("SPLIT-RING COMMUTATOR"),"Core Explore must hide commutator");
+   await page.locator("#level").selectOption("all");
+  }
+ }
+}
+async function testGiveUpReset(browser,url){
+ const ctx=await browser.newContext({viewport:{width:1100,height:850}});
+ try{
+  const page=await ctx.newPage();
+  page.on("dialog",d=>d.accept());
+  await page.route("https://cdn.jsdelivr.net/**",r=>r.abort());
+  await load(page,url);
+  await mode(page,"check");
+  await press(page,"action","giveup");
+  const stat=await page.locator("#mainPanel .stat").innerText();
+  assert.match(stat,/Recorded 1\/6/);
+  assert.match(stat,/Best 0\/6 marks/);
+  assert.equal(await page.locator('#mainPanel [data-action="retry"]').count(),0,"Given Up must be locked");
+  await page.locator("#resetTopic").click();
+  await mode(page,"check");
+  assert.match(await page.locator("#mainPanel .stat").innerText(),/Recorded 0\/6/);
+  await press(page,"answer",0);
+  await press(page,"action","submit");
+  assert.match(await page.locator("#mainPanel .stat").innerText(),/Best 1\/6 marks/);
+  await choosePage(page,"field");
+  await mode(page,"check");
+  assert.match(await page.locator("#mainPanel .stat").innerText(),/Recorded 0\/8/);
+ }finally{await ctx.close()}
 }
 async function testPrinting(page){
  await choosePage(page,"dc-motor");
@@ -235,6 +291,7 @@ async function testPrinting(page){
   await run("Full actual UI flow: 34 MCQs, all Cloze, Try, Retry, Exit, reload",()=>testAllLessonFlow(page));
   await run("Core/Supplement switching, no content leak",()=>testTiers(page));
   await run("Print Learning vs Problems, Core vs all",()=>testPrinting(page));
+  await run("Actual browser Give Up=0 lock, Reset and mission isolation",()=>testGiveUpReset(browser,url));
   await run("Three viewport screenshots, no horizontal overflow or JS errors",()=>testResponsive(browser,url));
   await run("WebKit Safari-engine touch simulation, directions, print & reload",()=>testWebKitSafariEngine(url));
   await run("Global runtime error check",async()=>assert.deepEqual(pageErrors,[]));
