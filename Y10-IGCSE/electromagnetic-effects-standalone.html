@@ -122,7 +122,7 @@ window.MathJax={tex:{inlineMath:[["\\(","\\)"]],displayMath:[["\\[","\\]"]]},opt
 const ROUTE=[
  {id:"orientation",section:"START",th:"เริ่มต้น: อ่านทิศทาง",en:"Start Here: Reading Directions",ready:true,planned:6},
  {id:"field",section:"4.5.3",th:"สนามแม่เหล็กจากกระแส",en:"Magnetic Effect of a Current",ready:true,planned:8},
- {id:"motor-effect",section:"4.5.4",th:"แรงบนตัวนำที่มีกระแส",en:"Motor Effect",ready:false,planned:12},
+ {id:"motor-effect",section:"4.5.4",th:"แรงบนตัวนำที่มีกระแส",en:"Motor Effect",ready:true,planned:12},
  {id:"dc-motor",section:"4.5.5",th:"มอเตอร์กระแสตรง",en:"The d.c. Motor",ready:false,planned:8},
  {id:"induction",section:"4.5.1",th:"การเหนี่ยวนำแม่เหล็กไฟฟ้า",en:"Electromagnetic Induction",ready:false,planned:10},
  {id:"generator",section:"4.5.2",th:"เครื่องกำเนิดไฟฟ้ากระแสสลับ",en:"The a.c. Generator",ready:false,planned:8},
@@ -592,6 +592,19 @@ function renderRecall(){
  (message?'<div class="feedback '+(!done?"bad":"")+'">'+esc(message)+'</div>':"")+
  (saved.recallComplete?'<p class="muted">✓ '+tr("เคยผ่านบทเติมคำแล้ว","Recall completed")+'</p>':"")+'</div>';
 }
+function motorQuestionDiagram(q,reveal){
+ if(currentId!=="motor-effect"||!q?.diagram)return "";
+ const d=q.diagram;
+ const hideCurrent=d.hideCurrent&&!reveal;
+ const showForce=d.showForce===true||reveal;
+ if(d.mode!=="beam"&&d.I==="in"&&["right","left"].includes(d.B)&&!hideCurrent){
+   return motorLabDiagram(d.I,d.B,showForce);
+ }
+ return motorDiagram(d.I,d.B,{
+  mode:d.mode==="beam"?"beam":"wire",charge:d.charge||"positive",
+  showForce,hideCurrent
+ });
+}
 function questionCard(mode){
  const arr=allQuestions(),q=currentQuestion();if(!q)return '<div class="content">No questions available for this level.</div>';
  const isCheck=mode==="check",rec=saved.records[q.id],locked=isCheck&&!!rec&&!retrying;
@@ -633,7 +646,7 @@ function questionCard(mode){
    mode==="try"?"Retry freely with instant feedback":"Your result is saved in this browser")+
  '<div class="content">'+status+'<div class="row-between" style="margin-top:14px"><span class="eyebrow">QUESTION '+(questionIndex+1)+' / '+arr.length+'</span>'+
  '<span class="badge '+(total==="Supplement"?"supplement":"")+'">'+total+'</span></div>'+
- '<h3>'+tr(esc(q.stem.th),esc(q.stem.en))+'</h3>'+opt+
+ '<h3>'+tr(esc(q.stem.th),esc(q.stem.en))+'</h3>'+motorQuestionDiagram(q,showOptions||locked)+opt+
  '<div class="flex" style="margin-top:16px">'+action+
  '<button type="button" data-action="example">'+tr("ดูตัวอย่างคล้าย","Similar example")+'</button>'+
  '<button type="button" data-action="read">'+tr("อ่านบทเรียน","Read lesson")+'</button></div>'+
@@ -665,6 +678,26 @@ function renderReference(){
     '<li>'+tr(esc(th),esc(q.exampleSteps.en[i]||""))+'</li>').join("")+'</ol>';
   }
   inner+='<p class="muted">'+tr("ตัวอย่างนี้ต่างจากโจทย์ข้อจริง เพื่อฝึกวิธีคิดก่อนตอบ","This is not the assessed question. Study the method before choosing an answer.")+'</p></div>';
+ }else if(currentId==="motor-effect"){
+  const illustrative=(q&&q.tier==="supplement")?
+    (["E11","E12"].includes(q.id)?motorDiagram("up","right",{mode:"beam",charge:"positive",showForce:true}):
+      motorLabDiagram("out","right",true)):
+    motorLabDiagram("in","right",true);
+  inner+='<div class="rule">'+tr("อ่านรูป: I หรือ v, B และ F ก่อนเลือกทิศ ให้ตรวจว่าใช้อนุภาคบวกหรือลบ",
+   "Read I or v, B and F. For beams, identify whether charge is positive or negative.")+'</div>'+
+   illustrative+
+   '<ol class="topic-plan">'+
+   '<li>'+tr("Core: ใช้ตัวนำที่เลื่อนในช่องแม่เหล็ก ตรวจผลเมื่อกลับ I หรือกลับ B ทีละอย่าง",
+      "Core: observe a movable conductor in a magnet gap, reversing I or B one at a time")+'</li>'+
+   '<li>'+tr("กลับทิศ I อย่างเดียวหรือ B อย่างเดียว → ทิศแรงกลับ",
+      "Reverse I only or B only → force reverses")+'</li>'+
+   '<li>'+tr("กลับทั้ง I และ B → ทิศแรงเหมือนเดิม",
+      "Reverse both I and B → force keeps its original direction")+'</li>'+
+   '<li>'+tr("Supplement: มือซ้าย นิ้วชี้ = B, นิ้วกลาง = กระแสตามแบบแผน, นิ้วหัวแม่มือ = F",
+      "Supplement: left first finger = B, second finger = conventional I, thumb = F")+'</li>'+
+   '<li>'+tr("อนุภาคลบ: กลับแรงจากที่คิดสำหรับประจุบวกเคลื่อนทิศเดียวกัน",
+      "Negative beam: reverse the force predicted for positive particles moving the same way")+'</li>'+
+   '</ol>';
  }else if(currentId==="field"){
   const refScene=q?.id==="M05"?"relay":q?.id==="M06"?"speaker":
    ["M02","M03","M08"].includes(q?.id)?"solenoid":"wire";
@@ -725,10 +758,11 @@ function printKind(kind){
    return '<div class="print-question"><h2>'+tr(esc(x.title.th),esc(x.title.en))+'</h2>'+
     (x.tier==="supplement"?'<strong>Supplement</strong>':"")+
     '<p class="only-th">'+esc(x.th)+'</p><p class="only-en">'+esc(x.en)+'</p>'+
-    (currentId==="field"&&figures[i]?fieldFigure(figures[i]):"")+'</div>';
+    (currentId==="field"&&figures[i]?fieldFigure(figures[i]):"")+
+    (currentId==="motor-effect"?motorReadingFigure(i):"")+'</div>';
  }).join(""):
  q.map((x,i)=>'<div class="print-question"><b>'+(i+1)+'. [1 mark] · '+esc(x.tier==="foundation"?"Foundation":x.tier==="supplement"?"Supplement":"Core")+'</b>'+
- '<p>'+tr(esc(x.stem.th),esc(x.stem.en))+'</p>'+
+ '<p>'+tr(esc(x.stem.th),esc(x.stem.en))+'</p>'+motorQuestionDiagram(x,false)+
  x.options.map((o,j)=>'<p>'+String.fromCharCode(65+j)+'. '+tr(esc(o[0]),esc(o[1]))+'</p>').join("")+
  '<div class="print-space"></div></div>').join("");
  $("printArea").innerHTML=title+content;window.print();
