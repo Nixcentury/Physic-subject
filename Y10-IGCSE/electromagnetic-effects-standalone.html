@@ -778,6 +778,21 @@ $("mainPanel").addEventListener("click",e=>{
   }else if(!practiceChecked)practiceChoice=Number(answer.dataset.answer);
   message="";render();return;
  }
+ const motorModeBtn=e.target.closest("[data-motor-mode]");
+ if(motorModeBtn){
+  motorMode=motorModeBtn.dataset.motorMode;
+  if(level==="core")motorMode="lab";
+  motorI="in";motorB="right";motorCharge="positive";motorGuess="";
+  render();return;
+ }
+ const motorIBtn=e.target.closest("[data-motor-i]");
+ if(motorIBtn){motorI=motorIBtn.dataset.motorI;motorGuess="";render();return}
+ const motorBBtn=e.target.closest("[data-motor-b]");
+ if(motorBBtn){motorB=motorBBtn.dataset.motorB;motorGuess="";render();return}
+ const motorChargeBtn=e.target.closest("[data-motor-charge]");
+ if(motorChargeBtn){motorCharge=motorChargeBtn.dataset.motorCharge;motorGuess="";render();return}
+ const motorGuessBtn=e.target.closest("[data-motor-guess]");
+ if(motorGuessBtn){motorGuess=motorGuessBtn.dataset.motorGuess;render();return}
  const fieldSceneBtn=e.target.closest("[data-field-scene]");
  if(fieldSceneBtn){fieldScene=fieldSceneBtn.dataset.fieldScene;fieldAnswer="";render();return}
  const fieldStrengthBtn=e.target.closest("[data-field-strength]");
@@ -845,7 +860,7 @@ $("mainPanel").addEventListener("click",e=>{
 });
 $("referencePanel").addEventListener("click",e=>{const btn=e.target.closest("[data-ref]");if(btn){refMode=btn.dataset.ref;renderReference()}});
 $("language").addEventListener("change",e=>{lang=e.target.value;document.body.dataset.lang=lang;document.documentElement.lang=lang==="en"?"en":"th";render()});
-$("level").addEventListener("change",e=>{level=e.target.value;questionIndex=0;chosen=null;practiceChoice=null;practiceChecked=false;retrying=false;render()});
+$("level").addEventListener("change",e=>{level=e.target.value;questionIndex=0;chosen=null;practiceChoice=null;practiceChecked=false;retrying=false;if(level==="core"){motorMode="lab";motorI="in";motorB="right";motorGuess=""}render()});
 $("resetTopic").addEventListener("click",()=>{
  if(!window.confirm("Clear only this lesson's saved answers, history and flashcards? / ล้างเฉพาะบทนี้?"))return;
  try{localStorage.removeItem(STORAGE_BASE+currentId)}catch(_){}
