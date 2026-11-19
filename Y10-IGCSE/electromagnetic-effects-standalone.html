@@ -54,6 +54,7 @@ body[data-lang=both] .only-en{margin-top:6px}
 @media(max-width:1090px){.layout{grid-template-columns:1fr}.reference{position:static;max-height:none}}
 @media(max-width:720px){header{position:static}.shell{display:block}.course-rail{min-height:0;position:static;max-height:none;display:block;padding:12px}.course-rail h2{margin:3px 6px 9px}#courseNav{display:flex;overflow:auto;gap:7px}.nav-item{min-width:190px;margin:0}main{padding:12px}.viewbar button{font-size:12px;min-width:78px}.bank{grid-template-columns:repeat(2,minmax(0,1fr))}.content{padding:15px}}
 @media print{
+.figure,svg{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 @page{size:A4;margin:13mm}
 body{background:#fff;color:#000;font:11pt/1.45 "Times New Roman",serif}
 header,aside,.hero,.tools,.viewbar,.layout,.foot{display:none!important}
@@ -120,7 +121,7 @@ window.MathJax={tex:{inlineMath:[["\\(","\\)"]],displayMath:[["\\[","\\]"]]},opt
 "use strict";
 const ROUTE=[
  {id:"orientation",section:"START",th:"เริ่มต้น: อ่านทิศทาง",en:"Start Here: Reading Directions",ready:true,planned:6},
- {id:"field",section:"4.5.3",th:"สนามแม่เหล็กจากกระแส",en:"Magnetic Effect of a Current",ready:false,planned:8},
+ {id:"field",section:"4.5.3",th:"สนามแม่เหล็กจากกระแส",en:"Magnetic Effect of a Current",ready:true,planned:8},
  {id:"motor-effect",section:"4.5.4",th:"แรงบนตัวนำที่มีกระแส",en:"Motor Effect",ready:false,planned:12},
  {id:"dc-motor",section:"4.5.5",th:"มอเตอร์กระแสตรง",en:"The d.c. Motor",ready:false,planned:8},
  {id:"induction",section:"4.5.1",th:"การเหนี่ยวนำแม่เหล็กไฟฟ้า",en:"Electromagnetic Induction",ready:false,planned:10},
@@ -570,8 +571,16 @@ function saveAnswer(kind){
 function printKind(kind){
  const l=current(),q=allQuestions();
  const title='<h1>'+tr(esc(l.title.th),esc(l.title.en))+'</h1>';
- const content=kind==="learn"?l.reading.map(x=>'<div class="print-question"><h2>'+tr(esc(x.title.th),esc(x.title.en))+'</h2><p class="only-th">'+esc(x.th)+'</p><p class="only-en">'+esc(x.en)+'</p></div>').join(""):
- q.map((x,i)=>'<div class="print-question"><b>'+(i+1)+'. [1 mark]</b><p>'+tr(esc(x.stem.th),esc(x.stem.en))+'</p>'+
+ const figures=["wire","solenoid",null,null,"relay","speaker"];
+ const content=kind==="learn"?l.reading.map((x,i)=>{
+   if(level==="core"&&x.tier==="supplement")return "";
+   return '<div class="print-question"><h2>'+tr(esc(x.title.th),esc(x.title.en))+'</h2>'+
+    (x.tier==="supplement"?'<strong>Supplement</strong>':"")+
+    '<p class="only-th">'+esc(x.th)+'</p><p class="only-en">'+esc(x.en)+'</p>'+
+    (currentId==="field"&&figures[i]?fieldFigure(figures[i]):"")+'</div>';
+ }).join(""):
+ q.map((x,i)=>'<div class="print-question"><b>'+(i+1)+'. [1 mark] · '+esc(x.tier==="foundation"?"Foundation":x.tier==="supplement"?"Supplement":"Core")+'</b>'+
+ '<p>'+tr(esc(x.stem.th),esc(x.stem.en))+'</p>'+
  x.options.map((o,j)=>'<p>'+String.fromCharCode(65+j)+'. '+tr(esc(o[0]),esc(o[1]))+'</p>').join("")+
  '<div class="print-space"></div></div>').join("");
  $$("printArea").innerHTML=title+content;window.print();
