@@ -34,7 +34,7 @@ const startServer=()=>new Promise(resolve=>server.listen(0,"127.0.0.1",resolve))
 const stopServer=()=>new Promise(resolve=>server.close(resolve));
 async function choosePage(page,id){await page.locator("#courseNav [data-lesson="+JSON.stringify(id)+"]").click();await assertVisible(page,"#mainPanel h2")}
 async function mode(page,id){await page.locator('#viewNav [data-view="'+id+'"]').click()}
-async function press(page,key,val){await page.locator('#mainPanel [data-'+key+'="'+val+'"]').click()}
+async function press(page,key,val){await page.locator('#mainPanel [data-'+key+'="'+val+'"]').first().click()}
 async function assertVisible(page,selector){assert(await page.locator(selector).first().isVisible(),selector+" not visible")}
 async function load(page,url){
  await page.goto(url,{waitUntil:"domcontentloaded"});
