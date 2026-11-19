@@ -397,14 +397,18 @@ function renderFieldExplore(){
 function renderLearn(){
  const l=current();
  const illustrations=["wire","solenoid",null,null,"relay","speaker"];
- const articles=l.reading.map((a,i)=>'<section><h3>'+tr(esc(a.title.th),esc(a.title.en))+'</h3>'+
- '<p class="only-th">'+esc(a.th)+'</p><p class="only-en">'+esc(a.en)+'</p>'+
- (currentId==="field"&&illustrations[i]?fieldFigure(illustrations[i]):"")+'</section>').join("");
+ const articles=l.reading.map((a,i)=>{
+  if(level==="core"&&a.tier==="supplement")return "";
+  return '<section><h3>'+tr(esc(a.title.th),esc(a.title.en))+'</h3>'+
+   (a.tier==="supplement"?'<span class="badge supplement">Supplement</span>':"")+
+   '<p class="only-th">'+esc(a.th)+'</p><p class="only-en">'+esc(a.en)+'</p>'+
+   (currentId==="field"&&illustrations[i]?fieldFigure(illustrations[i]):"")+'</section>';
+ }).join("");
  return head("อ่านก่อนตอบ","Read Before You Answer",
  "บทอ่านสองภาษาที่ครอบคลุมก่อนทำโจทย์ทุกข้อ",
- "Full bilingual reading needed to answer every question")+
- '<div class="content"><div class="rule">'+tr("เริ่มจากความหมายของสัญลักษณ์และทิศทาง ก่อนใช้กฎมือ","Start with diagram notation and directions before applying hand rules.")+'</div>'+
- articles+'<div class="flex" style="margin-top:18px"><button class="primary" type="button" data-view-jump="explore">'+tr("ลองเปลี่ยนทิศสนาม →","Explore the field →")+'</button></div></div>';
+ "Bilingual academic reading needed to answer every question")+
+ '<div class="content"><div class="rule">'+tr("เริ่มจากการดูสนามแม่เหล็กและทิศกระแสก่อนลงมือทำโจทย์","Observe fields and current directions before attempting problems")+'</div>'+
+ articles+'<div class="flex" style="margin-top:18px"><button class="primary" type="button" data-view-jump="explore">'+tr("ทดลองเปลี่ยนทิศ →","Explore directions →")+'</button></div></div>';
 }
 function renderExplore(){
  if(currentId==="field")return renderFieldExplore();
