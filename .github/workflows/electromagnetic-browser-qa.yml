@@ -1,12 +1,13 @@
-name: Electromagnetic Effects · Actual Browser QA
+name: Electromagnetic Effects · Chromium + WebKit QA
 
 on:
   push:
     branches:
       - feat/y10-electromagnetic-effects-r00
+      - main
     paths:
       - Y10-IGCSE/electromagnetic-effects-standalone.html
-      - qa/electromagnetic-browser.test.cjs
+      - .github/tests/electromagnetic-browser.test.cjs
       - .github/workflows/electromagnetic-browser-qa.yml
 
 permissions:
@@ -28,9 +29,9 @@ jobs:
       - name: Install Playwright Chromium
         run: |
           npm install --no-save --no-package-lock playwright
-          npx playwright install --with-deps chromium
+          npx playwright install --with-deps chromium webkit
       - name: Run full student-flow browser QA
-        run: node qa/electromagnetic-browser.test.cjs
+        run: node .github/tests/electromagnetic-browser.test.cjs
       - name: Save screenshots and QA report
         if: always()
         uses: actions/upload-artifact@v4
