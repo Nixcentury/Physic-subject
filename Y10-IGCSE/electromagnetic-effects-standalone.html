@@ -216,6 +216,7 @@ const esc=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;
 const tr=(th,en)=>'<span class="only-th">'+th+'</span><span class="only-en">'+en+'</span>';
 let currentId="orientation",view="learn",questionIndex=0,chosen=null,practiceChoice=null,practiceChecked=false;
 let refMode="reading",direction="out",exploreAnswer="",chosenWord=null,clozeSlots=[null,null,null];
+let fieldScene="wire",coilSense="ccw",currentStrength="low",relayOn=false,speakerPhase="out",fieldAnswer="";
 let flashIndex=0,flipped=false,seen=new Set(),message="",attemptsOpen=false,retrying=false;
 let level="all",lang="both",saved=loadState(currentId);
 function current(){return LESSONS[currentId]}
@@ -246,7 +247,7 @@ function currentQuestion(){return allQuestions()[Math.min(questionIndex,allQuest
 function enterLesson(id){
  if(!LESSONS[id])return;
  currentId=id;saved=loadState(id);view="learn";questionIndex=0;chosen=null;practiceChoice=null;practiceChecked=false;
- refMode="reading";direction="out";exploreAnswer="";chosenWord=null;clozeSlots=[null,null,null];flashIndex=0;flipped=false;seen=new Set();message="";retrying=false;
+ refMode="reading";direction="out";exploreAnswer="";chosenWord=null;clozeSlots=[null,null,null];fieldScene="wire";coilSense="ccw";currentStrength="low";relayOn=false;speakerPhase="out";fieldAnswer="";flashIndex=0;flipped=false;seen=new Set();message="";retrying=false;
  render();
 }
 function gotoView(next){
@@ -283,14 +284,130 @@ function figure(){
  '<text x="184" y="265" text-anchor="middle" font-size="13" fill="#315d83">'+(ccw?"Counterclockwise B":"Clockwise B")+'</text></svg>'+
  '<figcaption>'+tr("สนามรอบลวดตรงเมื่อมองตั้งฉากกับกระดาษ","Field around a straight wire viewed perpendicular to the page")+'</figcaption></figure>';
 }
+
+function fieldFigure(scene){
+ if(scene==="wire"){
+  const graphic=figure();
+  return currentStrength==="high"?graphic.replace('<circle cx="184" cy="140" r="94" ',
+    '<circle cx="184" cy="140" r="109" fill="none" stroke="#b1d2ed" stroke-width="2"/><circle cx="184" cy="140" r="94" '):graphic;
+ }
+ const high=currentStrength==="high",currentCCW=coilSense==="ccw",color="#2c699e";
+ const svgArrow=(x1,y1,x2,y2,tint="#246da5")=>{
+  const dx=x2-x1,dy=y2-y1,angle=Math.atan2(dy,dx),size=9;
+  const lx=x2-size*Math.cos(angle-.52),ly=y2-size*Math.sin(angle-.52),
+        rx=x2-size*Math.cos(angle+.52),ry=y2-size*Math.sin(angle+.52);
+  return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+tint+'" stroke-width="'+(high?5:3)+'" stroke-linecap="round"/>'+
+   '<polygon points="'+x2+','+y2+' '+lx+','+ly+' '+rx+','+ry+'" fill="'+tint+'"/>';
+ };
+ const txt=(x,y,text,sz=14,fill="#284967")=>'<text x="'+x+'" y="'+y+'" fill="'+fill+'" font-size="'+sz+'" text-anchor="middle">'+esc(text)+'</text>';
+ const rect=(x,y,w,h,fill="#e7f4fd",stroke="#6d92ac")=>'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="7" fill="'+fill+'" stroke="'+stroke+'" stroke-width="2"/>';
+ let v="",capTH="",capEN="";
+ if(scene==="solenoid"){
+  capTH="มองจากปลายซ้ายของโซลินอยด์: กระแสทวนเข็ม = N; ตามเข็ม = S";
+  capEN="Viewed from the solenoid's left end: counterclockwise current = N; clockwise = S";
+  v=txt(190,27,"VIEW FROM LEFT END",13)+
+    '<circle cx="190" cy="145" r="95" fill="#e7f2fb" stroke="#7494b0" stroke-width="3"/>'+
+    '<circle cx="190" cy="145" r="69" fill="#fff" stroke="#a5c7e3" stroke-width="'+(high?7:3)+'"/>';
+  v+=currentCCW?
+    svgArrow(228,64,149,64)+svgArrow(269,183,269,108)+svgArrow(151,225,228,225)+svgArrow(111,106,111,182):
+    svgArrow(149,64,228,64)+svgArrow(269,108,269,183)+svgArrow(228,225,151,225)+svgArrow(111,182,111,106);
+  v+=txt(190,141,currentCCW?"N":"S",36,currentCCW?"#b8534b":"#2a6097")+
+   txt(190,171,currentCCW?"B OUT  ⊙":"B IN  ⊗",14)+
+   txt(190,278,high?"I = HIGH  ·  STRONGER FIELD":"I = LOW",14);
+ }else if(scene==="relay"){
+  capTH="รีเลย์แบบหน้าสัมผัสปกติเปิด: เมื่อมีกระแสที่ขดลวด แผ่นเหล็กถูกดึงและวงจรโหลดปิด";
+  capEN="Normally-open relay: current in the control coil attracts the armature and closes the load contact";
+  v=rect(22,56,185,177,"#edf6fe")+rect(230,56,171,177,"#f7fbff")+
+    txt(115,80,"CONTROL CIRCUIT",13)+txt(314,80,"LOAD CIRCUIT",13)+
+    '<path d="M54 154 Q62 128 70 154 Q78 128 86 154 Q94 128 102 154 Q110 128 118 154 Q126 128 134 154 Q142 128 150 154" fill="none" stroke="#9867bd" stroke-width="5"/>'+
+    txt(110,184,relayOn?"COIL ON":"COIL OFF",14,relayOn?"#187654":"#8c6577")+
+    '<path d="M160 150 L243 150" stroke="#718397" stroke-width="3" stroke-dasharray="5 5"/>'+
+    '<circle cx="271" cy="143" r="5" fill="#334f68"/><circle cx="318" cy="143" r="5" fill="#334f68"/>'+
+    '<path d="M271 143 L318 '+(relayOn?143:122)+'" stroke="#bd7840" stroke-width="4"/>'+
+    '<path d="M318 143 H351 V164" fill="none" stroke="#6f8ca6" stroke-width="2"/>'+
+    '<circle cx="351" cy="183" r="18" fill="'+(relayOn?"#ffe599":"#f3f6fb")+'" stroke="#b28a4e" stroke-width="3"/>'+
+    txt(351,188,relayOn?"ON":"OFF",11)+txt(314,228,"NORMALLY OPEN",12)+
+    txt(210,277,relayOn?"CONTACT CLOSED":"CONTACT OPEN",16);
+ }else if(scene==="speaker"){
+  const out=speakerPhase==="out";
+  capTH="ภาพตัดขวางแนวคิด: B ลง; กระแสออกจากกระดาษ ⊙ ให้แรงขวา ส่วน ⊗ ให้แรงซ้าย (เป็นภาพตัวอย่างเฉพาะทิศ)";
+  capEN="Conceptual cross-section: B downward; out-of-page current ⊙ gives force right, and ⊗ gives force left (directional model)";
+  v=rect(70,41,242,50,"#df7970","#b85348")+rect(70,221,242,48,"#729bc7","#466f9a")+
+    txt(189,74,"N",25,"white")+txt(189,250,"S",25,"white")+
+    svgArrow(126,105,126,198)+svgArrow(248,105,248,198)+
+    '<circle cx="188" cy="153" r="25" fill="white" stroke="#b88648" stroke-width="3"/>'+
+    (out?'<circle cx="188" cy="153" r="8" fill="#b88648"/>':
+      '<path d="M178 143 L198 163 M198 143 L178 163" stroke="#b88648" stroke-width="4"/>')+
+    '<path d="M305 122 L365 82 L365 226 L305 186 Z" fill="#d9dfe8" stroke="#7b8ea4" stroke-width="3"/>'+
+    svgArrow(out?236:329,155,out?295:263,155,"#d0813e")+
+    txt(189,286,out?"I ⊙   F →":"I ⊗   F ←",17)+txt(339,67,"CONE",14);
+ }
+ const fig='<figure class="figure"><svg viewBox="0 0 425 300" role="img" xmlns="http://www.w3.org/2000/svg" aria-label="'+esc(capEN)+'">'+v+'</svg><figcaption>'+
+  tr(esc(capTH),esc(capEN))+'</figcaption></figure>';
+ return fig;
+}
+function fieldExpected(){
+ if(fieldScene==="wire")return direction==="out"?"left":"right";
+ if(fieldScene==="solenoid")return coilSense==="ccw"?"north":"south";
+ if(fieldScene==="relay")return relayOn?"on":"off";
+ return speakerPhase==="out"?"right":"left";
+}
+function renderFieldExplore(){
+ const names=[["wire","ลวดตรง","Straight Wire"],["solenoid","โซลินอยด์","Solenoid"],["relay","รีเลย์","Relay"],["speaker","ลำโพง","Loudspeaker"]];
+ const sceneBtns=names.map(([id,th,en])=>
+  '<button type="button" data-field-scene="'+id+'" class="'+(fieldScene===id?"primary":"")+'">'+tr(th,en)+'</button>').join("");
+ let controls="",question="",answers=[];
+ if(fieldScene==="wire"){
+  controls='<button type="button" data-direction="out" class="'+(direction==="out"?"primary":"")+'">⊙ '+tr("กระแสออก","Current out")+'</button>'+
+   '<button type="button" data-direction="in" class="'+(direction==="in"?"primary":"")+'">⊗ '+tr("กระแสเข้า","Current in")+'</button>'+
+   '<button type="button" data-field-strength="low" class="'+(currentStrength==="low"?"primary":"")+'">'+tr("กระแสน้อย","Lower I")+'</button>'+
+   '<button type="button" data-field-strength="high" class="'+(currentStrength==="high"?"primary":"")+'">'+tr("กระแสมาก","Higher I")+'</button>';
+  question=tr("ที่จุดเหนือเส้นลวด สนามชี้ไปทางใด?","At the top of the wire, which way does B point?");
+  answers=[["left","← ซ้าย","← Left"],["right","ขวา →","Right →"]];
+ }else if(fieldScene==="solenoid"){
+  controls='<button type="button" data-coil-sense="ccw" class="'+(coilSense==="ccw"?"primary":"")+'">'+tr("กระแสทวนเข็มจากปลายซ้าย","CCW viewed from left end")+'</button>'+
+   '<button type="button" data-coil-sense="cw" class="'+(coilSense==="cw"?"primary":"")+'">'+tr("กระแสตามเข็มจากปลายซ้าย","CW viewed from left end")+'</button>'+
+   '<button type="button" data-field-strength="low" class="'+(currentStrength==="low"?"primary":"")+'">'+tr("กระแสน้อย","Lower I")+'</button>'+
+   '<button type="button" data-field-strength="high" class="'+(currentStrength==="high"?"primary":"")+'">'+tr("กระแสมาก","Higher I")+'</button>';
+  question=tr("จากทิศกระแสที่เห็น ปลายซ้ายคือขั้วใด?","From the current as seen, what pole is the left end?");
+  answers=[["north","ขั้วเหนือ N","North (N)"],["south","ขั้วใต้ S","South (S)"]];
+ }else if(fieldScene==="relay"){
+  controls='<button type="button" data-relay-state="off" class="'+(!relayOn?"primary":"")+'">COIL OFF</button>'+
+   '<button type="button" data-relay-state="on" class="'+(relayOn?"primary":"")+'">COIL ON</button>';
+  question=tr("ในรีเลย์แบบหน้าสัมผัสปกติเปิด วงจรโหลดขณะนี้เป็นอย่างไร?","For this normally-open relay, what is the load circuit state?");
+  answers=[["off","วงจรเปิด (OFF)","Open (OFF)"],["on","วงจรปิด (ON)","Closed (ON)"]];
+ }else{
+  controls='<button type="button" data-speaker-phase="out" class="'+(speakerPhase==="out"?"primary":"")+'">I ⊙</button>'+
+   '<button type="button" data-speaker-phase="in" class="'+(speakerPhase==="in"?"primary":"")+'">I ⊗</button>';
+  question=tr("ในภาพที่สนามแม่เหล็กชี้ลง แรงบนลวดของขดลวดชี้ทิศใด?","With B pointing downward in this diagram, which way is the force on the coil wire?");
+  answers=[["right","→ ขวา","→ Right"],["left","← ซ้าย","← Left"]];
+ }
+ const verdict=fieldAnswer?'<div class="feedback '+(fieldAnswer===fieldExpected()?"":"bad")+'">'+
+ (fieldAnswer===fieldExpected()?tr("ถูกต้อง ลองเปลี่ยนกระแสแล้วตอบอีกครั้ง","Correct. Change a setting and try again."):
+ tr("ลองอีกครั้งโดยตรวจทิศกระแสและสนามในภาพ","Try again by checking the displayed current and magnetic field."))+'</div>':"";
+ return head("ทดลองสนามแม่เหล็กและอุปกรณ์","Explore Magnetic Fields & Devices",
+ "เปลี่ยนกระแสและทดลองสังเกตผลทุกสถานการณ์ โดยไม่คิดคะแนน",
+ "Change the current or device state and observe the predicted effect without scoring")+
+ '<div class="content"><div class="flex">'+sceneBtns+'</div>'+fieldFigure(fieldScene)+
+ '<div class="flex">'+controls+'</div><h3>'+question+'</h3><div class="flex">'+
+ answers.map(([id,th,en])=>'<button type="button" data-field-answer="'+id+'" class="'+(fieldAnswer===id?"primary":"")+'">'+tr(th,en)+'</button>').join("")+
+ '</div>'+verdict+
+ '<p class="muted">'+tr("เส้นและลูกศรเป็นภาพเชิงแนวคิด ไม่ใช่อุปกรณ์จริงที่มีขนาดตามสเกล","Schematic field and device views; not drawn to mechanical scale.")+'</p></div>';
+}
 function renderLearn(){
  const l=current();
- const articles=l.reading.map(a=>'<section><h3>'+tr(esc(a.title.th),esc(a.title.en))+'</h3><p class="only-th">'+esc(a.th)+'</p><p class="only-en">'+esc(a.en)+'</p></section>').join("");
- return head("อ่านก่อนตอบ","Read Before You Answer","บทอ่านต่อเนื่องพร้อมความรู้ที่ตอบโจทย์เริ่มต้นทุกข้อ","Complete foundation reading for every starter question")+
+ const illustrations=["wire","solenoid",null,null,"relay","speaker"];
+ const articles=l.reading.map((a,i)=>'<section><h3>'+tr(esc(a.title.th),esc(a.title.en))+'</h3>'+
+ '<p class="only-th">'+esc(a.th)+'</p><p class="only-en">'+esc(a.en)+'</p>'+
+ (currentId==="field"&&illustrations[i]?fieldFigure(illustrations[i]):"")+'</section>').join("");
+ return head("อ่านก่อนตอบ","Read Before You Answer",
+ "บทอ่านสองภาษาที่ครอบคลุมก่อนทำโจทย์ทุกข้อ",
+ "Full bilingual reading needed to answer every question")+
  '<div class="content"><div class="rule">'+tr("เริ่มจากความหมายของสัญลักษณ์และทิศทาง ก่อนใช้กฎมือ","Start with diagram notation and directions before applying hand rules.")+'</div>'+
  articles+'<div class="flex" style="margin-top:18px"><button class="primary" type="button" data-view-jump="explore">'+tr("ลองเปลี่ยนทิศสนาม →","Explore the field →")+'</button></div></div>';
 }
 function renderExplore(){
+ if(currentId==="field")return renderFieldExplore();
  const ccw=direction==="out";
  const right=ccw?"left":"right";
  let feedback="";
@@ -452,8 +569,20 @@ $$("mainPanel").addEventListener("click",e=>{
   }else if(!practiceChecked)practiceChoice=Number(answer.dataset.answer);
   message="";render();return;
  }
+ const fieldSceneBtn=e.target.closest("[data-field-scene]");
+ if(fieldSceneBtn){fieldScene=fieldSceneBtn.dataset.fieldScene;fieldAnswer="";render();return}
+ const fieldStrengthBtn=e.target.closest("[data-field-strength]");
+ if(fieldStrengthBtn){currentStrength=fieldStrengthBtn.dataset.fieldStrength;fieldAnswer="";render();return}
+ const coilBtn=e.target.closest("[data-coil-sense]");
+ if(coilBtn){coilSense=coilBtn.dataset.coilSense;fieldAnswer="";render();return}
+ const relayBtn=e.target.closest("[data-relay-state]");
+ if(relayBtn){relayOn=relayBtn.dataset.relayState==="on";fieldAnswer="";render();return}
+ const speakerBtn=e.target.closest("[data-speaker-phase]");
+ if(speakerBtn){speakerPhase=speakerBtn.dataset.speakerPhase;fieldAnswer="";render();return}
+ const fieldAnswerBtn=e.target.closest("[data-field-answer]");
+ if(fieldAnswerBtn){fieldAnswer=fieldAnswerBtn.dataset.fieldAnswer;render();return}
  const directionBtn=e.target.closest("[data-direction]");
- if(directionBtn){direction=directionBtn.dataset.direction;exploreAnswer="";render();return}
+ if(directionBtn){direction=directionBtn.dataset.direction;exploreAnswer="";fieldAnswer="";render();return}
  const exploreBtn=e.target.closest("[data-explore-answer]");
  if(exploreBtn){exploreAnswer=exploreBtn.dataset.exploreAnswer;render();return}
  const term=e.target.closest("[data-term]");
