@@ -212,7 +212,7 @@ const LESSONS={
  }
 };
 const STORAGE_BASE="em-effects-0625-progress-v1:";
-const $$=id=>document.getElementById(id);
+const $=id=>document.getElementById(id);
 const esc=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const tr=(th,en)=>'<span class="only-th">'+th+'</span><span class="only-en">'+en+'</span>';
 let currentId="orientation",view="learn",questionIndex=0,chosen=null,practiceChoice=null,practiceChecked=false;
@@ -263,7 +263,7 @@ function renderNav(){
   '<span class="name">'+tr(esc(r.th),esc(r.en))+'</span><span class="meta">'+tr("เริ่มเรียนได้","Ready to learn")+'</span></button>':
   '<div class="nav-item pending" aria-disabled="true"><span class="num">'+esc(r.section)+'</span><span class="name">'+tr(esc(r.th),esc(r.en))+'</span>'+
   '<span class="meta">'+tr("กำลังเตรียมบทเรียน","Lesson in preparation")+'</span></div>').join("");
- $$("courseNav").innerHTML=html;
+ $("courseNav").innerHTML=html;
 }
 function head(titleTH,titleEN,descTH,descEN){
  return '<div class="panel-head"><span class="eyebrow">LEARN FIRST · Y10</span><h2>'+tr(esc(titleTH),esc(titleEN))+'</h2><p>'+tr(esc(descTH),esc(descEN))+'</p></div>';
@@ -534,13 +534,13 @@ function renderReference(){
    '<li>'+tr("⊙ สนามทวนเข็ม, ⊗ สนามตามเข็ม","⊙ counterclockwise field, ⊗ clockwise field")+'</li></ol>';
  }
  inner+='</div>';
- $$("referencePanel").innerHTML=inner;
+ $("referencePanel").innerHTML=inner;
 }
 function render(){
- $$("lessonTitle").innerHTML=tr(esc(current().title.th),esc(current().title.en));
- $$("lessonIntro").innerHTML=tr(esc(current().intro.th),esc(current().intro.en));
+ $("lessonTitle").innerHTML=tr(esc(current().title.th),esc(current().title.en));
+ $("lessonIntro").innerHTML=tr(esc(current().intro.th),esc(current().intro.en));
  renderNav();
- for(const b of $$("viewNav").querySelectorAll("[data-view]")){
+ for(const b of $("viewNav").querySelectorAll("[data-view]")){
   const active=b.dataset.view===view;b.classList.toggle("active",active);b.setAttribute("aria-current",active?"page":"false");
   b.disabled=b.dataset.view==="exit"&&results().done!==results().total;
  }
@@ -583,11 +583,11 @@ function printKind(kind){
  '<p>'+tr(esc(x.stem.th),esc(x.stem.en))+'</p>'+
  x.options.map((o,j)=>'<p>'+String.fromCharCode(65+j)+'. '+tr(esc(o[0]),esc(o[1]))+'</p>').join("")+
  '<div class="print-space"></div></div>').join("");
- $$("printArea").innerHTML=title+content;window.print();
+ $("printArea").innerHTML=title+content;window.print();
 }
-$$("courseNav").addEventListener("click",e=>{const b=e.target.closest("[data-lesson]");if(b)enterLesson(b.dataset.lesson)});
-$$("viewNav").addEventListener("click",e=>{const b=e.target.closest("[data-view]");if(b)gotoView(b.dataset.view)});
-$$("mainPanel").addEventListener("click",e=>{
+$("courseNav").addEventListener("click",e=>{const b=e.target.closest("[data-lesson]");if(b)enterLesson(b.dataset.lesson)});
+$("viewNav").addEventListener("click",e=>{const b=e.target.closest("[data-view]");if(b)gotoView(b.dataset.view)});
+$("mainPanel").addEventListener("click",e=>{
  const answer=e.target.closest("[data-answer]");
  if(answer&&["try","check"].includes(view)){
   const q=currentQuestion();if(view==="check"){
@@ -661,17 +661,17 @@ $$("mainPanel").addEventListener("click",e=>{
   render();
  }
 });
-$$("referencePanel").addEventListener("click",e=>{const btn=e.target.closest("[data-ref]");if(btn){refMode=btn.dataset.ref;renderReference()}});
-$$("language").addEventListener("change",e=>{lang=e.target.value;document.body.dataset.lang=lang;document.documentElement.lang=lang==="en"?"en":"th";render()});
-$$("level").addEventListener("change",e=>{level=e.target.value;questionIndex=0;chosen=null;practiceChoice=null;practiceChecked=false;retrying=false;render()});
-$$("resetTopic").addEventListener("click",()=>{
+$("referencePanel").addEventListener("click",e=>{const btn=e.target.closest("[data-ref]");if(btn){refMode=btn.dataset.ref;renderReference()}});
+$("language").addEventListener("change",e=>{lang=e.target.value;document.body.dataset.lang=lang;document.documentElement.lang=lang==="en"?"en":"th";render()});
+$("level").addEventListener("change",e=>{level=e.target.value;questionIndex=0;chosen=null;practiceChoice=null;practiceChecked=false;retrying=false;render()});
+$("resetTopic").addEventListener("click",()=>{
  if(!window.confirm("Clear only this lesson's saved answers, history and flashcards? / ล้างเฉพาะบทนี้?"))return;
  try{localStorage.removeItem(STORAGE_BASE+currentId)}catch(_){}
  saved=loadState(currentId);questionIndex=0;chosen=null;practiceChoice=null;practiceChecked=false;retrying=false;clozeSlots=[null,null,null];seen=new Set();flashIndex=0;flipped=false;message="";view="learn";render();
 });
-$$("printNotes").addEventListener("click",()=>printKind("learn"));
-$$("printQuestions").addEventListener("click",()=>printKind("questions"));
-window.addEventListener("afterprint",()=>{$$("printArea").innerHTML=""});
+$("printNotes").addEventListener("click",()=>printKind("learn"));
+$("printQuestions").addEventListener("click",()=>printKind("questions"));
+window.addEventListener("afterprint",()=>{$("printArea").innerHTML=""});
 render();
 </script>
 </body>
