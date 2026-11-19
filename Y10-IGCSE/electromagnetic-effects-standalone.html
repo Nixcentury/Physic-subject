@@ -469,6 +469,41 @@ function motorDiagram(I,B,{mode="wire",charge="positive",showForce=false,hideCur
  "Schematic direction chart: I or v, B and F are placed apart for clarity, not at their physical positions.")+'</figcaption></figure>';
 }
 function motorExpected(){return computeMotorForce(motorI,motorB,motorMode==="beam"?"beam":"wire",motorCharge)}
+
+function motorLabDiagram(I,B,reveal=false){
+ const force=computeMotorForce(I,B),bRight=B==="right",forceUp=force==="up";
+ const t=(x,y,a,size=17,color="#234c73")=>'<text x="'+x+'" y="'+y+'" font-size="'+size+'" text-anchor="middle" font-weight="650" fill="'+color+'">'+esc(a)+'</text>';
+ const line=(x1,y1,x2,y2,color="#2a719d")=>'<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+color+'" stroke-width="4" stroke-linecap="round"/>';
+ const arrow=(x1,y1,x2,y2,c)=>{
+  const a=Math.atan2(y2-y1,x2-x1),z=15;
+  return line(x1,y1,x2,y2,c)+'<polygon points="'+x2+','+y2+' '+(x2-z*Math.cos(a-.4))+','+(y2-z*Math.sin(a-.4))+' '+(x2-z*Math.cos(a+.4))+','+(y2-z*Math.sin(a+.4))+'" fill="'+c+'"/>';
+ };
+ const pole=(x,name)=>'<rect x="'+x+'" y="64" width="85" height="166" rx="9" fill="'+(name==="N"?"#c9605c":"#5486b5")+'"/>'+t(x+42,148,name,30,"#fff");
+ const v='<rect x="10" y="10" width="529" height="283" rx="13" fill="#f4faff" stroke="#d5e3ef"/>'+
+  pole(38,bRight?"N":"S")+pole(418,bRight?"S":"N")+
+  t(278,37,"MOTOR EFFECT",18)+arrow(bRight?159:393,105,bRight?387:156,105,"#2c75aa")+
+  t(280,85,"B",19,"#2c75aa")+
+  '<circle cx="280" cy="171" r="28" fill="white" stroke="#af7b39" stroke-width="3"/>'+
+  (I==="out"?'<circle cx="280" cy="171" r="8" fill="#af7b39"/>':
+    '<path d="M266 157 L294 185 M294 157 L266 185" stroke="#af7b39" stroke-width="5"/>')+
+  t(280,219,"I "+(I==="out"?"⊙":"⊗"),18,"#9a6a2d")+
+  (reveal?arrow(369,forceUp?227:142,369,forceUp?142:227,"#17866e"):t(370,184,"F ?",24,"#17866e"))+
+  t(281,270,reveal?"F "+(forceUp?"↑":"↓"):"Predict F / ทำนาย F",16,"#17866e");
+ return '<figure class="figure"><svg viewBox="0 0 550 305" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+esc("N and S pole gap, I "+I+", B "+B+", force "+(reveal?force:"hidden"))+'">'+v+'</svg>'+
+ '<figcaption>'+tr("มองตามแนวลวด: สนามจาก N ไป S; ⊙ กระแสออก, ⊗ กระแสเข้า",
+ "View along the wire: field goes N to S; ⊙ current out, ⊗ current into the page")+'</figcaption></figure>';
+}
+function motorReadingFigure(i){
+ if(i===0||i===1)return motorLabDiagram("in","right",true);
+ if(i===2)return motorLabDiagram("in","right",true)+motorLabDiagram("out","right",true);
+ if(i===3)return motorLabDiagram("in","left",true)+motorLabDiagram("out","left",true);
+ if(i===4)return motorDiagram("right","right",{showForce:true});
+ if(i===5)return motorLabDiagram("in","right",true);
+ if(i===6)return motorDiagram("up","left",{showForce:true})+motorDiagram("right","out",{showForce:true});
+ if(i===7)return motorDiagram("right","up",{mode:"beam",charge:"positive",showForce:true})+
+ motorDiagram("right","up",{mode:"beam",charge:"negative",showForce:true});
+ return "";
+}
 function renderMotorExplore(){
  const chosen=motorGuess,correct=motorExpected(),extended=level==="all";
  const dirButtons=(kind,choiceSet,selected)=>choiceSet.map(d=>
@@ -498,7 +533,7 @@ function renderMotorExplore(){
  '<div class="content">'+modeButtons+
  '<div class="rule">'+tr(motorMode==="lab"?"Core: สลับกระแสเข้า–ออก หรือสนามซ้าย–ขวา แล้วสังเกตผลของแรง":"Supplement: เลือกทิศสามมิติของกระแส/ความเร็วและสนามเพื่อฝึกกฎมือซ้าย",
  motorMode==="lab"?"Core: reverse current into/out of the page, or field left/right, and observe the force":"Supplement: select any 3-D current/velocity and field directions to practise the hand rule")+'</div>'+
- motorDiagram(motorI,motorB,{mode:motorMode==="beam"?"beam":"wire",charge:motorCharge,showForce:!!chosen})+
+ (motorMode==="lab"?motorLabDiagram(motorI,motorB,!!chosen):motorDiagram(motorI,motorB,{mode:motorMode==="beam"?"beam":"wire",charge:motorCharge,showForce:!!chosen}))+
  '<h3>'+qTitle+'</h3><div class="flex">'+dirButtons("i",iChoices,motorI)+'</div>'+
  '<h3>'+tr("เลือกทิศสนามแม่เหล็ก B","Choose magnetic field B")+'</h3><div class="flex">'+dirButtons("b",bChoices,motorB)+'</div>'+
  qControls+'<h3>'+question+'</h3><div class="flex">'+
@@ -514,7 +549,8 @@ function renderLearn(){
   return '<section><h3>'+tr(esc(a.title.th),esc(a.title.en))+'</h3>'+
    (a.tier==="supplement"?'<span class="badge supplement">Supplement</span>':"")+
    '<p class="only-th">'+esc(a.th)+'</p><p class="only-en">'+esc(a.en)+'</p>'+
-   (currentId==="field"&&illustrations[i]?fieldFigure(illustrations[i]):"")+'</section>';
+   (currentId==="field"&&illustrations[i]?fieldFigure(illustrations[i]):"")+
+   (currentId==="motor-effect"?motorReadingFigure(i):"")+'</section>';
  }).join("");
  return head("อ่านก่อนตอบ","Read Before You Answer",
  "บทอ่านสองภาษาที่ครอบคลุมก่อนทำโจทย์ทุกข้อ",
