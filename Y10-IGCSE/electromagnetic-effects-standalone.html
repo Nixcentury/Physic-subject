@@ -225,11 +225,14 @@ let dcStep=0,dcBattery=1,dcTurns=1,dcCurrent=1,dcField=1,dcGuess="",dcReveal=fal
 let flashIndex=0,flipped=false,seen=new Set(),message="",attemptsOpen=false,retrying=false;
 let level="all",lang="both",saved=loadState(currentId);
 function current(){return LESSONS[currentId]}
+function isCoreDc(){return currentId==="dc-motor"&&level==="core"}
+function activeCloze(){return isCoreDc()?current().coreCloze:current().cloze}
+function activeFlashcards(){return isCoreDc()?current().coreFlashcards:current().flashcards}
 function loadState(id){
  let source={};try{source=JSON.parse(localStorage.getItem(STORAGE_BASE+id)||"{}")||{}}catch(_){}
  const sourceRecords=source.records&&typeof source.records==="object"?source.records:{};
  const records={};const lesson=LESSONS[id];
- if(!lesson)return {records:{},recallComplete:false,exitDone:false};
+ if(!lesson)return {records:{},recallComplete:false,exitDone:false,recallCore:false,exitDoneCore:false};
  for(const q of lesson.questions){
    const rec=sourceRecords[q.id];
    if(!rec||!["graded","givenup"].includes(rec.status))continue;
@@ -237,7 +240,7 @@ function loadState(id){
      answer:Number.isInteger(rec.answer)?rec.answer:null,
      history:Array.isArray(rec.history)?rec.history.filter(h=>Number.isInteger(h.answer)&&[0,1].includes(h.score)).slice(-30):[]};
  }
- return {records,recallComplete:source.recallComplete===true,exitDone:source.exitDone===true};
+ return {records,recallComplete:source.recallComplete===true,exitDone:source.exitDone===true,recallCore:source.recallCore===true,exitDoneCore:source.exitDoneCore===true};
 }
 function store(){
  try{localStorage.setItem(STORAGE_BASE+currentId,JSON.stringify(saved));return true}
@@ -709,21 +712,21 @@ function renderExplore(){
  '<p class="muted">'+tr("เปลี่ยนทิศกระแสแล้วลองตอบใหม่ได้โดยไม่เสียคะแนน","You can reverse the current and try again without losing marks.")+'</p></div>';
 }
 function recallPart(language){
- const parts=current().cloze.parts[language];
+ const parts=activeCloze().parts[language];
  return '<p class="'+(language==="th"?"only-th":"only-en")+' cloze-line">'+parts.map((part,i)=>
    esc(part)+(i<clozeSlots.length?' <button type="button" class="blank" data-blank="'+i+'">'+
-   (clozeSlots[i]?esc(current().cloze.bank.find(w=>w.id===clozeSlots[i])?.[language]||""):(i+1)+". ____")+'</button> ':"")).join("")+'</p>';
+   (clozeSlots[i]?esc(activeCloze().bank.find(w=>w.id===clozeSlots[i])?.[language]||""):(i+1)+". ____")+'</button> ':"")).join("")+'</p>';
 }
 function renderRecall(){
- const l=current(),bank=l.cloze.bank;
- const done=l.cloze.solution.every((id,i)=>id===clozeSlots[i]);
+ const l=current(),bank=activeCloze().bank;
+ const done=activeCloze().solution.every((id,i)=>id===clozeSlots[i]);
  return head("บทความเติมคำ","Academic Cloze Recall","อ่านแล้วเติม 3 ช่อง จากคลังคำ 15 คำ แตะคำก่อนแล้วแตะช่องตอบ","Fill three blanks from a 15-word bank: tap a term, then a blank")+
  '<div class="content">'+recallPart("th")+recallPart("en")+
  '<div class="bank">'+bank.map(w=>'<button type="button" data-term="'+esc(w.id)+'" class="'+(chosenWord===w.id?"selected":clozeSlots.includes(w.id)?"used":"")+'" '+(clozeSlots.includes(w.id)?"disabled":"")+'>'+tr(esc(w.th),esc(w.en))+'</button>').join("")+'</div>'+
  '<div class="flex"><button class="primary" type="button" data-recall="check">'+tr("ตรวจคำตอบ","Check answers")+'</button>'+
  '<button type="button" data-recall="clear">'+tr("ล้างคำตอบ","Clear blanks")+'</button></div>'+
  (message?'<div class="feedback '+(!done?"bad":"")+'">'+esc(message)+'</div>':"")+
- (saved.recallComplete?'<p class="muted">✓ '+tr("เคยผ่านบทเติมคำแล้ว","Recall completed")+'</p>':"")+'</div>';
+ ((isCoreDc()?saved.recallCore:saved.recallComplete)?'<p class="muted">✓ '+tr("เคยผ่านบทเติมคำแล้ว","Recall completed")+'</p>':"")+'</div>';
 }
 function motorQuestionDiagram(q,reveal){
  if(currentId!=="motor-effect"||!q?.diagram)return "";
@@ -796,17 +799,17 @@ function questionCard(mode){
 }
 function renderExit(){
  const p=results();if(p.done!==p.total)return head("ยังไม่พร้อม","Not ready","ตอบ Check ให้ครบก่อน","Complete all Check questions first")+'<div class="content"></div>';
- const f=current().flashcards[flashIndex],done=seen.size===current().flashcards.length;
+ const f=activeFlashcards()[flashIndex],done=seen.size===activeFlashcards().length;
  return head("Exit Flashcards","Exit Flashcards","พลิกคำตอบครบทุกใบก่อนจบบท","Reveal every card before finishing")+
- '<div class="content"><p class="eyebrow">CARD '+(flashIndex+1)+' / '+current().flashcards.length+'</p>'+
+ '<div class="content"><p class="eyebrow">CARD '+(flashIndex+1)+' / '+activeFlashcards().length+'</p>'+
  '<button type="button" class="flash-card '+(flipped?"answer":"")+'" data-flash="flip"><small>'+(flipped?"ANSWER":"QUESTION")+'</small>'+
  '<strong>'+tr(esc(flipped?f.answerTH:f.th),esc(flipped?f.answerEN:f.en))+'</strong>'+
  '<small>'+tr("แตะเพื่อพลิก","Tap to flip")+'</small></button>'+
  '<div class="flex" style="margin-top:13px"><button type="button" data-flash="prev" '+(flashIndex===0?"disabled":"")+'>'+tr("← ก่อน","← Previous")+'</button>'+
- '<button type="button" data-flash="next" '+(!flipped||flashIndex===current().flashcards.length-1?"disabled":"")+'>'+tr("ถัดไป →","Next →")+'</button>'+
+ '<button type="button" data-flash="next" '+(!flipped||flashIndex===activeFlashcards().length-1?"disabled":"")+'>'+tr("ถัดไป →","Next →")+'</button>'+
  '<button type="button" class="primary" data-flash="finish" '+(!done?"disabled":"")+'>'+tr("จบบท","Finish")+'</button></div>'+
- '<p class="muted">'+tr("เปิดคำตอบแล้ว "+seen.size+"/"+current().flashcards.length,"Answers revealed "+seen.size+"/"+current().flashcards.length)+
- (saved.exitDone?" · ✓ Exit Ticket":"")+'</p></div>';
+ '<p class="muted">'+tr("เปิดคำตอบแล้ว "+seen.size+"/"+activeFlashcards().length,"Answers revealed "+seen.size+"/"+activeFlashcards().length)+
+ ((isCoreDc()?saved.exitDoneCore:saved.exitDone)?" · ✓ Exit Ticket":"")+'</p></div>';
 }
 function renderReference(){
  const q=currentQuestion();
@@ -999,9 +1002,9 @@ $("mainPanel").addEventListener("click",e=>{
  if(recall){
   if(recall.dataset.recall==="clear"){clozeSlots=[null,null,null];chosenWord=null;message=""}
   else{
-   const correct=current().cloze.solution.filter((a,i)=>clozeSlots[i]===a).length;
+   const correct=activeCloze().solution.filter((a,i)=>clozeSlots[i]===a).length;
    message=correct===3?"ถูกต้อง 3/3 · Correct 3/3":"ถูก "+correct+"/3 · "+correct+"/3 correct. Check the reading and try again.";
-   if(correct===3){saved.recallComplete=true;store();}
+   if(correct===3){if(isCoreDc())saved.recallCore=true;else saved.recallComplete=true;store();}
   }render();return;
  }
  const step=e.target.closest("[data-page]");if(step){navigateQuestion(Number(step.dataset.page));return}
@@ -1029,15 +1032,15 @@ $("mainPanel").addEventListener("click",e=>{
  const card=e.target.closest("[data-flash]");if(card&&view==="exit"){
   const kind=card.dataset.flash;
   if(kind==="flip"){flipped=!flipped;if(flipped)seen.add(flashIndex)}
-  if(kind==="next"&&flipped&&flashIndex<current().flashcards.length-1){flashIndex++;flipped=seen.has(flashIndex)}
+  if(kind==="next"&&flipped&&flashIndex<activeFlashcards().length-1){flashIndex++;flipped=seen.has(flashIndex)}
   if(kind==="prev"&&flashIndex>0){flashIndex--;flipped=seen.has(flashIndex)}
-  if(kind==="finish"&&seen.size===current().flashcards.length){saved.exitDone=true;store();view="check"}
+  if(kind==="finish"&&seen.size===activeFlashcards().length){if(isCoreDc())saved.exitDoneCore=true;else saved.exitDone=true;store();view="check"}
   render();
  }
 });
 $("referencePanel").addEventListener("click",e=>{const btn=e.target.closest("[data-ref]");if(btn){refMode=btn.dataset.ref;renderReference()}});
 $("language").addEventListener("change",e=>{lang=e.target.value;document.body.dataset.lang=lang;document.documentElement.lang=lang==="en"?"en":"th";render()});
-$("level").addEventListener("change",e=>{level=e.target.value;questionIndex=0;chosen=null;practiceChoice=null;practiceChecked=false;retrying=false;if(level==="core"){motorMode="lab";motorI="in";motorB="right";motorGuess=""}render()});
+$("level").addEventListener("change",e=>{level=e.target.value;questionIndex=0;chosen=null;practiceChoice=null;practiceChecked=false;retrying=false;chosenWord=null;clozeSlots=[null,null,null];flashIndex=0;flipped=false;seen=new Set();message="";if(view==="exit")view="learn";if(level==="core"){motorMode="lab";motorI="in";motorB="right";motorGuess=""}render()});
 $("resetTopic").addEventListener("click",()=>{
  if(!window.confirm("Clear only this lesson's saved answers, history and flashcards? / ล้างเฉพาะบทนี้?"))return;
  try{localStorage.removeItem(STORAGE_BASE+currentId)}catch(_){}
